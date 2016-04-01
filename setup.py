@@ -1,9 +1,7 @@
 import os
 import sys
 from distutils.core import setup, Extension
-
 import numpy
-
 import src.urh.version as version
 
 if sys.platform == "win32":

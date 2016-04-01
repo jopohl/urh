@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Decoder</class>
+ <widget class="QDialog" name="Decoder">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>923</width>
+    <height>685</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Decoding</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QComboBox" name="combobox_decodings">
+       <item>
+        <property name="text">
+         <string>Non Return to Zero (NRZ)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Empty</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="delete_decoding">
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveas">
+       <property name="text">
+        <string>Save as...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Base Functions</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="basefunctions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::DragOnly</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Additional Functions</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="additionalfunctions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::DragOnly</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Decoder</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+           <strikeout>false</strikeout>
+          </font>
+         </property>
+         <property name="text">
+          <string>Signal</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ListWidget" name="decoderchain">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::DragDrop</enum>
+         </property>
+         <property name="defaultDropAction">
+          <enum>Qt::MoveAction</enum>
+         </property>
+         <property name="textElideMode">
+          <enum>Qt::ElideMiddle</enum>
+         </property>
+         <property name="resizeMode">
+          <enum>QListView::Fixed</enum>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::ListMode</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="text">
+          <string>Decoded Bits</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="gb_infoandoptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Information and Options</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QLabel" name="info">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information.</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::PlainText</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QStackedWidget" name="optionWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>5</number>
+            </property>
+            <widget class="QWidget" name="page_empty"/>
+            <widget class="QWidget" name="page_redundancy">
+             <widget class="QSpinBox" name="multiple">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>56</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="minimum">
+               <number>2</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_5">
+              <property name="geometry">
+               <rect>
+                <x>60</x>
+                <y>0</y>
+                <width>171</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Number of redundant bits</string>
+              </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="page_carrier">
+             <widget class="QLineEdit" name="carrier">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>113</width>
+                <height>23</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_6">
+              <property name="geometry">
+               <rect>
+                <x>120</x>
+                <y>0</y>
+                <width>171</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Carrier ('1' -&gt; 1_1_1_1...)</string>
+              </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="page_substitution">
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QSpinBox" name="substitution_rows">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>1000</number>
+                </property>
+                <property name="value">
+                 <number>4</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_10">
+                <property name="text">
+                 <string>Rows</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QTableWidget" name="substitution">
+                <property name="verticalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+                <property name="horizontalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_external">
+             <widget class="QLineEdit" name="external_decoder">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>291</width>
+                <height>23</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="external_encoder">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>30</y>
+                <width>291</width>
+                <height>23</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_11">
+              <property name="geometry">
+               <rect>
+                <x>300</x>
+                <y>0</y>
+                <width>71</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Decoder</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_12">
+              <property name="geometry">
+               <rect>
+                <x>300</x>
+                <y>30</y>
+                <width>71</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Encoder</string>
+              </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="page_data_whitening">
+             <widget class="QLineEdit" name="datawhitening_sync">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>171</width>
+                <height>23</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_13">
+              <property name="geometry">
+               <rect>
+                <x>180</x>
+                <y>0</y>
+                <width>231</width>
+                <height>20</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Synchronization bytes (hex coded)</string>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="datawhitening_polynomial">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>30</y>
+                <width>171</width>
+                <height>23</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_14">
+              <property name="geometry">
+               <rect>
+                <x>180</x>
+                <y>30</y>
+                <width>291</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Data whitening polynomial (LFSR, hex coded)</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="datawhitening_applycrc">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>60</y>
+                <width>261</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Compute and apply CRC-16 via XOR</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="datawhitening_preamble_rm">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>80</y>
+                <width>221</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Remove Preamble (1010...)</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="datawhitening_sync_rm">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>100</y>
+                <width>261</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Remove Synchronization bytes</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="datawhitening_crc_rm">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>120</y>
+                <width>131</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Remove CRC-16</string>
+              </property>
+             </widget>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+         <zorder>optionWidget</zorder>
+         <zorder>info</zorder>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Decoded Bits:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="combobox_signals">
+       <item>
+        <property name="text">
+         <string>Test</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLineEdit" name="output">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="decoding_errors_label">
+       <property name="text">
+        <string>[Decoding Errors = 0]</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Signal {0,1}:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="inpt">
+       <property name="inputMethodHints">
+        <set>Qt::ImhDigitsOnly</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="ZoomableGraphicView" name="graphicsView_signal">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="ZoomableGraphicView" name="graphicsView_decoded">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZoomableGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.ZoomableGraphicView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ListWidget</class>
+   <extends>QListWidget</extends>
+   <header>urh.ui.ListWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

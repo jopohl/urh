@@ -1,0 +1,44 @@
+from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
+from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
+from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+
+from urh import constants
+
+
+class ComboBoxDelegate(QItemDelegate):
+    def __init__(self, items, coloring, parent=None):
+        super().__init__(parent)
+        self.items = items
+        self.coloring = coloring
+
+    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+        editor = QComboBox(parent)
+        editor.addItems(self.items)
+        if self.coloring:
+            img = QImage(16, 16, QImage.Format_RGB32)
+            painter = QPainter(img)
+
+            painter.fillRect(img.rect(), Qt.black)
+            rect = img.rect().adjusted(1, 1, -1, -1)
+            for i, item in enumerate(self.items):
+                color = constants.LABEL_COLORS[i]
+                painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
+                editor.setItemData(i, QPixmap.fromImage(img), Qt.DecorationRole)
+
+            del painter
+        editor.currentIndexChanged.connect(self.currentIndexChanged)
+        return editor
+
+    def setEditorData(self, editor: QWidget, index: QModelIndex):
+        editor.blockSignals(True)
+        item = index.model().data(index)
+        indx = self.items.index(item) if item in self.items else int(item)
+        editor.setCurrentIndex(indx)
+        editor.blockSignals(False)
+
+    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
+        model.setData(index, editor.currentIndex(), Qt.EditRole)
+
+    @pyqtSlot()
+    def currentIndexChanged(self):
+        self.commitData.emit(self.sender())

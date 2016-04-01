@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>data/icons/ajax-loader.gif</file>
+    <file>data/icons/appicon.png</file>
+    <file>data/icons/arrow_down_generator.png</file>
+    <file>data/icons/arrow_right_generator.png</file>
+    <file>data/icons/downarrow.png</file>
+    <file>data/icons/equals_generator.png</file>
+    <file>data/icons/expand.png</file>
+    <file>data/icons/plus.png</file>
+    <file>data/icons/shrink.png</file>
+    <file>data/icons/uparrow.png</file>
+  </qresource>
+</RCC>

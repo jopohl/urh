@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+import locale
+import os
+import re
+import sys
+import time
+
+from PyQt5.QtGui import QPalette, QIcon
+from PyQt5.QtWidgets import QApplication, QWidget
+
+locale.setlocale(locale.LC_ALL, '')
+
+
+GENERATE_UI = True
+
+
+def main(argv):
+    urh_exe = sys.executable if hasattr(sys, 'frozen') else argv[0]
+    urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
+
+    urh_dir = os.path.join(os.path.dirname(urh_exe), "..")
+    prefix = os.path.abspath(os.path.normpath(urh_dir))
+
+    src_dir = os.path.join(prefix, "src")
+    if os.path.exists(src_dir) and not prefix.startswith("/usr") \
+            and not re.match(r"(?i)c:\\program", prefix):
+        # Started locally, not installed
+        print("Using modules from {0}".format(src_dir), file=sys.stderr)
+        sys.path.insert(0, src_dir)
+
+    from urh.controller.MainController import MainController
+    from urh import constants
+
+
+    app = QApplication(argv)
+
+    if os.name != "posix":
+        # noinspection PyUnresolvedReferences
+        import urh.ui.xtra_icons_rc  # Fallback Theme for Windows
+        QIcon.setThemeName("oxy")
+
+    mainwindow = MainController()
+    mainwindow.showMaximized()
+
+    # Systemfarben als Zeichenfarbe setzen
+    widget = QWidget()
+    bgcolor = widget.palette().color(QPalette.Background)
+    fgcolor = widget.palette().color(QPalette.Foreground)
+    constants.BGCOLOR = bgcolor
+    constants.LINECOLOR = fgcolor
+
+    return app.exec_()
+
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+    t = time.time()
+    if GENERATE_UI and not hasattr(sys, 'frozen'):
+        try:
+            autohacker_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+            sys.path.append(autohacker_dir)
+            sys.path.append(os.path.join(autohacker_dir, "src"))
+            
+            import generate_ui
+            generate_ui.gen()  # Im Release rausnehmen
+
+            print("Time for generating UI: %.2f seconds" % (time.time() - t), file=sys.stderr)
+        except (ImportError, FileNotFoundError):
+            print("Will not regenerate UI, because script cant be found. This is okay in "
+                  "release.", file=sys.stderr)
+
+    os._exit(main(sys.argv)) # sys.exit() is not enough on Windows and will result in crash on exit

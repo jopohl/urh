@@ -1,0 +1,2 @@
+This plugin allows you to entirely crop long sequences of zeros in your protocol and focus on relevant data.
+You can set a threshold below. All sequences of directly following zeros, which are longer than this threshold will be removed.

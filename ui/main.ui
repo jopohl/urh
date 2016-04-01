@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1017</width>
+    <height>884</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Universal Radio Hacker</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../urh.qrc">
+    <normaloff>:/icons/data/icons/appicon.png</normaloff>:/icons/data/icons/appicon.png</iconset>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="lnEdtTreeFilter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhDialableCharactersOnly</set>
+          </property>
+          <property name="placeholderText">
+           <string>Filter</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DirectoryTreeView" name="fileTree">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>10</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="autoScroll">
+           <bool>true</bool>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragOnly</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>false</bool>
+          </property>
+          <attribute name="headerCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_interpretation">
+        <attribute name="title">
+         <string>Interpretation</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
+       </widget>
+       <widget class="QWidget" name="tab_protocol">
+        <attribute name="title">
+         <string>Analysis</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout"/>
+       </widget>
+       <widget class="QWidget" name="tab_generator">
+        <attribute name="title">
+         <string>Generator</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_5"/>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1017</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionNew_Project"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionRecord"/>
+    <addaction name="actionSniff_protocol"/>
+    <addaction name="actionSpectrum_Analyzer"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveAllSignals"/>
+    <addaction name="actionClose_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionConvert_Folder_to_Project"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionHold_Shift_to_Drag"/>
+    <addaction name="actionShow_Confirm_Close_Dialog"/>
+    <addaction name="actionSeperate_Protocols_in_Compare_Frame"/>
+    <addaction name="actionSort_Frames_by_Name"/>
+    <addaction name="actionShow_file_tree"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionMinimize_all"/>
+    <addaction name="actionMaximize_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionDecoding"/>
+    <addaction name="actionOptions"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Hel&amp;p</string>
+    </property>
+    <addaction name="actionAbout_AutomaticHacker"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionFSK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionOOK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionPSK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>PSK</string>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>None (bei .bin)</string>
+   </property>
+  </action>
+  <action name="actionAuto_Fit_Y">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Auto Fit Y</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset theme="edit-undo">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset theme="edit-redo">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+  </action>
+  <action name="actionCommon_Zoom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Common Zoom</string>
+   </property>
+  </action>
+  <action name="actionShow_Confirm_Close_Dialog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Show Confirm Close Dialog</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
+   </property>
+  </action>
+  <action name="actionHold_Shift_to_Drag">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Hold Shift to Drag</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="icon">
+    <iconset theme="help-contents">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Documentation</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionAbout_AutomaticHacker">
+   <property name="icon">
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About Universal Radio Hacker...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionOpenSignal">
+   <property name="text">
+    <string>&amp;Signal</string>
+   </property>
+  </action>
+  <action name="actionOpenProtocol">
+   <property name="text">
+    <string>&amp;Protocol</string>
+   </property>
+  </action>
+  <action name="actionShow_Compare_Frame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;Compare Frame</string>
+   </property>
+  </action>
+  <action name="actionClose_all">
+   <property name="text">
+    <string>&amp;Close all</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionMinimize_all">
+   <property name="text">
+    <string>&amp;Minimize all</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionMaximize_all">
+   <property name="text">
+    <string>Maximize &amp;all</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSaveAllSignals">
+   <property name="icon">
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save all signals</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSeperate_Protocols_in_Compare_Frame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Seperate Protocols in Compare Frame</string>
+   </property>
+  </action>
+  <action name="actionOpenArchive">
+   <property name="text">
+    <string>&amp;Archive</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionOpen_Folder">
+   <property name="icon">
+    <iconset theme="folder-open">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Folder..</string>
+   </property>
+  </action>
+  <action name="actionShow_only_Compare_Frame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Compare Frame only</string>
+   </property>
+  </action>
+  <action name="actionConfigurePlugins">
+   <property name="text">
+    <string>Configure...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSort_Frames_by_Name">
+   <property name="text">
+    <string>Sort Frames by Name</string>
+   </property>
+  </action>
+  <action name="actionConvert_Folder_to_Project">
+   <property name="text">
+    <string>Convert Folder to Project</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionDecoding">
+   <property name="text">
+    <string>Decoding...</string>
+   </property>
+  </action>
+  <action name="actionRecord">
+   <property name="text">
+    <string>Record signal...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSpectrum_Analyzer">
+   <property name="text">
+    <string>Spectrum Analyzer...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="icon">
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Options...</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionShow_file_tree">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show file tree</string>
+   </property>
+  </action>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>New Project..</string>
+   </property>
+  </action>
+  <action name="actionSniff_protocol">
+   <property name="text">
+    <string>Sniff protocol...</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DirectoryTreeView</class>
+   <extends>QTreeView</extends>
+   <header>urh.ui.views.DirectoryTreeView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../urh.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,9 +1,6 @@
 import sys
 import os
 from subprocess import call
-
-from urh import constants
-
 sys.dont_write_bytecode = True
 
 def gen():
@@ -19,10 +16,10 @@ def gen():
         uic_path = os.path.join(bindir, "pyuic5")
         rcc_path = os.path.join(bindir, "pyrcc5")
 
-    ui_path = "../ui"
-    rc_path = "../"
-
-    out_path = "../src/urh/ui"
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    ui_path = os.path.join(file_dir, "ui")
+    rc_path = file_dir
+    out_path = os.path.join(file_dir, "src", "urh", "ui")
 
     ui_files = [f for f in os.listdir(ui_path) if f.endswith(".ui")]
     rc_files = [f for f in os.listdir(rc_path) if f.endswith(".qrc")]

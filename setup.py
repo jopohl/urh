@@ -44,10 +44,6 @@ def get_package_data():
     package_data = {}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
-    # for path in os.listdir(os.path.join("./src/", PLUGIN_DIR)):
-    #     if os.path.isdir(os.path.join(os.path.join("./src/", PLUGIN_DIR), path)):
-    #         package_data[PLUGIN_DIR + "." + path] = ['settings.ui', "descr.txt"]
-
     return package_data
 
 def get_ext_modules():
@@ -63,6 +59,9 @@ def get_ext_modules():
 
     return extensions
 
+
+import generate_ui
+generate_ui.gen()
 
 setup(
     name="Universal Radio Hacker",

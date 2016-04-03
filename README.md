@@ -7,5 +7,5 @@
 # Installation
 
 ```python
-python setup.py install
+sudo python setup.py install
 ```

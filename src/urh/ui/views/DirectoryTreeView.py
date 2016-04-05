@@ -7,8 +7,10 @@ class DirectoryTreeView(QTreeView):
         super().__init__(parent)
 
     def create_directory(self):
-        index = self.currentIndex()
+        index = self.model().mapToSource(self.rootIndex())
         """:type: QModelIndex """
+
+        model = self.model().sourceModel()
 
         if not index.isValid():
             return
@@ -16,7 +18,7 @@ class DirectoryTreeView(QTreeView):
         dir_name, ok = QInputDialog.getText(self, self.tr("Create Directory"), self.tr("Directory name"))
 
         if ok and len(dir_name) > 0:
-            if not self.model().mkdir(index, dir_name).isValid():
+            if not model.mkdir(index, dir_name).isValid():
                 QMessageBox.information(self, self.tr("Create Directoy"), self.tr("Failed to create the directory"))
 
     def remove(self):

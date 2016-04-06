@@ -1038,6 +1038,7 @@ class CompareFrameController(QFrame):
 
         self.protocol_model.update()
         self.protocol_label_list_model.update()
+        self.label_value_model.update()
 
     def handle_label_selection_changed(self):
         rows = [index.row() for index in self.ui.listViewLabelNames.selectedIndexes()]

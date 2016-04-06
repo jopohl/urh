@@ -44,6 +44,7 @@ def get_package_data():
     package_data = {}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
+
     return package_data
 
 def get_ext_modules():

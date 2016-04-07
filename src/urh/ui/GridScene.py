@@ -48,17 +48,21 @@ class GridScene(ZoomableScene):
             font_height = self.font_metrics.height()
 
             for x in x_range:
-                value = self.value_with_suffix(self.center_freq + self.frequencies[x])
+                if self.frequencies[x] != 0:
+                    value = self.value_with_suffix(self.frequencies[x])
+                else:
+                    value = self.value_with_suffix(self.center_freq, use_sign=False)
                 font_width = self.font_metrics.width(value)
                 painter.drawText(x / scale_x - font_width / 2,
                                  bottom / scale_y + font_height, value)
 
-    def value_with_suffix(self, value: float):
-        if value >= 10 ** 9:
-            return locale.format_string("%.2f", value / 10 ** 9) + "G"
-        elif value >= 10 ** 6:
-            return locale.format_string("%.2f",value / 10 ** 6) + "M"
-        elif value >= 10 ** 3:
-            return locale.format_string("%.2f", value / 10 ** 3) + "K"
+    def value_with_suffix(self, value: float, use_sign=True):
+        sign = "+" if value > 0 and use_sign else ""
+        if abs(value) >= 10 ** 9:
+            return sign + locale.format_string("%.2f", value / 10 ** 9) + "G"
+        elif abs(value) >= 10 ** 6:
+            return sign + locale.format_string("%.2f",value / 10 ** 6) + "M"
+        elif abs(value) >= 10 ** 3:
+            return sign + locale.format_string("%.2f", value / 10 ** 3) + "K"
         else:
-            return locale.format_string("%.2f", value)
+            return sign + locale.format_string("%.2f", value)

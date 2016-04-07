@@ -11,14 +11,10 @@ sudo python setup.py install
 ```
 
 # Running from source
-To run urh without installation, you need to rebuild the C++ Extensions (only once):
-```bash
-cd src/urh/cythonext
-python3 build.py
-```
-
-Then you can run the application:
+To run urh without installation, just run:
 ```bash
 cd bin
 ./urh
 ```
+
+Note, on first use the C++ extensions will be built.

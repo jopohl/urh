@@ -23,11 +23,11 @@ class Formatter():
 
     @staticmethod
     def big_value_with_suffix(value: float) -> str:
-        if value >= 1e9:
-            return locale.format_string("%.2fG", value / 1e9)
-        elif value >= 1e6:
-            return locale.format_string("%.2fM", value / 1e6)
-        elif value >= 1e3:
-            return locale.format_string("%.2fK", value / 1e3)
+        if abs(value) >= 1e9:
+            return locale.format_string("%.3fG", value / 1e9)
+        elif abs(value) >= 1e6:
+            return locale.format_string("%.3fM", value / 1e6)
+        elif abs(value) >= 1e3:
+            return locale.format_string("%.3fK", value / 1e3)
         else:
-            return locale.format_string("%.2f", value)
+            return locale.format_string("%.3f", value)

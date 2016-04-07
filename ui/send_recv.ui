@@ -16,15 +16,39 @@
   <property name="windowTitle">
    <string>Record Signal</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,3,1">
+  <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,5,1">
    <item row="0" column="0" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditIP">
          <property name="text">
-          <string>Device:</string>
+          <string>192.168.10.2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="spinBoxGain">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>40</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Gain:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Bandwidth (Hz):</string>
          </property>
         </widget>
        </item>
@@ -42,17 +66,10 @@
          </item>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Gain:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Frequency (Hz):</string>
+          <string>Device:</string>
          </property>
         </widget>
        </item>
@@ -60,30 +77,6 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Sample rate (Sps):</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="spinBoxGain">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>40</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Bandwidth (Hz):</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEditIP">
-         <property name="text">
-          <string>192.168.10.2</string>
          </property>
         </widget>
        </item>
@@ -104,6 +97,13 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Frequency (Hz):</string>
+         </property>
+        </widget>
+       </item>
        <item row="6" column="0">
         <widget class="QLabel" name="labelNRepeat">
          <property name="text">
@@ -113,8 +113,11 @@
        </item>
        <item row="2" column="1">
         <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
+         <property name="decimals">
+          <number>3</number>
+         </property>
          <property name="minimum">
-          <double>0.010000000000000</double>
+          <double>0.001000000000000</double>
          </property>
          <property name="maximum">
           <double>1000000000000.000000000000000</double>
@@ -123,8 +126,11 @@
        </item>
        <item row="3" column="1">
         <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
+         <property name="decimals">
+          <number>3</number>
+         </property>
          <property name="minimum">
-          <double>0.010000000000000</double>
+          <double>0.001000000000000</double>
          </property>
          <property name="maximum">
           <double>1000000000000.000000000000000</double>
@@ -133,8 +139,11 @@
        </item>
        <item row="4" column="1">
         <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
+         <property name="decimals">
+          <number>3</number>
+         </property>
          <property name="minimum">
-          <double>0.010000000000000</double>
+          <double>0.001000000000000</double>
          </property>
          <property name="maximum">
           <double>1000000000000.000000000000000</double>

@@ -50,6 +50,7 @@ class FFTSceneManager(SceneManager):
 
     def clear_path(self):
         super().clear_path()
+        self.peak = []
         self.peak_item.setPath(QPainterPath())
 
     def set_text(self, text):

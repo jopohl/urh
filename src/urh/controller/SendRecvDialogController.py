@@ -139,6 +139,7 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_nrepeat_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slideyscale_value_changed)
+        self.ui.graphicsView.freq_clicked.connect(self.on_graphics_view_freq_clicked)
 
         self.ui.graphicsView.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
         self.ui.graphicsView.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
@@ -386,3 +387,8 @@ class SendRecvDialogController(QDialog):
         scale_factor = (new_value + 1 - middle) / current_factor if scale_up else current_factor / new_value
         if scale_factor > 0:
             self.ui.graphicsView.scale(1, scale_factor)
+
+    @pyqtSlot(float)
+    def on_graphics_view_freq_clicked(self, freq: float):
+        self.ui.spinBoxFreq.setValue(freq)
+        self.ui.spinBoxFreq.editingFinished.emit()

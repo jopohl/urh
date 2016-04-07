@@ -29,6 +29,20 @@ def main(argv):
         print("Using modules from {0}".format(src_dir), file=sys.stderr)
         sys.path.insert(0, src_dir)
 
+    try:
+        import urh.cythonext.signalFunctions
+        import urh.cythonext.path_creator
+        import urh.cythonext.util
+    except ImportError:
+        print("Could not find C++ extensions, trying to build them.", file=sys.stderr)
+        old_dir = os.curdir
+        os.chdir(os.path.join(src_dir, "urh", "cythonext"))
+
+        from urh.cythonext import build
+        build.main()
+
+        os.chdir(old_dir)
+
     from urh.controller.MainController import MainController
     from urh import constants
 

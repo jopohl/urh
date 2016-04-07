@@ -18,7 +18,7 @@ def get_python3_interpreter():
 
     return None
 
-if __name__ == "__main__":
+def main():
     python3 = get_python3_interpreter()
 
     call([python3, "setup.py", "build_ext",
@@ -31,3 +31,6 @@ if __name__ == "__main__":
 
     for f in filenames:
         shutil.move(os.path.join(build_path, f), f)
+
+if __name__ == "__main__":
+    main()

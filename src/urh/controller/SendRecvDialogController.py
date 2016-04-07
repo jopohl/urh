@@ -58,7 +58,6 @@ class SendRecvDialogController(QDialog):
             self.ui.btnSave.hide()
 
         if self.mode == Mode.spectrum:
-            self.ui.btnClear.hide()
             self.setWindowTitle("Spectrum analyzer")
 
         if self.mode == Mode.send:
@@ -233,7 +232,7 @@ class SendRecvDialogController(QDialog):
         self.ui.graphicsView.capturing_data = True
         self.ui.btnSave.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
-        self.ui.btnClear.setEnabled(False)
+        self.ui.btnClear.setEnabled(self.mode == Mode.spectrum)
         self.ui.spinBoxNRepeat.setEnabled(False)
         self.ui.btnStop.setEnabled(True)
 
@@ -332,6 +331,8 @@ class SendRecvDialogController(QDialog):
             self.ui.progressBar.setValue(0)
             self.ui.btnClear.setEnabled(False)
             self.ui.btnSave.setEnabled(False)
+        else:
+            self.scene_creator.clear_path()
 
     def on_save_clicked(self):
         data = self.device_thread.data[:self.device_thread.current_index]

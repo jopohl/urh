@@ -41,6 +41,7 @@ def main():
                             include_dirs=[numpy.get_include()],
                             extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
+                            libraries = ["hackrf"] if f == "hackrf" else [],
                             language=LANGUAGE) for f in filenames]
 
     if use_cython:

@@ -1,12 +1,16 @@
 cimport chackrf
 from libc.stdlib cimport malloc, free
 
+cdef int _c_callback(chackrf.hackrf_transfer* transfer):
+    print(transfer.buffer_length)
+
+
 cdef class HackRF:
     cdef chackrf.hackrf_device* _c_device
+    cdef int hackrf_success
+
     def __cinit__(self):
-        self.is_open = False
         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
-        pass
 
     def setup(self):
         chackrf.hackrf_init()
@@ -20,7 +24,6 @@ cdef class HackRF:
     def __open(self):
         ret = chackrf.hackrf_open(&self._c_device)
         if ret == self.hackrf_success:
-            self.is_open = True
             print('Successfully opened HackRF device')
             return self.hackrf_success
         else:
@@ -29,20 +32,18 @@ cdef class HackRF:
     def __close(self):
         ret = chackrf.hackrf_close(self._c_device)
         if ret == self.hackrf_success:
-            self.is_open = False
             print('Successfully closed HackRF device')
             return self.hackrf_success
         else:
             print('Failed to close HackRF!')
 
-    def start_rx_mode(self, set_callback):
-        self.callback = _callback(set_callback) # TODO Callback verstehen
-        ret = chackrf.hackrf_start_rx(self._c_device, self.callback, <void *>0)
+    def start_rx_mode(self, callback):
+        ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
         if ret == self.hackrf_success:
-            print('Successfully start HackRf in Recieve Mode')
+            print('Successfully start HackRf in receive mode')
             return self.hackrf_success
         else:
-            print('Failed to start HackRf in Recieve Mode')
+            print('Failed to start HackRf in receive mode')
 
     def stop_rx_mode(self):
         ret = chackrf.hackrf_stop_rx(self._c_device)
@@ -53,9 +54,8 @@ cdef class HackRF:
             print('Failed to stop HackRF receive mode')
         return ret
 
-    def start_tx_mode(self, set_callback):
-        self.callback = _callback(set_callback) # TODO Callback verstehen
-        ret =  chackrf.hackrf_start_tx(self._c_device, self.callback, <void *>0)
+    def start_tx_mode(self, callback):
+        ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
         if ret == self.hackrf_success:
             print('Successfully started HackRF in Transfer Mode')
             return self.hackrf_success
@@ -92,10 +92,10 @@ cdef class HackRF:
     def set_freq(self, freq_hz):
         ret = chackrf.hackrf_set_freq(self._c_device, freq_hz)
         if ret == self.hackrf_success:
-            print('Successfully set frequency with value [%d]', freq_hz)
+            print('Successfully set frequency with value', freq_hz)
             return self.hackrf_success
         else:
-            print('Error setting frequency with value [%d]', freq_hz)
+            print('Error setting frequency with value', freq_hz)
 
     def is_streaming(self):
         ret = chackrf.hackrf_is_streaming(self._c_device)
@@ -108,28 +108,28 @@ cdef class HackRF:
         ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
         result = chackrf.hackrf_set_lna_gain(self._c_device, value)
         if result == self.hackrf_success:
-            print('Successfully set LNA gain to [%d]', value)
+            print('Successfully set LNA gain to', value)
             return self.hackrf_success
         else:
-            print('Failed to set LNA gain to [%d]', value)
+            print('Failed to set LNA gain to', value)
 
     def set_vga_gain(self, value):
         ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
         result = chackrf.hackrf_set_vga_gain(self._c_device, value)
         if result == self.hackrf_success:
-            print('Successfully set VGA gain to [%d]', value)
+            print('Successfully set VGA gain to', value)
             return self.hackrf_success
         else:
-            print('Failed to set VGA gain to [%d]', value)
+            print('Failed to set VGA gain to', value)
 
     def set_txvga_gain(self, value):
         ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
         result = chackrf.hackrf_set_txvga_gain(self._c_device, value)
         if result == self.hackrf_success:
-            print('Successfully set TXVGA gain to [%d]', value)
+            print('Successfully set TXVGA gain to', value)
             return self.hackrf_success
         else:
-            print('Failed to set TXVGA gain to [%d]', value)
+            print('Failed to set TXVGA gain to', value)
 
 
     def set_antenna_enable(self, value):

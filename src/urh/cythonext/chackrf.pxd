@@ -70,7 +70,8 @@ cdef extern from "libhackrf/hackrf.h":
 
     ctypedef hackrf_device_list hackrf_device_list_t;
 
-    ctypedef int (*hackrf_sample_block_cb_fn)(hackrf_transfer*transfer)
+    ctypedef int (*hackrf_sample_block_cb_fn)(hackrf_transfer* transfer)
+
     
     int hackrf_init()
     int hackrf_exit()

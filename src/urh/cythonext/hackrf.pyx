@@ -3,13 +3,10 @@ cimport numpy as np
 from libc.stdio cimport * # printf fflush
 from libc.stdlib cimport malloc, free
 cdef object f
-#cdef unsigned char[:] buffer = np.empty(10000000000000)
 
-cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:
+cdef int _c_callback(chackrf.hackrf_transfer* transfer) with gil:
     global f
-    printf("%d %d\n", transfer.buffer_length, transfer.valid_length)
-    printf("%d\n", transfer.buffer[0])
-
+    (<object>f)(transfer.buffer)
     return 0
 
 cdef chackrf.hackrf_device* _c_device

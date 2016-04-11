@@ -7,12 +7,12 @@ import time
 from urh.cythonext import hackrf
 
 class TestHackRF(unittest.TestCase):
-    def callback_fun(self, hackrf_transfer):
+    def callback_fun(self, buffer):
         # array_type = (ctypes.c_byte * length)
         # values = ctypes.cast(hackrf_transfer.contents.buffer, ctypes.POINTER(array_type)).contents
         # # iq data here
         # iq = hackrf.packed_bytes_to_iq(values)
-        print("jkefjknskf")
+        print(len(buffer))
         return 0
 
 

@@ -3,7 +3,7 @@ from libc.stdlib cimport malloc, free
 cdef object f
 cdef int l = -1
 
-cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:
+cdef int _c_callback(chackrf.hackrf_transfer* transfer):
     global f
     l = transfer.buffer_length
     #(<object>f)(<object>PyTransfer(transfer))

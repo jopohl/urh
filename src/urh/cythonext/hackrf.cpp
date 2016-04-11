@@ -485,7 +485,7 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF;
 
-/* "src/urh/cythonext/hackrf.pyx":8
+/* "src/urh/cythonext/hackrf.pyx":14
  * 
  * 
  * cdef class HackRF:             # <<<<<<<<<<<<<<
@@ -579,23 +579,16 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
+static CYTHON_INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict, const char* function_name, int kw_allowed);
+
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
 #else
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
-
-static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb);
-static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb);
-
-static void __Pyx_WriteUnraisable(const char *name, int clineno,
-                                  int lineno, const char *filename,
-                                  int full_traceback, int nogil);
-
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
-
-static CYTHON_INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict, const char* function_name, int kw_allowed);
 
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
@@ -660,6 +653,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from 'src.urh.cythonext.hackrf' */
 static PyTypeObject *__pyx_ptype_3src_3urh_9cythonext_6hackrf_HackRF = 0;
+static PyObject *__pyx_v_3src_3urh_9cythonext_6hackrf_f = 0;
+static int __pyx_v_3src_3urh_9cythonext_6hackrf_l;
 static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback(hackrf_transfer *); /*proto*/
 #define __Pyx_MODULE_NAME "src.urh.cythonext.hackrf"
 int __pyx_module_is_main_src__urh__cythonext__hackrf = 0;
@@ -745,7 +740,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_callback); /* proto */
+static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self, PyObject *__pyx_v_callback); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self, PyObject *__pyx_v_callback); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self); /* proto */
@@ -782,66 +777,53 @@ static PyObject *__pyx_tuple__18;
 static PyObject *__pyx_tuple__19;
 static PyObject *__pyx_tuple__20;
 
-/* "src/urh/cythonext/hackrf.pyx":4
- * from libc.stdlib cimport malloc, free
+/* "src/urh/cythonext/hackrf.pyx":6
+ * cdef int l = -1
  * 
- * cdef int _c_callback(chackrf.hackrf_transfer* transfer):             # <<<<<<<<<<<<<<
- *     print(transfer.buffer_length)
- * 
+ * cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:             # <<<<<<<<<<<<<<
+ *     global f
+ *     global l
  */
 
 static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback(hackrf_transfer *__pyx_v_transfer) {
   int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("_c_callback", 0);
+  int __pyx_t_1;
 
-  /* "src/urh/cythonext/hackrf.pyx":5
- * 
- * cdef int _c_callback(chackrf.hackrf_transfer* transfer):
- *     print(transfer.buffer_length)             # <<<<<<<<<<<<<<
+  /* "src/urh/cythonext/hackrf.pyx":9
+ *     global f
+ *     global l
+ *     l = transfer.buffer_length             # <<<<<<<<<<<<<<
+ *     #(<object>f)(<object>PyTransfer(transfer))
+ *     return 0
+ */
+  __pyx_t_1 = __pyx_v_transfer->buffer_length;
+  __pyx_v_3src_3urh_9cythonext_6hackrf_l = __pyx_t_1;
+
+  /* "src/urh/cythonext/hackrf.pyx":11
+ *     l = transfer.buffer_length
+ *     #(<object>f)(<object>PyTransfer(transfer))
+ *     return 0             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_transfer->buffer_length); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
-  __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = 0;
+  goto __pyx_L0;
 
-  /* "src/urh/cythonext/hackrf.pyx":4
- * from libc.stdlib cimport malloc, free
+  /* "src/urh/cythonext/hackrf.pyx":6
+ * cdef int l = -1
  * 
- * cdef int _c_callback(chackrf.hackrf_transfer* transfer):             # <<<<<<<<<<<<<<
- *     print(transfer.buffer_length)
- * 
+ * cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:             # <<<<<<<<<<<<<<
+ *     global f
+ *     global l
  */
 
   /* function exit code */
-  __pyx_r = 0;
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_WriteUnraisable("src.urh.cythonext.hackrf._c_callback", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":12
- *     cdef int hackrf_success
+/* "src/urh/cythonext/hackrf.pyx":20
+ * 
  * 
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
  *         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
@@ -869,7 +851,7 @@ static int __pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF___cinit__(struct __pyx_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":13
+  /* "src/urh/cythonext/hackrf.pyx":21
  * 
  *     def __cinit__(self):
  *         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS             # <<<<<<<<<<<<<<
@@ -878,8 +860,8 @@ static int __pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF___cinit__(struct __pyx_
  */
   __pyx_v_self->hackrf_success = 0;
 
-  /* "src/urh/cythonext/hackrf.pyx":12
- *     cdef int hackrf_success
+  /* "src/urh/cythonext/hackrf.pyx":20
+ * 
  * 
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
  *         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
@@ -892,7 +874,7 @@ static int __pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF___cinit__(struct __pyx_
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":15
+/* "src/urh/cythonext/hackrf.pyx":23
  *         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
  * 
  *     def setup(self):             # <<<<<<<<<<<<<<
@@ -924,7 +906,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("setup", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":16
+  /* "src/urh/cythonext/hackrf.pyx":24
  * 
  *     def setup(self):
  *         chackrf.hackrf_init()             # <<<<<<<<<<<<<<
@@ -933,7 +915,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
  */
   hackrf_init();
 
-  /* "src/urh/cythonext/hackrf.pyx":17
+  /* "src/urh/cythonext/hackrf.pyx":25
  *     def setup(self):
  *         chackrf.hackrf_init()
  *         return self.__open()             # <<<<<<<<<<<<<<
@@ -941,7 +923,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
  *     def exit(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_open); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_open); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -954,10 +936,10 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -965,7 +947,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/hackrf.pyx":15
+  /* "src/urh/cythonext/hackrf.pyx":23
  *         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
  * 
  *     def setup(self):             # <<<<<<<<<<<<<<
@@ -986,7 +968,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_2setup(struct __p
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":19
+/* "src/urh/cythonext/hackrf.pyx":27
  *         return self.__open()
  * 
  *     def exit(self):             # <<<<<<<<<<<<<<
@@ -1019,14 +1001,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("exit", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":20
+  /* "src/urh/cythonext/hackrf.pyx":28
  * 
  *     def exit(self):
  *         ret = self.__close()             # <<<<<<<<<<<<<<
  *         chackrf.hackrf_exit()
  *         return ret
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_close); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_close); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -1039,17 +1021,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __py
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_ret = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/urh/cythonext/hackrf.pyx":21
+  /* "src/urh/cythonext/hackrf.pyx":29
  *     def exit(self):
  *         ret = self.__close()
  *         chackrf.hackrf_exit()             # <<<<<<<<<<<<<<
@@ -1058,7 +1040,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __py
  */
   hackrf_exit();
 
-  /* "src/urh/cythonext/hackrf.pyx":22
+  /* "src/urh/cythonext/hackrf.pyx":30
  *         ret = self.__close()
  *         chackrf.hackrf_exit()
  *         return ret             # <<<<<<<<<<<<<<
@@ -1070,7 +1052,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __py
   __pyx_r = __pyx_v_ret;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/hackrf.pyx":19
+  /* "src/urh/cythonext/hackrf.pyx":27
  *         return self.__open()
  * 
  *     def exit(self):             # <<<<<<<<<<<<<<
@@ -1092,7 +1074,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_4exit(struct __py
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":24
+/* "src/urh/cythonext/hackrf.pyx":32
  *         return ret
  * 
  *     def __open(self):             # <<<<<<<<<<<<<<
@@ -1124,7 +1106,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__open", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":25
+  /* "src/urh/cythonext/hackrf.pyx":33
  * 
  *     def __open(self):
  *         ret = chackrf.hackrf_open(&self._c_device)             # <<<<<<<<<<<<<<
@@ -1133,7 +1115,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
  */
   __pyx_v_ret = hackrf_open((&__pyx_v_self->_c_device));
 
-  /* "src/urh/cythonext/hackrf.pyx":26
+  /* "src/urh/cythonext/hackrf.pyx":34
  *     def __open(self):
  *         ret = chackrf.hackrf_open(&self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1143,18 +1125,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":27
+    /* "src/urh/cythonext/hackrf.pyx":35
  *         ret = chackrf.hackrf_open(&self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully opened HackRF device')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":28
+    /* "src/urh/cythonext/hackrf.pyx":36
  *         if ret == self.hackrf_success:
  *             print('Successfully opened HackRF device')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -1162,13 +1144,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
  *             print('No HackRF detected!')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":26
+    /* "src/urh/cythonext/hackrf.pyx":34
  *     def __open(self):
  *         ret = chackrf.hackrf_open(&self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1177,7 +1159,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":30
+  /* "src/urh/cythonext/hackrf.pyx":38
  *             return self.hackrf_success
  *         else:
  *             print('No HackRF detected!')             # <<<<<<<<<<<<<<
@@ -1185,12 +1167,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
  *     def __close(self):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":24
+  /* "src/urh/cythonext/hackrf.pyx":32
  *         return ret
  * 
  *     def __open(self):             # <<<<<<<<<<<<<<
@@ -1211,7 +1193,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_6__open(struct __
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":32
+/* "src/urh/cythonext/hackrf.pyx":40
  *             print('No HackRF detected!')
  * 
  *     def __close(self):             # <<<<<<<<<<<<<<
@@ -1243,7 +1225,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__close", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":33
+  /* "src/urh/cythonext/hackrf.pyx":41
  * 
  *     def __close(self):
  *         ret = chackrf.hackrf_close(self._c_device)             # <<<<<<<<<<<<<<
@@ -1252,7 +1234,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
  */
   __pyx_v_ret = hackrf_close(__pyx_v_self->_c_device);
 
-  /* "src/urh/cythonext/hackrf.pyx":34
+  /* "src/urh/cythonext/hackrf.pyx":42
  *     def __close(self):
  *         ret = chackrf.hackrf_close(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1262,18 +1244,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":35
+    /* "src/urh/cythonext/hackrf.pyx":43
  *         ret = chackrf.hackrf_close(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully closed HackRF device')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":36
+    /* "src/urh/cythonext/hackrf.pyx":44
  *         if ret == self.hackrf_success:
  *             print('Successfully closed HackRF device')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -1281,13 +1263,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
  *             print('Failed to close HackRF!')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":34
+    /* "src/urh/cythonext/hackrf.pyx":42
  *     def __close(self):
  *         ret = chackrf.hackrf_close(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1296,7 +1278,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":38
+  /* "src/urh/cythonext/hackrf.pyx":46
  *             return self.hackrf_success
  *         else:
  *             print('Failed to close HackRF!')             # <<<<<<<<<<<<<<
@@ -1304,12 +1286,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
  *     def start_rx_mode(self, callback):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":32
+  /* "src/urh/cythonext/hackrf.pyx":40
  *             print('No HackRF detected!')
  * 
  *     def __close(self):             # <<<<<<<<<<<<<<
@@ -1330,12 +1312,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_8__close(struct _
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":40
+/* "src/urh/cythonext/hackrf.pyx":48
  *             print('Failed to close HackRF!')
  * 
  *     def start_rx_mode(self, callback):             # <<<<<<<<<<<<<<
- *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
- *         if ret == self.hackrf_success:
+ *         global f
+ *         global l
  */
 
 /* Python wrapper */
@@ -1351,71 +1333,122 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_6hackrf_6HackRF_11start_rx_mode(P
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_callback) {
+static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(struct __pyx_obj_3src_3urh_9cythonext_6hackrf_HackRF *__pyx_v_self, PyObject *__pyx_v_callback) {
   int __pyx_v_ret;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
+  int __pyx_t_3;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("start_rx_mode", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":41
- * 
- *     def start_rx_mode(self, callback):
+  /* "src/urh/cythonext/hackrf.pyx":51
+ *         global f
+ *         global l
+ *         f  = callback             # <<<<<<<<<<<<<<
+ *         print(l)
+ *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
+ */
+  __Pyx_INCREF(__pyx_v_callback);
+  __Pyx_XGOTREF(__pyx_v_3src_3urh_9cythonext_6hackrf_f);
+  __Pyx_DECREF_SET(__pyx_v_3src_3urh_9cythonext_6hackrf_f, __pyx_v_callback);
+  __Pyx_GIVEREF(__pyx_v_callback);
+
+  /* "src/urh/cythonext/hackrf.pyx":52
+ *         global l
+ *         f  = callback
+ *         print(l)             # <<<<<<<<<<<<<<
+ *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
+ *         if ret == self.hackrf_success:
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_3src_3urh_9cythonext_6hackrf_l); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/cythonext/hackrf.pyx":53
+ *         f  = callback
+ *         print(l)
  *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)             # <<<<<<<<<<<<<<
  *         if ret == self.hackrf_success:
- *             print('Successfully start HackRf in receive mode')
+ *             print(l)
  */
   __pyx_v_ret = hackrf_start_rx(__pyx_v_self->_c_device, __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback, ((void *)0));
 
-  /* "src/urh/cythonext/hackrf.pyx":42
- *     def start_rx_mode(self, callback):
+  /* "src/urh/cythonext/hackrf.pyx":54
+ *         print(l)
  *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
+ *             print(l)
+ *             print('Successfully start HackRf in receive mode')
+ */
+  __pyx_t_3 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
+  if (__pyx_t_3) {
+
+    /* "src/urh/cythonext/hackrf.pyx":55
+ *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
+ *         if ret == self.hackrf_success:
+ *             print(l)             # <<<<<<<<<<<<<<
  *             print('Successfully start HackRf in receive mode')
  *             return self.hackrf_success
  */
-  __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
-  if (__pyx_t_1) {
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_3src_3urh_9cythonext_6hackrf_l); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+    __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":43
- *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
+    /* "src/urh/cythonext/hackrf.pyx":56
  *         if ret == self.hackrf_success:
+ *             print(l)
  *             print('Successfully start HackRf in receive mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":44
- *         if ret == self.hackrf_success:
+    /* "src/urh/cythonext/hackrf.pyx":57
+ *             print(l)
  *             print('Successfully start HackRf in receive mode')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
  *         else:
  *             print('Failed to start HackRf in receive mode')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_r = __pyx_t_2;
-    __pyx_t_2 = 0;
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 57; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":42
- *     def start_rx_mode(self, callback):
+    /* "src/urh/cythonext/hackrf.pyx":54
+ *         print(l)
  *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
+ *             print(l)
  *             print('Successfully start HackRf in receive mode')
- *             return self.hackrf_success
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":46
+  /* "src/urh/cythonext/hackrf.pyx":59
  *             return self.hackrf_success
  *         else:
  *             print('Failed to start HackRf in receive mode')             # <<<<<<<<<<<<<<
@@ -1423,23 +1456,24 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(s
  *     def stop_rx_mode(self):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":40
+  /* "src/urh/cythonext/hackrf.pyx":48
  *             print('Failed to close HackRF!')
  * 
  *     def start_rx_mode(self, callback):             # <<<<<<<<<<<<<<
- *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
- *         if ret == self.hackrf_success:
+ *         global f
+ *         global l
  */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("src.urh.cythonext.hackrf.HackRF.start_rx_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
@@ -1449,7 +1483,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_10start_rx_mode(s
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":48
+/* "src/urh/cythonext/hackrf.pyx":61
  *             print('Failed to start HackRf in receive mode')
  * 
  *     def stop_rx_mode(self):             # <<<<<<<<<<<<<<
@@ -1481,7 +1515,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("stop_rx_mode", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":49
+  /* "src/urh/cythonext/hackrf.pyx":62
  * 
  *     def stop_rx_mode(self):
  *         ret = chackrf.hackrf_stop_rx(self._c_device)             # <<<<<<<<<<<<<<
@@ -1490,7 +1524,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
  */
   __pyx_v_ret = hackrf_stop_rx(__pyx_v_self->_c_device);
 
-  /* "src/urh/cythonext/hackrf.pyx":50
+  /* "src/urh/cythonext/hackrf.pyx":63
  *     def stop_rx_mode(self):
  *         ret = chackrf.hackrf_stop_rx(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1500,18 +1534,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":51
+    /* "src/urh/cythonext/hackrf.pyx":64
  *         ret = chackrf.hackrf_stop_rx(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully stopped HackRF receive mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":52
+    /* "src/urh/cythonext/hackrf.pyx":65
  *         if ret == self.hackrf_success:
  *             print('Successfully stopped HackRF receive mode')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -1519,13 +1553,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
  *             print('Failed to stop HackRF receive mode')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":50
+    /* "src/urh/cythonext/hackrf.pyx":63
  *     def stop_rx_mode(self):
  *         ret = chackrf.hackrf_stop_rx(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1534,7 +1568,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":54
+  /* "src/urh/cythonext/hackrf.pyx":67
  *             return self.hackrf_success
  *         else:
  *             print('Failed to stop HackRF receive mode')             # <<<<<<<<<<<<<<
@@ -1542,12 +1576,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
  * 
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":55
+  /* "src/urh/cythonext/hackrf.pyx":68
  *         else:
  *             print('Failed to stop HackRF receive mode')
  *         return ret             # <<<<<<<<<<<<<<
@@ -1555,13 +1589,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
  *     def start_tx_mode(self, callback):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/hackrf.pyx":48
+  /* "src/urh/cythonext/hackrf.pyx":61
  *             print('Failed to start HackRf in receive mode')
  * 
  *     def stop_rx_mode(self):             # <<<<<<<<<<<<<<
@@ -1580,12 +1614,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_12stop_rx_mode(st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":57
+/* "src/urh/cythonext/hackrf.pyx":70
  *         return ret
  * 
  *     def start_tx_mode(self, callback):             # <<<<<<<<<<<<<<
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
- *         if ret == self.hackrf_success:
+ *         global f
+ *         f = callback
  */
 
 /* Python wrapper */
@@ -1612,18 +1646,30 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("start_tx_mode", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":58
- * 
+  /* "src/urh/cythonext/hackrf.pyx":72
  *     def start_tx_mode(self, callback):
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)             # <<<<<<<<<<<<<<
+ *         global f
+ *         f = callback             # <<<<<<<<<<<<<<
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)
+ *         if ret == self.hackrf_success:
+ */
+  __Pyx_INCREF(__pyx_v_callback);
+  __Pyx_XGOTREF(__pyx_v_3src_3urh_9cythonext_6hackrf_f);
+  __Pyx_DECREF_SET(__pyx_v_3src_3urh_9cythonext_6hackrf_f, __pyx_v_callback);
+  __Pyx_GIVEREF(__pyx_v_callback);
+
+  /* "src/urh/cythonext/hackrf.pyx":73
+ *         global f
+ *         f = callback
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)             # <<<<<<<<<<<<<<
  *         if ret == self.hackrf_success:
  *             print('Successfully started HackRF in Transfer Mode')
  */
-  __pyx_v_ret = hackrf_start_tx(__pyx_v_self->_c_device, __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback, ((void *)__pyx_v_callback));
+  __pyx_v_ret = hackrf_start_tx(__pyx_v_self->_c_device, ((hackrf_sample_block_cb_fn)__pyx_f_3src_3urh_9cythonext_6hackrf__c_callback), ((void *)__pyx_v_callback));
 
-  /* "src/urh/cythonext/hackrf.pyx":59
- *     def start_tx_mode(self, callback):
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
+  /* "src/urh/cythonext/hackrf.pyx":74
+ *         f = callback
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
  *             print('Successfully started HackRF in Transfer Mode')
  *             return self.hackrf_success
@@ -1631,18 +1677,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(s
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":60
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
+    /* "src/urh/cythonext/hackrf.pyx":75
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)
  *         if ret == self.hackrf_success:
  *             print('Successfully started HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":61
+    /* "src/urh/cythonext/hackrf.pyx":76
  *         if ret == self.hackrf_success:
  *             print('Successfully started HackRF in Transfer Mode')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -1650,22 +1696,22 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(s
  *             print('Failed to start HackRF in Transfer Mode')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":59
- *     def start_tx_mode(self, callback):
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
+    /* "src/urh/cythonext/hackrf.pyx":74
+ *         f = callback
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
  *             print('Successfully started HackRF in Transfer Mode')
  *             return self.hackrf_success
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":63
+  /* "src/urh/cythonext/hackrf.pyx":78
  *             return self.hackrf_success
  *         else:
  *             print('Failed to start HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
@@ -1673,17 +1719,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(s
  *     def stop_tx_mode(self):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":57
+  /* "src/urh/cythonext/hackrf.pyx":70
  *         return ret
  * 
  *     def start_tx_mode(self, callback):             # <<<<<<<<<<<<<<
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
- *         if ret == self.hackrf_success:
+ *         global f
+ *         f = callback
  */
 
   /* function exit code */
@@ -1699,7 +1745,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_14start_tx_mode(s
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":65
+/* "src/urh/cythonext/hackrf.pyx":80
  *             print('Failed to start HackRF in Transfer Mode')
  * 
  *     def stop_tx_mode(self):             # <<<<<<<<<<<<<<
@@ -1731,7 +1777,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("stop_tx_mode", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":66
+  /* "src/urh/cythonext/hackrf.pyx":81
  * 
  *     def stop_tx_mode(self):
  *         ret = chackrf.hackrf_stop_tx(self._c_device)             # <<<<<<<<<<<<<<
@@ -1740,7 +1786,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
  */
   __pyx_v_ret = hackrf_stop_tx(__pyx_v_self->_c_device);
 
-  /* "src/urh/cythonext/hackrf.pyx":67
+  /* "src/urh/cythonext/hackrf.pyx":82
  *     def stop_tx_mode(self):
  *         ret = chackrf.hackrf_stop_tx(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1750,18 +1796,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":68
+    /* "src/urh/cythonext/hackrf.pyx":83
  *         ret = chackrf.hackrf_stop_tx(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully stoped HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":69
+    /* "src/urh/cythonext/hackrf.pyx":84
  *         if ret == self.hackrf_success:
  *             print('Successfully stoped HackRF in Transfer Mode')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -1769,13 +1815,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
  *             print('Failed to stop HackRF in Transfer Mode')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":67
+    /* "src/urh/cythonext/hackrf.pyx":82
  *     def stop_tx_mode(self):
  *         ret = chackrf.hackrf_stop_tx(self._c_device)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1784,7 +1830,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":71
+  /* "src/urh/cythonext/hackrf.pyx":86
  *             return self.hackrf_success
  *         else:
  *             print('Failed to stop HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
@@ -1792,12 +1838,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
  *     def board_id_read(self):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":65
+  /* "src/urh/cythonext/hackrf.pyx":80
  *             print('Failed to start HackRF in Transfer Mode')
  * 
  *     def stop_tx_mode(self):             # <<<<<<<<<<<<<<
@@ -1818,7 +1864,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_16stop_tx_mode(st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":73
+/* "src/urh/cythonext/hackrf.pyx":88
  *             print('Failed to stop HackRF in Transfer Mode')
  * 
  *     def board_id_read(self):             # <<<<<<<<<<<<<<
@@ -1851,7 +1897,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("board_id_read", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":75
+  /* "src/urh/cythonext/hackrf.pyx":90
  *     def board_id_read(self):
  *         cdef unsigned char value
  *         ret = chackrf.hackrf_board_id_read(self._c_device, &value)             # <<<<<<<<<<<<<<
@@ -1860,7 +1906,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
  */
   __pyx_v_ret = hackrf_board_id_read(__pyx_v_self->_c_device, (&__pyx_v_value));
 
-  /* "src/urh/cythonext/hackrf.pyx":76
+  /* "src/urh/cythonext/hackrf.pyx":91
  *         cdef unsigned char value
  *         ret = chackrf.hackrf_board_id_read(self._c_device, &value)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1870,18 +1916,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":77
+    /* "src/urh/cythonext/hackrf.pyx":92
  *         ret = chackrf.hackrf_board_id_read(self._c_device, &value)
  *         if ret == self.hackrf_success:
  *             print('Successfully got Board Id')             # <<<<<<<<<<<<<<
  *             return value
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":78
+    /* "src/urh/cythonext/hackrf.pyx":93
  *         if ret == self.hackrf_success:
  *             print('Successfully got Board Id')
  *             return value             # <<<<<<<<<<<<<<
@@ -1889,13 +1935,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
  *             print('Failed to get Board Id')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_unsigned_char(__pyx_v_value); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyInt_From_unsigned_char(__pyx_v_value); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":76
+    /* "src/urh/cythonext/hackrf.pyx":91
  *         cdef unsigned char value
  *         ret = chackrf.hackrf_board_id_read(self._c_device, &value)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -1904,7 +1950,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":80
+  /* "src/urh/cythonext/hackrf.pyx":95
  *             return value
  *         else:
  *             print('Failed to get Board Id')             # <<<<<<<<<<<<<<
@@ -1912,12 +1958,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
  *     def version_string_read(self):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":73
+  /* "src/urh/cythonext/hackrf.pyx":88
  *             print('Failed to stop HackRF in Transfer Mode')
  * 
  *     def board_id_read(self):             # <<<<<<<<<<<<<<
@@ -1938,7 +1984,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_18board_id_read(s
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":82
+/* "src/urh/cythonext/hackrf.pyx":97
  *             print('Failed to get Board Id')
  * 
  *     def version_string_read(self):             # <<<<<<<<<<<<<<
@@ -1972,7 +2018,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("version_string_read", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":83
+  /* "src/urh/cythonext/hackrf.pyx":98
  * 
  *     def version_string_read(self):
  *         cdef char* version = <char *>malloc(20 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -1981,7 +2027,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  */
   __pyx_v_version = ((char *)malloc((20 * (sizeof(char)))));
 
-  /* "src/urh/cythonext/hackrf.pyx":84
+  /* "src/urh/cythonext/hackrf.pyx":99
  *     def version_string_read(self):
  *         cdef char* version = <char *>malloc(20 * sizeof(char))
  *         cdef unsigned char length = 20             # <<<<<<<<<<<<<<
@@ -1990,7 +2036,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  */
   __pyx_v_length = 20;
 
-  /* "src/urh/cythonext/hackrf.pyx":85
+  /* "src/urh/cythonext/hackrf.pyx":100
  *         cdef char* version = <char *>malloc(20 * sizeof(char))
  *         cdef unsigned char length = 20
  *         ret = chackrf.hackrf_version_string_read(self._c_device, version, length)             # <<<<<<<<<<<<<<
@@ -1999,7 +2045,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  */
   __pyx_v_ret = hackrf_version_string_read(__pyx_v_self->_c_device, __pyx_v_version, __pyx_v_length);
 
-  /* "src/urh/cythonext/hackrf.pyx":86
+  /* "src/urh/cythonext/hackrf.pyx":101
  *         cdef unsigned char length = 20
  *         ret = chackrf.hackrf_version_string_read(self._c_device, version, length)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2009,18 +2055,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":87
+    /* "src/urh/cythonext/hackrf.pyx":102
  *         ret = chackrf.hackrf_version_string_read(self._c_device, version, length)
  *         if ret == self.hackrf_success:
  *             print('Successfully got HackRf Version String')             # <<<<<<<<<<<<<<
  *             return version.decode('UTF-8')
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":88
+    /* "src/urh/cythonext/hackrf.pyx":103
  *         if ret == self.hackrf_success:
  *             print('Successfully got HackRf Version String')
  *             return version.decode('UTF-8')             # <<<<<<<<<<<<<<
@@ -2028,13 +2074,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  *             print('Failed to get Version String')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_version, 0, strlen(__pyx_v_version), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_version, 0, strlen(__pyx_v_version), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":86
+    /* "src/urh/cythonext/hackrf.pyx":101
  *         cdef unsigned char length = 20
  *         ret = chackrf.hackrf_version_string_read(self._c_device, version, length)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2043,7 +2089,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":90
+  /* "src/urh/cythonext/hackrf.pyx":105
  *             return version.decode('UTF-8')
  *         else:
  *             print('Failed to get Version String')             # <<<<<<<<<<<<<<
@@ -2051,12 +2097,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
  *     def set_freq(self, freq_hz):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":82
+  /* "src/urh/cythonext/hackrf.pyx":97
  *             print('Failed to get Board Id')
  * 
  *     def version_string_read(self):             # <<<<<<<<<<<<<<
@@ -2077,7 +2123,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_20version_string_
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":92
+/* "src/urh/cythonext/hackrf.pyx":107
  *             print('Failed to get Version String')
  * 
  *     def set_freq(self, freq_hz):             # <<<<<<<<<<<<<<
@@ -2111,17 +2157,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_freq", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":93
+  /* "src/urh/cythonext/hackrf.pyx":108
  * 
  *     def set_freq(self, freq_hz):
  *         ret = chackrf.hackrf_set_freq(self._c_device, freq_hz)             # <<<<<<<<<<<<<<
  *         if ret == self.hackrf_success:
  *             print('Successfully set frequency with value', freq_hz)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_uint64_t(__pyx_v_freq_hz); if (unlikely((__pyx_t_1 == (uint64_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_uint64_t(__pyx_v_freq_hz); if (unlikely((__pyx_t_1 == (uint64_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ret = hackrf_set_freq(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":94
+  /* "src/urh/cythonext/hackrf.pyx":109
  *     def set_freq(self, freq_hz):
  *         ret = chackrf.hackrf_set_freq(self._c_device, freq_hz)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2131,14 +2177,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
   __pyx_t_2 = ((__pyx_v_ret == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":95
+    /* "src/urh/cythonext/hackrf.pyx":110
  *         ret = chackrf.hackrf_set_freq(self._c_device, freq_hz)
  *         if ret == self.hackrf_success:
  *             print('Successfully set frequency with value', freq_hz)             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_frequency_with);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_frequency_with);
@@ -2146,12 +2192,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
     __Pyx_INCREF(__pyx_v_freq_hz);
     __Pyx_GIVEREF(__pyx_v_freq_hz);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_freq_hz);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":96
+    /* "src/urh/cythonext/hackrf.pyx":111
  *         if ret == self.hackrf_success:
  *             print('Successfully set frequency with value', freq_hz)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2159,13 +2205,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
  *             print('Error setting frequency with value', freq_hz)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_r = __pyx_t_4;
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":94
+    /* "src/urh/cythonext/hackrf.pyx":109
  *     def set_freq(self, freq_hz):
  *         ret = chackrf.hackrf_set_freq(self._c_device, freq_hz)
  *         if ret == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2174,7 +2220,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":98
+  /* "src/urh/cythonext/hackrf.pyx":113
  *             return self.hackrf_success
  *         else:
  *             print('Error setting frequency with value', freq_hz)             # <<<<<<<<<<<<<<
@@ -2182,7 +2228,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
  *     def is_streaming(self):
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Error_setting_frequency_with_val);
     __Pyx_GIVEREF(__pyx_kp_u_Error_setting_frequency_with_val);
@@ -2190,13 +2236,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
     __Pyx_INCREF(__pyx_v_freq_hz);
     __Pyx_GIVEREF(__pyx_v_freq_hz);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_freq_hz);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":92
+  /* "src/urh/cythonext/hackrf.pyx":107
  *             print('Failed to get Version String')
  * 
  *     def set_freq(self, freq_hz):             # <<<<<<<<<<<<<<
@@ -2218,7 +2264,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_22set_freq(struct
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":100
+/* "src/urh/cythonext/hackrf.pyx":115
  *             print('Error setting frequency with value', freq_hz)
  * 
  *     def is_streaming(self):             # <<<<<<<<<<<<<<
@@ -2246,7 +2292,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("is_streaming", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":101
+  /* "src/urh/cythonext/hackrf.pyx":116
  * 
  *     def is_streaming(self):
  *         ret = chackrf.hackrf_is_streaming(self._c_device)             # <<<<<<<<<<<<<<
@@ -2255,7 +2301,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
  */
   __pyx_v_ret = hackrf_is_streaming(__pyx_v_self->_c_device);
 
-  /* "src/urh/cythonext/hackrf.pyx":102
+  /* "src/urh/cythonext/hackrf.pyx":117
  *     def is_streaming(self):
  *         ret = chackrf.hackrf_is_streaming(self._c_device)
  *         if(ret == 1):             # <<<<<<<<<<<<<<
@@ -2265,7 +2311,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
   __pyx_t_1 = ((__pyx_v_ret == 1) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":103
+    /* "src/urh/cythonext/hackrf.pyx":118
  *         ret = chackrf.hackrf_is_streaming(self._c_device)
  *         if(ret == 1):
  *             return True             # <<<<<<<<<<<<<<
@@ -2277,7 +2323,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":102
+    /* "src/urh/cythonext/hackrf.pyx":117
  *     def is_streaming(self):
  *         ret = chackrf.hackrf_is_streaming(self._c_device)
  *         if(ret == 1):             # <<<<<<<<<<<<<<
@@ -2286,7 +2332,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":105
+  /* "src/urh/cythonext/hackrf.pyx":120
  *             return True
  *         else:
  *             return False             # <<<<<<<<<<<<<<
@@ -2300,7 +2346,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
     goto __pyx_L0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":100
+  /* "src/urh/cythonext/hackrf.pyx":115
  *             print('Error setting frequency with value', freq_hz)
  * 
  *     def is_streaming(self):             # <<<<<<<<<<<<<<
@@ -2315,7 +2361,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_24is_streaming(st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":107
+/* "src/urh/cythonext/hackrf.pyx":122
  *             return False
  * 
  *     def set_lna_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2350,17 +2396,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_lna_gain", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":109
+  /* "src/urh/cythonext/hackrf.pyx":124
  *     def set_lna_gain(self, value):
  *         ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
  *         result = chackrf.hackrf_set_lna_gain(self._c_device, value)             # <<<<<<<<<<<<<<
  *         if result == self.hackrf_success:
  *             print('Successfully set LNA gain to', value)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_result = hackrf_set_lna_gain(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":110
+  /* "src/urh/cythonext/hackrf.pyx":125
  *         ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
  *         result = chackrf.hackrf_set_lna_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2370,14 +2416,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
   __pyx_t_2 = ((__pyx_v_result == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":111
+    /* "src/urh/cythonext/hackrf.pyx":126
  *         result = chackrf.hackrf_set_lna_gain(self._c_device, value)
  *         if result == self.hackrf_success:
  *             print('Successfully set LNA gain to', value)             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_LNA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_LNA_gain_to);
@@ -2385,12 +2431,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_value);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":112
+    /* "src/urh/cythonext/hackrf.pyx":127
  *         if result == self.hackrf_success:
  *             print('Successfully set LNA gain to', value)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2398,13 +2444,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
  *             print('Failed to set LNA gain to', value)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_r = __pyx_t_4;
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":110
+    /* "src/urh/cythonext/hackrf.pyx":125
  *         ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
  *         result = chackrf.hackrf_set_lna_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2413,7 +2459,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":114
+  /* "src/urh/cythonext/hackrf.pyx":129
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set LNA gain to', value)             # <<<<<<<<<<<<<<
@@ -2421,7 +2467,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
  *     def set_vga_gain(self, value):
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Failed_to_set_LNA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Failed_to_set_LNA_gain_to);
@@ -2429,13 +2475,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_value);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":107
+  /* "src/urh/cythonext/hackrf.pyx":122
  *             return False
  * 
  *     def set_lna_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2457,7 +2503,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_26set_lna_gain(st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":116
+/* "src/urh/cythonext/hackrf.pyx":131
  *             print('Failed to set LNA gain to', value)
  * 
  *     def set_vga_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2492,17 +2538,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_vga_gain", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":118
+  /* "src/urh/cythonext/hackrf.pyx":133
  *     def set_vga_gain(self, value):
  *         ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
  *         result = chackrf.hackrf_set_vga_gain(self._c_device, value)             # <<<<<<<<<<<<<<
  *         if result == self.hackrf_success:
  *             print('Successfully set VGA gain to', value)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_result = hackrf_set_vga_gain(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":119
+  /* "src/urh/cythonext/hackrf.pyx":134
  *         ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
  *         result = chackrf.hackrf_set_vga_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2512,14 +2558,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
   __pyx_t_2 = ((__pyx_v_result == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":120
+    /* "src/urh/cythonext/hackrf.pyx":135
  *         result = chackrf.hackrf_set_vga_gain(self._c_device, value)
  *         if result == self.hackrf_success:
  *             print('Successfully set VGA gain to', value)             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_VGA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_VGA_gain_to);
@@ -2527,12 +2573,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_value);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":121
+    /* "src/urh/cythonext/hackrf.pyx":136
  *         if result == self.hackrf_success:
  *             print('Successfully set VGA gain to', value)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2540,13 +2586,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
  *             print('Failed to set VGA gain to', value)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_r = __pyx_t_4;
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":119
+    /* "src/urh/cythonext/hackrf.pyx":134
  *         ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
  *         result = chackrf.hackrf_set_vga_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2555,7 +2601,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":123
+  /* "src/urh/cythonext/hackrf.pyx":138
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set VGA gain to', value)             # <<<<<<<<<<<<<<
@@ -2563,7 +2609,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
  *     def set_txvga_gain(self, value):
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Failed_to_set_VGA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Failed_to_set_VGA_gain_to);
@@ -2571,13 +2617,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_value);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":116
+  /* "src/urh/cythonext/hackrf.pyx":131
  *             print('Failed to set LNA gain to', value)
  * 
  *     def set_vga_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2599,7 +2645,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_28set_vga_gain(st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":125
+/* "src/urh/cythonext/hackrf.pyx":140
  *             print('Failed to set VGA gain to', value)
  * 
  *     def set_txvga_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2634,17 +2680,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_txvga_gain", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":127
+  /* "src/urh/cythonext/hackrf.pyx":142
  *     def set_txvga_gain(self, value):
  *         ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
  *         result = chackrf.hackrf_set_txvga_gain(self._c_device, value)             # <<<<<<<<<<<<<<
  *         if result == self.hackrf_success:
  *             print('Successfully set TXVGA gain to', value)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_result = hackrf_set_txvga_gain(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":128
+  /* "src/urh/cythonext/hackrf.pyx":143
  *         ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
  *         result = chackrf.hackrf_set_txvga_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2654,14 +2700,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
   __pyx_t_2 = ((__pyx_v_result == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":129
+    /* "src/urh/cythonext/hackrf.pyx":144
  *         result = chackrf.hackrf_set_txvga_gain(self._c_device, value)
  *         if result == self.hackrf_success:
  *             print('Successfully set TXVGA gain to', value)             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_TXVGA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_TXVGA_gain_to);
@@ -2669,12 +2715,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_value);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":130
+    /* "src/urh/cythonext/hackrf.pyx":145
  *         if result == self.hackrf_success:
  *             print('Successfully set TXVGA gain to', value)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2682,13 +2728,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
  *             print('Failed to set TXVGA gain to', value)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_r = __pyx_t_4;
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":128
+    /* "src/urh/cythonext/hackrf.pyx":143
  *         ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
  *         result = chackrf.hackrf_set_txvga_gain(self._c_device, value)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2697,7 +2743,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":132
+  /* "src/urh/cythonext/hackrf.pyx":147
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set TXVGA gain to', value)             # <<<<<<<<<<<<<<
@@ -2705,7 +2751,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
  * 
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Failed_to_set_TXVGA_gain_to);
     __Pyx_GIVEREF(__pyx_kp_u_Failed_to_set_TXVGA_gain_to);
@@ -2713,13 +2759,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
     __Pyx_INCREF(__pyx_v_value);
     __Pyx_GIVEREF(__pyx_v_value);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_value);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":125
+  /* "src/urh/cythonext/hackrf.pyx":140
  *             print('Failed to set VGA gain to', value)
  * 
  *     def set_txvga_gain(self, value):             # <<<<<<<<<<<<<<
@@ -2741,7 +2787,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_30set_txvga_gain(
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":135
+/* "src/urh/cythonext/hackrf.pyx":150
  * 
  * 
  *     def set_antenna_enable(self, value):             # <<<<<<<<<<<<<<
@@ -2775,14 +2821,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_antenna_enable", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":136
+  /* "src/urh/cythonext/hackrf.pyx":151
  * 
  *     def set_antenna_enable(self, value):
  *         cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_2) {
     __pyx_t_1 = 1;
   } else {
@@ -2790,7 +2836,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
   }
   __pyx_v_val = __pyx_t_1;
 
-  /* "src/urh/cythonext/hackrf.pyx":137
+  /* "src/urh/cythonext/hackrf.pyx":152
  *     def set_antenna_enable(self, value):
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)             # <<<<<<<<<<<<<<
@@ -2799,7 +2845,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
  */
   __pyx_v_result = hackrf_set_antenna_enable(__pyx_v_self->_c_device, __pyx_v_val);
 
-  /* "src/urh/cythonext/hackrf.pyx":138
+  /* "src/urh/cythonext/hackrf.pyx":153
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2809,18 +2855,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
   __pyx_t_1 = ((__pyx_v_result == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":139
+    /* "src/urh/cythonext/hackrf.pyx":154
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  *             print('Successfully set antenna_enable')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":140
+    /* "src/urh/cythonext/hackrf.pyx":155
  *         if result == self.hackrf_success:
  *             print('Successfully set antenna_enable')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2828,13 +2874,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
  *             print('Failed to set antenna_enable')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":138
+    /* "src/urh/cythonext/hackrf.pyx":153
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2843,7 +2889,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":142
+  /* "src/urh/cythonext/hackrf.pyx":157
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set antenna_enable')             # <<<<<<<<<<<<<<
@@ -2851,12 +2897,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
  *     def set_sample_rate(self, sample_rate):
  */
   /*else*/ {
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":135
+  /* "src/urh/cythonext/hackrf.pyx":150
  * 
  * 
  *     def set_antenna_enable(self, value):             # <<<<<<<<<<<<<<
@@ -2877,7 +2923,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_32set_antenna_ena
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":144
+/* "src/urh/cythonext/hackrf.pyx":159
  *             print('Failed to set antenna_enable')
  * 
  *     def set_sample_rate(self, sample_rate):             # <<<<<<<<<<<<<<
@@ -2911,17 +2957,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_sample_rate", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":145
+  /* "src/urh/cythonext/hackrf.pyx":160
  * 
  *     def set_sample_rate(self, sample_rate):
  *         result = chackrf.hackrf_set_sample_rate(self._c_device, sample_rate)             # <<<<<<<<<<<<<<
  *         if result != self.hackrf_success:
  *             print('Error setting Sample Rate', sample_rate)
  */
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_sample_rate); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_sample_rate); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_result = hackrf_set_sample_rate(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":146
+  /* "src/urh/cythonext/hackrf.pyx":161
  *     def set_sample_rate(self, sample_rate):
  *         result = chackrf.hackrf_set_sample_rate(self._c_device, sample_rate)
  *         if result != self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2931,14 +2977,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
   __pyx_t_2 = ((__pyx_v_result != __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":147
+    /* "src/urh/cythonext/hackrf.pyx":162
  *         result = chackrf.hackrf_set_sample_rate(self._c_device, sample_rate)
  *         if result != self.hackrf_success:
  *             print('Error setting Sample Rate', sample_rate)             # <<<<<<<<<<<<<<
  *         else:
  *             print('Successfully set Sample Rate', sample_rate)
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Error_setting_Sample_Rate);
     __Pyx_GIVEREF(__pyx_kp_u_Error_setting_Sample_Rate);
@@ -2946,12 +2992,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
     __Pyx_INCREF(__pyx_v_sample_rate);
     __Pyx_GIVEREF(__pyx_v_sample_rate);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_sample_rate);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":146
+    /* "src/urh/cythonext/hackrf.pyx":161
  *     def set_sample_rate(self, sample_rate):
  *         result = chackrf.hackrf_set_sample_rate(self._c_device, sample_rate)
  *         if result != self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -2961,7 +3007,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
     goto __pyx_L3;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":149
+  /* "src/urh/cythonext/hackrf.pyx":164
  *             print('Error setting Sample Rate', sample_rate)
  *         else:
  *             print('Successfully set Sample Rate', sample_rate)             # <<<<<<<<<<<<<<
@@ -2969,7 +3015,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
  * 
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_Sample_Rate);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_Sample_Rate);
@@ -2977,12 +3023,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
     __Pyx_INCREF(__pyx_v_sample_rate);
     __Pyx_GIVEREF(__pyx_v_sample_rate);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_sample_rate);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":150
+    /* "src/urh/cythonext/hackrf.pyx":165
  *         else:
  *             print('Successfully set Sample Rate', sample_rate)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -2990,7 +3036,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
  *     def set_amp_enable(self, value):
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
@@ -2998,7 +3044,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
   }
   __pyx_L3:;
 
-  /* "src/urh/cythonext/hackrf.pyx":144
+  /* "src/urh/cythonext/hackrf.pyx":159
  *             print('Failed to set antenna_enable')
  * 
  *     def set_sample_rate(self, sample_rate):             # <<<<<<<<<<<<<<
@@ -3020,7 +3066,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_34set_sample_rate
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":152
+/* "src/urh/cythonext/hackrf.pyx":167
  *             return self.hackrf_success
  * 
  *     def set_amp_enable(self, value):             # <<<<<<<<<<<<<<
@@ -3054,14 +3100,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_amp_enable", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":153
+  /* "src/urh/cythonext/hackrf.pyx":168
  * 
  *     def set_amp_enable(self, value):
  *         cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_2) {
     __pyx_t_1 = 1;
   } else {
@@ -3069,7 +3115,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
   }
   __pyx_v_val = __pyx_t_1;
 
-  /* "src/urh/cythonext/hackrf.pyx":154
+  /* "src/urh/cythonext/hackrf.pyx":169
  *     def set_amp_enable(self, value):
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)             # <<<<<<<<<<<<<<
@@ -3078,7 +3124,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
  */
   __pyx_v_result = hackrf_set_amp_enable(__pyx_v_self->_c_device, __pyx_v_val);
 
-  /* "src/urh/cythonext/hackrf.pyx":155
+  /* "src/urh/cythonext/hackrf.pyx":170
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -3088,18 +3134,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
   __pyx_t_1 = ((__pyx_v_result == __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/cythonext/hackrf.pyx":156
+    /* "src/urh/cythonext/hackrf.pyx":171
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  *             print('Successfully set amp')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":157
+    /* "src/urh/cythonext/hackrf.pyx":172
  *         if result == self.hackrf_success:
  *             print('Successfully set amp')
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
@@ -3107,13 +3153,13 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
  *             print('Failed to set amp')
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/hackrf.pyx":155
+    /* "src/urh/cythonext/hackrf.pyx":170
  *         cdef bint val = 1 if value else 0
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)
  *         if result == self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -3122,7 +3168,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
  */
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":159
+  /* "src/urh/cythonext/hackrf.pyx":174
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set amp')             # <<<<<<<<<<<<<<
@@ -3130,12 +3176,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):
  */
   /*else*/ {
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":152
+  /* "src/urh/cythonext/hackrf.pyx":167
  *             return self.hackrf_success
  * 
  *     def set_amp_enable(self, value):             # <<<<<<<<<<<<<<
@@ -3156,7 +3202,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_36set_amp_enable(
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/hackrf.pyx":161
+/* "src/urh/cythonext/hackrf.pyx":176
  *             print('Failed to set amp')
  * 
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):             # <<<<<<<<<<<<<<
@@ -3190,17 +3236,17 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_baseband_filter_bandwidth", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":162
+  /* "src/urh/cythonext/hackrf.pyx":177
  * 
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):
  *         result = chackrf.hackrf_set_baseband_filter_bandwidth(self._c_device, bandwidth_hz)             # <<<<<<<<<<<<<<
  *         if result != self.hackrf_success:
  *             print('Failed to set Baseband Filter Bandwidth with value', bandwidth_hz)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_bandwidth_hz); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_bandwidth_hz); if (unlikely((__pyx_t_1 == (uint32_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_result = hackrf_set_baseband_filter_bandwidth(__pyx_v_self->_c_device, __pyx_t_1);
 
-  /* "src/urh/cythonext/hackrf.pyx":163
+  /* "src/urh/cythonext/hackrf.pyx":178
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):
  *         result = chackrf.hackrf_set_baseband_filter_bandwidth(self._c_device, bandwidth_hz)
  *         if result != self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -3210,14 +3256,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
   __pyx_t_2 = ((__pyx_v_result != __pyx_v_self->hackrf_success) != 0);
   if (__pyx_t_2) {
 
-    /* "src/urh/cythonext/hackrf.pyx":164
+    /* "src/urh/cythonext/hackrf.pyx":179
  *         result = chackrf.hackrf_set_baseband_filter_bandwidth(self._c_device, bandwidth_hz)
  *         if result != self.hackrf_success:
  *             print('Failed to set Baseband Filter Bandwidth with value', bandwidth_hz)             # <<<<<<<<<<<<<<
  *         else:
  *             print('Successfully set Baseband Filter Bandwidth with value', bandwidth_hz)
  */
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_kp_u_Failed_to_set_Baseband_Filter_Ba);
     __Pyx_GIVEREF(__pyx_kp_u_Failed_to_set_Baseband_Filter_Ba);
@@ -3225,12 +3271,12 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
     __Pyx_INCREF(__pyx_v_bandwidth_hz);
     __Pyx_GIVEREF(__pyx_v_bandwidth_hz);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_bandwidth_hz);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":163
+    /* "src/urh/cythonext/hackrf.pyx":178
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):
  *         result = chackrf.hackrf_set_baseband_filter_bandwidth(self._c_device, bandwidth_hz)
  *         if result != self.hackrf_success:             # <<<<<<<<<<<<<<
@@ -3240,14 +3286,14 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
     goto __pyx_L3;
   }
 
-  /* "src/urh/cythonext/hackrf.pyx":166
+  /* "src/urh/cythonext/hackrf.pyx":181
  *             print('Failed to set Baseband Filter Bandwidth with value', bandwidth_hz)
  *         else:
  *             print('Successfully set Baseband Filter Bandwidth with value', bandwidth_hz)             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  */
   /*else*/ {
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 181; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_kp_u_Successfully_set_Baseband_Filter);
     __Pyx_GIVEREF(__pyx_kp_u_Successfully_set_Baseband_Filter);
@@ -3255,18 +3301,18 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
     __Pyx_INCREF(__pyx_v_bandwidth_hz);
     __Pyx_GIVEREF(__pyx_v_bandwidth_hz);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_bandwidth_hz);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 181; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "src/urh/cythonext/hackrf.pyx":167
+    /* "src/urh/cythonext/hackrf.pyx":182
  *         else:
  *             print('Successfully set Baseband Filter Bandwidth with value', bandwidth_hz)
  *             return self.hackrf_success             # <<<<<<<<<<<<<<
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->hackrf_success); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
@@ -3274,7 +3320,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_6hackrf_6HackRF_38set_baseband_fi
   }
   __pyx_L3:;
 
-  /* "src/urh/cythonext/hackrf.pyx":161
+  /* "src/urh/cythonext/hackrf.pyx":176
  *             print('Failed to set amp')
  * 
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):             # <<<<<<<<<<<<<<
@@ -3463,7 +3509,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -3473,223 +3519,223 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "src/urh/cythonext/hackrf.pyx":27
+  /* "src/urh/cythonext/hackrf.pyx":35
  *         ret = chackrf.hackrf_open(&self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully opened HackRF device')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_Successfully_opened_HackRF_devic); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_Successfully_opened_HackRF_devic); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "src/urh/cythonext/hackrf.pyx":30
+  /* "src/urh/cythonext/hackrf.pyx":38
  *             return self.hackrf_success
  *         else:
  *             print('No HackRF detected!')             # <<<<<<<<<<<<<<
  * 
  *     def __close(self):
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_No_HackRF_detected); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_No_HackRF_detected); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "src/urh/cythonext/hackrf.pyx":35
+  /* "src/urh/cythonext/hackrf.pyx":43
  *         ret = chackrf.hackrf_close(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully closed HackRF device')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_Successfully_closed_HackRF_devic); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_Successfully_closed_HackRF_devic); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "src/urh/cythonext/hackrf.pyx":38
+  /* "src/urh/cythonext/hackrf.pyx":46
  *             return self.hackrf_success
  *         else:
  *             print('Failed to close HackRF!')             # <<<<<<<<<<<<<<
  * 
  *     def start_rx_mode(self, callback):
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_close_HackRF); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_close_HackRF); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "src/urh/cythonext/hackrf.pyx":43
- *         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
+  /* "src/urh/cythonext/hackrf.pyx":56
  *         if ret == self.hackrf_success:
+ *             print(l)
  *             print('Successfully start HackRf in receive mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Successfully_start_HackRf_in_rec); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Successfully_start_HackRf_in_rec); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "src/urh/cythonext/hackrf.pyx":46
+  /* "src/urh/cythonext/hackrf.pyx":59
  *             return self.hackrf_success
  *         else:
  *             print('Failed to start HackRf in receive mode')             # <<<<<<<<<<<<<<
  * 
  *     def stop_rx_mode(self):
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_start_HackRf_in_receiv); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_start_HackRf_in_receiv); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "src/urh/cythonext/hackrf.pyx":51
+  /* "src/urh/cythonext/hackrf.pyx":64
  *         ret = chackrf.hackrf_stop_rx(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully stopped HackRF receive mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Successfully_stopped_HackRF_rece); if (unlikely(!__pyx_tuple__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Successfully_stopped_HackRF_rece); if (unlikely(!__pyx_tuple__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "src/urh/cythonext/hackrf.pyx":54
+  /* "src/urh/cythonext/hackrf.pyx":67
  *             return self.hackrf_success
  *         else:
  *             print('Failed to stop HackRF receive mode')             # <<<<<<<<<<<<<<
  *         return ret
  * 
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_stop_HackRF_receive_mo); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_stop_HackRF_receive_mo); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "src/urh/cythonext/hackrf.pyx":60
- *         ret = chackrf.hackrf_start_tx(self._c_device, _c_callback, <void *>callback)
+  /* "src/urh/cythonext/hackrf.pyx":75
+ *         ret = chackrf.hackrf_start_tx(self._c_device, <chackrf.hackrf_sample_block_cb_fn> _c_callback, <void *>callback)
  *         if ret == self.hackrf_success:
  *             print('Successfully started HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Successfully_started_HackRF_in_T); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Successfully_started_HackRF_in_T); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "src/urh/cythonext/hackrf.pyx":63
+  /* "src/urh/cythonext/hackrf.pyx":78
  *             return self.hackrf_success
  *         else:
  *             print('Failed to start HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  * 
  *     def stop_tx_mode(self):
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_start_HackRF_in_Transf); if (unlikely(!__pyx_tuple__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_start_HackRF_in_Transf); if (unlikely(!__pyx_tuple__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "src/urh/cythonext/hackrf.pyx":68
+  /* "src/urh/cythonext/hackrf.pyx":83
  *         ret = chackrf.hackrf_stop_tx(self._c_device)
  *         if ret == self.hackrf_success:
  *             print('Successfully stoped HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Successfully_stoped_HackRF_in_Tr); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Successfully_stoped_HackRF_in_Tr); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "src/urh/cythonext/hackrf.pyx":71
+  /* "src/urh/cythonext/hackrf.pyx":86
  *             return self.hackrf_success
  *         else:
  *             print('Failed to stop HackRF in Transfer Mode')             # <<<<<<<<<<<<<<
  * 
  *     def board_id_read(self):
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_stop_HackRF_in_Transfe); if (unlikely(!__pyx_tuple__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_stop_HackRF_in_Transfe); if (unlikely(!__pyx_tuple__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "src/urh/cythonext/hackrf.pyx":77
+  /* "src/urh/cythonext/hackrf.pyx":92
  *         ret = chackrf.hackrf_board_id_read(self._c_device, &value)
  *         if ret == self.hackrf_success:
  *             print('Successfully got Board Id')             # <<<<<<<<<<<<<<
  *             return value
  *         else:
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_Successfully_got_Board_Id); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_Successfully_got_Board_Id); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "src/urh/cythonext/hackrf.pyx":80
+  /* "src/urh/cythonext/hackrf.pyx":95
  *             return value
  *         else:
  *             print('Failed to get Board Id')             # <<<<<<<<<<<<<<
  * 
  *     def version_string_read(self):
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_get_Board_Id); if (unlikely(!__pyx_tuple__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_get_Board_Id); if (unlikely(!__pyx_tuple__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
-  /* "src/urh/cythonext/hackrf.pyx":87
+  /* "src/urh/cythonext/hackrf.pyx":102
  *         ret = chackrf.hackrf_version_string_read(self._c_device, version, length)
  *         if ret == self.hackrf_success:
  *             print('Successfully got HackRf Version String')             # <<<<<<<<<<<<<<
  *             return version.decode('UTF-8')
  *         else:
  */
-  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_u_Successfully_got_HackRf_Version); if (unlikely(!__pyx_tuple__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_u_Successfully_got_HackRf_Version); if (unlikely(!__pyx_tuple__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
 
-  /* "src/urh/cythonext/hackrf.pyx":90
+  /* "src/urh/cythonext/hackrf.pyx":105
  *             return version.decode('UTF-8')
  *         else:
  *             print('Failed to get Version String')             # <<<<<<<<<<<<<<
  * 
  *     def set_freq(self, freq_hz):
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_get_Version_String); if (unlikely(!__pyx_tuple__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_get_Version_String); if (unlikely(!__pyx_tuple__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
 
-  /* "src/urh/cythonext/hackrf.pyx":139
+  /* "src/urh/cythonext/hackrf.pyx":154
  *         result =  chackrf.hackrf_set_antenna_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  *             print('Successfully set antenna_enable')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_u_Successfully_set_antenna_enable); if (unlikely(!__pyx_tuple__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_u_Successfully_set_antenna_enable); if (unlikely(!__pyx_tuple__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
 
-  /* "src/urh/cythonext/hackrf.pyx":142
+  /* "src/urh/cythonext/hackrf.pyx":157
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set antenna_enable')             # <<<<<<<<<<<<<<
  * 
  *     def set_sample_rate(self, sample_rate):
  */
-  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_set_antenna_enable); if (unlikely(!__pyx_tuple__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_set_antenna_enable); if (unlikely(!__pyx_tuple__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
 
-  /* "src/urh/cythonext/hackrf.pyx":156
+  /* "src/urh/cythonext/hackrf.pyx":171
  *         result =  chackrf.hackrf_set_amp_enable(self._c_device, val)
  *         if result == self.hackrf_success:
  *             print('Successfully set amp')             # <<<<<<<<<<<<<<
  *             return self.hackrf_success
  *         else:
  */
-  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_u_Successfully_set_amp); if (unlikely(!__pyx_tuple__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_u_Successfully_set_amp); if (unlikely(!__pyx_tuple__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
 
-  /* "src/urh/cythonext/hackrf.pyx":159
+  /* "src/urh/cythonext/hackrf.pyx":174
  *             return self.hackrf_success
  *         else:
  *             print('Failed to set amp')             # <<<<<<<<<<<<<<
  * 
  *     def set_baseband_filter_bandwidth(self, bandwidth_hz):
  */
-  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_set_amp); if (unlikely(!__pyx_tuple__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_u_Failed_to_set_amp); if (unlikely(!__pyx_tuple__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
   __Pyx_RefNannyFinishContext();
@@ -3789,12 +3835,13 @@ PyMODINIT_FUNC PyInit_hackrf(void)
   /*--- Constants init code ---*/
   if (__Pyx_InitCachedConstants() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   /*--- Global init code ---*/
+  __pyx_v_3src_3urh_9cythonext_6hackrf_f = Py_None; Py_INCREF(Py_None);
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_3src_3urh_9cythonext_6hackrf_HackRF) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_3src_3urh_9cythonext_6hackrf_HackRF) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_3src_3urh_9cythonext_6hackrf_HackRF.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "HackRF", (PyObject *)&__pyx_type_3src_3urh_9cythonext_6hackrf_HackRF) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "HackRF", (PyObject *)&__pyx_type_3src_3urh_9cythonext_6hackrf_HackRF) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_3src_3urh_9cythonext_6hackrf_HackRF = &__pyx_type_3src_3urh_9cythonext_6hackrf_HackRF;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
@@ -3804,10 +3851,19 @@ PyMODINIT_FUNC PyInit_hackrf(void)
   if (__Pyx_patch_abc() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
 
+  /* "src/urh/cythonext/hackrf.pyx":4
+ * from libc.stdlib cimport malloc, free
+ * cdef object f
+ * cdef int l = -1             # <<<<<<<<<<<<<<
+ * 
+ * cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:
+ */
+  __pyx_v_3src_3urh_9cythonext_6hackrf_l = -1;
+
   /* "src/urh/cythonext/hackrf.pyx":1
  * cimport chackrf             # <<<<<<<<<<<<<<
  * from libc.stdlib cimport malloc, free
- * 
+ * cdef object f
  */
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -3864,92 +3920,6 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
 #endif
     }
     return result;
-}
-
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
-    PyObject *result;
-    ternaryfunc call = func->ob_type->tp_call;
-    if (unlikely(!call))
-        return PyObject_Call(func, arg, kw);
-    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
-        return NULL;
-    result = (*call)(func, arg, kw);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
-    }
-    return result;
-}
-#endif
-
-static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb) {
-#if CYTHON_COMPILING_IN_CPYTHON
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    PyThreadState *tstate = PyThreadState_GET();
-    tmp_type = tstate->curexc_type;
-    tmp_value = tstate->curexc_value;
-    tmp_tb = tstate->curexc_traceback;
-    tstate->curexc_type = type;
-    tstate->curexc_value = value;
-    tstate->curexc_traceback = tb;
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#else
-    PyErr_Restore(type, value, tb);
-#endif
-}
-static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb) {
-#if CYTHON_COMPILING_IN_CPYTHON
-    PyThreadState *tstate = PyThreadState_GET();
-    *type = tstate->curexc_type;
-    *value = tstate->curexc_value;
-    *tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-#else
-    PyErr_Fetch(type, value, tb);
-#endif
-}
-
-static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
-                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
-                                  int full_traceback, CYTHON_UNUSED int nogil) {
-    PyObject *old_exc, *old_val, *old_tb;
-    PyObject *ctx;
-#ifdef WITH_THREAD
-    PyGILState_STATE state;
-    if (nogil)
-        state = PyGILState_Ensure();
-#endif
-    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
-    if (full_traceback) {
-        Py_XINCREF(old_exc);
-        Py_XINCREF(old_val);
-        Py_XINCREF(old_tb);
-        __Pyx_ErrRestore(old_exc, old_val, old_tb);
-        PyErr_PrintEx(1);
-    }
-    #if PY_MAJOR_VERSION < 3
-    ctx = PyString_FromString(name);
-    #else
-    ctx = PyUnicode_FromString(name);
-    #endif
-    __Pyx_ErrRestore(old_exc, old_val, old_tb);
-    if (!ctx) {
-        PyErr_WriteUnraisable(Py_None);
-    } else {
-        PyErr_WriteUnraisable(ctx);
-        Py_DECREF(ctx);
-    }
-#ifdef WITH_THREAD
-    if (nogil)
-        PyGILState_Release(state);
-#endif
 }
 
 static void __Pyx_RaiseArgtupleInvalid(
@@ -4015,6 +3985,25 @@ invalid_keyword:
     #endif
     return 0;
 }
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
+    PyObject *result;
+    ternaryfunc call = func->ob_type->tp_call;
+    if (unlikely(!call))
+        return PyObject_Call(func, arg, kw);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = (*call)(func, arg, kw);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
 
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {

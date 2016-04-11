@@ -3,6 +3,7 @@ import unittest
 import sys
 
 import time
+import numpy as np
 
 from urh.cythonext import hackrf
 
@@ -12,7 +13,9 @@ class TestHackRF(unittest.TestCase):
         # values = ctypes.cast(hackrf_transfer.contents.buffer, ctypes.POINTER(array_type)).contents
         # # iq data here
         # iq = hackrf.packed_bytes_to_iq(values)
-        print(len(buffer))
+
+        print(buffer[0:10])
+
         return 0
 
 

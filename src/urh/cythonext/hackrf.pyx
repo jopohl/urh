@@ -1,20 +1,18 @@
 cimport chackrf
+from libc.stdio cimport * # printf fflush
 from libc.stdlib cimport malloc, free
 cdef object f
-cdef int l = -1
 
-cdef int _c_callback(chackrf.hackrf_transfer* transfer):
+cdef int _c_callback(chackrf.hackrf_transfer* transfer) nogil:
     global f
-    l = transfer.buffer_length
+    printf("Callback called")
+    fflush(stdout)
     #(<object>f)(<object>PyTransfer(transfer))
     return 0
-
 
 cdef class HackRF:
     cdef chackrf.hackrf_device* _c_device
     cdef int hackrf_success
-
-
 
     def __cinit__(self):
         self.hackrf_success = 0 #chackrf.hackrf_error.HACKRF_SUCCESS
@@ -46,12 +44,10 @@ cdef class HackRF:
 
     def start_rx_mode(self, callback):
         global f
-        global l
         f  = callback
-        print(l)
+        printf("C-Printf Test")
         ret = chackrf.hackrf_start_rx(self._c_device, _c_callback, <void *>0)
         if ret == self.hackrf_success:
-            print(l)
             print('Successfully start HackRf in receive mode')
             return self.hackrf_success
         else:

@@ -223,6 +223,7 @@ class EpicGraphicView(SelectableGraphicView):
             self.resetTransform()
             x_factor = self.width() / self.sceneRect().width()
             self.scale(x_factor, y_factor)
+            self.centerOn(0, self.y_center)
 
     def zoom_to_selection(self, start: int, end: int):
         if start == end:
@@ -250,3 +251,11 @@ class EpicGraphicView(SelectableGraphicView):
 
     def clear_selection(self):
         self.set_selection_area(0, 0)
+
+
+    def resizeEvent(self, event):
+        if self.view_rect().width() > self.sceneRect().width():
+            x_factor = self.width() / self.sceneRect().width()
+            self.scale(x_factor / self.transform().m11(), 1)
+
+        self.autofit_view()

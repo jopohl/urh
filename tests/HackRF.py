@@ -14,6 +14,9 @@ class TestHackRF(unittest.TestCase):
         # # iq data here
         # iq = hackrf.packed_bytes_to_iq(values)
 
+        # https://github.com/osmocom/gr-osmosdr/blob/master/lib/osmosdr/osmosdr_src_c.cc#L235
+        # *out++ = gr_complex( float(*(buf + i * 2 + 0)) * (1.0f/32767.5f),
+        # float(*(buf + i * 2 + 1)) * (1.0f/32767.5f) );
         print(buffer[0:10])
 
         return 0

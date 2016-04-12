@@ -435,7 +435,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def show_about(self):
-        QMessageBox.about(self, self.tr("About"), self.tr("Version: {0}").format(version.VERSION))
+        QMessageBox.about(self, self.tr("About"), self.tr("<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />Contributors:<i><ul><li>Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li><li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li></ul></i>").format(version.VERSION))
 
     @pyqtSlot(CompareFrameController, int, int, int, int)
     def show_protocol_selection_in_interpretation(self, startblock, start, endblock, end):

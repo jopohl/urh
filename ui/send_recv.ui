@@ -501,7 +501,7 @@
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOn</enum>
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
     </widget>
    </item>
@@ -544,8 +544,19 @@
  </customwidgets>
  <tabstops>
   <tabstop>cbDevice</tabstop>
+  <tabstop>lineEditIP</tabstop>
+  <tabstop>spinBoxFreq</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>spinBoxBandwidth</tabstop>
   <tabstop>spinBoxGain</tabstop>
+  <tabstop>spinBoxNRepeat</tabstop>
+  <tabstop>btnStart</tabstop>
+  <tabstop>btnStop</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>btnClear</tabstop>
   <tabstop>graphicsView</tabstop>
+  <tabstop>sliderYscale</tabstop>
+  <tabstop>txtEditErrors</tabstop>
  </tabstops>
  <resources/>
  <connections/>

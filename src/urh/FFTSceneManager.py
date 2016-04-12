@@ -34,8 +34,9 @@ class FFTSceneManager(SceneManager):
         self.path_item.setPath(path)
 
         try:
-            peak_path = path_creator.create_path(np.log10(self.peak), start, end)
-            self.peak_item.setPath(peak_path)
+            if len(self.peak) > 0:
+                peak_path = path_creator.create_path(np.log10(self.peak), start, end)
+                self.peak_item.setPath(peak_path)
         except RuntimeWarning:
             pass
 

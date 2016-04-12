@@ -22,12 +22,12 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             if self.suffix() != text[-1]:
                 if self.auto_suffix:
                     self.setSuffix(text[-1])
-                self.on_text_edited()
+                #self.on_text_edited()
         else:
             if self.suffix() != "":
                 if self.auto_suffix:
                     self.setSuffix("")
-                self.on_text_edited()
+                #self.on_text_edited()
 
     def on_text_edited(self):
         self.lineEdit().setText(self.lineEdit().text().upper())

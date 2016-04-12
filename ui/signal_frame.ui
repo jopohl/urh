@@ -80,17 +80,6 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="0">
-      <widget class="QPushButton" name="btnReplay">
-       <property name="text">
-        <string>Replay signal...</string>
-       </property>
-       <property name="icon">
-        <iconset theme="media-playback-start">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="spinBoxNoiseTreshold">
        <property name="toolTip">
@@ -290,7 +279,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      </item>
      <item row="0" column="0" colspan="2">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="5">
+       <item row="0" column="9">
         <widget class="QToolButton" name="btnMinimize">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -361,7 +350,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </property>
         </spacer>
        </item>
-       <item row="0" column="6">
+       <item row="0" column="10">
         <widget class="QToolButton" name="btnCloseSignal">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -428,7 +417,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
+       <item row="0" column="6">
         <widget class="QToolButton" name="btnInfo">
          <property name="minimumSize">
           <size>
@@ -447,6 +436,32 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </property>
          <property name="icon">
           <iconset theme="dialog-information">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QToolButton" name="btnReplay">
+         <property name="minimumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Replay signal</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset theme="media-playback-start">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -594,13 +609,26 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="15" column="1">
+     <item row="10" column="0">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="15" column="0" colspan="2">
       <widget class="QPushButton" name="btnAutoDetect">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Auto-Detect</string>
+        <string>Autodetect parameters</string>
        </property>
        <property name="icon">
         <iconset theme="system-software-update">
@@ -619,19 +647,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         <bool>true</bool>
        </property>
       </widget>
-     </item>
-     <item row="10" column="0">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
@@ -1123,7 +1138,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   <tabstop>spinBoxInfoLen</tabstop>
   <tabstop>spinBoxTolerance</tabstop>
   <tabstop>cbSignalView</tabstop>
-  <tabstop>btnReplay</tabstop>
   <tabstop>chkBoxShowProtocol</tabstop>
   <tabstop>cbProtoView</tabstop>
   <tabstop>chkBoxSyncSelection</tabstop>

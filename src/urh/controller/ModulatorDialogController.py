@@ -27,13 +27,8 @@ class ModulatorDialogController(QDialog):
 
         self.modulators = modulators
 
+        self.set_ui_for_current_modulator()
 
-        self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
-        self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
-        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
-        self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
-        self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
-        self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
         self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
         self.ui.cbShowDataBitsOnly.setEnabled(False)
         self.protocol = None
@@ -45,7 +40,7 @@ class ModulatorDialogController(QDialog):
 
         self.ui.chkBoxLockSIV.setDisabled(True)
 
-        self.ui.comboBoxModulationType.setCurrentIndex(self.current_modulator.modulation_type)
+
         self.create_connects()
         self.on_modulation_type_changed()
 
@@ -58,14 +53,24 @@ class ModulatorDialogController(QDialog):
         mod = self.modulators[self.ui.comboBoxCustomModulations.currentIndex()]
         return mod
 
+    def set_ui_for_current_modulator(self):
+        self.ui.comboBoxModulationType.setCurrentIndex(self.current_modulator.modulation_type)
+        self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
+        self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
+        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
+        self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
+        self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
+        self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
+
+
     def create_connects(self):
-        self.ui.doubleSpinBoxCarrierFreq.valueChanged.connect(self.on_carrier_freq_changed)
-        self.ui.doubleSpinBoxCarrierPhase.valueChanged.connect(self.on_carrier_phase_changed)
-        self.ui.spinBoxBitLength.valueChanged.connect(self.on_bit_len_changed)
-        self.ui.spinBoxSampleRate.valueChanged.connect(self.on_sample_rate_changed)
+        self.ui.doubleSpinBoxCarrierFreq.editingFinished.connect(self.on_carrier_freq_changed)
+        self.ui.doubleSpinBoxCarrierPhase.editingFinished.connect(self.on_carrier_phase_changed)
+        self.ui.spinBoxBitLength.editingFinished.connect(self.on_bit_len_changed)
+        self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
         self.ui.linEdDataBits.textChanged.connect(self.on_data_bits_changed)
-        self.ui.spinBoxParameter0.valueChanged.connect(self.on_modulation_parameter_zero_changed)
-        self.ui.spinBoxParameter1.valueChanged.connect(self.on_modulation_parameter_one_changed)
+        self.ui.spinBoxParameter0.editingFinished.connect(self.on_modulation_parameter_zero_changed)
+        self.ui.spinBoxParameter1.editingFinished.connect(self.on_modulation_parameter_one_changed)
         self.ui.comboBoxModulationType.currentIndexChanged.connect(self.on_modulation_type_changed)
         self.ui.gVOriginalSignal.zoomed.connect(self.on_orig_signal_zoomed)
         self.ui.cbShowDataBitsOnly.stateChanged.connect(self.on_show_data_bits_only_changed)
@@ -219,11 +224,9 @@ class ModulatorDialogController(QDialog):
             self.ui.spinBoxParameter0.setMaximum(1e12)
             self.ui.spinBoxParameter0.setMinimum(-1e12)
             self.ui.spinBoxParameter0.setDecimals(4)
-            self.ui.spinBoxParameter0.setSuffix("")
             self.ui.spinBoxParameter1.setMaximum(1e12)
             self.ui.spinBoxParameter1.setMinimum(-1e12)
             self.ui.spinBoxParameter1.setDecimals(4)
-            self.ui.spinBoxParameter1.setSuffix("")
             if write_standard_parameters:
                 self.autodetect_fsk_freqs()
             else:
@@ -327,6 +330,7 @@ class ModulatorDialogController(QDialog):
 
     @pyqtSlot()
     def on_custom_modulation_index_changed(self):
+        self.set_ui_for_current_modulator()
         self.draw_carrier()
         self.draw_data_bits()
         self.draw_modulated()

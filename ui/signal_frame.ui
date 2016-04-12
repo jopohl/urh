@@ -1086,13 +1086,18 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>btnMinimize</tabstop>
   <tabstop>btnSaveSignal</tabstop>
+  <tabstop>btnInfo</tabstop>
+  <tabstop>btnMinimize</tabstop>
   <tabstop>btnCloseSignal</tabstop>
   <tabstop>lineEditSignalName</tabstop>
+  <tabstop>spinBoxNoiseTreshold</tabstop>
+  <tabstop>spinBoxCenterOffset</tabstop>
   <tabstop>spinBoxInfoLen</tabstop>
   <tabstop>spinBoxTolerance</tabstop>
+  <tabstop>btnAutoDetect</tabstop>
   <tabstop>cbSignalView</tabstop>
+  <tabstop>btnReplay</tabstop>
   <tabstop>chkBoxShowProtocol</tabstop>
   <tabstop>cbProtoView</tabstop>
   <tabstop>chkBoxSyncSelection</tabstop>
@@ -1103,6 +1108,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   <tabstop>btnShowHideStartEnd</tabstop>
   <tabstop>spinBoxSelectionStart</tabstop>
   <tabstop>spinBoxSelectionEnd</tabstop>
+  <tabstop>spinBoxXZoom</tabstop>
  </tabstops>
  <resources>
   <include location="../urh.qrc"/>

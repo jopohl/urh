@@ -11,7 +11,7 @@ sudo python setup.py install
 ```
 
 # Running from source
-To run urh without installation, just run:
+To execute urh without installation, just run:
 ```bash
 cd bin
 ./urh

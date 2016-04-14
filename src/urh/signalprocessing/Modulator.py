@@ -177,6 +177,8 @@ class Modulator(object):
 
         if mod_type == "FSK":
             f = paramvector
+            #from scipy import ndimage
+            #f = ndimage.filters.gaussian_filter1d(paramvector, 1)
             #f = np.convolve(paramvector, self.ggauss(), mode="same")
         elif mod_type == "GFSK":
             f = np.convolve(paramvector, self.gauss(sigma=0.75), mode="same")

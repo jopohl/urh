@@ -181,7 +181,7 @@ class Modulator(object):
             #f = ndimage.filters.gaussian_filter1d(paramvector, 1)
             #f = np.convolve(paramvector, self.ggauss(), mode="same")
         elif mod_type == "GFSK":
-            f = np.convolve(paramvector, self.gauss(sigma=0.75), mode="same")
+            f = np.convolve(paramvector, self.gauss2(), mode="same")
         else:
             f = self.carrier_freq_hz
 
@@ -189,12 +189,38 @@ class Modulator(object):
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
 
 
-    def gauss(self, n=6, sigma=1.0):
+    def gauss(self, n=11, sigma=1.0):
         r = range(-int(n / 2), int(n / 2) + 1)
         result =  np.array([1 / (sigma * np.sqrt(2 * np.pi)) * np.exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r])
         return result / result.sum()
 
-    def ggauss(self):
+
+    def gauss2(self, sigma=1.0, truncate=4.0):
+        sd = float(sigma)
+        # make the radius of the filter equal to truncate standard deviations
+        lw = int(truncate * sd + 0.5)
+        weights = [0.0] * (2 * lw + 1)
+        weights[lw] = 1.0
+        sum = 1.0
+        sd = sd * sd
+        # calculate the kernel:
+        for ii in range(1, lw + 1):
+            tmp = np.exp(-0.5 * float(ii * ii) / sd)
+            weights[lw + ii] = tmp
+            weights[lw - ii] = tmp
+            sum += 2.0 * tmp
+        for ii in range(2 * lw + 1):
+            weights[ii] /= sum
+
+        return weights
+
+    def gauss3(self, n=22, bt=0.5):
+        a = (1/bt) * np.sqrt(np.log10(2)/2)
+        r = range(-int(n / 2), int(n / 2) + 1)
+        result =  np.array([np.sqrt(np.pi)/a * np.exp(-(np.pi ** 2 * x ** 2)/(a**2)) for x in r])
+        return result / result.sum()
+
+    def gunradio_gauss(self):
         bit_len = 100
         gaussian_taps = self.firdes_gaussian(bit_len, 0.5, int(0.5*bit_len))
         sqwave = (1,) * bit_len

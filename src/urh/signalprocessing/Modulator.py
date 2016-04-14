@@ -177,9 +177,9 @@ class Modulator(object):
 
         if mod_type == "FSK":
             f = paramvector
+            #f = np.convolve(paramvector, self.ggauss(), mode="same")
         elif mod_type == "GFSK":
-            #f = np.convolve(paramvector, self.gauss(len(paramvector)-1, sigma=2), mode="same")
-            f = self.running_mean(paramvector, 4)
+            f = np.convolve(paramvector, self.gauss(sigma=0.75), mode="same")
         else:
             f = self.carrier_freq_hz
 
@@ -187,18 +187,32 @@ class Modulator(object):
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
 
 
-    def running_mean(self, x, N, times=2):
-        result = x
-        for _ in range(times):
-            result = np.insert(result, 0, [result[0]] * (N-1))
-            cumsum = np.cumsum(np.insert(result, 0, 0))
-            result = (cumsum[N:] - cumsum[:-N]) / N
-        return result
-
-    def gauss(self, n=11, sigma=1.0):
+    def gauss(self, n=6, sigma=1.0):
         r = range(-int(n / 2), int(n / 2) + 1)
         result =  np.array([1 / (sigma * np.sqrt(2 * np.pi)) * np.exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r])
         return result / result.sum()
+
+    def ggauss(self):
+        bit_len = 100
+        gaussian_taps = self.firdes_gaussian(bit_len, 0.5, int(0.5*bit_len))
+        sqwave = (1,) * bit_len
+        taps = np.convolve(np.array(gaussian_taps),np.array(sqwave))
+        return taps
+
+    def firdes_gaussian(self, samples_per_symbol, bt, ntaps):
+        taps = np.empty(ntaps, dtype=np.float32)
+        dt = 1/samples_per_symbol
+        s = 1.0/(np.sqrt(np.log(2.0)) / (2*np.pi*bt))
+        t0 = -0.5 * ntaps
+        for i in range(ntaps):
+            t0 += 1
+            ts = s*dt*t0
+            taps[i] = np.exp(-0.5*ts*ts)
+
+        taps /= taps.sum()
+        return taps
+
+
 
     @staticmethod
     def get_value_with_suffix(value):

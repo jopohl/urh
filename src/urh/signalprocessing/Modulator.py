@@ -10,13 +10,13 @@ from urh.cythonext import path_creator
 from urh.cythonext.signalFunctions import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 
-
 class Modulator(object):
     """
     This class can modulate bits to a carrier.
     Very useful in generation phase.
     """
-    MODULATION_TYPES = ["ASK", "FSK", "PSK"]
+
+    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
 
 
     def __init__(self, name: str):
@@ -85,12 +85,18 @@ class Modulator(object):
     def modulation_type_str(self):
         return self.MODULATION_TYPES[self.modulation_type]
 
+    @modulation_type_str.setter
+    def modulation_type_str(self, val: str):
+        val = val.upper()
+        if val in self.MODULATION_TYPES:
+            self.modulation_type = self.MODULATION_TYPES.index(val)
+
     @property
     def param_for_zero_str(self):
         mod = self.MODULATION_TYPES[self.modulation_type]
         if mod == "ASK":
             return str(self.param_for_zero) + "%"
-        elif mod == "FSK":
+        elif mod == "FSK" or mod == "GFSK":
             return self.get_value_with_suffix(self.param_for_zero) + "Hz"
         elif mod == "PSK":
             return str(self.param_for_zero) + "°"
@@ -100,7 +106,7 @@ class Modulator(object):
         mod = self.MODULATION_TYPES[self.modulation_type]
         if mod == "ASK":
             return str(self.param_for_one) + "%"
-        elif mod == "FSK":
+        elif mod == "FSK" or mod == "GFSK":
             return self.get_value_with_suffix(self.param_for_one) + "Hz"
         elif mod == "PSK":
             return str(self.param_for_one) + "°"
@@ -168,11 +174,31 @@ class Modulator(object):
         t = np.arange(start, start + total_samples - pause) / self.sample_rate
         a = paramvector / 100 if mod_type == "ASK" else self.carrier_amplitude
         phi = paramvector * (np.pi / 180) if mod_type == "PSK" else self.carrier_phase_deg * (np.pi / 180)
-        f = paramvector if mod_type == "FSK" else self.carrier_freq_hz
+
+        if mod_type == "FSK":
+            f = paramvector
+        elif mod_type == "GFSK":
+            #f = np.convolve(paramvector, self.gauss(len(paramvector)-1, sigma=2), mode="same")
+            f = self.running_mean(paramvector, 4)
+        else:
+            f = self.carrier_freq_hz
 
         self.modulated_samples.imag[:total_samples - pause] = a * np.sin(2 * np.pi * f * t + phi)
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
 
+
+    def running_mean(self, x, N, times=2):
+        result = x
+        for _ in range(times):
+            result = np.insert(result, 0, [result[0]] * (N-1))
+            cumsum = np.cumsum(np.insert(result, 0, 0))
+            result = (cumsum[N:] - cumsum[:-N]) / N
+        return result
+
+    def gauss(self, n=11, sigma=1.0):
+        r = range(-int(n / 2), int(n / 2) + 1)
+        result =  np.array([1 / (sigma * np.sqrt(2 * np.pi)) * np.exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r])
+        return result / result.sum()
 
     @staticmethod
     def get_value_with_suffix(value):

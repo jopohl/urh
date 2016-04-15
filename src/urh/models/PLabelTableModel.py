@@ -56,7 +56,15 @@ class PLabelTableModel(QAbstractTableModel):
                 return lbl.restrictive
             elif j == 4:
                 if lbl.restrictive:
-                    return lbl.refblock + self.offset + 1
+                    start = int(self.proto_group.convert_index(lbl.start, 0, self.proto_view, True)[0])
+                    end = int(self.proto_group.convert_index(lbl.end, 0, self.proto_view, True)[1])
+                    block = self.proto_group.blocks[lbl.refblock]
+                    if self.proto_view == 0:
+                        return block.decoded_bits_str[start:end]
+                    elif self.proto_view == 1:
+                        return block.decoded_hex_str[start:end]
+                    else:
+                        return block.decoded_ascii_str[start:end]
                 else:
                     return "-"
             elif j == 5:
@@ -99,9 +107,8 @@ class PLabelTableModel(QAbstractTableModel):
             self.restrictive_changed.emit(i, value)
             lbl.find_block_numbers(proto)
         elif j == 4:
-            lbl.refblock = int(value) - self.offset - 1
-            lbl.reference_bits = proto[lbl.refblock][lbl.start:lbl.end]
-            lbl.find_block_numbers(proto)
+            # Pass Reference bits via seperate dialog
+            pass
         elif j == 5:
             lbl.color_index = value
         elif j == 6:
@@ -110,6 +117,13 @@ class PLabelTableModel(QAbstractTableModel):
             self.remove_label(self.protocol_labels[i])
 
         return True
+
+    def set_refblock(self, lbl: ProtocolLabel, refblock: int):
+        proto = self.proto_group.decoded_bits_str
+        lbl.refblock = int(refblock) - self.offset
+        lbl.reference_bits = proto[lbl.refblock][lbl.start:lbl.end]
+        lbl.find_block_numbers(proto)
+
 
     def flags(self, index):
         if not index.isValid():
@@ -121,7 +135,9 @@ class PLabelTableModel(QAbstractTableModel):
             return Qt.NoItemFlags
 
         if index.column() == 4 and not lbl.restrictive:
-            return Qt.ItemIsSelectable
+            return Qt.NoItemFlags
+        elif index.column() == 4 and lbl.restrictive:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
         return Qt.ItemIsEditable | Qt.ItemIsEnabled
 
@@ -129,3 +145,25 @@ class PLabelTableModel(QAbstractTableModel):
         self.proto_group.remove_label(label)
         self.update()
         self.label_removed.emit(label)
+
+    def get_protocol_sequences(self, start: int, end: int):
+        sequences = []
+        indexes = []
+        start = int(self.proto_group.convert_index(start, 0, self.proto_view, True)[0])
+        end = int(self.proto_group.convert_index(end, 0, self.proto_view, True)[0])
+
+        for i, block in enumerate(self.proto_group.blocks):
+
+            if self.proto_view == 0:
+                data = block.decoded_bits_str[start:end]
+            elif self.proto_view == 1:
+                data  = block.decoded_hex_str[start:end]
+            else:
+                data  = block.decoded_ascii_str[start:end]
+
+            if len(data) == end - start and data not in sequences:
+                sequences.append(data)
+                indexes.append(i) # For setting refblock later
+
+        return sequences, indexes
+

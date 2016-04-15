@@ -177,10 +177,10 @@ class Modulator(object):
 
         if mod_type == "FSK":
             f = paramvector
+        elif mod_type == "GFSK":
             #from scipy import ndimage
             #f = ndimage.filters.gaussian_filter1d(paramvector, 1)
             #f = np.convolve(paramvector, self.ggauss(), mode="same")
-        elif mod_type == "GFSK":
             f = np.convolve(paramvector, self.gauss2(), mode="same")
         else:
             f = self.carrier_freq_hz

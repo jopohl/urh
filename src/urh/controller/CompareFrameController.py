@@ -676,10 +676,7 @@ class CompareFrameController(QFrame):
                     active_group_ids.add(group)
                     self.selected_protocols.add(proto)
 
-        if active_group_ids == set(self.active_group_ids):
-            ignore_table_model_on_update = True
-        else:
-            ignore_table_model_on_update = False
+        if active_group_ids != set(self.active_group_ids):
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
 
@@ -700,7 +697,7 @@ class CompareFrameController(QFrame):
         self.ui.treeViewProtocols.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         self.ui.treeViewProtocols.blockSignals(False)
 
-        self.updateUI(ignore_table_model=ignore_table_model_on_update, resize_table=False)
+        self.updateUI(ignore_table_model=True, resize_table=False)
 
     @pyqtSlot(int)
     def handle_ref_index_changed(self, new_ref_index):

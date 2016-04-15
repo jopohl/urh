@@ -12,7 +12,7 @@ from urh.cythonext import signalFunctions
 class GFSK(unittest.TestCase):
     def test_plot(self):
         modulator = Modulator("gfsk")
-        modulator.modulation_type_str = "FSK"
+        modulator.modulation_type_str = "GFSK"
         modulator.samples_per_bit = 100
         modulator.sample_rate = 1e6
         modulator.param_for_one = 20e3

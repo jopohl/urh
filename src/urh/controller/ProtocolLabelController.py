@@ -87,7 +87,6 @@ class ProtocolLabelController(QDialog):
         lbl = self.model.protocol_labels[i]
         j = index.column()
         if j == 4 and lbl.restrictive:
-            # Todo Matching Block des Labels auf ersten Match setzen (am besten im Setter)
             seqs, indexes = self.model.get_protocol_sequences(lbl.start, lbl.end)
             item, ok = QInputDialog.getItem(self, "Choose matching pattern", "Pattern", seqs)
             if ok and item:

@@ -7,7 +7,7 @@ from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 class PLabelTableModel(QAbstractTableModel):
     header_labels = ["Name", "Start", "End", 'Match exactly',
-                     "Matching Block", 'Color', 'Apply decoding', 'Delete']
+                     "Matching sequence", 'Color', 'Apply decoding', 'Delete']
 
     restrictive_changed = pyqtSignal(int, bool)
     label_removed = pyqtSignal(ProtocolLabel)

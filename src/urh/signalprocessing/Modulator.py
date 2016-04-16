@@ -187,13 +187,21 @@ class Modulator(object):
         else:
             f = self.carrier_freq_hz
 
-        #self.modulated_samples.real[:total_samples - pause] = paramvector[:]
+        #c = np.zeros(len(paramvector))
+        #for ii in range(0, len(paramvector) -1):
+        #    c[ii+1] = c[ii] + paramvector[ii] * (self.sample_rate/ self.samples_per_bit)
+
+        #i = np.cos(c)
+        #q = np.sin(c)
+        #m = np.sin(2*np.pi*fmid*t)*i + np.cos(2*np.pi*fmid*t)*q
+        #m = np.cos(2*np.pi*self.carrier_freq_hz*t + 2*np.pi*3*c)
+        #self.modulated_samples.real[:total_samples - pause] = m
         self.modulated_samples.imag[:total_samples - pause] = a * np.sin(2 * np.pi * f * t + phi)
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
 
 
 
-    def gauss_fir(self, bt=0.5):
+    def gauss_fir(self, bt=0.5, filter_width=1):
         """
 
         :param bt: normalized 3-dB bandwidth-symbol time product
@@ -201,7 +209,7 @@ class Modulator(object):
         :return:
         """
         # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
-        k = range(-6, 7)
+        k = range(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit)+1)
         ts = self.samples_per_bit / self.sample_rate # symbol time
         a = np.sqrt(np.log(2)/2)*(ts/bt)
         B = a / np.sqrt(np.log(2)/2) # filter bandwidth

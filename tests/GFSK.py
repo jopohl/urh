@@ -17,16 +17,17 @@ class GFSK(unittest.TestCase):
         modulator.sample_rate = 1e6
         modulator.param_for_one = 20e3
         modulator.param_for_zero = -10e3
+        modulator.carrier_freq_hz = 15e3
 
 
-        modulator.modulate([True, False, True, False], 77)
+        modulator.modulate([True, False, True, False, False], 77)
         data = copy.deepcopy(modulator.modulated_samples)
-        modulator.modulate([False, True, True, False, True], 100, start=len(data))
+        modulator.modulate([False, True, True, True, True, False, True], 100, start=len(data))
         data = np.concatenate((data, modulator.modulated_samples))
 
         plt.subplot(2, 1, 1)
         axes = plt.gca()
-        #axes.set_ylim([-2,2])
+        axes.set_ylim([-2,2])
         plt.plot(data.real)
         plt.title("Modulated Wave")
 

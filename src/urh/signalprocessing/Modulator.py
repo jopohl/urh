@@ -167,7 +167,10 @@ class Modulator(object):
                 log_bit = bit
                 samples_per_bit = self.samples_per_bit
 
-            param = self.param_for_one if log_bit else self.param_for_zero
+            if mod_type == "FSK" or mod_type == "GFSK":
+                param = 1 if log_bit else -1
+            else:
+                param = self.param_for_one if log_bit else self.param_for_zero
             paramvector[sample_pos:sample_pos + samples_per_bit] = np.full(samples_per_bit, param, dtype=np.float64)
             sample_pos += samples_per_bit
 
@@ -175,18 +178,45 @@ class Modulator(object):
         a = paramvector / 100 if mod_type == "ASK" else self.carrier_amplitude
         phi = paramvector * (np.pi / 180) if mod_type == "PSK" else self.carrier_phase_deg * (np.pi / 180)
 
-        if mod_type == "FSK":
-            f = paramvector
-        elif mod_type == "GFSK":
-            #from scipy import ndimage
-            #f = ndimage.filters.gaussian_filter1d(paramvector, 1)
-            #f = np.convolve(paramvector, self.ggauss(), mode="same")
-            f = np.convolve(paramvector, self.gauss2(), mode="same")
+        if mod_type == "FSK" or mod_type == "GFSK":
+            fmid = (self.param_for_one + self.param_for_zero)/2
+            dist = abs(fmid - self.param_for_one)
+            if mod_type == "GFSK":
+                paramvector =  np.convolve(paramvector, self.gauss_fir(), mode="same")
+            f = fmid + dist * paramvector
         else:
             f = self.carrier_freq_hz
 
+        #self.modulated_samples.real[:total_samples - pause] = paramvector[:]
         self.modulated_samples.imag[:total_samples - pause] = a * np.sin(2 * np.pi * f * t + phi)
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
+
+
+
+    def gauss_fir(self, bt=0.5):
+        """
+
+        :param bt: normalized 3-dB bandwidth-symbol time product
+        :param span: Filter span in symbols
+        :return:
+        """
+        # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
+        k = range(-6, 7)
+        ts = self.samples_per_bit / self.sample_rate # symbol time
+        a = np.sqrt(np.log(2)/2)*(ts/bt)
+        B = a / np.sqrt(np.log(2)/2) # filter bandwidth
+        h = np.sqrt((2*np.pi)/(np.log(2))) * bt/ts * np.exp(-(((np.sqrt(2)*np.pi)/np.sqrt(np.log(2))*bt*k/self.samples_per_bit)**2))
+        return h / h.sum()
+
+
+    def gauss_matlab(self, bt=0.5):
+        # https://github.com/rikrd/matlab/blob/master/signal/signal/gaussfir.m
+        symbol_range = 1
+        filtLen = 2 * self.samples_per_bit * symbol_range + 1
+        t = np.linspace(-symbol_range, symbol_range, filtLen)
+        alpha = np.sqrt(np.log(2) / 2) / (bt)
+        h = (np.sqrt(np.pi) / alpha) * np.exp(-(t * np.pi / alpha) ** 2)
+        return h/h.sum()
 
 
     def gauss(self, n=11, sigma=1.0):

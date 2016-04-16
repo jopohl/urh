@@ -25,11 +25,13 @@ class GFSK(unittest.TestCase):
         data = np.concatenate((data, modulator.modulated_samples))
 
         plt.subplot(2, 1, 1)
+        axes = plt.gca()
+        #axes.set_ylim([-2,2])
         plt.plot(data.real)
         plt.title("Modulated Wave")
 
         plt.subplot(2, 1, 2)
-        qad =  signalFunctions.afp_demod(np.ascontiguousarray(data), 0, 1)
+        qad = signalFunctions.afp_demod(np.ascontiguousarray(data), 0, 1)
         plt.plot(qad)
         plt.title("Quad Demod")
 

@@ -18,12 +18,14 @@ class Device(metaclass=ABCMeta):
         self.current_index = 0
         while True:
             try:
-                self.data = np.zeros(buf_size, dtype=np.complex64)
+                self.receive_buffer = np.zeros(int(buf_size), dtype=np.complex64)
                 break
             except (MemoryError, ValueError):
                 buf_size //= 2
 
-
+    @property
+    def received_data(self):
+        return self.receive_buffer[:self.current_index]
 
     @property
     def bandwidth(self):
@@ -98,7 +100,7 @@ class Device(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def unpack_complex(self, buffer):
+    def unpack_complex(self, nvalues):
         pass
 
     def set_device_parameters(self):
@@ -115,16 +117,16 @@ class Device(metaclass=ABCMeta):
             if nvalues == 0:
                 return 0
 
-            if self.current_index + nvalues >= len(self.data):
+            if self.current_index + nvalues >= len(self.receive_buffer):
                 if self.is_ringbuffer:
                     self.current_index = 0
-                    if nvalues >= len(self.data):
+                    if nvalues >= len(self.receive_buffer):
                         self.stop_rx_mode("Receiving buffer too small.")
                 else:
                     self.stop_rx_mode("Receiving Buffer is full.")
                     return
 
-            self.data[self.current_index:self.current_index + nvalues] = self.unpack_complex(self.byte_buffer)
+            self.receive_buffer[self.current_index:self.current_index + nvalues] = self.unpack_complex(nvalues)
             self.current_index += nvalues
             l = bytes_per_number*(len(self.byte_buffer)//bytes_per_number)
             self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%bytes_per_number]

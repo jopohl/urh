@@ -1,8 +1,7 @@
 from urh.dev.Device import Device
 from urh.cythonext import hackrf
 import numpy as np
-import logging
-
+from urh.util.Logger import logger
 
 class HackRF(Device):
     BYTES_PER_COMPLEX_NUMBER = 2
@@ -16,41 +15,41 @@ class HackRF(Device):
         if not self.is_open:
             if hackrf.setup() == self.success:
                 self.is_open = True
-                logging.info("successfully opened hackrf")
+                logger.info("successfully opened HackRF")
                 self.set_device_parameters()
 
     def close(self):
         if self.is_open:
             if hackrf.exit() == self.success:
-                logging.info("successfully closed hackrf")
+                logger.info("successfully closed HackRF")
                 self.is_open = False
 
     def start_rx_mode(self):
         if hackrf.start_rx_mode(self.callback_recv) == self.success:
-            logging.info("successfully started hackrf rx mode")
+            logger.info("successfully started HackRF rx mode")
         else:
-            logging.error("could not start hackrf rx mode")
+            logger.error("could not start HackRF rx mode")
 
     def stop_rx_mode(self, msg):
         if hackrf.stop_rx_mode() == self.success:
-            logging.info("stopped rx mode " + str(msg))
+            logger.info("stopped HackRF rx mode (" + str(msg) + ")")
         else:
-            logging.error("could not stop hackrf rx mode")
+            logger.error("could not stop HackRF rx mode")
 
     def set_device_bandwidth(self, bw):
         if self.is_open:
 
             if hackrf.set_baseband_filter_bandwidth(bw) == self.success:
-                logging.info("successfully set bandwidth to {0}".format(bw))
+                logger.info("successfully set HackRF bandwidth to {0}".format(bw))
             else:
-                logging.error("failed to set bandwidth to {0}".format(bw))
+                logger.error("failed to set HackRF bandwidth to {0}".format(bw))
 
     def set_device_frequency(self, value):
         if self.is_open:
             if hackrf.set_freq(value) == self.success:
-                logging.info("successfully set frequency to {0}".format(value))
+                logger.info("successfully set HackRF frequency to {0}".format(value))
             else:
-                logging.error("failed to set frequency to {0}".format(value))
+                logger.error("failed to set HackRF frequency to {0}".format(value))
 
     def set_device_gain(self, gain):
         if self.is_open:
@@ -61,9 +60,9 @@ class HackRF(Device):
     def set_device_sample_rate(self, sample_rate):
         if self.is_open:
             if hackrf.set_sample_rate(sample_rate) == self.success:
-                logging.info("successfully set sample rate to {0}".format(sample_rate))
+                logger.info("successfully set HackRF sample rate to {0}".format(sample_rate))
             else:
-                logging.error("failed to set sample rate to {0}".format(sample_rate))
+                logger.error("failed to set HackRF sample rate to {0}".format(sample_rate))
 
 
     def unpack_complex(self, nvalues: int):

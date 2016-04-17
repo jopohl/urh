@@ -53,6 +53,22 @@ class TestHackRF(unittest.TestCase):
         print(c)
         # x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
 
+    def test_fromstring2(self):
+        buffer = b'\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe'
+        c = np.empty(len(buffer) // 2, dtype=np.complex64)
+
+        # dtype  =
+        unpacked = np.frombuffer(buffer, dtype="<h") # cast in short
+        print(unpacked)
+        f = 1.0/32767.5
+        for i in range(0, len(unpacked)-1,2):
+            c[i] = complex(float(unpacked[i]*f), float(unpacked[i+1]*f))
+
+        print(c)
+        # x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
+
+
+
     def test_hackrf_class(self):
         hfc = HackRF(1e6, 433e6, 20, 1e6)
         hfc.open()

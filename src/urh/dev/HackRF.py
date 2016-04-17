@@ -12,8 +12,8 @@ class HackRF(Device):
         self.is_open = False
         self.success = 0
 
-        self.__lut = np.empty(0xffff + 1, dtype=np.complex64)
-        self.little_endian = True
+        self.__lut = np.zeros(0xffff + 1, dtype=np.complex64)
+        self.little_endian = False
         for i in range(0, 0xffff + 1):
             if self.little_endian:
                 real = (float(np.int8(i & 0xff))) * (1.0 / 128.0)

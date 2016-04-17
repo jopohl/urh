@@ -18,7 +18,7 @@ class Device(metaclass=ABCMeta):
         self.current_index = 0
         while True:
             try:
-                self.receive_buffer = np.zeros(int(buf_size), dtype=np.complex64)
+                self.receive_buffer = np.zeros(int(buf_size), dtype=np.complex64, order='C')
                 break
             except (MemoryError, ValueError):
                 buf_size //= 2

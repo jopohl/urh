@@ -36,17 +36,21 @@ class TestHackRF(unittest.TestCase):
 
     def test_fromstring(self):
         buffer = b'\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe'
-        r = np.empty(len(buffer)//4, dtype=np.float16)
-        i = np.empty(len(buffer)//4, dtype=np.float16)
-        c = np.empty(len(buffer)//4, dtype=np.complex64)
+        r = np.empty(len(buffer)//2, dtype=np.float32)
+        i = np.empty(len(buffer)//2, dtype=np.float32)
+        c = np.empty(len(buffer)//2, dtype=np.complex64)
 
-        for j in range(0, len(buffer)-3, 4):
-            print(np.frombuffer(buffer[j:j + 2], dtype=np.float16))
-            r[j//4] = np.frombuffer(buffer[j:j + 2], dtype=np.uint8) / 32767.5
-            i[j//4] = np.frombuffer(buffer[j + 2:j + 4], dtype=np.uint8) / 32767.5
+        #dtype  =
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        ru = unpacked['r'] / 128.0
+        iu = unpacked['i'] / 128.0
+
+        #for j in range(0, len(buffer)-1, 2):
+        #    r[j//2] = np.frombuffer(buffer[j:j + 1], dtype=np.int8) / 128.0
+        #    i[j//2] = np.frombuffer(buffer[j + 1:j + 2], dtype=np.int8) / 128.0
         #r2 = np.fromstring(buffer[], dtype=np.float16) / 32767.5
-        c.real = r
-        c.imag = i
+        c.real = ru
+        c.imag = iu
         print(c)
         #x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
 

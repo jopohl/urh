@@ -70,14 +70,17 @@ class TestHackRF(unittest.TestCase):
 
 
     def test_hackrf_class(self):
-        hfc = HackRF(1e6, 433e6, 20, 1e6)
+        hfc = HackRF(1e6, 433e6, 20, 10e6)
         hfc.open()
         hfc.start_rx_mode()
         time.sleep(5)
         print(hfc.current_index)
         print(hfc.received_data)
-        hfc.received_data.tofile("/tmp/hackrf.complex")
         hfc.stop_rx_mode("Finished test")
+        hfc.received_data.tofile("/tmp/hackrf.complex")
+        print("Wrote Data")
+
+
         hfc.close()
 
     def test_lookup(self):

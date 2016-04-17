@@ -2,7 +2,7 @@ import threading
 import numpy as np
 from abc import ABCMeta, abstractmethod
 class Device(metaclass=ABCMeta):
-    BYTES_PER_COMPLEX_NUMBER = None
+    BYTES_PER_SAMPLE = None
 
     def __init__(self, bw, freq, gain, srate, initial_bufsize=8e9, is_ringbuffer=False):
         self.lock = threading.Lock()
@@ -112,7 +112,7 @@ class Device(metaclass=ABCMeta):
     def callback_recv(self, buffer):
         with self.lock:
             self.byte_buffer += buffer
-            bytes_per_number = self.BYTES_PER_COMPLEX_NUMBER
+            bytes_per_number = self.BYTES_PER_SAMPLE
             nvalues = len(self.byte_buffer) // bytes_per_number
             if nvalues == 0:
                 return 0

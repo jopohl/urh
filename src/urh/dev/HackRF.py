@@ -68,7 +68,7 @@ class HackRF(Device):
     def unpack_complex(self, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)
         buffer = self.byte_buffer[:nvalues * self.BYTES_PER_COMPLEX_NUMBER]
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
         result.real = unpacked['r'] / 128.0
         result.imag = unpacked['i'] / 128.0
         return result

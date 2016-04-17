@@ -1,7 +1,9 @@
 from urh.dev.Device import Device
 from urh.cythonext import hackrf
+import numpy as np
 
 class HackRF(Device):
+    BYTES_PER_COMPLEX_NUMBER = 2
     def __init__(self, bw, freq, gain, srate, initial_bufsize=8e9, is_ringbuffer=False):
         super().__init__(bw, freq, gain, srate, initial_bufsize, is_ringbuffer)
         self.is_open = False
@@ -42,3 +44,10 @@ class HackRF(Device):
     def set_device_sample_rate(self, sample_rate):
         if self.is_open:
             hackrf.set_sample_rate(sample_rate)
+
+    def unpack_complex(self, buffer):
+        result = np.empty(len(buffer) // self.BYTES_PER_COMPLEX_NUMBER, dtype=np.complex64)
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        result.real = unpacked['r'] / 128.0
+        result.imag = unpacked['i'] / 128.0
+        return result

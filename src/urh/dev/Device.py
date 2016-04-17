@@ -2,6 +2,8 @@ import threading
 import numpy as np
 from abc import ABCMeta, abstractmethod
 class Device(metaclass=ABCMeta):
+    BYTES_PER_COMPLEX_NUMBER = None
+
     def __init__(self, bw, freq, gain, srate, initial_bufsize=8e9, is_ringbuffer=False):
         self.lock = threading.Lock()
         self.byte_buffer = b''
@@ -79,31 +81,52 @@ class Device(metaclass=ABCMeta):
     def set_device_sample_rate(self, sample_rate):
         pass
 
+    @abstractmethod
+    def open(self):
+        pass
+
+    @abstractmethod
+    def close(self):
+        pass
+
+    @abstractmethod
+    def start_rx_mode(self):
+        pass
+
+    @abstractmethod
+    def stop_rx_mode(self, msg):
+        pass
+
+    @abstractmethod
+    def unpack_complex(self, buffer):
+        pass
+
+    def set_device_parameters(self):
+        self.set_device_bandwidth(self.bandwidth)
+        self.set_device_frequency(self.frequency)
+        self.set_device_gain(self.gain)
+        self.set_device_sample_rate(self.sample_rate)
+
     def callback_recv(self, buffer):
         with self.lock:
             self.byte_buffer += buffer
+            bytes_per_number = self.BYTES_PER_COMPLEX_NUMBER
+            nvalues = len(self.byte_buffer) // bytes_per_number
+            if nvalues == 0:
+                return 0
 
-            r = np.empty(len(self.byte_buffer) // 4, dtype=np.float16)
-            i = np.empty(len(self.byte_buffer) // 4, dtype=np.float16)
-            c = np.empty(len(self.byte_buffer) // 4, dtype=np.complex64)
-            if self.current_index + len(c) >= len(self.data):
+            if self.current_index + nvalues >= len(self.data):
                 if self.is_ringbuffer:
                     self.current_index = 0
-                    if len(c) >= len(self.data):
-                        self.stop("Receiving buffer too small.")
+                    if nvalues >= len(self.data):
+                        self.stop_rx_mode("Receiving buffer too small.")
                 else:
-                    self.stop("Receiving Buffer is full.")
+                    self.stop_rx_mode("Receiving Buffer is full.")
                     return
 
-            for j in range(0, len(self.byte_buffer), 4):
-                r[j // 4] = np.frombuffer(self.byte_buffer[j:j + 2], dtype=np.float16) / 32767.5
-                i[j // 4] = np.frombuffer(self.byte_buffer[j + 2:j + 4], dtype=np.float16) / 32767.5
-            # r2 = np.fromstring(buffer[], dtype=np.float16) / 32767.5
-            c.real = r
-            c.imag = i
-            self.data[self.current_index:self.current_index + len(c)] = c
-            self.current_index += len(c)
-            l = 4*(len(self.byte_buffer)//4)
-            self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%4]
+            self.data[self.current_index:self.current_index + nvalues] = self.unpack_complex(self.byte_buffer)
+            self.current_index += nvalues
+            l = bytes_per_number*(len(self.byte_buffer)//bytes_per_number)
+            self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%bytes_per_number]
 
         return 0

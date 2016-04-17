@@ -69,7 +69,7 @@ class Device(metaclass=ABCMeta):
 
     @property
     def sample_rate(self):
-        return self.sample_rate
+        return self.__sample_rate
 
     @sample_rate.setter
     def sample_rate(self, value):

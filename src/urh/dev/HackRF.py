@@ -42,11 +42,16 @@ class HackRF(Device):
         if self.is_open:
             self.set_device_parameters()
             if hackrf.start_rx_mode(self.callback_recv) == self.success:
+                self.is_receiving = True
+                self.read_queue_thread.start()
                 logger.info("successfully started HackRF rx mode")
             else:
+                self.is_receiving = False
                 logger.error("could not start HackRF rx mode")
 
     def stop_rx_mode(self, msg):
+        self.is_receiving = False
+        self.read_queue_thread.join()
         if self.is_open:
             logger.info("Stopping rx mode")
             if hackrf.stop_rx_mode() == self.success:

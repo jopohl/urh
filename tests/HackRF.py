@@ -73,13 +73,15 @@ class TestHackRF(unittest.TestCase):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
         hfc.open()
         hfc.start_rx_mode()
-        time.sleep(5)
-        while not hfc.queue.empty():
-            hfc.byte_buffer += hfc.queue.get()
-
+        i = 0
+        while i < 5:
+            print("{0}/{1}".format(i+1, 5))
+            time.sleep(1)
+            i+=1
         print("{0:,}".format(hfc.current_index))
         #print(hfc.received_data)
-        hfc.unpack_complex(len(hfc.byte_buffer)//2).tofile("/tmp/hackrf.complex")
+        #hfc.unpack_complex(len(hfc.byte_buffer)//2).tofile("/tmp/hackrf.complex")
+        hfc.received_data.tofile("/tmp/hackrf.complex")
         print("Wrote Data")
         hfc.stop_rx_mode("Finished test")
         hfc.close()

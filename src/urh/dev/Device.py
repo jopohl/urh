@@ -3,6 +3,10 @@ from multiprocessing import Queue
 
 import numpy as np
 from abc import ABCMeta, abstractmethod
+
+import time
+
+
 class Device(metaclass=ABCMeta):
     BYTES_PER_SAMPLE = None
 
@@ -20,6 +24,11 @@ class Device(metaclass=ABCMeta):
         buf_size = initial_bufsize
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         self.current_index = 0
+        self.is_receiving = False
+
+        self.read_queue_thread = threading.Thread(target=self.read_queue)
+        self.read_queue_thread.daemon = True
+
         while True:
             try:
                 self.receive_buffer = np.zeros(int(buf_size), dtype=np.complex64, order='C')
@@ -112,6 +121,29 @@ class Device(metaclass=ABCMeta):
         self.set_device_frequency(self.frequency)
         self.set_device_gain(self.gain)
         self.set_device_sample_rate(self.sample_rate)
+
+    def read_queue(self):
+        while self.is_receiving:
+            while not self.queue.empty():
+                self.byte_buffer += self.queue.get()
+                bytes_per_number = self.BYTES_PER_SAMPLE
+                nvalues = len(self.byte_buffer) // bytes_per_number
+                if nvalues > 0:
+
+                    if self.current_index + nvalues >= len(self.receive_buffer):
+                        if self.is_ringbuffer:
+                            self.current_index = 0
+                            if nvalues >= len(self.receive_buffer):
+                                self.stop_rx_mode("Receiving buffer too small.")
+                        else:
+                            self.stop_rx_mode("Receiving Buffer is full.")
+                            return
+
+                    self.receive_buffer[self.current_index:self.current_index + nvalues] = self.unpack_complex(nvalues)
+                    self.current_index += nvalues
+                    l = bytes_per_number*(len(self.byte_buffer)//bytes_per_number)
+                    self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%bytes_per_number]
+            time.sleep(0.01)
 
     def callback_recv(self, buffer):
         #print("-")

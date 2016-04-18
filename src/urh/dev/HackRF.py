@@ -1,3 +1,5 @@
+import struct
+
 from urh.dev.Device import Device
 from urh.cythonext import hackrf
 import numpy as np
@@ -99,3 +101,8 @@ class HackRF(Device):
         # for i in range(len(result)):
         #     result[i] = self.__lut[unpacked[i]]
         return result
+
+
+    def pack_complex(self, complex_samples: np.ndarray):
+        assert complex_samples.dtype == np.complex64
+        return (128 * complex_samples.view(np.float32)).astype(np.int8).tobytes()

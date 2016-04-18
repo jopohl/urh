@@ -116,6 +116,10 @@ class Device(metaclass=ABCMeta):
     def unpack_complex(self, buffer, nvalues):
         pass
 
+    @abstractmethod
+    def pack_complex(self, complex_samples: np.ndarray):
+        pass
+
     def set_device_parameters(self):
         self.set_device_bandwidth(self.bandwidth)
         self.set_device_frequency(self.frequency)

@@ -85,6 +85,8 @@ class TestHackRF(unittest.TestCase):
         print("Wrote Data")
         hfc.stop_rx_mode("Finished test")
         hfc.close()
+        t = time.time()
+        print("Packing time", time.time() - t)
 
     def test_lookup(self):
         # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127
@@ -106,3 +108,8 @@ class TestHackRF(unittest.TestCase):
 
         print(lookup[0x0001])
         print(ru, iu)
+
+
+    def test_pack_complex(self):
+        hkrf = HackRF(1,1,1,1)
+        print(hkrf.pack_complex(np.array([complex(0.1, 0.1), complex(0.5, 0.1)], dtype=np.complex64)))

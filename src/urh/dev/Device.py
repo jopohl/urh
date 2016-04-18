@@ -1,4 +1,6 @@
 import threading
+from multiprocessing import Queue
+
 import numpy as np
 from abc import ABCMeta, abstractmethod
 class Device(metaclass=ABCMeta):
@@ -12,6 +14,8 @@ class Device(metaclass=ABCMeta):
         self.__frequency = freq
         self.__gain = gain
         self.__sample_rate = srate
+
+        self.queue = Queue()
 
         buf_size = initial_bufsize
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
@@ -110,25 +114,26 @@ class Device(metaclass=ABCMeta):
         self.set_device_sample_rate(self.sample_rate)
 
     def callback_recv(self, buffer):
-        with self.lock:
-            self.byte_buffer += buffer
-            bytes_per_number = self.BYTES_PER_SAMPLE
-            nvalues = len(self.byte_buffer) // bytes_per_number
-            if nvalues == 0:
-                return 0
-
-            if self.current_index + nvalues >= len(self.receive_buffer):
-                if self.is_ringbuffer:
-                    self.current_index = 0
-                    if nvalues >= len(self.receive_buffer):
-                        self.stop_rx_mode("Receiving buffer too small.")
-                else:
-                    self.stop_rx_mode("Receiving Buffer is full.")
-                    return
-
-            self.receive_buffer[self.current_index:self.current_index + nvalues] = self.unpack_complex(nvalues)
-            self.current_index += nvalues
-            l = bytes_per_number*(len(self.byte_buffer)//bytes_per_number)
-            self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%bytes_per_number]
-
+        #print("-")
+        self.queue.put(buffer)
+        # with self.lock:
+        #     self.byte_buffer += buffer
+        #     bytes_per_number = self.BYTES_PER_SAMPLE
+        #     nvalues = len(self.byte_buffer) // bytes_per_number
+        #     if nvalues > 0:
+        #        # return 0
+        #
+        #     # if self.current_index + nvalues >= len(self.receive_buffer):
+        #     #     if self.is_ringbuffer:
+        #     #         self.current_index = 0
+        #     #         if nvalues >= len(self.receive_buffer):
+        #     #             self.stop_rx_mode("Receiving buffer too small.")
+        #     #     else:
+        #     #         self.stop_rx_mode("Receiving Buffer is full.")
+        #     #         return
+        #
+        #         self.receive_buffer[self.current_index:self.current_index + nvalues] = self.unpack_complex(nvalues)
+        #         self.current_index += nvalues
+        #     #l = bytes_per_number*(len(self.byte_buffer)//bytes_per_number)
+        #    # self.byte_buffer = self.byte_buffer[l:l+len(self.byte_buffer)%bytes_per_number]
         return 0

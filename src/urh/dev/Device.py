@@ -1,3 +1,4 @@
+import io
 import threading
 from multiprocessing import Queue
 
@@ -20,15 +21,23 @@ class Device(metaclass=ABCMeta):
         self.__sample_rate = srate
 
         self.queue = Queue()
+        self.send_buffer = None
+        self.send_buffer_reader = None
+
+        self.samples_to_send = np.array([], dtype=np.complex64)
 
         buf_size = initial_bufsize
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
-        self.current_index = 0
+        self.current_recv_index = 0
+        self.current_send_index = 0
         self.is_receiving = False
         self.is_transmitting = False
 
-        self.read_queue_thread = threading.Thread(target=self.read_queue)
+        self.read_queue_thread = threading.Thread(target=self.read_receiving_queue)
         self.read_queue_thread.daemon = True
+
+        self.check_send_buffer_thread = threading.Thread(target=self.check_send_buffer_empty)
+        self.check_send_buffer_thread.daemon = True
 
         while True:
             try:
@@ -39,7 +48,11 @@ class Device(metaclass=ABCMeta):
 
     @property
     def received_data(self):
-        return self.receive_buffer[:self.current_index]
+        return self.receive_buffer[:self.current_recv_index]
+
+    @property
+    def sent_data(self):
+        return self.sent_data[:self.current_send_index]
 
     @property
     def bandwidth(self):
@@ -114,7 +127,7 @@ class Device(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def start_tx_mode(self):
+    def start_tx_mode(self, samples_to_send: np.ndarray):
         pass
 
     @abstractmethod
@@ -135,15 +148,15 @@ class Device(metaclass=ABCMeta):
         self.set_device_gain(self.gain)
         self.set_device_sample_rate(self.sample_rate)
 
-    def read_queue(self):
+    def read_receiving_queue(self):
         while self.is_receiving:
             while not self.queue.empty():
                 self.byte_buffer += self.queue.get()
                 nsamples = len(self.byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:
-                    if self.current_index + nsamples >= len(self.receive_buffer):
+                    if self.current_recv_index + nsamples >= len(self.receive_buffer):
                         if self.is_ringbuffer:
-                            self.current_index = 0
+                            self.current_recv_index = 0
                             if nsamples >= len(self.receive_buffer):
                                 self.stop_rx_mode("Receiving buffer too small.")
                         else:
@@ -151,16 +164,34 @@ class Device(metaclass=ABCMeta):
                             return
 
                     end = nsamples*self.BYTES_PER_SAMPLE
-                    self.receive_buffer[self.current_index:self.current_index + nsamples] = \
+                    self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
                         self.unpack_complex(self.byte_buffer[:end], nsamples)
-                    self.current_index += nsamples
+                    self.current_recv_index += nsamples
                     self.byte_buffer = self.byte_buffer[end:]
             time.sleep(0.01)
 
-    def callback_recv(self, buffer):
+
+    def init_send_buffer(self, samples_to_send: np.ndarray):
+        self.samples_to_send = samples_to_send
+        self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
+        self.send_buffer_reader = io.BufferedReader(self.send_buffer)
+
+    def check_send_buffer_empty(self):
+        # TODO Num Repitions while loop
+        while self.is_transmitting and self.send_buffer.peek():
+            time.sleep(0.01)
+            self.current_send_index = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
+            continue # Still data in send buffer
+
+        self.current_send_index = len(self.samples_to_send)
+        self.send_buffer_reader.close()
+        self.send_buffer.close()
+        self.stop_tx_mode("No more data to send")
+
+    def callback_recv(self, buffer, buffer_length):
         self.queue.put(buffer)
         return 0
 
-    def callback_send(self, buffer):
-       # buffer[0:10] = self.send_data[0:10]
-        pass
+    def callback_send(self, buffer, buffer_length):
+        buffer[0:buffer_length] = self.send_buffer.read(buffer_length)
+        return 0

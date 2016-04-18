@@ -63,19 +63,25 @@ class HackRF(Device):
                 logger.error("could not stop HackRF rx mode")
 
 
-    def start_tx_mode(self):
+    def start_tx_mode(self, samples_to_send: np.ndarray):
         if self.is_open:
+            self.init_send_buffer(samples_to_send)
             self.set_device_parameters()
             if hackrf.start_tx_mode(self.callback_send) == self.success:
                 self.is_transmitting = True
+                self.check_send_buffer_thread.start()
                 logger.info("successfully started HackRF tx mode")
             else:
                 self.is_transmitting = False
                 logger.error("could not start HackRF tx mode")
 
 
+
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
+        if self.check_send_buffer_thread.is_alive():
+            self.check_send_buffer_thread.join()
+
         if self.is_open:
             self.set_device_parameters()
             if hackrf.stop_tx_mode() == self.success:

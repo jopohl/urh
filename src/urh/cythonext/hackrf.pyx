@@ -6,7 +6,7 @@ cdef object f
 
 cdef int _c_callback(chackrf.hackrf_transfer* transfer)  with gil:
     global f
-    (<object>f)(transfer.buffer[0:transfer.valid_length])
+    (<object>f)(transfer.buffer[0:transfer.valid_length], transfer.valid_length)
     return 0
 
 cdef chackrf.hackrf_device* _c_device

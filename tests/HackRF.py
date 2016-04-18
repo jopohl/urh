@@ -80,7 +80,7 @@ class TestHackRF(unittest.TestCase):
             print("{0}/{1}".format(i+1, 5))
             time.sleep(1)
             i+=1
-        print("{0:,}".format(hfc.current_index))
+        print("{0:,}".format(hfc.current_recv_index))
         #print(hfc.received_data)
         #hfc.unpack_complex(len(hfc.byte_buffer)//2).tofile("/tmp/hackrf.complex")
         hfc.received_data.tofile("/tmp/hackrf.complex")
@@ -119,8 +119,15 @@ class TestHackRF(unittest.TestCase):
     def test_buffer_io(self):
         b = io.BytesIO(b"\x00\x01\x02\x03\x04\x05\x06")
         br = io.BufferedReader(b) # Buffered Reader is thread safe https://docs.python.org/3/library/io.html#multi-threading
+        print(bool(br.peek()))
         print(br.read(2))
+        print(br.tell())
         print(br.read(2))
         print(br.read(2))
         print(br.read(2))
         print(br.read1(2))
+        print(br.tell())
+        print(bool(br.peek()))
+        br.close()
+        b.close()
+        br.close()

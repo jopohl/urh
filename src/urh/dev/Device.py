@@ -161,5 +161,6 @@ class Device(metaclass=ABCMeta):
         self.queue.put(buffer)
         return 0
 
-    def callback_send(self):
+    def callback_send(self, buffer):
+       # buffer[0:10] = self.send_data[0:10]
         pass

@@ -126,4 +126,4 @@ class HackRF(Device):
 
     def pack_complex(self, complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
-        return (128 * complex_samples.view(np.float32)).astype(np.int8).tobytes()
+        return (128 * complex_samples.view(np.float32)).astype(np.uint8).tobytes()

@@ -3,6 +3,8 @@ import unittest
 import sys
 
 import time
+
+import io
 import numpy as np
 
 from urh.cythonext import hackrf
@@ -113,3 +115,12 @@ class TestHackRF(unittest.TestCase):
     def test_pack_complex(self):
         hkrf = HackRF(1,1,1,1)
         print(hkrf.pack_complex(np.array([complex(0.1, 0.1), complex(0.5, 0.1)], dtype=np.complex64)))
+
+    def test_buffer_io(self):
+        b = io.BytesIO(b"\x00\x01\x02\x03\x04\x05\x06")
+        br = io.BufferedReader(b) # Buffered Reader is thread safe https://docs.python.org/3/library/io.html#multi-threading
+        print(br.read(2))
+        print(br.read(2))
+        print(br.read(2))
+        print(br.read(2))
+        print(br.read1(2))

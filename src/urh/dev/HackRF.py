@@ -51,7 +51,8 @@ class HackRF(Device):
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        self.read_queue_thread.join()
+        if self.read_queue_thread.is_alive():
+            self.read_queue_thread.join()
         if self.is_open:
             logger.info("Stopping rx mode")
             if hackrf.stop_rx_mode() == self.success:
@@ -87,10 +88,14 @@ class HackRF(Device):
             else:
                 logger.error("failed to set HackRF sample rate to {0}".format(sample_rate))
 
-    def unpack_complex(self, nvalues: int):
+    def unpack_complex(self, buffer, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)
-        buffer = self.byte_buffer[:nvalues * self.BYTES_PER_SAMPLE]
-        unpacked = np.frombuffer(buffer, dtype=np.uint16)
-        for i in range(len(result)):
-            result[i] = self.__lut[unpacked[i]]
+        #unpacked = np.frombuffer(buffer, dtype=np.uint16)
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        result.real = unpacked['r'] / 128.0
+        result.imag = unpacked['i'] / 128.0
+
+        #
+        # for i in range(len(result)):
+        #     result[i] = self.__lut[unpacked[i]]
         return result

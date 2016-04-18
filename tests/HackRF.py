@@ -71,7 +71,7 @@ class TestHackRF(unittest.TestCase):
 
 
 
-    def test_hackrf_class(self):
+    def test_hackrf_class_recv(self):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
         hfc.open()
         hfc.start_rx_mode()
@@ -87,8 +87,18 @@ class TestHackRF(unittest.TestCase):
         print("Wrote Data")
         hfc.stop_rx_mode("Finished test")
         hfc.close()
-        t = time.time()
-        print("Packing time", time.time() - t)
+
+    def test_hackrf_class_send(self):
+        hfc = HackRF(1e6, 433.92e6, 20, 1e6)
+        hfc.open()
+        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64))
+        while not hfc.sending_finished:
+            print(hfc.current_send_index)
+            time.sleep(1)
+       # hfc.stop_tx_mode("Test finished")
+        hfc.close()
+
+
 
     def test_lookup(self):
         # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127

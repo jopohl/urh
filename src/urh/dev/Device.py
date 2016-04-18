@@ -55,6 +55,10 @@ class Device(metaclass=ABCMeta):
         return self.sent_data[:self.current_send_index]
 
     @property
+    def sending_finished(self):
+        return self.current_send_index >= len(self.samples_to_send) - 1
+
+    @property
     def bandwidth(self):
         return self.__bandwidth
 
@@ -178,20 +182,17 @@ class Device(metaclass=ABCMeta):
 
     def check_send_buffer_empty(self):
         # TODO Num Repitions while loop
-        while self.is_transmitting and self.send_buffer.peek():
-            time.sleep(0.01)
+        while self.is_transmitting and self.send_buffer_reader.peek():
+            time.sleep(0.1)
             self.current_send_index = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
             continue # Still data in send buffer
 
         self.current_send_index = len(self.samples_to_send)
-        self.send_buffer_reader.close()
-        self.send_buffer.close()
-        self.stop_tx_mode("No more data to send")
 
-    def callback_recv(self, buffer, buffer_length):
+
+    def callback_recv(self, buffer):
         self.queue.put(buffer)
         return 0
 
-    def callback_send(self, buffer, buffer_length):
-        buffer[0:buffer_length] = self.send_buffer.read(buffer_length)
-        return 0
+    def callback_send(self, buffer_length):
+        return self.send_buffer_reader.read(buffer_length)

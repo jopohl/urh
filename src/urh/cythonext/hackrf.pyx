@@ -4,9 +4,17 @@ from libc.stdio cimport * # printf fflush
 from libc.stdlib cimport malloc, free
 cdef object f
 
-cdef int _c_callback(chackrf.hackrf_transfer* transfer)  with gil:
+cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:
     global f
-    (<object>f)(transfer.buffer[0:transfer.valid_length], transfer.valid_length)
+    (<object>f)(transfer.buffer[0:transfer.valid_length])
+    return 0
+
+cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
+    global f
+    cdef int i
+    bytearr = (<object>f)(transfer.valid_length)
+    for i in range(0, len(bytearr)):
+        transfer.buffer[i] = bytearr[i]
     return 0
 
 cdef chackrf.hackrf_device* _c_device
@@ -31,15 +39,15 @@ cpdef close():
 cpdef start_rx_mode(callback):
     global f
     f  = callback
-    return chackrf.hackrf_start_rx(_c_device, _c_callback, <void*>_c_callback)
+    return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*>_c_callback_recv)
 
 cpdef stop_rx_mode():
     return chackrf.hackrf_stop_rx(_c_device)
 
-cpdef start_tx_mode( callback):
+cpdef start_tx_mode(callback):
     global f
     f = callback
-    return chackrf.hackrf_start_tx(_c_device, _c_callback, <void *>callback)
+    return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *>_c_callback_send)
 
 cpdef stop_tx_mode():
     return chackrf.hackrf_stop_tx(_c_device)

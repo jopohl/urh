@@ -80,10 +80,14 @@ class HackRF(Device):
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
         if self.check_send_buffer_thread.is_alive():
+            logger.info("HackRF: closing send buffer thread")
             self.check_send_buffer_thread.join()
 
+        self.send_buffer_reader.close()
+        self.send_buffer.close()
+
         if self.is_open:
-            self.set_device_parameters()
+            logger.info("stopping HackRF tx mode")
             if hackrf.stop_tx_mode() == self.success:
                 logger.info("successfully stopped HackRF tx mode")
             else:

@@ -25,6 +25,7 @@ class Device(metaclass=ABCMeta):
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         self.current_index = 0
         self.is_receiving = False
+        self.is_transmitting = False
 
         self.read_queue_thread = threading.Thread(target=self.read_queue)
         self.read_queue_thread.daemon = True
@@ -113,6 +114,14 @@ class Device(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def start_tx_mode(self):
+        pass
+
+    @abstractmethod
+    def stop_tx_mode(self, msg):
+        pass
+
+    @abstractmethod
     def unpack_complex(self, buffer, nvalues):
         pass
 
@@ -151,3 +160,6 @@ class Device(metaclass=ABCMeta):
     def callback_recv(self, buffer):
         self.queue.put(buffer)
         return 0
+
+    def callback_send(self):
+        pass

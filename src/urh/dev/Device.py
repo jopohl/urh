@@ -54,7 +54,7 @@ class Device(metaclass=ABCMeta):
 
     @property
     def sent_data(self):
-        return self.sent_data[:self.current_sent_sample]
+        return self.samples_to_send[:self.current_sent_sample]
 
     @property
     def sending_finished(self):

@@ -25,19 +25,21 @@ class Device(metaclass=ABCMeta):
         self.send_buffer_reader = None
 
         self.samples_to_send = np.array([], dtype=np.complex64)
+        self.sending_repeats = 1 # How often shall the sending sequence be repeated? -1 = forever
+        self.current_sending_repeat = 0
 
         buf_size = initial_bufsize
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         self.current_recv_index = 0
-        self.current_send_index = 0
+        self.current_sent_sample = 0
         self.is_receiving = False
         self.is_transmitting = False
 
         self.read_queue_thread = threading.Thread(target=self.read_receiving_queue)
         self.read_queue_thread.daemon = True
 
-        self.check_send_buffer_thread = threading.Thread(target=self.check_send_buffer_empty)
-        self.check_send_buffer_thread.daemon = True
+        self.sendbuffer_thread = threading.Thread(target=self.check_send_buffer)
+        self.sendbuffer_thread.daemon = True
 
         while True:
             try:
@@ -52,11 +54,11 @@ class Device(metaclass=ABCMeta):
 
     @property
     def sent_data(self):
-        return self.sent_data[:self.current_send_index]
+        return self.sent_data[:self.current_sent_sample]
 
     @property
     def sending_finished(self):
-        return self.current_send_index >= len(self.samples_to_send) - 1
+        return self.current_sent_sample >= len(self.samples_to_send) - 1
 
     @property
     def bandwidth(self):
@@ -131,7 +133,7 @@ class Device(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def start_tx_mode(self, samples_to_send: np.ndarray):
+    def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
         pass
 
     @abstractmethod
@@ -176,18 +178,24 @@ class Device(metaclass=ABCMeta):
 
 
     def init_send_buffer(self, samples_to_send: np.ndarray):
+        self.current_sent_sample = 0
         self.samples_to_send = samples_to_send
         self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
         self.send_buffer_reader = io.BufferedReader(self.send_buffer)
 
-    def check_send_buffer_empty(self):
-        # TODO Num Repitions while loop
-        while self.is_transmitting and self.send_buffer_reader.peek():
-            time.sleep(0.1)
-            self.current_send_index = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
-            continue # Still data in send buffer
 
-        self.current_send_index = len(self.samples_to_send)
+    def check_send_buffer(self):
+        while self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1: # -1 = forever
+            self.init_send_buffer(self.samples_to_send)
+
+            while self.is_transmitting and self.send_buffer_reader.peek():
+                time.sleep(0.1)
+                self.current_sent_sample = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
+                continue # Still data in send buffer
+
+            self.current_sending_repeat += 1
+
+        self.current_sent_sample = len(self.samples_to_send)
 
 
     def callback_recv(self, buffer):

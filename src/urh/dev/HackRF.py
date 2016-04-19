@@ -65,13 +65,16 @@ class HackRF(Device):
                 logger.error("could not stop HackRF rx mode")
 
 
-    def start_tx_mode(self, samples_to_send: np.ndarray):
+    def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
         if self.is_open:
-            self.init_send_buffer(samples_to_send)
+            #self.init_send_buffer(samples_to_send)
             self.set_device_parameters()
+            self.sending_repeats = repeats
+            self.current_sending_repeat = 0
+
             if hackrf.start_tx_mode(self.callback_send) == self.success:
                 self.is_transmitting = True
-                self.check_send_buffer_thread.start()
+                self.sendbuffer_thread.start()
                 logger.info("successfully started HackRF tx mode")
             else:
                 self.is_transmitting = False
@@ -82,9 +85,9 @@ class HackRF(Device):
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        if self.check_send_buffer_thread.is_alive():
+        if self.sendbuffer_thread.is_alive():
             logger.info("HackRF: closing send buffer thread")
-            self.check_send_buffer_thread.join()
+            self.sendbuffer_thread.join()
 
         self.send_buffer_reader.close()
         self.send_buffer.close()
@@ -129,14 +132,9 @@ class HackRF(Device):
 
     def unpack_complex(self, buffer, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)
-        #unpacked = np.frombuffer(buffer, dtype=np.uint16)
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
         result.real = unpacked['r'] / 128.0
         result.imag = unpacked['i'] / 128.0
-
-        #
-        # for i in range(len(result)):
-        #     result[i] = self.__lut[unpacked[i]]
         return result
 
 

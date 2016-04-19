@@ -58,6 +58,7 @@ class Device(metaclass=ABCMeta):
 
     @property
     def sending_finished(self):
+        # current_sent_sample is only set in method check_send_buffer
         return self.current_sent_sample == len(self.samples_to_send)
 
     @property

@@ -13,6 +13,7 @@ cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
     global f
     cdef int i
     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+    # memcpy(transfer.buffer, bytebuf, len(bytebuf)); # len -> Koennte knallen, wenn letzte valide Bytes von bytebuf 0x00 sind. Evtl. size/sizeof als Alternative
     for i in range(0, len(bytebuf)):
         transfer.buffer[i] = bytebuf[i]
     return 0

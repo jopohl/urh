@@ -192,7 +192,8 @@ class Device(metaclass=ABCMeta):
         self.send_buffer_reader.seek(0)
 
     def check_send_buffer(self):
-        while self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1: # -1 = forever
+         # sendning_repeats -1 = forever
+        while (self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1) and self.is_transmitting:
             self.reset_send_buffer()
 
             while self.is_transmitting and self.send_buffer_reader.peek():

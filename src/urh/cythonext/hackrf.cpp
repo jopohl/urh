@@ -1308,7 +1308,7 @@ static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_recv(hackrf_transfer
 
 static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_send(hackrf_transfer *__pyx_v_transfer) {
   int __pyx_v_i;
-  PyObject *__pyx_v_bytearr = NULL;
+  PyObject *__pyx_v_bytebuf = 0;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1330,9 +1330,9 @@ static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_send(hackrf_transfer
   /* "src/urh/cythonext/hackrf.pyx":15
  *     global f
  *     cdef int i
- *     bytearr = (<object>f)(transfer.valid_length)             # <<<<<<<<<<<<<<
- *     for i in range(0, len(bytearr)):
- *         transfer.buffer[i] = bytearr[i]
+ *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)             # <<<<<<<<<<<<<<
+ *     for i in range(0, len(bytebuf)):
+ *         transfer.buffer[i] = bytebuf[i]
  */
   __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_transfer->valid_length); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -1363,28 +1363,33 @@ static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_send(hackrf_transfer
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_bytearr = __pyx_t_1;
+  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "bytes", Py_TYPE(__pyx_t_1)->tp_name), 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_bytebuf = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "src/urh/cythonext/hackrf.pyx":16
  *     cdef int i
- *     bytearr = (<object>f)(transfer.valid_length)
- *     for i in range(0, len(bytearr)):             # <<<<<<<<<<<<<<
- *         transfer.buffer[i] = bytearr[i]
+ *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+ *     for i in range(0, len(bytebuf)):             # <<<<<<<<<<<<<<
+ *         transfer.buffer[i] = bytebuf[i]
  *     return 0
  */
-  __pyx_t_6 = PyObject_Length(__pyx_v_bytearr); if (unlikely(__pyx_t_6 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(__pyx_v_bytebuf == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_6 = PyBytes_GET_SIZE(__pyx_v_bytebuf); if (unlikely(__pyx_t_6 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
     /* "src/urh/cythonext/hackrf.pyx":17
- *     bytearr = (<object>f)(transfer.valid_length)
- *     for i in range(0, len(bytearr)):
- *         transfer.buffer[i] = bytearr[i]             # <<<<<<<<<<<<<<
+ *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+ *     for i in range(0, len(bytebuf)):
+ *         transfer.buffer[i] = bytebuf[i]             # <<<<<<<<<<<<<<
  *     return 0
  * 
  */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_bytearr, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_bytebuf, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_8 = __Pyx_PyInt_As_uint8_t(__pyx_t_1); if (unlikely((__pyx_t_8 == (uint8_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -1392,8 +1397,8 @@ static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_send(hackrf_transfer
   }
 
   /* "src/urh/cythonext/hackrf.pyx":18
- *     for i in range(0, len(bytearr)):
- *         transfer.buffer[i] = bytearr[i]
+ *     for i in range(0, len(bytebuf)):
+ *         transfer.buffer[i] = bytebuf[i]
  *     return 0             # <<<<<<<<<<<<<<
  * 
  * cdef chackrf.hackrf_device* _c_device
@@ -1419,7 +1424,7 @@ static int __pyx_f_3src_3urh_9cythonext_6hackrf__c_callback_send(hackrf_transfer
   __Pyx_WriteUnraisable("src.urh.cythonext.hackrf._c_callback_send", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_bytearr);
+  __Pyx_XDECREF(__pyx_v_bytebuf);
   __Pyx_RefNannyFinishContext();
   #ifdef WITH_THREAD
   PyGILState_Release(__pyx_gilstate_save);

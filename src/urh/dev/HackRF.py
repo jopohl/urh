@@ -50,6 +50,8 @@ class HackRF(Device):
             else:
                 self.is_receiving = False
                 logger.error("could not start HackRF rx mode")
+        else:
+            logger.error("Could not start HackRF rx mode: Device not open")
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
@@ -74,7 +76,8 @@ class HackRF(Device):
             else:
                 self.is_transmitting = False
                 logger.error("could not start HackRF tx mode")
-
+        else:
+            logger.error("Could not start HackRF tx mode: Device not open")
 
 
     def stop_tx_mode(self, msg):
@@ -87,11 +90,14 @@ class HackRF(Device):
         self.send_buffer.close()
 
         if self.is_open:
-            logger.info("stopping HackRF tx mode")
-            if hackrf.stop_tx_mode() == self.success:
-                logger.info("successfully stopped HackRF tx mode")
-            else:
-                logger.error("could not stopped HackRF tx mode")
+            logger.info("stopping HackRF tx mode ({0})".format(msg))
+            logger.info("closing because stop_tx_mode of HackRF is bugged and never returns")
+            self.close()
+            #if hackrf.stop_tx_mode() == self.success:
+            # if hackrf.close
+            #     logger.info("successfully stopped HackRF tx mode")
+            # else:
+            #     logger.error("could not stopped HackRF tx mode")
 
     def set_device_bandwidth(self, bw):
         if self.is_open:

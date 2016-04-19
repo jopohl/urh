@@ -12,9 +12,9 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:
 cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
     global f
     cdef int i
-    bytearr = (<object>f)(transfer.valid_length)
-    for i in range(0, len(bytearr)):
-        transfer.buffer[i] = bytearr[i]
+    cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+    for i in range(0, len(bytebuf)):
+        transfer.buffer[i] = bytebuf[i]
     return 0
 
 cdef chackrf.hackrf_device* _c_device

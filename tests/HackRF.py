@@ -95,9 +95,8 @@ class TestHackRF(unittest.TestCase):
         while not hfc.sending_finished:
             print(hfc.current_send_index)
             time.sleep(1)
-       # hfc.stop_tx_mode("Test finished")
+        hfc.stop_tx_mode("Test finished")
         hfc.close()
-
 
 
     def test_lookup(self):

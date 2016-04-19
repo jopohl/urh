@@ -31,6 +31,10 @@ cpdef exit():
     chackrf.hackrf_exit()
     return ret
 
+cpdef reopen():
+    close()
+    return open()
+
 cpdef open():
     return chackrf.hackrf_open(&_c_device)
 

@@ -1,5 +1,7 @@
 import struct
 
+import time
+
 from urh.dev.Device import Device
 from urh.cythonext import hackrf
 import numpy as np
@@ -25,6 +27,10 @@ class HackRF(Device):
                 imag = (float(np.int8(i & 0xff))) * (1.0 / 128.0)
 
             self.__lut[i] = complex(real, imag)
+
+    def reopen(self):
+        if self.is_open:
+            hackrf.reopen()
 
     def open(self):
         if not self.is_open:
@@ -65,10 +71,15 @@ class HackRF(Device):
                 logger.error("could not stop HackRF rx mode")
 
 
+    def switch_from_rx2tx(self):
+        # https://github.com/mossmann/hackrf/pull/246/commits/4f9665fb3b43462e39a1592fc34f3dfb50de4a07
+        self.reopen()
+
     def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
         if self.is_open:
             self.init_send_parameters(samples_to_send, repeats)
 
+            t = time.time()
             if hackrf.start_tx_mode(self.callback_send) == self.success:
                 self.is_transmitting = True
                 self.sendbuffer_thread.start()
@@ -76,6 +87,7 @@ class HackRF(Device):
             else:
                 self.is_transmitting = False
                 logger.error("could not start HackRF tx mode")
+            print("other", 1000*(time.time()-t))
         else:
             logger.error("Could not start HackRF tx mode: Device not open")
 

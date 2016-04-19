@@ -98,6 +98,41 @@ class TestHackRF(unittest.TestCase):
         hfc.stop_tx_mode("Test finished")
         hfc.close()
 
+    def test_hackrf_class_send_recv(self):
+        while True:
+            t = time.time()
+            hfc = HackRF(1e6, 433.92e6, 20, 1e6)
+            hfc.open()
+            print("opening time:", time.time()-t)
+            hfc.start_rx_mode()
+            i = 0
+            t = time.time()
+            while i < 1:
+                #print("{0}/{1}".format(i+1, 5))
+                time.sleep(1)
+                i+=1
+            print("{0:,}".format(hfc.current_recv_index))
+            rcv_data = hfc.received_data
+            print("Rcv done {0}".format(time.time()-t))
+
+            t = time.time()
+            hfc.stop_rx_mode("Finished test")
+            #hfc.reopen()
+            #print("reopen", 1000*(time.time()-t))
+            #hfc.close()
+            #hfc.open()
+            time.sleep(1)
+            hfc.start_tx_mode(rcv_data, repeats=1)
+            print("Switch time:", 1000*(time.time()-t), "ms")
+            t = time.time()
+            while not hfc.sending_finished:
+                #print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat + 1, hfc.current_sent_sample))
+                time.sleep(0.01)
+            print("Send time", time.time()-t)
+            t = time.time()
+            hfc.stop_tx_mode("Test finished")
+            #hfc.close()
+            print("Close time", time.time()-t)
 
     def test_lookup(self):
         # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127

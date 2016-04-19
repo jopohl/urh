@@ -91,9 +91,9 @@ class TestHackRF(unittest.TestCase):
     def test_hackrf_class_send(self):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
         hfc.open()
-        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64), repeats=1)
+        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64), repeats=10)
         while not hfc.sending_finished:
-            print(hfc.current_sent_sample)
+            print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat+1, hfc.current_sent_sample))
             time.sleep(1)
         hfc.stop_tx_mode("Test finished")
         hfc.close()

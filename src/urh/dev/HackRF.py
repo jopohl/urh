@@ -67,10 +67,7 @@ class HackRF(Device):
 
     def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
         if self.is_open:
-            #self.init_send_buffer(samples_to_send)
-            self.set_device_parameters()
-            self.sending_repeats = repeats
-            self.current_sending_repeat = 0
+            self.init_send_parameters(samples_to_send, repeats)
 
             if hackrf.start_tx_mode(self.callback_send) == self.success:
                 self.is_transmitting = True

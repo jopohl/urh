@@ -172,7 +172,7 @@ class GeneratorTabController(QWidget):
             prefix = "Amplitude"
         elif mod_type == "PSK":
             prefix = "Phase"
-        elif mod_type == "FSK":
+        elif mod_type in ("FSK", "GFSK"):
             prefix = "Frequency"
         else:
             prefix = "Unknown Modulation Type (This should not happen...)"

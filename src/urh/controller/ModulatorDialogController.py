@@ -54,7 +54,8 @@ class ModulatorDialogController(QDialog):
         return mod
 
     def set_ui_for_current_modulator(self):
-        self.ui.comboBoxModulationType.setCurrentIndex(self.current_modulator.modulation_type)
+        index = self.ui.comboBoxModulationType.findText("*("+self.current_modulator.modulation_type_str+")", Qt.MatchWildcard)
+        self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
         self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
@@ -200,6 +201,8 @@ class ModulatorDialogController(QDialog):
         else:
             self.current_modulator.modulation_type_str = self.__cur_selected_mod_type()
             write_standard_parameters = True
+
+        self.__set_gauss_ui_visibility(self.__cur_selected_mod_type() == "GFSK")
 
         if self.__cur_selected_mod_type() == "ASK":
             self.ui.lParameterfor0.setText(self.tr("Amplitude for 0:"))
@@ -540,3 +543,13 @@ class ModulatorDialogController(QDialog):
     @pyqtSlot(int)
     def on_original_selection_changed(self, new_width: int):
         self.ui.lOriginalSignalSamplesSelected.setText(str(abs(new_width)))
+
+
+    def __set_gauss_ui_visibility(self, show:bool):
+        self.ui.lGaussBT.setVisible(show)
+        self.ui.lGaussWidth.setVisible(show)
+        self.ui.spinBoxGaussBT.setVisible(show)
+        self.ui.spinBoxGaussFilterWidth.setVisible(show)
+
+        self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
+        self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)

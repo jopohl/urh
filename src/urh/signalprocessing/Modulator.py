@@ -30,6 +30,9 @@ class Modulator(object):
         self.modulation_type = 0
         self.name = name
 
+        self.gauss_bt = 0.5   # bt product for gaussian filter (GFSK)
+        self.gauss_filter_width = 1 # filter width for gaussian filter (GFSK)
+
         self.param_for_zero = 0  # Freq, Amplitude (0..100%) or Phase (0..360)
         self.param_for_one = 100  # Freq, Amplitude (0..100%) or Phase (0..360)
 
@@ -182,7 +185,12 @@ class Modulator(object):
             fmid = (self.param_for_one + self.param_for_zero)/2
             dist = abs(fmid - self.param_for_one)
             if mod_type == "GFSK":
-                paramvector =  np.convolve(paramvector, self.gauss_fir(), mode="same")
+                gfir =  self.gauss_fir(bt=self.gauss_bt, filter_width=self.gauss_filter_width)
+                if len(paramvector) >= len(gfir):
+                    paramvector =  np.convolve(paramvector, gfir, mode="same")
+                else:
+                    # Prevent dimension crash later, because gaussian finite impulse response is longer then paramvector
+                    paramvector = np.convolve(gfir, paramvector, mode="same")[:len(paramvector)]
 
             f = fmid + dist * paramvector
 
@@ -202,14 +210,14 @@ class Modulator(object):
         """
 
         :param bt: normalized 3-dB bandwidth-symbol time product
-        :param span: Filter span in symbols
+        :param span: filter span in symbols
         :return:
         """
         # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
         k = range(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit)+1)
         ts = self.samples_per_bit / self.sample_rate # symbol time
-        a = np.sqrt(np.log(2)/2)*(ts/bt)
-        B = a / np.sqrt(np.log(2)/2) # filter bandwidth
+        #a = np.sqrt(np.log(2)/2)*(ts/bt)
+        #B = a / np.sqrt(np.log(2)/2) # filter bandwidth
         h = np.sqrt((2*np.pi)/(np.log(2))) * bt/ts * np.exp(-(((np.sqrt(2)*np.pi)/np.sqrt(np.log(2))*bt*k/self.samples_per_bit)**2))
         return h / h.sum()
 

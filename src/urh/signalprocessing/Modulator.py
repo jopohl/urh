@@ -186,7 +186,9 @@ class Modulator(object):
 
             f = fmid + dist * paramvector
 
-            phi = np.zeros(len(f))
+            # sin(2*pi*f_1*t_1 + phi_1) = sin(2*pi*f_2*t_1 + phi_2) <=> phi_2 = 2*pi*t_1*(f_1 - f_2) + phi_1
+            phi = np.empty(len(f))
+            phi[0] = self.carrier_phase_deg
             for i in range(0, len(phi) - 1):
                 phi[i+1] = 2 * np.pi * t[i] * (f[i]-f[i+1]) + phi[i] # Correct the phase to prevent spiky jumps
         else:

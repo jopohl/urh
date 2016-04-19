@@ -18,7 +18,7 @@ class GFSK(unittest.TestCase):
         modulator.param_for_one = 20e3
         modulator.param_for_zero = 10e3
         modulator.carrier_freq_hz = 15e3
-        modulator.carrier_phase_deg = 0
+        modulator.carrier_phase_deg = 90
 
 
         modulator.modulate([True, False, True, False, False], 77)

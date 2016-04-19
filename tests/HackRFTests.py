@@ -134,6 +134,7 @@ class TestHackRF(unittest.TestCase):
         print(br.read(2))
         print(br.read(2))
         print(br.read(2))
+        br.seek(0)
         print(br.read1(2))
         print(br.tell())
         print(bool(br.peek()))

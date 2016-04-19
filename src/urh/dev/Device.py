@@ -176,23 +176,23 @@ class Device(metaclass=ABCMeta):
                     self.byte_buffer = self.byte_buffer[end:]
             time.sleep(0.01)
 
-
-    def init_send_buffer(self):
-        self.current_sent_sample = 0
-        self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
-        self.send_buffer_reader = io.BufferedReader(self.send_buffer)
-
-
     def init_send_parameters(self, samples_to_send: np.ndarray, repeats: int):
         self.samples_to_send = samples_to_send
         self.set_device_parameters()
         self.sending_repeats = repeats
         self.current_sending_repeat = 0
+        self.current_sent_sample = 0
 
+        self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
+        self.send_buffer_reader = io.BufferedReader(self.send_buffer)
+
+    def reset_send_buffer(self):
+        self.current_sent_sample = 0
+        self.send_buffer_reader.seek(0)
 
     def check_send_buffer(self):
         while self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1: # -1 = forever
-            self.init_send_buffer()
+            self.reset_send_buffer()
 
             while self.is_transmitting and self.send_buffer_reader.peek():
                 time.sleep(0.1)
@@ -201,7 +201,8 @@ class Device(metaclass=ABCMeta):
 
             self.current_sending_repeat += 1
 
-        self.current_sent_sample = len(self.samples_to_send)
+        if self.current_sent_sample >= len(self.samples_to_send) - 1: # Mark transmission as finished
+            self.current_sent_sample = len(self.samples_to_send)
 
 
     def callback_recv(self, buffer):

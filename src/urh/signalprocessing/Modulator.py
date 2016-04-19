@@ -183,22 +183,17 @@ class Modulator(object):
             dist = abs(fmid - self.param_for_one)
             if mod_type == "GFSK":
                 paramvector =  np.convolve(paramvector, self.gauss_fir(), mode="same")
+
             f = fmid + dist * paramvector
+
+            phi = np.zeros(len(f))
+            for i in range(0, len(phi) - 1):
+                phi[i+1] = 2 * np.pi * t[i] * (f[i]-f[i+1]) + phi[i] # Correct the phase to prevent spiky jumps
         else:
             f = self.carrier_freq_hz
 
-        #c = np.zeros(len(paramvector))
-        #for ii in range(0, len(paramvector) -1):
-        #    c[ii+1] = c[ii] + paramvector[ii] * (self.sample_rate/ self.samples_per_bit)
-
-        #i = np.cos(c)
-        #q = np.sin(c)
-        #m = np.sin(2*np.pi*fmid*t)*i + np.cos(2*np.pi*fmid*t)*q
-        #m = np.cos(2*np.pi*self.carrier_freq_hz*t + 2*np.pi*3*c)
-        #self.modulated_samples.real[:total_samples - pause] = m
         self.modulated_samples.imag[:total_samples - pause] = a * np.sin(2 * np.pi * f * t + phi)
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
-
 
 
     def gauss_fir(self, bt=0.5, filter_width=1):

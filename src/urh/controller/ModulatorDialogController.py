@@ -171,6 +171,11 @@ class ModulatorDialogController(QDialog):
         else:
             self.ui.btnRestoreBits.setEnabled(True)
 
+    def __cur_selected_mod_type(self):
+        s = self.ui.comboBoxModulationType.currentText()
+        return s[s.rindex("(")+1:s.rindex(")")]
+
+
     @pyqtSlot()
     def on_sample_rate_changed(self):
         if int(self.ui.spinBoxSampleRate.value()) > 0:
@@ -190,13 +195,13 @@ class ModulatorDialogController(QDialog):
 
     @pyqtSlot()
     def on_modulation_type_changed(self):
-        if self.current_modulator.modulation_type == self.ui.comboBoxModulationType.currentIndex():
+        if self.current_modulator.modulation_type_str == self.__cur_selected_mod_type():
             write_standard_parameters = False
         else:
-            self.current_modulator.modulation_type = self.ui.comboBoxModulationType.currentIndex()
+            self.current_modulator.modulation_type_str = self.__cur_selected_mod_type()
             write_standard_parameters = True
 
-        if self.ui.comboBoxModulationType.currentIndex() == 0:
+        if self.__cur_selected_mod_type() == "ASK":
             self.ui.lParameterfor0.setText(self.tr("Amplitude for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Amplitude for 1:"))
             self.ui.spinBoxParameter0.auto_suffix = False
@@ -216,7 +221,7 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        elif self.ui.comboBoxModulationType.currentIndex() == 1:
+        elif self.__cur_selected_mod_type() in ("FSK", "GFSK"):
             self.ui.spinBoxParameter0.auto_suffix = True
             self.ui.spinBoxParameter1.auto_suffix = True
             self.ui.lParameterfor0.setText(self.tr("Frequency for 0:"))
@@ -233,7 +238,7 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        elif self.ui.comboBoxModulationType.currentIndex() == 2:
+        elif self.__cur_selected_mod_type() == "PSK":
             self.ui.spinBoxParameter0.auto_suffix = False
             self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.lParameterfor0.setText(self.tr("Phase (degree) for 0:"))
@@ -253,7 +258,8 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        self.draw_modulated()
+        self.ui.spinBoxParameter0.editingFinished.emit()
+        self.ui.spinBoxParameter1.editingFinished.emit()
 
 
     def resizeEvent(self, event: QResizeEvent):
@@ -476,7 +482,7 @@ class ModulatorDialogController(QDialog):
         self.autodetect_fsk_freqs()
 
     def autodetect_fsk_freqs(self):
-        if self.ui.comboBoxModulationType.currentIndex() != 1:
+        if self.__cur_selected_mod_type() not in ("FSK", "GFSK"):
             return
 
         try:

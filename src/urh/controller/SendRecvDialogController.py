@@ -10,9 +10,9 @@ from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 from urh import constants
 from urh.FFTSceneManager import FFTSceneManager
 from urh.LiveSceneManager import LiveSceneManager
-from urh.dev.ReceiverThread import ReceiverThread
-from urh.dev.SenderThread import SenderThread
-from urh.dev.SpectrumThread import SpectrumThread
+from urh.dev.gr.ReceiverThread import ReceiverThread
+from urh.dev.gr.SenderThread import SenderThread
+from urh.dev.gr.SpectrumThread import SpectrumThread
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors

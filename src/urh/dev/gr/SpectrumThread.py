@@ -2,7 +2,7 @@ import socket
 
 import numpy as np
 
-from urh.dev.AbstractBaseThread import AbstractBaseThread
+from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 
 
 class SpectrumThread(AbstractBaseThread):

@@ -3,7 +3,7 @@ import socket
 import numpy as np
 from PyQt5.QtCore import pyqtSignal
 
-from urh.dev.AbstractBaseThread import AbstractBaseThread
+from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 
 
 class ReceiverThread(AbstractBaseThread):
@@ -21,7 +21,7 @@ class ReceiverThread(AbstractBaseThread):
                 self.data = np.zeros(buf_size, dtype=np.complex64)
                 break
             except (MemoryError, ValueError):
-                buf_size /= 2
+                buf_size //= 2
 
     def run(self):
         self.initalize_process()

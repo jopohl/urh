@@ -4,9 +4,9 @@ import time
 import numpy as np
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtWidgets import QApplication
-
 from urh.cythonext.signalFunctions import grab_pulse_lens
-from urh.dev.ReceiverThread import ReceiverThread
+
+from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal

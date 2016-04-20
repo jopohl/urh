@@ -214,13 +214,11 @@ class Modulator(object):
         :return:
         """
         # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
-        k = range(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit)+1)
+        k = np.arange(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit)+1)
         ts = self.samples_per_bit / self.sample_rate # symbol time
         #a = np.sqrt(np.log(2)/2)*(ts/bt)
         #B = a / np.sqrt(np.log(2)/2) # filter bandwidth
         h = np.sqrt((2*np.pi)/(np.log(2))) * bt/ts * np.exp(-(((np.sqrt(2)*np.pi)/np.sqrt(np.log(2))*bt*k/self.samples_per_bit)**2))
-        h5 = (bt*k/self.samples_per_bit)
-       # h6 =
         return h / h.sum()
 
     @staticmethod

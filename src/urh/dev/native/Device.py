@@ -185,9 +185,7 @@ class Device(metaclass=ABCMeta):
         self.current_sending_repeat = 0
         self.current_sent_sample = 0
 
-        t = time.time()
         self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
-        print("1", 1000*(time.time()-t))
         self.send_buffer_reader = io.BufferedReader(self.send_buffer)
 
     def reset_send_buffer(self):

@@ -1,14 +1,11 @@
+import io
+import time
 import unittest
 
-import sys
-
-import time
-
-import io
 import numpy as np
 
 from urh.cythonext import hackrf
-from urh.dev.HackRF import HackRF
+from urh.dev.native.HackRF import HackRF
 
 
 class TestHackRF(unittest.TestCase):
@@ -117,11 +114,10 @@ class TestHackRF(unittest.TestCase):
 
             t = time.time()
             hfc.stop_rx_mode("Finished test")
-            #hfc.reopen()
+            hfc.reopen()
             #print("reopen", 1000*(time.time()-t))
             #hfc.close()
             #hfc.open()
-            time.sleep(1)
             hfc.start_tx_mode(rcv_data, repeats=1)
             print("Switch time:", 1000*(time.time()-t), "ms")
             t = time.time()

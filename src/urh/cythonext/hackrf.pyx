@@ -1,7 +1,5 @@
 cimport chackrf
-cimport numpy as np
-from libc.stdio cimport * # printf fflush
-from libc.stdlib cimport malloc, free
+from libc.stdlib cimport malloc
 cdef object f
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:

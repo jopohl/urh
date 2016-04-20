@@ -1,10 +1,7 @@
-import struct
-
-import time
-
-from urh.dev.Device import Device
-from urh.cythonext import hackrf
 import numpy as np
+
+from urh.cythonext import hackrf
+from urh.dev.native.Device import Device
 from urh.util.Logger import logger
 
 
@@ -79,7 +76,6 @@ class HackRF(Device):
         if self.is_open:
             self.init_send_parameters(samples_to_send, repeats)
 
-            t = time.time()
             if hackrf.start_tx_mode(self.callback_send) == self.success:
                 self.is_transmitting = True
                 self.sendbuffer_thread.start()
@@ -87,7 +83,6 @@ class HackRF(Device):
             else:
                 self.is_transmitting = False
                 logger.error("could not start HackRF tx mode")
-            print("other", 1000*(time.time()-t))
         else:
             logger.error("Could not start HackRF tx mode: Device not open")
 

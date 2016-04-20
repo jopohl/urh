@@ -219,6 +219,8 @@ class Modulator(object):
         #a = np.sqrt(np.log(2)/2)*(ts/bt)
         #B = a / np.sqrt(np.log(2)/2) # filter bandwidth
         h = np.sqrt((2*np.pi)/(np.log(2))) * bt/ts * np.exp(-(((np.sqrt(2)*np.pi)/np.sqrt(np.log(2))*bt*k/self.samples_per_bit)**2))
+        h5 = (bt*k/self.samples_per_bit)
+       # h6 =
         return h / h.sum()
 
     @staticmethod

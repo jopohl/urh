@@ -86,6 +86,8 @@ class ModulatorDialogController(QDialog):
         self.ui.gVData.zoomed.connect(self.on_carrier_data_modulated_zoomed)
         self.ui.gVModulated.sel_area_width_changed.connect(self.on_modulated_selection_changed)
         self.ui.gVOriginalSignal.sel_area_width_changed.connect(self.on_original_selection_changed)
+        self.ui.spinBoxGaussBT.editingFinished.connect(self.on_gauss_bt_edited)
+        self.ui.spinBoxGaussFilterWidth.editingFinished.connect(self.on_gaus_filter_wdith_edited)
 
         self.ui.chkBoxLockSIV.stateChanged.connect(self.on_lock_siv_changed)
         self.ui.btnRestoreBits.clicked.connect(self.on_btn_restore_bits_clicked)
@@ -192,6 +194,16 @@ class ModulatorDialogController(QDialog):
     @pyqtSlot()
     def on_modulation_parameter_one_changed(self):
         self.current_modulator.param_for_one = self.ui.spinBoxParameter1.value()
+        self.draw_modulated()
+
+    @pyqtSlot()
+    def on_gauss_bt_edited(self):
+        self.current_modulator.gauss_bt = self.ui.spinBoxGaussBT.value()
+        self.draw_modulated()
+
+    @pyqtSlot()
+    def on_gaus_filter_wdith_edited(self):
+        self.current_modulator.gauss_filter_width = self.ui.spinBoxGaussFilterWidth.value()
         self.draw_modulated()
 
     @pyqtSlot()

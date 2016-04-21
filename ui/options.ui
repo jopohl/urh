@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
+    <width>746</width>
     <height>486</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabInterpretation">
       <attribute name="title">
@@ -229,43 +229,40 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>Available Devices</string>
+          <string>Gnuradio options</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QLabel" name="label_5">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditPython2Interpreter"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Python2 interpreter:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="label_11">
             <property name="font">
              <font>
               <italic>true</italic>
              </font>
             </property>
             <property name="text">
-             <string>Choose the selectable Devices in send/receive dialogs</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
+             <string>Needed for Gnuradio backend only</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QCheckBox" name="chkBoxUSRP">
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="lGnuradioInstalled">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
-             <string>USRP</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chkBoxHackRF">
-            <property name="text">
-             <string>HackRF</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>Gnuradio installation found</string>
             </property>
            </widget>
           </item>
@@ -273,15 +270,50 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0" rowspan="3">
+          <widget class="QListWidget" name="listWidgetDevices">
+           <item>
+            <property name="text">
+             <string>HackRF</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>USRP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="rbGnuradioBackend">
+           <property name="text">
+            <string>Gnuradio backend</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
             <string>Default sending repititions:</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="chkBoxEnabled">
+           <property name="text">
+            <string>Enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QRadioButton" name="rbNativeBackend">
+           <property name="text">
+            <string>Native backend (recommended)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
           <widget class="QSpinBox" name="spinBoxNumSendingRepeats">
            <property name="specialValueText">
             <string>Infinite</string>
@@ -294,6 +326,13 @@
            </property>
            <property name="displayIntegerBase">
             <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>

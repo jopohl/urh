@@ -1,20 +1,42 @@
+from subprocess import call, DEVNULL
+
 from urh import constants
 import os
 import sys
 from enum import Enum
 
 class Backends(Enum):
+    none = 0
     native = 1
     grc = 2
 
 
 class BackendContainer(object):
-    def __init__(self, avail_backends: set, selected_backend: Backends):
+    def __init__(self, name, avail_backends: set):
+        self.name = name
         self.avail_backends = avail_backends
-        self.selected_backend = selected_backend
+        settings = constants.SETTINGS
+        self.selected_backend = Backends[settings.value(name+"_selected_backend", "none")]
+        if self.selected_backend != Backends.none and self.selected_backend not in self.avail_backends:
+            self.selected_backend = Backends.none
+
+        self.is_enabled = settings.value(name+"_is_enabled", True, bool)
 
     def __repr__(self):
         return "avail backends: " +str(self.avail_backends) + "| selected backend:" + str(self.selected_backend)
+
+    def set_enabled(self, enabled: bool):
+        self.is_enabled = enabled
+        self.write_settings()
+
+    def set_selected_backend(self, sel_backend: Backends):
+        self.selected_backend = sel_backend
+        self.write_settings()
+
+    def write_settings(self):
+        settings = constants.SETTINGS
+        settings.setValue(self.name + "_is_enabled", self.is_enabled)
+        settings.setValue(self.name + "_selected_backend", self.selected_backend.name)
 
 class BackendHandler(object):
     """
@@ -25,20 +47,18 @@ class BackendHandler(object):
     4) provide wrapper methods for devices for calling with the right backend
 
     """
-
-
-
     DEVICE_NAMES = ("HackRF", "USRP")
 
     def __init__(self):
-        self.gnuradio_exe = constants.SETTINGS.value('gnuradio_exe')
-        self.python2_exe = constants.SETTINGS.value('python2_exe')
+        self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
         else:
             self.path = os.path.join(os.path.dirname(sys.executable), "dev")
 
         self.device_backends = {}
+        """:type: dict[str, BackendContainer] """
+
         self.get_backends()
 
     @property
@@ -47,8 +67,10 @@ class BackendHandler(object):
 
     @property
     def gnuradio_installed(self) -> bool:
-        return os.path.isfile(self.gnuradio_exe) and os.path.isfile(self.python2_exe)
-
+        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
+            return call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+        else:
+            return False
     @property
     def hackrf_native_enabled(self) -> bool:
          try:
@@ -96,8 +118,18 @@ class BackendHandler(object):
         self.device_backends.clear()
         for device_name in self.DEVICE_NAMES:
             ab = self.avail_backends_for_device(device_name)
-            sb = None # TODO read from settings
-            self.device_backends[device_name.lower()] = BackendContainer(ab, sb)
+            self.device_backends[device_name.lower()] = BackendContainer(device_name.lower(), ab)
+
+    def __get_python2_interpreter(self):
+        paths = os.get_exec_path()
+
+        for p in paths:
+            for prog in ["python2", "python2.exe"]:
+                attempt = os.path.join(p, prog)
+                if os.path.isfile(attempt):
+                    return attempt
+
+        return ""
 
 if __name__ == "__main__":
     bh = BackendHandler()

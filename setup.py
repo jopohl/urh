@@ -61,9 +61,18 @@ def get_ext_modules():
     return extensions
 
 def get_dev_modules():
-    # Check if lib is there, if yes add to extensions
-    #  libraries = ["hackrf"] if f == "hackrf" else [],
-    pass
+    # Todo: Check if lib is there, if yes add to extensions
+    ext = ".cpp"
+    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/dev/native/lib") if f.endswith(ext)]
+    libs = {"hackrf": "hackrf"}
+
+    extensions = [Extension("urh.dev.native.lib." + f, ["src/urh/dev/native/lib" + f + ext],
+                        #include_dirs=[numpy.get_include()],
+                        extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
+                        libraries=[libs[f]],
+                        extra_link_args=[OPEN_MP_FLAG],
+                        language="c++") for f in filenames]
+    return extensions
 
 import generate_ui
 generate_ui.gen()
@@ -77,7 +86,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     packages=get_packages(),
-    ext_modules=get_ext_modules(),
+    ext_modules=get_ext_modules() + get_dev_modules(),
     # data_files=[("data", "")],
         scripts=["bin/urh"], requires=['PyQt5', 'numpy']
 )

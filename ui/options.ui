@@ -272,18 +272,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0" rowspan="3">
-          <widget class="QListWidget" name="listWidgetDevices">
-           <item>
-            <property name="text">
-             <string>HackRF</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>USRP</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QListWidget" name="listWidgetDevices"/>
          </item>
          <item row="2" column="1">
           <widget class="QRadioButton" name="rbGnuradioBackend">
@@ -300,7 +289,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QCheckBox" name="chkBoxEnabled">
+          <widget class="QCheckBox" name="chkBoxDeviceEnabled">
            <property name="text">
             <string>Enabled</string>
            </property>

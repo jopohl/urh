@@ -17,13 +17,29 @@ class BackendContainer(object):
         self.avail_backends = avail_backends
         settings = constants.SETTINGS
         self.selected_backend = Backends[settings.value(name+"_selected_backend", "none")]
-        if self.selected_backend != Backends.none and self.selected_backend not in self.avail_backends:
+        if self.selected_backend == Backends.none:
+            if Backends.native in self.avail_backends:
+                self.selected_backend = Backends.native
+            elif Backends.grc in self.avail_backends:
+                self.selected_backend = Backends.grc
+        elif self.selected_backend not in self.avail_backends:
             self.selected_backend = Backends.none
 
         self.is_enabled = settings.value(name+"_is_enabled", True, bool)
+        if len(self.avail_backends) == 0:
+            self.is_enabled = False
 
     def __repr__(self):
         return "avail backends: " +str(self.avail_backends) + "| selected backend:" + str(self.selected_backend)
+
+
+    @property
+    def has_gnuradio_backend(self):
+        return Backends.grc in self.avail_backends
+
+    @property
+    def has_native_backend(self):
+        return Backends.native in self.avail_backends
 
     def set_enabled(self, enabled: bool):
         self.is_enabled = enabled

@@ -18,10 +18,10 @@ class ReceiverThread(AbstractBaseThread):
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         while True:
             try:
-                self.data = np.zeros(buf_size, dtype=np.complex64)
+                self.data = np.zeros(int(buf_size), dtype=np.complex64)
                 break
             except (MemoryError, ValueError):
-                buf_size //= 2
+                buf_size /= 2
 
     def run(self):
         self.initalize_process()

@@ -39,9 +39,9 @@ class ProtocolSniffDialogController(QDialog):
 
         self.ui.cbDevice.clear()
         items = []
-        if constants.SETTINGS.value('usrp_available', type=bool):
+        if constants.SETTINGS.value('usrp_is_enabled', type=bool):
             items.append("USRP")
-        if constants.SETTINGS.value('hackrf_available', type=bool):
+        if constants.SETTINGS.value('hackrf_is_enabled', type=bool):
             items.append("HackRF")
         self.ui.cbDevice.addItems(items)
         if device in items:

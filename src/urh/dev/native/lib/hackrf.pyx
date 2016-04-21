@@ -1,6 +1,8 @@
 cimport chackrf
 from libc.stdlib cimport malloc
+from libc.string cimport memcpy
 cdef object f
+from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:
     global f
@@ -9,11 +11,8 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:
 
 cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
     global f
-    cdef int i
     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
-    # memcpy(transfer.buffer, bytebuf, len(bytebuf)); # len -> Koennte knallen, wenn letzte valide Bytes von bytebuf 0x00 sind. Vielleicht size/sizeof als Alternative
-    for i in range(0, len(bytebuf)):
-        transfer.buffer[i] = bytebuf[i]
+    memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
     return 0
 
 cdef chackrf.hackrf_device* _c_device

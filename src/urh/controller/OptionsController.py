@@ -120,3 +120,9 @@ class OptionsController(QDialog):
 
         if not 'show_pause_as_time' in keys:
             settings.setValue('show_pause_as_time', False)
+
+        if not 'gnuradio_path' in keys:
+            settings.setValue('gnuradio_exe', '')
+
+        if not 'python2_path' in keys:
+            settings.setValue('python2_exe', '')

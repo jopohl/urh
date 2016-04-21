@@ -60,6 +60,10 @@ def get_ext_modules():
 
     return extensions
 
+def get_dev_modules():
+    # Check if lib is there, if yes add to extensions
+    #  libraries = ["hackrf"] if f == "hackrf" else [],
+    pass
 
 import generate_ui
 generate_ui.gen()

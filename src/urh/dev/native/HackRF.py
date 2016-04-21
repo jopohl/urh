@@ -1,7 +1,7 @@
 import numpy as np
 
-from urh.cythonext import hackrf
 from urh.dev.native.Device import Device
+from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
 
 

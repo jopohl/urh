@@ -4,8 +4,8 @@ import unittest
 
 import numpy as np
 
-from urh.cythonext import hackrf
 from urh.dev.native.HackRF import HackRF
+from urh.dev.native.lib import hackrf
 
 
 class TestHackRF(unittest.TestCase):

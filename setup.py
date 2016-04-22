@@ -1,6 +1,7 @@
 import os
 import sys
 from distutils.core import setup, Extension
+from distutils import ccompiler
 import numpy
 import src.urh.version as version
 
@@ -60,18 +61,23 @@ def get_ext_modules():
 
     return extensions
 
-def get_dev_modules():
-    # Todo: Check if lib is there, if yes add to extensions
-    ext = ".cpp"
-    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/dev/native/lib") if f.endswith(ext)]
-    libs = {"hackrf": "hackrf"}
+def get_device_modules():
+    compiler = ccompiler.new_compiler()
 
-    extensions = [Extension("urh.dev.native.lib." + f, ["src/urh/dev/native/lib" + f + ext],
-                        #include_dirs=[numpy.get_include()],
-                        extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
-                        libraries=[libs[f]],
-                        extra_link_args=[OPEN_MP_FLAG],
-                        language="c++") for f in filenames]
+    extensions = []
+    devices = {
+                "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+              }
+
+    for dev_name, params in devices.items():
+        if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+            print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
+            e = Extension("urh.dev.native.lib."+dev_name, ["src/urh/dev/native/lib/{0}.cpp".format(dev_name)],
+                          extra_compile_args= ["-static", "-static-libgcc", OPEN_MP_FLAG],
+                          extra_link_args=[OPEN_MP_FLAG], language="c++",
+                          libraries=[params["lib"]])
+            extensions.append(e)
+        os.remove("a.out") # Temp file for checking
     return extensions
 
 #import generate_ui
@@ -86,7 +92,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     packages=get_packages(),
-    ext_modules=get_ext_modules() + get_dev_modules(),
+    ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],
         scripts=["bin/urh"], requires=['PyQt5', 'numpy']
 )

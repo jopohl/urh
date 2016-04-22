@@ -1,9 +1,8 @@
-from distutils.core import setup
-from distutils.extension import Extension
+import tempfile
+from distutils.core import setup, Extension
 
 import shutil
 
-from urh.cythonext import build
 import os
 import sys
 
@@ -31,6 +30,9 @@ else:
                            'initializedcheck': False,
                            }
 
+build_dir = os.path.join(tempfile.gettempdir(), "build")
+
+
 def main():
     try:
         from Cython.Distutils import build_ext
@@ -56,7 +58,7 @@ def main():
         ext_modules=extensions
     )
 
-    build_path = os.path.join(build.build_dir, "result")
+    build_path = os.path.join(build_dir, "result")
     filenames = os.listdir(build_path)
 
     for f in filenames:
@@ -86,7 +88,7 @@ def main():
         ext_modules=extensions
     )
 
-    build_path = os.path.join(build.build_dir, "result")
+    build_path = os.path.join(build_dir, "result")
     filenames = os.listdir(build_path)
 
     for f in filenames:

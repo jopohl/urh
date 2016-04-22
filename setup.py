@@ -77,6 +77,8 @@ def get_device_modules():
                           extra_link_args=[OPEN_MP_FLAG], language="c++",
                           libraries=[params["lib"]])
             extensions.append(e)
+        else:
+             print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
         os.remove("a.out") # Temp file for checking
     return extensions
 

@@ -79,7 +79,10 @@ def get_device_modules():
             extensions.append(e)
         else:
              print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
-        os.remove("a.out") # Temp file for checking
+        try:
+            os.remove("a.out") # Temp file for checking
+        except OSError:
+            pass
     return extensions
 
 #import generate_ui

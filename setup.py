@@ -25,27 +25,11 @@ URH_DIR = "urh"
 
 def get_packages():
     packages = [URH_DIR]
-
-    hiera = ""
+    separator = os.path.normpath("/")
     for dirpath, dirnames, filenames in os.walk(os.path.join("./src/", URH_DIR)):
-
-        for dirname in dirnames:
-            if dirname == "__pycache__":
-                continue
-
-
-
-    # for path in os.listdir(os.path.join("./src/", URH_DIR)):
-    #     if path == "__pycache__":
-    #         continue
-    #     if os.path.isdir(os.path.join(os.path.join("./src/", URH_DIR), path)):
-    #         packages.append(URH_DIR + "." + path)
-    #     if path == "ui":
-    #         for subdir in UI_SUBDIRS:
-    #             packages.append(URH_DIR + "." + path + "." + subdir)
-    #     if path == "plugins":
-    #         for plugin in PLUGINS:
-    #             packages.append(URH_DIR + "." + path + "." + plugin)
+        package_path = os.path.relpath(dirpath, os.path.join("./src/",URH_DIR)).replace(separator, ".")
+        if len(package_path) > 1:
+            packages.append(URH_DIR+"."+package_path)
 
     return packages
 

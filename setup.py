@@ -74,8 +74,8 @@ def get_dev_modules():
                         language="c++") for f in filenames]
     return extensions
 
-import generate_ui
-generate_ui.gen()
+#import generate_ui
+#generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 setup(
     name="Universal Radio Hacker",

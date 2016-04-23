@@ -60,7 +60,6 @@ class BackendHandler(object):
     1) List available backends for devices
     2) List available devices (atleast one backend)
     3) Manage the selection of devices backend
-    4) provide wrapper methods for devices for calling with the right backend
 
     """
     DEVICE_NAMES = ("HackRF", "USRP")

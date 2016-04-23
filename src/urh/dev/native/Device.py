@@ -12,7 +12,6 @@ class Device(metaclass=ABCMeta):
     BYTES_PER_SAMPLE = None
 
     def __init__(self, bw, freq, gain, srate, initial_bufsize=8e9, is_ringbuffer=False):
-        self.lock = threading.Lock()
         self.byte_buffer = b''
 
         self.__bandwidth = bw

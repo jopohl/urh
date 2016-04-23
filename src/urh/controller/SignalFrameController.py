@@ -541,7 +541,6 @@ class SignalFrameController(QFrame):
             return
 
         self.protocol_selection_is_updateable = False
-        # TODO Temporär Gruppe anlegen und convert index aufrufen? Oder statische methode in ProtocolGroup.
         sel_start = int(self.proto_analyzer.convert_index(sel_start, old_protoview, self.proto_view, True)[0])
         sel_end = int(math.ceil(self.proto_analyzer.convert_index(sel_end, old_protoview, self.proto_view, True)[1]))
 
@@ -828,7 +827,6 @@ class SignalFrameController(QFrame):
             self.ui.txtEdProto.blockSignals(False)
             return
 
-        # TODO: Temporär Gruppe für Convert anlegen? Oder statische Methode in ProtocolGroup hinzufügen
         startindex = int(
             protocol.convert_index(startindex, 0, self.proto_view, True)[0])
         endindex = int(math.ceil(

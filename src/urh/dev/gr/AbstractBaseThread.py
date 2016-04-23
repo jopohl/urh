@@ -6,6 +6,7 @@ from subprocess import Popen, PIPE
 from threading import Thread
 
 from PyQt5.QtCore import QThread, pyqtSignal
+from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
 
@@ -99,8 +100,9 @@ class AbstractBaseThread(QThread):
         if not hasattr(sys, 'frozen'):
             rp = os.path.dirname(os.path.realpath(__file__))
         else:
-            rp = os.path.join(os.path.dirname(sys.executable), "dev")
+            rp = os.path.join(os.path.dirname(sys.executable), "dev", "gr")
 
+        rp = os.path.realpath(os.path.join(rp, "scripts"))
         suffix = "_recv.py" if self._receiving else "_send.py"
         filename = self.device.lower() + suffix
 
@@ -145,8 +147,6 @@ class AbstractBaseThread(QThread):
         result = b"".join(result)
         return result.decode("utf-8")
 
-    def clear_data(self):
-        self.current_index = 0
 
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):
@@ -178,5 +178,5 @@ class AbstractBaseThread(QThread):
             self.tb_process.terminate()
             self.tb_process = None
 
-        print(msg)
+        logger.info(msg)
         self.stopped.emit()

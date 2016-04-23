@@ -2211,12 +2211,12 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
           __pyx_t_12 = __pyx_v_samples_per_pixel;
           if (__pyx_t_12 == 0) abort();
           {
-              PY_LONG_LONG __pyx_parallel_temp0 = 0xbad0bad0;
+              float __pyx_parallel_temp0 = __PYX_NAN();
               float __pyx_parallel_temp1 = __PYX_NAN();
-              float __pyx_parallel_temp2 = __PYX_NAN();
+              PY_LONG_LONG __pyx_parallel_temp2 = 0xbad0bad0;
               float __pyx_parallel_temp3 = __PYX_NAN();
-              float __pyx_parallel_temp4 = __PYX_NAN();
-              PY_LONG_LONG __pyx_parallel_temp5 = 0xbad0bad0;
+              PY_LONG_LONG __pyx_parallel_temp4 = 0xbad0bad0;
+              float __pyx_parallel_temp5 = __PYX_NAN();
               PY_LONG_LONG __pyx_parallel_temp6 = 0xbad0bad0;
               PY_LONG_LONG __pyx_parallel_temp7 = 0xbad0bad0;
               const char *__pyx_parallel_filename = NULL; int __pyx_parallel_lineno = 0, __pyx_parallel_clineno = 0;
@@ -2233,7 +2233,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
               if (__pyx_t_14 > 0)
               {
                   #ifdef _OPENMP
-                  #pragma omp parallel private(__pyx_t_19, __pyx_t_17, __pyx_t_4, __pyx_t_15, __pyx_t_16, __pyx_t_18) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
+                  #pragma omp parallel private(__pyx_t_19, __pyx_t_4, __pyx_t_18, __pyx_t_15, __pyx_t_17, __pyx_t_16) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
                   #endif /* _OPENMP */
                   {
                       #ifdef _OPENMP
@@ -2243,20 +2243,20 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
                       Py_BEGIN_ALLOW_THREADS
                       #endif /* _OPENMP */
                       #ifdef _OPENMP
-                      #pragma omp for lastprivate(__pyx_v_j) lastprivate(__pyx_v_maximum) lastprivate(__pyx_v_sample) lastprivate(__pyx_v_minimum) lastprivate(__pyx_v_tmp) lastprivate(__pyx_v_chunk_end) firstprivate(__pyx_v_i) lastprivate(__pyx_v_i) lastprivate(__pyx_v_index) schedule(static)
+                      #pragma omp for lastprivate(__pyx_v_sample) lastprivate(__pyx_v_tmp) lastprivate(__pyx_v_index) lastprivate(__pyx_v_minimum) firstprivate(__pyx_v_i) lastprivate(__pyx_v_i) lastprivate(__pyx_v_maximum) lastprivate(__pyx_v_chunk_end) lastprivate(__pyx_v_j) schedule(static)
                       #endif /* _OPENMP */
                       for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_14; __pyx_t_13++){
                           if (__pyx_parallel_why < 2)
                           {
                               __pyx_v_i = __pyx_t_3 + __pyx_t_12 * __pyx_t_13;
                               /* Initialize private variables to invalid values */
-                              __pyx_v_j = ((PY_LONG_LONG)0xbad0bad0);
-                              __pyx_v_maximum = ((float)__PYX_NAN());
                               __pyx_v_sample = ((float)__PYX_NAN());
-                              __pyx_v_minimum = ((float)__PYX_NAN());
                               __pyx_v_tmp = ((float)__PYX_NAN());
-                              __pyx_v_chunk_end = ((PY_LONG_LONG)0xbad0bad0);
                               __pyx_v_index = ((PY_LONG_LONG)0xbad0bad0);
+                              __pyx_v_minimum = ((float)__PYX_NAN());
+                              __pyx_v_maximum = ((float)__PYX_NAN());
+                              __pyx_v_chunk_end = ((PY_LONG_LONG)0xbad0bad0);
+                              __pyx_v_j = ((PY_LONG_LONG)0xbad0bad0);
 
                               /* "src/urh/cythonext/path_creator.pyx":39
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
@@ -2503,14 +2503,14 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
                               #pragma omp critical(__pyx_parallel_lastprivates0)
                               #endif /* _OPENMP */
                               {
-                                  __pyx_parallel_temp0 = __pyx_v_j;
-                                  __pyx_parallel_temp1 = __pyx_v_maximum;
-                                  __pyx_parallel_temp2 = __pyx_v_sample;
+                                  __pyx_parallel_temp0 = __pyx_v_sample;
+                                  __pyx_parallel_temp1 = __pyx_v_tmp;
+                                  __pyx_parallel_temp2 = __pyx_v_index;
                                   __pyx_parallel_temp3 = __pyx_v_minimum;
-                                  __pyx_parallel_temp4 = __pyx_v_tmp;
-                                  __pyx_parallel_temp5 = __pyx_v_chunk_end;
-                                  __pyx_parallel_temp6 = __pyx_v_i;
-                                  __pyx_parallel_temp7 = __pyx_v_index;
+                                  __pyx_parallel_temp4 = __pyx_v_i;
+                                  __pyx_parallel_temp5 = __pyx_v_maximum;
+                                  __pyx_parallel_temp6 = __pyx_v_chunk_end;
+                                  __pyx_parallel_temp7 = __pyx_v_j;
                               }
                               __pyx_L17:;
                               #ifdef _OPENMP
@@ -2540,14 +2540,14 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
                 __pyx_parallel_why = 4;
               }
               if (__pyx_parallel_why) {
-                __pyx_v_j = __pyx_parallel_temp0;
-                __pyx_v_maximum = __pyx_parallel_temp1;
-                __pyx_v_sample = __pyx_parallel_temp2;
+                __pyx_v_sample = __pyx_parallel_temp0;
+                __pyx_v_tmp = __pyx_parallel_temp1;
+                __pyx_v_index = __pyx_parallel_temp2;
                 __pyx_v_minimum = __pyx_parallel_temp3;
-                __pyx_v_tmp = __pyx_parallel_temp4;
-                __pyx_v_chunk_end = __pyx_parallel_temp5;
-                __pyx_v_i = __pyx_parallel_temp6;
-                __pyx_v_index = __pyx_parallel_temp7;
+                __pyx_v_i = __pyx_parallel_temp4;
+                __pyx_v_maximum = __pyx_parallel_temp5;
+                __pyx_v_chunk_end = __pyx_parallel_temp6;
+                __pyx_v_j = __pyx_parallel_temp7;
                 switch (__pyx_parallel_why) {
                       case 3: goto __pyx_L5_return;
                       case 4:
@@ -3669,6 +3669,7 @@ __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_10, 1, (PyObject *(*)(char *)) __
     __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
     goto __pyx_L11_try_end;
     __pyx_L4_error:;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3676,7 +3677,6 @@ __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_10, 1, (PyObject *(*)(char *)) __
     __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
 
     /* "src/urh/cythonext/path_creator.pyx":110
  *     try:

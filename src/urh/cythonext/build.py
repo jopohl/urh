@@ -26,11 +26,6 @@ def main():
           os.path.join(build_dir, "result"),
           "--build-temp", build_dir])
 
-    build_path = os.path.join(build_dir, "result")
-    filenames = os.listdir(build_path)
-
-    for f in filenames:
-        shutil.move(os.path.join(build_path, f), f)
 
 if __name__ == "__main__":
     main()

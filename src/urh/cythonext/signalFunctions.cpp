@@ -3117,8 +3117,8 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
               float __pyx_parallel_temp0 = __PYX_NAN();
               PY_LONG_LONG __pyx_parallel_temp1 = 0xbad0bad0;
               float __pyx_parallel_temp2 = __PYX_NAN();
-              __pyx_t_float_complex __pyx_parallel_temp3;
-              float __pyx_parallel_temp4 = __PYX_NAN();
+              float __pyx_parallel_temp3 = __PYX_NAN();
+              __pyx_t_float_complex __pyx_parallel_temp4;
               __pyx_t_float_complex __pyx_parallel_temp5;
               const char *__pyx_parallel_filename = NULL; int __pyx_parallel_lineno = 0, __pyx_parallel_clineno = 0;
               PyObject *__pyx_parallel_exc_type = NULL, *__pyx_parallel_exc_value = NULL, *__pyx_parallel_exc_tb = NULL;
@@ -3134,7 +3134,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
               if (__pyx_t_11 > 0)
               {
                   #ifdef _OPENMP
-                  #pragma omp parallel private(__pyx_t_17, __pyx_t_16, __pyx_t_14, __pyx_t_10, __pyx_t_3, __pyx_t_20, __pyx_t_19, __pyx_t_15, __pyx_t_18) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
+                  #pragma omp parallel private(__pyx_t_19, __pyx_t_18, __pyx_t_3, __pyx_t_15, __pyx_t_17, __pyx_t_10, __pyx_t_16, __pyx_t_20, __pyx_t_14) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
                   #endif /* _OPENMP */
                   {
                       #ifdef _OPENMP
@@ -3144,16 +3144,16 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                       Py_BEGIN_ALLOW_THREADS
                       #endif /* _OPENMP */
                       #ifdef _OPENMP
-                      #pragma omp for lastprivate(__pyx_v_imag) firstprivate(__pyx_v_i) lastprivate(__pyx_v_i) lastprivate(__pyx_v_real) lastprivate(__pyx_v_tmp) lastprivate(__pyx_v_magnitude) lastprivate(__pyx_v_c) schedule(static)
+                      #pragma omp for lastprivate(__pyx_v_magnitude) firstprivate(__pyx_v_i) lastprivate(__pyx_v_i) lastprivate(__pyx_v_real) lastprivate(__pyx_v_imag) lastprivate(__pyx_v_c) lastprivate(__pyx_v_tmp) schedule(static)
                       #endif /* _OPENMP */
                       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12++){
                           if (__pyx_parallel_why < 2)
                           {
                               __pyx_v_i = 1 + 1 * __pyx_t_12;
                               /* Initialize private variables to invalid values */
-                              __pyx_v_imag = ((float)__PYX_NAN());
-                              __pyx_v_real = ((float)__PYX_NAN());
                               __pyx_v_magnitude = ((float)__PYX_NAN());
+                              __pyx_v_real = ((float)__PYX_NAN());
+                              __pyx_v_imag = ((float)__PYX_NAN());
 
                               /* "src/urh/cythonext/signalFunctions.pyx":123
  *     else:
@@ -3365,12 +3365,12 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               #pragma omp critical(__pyx_parallel_lastprivates1)
                               #endif /* _OPENMP */
                               {
-                                  __pyx_parallel_temp0 = __pyx_v_imag;
+                                  __pyx_parallel_temp0 = __pyx_v_magnitude;
                                   __pyx_parallel_temp1 = __pyx_v_i;
                                   __pyx_parallel_temp2 = __pyx_v_real;
-                                  __pyx_parallel_temp3 = __pyx_v_tmp;
-                                  __pyx_parallel_temp4 = __pyx_v_magnitude;
-                                  __pyx_parallel_temp5 = __pyx_v_c;
+                                  __pyx_parallel_temp3 = __pyx_v_imag;
+                                  __pyx_parallel_temp4 = __pyx_v_c;
+                                  __pyx_parallel_temp5 = __pyx_v_tmp;
                               }
                               __pyx_L25:;
                               #ifdef _OPENMP
@@ -3400,12 +3400,12 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                 __pyx_parallel_why = 4;
               }
               if (__pyx_parallel_why) {
-                __pyx_v_imag = __pyx_parallel_temp0;
+                __pyx_v_magnitude = __pyx_parallel_temp0;
                 __pyx_v_i = __pyx_parallel_temp1;
                 __pyx_v_real = __pyx_parallel_temp2;
-                __pyx_v_tmp = __pyx_parallel_temp3;
-                __pyx_v_magnitude = __pyx_parallel_temp4;
-                __pyx_v_c = __pyx_parallel_temp5;
+                __pyx_v_imag = __pyx_parallel_temp3;
+                __pyx_v_c = __pyx_parallel_temp4;
+                __pyx_v_tmp = __pyx_parallel_temp5;
                 switch (__pyx_parallel_why) {
                       case 3: goto __pyx_L15_return;
                       case 4:

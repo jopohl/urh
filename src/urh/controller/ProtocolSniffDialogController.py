@@ -39,9 +39,9 @@ class ProtocolSniffDialogController(QDialog):
 
         self.ui.cbDevice.clear()
         items = []
-        if constants.SETTINGS.value('usrp_available', type=bool):
+        if constants.SETTINGS.value('usrp_is_enabled', type=bool):
             items.append("USRP")
-        if constants.SETTINGS.value('hackrf_available', type=bool):
+        if constants.SETTINGS.value('hackrf_is_enabled', type=bool):
             items.append("HackRF")
         self.ui.cbDevice.addItems(items)
         if device in items:
@@ -70,8 +70,8 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
         self.ui.btnClose.clicked.connect(self.close)
 
-        self.sniffer.rcv_thrd.started.connect(self.on_sniffer_rcv_started)
-        self.sniffer.rcv_thrd.stopped.connect(self.on_sniffer_rcv_stopped)
+        self.sniffer.rcv_device.started.connect(self.on_sniffer_rcv_started)
+        self.sniffer.rcv_device.stopped.connect(self.on_sniffer_rcv_stopped)
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
         self.sniffer.qt_signals.sniff_device_errors_changed.connect(
             self.on_device_errors_changed)
@@ -103,15 +103,15 @@ class ProtocolSniffDialogController(QDialog):
 
     @pyqtSlot()
     def on_sample_rate_edited(self):
-        self.sniffer.rcv_thrd.sample_rate = self.ui.spinBoxSampleRate.value()
+        self.sniffer.rcv_device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
     def on_freq_edited(self):
-        self.sniffer.rcv_thrd.freq = self.ui.spinBoxFreq.value()
+        self.sniffer.rcv_device.frequency = self.ui.spinBoxFreq.value()
 
     @pyqtSlot()
     def on_bw_edited(self):
-        self.sniffer.rcv_thrd.bandwidth = self.ui.spinBoxBandwidth.value()
+        self.sniffer.rcv_device.bandwidth = self.ui.spinBoxBandwidth.value()
 
     @pyqtSlot()
     def on_usrp_ip_edited(self):
@@ -119,7 +119,7 @@ class ProtocolSniffDialogController(QDialog):
 
     @pyqtSlot()
     def on_gain_edited(self):
-        self.sniffer.rcv_thrd.gain = self.ui.spinBoxGain.value()
+        self.sniffer.rcv_device.gain = self.ui.spinBoxGain.value()
 
     @pyqtSlot()
     def on_noise_edited(self):
@@ -144,7 +144,7 @@ class ProtocolSniffDialogController(QDialog):
     @pyqtSlot()
     def on_device_edited(self):
         dev = self.ui.cbDevice.currentText()
-        self.sniffer.device = dev
+        self.sniffer.device_name = dev
         self.ui.lineEditIP.setVisible(dev == "USRP")
         self.ui.labelIP.setVisible(dev == "USRP")
 

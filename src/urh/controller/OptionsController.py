@@ -1,9 +1,13 @@
+import os
+
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHBoxLayout
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
+from subprocess import call, DEVNULL
 
 from urh import constants
 from urh.controller.PluginController import PluginController
+from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
 from urh.ui.ui_options import Ui_DialogOptions
 
 
@@ -13,6 +17,8 @@ class OptionsController(QDialog):
     def __init__(self, installed_plugins, highlighted_plugins=None, parent=None):
         super().__init__(parent)
 
+        self.backend_handler = BackendHandler()
+
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -21,15 +27,62 @@ class OptionsController(QDialog):
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
 
+        completer = QCompleter()
+        completer.setModel(QDirModel(completer))
+        self.ui.lineEditPython2Interpreter.setCompleter(completer)
+
+        for devname in self.backend_handler.DEVICE_NAMES:
+            self.ui.listWidgetDevices.addItem(devname)
+
+        self.ui.listWidgetDevices.setCurrentRow(0)
+        self.refresh_device_tab()
+
         self.create_connects()
         self.old_symbol_tresh = 10
         self.old_show_pause_as_time = False
 
         self.read_options()
 
+
+    @property
+    def selected_device(self) -> BackendContainer:
+        try:
+            devname = self.ui.listWidgetDevices.currentItem().text().lower()
+            return self.backend_handler.device_backends[devname]
+        except:
+            return ""
+
     def create_connects(self):
         self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.handle_spinbox_symbol_treshold_value_changed)
         self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
+        self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
+        self.ui.listWidgetDevices.currentRowChanged.connect(self.show_selected_device_params)
+        self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
+        self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
+        self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
+
+
+    def show_gnuradio_infos(self):
+        self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+        if self.backend_handler.gnuradio_installed:
+            self.ui.lGnuradioInstalled.setStyleSheet("")
+            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio installation found"))
+        else:
+            self.ui.lGnuradioInstalled.setStyleSheet("color: red")
+            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio installation not found"))
+
+
+    def show_selected_device_params(self):
+        if self.ui.listWidgetDevices.currentRow() >= 0:
+            dev = self.selected_device
+
+            self.ui.chkBoxDeviceEnabled.setEnabled(len(dev.avail_backends) > 0)
+            self.ui.rbGnuradioBackend.setEnabled(dev.has_gnuradio_backend)
+            self.ui.rbNativeBackend.setEnabled(dev.has_native_backend)
+
+            self.ui.chkBoxDeviceEnabled.setChecked(dev.is_enabled)
+            self.ui.rbGnuradioBackend.setChecked(dev.selected_backend == Backends.grc)
+            self.ui.rbNativeBackend.setChecked(dev.selected_backend == Backends.native)
 
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
@@ -39,8 +92,6 @@ class OptionsController(QDialog):
             changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
 
         settings = constants.SETTINGS
-        settings.setValue('usrp_available', self.ui.chkBoxUSRP.isChecked())
-        settings.setValue('hackrf_available', self.ui.chkBoxHackRF.isChecked())
         settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())
         settings.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
         settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
@@ -52,8 +103,9 @@ class OptionsController(QDialog):
 
     def read_options(self):
         settings = constants.SETTINGS
-        self.ui.chkBoxUSRP.setChecked(settings.value('usrp_available', type=bool))
-        self.ui.chkBoxHackRF.setChecked(settings.value('hackrf_available', type=bool))
+        #self.ui.chkBoxUSRP.setChecked(settings.value('usrp_available', type=bool))
+        #self.ui.chkBoxHackRF.setChecked(settings.value('hackrf_available', type=bool))
+
         self.ui.comboBoxDefaultView.setCurrentIndex(settings.value('default_view', type = int))
         self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
         self.ui.checkBoxPauseTime.setChecked(settings.value('show_pause_as_time', type=bool))
@@ -92,6 +144,39 @@ class OptionsController(QDialog):
                     int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
         self.ui.lExplanation.setText(txt)
 
+
+    @pyqtSlot()
+    def on_python2_exe_path_edited(self):
+        python2_exe = self.ui.lineEditPython2Interpreter.text()
+        if os.path.isfile(python2_exe) and os.access(python2_exe, os.X_OK):
+            self.backend_handler.python2_exe = python2_exe
+            self.backend_handler.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+            constants.SETTINGS.setValue("python2_exe", python2_exe)
+            self.refresh_device_tab()
+        else:
+            self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+
+
+
+    @pyqtSlot()
+    def on_chk_box_device_enabled_clicked(self):
+        self.selected_device.is_enabled = bool(self.ui.chkBoxDeviceEnabled.isChecked())
+        self.selected_device.write_settings()
+
+
+
+    @pyqtSlot()
+    def on_rb_gnuradio_backend_clicked(self):
+        if Backends.grc in self.selected_device.avail_backends:
+            self.selected_device.selected_backend = Backends.grc
+            self.selected_device.write_settings()
+
+    @pyqtSlot()
+    def on_rb_native_backend_clicked(self):
+        if Backends.native in self.selected_device.avail_backends:
+            self.selected_device.selected_backend = Backends.native
+            self.selected_device.write_settings()
+
     def on_chkbox_enable_symbols_clicked(self):
         if self.ui.chkBoxEnableSymbols.isChecked():
             self.ui.spinBoxSymbolTreshold.setValue(10)
@@ -99,16 +184,15 @@ class OptionsController(QDialog):
             self.ui.spinBoxSymbolTreshold.setValue(50)
 
 
+    def refresh_device_tab(self):
+        self.backend_handler.get_backends()
+        self.show_gnuradio_infos()
+        self.show_selected_device_params()
+
     @staticmethod
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
-        if not 'usrp_available' in keys:
-            settings.setValue('usrp_available', True)
-
-        if not 'hackrf_available' in keys:
-            settings.setValue('hackrf_available', True)
-
         if not 'rel_symbol_length' in keys:
             settings.setValue('rel_symbol_length', 10)
 

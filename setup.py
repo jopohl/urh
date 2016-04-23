@@ -1,6 +1,7 @@
 import os
 import sys
 from distutils.core import setup, Extension
+from distutils import ccompiler
 import numpy
 import src.urh.version as version
 
@@ -24,18 +25,11 @@ URH_DIR = "urh"
 
 def get_packages():
     packages = [URH_DIR]
-
-    for path in os.listdir(os.path.join("./src/", URH_DIR)):
-        if path == "__pycache__":
-            continue
-        if os.path.isdir(os.path.join(os.path.join("./src/", URH_DIR), path)):
-            packages.append(URH_DIR + "." + path)
-        if path == "ui":
-            for subdir in UI_SUBDIRS:
-                packages.append(URH_DIR + "." + path + "." + subdir)
-        if path == "plugins":
-            for plugin in PLUGINS:
-                packages.append(URH_DIR + "." + path + "." + plugin)
+    separator = os.path.normpath("/")
+    for dirpath, dirnames, filenames in os.walk(os.path.join("./src/", URH_DIR)):
+        package_path = os.path.relpath(dirpath, os.path.join("./src/",URH_DIR)).replace(separator, ".")
+        if len(package_path) > 1:
+            packages.append(URH_DIR+"."+package_path)
 
     return packages
 
@@ -60,9 +54,32 @@ def get_ext_modules():
 
     return extensions
 
+def get_device_modules():
+    compiler = ccompiler.new_compiler()
 
-import generate_ui
-generate_ui.gen()
+    extensions = []
+    devices = {
+                "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+              }
+
+    for dev_name, params in devices.items():
+        if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+            print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
+            e = Extension("urh.dev.native.lib."+dev_name, ["src/urh/dev/native/lib/{0}.cpp".format(dev_name)],
+                          extra_compile_args= ["-static", "-static-libgcc", OPEN_MP_FLAG],
+                          extra_link_args=[OPEN_MP_FLAG], language="c++",
+                          libraries=[params["lib"]])
+            extensions.append(e)
+        else:
+             print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
+        try:
+            os.remove("a.out") # Temp file for checking
+        except OSError:
+            pass
+    return extensions
+
+#import generate_ui
+#generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 setup(
     name="Universal Radio Hacker",
@@ -73,7 +90,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     packages=get_packages(),
-    ext_modules=get_ext_modules(),
+    ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],
         scripts=["bin/urh"], requires=['PyQt5', 'numpy']
 )

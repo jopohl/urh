@@ -3,7 +3,6 @@ import time
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
-from urh import constants
 
 from urh.dev.BackendHandler import Backends, BackendHandler
 from enum import Enum
@@ -12,7 +11,6 @@ from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
 from urh.dev.gr.SpectrumThread import SpectrumThread
 from urh.dev.native.HackRF import HackRF
-from urh.util import Logger
 
 
 class Mode(Enum):
@@ -27,11 +25,12 @@ class VirtualDevice(QObject):
     """
     started = pyqtSignal()
     stopped = pyqtSignal()
+    index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
 
     def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
-                 device_ip=None, sending_repeats=1, parent=None):
+                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False):
         super().__init__(parent)
         self.name = name
         self.backend_handler = backend_handler
@@ -40,7 +39,8 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
-                self.__dev = ReceiverThread(samp_rate, freq, gain, bw, parent=parent)
+                self.__dev = ReceiverThread(samp_rate, freq, gain, bw, parent=parent, is_ringbuffer=is_ringbuffer)
+                self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
                 self.__dev = SenderThread(samp_rate, freq, gain, bw, parent=parent)
                 self.__dev.data = samples_to_send
@@ -57,8 +57,9 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.native:
             name = self.name.lower()
             if name in map(str.lower, BackendHandler.DEVICE_NAMES):
-                is_ringbuffer = self.mode == Mode.spectrum
-                recv_bufsize = 0.25 * 1024 * 1024 if self.mode == Mode.spectrum else 8e9
+                is_ringbuffer = self.mode == Mode.spectrum or is_ringbuffer
+                recv_bufsize = 0.25 * 1024 * 1024 if self.mode == Mode.spectrum else 2 * (1024 ** 3)
+
                 if name == "hackrf":
                     self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer, bufsize=recv_bufsize)
                 else:
@@ -66,6 +67,7 @@ class VirtualDevice(QObject):
             else:
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.device_ip = device_ip
+            self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
         else:
@@ -336,6 +338,9 @@ class VirtualDevice(QObject):
 
     def emit_sender_needs_restart(self):
         self.sender_needs_restart.emit()
+
+    def emit_index_changed(self, old, new):
+        self.index_changed.emit(old, new)
 
     def read_errors(self):
         if self.backend == Backends.grc:

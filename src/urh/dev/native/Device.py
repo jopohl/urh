@@ -3,17 +3,20 @@ import threading
 from multiprocessing import Queue
 
 import numpy as np
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 
 import time
 
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from urh.util.Logger import logger
 
-class Device(metaclass=ABCMeta):
+class Device(QObject):
     BYTES_PER_SAMPLE = None
-
+    rcv_index_changed = pyqtSignal(int, int)
 
     def __init__(self, bw, freq, gain, srate, bufsize=8e9, is_ringbuffer=False):
+        super().__init__()
         self.byte_buffer = b''
 
         self.__bandwidth = bw
@@ -35,7 +38,7 @@ class Device(metaclass=ABCMeta):
         self.sending_repeats = 1 # How often shall the sending sequence be repeated? -1 = forever
         self.current_sending_repeat = 0
 
-        self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
+        self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Spectrum Analyzer or Protocol Sniffing
         self.current_recv_index = 0
         self.current_sent_sample = 0
         self.is_receiving = False
@@ -202,6 +205,7 @@ class Device(metaclass=ABCMeta):
         while self.is_receiving:
             while not self.queue.empty():
                 self.byte_buffer += self.queue.get()
+                old_index = self.current_recv_index
 
                 nsamples = len(self.byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:
@@ -221,6 +225,8 @@ class Device(metaclass=ABCMeta):
                     self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
                         self.unpack_complex(self.byte_buffer[:end], nsamples)
                     self.current_recv_index += nsamples
+
+                    self.rcv_index_changed.emit(old_index, self.current_recv_index)
 
                     if clear_byte_buffer:
                         self.byte_buffer = b""

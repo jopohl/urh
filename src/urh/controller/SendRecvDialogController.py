@@ -1,8 +1,6 @@
 import locale
 import random
 import time
-from enum import Enum
-
 import gc
 
 import numpy as np

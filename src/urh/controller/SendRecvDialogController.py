@@ -6,10 +6,12 @@ from enum import Enum
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
+from urh.dev.BackendHandler import BackendHandler
 
 from urh import constants
 from urh.FFTSceneManager import FFTSceneManager
 from urh.LiveSceneManager import LiveSceneManager
+from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
 from urh.dev.gr.SpectrumThread import SpectrumThread
@@ -18,10 +20,7 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 
 
-class Mode(Enum):
-    receive = 1
-    send = 2
-    spectrum = 3
+
 
 
 class SendRecvDialogController(QDialog):
@@ -34,13 +33,14 @@ class SendRecvDialogController(QDialog):
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
+
+        self.backend_handler = BackendHandler()
         self.update_interval = 125
 
-        self.mode = mode  # recv, send, or spectrum
-        if self.mode == Mode.send and modulated_data is None:
+        if mode == Mode.send and modulated_data is None:
             raise ValueError("I need modulated data to send!")
 
-        if self.mode == Mode.receive or self.mode == Mode.spectrum:
+        if mode == Mode.receive or mode == Mode.spectrum:
             self.ui.spinBoxNRepeat.hide()
             self.ui.labelNRepeat.hide()
             self.ui.lblCurrentRepeatValue.hide()
@@ -48,7 +48,7 @@ class SendRecvDialogController(QDialog):
             self.ui.lSamplesSentText.hide()
             self.ui.progressBar.hide()
 
-        if self.mode == Mode.send or self.mode == Mode.spectrum:
+        if mode == Mode.send or mode == Mode.spectrum:
             self.ui.lSamplesCaptured.hide()
             self.ui.lSamplesCapturedText.hide()
             self.ui.lSignalSize.hide()
@@ -57,10 +57,10 @@ class SendRecvDialogController(QDialog):
             self.ui.lTimeText.hide()
             self.ui.btnSave.hide()
 
-        if self.mode == Mode.spectrum:
+        if mode == Mode.spectrum:
             self.setWindowTitle("Spectrum analyzer")
 
-        if self.mode == Mode.send:
+        if mode == Mode.send:
             self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
             self.setWindowTitle("Send signal")
             self.ui.btnStart.setToolTip("Send data")
@@ -75,20 +75,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxSampleRate.setValue(samp_rate)
         self.ui.spinBoxBandwidth.setValue(bw)
         self.ui.spinBoxGain.setValue(gain)
-        self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', type=int))
-
-        if self.mode == Mode.receive:
-            self.device_thread = ReceiverThread(samp_rate, freq, gain, bw, parent=self)
-        elif self.mode == Mode.send:
-            self.device_thread = SenderThread(samp_rate, freq, gain, bw, parent=self)
-            self.device_thread.data = modulated_data
-            self.device_thread.samples_per_transmission = len(modulated_data)
-
-            self.ui.progressBar.setMaximum(len(modulated_data))
-        elif self.mode == Mode.spectrum:
-            self.device_thread = SpectrumThread(samp_rate, freq, gain, bw, parent=self)
-
-        self.device_thread.usrp_ip = self.ui.lineEditIP.text()
+        self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
 
         self.ui.cbDevice.clear()
         items = []
@@ -100,14 +87,20 @@ class SendRecvDialogController(QDialog):
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
 
-        self.on_selected_device_changed()
+
+        dev_name = self.ui.cbDevice.currentText()
+        nrep = self.ui.spinBoxNRepeat.value()
+        self.device = VirtualDevice(dev_name, mode, bw, freq, gain, samp_rate, samples_to_send=modulated_data,
+                                    device_ip=self.ui.lineEditIP.text(), sending_repeats=nrep, parent=self)
+        self.ui.lineEditIP.setVisible(dev_name == "USRP")
+        self.ui.labelIP.setVisible(dev_name == "USRP")
 
         self.recorded_files = []
 
         self.timer = QTimer(self)
 
-        if self.mode == Mode.receive or self.mode == Mode.send:
-            self.scene_creator = LiveSceneManager(self.device_thread.data.real, parent=self)
+        if mode == Mode.receive or mode == Mode.send:
+            self.scene_creator = LiveSceneManager(self.device.data.real, parent=self)
         else:
             self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.ui.graphicsView)
 
@@ -126,10 +119,11 @@ class SendRecvDialogController(QDialog):
         self.ui.btnStop.clicked.connect(self.on_stop_clicked)
         self.ui.btnClear.clicked.connect(self.on_clear_clicked)
         self.ui.btnSave.clicked.connect(self.on_save_clicked)
-        self.device_thread.stopped.connect(self.on_device_thread_stopped)
-        self.device_thread.started.connect(self.on_device_thread_started)
-        self.device_thread.sender_needs_restart.connect(
-            self.__restart_device_thread)
+
+        self.device.stopped.connect(self.on_device_stopped)
+        self.device.started.connect(self.on_device_started)
+        self.device.sender_needs_restart.connect(self.__restart_device_thread)
+
         self.timer.timeout.connect(self.update_view)
         self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
         self.ui.spinBoxGain.editingFinished.connect(self.on_gain_changed)
@@ -144,38 +138,45 @@ class SendRecvDialogController(QDialog):
         self.ui.graphicsView.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
         self.ui.graphicsView.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
 
+
+    @property
+    def mode(self):
+        return self.device.mode
+
     @property
     def has_empty_device_list(self):
         return self.ui.cbDevice.count() == 0
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
-        self.device_thread.sample_rate = self.ui.spinBoxSampleRate.value()
+        self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
     def on_freq_changed(self):
-        self.device_thread.freq = self.ui.spinBoxFreq.value()
+        self.device.frequency = self.ui.spinBoxFreq.value()
         if self.mode == Mode.spectrum:
             self.scene_creator.scene.center_freq = self.ui.spinBoxFreq.value()
 
     @pyqtSlot()
     def on_bw_changed(self):
-        self.device_thread.bandwidth = self.ui.spinBoxBandwidth.value()
+        self.device.bandwidth = self.ui.spinBoxBandwidth.value()
 
     @pyqtSlot()
     def on_usrp_ip_changed(self):
-        self.device_thread.usrp_ip = self.ui.lineEditIP.text()
+        self.device.ip = self.ui.lineEditIP.text()
 
     @pyqtSlot()
     def on_gain_changed(self):
-        self.device_thread.gain = self.ui.spinBoxGain.value()
+        self.device.gain = self.ui.spinBoxGain.value()
 
     @pyqtSlot()
     def on_selected_device_changed(self):
-        dev = self.ui.cbDevice.currentText()
-        self.device_thread.device = dev
-        self.ui.lineEditIP.setVisible(dev == "USRP")
-        self.ui.labelIP.setVisible(dev == "USRP")
+        dev_name = self.ui.cbDevice.currentText()
+        nrep = self.ui.spinBoxNRepeat.value()
+        self.device = VirtualDevice(dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
+                                    self.device.sample_rate, self.device.samples_to_send, self.device.ip, nrep, self)
+        self.ui.lineEditIP.setVisible(dev_name == "USRP")
+        self.ui.labelIP.setVisible(dev_name == "USRP")
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -188,28 +189,21 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxSampleRate.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
 
-        self.device_thread.setTerminationEnabled(True)
-        self.device_thread.terminate()
-        time.sleep(0.1)
-
-        self.device_thread.start()
+        self.device.start()
 
     @pyqtSlot()
     def on_nrepeat_changed(self):
         if not self.ui.spinBoxNRepeat.isVisible():
             return
 
-        if self.device_thread.max_repeats != self.ui.spinBoxNRepeat.value():
-            self.device_thread.max_repeats = self.ui.spinBoxNRepeat.value()
-            self.device_thread.current_iteration = 0
-        self.device_thread.repeat_endless = self.ui.spinBoxNRepeat.value() == 0
+        self.device.num_sending_repeats = self.ui.spinBoxNRepeat.value()
 
     @pyqtSlot()
     def on_stop_clicked(self):
-        self.device_thread.stop("Stopped receiving due to user interaction")
+        self.device.stop("Stopped receiving due to user interaction")
 
     @pyqtSlot()
-    def on_device_thread_stopped(self):
+    def on_device_stopped(self):
         self.ui.graphicsView.capturing_data = False
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
@@ -227,7 +221,7 @@ class SendRecvDialogController(QDialog):
         self.update_view()
 
     @pyqtSlot()
-    def on_device_thread_started(self):
+    def on_device_started(self):
         self.ui.txtEditErrors.clear()
         self.scene_creator.set_text("Waiting for device..")
         self.ui.graphicsView.capturing_data = True

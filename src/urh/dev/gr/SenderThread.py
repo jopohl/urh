@@ -24,10 +24,13 @@ class SenderThread(AbstractBaseThread):
             except OSError:
                 self.port += 1
 
-        self.repeat_endless = False
         self.max_repeats = 1 # How often shall we send the data?
 
         self.__samples_per_transmission = self.MAX_SAMPLES_PER_TRANSMISSION
+
+    @property
+    def repeat_endless(self):
+        return self.max_repeats == 0 or self.max_repeats == -1
 
     @property
     def samples_per_transmission(self):

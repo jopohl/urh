@@ -72,7 +72,7 @@ class HackRF(Device):
         # https://github.com/mossmann/hackrf/pull/246/commits/4f9665fb3b43462e39a1592fc34f3dfb50de4a07
         self.reopen()
 
-    def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
+    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None):
         if self.is_open:
             self.init_send_parameters(samples_to_send, repeats)
 

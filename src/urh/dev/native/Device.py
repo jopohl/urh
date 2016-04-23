@@ -40,6 +40,8 @@ class Device(metaclass=ABCMeta):
         self.sendbuffer_thread = threading.Thread(target=self.check_send_buffer)
         self.sendbuffer_thread.daemon = True
 
+        self.device_ip = "192.168.10.2" # For USRP
+
         while True:
             try:
                 self.receive_buffer = np.zeros(int(buf_size), dtype=np.complex64, order='C')
@@ -133,7 +135,7 @@ class Device(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def start_tx_mode(self, samples_to_send: np.ndarray, repeats=1):
+    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None):
         pass
 
     @abstractmethod
@@ -176,16 +178,21 @@ class Device(metaclass=ABCMeta):
                     self.byte_buffer = self.byte_buffer[end:]
             time.sleep(0.01)
 
-    def init_send_parameters(self, samples_to_send: np.ndarray, repeats: int):
-        self.samples_to_send = samples_to_send
+    def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None):
         self.set_device_parameters()
+        if samples_to_send is not None:
+            self.samples_to_send = samples_to_send
+            self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
+            self.send_buffer_reader = io.BufferedReader(self.send_buffer)
+        else:
+            self.reset_send_buffer()
 
-        self.sending_repeats = repeats
+        if repeats is not None:
+            self.sending_repeats = repeats
+
         self.current_sending_repeat = 0
         self.current_sent_sample = 0
 
-        self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
-        self.send_buffer_reader = io.BufferedReader(self.send_buffer)
 
     def reset_send_buffer(self):
         self.current_sent_sample = 0

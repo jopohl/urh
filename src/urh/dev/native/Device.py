@@ -46,6 +46,10 @@ class Device(metaclass=ABCMeta):
         self.receive_buffer = None
         self.receive_buffer_size = bufsize
 
+
+        self.spectrum_x = None
+        self.spectrum_y = None
+
     def _start_sendbuffer_thread(self):
         self.sendbuffer_thread = threading.Thread(target=self.check_send_buffer)
         self.sendbuffer_thread.daemon = True
@@ -64,6 +68,7 @@ class Device(metaclass=ABCMeta):
                     break
                 except (OSError, MemoryError, ValueError):
                     self.receive_buffer_size //= 2
+        logger.info("Initialized receiving buffer with size {0}MB".format(self.receive_buffer_size/(1024*1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -193,16 +198,21 @@ class Device(metaclass=ABCMeta):
         self.set_device_sample_rate(self.sample_rate)
 
     def read_receiving_queue(self):
+        clear_byte_buffer = False
         while self.is_receiving:
             while not self.queue.empty():
                 self.byte_buffer += self.queue.get()
+
                 nsamples = len(self.byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:
                     if self.current_recv_index + nsamples >= len(self.receive_buffer):
                         if self.is_ringbuffer:
                             self.current_recv_index = 0
+                            clear_byte_buffer = True
                             if nsamples >= len(self.receive_buffer):
-                                self.stop_rx_mode("Receiving buffer too small.")
+                               # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
+                                nsamples = len(self.receive_buffer) - 1
+
                         else:
                             self.stop_rx_mode("Receiving Buffer is full.")
                             return
@@ -211,7 +221,13 @@ class Device(metaclass=ABCMeta):
                     self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
                         self.unpack_complex(self.byte_buffer[:end], nsamples)
                     self.current_recv_index += nsamples
-                    self.byte_buffer = self.byte_buffer[end:]
+
+                    if clear_byte_buffer:
+                        self.byte_buffer = b""
+                        clear_byte_buffer = False
+                    else:
+                        self.byte_buffer = self.byte_buffer[end:]
+
             time.sleep(0.01)
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, skip_device_parameters=False):

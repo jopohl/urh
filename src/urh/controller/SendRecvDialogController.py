@@ -9,6 +9,8 @@ import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
+from urh.util.Logger import logger
+
 from urh.dev.BackendHandler import BackendHandler
 
 from urh import constants
@@ -301,7 +303,7 @@ class SendRecvDialogController(QDialog):
             self.ui.graphicsView.horizontalScrollBar().blockSignals(True)
             self.scene_creator.end = self.device.current_index
         elif self.mode == Mode.spectrum:
-            x, y = self.device.spectrum_x, self.device.spectrum_y
+            x, y = self.device.spectrum
             self.scene_creator.scene.frequencies = x
             self.scene_creator.plot_data = y
             if x is None or y is None:
@@ -316,7 +318,7 @@ class SendRecvDialogController(QDialog):
         QApplication.processEvents()
 
         self.device.port = random.randint(1024, 65536)
-        print("Retry with port " + str(self.device.port))
+        logger.info("Retry with port " + str(self.device.port))
 
         self.device.start()
         QApplication.processEvents()

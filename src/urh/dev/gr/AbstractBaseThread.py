@@ -6,6 +6,7 @@ from subprocess import Popen, PIPE
 from threading import Thread
 
 from PyQt5.QtCore import QThread, pyqtSignal
+from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
 
@@ -177,5 +178,5 @@ class AbstractBaseThread(QThread):
             self.tb_process.terminate()
             self.tb_process = None
 
-        print(msg)
+        logger.info(msg)
         self.stopped.emit()

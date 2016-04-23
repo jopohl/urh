@@ -1,5 +1,6 @@
 import time
 
+import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh import constants
@@ -57,8 +58,9 @@ class VirtualDevice(QObject):
             name = self.name.lower()
             if name in map(str.lower, BackendHandler.DEVICE_NAMES):
                 is_ringbuffer = self.mode == Mode.spectrum
+                recv_bufsize = 0.25 * 1024 * 1024 if self.mode == Mode.spectrum else 8e9
                 if name == "hackrf":
-                    self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
+                    self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer, bufsize=recv_bufsize)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:
@@ -261,27 +263,17 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
-    def spectrum_x(self):
+    def spectrum(self):
         if self.mode == Mode.spectrum:
             if self.backend == Backends.grc:
-                return self.__dev.x
+                return self.__dev.x, self.__dev.y
             elif self.backend == Backends.native:
-                # TODO Implement
-                raise NotImplementedError("Implement native Specturm analyzer")
+                w = np.abs(np.fft.fft(self.__dev.receive_buffer))
+                freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
+                idx = np.argsort(freqs)
+                return freqs[idx].astype(np.float32), w[idx].astype(np.float32)
         else:
             raise ValueError("Spectrum x only available in spectrum mode")
-
-    @property
-    def spectrum_y(self):
-        if self.mode == Mode.spectrum:
-            if self.backend == Backends.grc:
-                return self.__dev.y
-            elif self.backend == Backends.native:
-                # TODO Implement
-                raise NotImplementedError("Implement native Specturm analyzer")
-        else:
-            raise ValueError("Spectrum y only available in spectrum mode")
-
 
     def start(self):
         if self.backend == Backends.grc:

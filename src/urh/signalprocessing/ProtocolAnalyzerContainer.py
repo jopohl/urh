@@ -94,7 +94,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 l.refblock += proto_analyzer.num_blocks
 
         for p in proto_labels:
-            self.__group.add_label(p)
+            self.__group.add_label(p, decode=False)
 
         for block in self.blocks:
             block.fuzz_labels[index:0] = [p for p in proto_labels if p not in block.fuzz_labels]
@@ -114,7 +114,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.qt_signals.line_duplicated.emit()
 
     def refresh_protolabel_blocks(self):
-        self.__group.refresh_labels()
+        self.__group.refresh_labels(decode=False)
 
     def fuzz_successive(self):
         """

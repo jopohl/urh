@@ -148,7 +148,6 @@ class SignalTabController(QWidget):
         sig_frame.files_dropped.connect(self.handle_files_dropped)
         sig_frame.apply_to_all_clicked.connect(self.handle_apply_to_all_clicked)
         sig_frame.sort_action_clicked.connect(self.sort_frames_by_name)
-        self.splitter.splitterMoved.connect(sig_frame.redraw_after_resize)
 
 
         if prev_signal_frame is not None:

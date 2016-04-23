@@ -121,11 +121,15 @@ class ProtocolTreeModel(QAbstractItemModel):
             return QIcon.fromTheme("folder")
         elif role == Qt.CheckStateRole:
             return item.show
-        elif role == Qt.FontRole and item.is_group and\
-                        self.rootItem.index_of(item) in self.controller.active_group_ids:
-            font = QFont()
-            font.setBold(True)
-            return font
+        elif role == Qt.FontRole:
+            if item.is_group and self.rootItem.index_of(item) in self.controller.active_group_ids:
+                font = QFont()
+                font.setBold(True)
+                return font
+            elif item.protocol in self.controller.selected_protocols:
+                font = QFont()
+                font.setBold(True)
+                return font
         elif role == Qt.TextColorRole and item.protocol == self.reference_protocol:
             return constants.SELECTED_ROW_COLOR
         elif role == Qt.ToolTipRole:

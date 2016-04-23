@@ -120,14 +120,13 @@ class TableModel(QAbstractTableModel):
 
         offset = 0
         for group in self.controller.groups:
-            if group in self.controller.active_groups:
-                for lbl in group.labels:
-                    bg_color = label_colors[lbl.color_index]
-                    for i in lbl.block_numbers:
-                        start, end = group.get_label_range(lbl, self.proto_view, self.decode)
-                        for j in range(start, end):
-                            self.background_colors[i+offset, j] = bg_color
-                            self.tooltips[i+offset, j] = lbl.name
+            for lbl in group.labels:
+                bg_color = label_colors[lbl.color_index]
+                for i in lbl.block_numbers:
+                    start, end = group.get_label_range(lbl, self.proto_view, self.decode)
+                    for j in range(start, end):
+                        self.background_colors[i+offset, j] = bg_color
+                        self.tooltips[i+offset, j] = lbl.name
             offset += group.num_blocks
 
     def refresh_fonts(self):

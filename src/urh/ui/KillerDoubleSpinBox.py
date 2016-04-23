@@ -22,12 +22,10 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             if self.suffix() != text[-1]:
                 if self.auto_suffix:
                     self.setSuffix(text[-1])
-                self.on_text_edited()
         else:
             if self.suffix() != "":
                 if self.auto_suffix:
                     self.setSuffix("")
-                self.on_text_edited()
 
     def on_text_edited(self):
         self.lineEdit().setText(self.lineEdit().text().upper())
@@ -39,7 +37,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def setUnit(self):
         value = abs(self.value())
-
         if 10 ** 9 <= value <= 10 ** 11:
             if self.suffix() != "G" and self.auto_suffix:
                 self.setSuffix("G")
@@ -85,6 +82,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             return super().valueFromText(text)
 
     def validate(self, inpt: str, pos: int):
-        rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")
+        rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG"+str(self.suffix())+"]?$")
         result = QValidator.Acceptable if rx.exactMatch(inpt.replace(",", ".")) else QValidator.Invalid
         return result, inpt, pos

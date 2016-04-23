@@ -22,12 +22,13 @@ class Formatter():
         return locale.format_string("%.2f " + suffix, value) + "s"
 
     @staticmethod
-    def big_value_with_suffix(value: float) -> str:
+    def big_value_with_suffix(value: float, decimals=3) -> str:
+        fmt_str = "%.{0:d}f".format(decimals)
         if abs(value) >= 1e9:
-            return locale.format_string("%.3fG", value / 1e9)
+            return locale.format_string(fmt_str+"G", value / 1e9)
         elif abs(value) >= 1e6:
-            return locale.format_string("%.3fM", value / 1e6)
+            return locale.format_string(fmt_str+"M", value / 1e6)
         elif abs(value) >= 1e3:
-            return locale.format_string("%.3fK", value / 1e3)
+            return locale.format_string(fmt_str+"K", value / 1e3)
         else:
-            return locale.format_string("%.3f", value)
+            return locale.format_string(fmt_str, value)

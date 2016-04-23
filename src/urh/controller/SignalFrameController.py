@@ -1021,13 +1021,6 @@ class SignalFrameController(QFrame):
             self.ui.btnSaveSignal.hide()
         self.ui.lineEditSignalName.setFont(font)
 
-    def redraw_after_resize(self):
-        if self.ui.gvSignal.view_rect().width() > self.ui.gvSignal.sceneRect().width():
-            x_factor = self.ui.gvSignal.width() / self.ui.gvSignal.sceneRect().width()
-            self.ui.gvSignal.scale(x_factor / self.ui.gvSignal.transform().m11(), 1)
-
-        self.ui.gvSignal.autofit_view()
-
     def contextMenuEvent(self, event: QContextMenuEvent):
         if self.signal is None:
             return

@@ -31,7 +31,6 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class MainController(QMainWindow):
-    resized = pyqtSignal()
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -343,7 +342,6 @@ class MainController(QMainWindow):
 
         sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         sframe.ui.gvSignal.autofit_view()
-        self.resized.connect(sframe.redraw_after_resize)
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
         QApplication.processEvents()
@@ -382,10 +380,6 @@ class MainController(QMainWindow):
 
         self.set_frame_numbers()
         self.refresh_main_menu()
-
-    def resizeEvent(self, event: QResizeEvent):
-        event.accept()
-        self.resized.emit()
 
     def updateRecentActionList(self):
         recentFilePaths = constants.SETTINGS.value("recentFiles")
@@ -435,7 +429,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def show_about(self):
-        QMessageBox.about(self, self.tr("About"), self.tr("Version: {0}").format(version.VERSION))
+        QMessageBox.about(self, self.tr("About"), self.tr("<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />Contributors:<i><ul><li>Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li><li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li></ul></i>").format(version.VERSION))
 
     @pyqtSlot(CompareFrameController, int, int, int, int)
     def show_protocol_selection_in_interpretation(self, startblock, start, endblock, end):

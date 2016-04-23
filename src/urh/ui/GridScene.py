@@ -46,13 +46,20 @@ class GridScene(ZoomableScene):
             painter.scale(scale_x, scale_y)
 
             font_height = self.font_metrics.height()
+            counter = -1  # Counter for Label for every second line
 
             for x in x_range:
                 freq =  self.frequencies[x]
+                counter += 1
+
+                if freq != 0 and (counter % 2 != 0): # Label for every second line
+                    continue
+
                 if freq != 0:
                     prefix = "+" if freq > 0 else ""
-                    value = prefix+Formatter.big_value_with_suffix(freq)
+                    value = prefix+Formatter.big_value_with_suffix(freq, 2)
                 else:
+                    counter = 0
                     value = Formatter.big_value_with_suffix(self.center_freq)
                 font_width = self.font_metrics.width(value)
                 painter.drawText(x / scale_x - font_width / 2,

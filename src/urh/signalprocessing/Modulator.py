@@ -10,13 +10,13 @@ from urh.cythonext import path_creator
 from urh.cythonext.signalFunctions import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 
-
 class Modulator(object):
     """
     This class can modulate bits to a carrier.
     Very useful in generation phase.
     """
-    MODULATION_TYPES = ["ASK", "FSK", "PSK"]
+
+    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
 
 
     def __init__(self, name: str):
@@ -29,6 +29,9 @@ class Modulator(object):
         self.__sample_rate = None
         self.modulation_type = 0
         self.name = name
+
+        self.gauss_bt = 0.5   # bt product for gaussian filter (GFSK)
+        self.gauss_filter_width = 1 # filter width for gaussian filter (GFSK)
 
         self.param_for_zero = 0  # Freq, Amplitude (0..100%) or Phase (0..360)
         self.param_for_one = 100  # Freq, Amplitude (0..100%) or Phase (0..360)
@@ -85,12 +88,18 @@ class Modulator(object):
     def modulation_type_str(self):
         return self.MODULATION_TYPES[self.modulation_type]
 
+    @modulation_type_str.setter
+    def modulation_type_str(self, val: str):
+        val = val.upper()
+        if val in self.MODULATION_TYPES:
+            self.modulation_type = self.MODULATION_TYPES.index(val)
+
     @property
     def param_for_zero_str(self):
         mod = self.MODULATION_TYPES[self.modulation_type]
         if mod == "ASK":
             return str(self.param_for_zero) + "%"
-        elif mod == "FSK":
+        elif mod == "FSK" or mod == "GFSK":
             return self.get_value_with_suffix(self.param_for_zero) + "Hz"
         elif mod == "PSK":
             return str(self.param_for_zero) + "°"
@@ -100,7 +109,7 @@ class Modulator(object):
         mod = self.MODULATION_TYPES[self.modulation_type]
         if mod == "ASK":
             return str(self.param_for_one) + "%"
-        elif mod == "FSK":
+        elif mod == "FSK" or mod == "GFSK":
             return self.get_value_with_suffix(self.param_for_one) + "Hz"
         elif mod == "PSK":
             return str(self.param_for_one) + "°"
@@ -161,18 +170,56 @@ class Modulator(object):
                 log_bit = bit
                 samples_per_bit = self.samples_per_bit
 
-            param = self.param_for_one if log_bit else self.param_for_zero
+            if mod_type == "FSK" or mod_type == "GFSK":
+                param = 1 if log_bit else -1
+            else:
+                param = self.param_for_one if log_bit else self.param_for_zero
             paramvector[sample_pos:sample_pos + samples_per_bit] = np.full(samples_per_bit, param, dtype=np.float64)
             sample_pos += samples_per_bit
 
         t = np.arange(start, start + total_samples - pause) / self.sample_rate
         a = paramvector / 100 if mod_type == "ASK" else self.carrier_amplitude
         phi = paramvector * (np.pi / 180) if mod_type == "PSK" else self.carrier_phase_deg * (np.pi / 180)
-        f = paramvector if mod_type == "FSK" else self.carrier_freq_hz
+
+        if mod_type == "FSK" or mod_type == "GFSK":
+            fmid = (self.param_for_one + self.param_for_zero)/2
+            dist = abs(fmid - self.param_for_one)
+            if mod_type == "GFSK":
+                gfir =  self.gauss_fir(bt=self.gauss_bt, filter_width=self.gauss_filter_width)
+                if len(paramvector) >= len(gfir):
+                    paramvector =  np.convolve(paramvector, gfir, mode="same")
+                else:
+                    # Prevent dimension crash later, because gaussian finite impulse response is longer then paramvector
+                    paramvector = np.convolve(gfir, paramvector, mode="same")[:len(paramvector)]
+
+            f = fmid + dist * paramvector
+
+            # sin(2*pi*f_1*t_1 + phi_1) = sin(2*pi*f_2*t_1 + phi_2) <=> phi_2 = 2*pi*t_1*(f_1 - f_2) + phi_1
+            phi = np.empty(len(f))
+            phi[0] = self.carrier_phase_deg
+            for i in range(0, len(phi) - 1):
+                phi[i+1] = 2 * np.pi * t[i] * (f[i]-f[i+1]) + phi[i] # Correct the phase to prevent spiky jumps
+        else:
+            f = self.carrier_freq_hz
 
         self.modulated_samples.imag[:total_samples - pause] = a * np.sin(2 * np.pi * f * t + phi)
         self.modulated_samples.real[:total_samples - pause] = a * np.cos(2 * np.pi * f * t + phi)
 
+
+    def gauss_fir(self, bt=0.5, filter_width=1):
+        """
+
+        :param bt: normalized 3-dB bandwidth-symbol time product
+        :param span: filter span in symbols
+        :return:
+        """
+        # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
+        k = np.arange(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit)+1)
+        ts = self.samples_per_bit / self.sample_rate # symbol time
+        #a = np.sqrt(np.log(2)/2)*(ts/bt)
+        #B = a / np.sqrt(np.log(2)/2) # filter bandwidth
+        h = np.sqrt((2*np.pi)/(np.log(2))) * bt/ts * np.exp(-(((np.sqrt(2)*np.pi)/np.sqrt(np.log(2))*bt*k/self.samples_per_bit)**2))
+        return h / h.sum()
 
     @staticmethod
     def get_value_with_suffix(value):

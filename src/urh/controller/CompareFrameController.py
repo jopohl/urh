@@ -11,8 +11,7 @@ from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, 
 from urh import constants
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
-from urh.controller.ProtocolSniffDialogController import \
-    ProtocolSniffDialogController
+from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
@@ -57,6 +56,7 @@ class CompareFrameController(QFrame):
         self.decimal_point = clocale.decimalPoint()
 
         self.__active_group_ids = [0]
+        self.selected_protocols = set()
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, self)
         """:type: ProtocolTableModel"""
@@ -665,6 +665,7 @@ class CompareFrameController(QFrame):
 
         active_group_ids = set()
         selection = QItemSelection()
+        self.selected_protocols.clear()
 
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
             for i, tree_item in enumerate(tree_items):
@@ -673,11 +674,9 @@ class CompareFrameController(QFrame):
                     #index = self.proto_tree_model.createIndex(i, 0, tree_item)
                     #selection.select(index, index)
                     active_group_ids.add(group)
+                    self.selected_protocols.add(proto)
 
-        if active_group_ids == set(self.active_group_ids):
-            ignore_table_model_on_update = True
-        else:
-            ignore_table_model_on_update = False
+        if active_group_ids != set(self.active_group_ids):
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
 
@@ -698,7 +697,7 @@ class CompareFrameController(QFrame):
         self.ui.treeViewProtocols.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         self.ui.treeViewProtocols.blockSignals(False)
 
-        self.updateUI(ignore_table_model=ignore_table_model_on_update, resize_table=False)
+        self.updateUI(ignore_table_model=True, resize_table=False)
 
     @pyqtSlot(int)
     def handle_ref_index_changed(self, new_ref_index):

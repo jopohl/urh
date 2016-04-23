@@ -110,17 +110,20 @@ class ProtocolGroup(object):
         except IndexError:
             return None
 
-    def refresh_label(self, lbl: ProtocolLabel):
+    def refresh_label(self, lbl: ProtocolLabel, decode=True):
         if lbl not in self.labels:
             print("Label {0} is not in Group {1}".format(lbl.name, self.name), file=sys.stderr)
             return
 
-        lbl.find_block_numbers(self.decoded_bits_str)
+        if decode:
+            lbl.find_block_numbers(self.decoded_bits_str)
+        else:
+            lbl.find_block_numbers(self.plain_bits_str)
 
-    def refresh_labels(self):
+    def refresh_labels(self, decode=True):
         for lbl in self.labels:
             #lbl.signals.apply_decoding_changed.emit(lbl) # Update DnD Labels for new blocks
-            self.refresh_label(lbl)
+            self.refresh_label(lbl, decode)
 
     def convert_index(self, index: int, from_view: int, to_view: int, decoded: bool, block_indx=-1) -> tuple:
         """
@@ -224,12 +227,12 @@ class ProtocolGroup(object):
 
         return proto_label
 
-    def add_label(self, lbl: ProtocolLabel, refresh=True):
+    def add_label(self, lbl: ProtocolLabel, refresh=True, decode=True):
         if lbl not in self.labels:
             lbl.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
             self.labels.append(lbl)
             if refresh:
-                self.refresh_label(lbl)
+                self.refresh_label(lbl, decode=decode)
             self.labels.sort()
 
     def handle_plabel_apply_decoding_changed(self, lbl: ProtocolLabel):

@@ -27,13 +27,8 @@ class ModulatorDialogController(QDialog):
 
         self.modulators = modulators
 
+        self.set_ui_for_current_modulator()
 
-        self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
-        self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
-        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
-        self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
-        self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
-        self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
         self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
         self.ui.cbShowDataBitsOnly.setEnabled(False)
         self.protocol = None
@@ -45,7 +40,7 @@ class ModulatorDialogController(QDialog):
 
         self.ui.chkBoxLockSIV.setDisabled(True)
 
-        self.ui.comboBoxModulationType.setCurrentIndex(self.current_modulator.modulation_type)
+
         self.create_connects()
         self.on_modulation_type_changed()
 
@@ -58,14 +53,25 @@ class ModulatorDialogController(QDialog):
         mod = self.modulators[self.ui.comboBoxCustomModulations.currentIndex()]
         return mod
 
+    def set_ui_for_current_modulator(self):
+        index = self.ui.comboBoxModulationType.findText("*("+self.current_modulator.modulation_type_str+")", Qt.MatchWildcard)
+        self.ui.comboBoxModulationType.setCurrentIndex(index)
+        self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
+        self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
+        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
+        self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
+        self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
+        self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
+
+
     def create_connects(self):
-        self.ui.doubleSpinBoxCarrierFreq.valueChanged.connect(self.on_carrier_freq_changed)
-        self.ui.doubleSpinBoxCarrierPhase.valueChanged.connect(self.on_carrier_phase_changed)
-        self.ui.spinBoxBitLength.valueChanged.connect(self.on_bit_len_changed)
-        self.ui.spinBoxSampleRate.valueChanged.connect(self.on_sample_rate_changed)
+        self.ui.doubleSpinBoxCarrierFreq.editingFinished.connect(self.on_carrier_freq_changed)
+        self.ui.doubleSpinBoxCarrierPhase.editingFinished.connect(self.on_carrier_phase_changed)
+        self.ui.spinBoxBitLength.editingFinished.connect(self.on_bit_len_changed)
+        self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
         self.ui.linEdDataBits.textChanged.connect(self.on_data_bits_changed)
-        self.ui.spinBoxParameter0.valueChanged.connect(self.on_modulation_parameter_zero_changed)
-        self.ui.spinBoxParameter1.valueChanged.connect(self.on_modulation_parameter_one_changed)
+        self.ui.spinBoxParameter0.editingFinished.connect(self.on_modulation_parameter_zero_changed)
+        self.ui.spinBoxParameter1.editingFinished.connect(self.on_modulation_parameter_one_changed)
         self.ui.comboBoxModulationType.currentIndexChanged.connect(self.on_modulation_type_changed)
         self.ui.gVOriginalSignal.zoomed.connect(self.on_orig_signal_zoomed)
         self.ui.cbShowDataBitsOnly.stateChanged.connect(self.on_show_data_bits_only_changed)
@@ -80,6 +86,8 @@ class ModulatorDialogController(QDialog):
         self.ui.gVData.zoomed.connect(self.on_carrier_data_modulated_zoomed)
         self.ui.gVModulated.sel_area_width_changed.connect(self.on_modulated_selection_changed)
         self.ui.gVOriginalSignal.sel_area_width_changed.connect(self.on_original_selection_changed)
+        self.ui.spinBoxGaussBT.editingFinished.connect(self.on_gauss_bt_edited)
+        self.ui.spinBoxGaussFilterWidth.editingFinished.connect(self.on_gaus_filter_wdith_edited)
 
         self.ui.chkBoxLockSIV.stateChanged.connect(self.on_lock_siv_changed)
         self.ui.btnRestoreBits.clicked.connect(self.on_btn_restore_bits_clicked)
@@ -166,6 +174,11 @@ class ModulatorDialogController(QDialog):
         else:
             self.ui.btnRestoreBits.setEnabled(True)
 
+    def __cur_selected_mod_type(self):
+        s = self.ui.comboBoxModulationType.currentText()
+        return s[s.rindex("(")+1:s.rindex(")")]
+
+
     @pyqtSlot()
     def on_sample_rate_changed(self):
         if int(self.ui.spinBoxSampleRate.value()) > 0:
@@ -184,14 +197,26 @@ class ModulatorDialogController(QDialog):
         self.draw_modulated()
 
     @pyqtSlot()
+    def on_gauss_bt_edited(self):
+        self.current_modulator.gauss_bt = self.ui.spinBoxGaussBT.value()
+        self.draw_modulated()
+
+    @pyqtSlot()
+    def on_gaus_filter_wdith_edited(self):
+        self.current_modulator.gauss_filter_width = self.ui.spinBoxGaussFilterWidth.value()
+        self.draw_modulated()
+
+    @pyqtSlot()
     def on_modulation_type_changed(self):
-        if self.current_modulator.modulation_type == self.ui.comboBoxModulationType.currentIndex():
+        if self.current_modulator.modulation_type_str == self.__cur_selected_mod_type():
             write_standard_parameters = False
         else:
-            self.current_modulator.modulation_type = self.ui.comboBoxModulationType.currentIndex()
+            self.current_modulator.modulation_type_str = self.__cur_selected_mod_type()
             write_standard_parameters = True
 
-        if self.ui.comboBoxModulationType.currentIndex() == 0:
+        self.__set_gauss_ui_visibility(self.__cur_selected_mod_type() == "GFSK")
+
+        if self.__cur_selected_mod_type() == "ASK":
             self.ui.lParameterfor0.setText(self.tr("Amplitude for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Amplitude for 1:"))
             self.ui.spinBoxParameter0.auto_suffix = False
@@ -211,7 +236,7 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        elif self.ui.comboBoxModulationType.currentIndex() == 1:
+        elif self.__cur_selected_mod_type() in ("FSK", "GFSK"):
             self.ui.spinBoxParameter0.auto_suffix = True
             self.ui.spinBoxParameter1.auto_suffix = True
             self.ui.lParameterfor0.setText(self.tr("Frequency for 0:"))
@@ -219,18 +244,16 @@ class ModulatorDialogController(QDialog):
             self.ui.spinBoxParameter0.setMaximum(1e12)
             self.ui.spinBoxParameter0.setMinimum(-1e12)
             self.ui.spinBoxParameter0.setDecimals(4)
-            self.ui.spinBoxParameter0.setSuffix("")
             self.ui.spinBoxParameter1.setMaximum(1e12)
             self.ui.spinBoxParameter1.setMinimum(-1e12)
             self.ui.spinBoxParameter1.setDecimals(4)
-            self.ui.spinBoxParameter1.setSuffix("")
             if write_standard_parameters:
                 self.autodetect_fsk_freqs()
             else:
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        elif self.ui.comboBoxModulationType.currentIndex() == 2:
+        elif self.__cur_selected_mod_type() == "PSK":
             self.ui.spinBoxParameter0.auto_suffix = False
             self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.lParameterfor0.setText(self.tr("Phase (degree) for 0:"))
@@ -250,7 +273,8 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
-        self.draw_modulated()
+        self.ui.spinBoxParameter0.editingFinished.emit()
+        self.ui.spinBoxParameter1.editingFinished.emit()
 
 
     def resizeEvent(self, event: QResizeEvent):
@@ -327,6 +351,7 @@ class ModulatorDialogController(QDialog):
 
     @pyqtSlot()
     def on_custom_modulation_index_changed(self):
+        self.set_ui_for_current_modulator()
         self.draw_carrier()
         self.draw_data_bits()
         self.draw_modulated()
@@ -472,7 +497,7 @@ class ModulatorDialogController(QDialog):
         self.autodetect_fsk_freqs()
 
     def autodetect_fsk_freqs(self):
-        if self.ui.comboBoxModulationType.currentIndex() != 1:
+        if self.__cur_selected_mod_type() not in ("FSK", "GFSK"):
             return
 
         try:
@@ -530,3 +555,13 @@ class ModulatorDialogController(QDialog):
     @pyqtSlot(int)
     def on_original_selection_changed(self, new_width: int):
         self.ui.lOriginalSignalSamplesSelected.setText(str(abs(new_width)))
+
+
+    def __set_gauss_ui_visibility(self, show:bool):
+        self.ui.lGaussBT.setVisible(show)
+        self.ui.lGaussWidth.setVisible(show)
+        self.ui.spinBoxGaussBT.setVisible(show)
+        self.ui.spinBoxGaussFilterWidth.setVisible(show)
+
+        self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
+        self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)

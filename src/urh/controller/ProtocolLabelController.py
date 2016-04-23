@@ -1,6 +1,6 @@
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.QtCore import Qt, pyqtSlot, QModelIndex
+from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
@@ -30,9 +30,6 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, maxval, self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, maxval, self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(3, CheckBoxDelegate(self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, SpinBoxDelegate(offset+1,
-                                                                               offset+proto_group.num_blocks,
-                                                                               self))
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(5,
                                                             ComboBoxDelegate([""] * len(constants.LABEL_COLORS), True,
@@ -57,6 +54,7 @@ class ProtocolLabelController(QDialog):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
         self.model.restrictive_changed.connect(self.handle_restrictive_changed)
+        self.ui.tblViewProtoLabels.clicked.connect(self.on_table_clicked)
 
     @pyqtSlot()
     def confirm(self):
@@ -67,21 +65,30 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 2))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
 
-        if self.model.protocol_labels[row].restrictive:
-            self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
-
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 5))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 6))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 7))
 
     @pyqtSlot(int, bool)
     def handle_restrictive_changed(self, row: int, restrictive: bool):
-        if restrictive:
-            self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
-        else:
-            self.ui.tblViewProtoLabels.closePersistentEditor(self.model.index(row, 4))
+        self.model.update()
 
     @pyqtSlot(int)
     def set_view_index(self, ind):
         self.model.proto_view = ind
         self.model.update()
+
+    @pyqtSlot(QModelIndex)
+    def on_table_clicked(self, index: QModelIndex):
+        if not index.isValid():
+            return
+
+        i = index.row()
+        lbl = self.model.protocol_labels[i]
+        j = index.column()
+        if j == 4 and lbl.restrictive:
+            seqs, indexes = self.model.get_protocol_sequences(lbl.start, lbl.end)
+            item, ok = QInputDialog.getItem(self, "Choose matching pattern", "Pattern", seqs)
+            if ok and item:
+                self.model.set_refblock(lbl, indexes[seqs.index(item)])
+                self.model.update()

@@ -1,6 +1,6 @@
 import time
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh import constants
 
@@ -11,6 +11,7 @@ from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
 from urh.dev.gr.SpectrumThread import SpectrumThread
 from urh.dev.native.HackRF import HackRF
+from urh.util import Logger
 
 
 class Mode(Enum):
@@ -18,7 +19,7 @@ class Mode(Enum):
     send = 2
     spectrum = 3
 
-class VirtualDevice(object):
+class VirtualDevice(QObject):
     """
     Wrapper class for providing sending methods for grc and native devices
 
@@ -30,9 +31,10 @@ class VirtualDevice(object):
 
     def __init__(self, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None):
+        super().__init__(parent)
         self.name = name
         self.backend_handler = BackendHandler()
-        self.backend = self.backend_handler.device_backends[name].selected_backend
+        self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
         self.mode = mode
 
         if self.backend == Backends.grc:
@@ -53,7 +55,7 @@ class VirtualDevice(object):
             self.__dev.sender_needs_restart.connect(self.emit_sender_needs_restart)
         elif self.backend == Backends.native:
             name = self.name.lower()
-            if name in BackendHandler.DEVICE_NAMES:
+            if name in map(str.lower, BackendHandler.DEVICE_NAMES):
                 is_ringbuffer = self.mode == Mode.spectrum
                 if name == "hackrf":
                     self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
@@ -137,6 +139,20 @@ class VirtualDevice(object):
             raise ValueError("Unsupported Backend")
 
     @property
+    def port(self):
+        if self.backend == Backends.grc:
+            return self.__dev.port
+        else:
+            raise ValueError("Port only for gnnuradio socket (grc backend)")
+
+    @port.setter
+    def port(self, value):
+        if self.backend == Backends.native:
+            self.__dev.port = value
+        else:
+            raise ValueError("Port only for gnnuradio socket (grc backend)")
+
+    @property
     def data(self):
         if self.backend == Backends.grc:
             return self.__dev.data
@@ -145,6 +161,19 @@ class VirtualDevice(object):
                 return self.__dev.samples_to_send
             else:
                 return self.__dev.receive_buffer
+        else:
+            raise ValueError("Unsupported Backend")
+
+
+    @data.setter
+    def data(self, value):
+        if self.backend == Backends.grc:
+            self.__dev.data = value
+        elif self.backend == Backends.native:
+            if self.mode == Mode.send:
+                self.__dev.samples_to_send = value
+            else:
+                self.__dev.receive_buffer = value
         else:
             raise ValueError("Unsupported Backend")
 
@@ -170,6 +199,80 @@ class VirtualDevice(object):
             else:
                 raise ValueError("Unsupported Backend")
 
+    @property
+    def current_index(self):
+        if self.backend == Backends.grc:
+            return self.__dev.current_index
+        elif self.backend == Backends.native:
+            if self.mode == Mode.send:
+                return self.__dev.current_sent_sample
+            else:
+                return self.__dev.current_recv_index
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @current_index.setter
+    def current_index(self, value):
+        if self.backend == Backends.grc:
+            self.__dev.current_index = value
+        elif self.backend == Backends.native:
+            if self.mode == Mode.send:
+                self.__dev.current_sent_sample = value
+            else:
+                self.__dev.current_recv_index = value
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @property
+    def current_iteration(self):
+        if self.backend == Backends.grc:
+            return self.__dev.current_iteration
+        elif self.backend == Backends.native:
+            return self.__dev.current_sending_repeat
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @current_iteration.setter
+    def current_iteration(self, value):
+        if self.backend == Backends.grc:
+            self.__dev.current_iteration = value
+        elif self.backend == Backends.native:
+            self.__dev.current_sending_repeat = value
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @property
+    def sending_finished(self):
+        if self.backend == Backends.grc:
+            return self.__dev.current_iteration is None
+        elif self.backend == Backends.native:
+            return self.__dev.sending_finished
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @property
+    def spectrum_x(self):
+        if self.mode == Mode.spectrum:
+            if self.backend == Backends.grc:
+                return self.__dev.x
+            elif self.backend == Backends.native:
+                # TODO Implement
+                raise NotImplementedError("Implement native Specturm analyzer")
+        else:
+            raise ValueError("Spectrum x only available in spectrum mode")
+
+    @property
+    def spectrum_y(self):
+        if self.mode == Mode.spectrum:
+            if self.backend == Backends.grc:
+                return self.__dev.y
+            elif self.backend == Backends.native:
+                # TODO Implement
+                raise NotImplementedError("Implement native Specturm analyzer")
+        else:
+            raise ValueError("Spectrum y only available in spectrum mode")
+
+
     def start(self):
         if self.backend == Backends.grc:
             self.__dev.setTerminationEnabled(True)
@@ -182,6 +285,8 @@ class VirtualDevice(object):
 
             if self.mode == Mode.send:
                 self.__dev.start_tx_mode()
+            else:
+                self.__dev.start_rx_mode()
 
             self.emit_started_signal()
         else:
@@ -201,6 +306,17 @@ class VirtualDevice(object):
             raise ValueError("Unsupported Backend")
 
 
+    def cleanup(self):
+        if self.backend == Backends.grc:
+            if self.mode == Mode.send:
+                self.__dev.socket.close()
+            self.__dev.quit()
+
+        elif self.backend == Backends.native:
+            self.__dev.close()
+
+        self.data = None
+
     def emit_stopped_signal(self):
         self.stopped.emit()
 
@@ -209,3 +325,10 @@ class VirtualDevice(object):
 
     def emit_sender_needs_restart(self):
         self.sender_needs_restart.emit()
+
+    def read_errors(self):
+        if self.backend == Backends.grc:
+            return self.__dev.read_errors()
+        elif self.backend == Backends.native:
+            # TODO Error messages for devices
+            return "1"

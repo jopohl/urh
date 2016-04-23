@@ -120,9 +120,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnClear.clicked.connect(self.on_clear_clicked)
         self.ui.btnSave.clicked.connect(self.on_save_clicked)
 
-        self.device.stopped.connect(self.on_device_stopped)
-        self.device.started.connect(self.on_device_started)
-        self.device.sender_needs_restart.connect(self.__restart_device_thread)
+        self.__create_device_connects()
 
         self.timer.timeout.connect(self.update_view)
         self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
@@ -138,6 +136,10 @@ class SendRecvDialogController(QDialog):
         self.ui.graphicsView.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
         self.ui.graphicsView.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
 
+    def __create_device_connects(self):
+        self.device.stopped.connect(self.on_device_stopped)
+        self.device.started.connect(self.on_device_started)
+        self.device.sender_needs_restart.connect(self.__restart_device_thread)
 
     @property
     def mode(self):
@@ -175,6 +177,9 @@ class SendRecvDialogController(QDialog):
         nrep = self.ui.spinBoxNRepeat.value()
         self.device = VirtualDevice(dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
                                     self.device.sample_rate, self.device.samples_to_send, self.device.ip, nrep, self)
+        self.__create_device_connects()
+        self.scene_creator = LiveSceneManager(self.device.data.real, parent=self)
+        self.ui.graphicsView.setScene(self.scene_creator.scene)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
@@ -208,7 +213,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(True)
-        self.ui.btnSave.setEnabled(self.device_thread.current_index > 0)
+        self.ui.btnSave.setEnabled(self.device.current_index > 0)
         self.ui.spinBoxSampleRate.setEnabled(True)
         self.ui.spinBoxFreq.setEnabled(True)
         self.ui.lineEditIP.setEnabled(True)
@@ -244,23 +249,24 @@ class SendRecvDialogController(QDialog):
 
     def update_view(self):
         txt = self.ui.txtEditErrors.toPlainText()
-        new_errors = self.device_thread.read_errors()
+        new_errors = self.device.read_errors()
 
         if "No devices found for" in new_errors:
-            self.device_thread.stop("Could not establish connection to USRP")
+            self.device.stop("Could not establish connection to USRP")
             Errors.usrp_ip_not_found()
 
             self.on_clear_clicked()
 
         elif "FATAL: No supported devices found" in new_errors or \
                         "HACKRF_ERROR_NOT_FOUND" in new_errors or \
-                        "HACKRF_ERROR_LIBUSB" in new_errors:
-            self.device_thread.stop("Could not establish connection to HackRF")
+                        "HACKRF_ERROR_LIBUSB" in new_errors or\
+                        "failed to open HackRF" in new_errors or "could not start HackRF rx mode" in new_errors:
+            self.device.stop("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()
 
         elif "No module named gnuradio" in new_errors:
-            self.device_thread.stop("Did not find gnuradio.")
+            self.device.stop("Did not find gnuradio.")
             Errors.gnuradio_not_installed()
             self.on_clear_clicked()
 
@@ -270,24 +276,24 @@ class SendRecvDialogController(QDialog):
         if len(new_errors) > 1:
             self.ui.txtEditErrors.setPlainText(txt + new_errors)
 
-        self.ui.progressBar.setValue(self.device_thread.current_index)
+        self.ui.progressBar.setValue(self.device.current_index)
 
-        self.ui.lSamplesCaptured.setText("{0:n}".format(self.device_thread.current_index))
-        self.ui.lSignalSize.setText("{0:n}".format((8 * self.device_thread.current_index) / (1024 ** 2)))
-        self.ui.lTime.setText(locale.format_string("%.2f", self.device_thread.current_index / self.device_thread.sample_rate))
-        if self.device_thread.current_iteration is not None:
-            self.ui.lblCurrentRepeatValue.setText(str(self.device_thread.current_iteration + 1))
+        self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
+        self.ui.lSignalSize.setText("{0:n}".format((8 * self.device.current_index) / (1024 ** 2)))
+        self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
+        if not self.device.sending_finished:
+            self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
         else:
             self.ui.lblCurrentRepeatValue.setText("Done")
 
-        if self.device_thread.current_index == 0:
+        if self.device.current_index == 0:
             return
 
         if self.mode == Mode.send or self.mode == Mode.receive:
             self.ui.graphicsView.horizontalScrollBar().blockSignals(True)
-            self.scene_creator.end = self.device_thread.current_index
+            self.scene_creator.end = self.device.current_index
         elif self.mode == Mode.spectrum:
-            x, y = self.device_thread.x, self.device_thread.y
+            x, y = self.device.spectrum_x, self.device.spectrum_y
             self.scene_creator.scene.frequencies = x
             self.scene_creator.plot_data = y
             if x is None or y is None:
@@ -298,25 +304,22 @@ class SendRecvDialogController(QDialog):
         self.ui.graphicsView.update()
 
     def __restart_device_thread(self):
-        self.device_thread.stop("Restarting thread with new port")
+        self.device.stop("Restarting with new port")
         QApplication.processEvents()
 
-        self.device_thread.port = random.randint(1024, 65536)
-        print("Retry with port " + str(self.device_thread.port))
-        self.device_thread.setTerminationEnabled(True)
-        self.device_thread.terminate()
-        time.sleep(1)
+        self.device.port = random.randint(1024, 65536)
+        print("Retry with port " + str(self.device.port))
 
-        self.device_thread.start()
+        self.device.start()
         QApplication.processEvents()
 
     @pyqtSlot()
     def on_clear_clicked(self):
         if self.mode != Mode.spectrum:
             self.ui.txtEditErrors.clear()
-            self.device_thread.clear_data()
+            self.device.current_index = 0
             self.scene_creator.clear_path()
-            self.device_thread.current_iteration = 0
+            self.device.current_iteration = 0
             self.ui.graphicsView.repaint()
             self.ui.lSamplesCaptured.setText("0")
             self.ui.lSignalSize.setText("0")
@@ -330,7 +333,7 @@ class SendRecvDialogController(QDialog):
             self.scene_creator.clear_path()
 
     def on_save_clicked(self):
-        data = self.device_thread.data[:self.device_thread.current_index]
+        data = self.device.data[:self.device.current_index]
         filename = FileOperator.save_data_dialog("recorded", data, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
@@ -338,8 +341,8 @@ class SendRecvDialogController(QDialog):
 
 
     def closeEvent(self, QCloseEvent):
-        self.device_thread.stop("Dialog closed. Killing recording process.")
-        if self.mode == Mode.receive and not self.already_saved and self.device_thread.current_index > 0:
+        self.device.stop("Dialog closed. Killing recording process.")
+        if self.mode == Mode.receive and not self.already_saved and self.device.current_index > 0:
             reply = QMessageBox.question(self, self.tr("Save data?"),
                                          self.tr("Do you want to save the data you have captured so far?"),
                                          QMessageBox.Yes | QMessageBox.No | QMessageBox.Abort)
@@ -350,19 +353,16 @@ class SendRecvDialogController(QDialog):
                 return
 
         time.sleep(0.1)
-        if self.mode == Mode.send:
-            self.device_thread.socket.close()
-
-        self.device_thread.data = None
-
+        self.device.cleanup()
         self.files_recorded.emit(self.recorded_files)
-        self.recording_parameters.emit(str(self.device_thread.freq),
-                                       str(self.device_thread.sample_rate),
-                                       str(self.device_thread.bandwidth),
-                                       str(self.device_thread.gain),
-                                       str(self.device_thread.device))
-        self.device_thread.quit()
-        self.device_thread.deleteLater()
+        self.recording_parameters.emit(str(self.device.frequency),
+                                       str(self.device.sample_rate),
+                                       str(self.device.bandwidth),
+                                       str(self.device.gain),
+                                       str(self.device.name))
+
+        #self.device_thread.quit()
+        #self.device_thread.deleteLater()
 
         QCloseEvent.accept()
 

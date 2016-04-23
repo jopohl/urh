@@ -146,8 +146,6 @@ class AbstractBaseThread(QThread):
         result = b"".join(result)
         return result.decode("utf-8")
 
-    def clear_data(self):
-        self.current_index = 0
 
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):

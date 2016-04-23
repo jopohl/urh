@@ -1,4 +1,5 @@
 import tempfile
+from distutils import ccompiler
 from distutils.core import setup, Extension
 
 import shutil
@@ -31,6 +32,31 @@ else:
                            }
 
 build_dir = os.path.join(tempfile.gettempdir(), "build")
+
+
+def get_device_modules():
+    compiler = ccompiler.new_compiler()
+
+    extensions = []
+    devices = {
+                "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+              }
+
+    for dev_name, params in devices.items():
+        if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+            print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
+            e = Extension(dev_name, ["{0}.cpp".format(dev_name)],
+                          extra_compile_args= ["-static", "-static-libgcc", OPEN_MP_FLAG],
+                          extra_link_args=[OPEN_MP_FLAG], language="c++",
+                          libraries=[params["lib"]])
+            extensions.append(e)
+        else:
+             print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
+        try:
+            os.remove("a.out") # Temp file for checking
+        except OSError:
+            pass
+    return extensions
 
 
 def main():
@@ -68,16 +94,7 @@ def main():
     # Part 2: Build devices
     DEV_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "dev", "native", "lib"))
     os.chdir(DEV_DIR)
-    filenames = [os.path.splitext(f)[0] for f in os.listdir(DEV_DIR) if f.endswith(ext)]
-
-    libs = {"hackrf": "hackrf", "usrp": "uhd"}
-
-    extensions = [Extension(f, [f+ext],
-                            include_dirs=[numpy.get_include()],
-                            extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
-                            extra_link_args=[OPEN_MP_FLAG],
-                            libraries = [libs[f]],
-                            language=LANGUAGE) for f in filenames]
+    extensions = get_device_modules()
 
     if use_cython:
         from Cython.Build import cythonize
@@ -87,6 +104,8 @@ def main():
         name='Universal Radio Hacker',
         ext_modules=extensions
     )
+    if os.path.isdir(os.path.join(DEV_DIR, "tmp")):
+        shutil.rmtree(os.path.join(DEV_DIR, "tmp"))
 
     build_path = os.path.join(build_dir, "result")
     filenames = os.listdir(build_path)

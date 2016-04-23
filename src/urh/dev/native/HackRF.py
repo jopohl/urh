@@ -8,10 +8,26 @@ from urh.util.Logger import logger
 class HackRF(Device):
     BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
 
-    def __init__(self, bw, freq, gain, srate, initial_bufsize=8e9, is_ringbuffer=False):
-        super().__init__(bw, freq, gain, srate, initial_bufsize, is_ringbuffer)
-        self.is_open = False
+    def __init__(self, bw, freq, gain, srate, bufsize=2e9, is_ringbuffer=False):
+        super().__init__(bw, freq, gain, srate, bufsize, is_ringbuffer)
         self.success = 0
+        self.error_not_open = -4242
+
+        self.error_codes = {
+            0: "HACKRF_SUCCESS",
+            1: "HACKRF_TRUE",
+            -2: "HACKRF_ERROR_INVALID_PARAM",
+            -5: "HACKRF_ERROR_NOT_FOUND",
+            -6: "HACKRF_ERROR_BUSY",
+            -11: "HACKRF_ERROR_NO_MEM",
+            -1000: "HACKRF_ERROR_LIBUSB",
+            -1001: "HACKRF_ERROR_THREAD",
+            -1002: "HACKRF_ERROR_STREAMING_THREAD_ERR",
+            -1003: "HACKRF_ERROR_STREAMING_STOPPED",
+            -1004: "HACKRF_ERROR_STREAMING_EXIT_CALLED",
+            -4242: "HACKRF NOT OPEN",
+            -9999: "HACKRF_ERROR_OTHER"
+        }
 
         self.__lut = np.zeros(0xffff + 1, dtype=np.complex64)
         self.little_endian = False
@@ -31,42 +47,43 @@ class HackRF(Device):
 
     def open(self):
         if not self.is_open:
-            if hackrf.setup() == self.success:
-                self.is_open = True
-                logger.info("successfully opened HackRF")
-            else:
-                logger.warning("failed to open HackRF")
+            ret = hackrf.setup()
+            self.is_open = ret == self.success
+            self.log_retcode(ret, "open")
+
 
     def close(self):
         if self.is_open:
-            if hackrf.exit() == self.success:
-                logger.info("successfully closed HackRF")
-                self.is_open = False
+            ret = hackrf.exit()
+            self.is_open = ret != self.success
+            self.log_retcode(ret, "close")
+
 
     def start_rx_mode(self):
         if self.is_open:
+            self.init_recv_buffer()
             self.set_device_parameters()
-            if hackrf.start_rx_mode(self.callback_recv) == self.success:
-                self.is_receiving = True
-                self.read_queue_thread.start()
-                logger.info("successfully started HackRF rx mode")
-            else:
-                self.is_receiving = False
-                logger.error("could not start HackRF rx mode")
+            ret = hackrf.start_rx_mode(self.callback_recv)
+            self.is_receiving = ret == self.success
+
+            if self.is_receiving:
+                logger.info("HackRF: Starting receiving thread")
+                self._start_readqueue_thread()
+
+            self.log_retcode(ret, "start_rx_mode")
         else:
-            logger.error("Could not start HackRF rx mode: Device not open")
+            self.log_retcode(self.error_not_open, "start_rx_mode")
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
         if self.read_queue_thread.is_alive():
-            self.read_queue_thread.join()
-        if self.is_open:
-            logger.info("Stopping rx mode")
-            if hackrf.stop_rx_mode() == self.success:
-                logger.info("stopped HackRF rx mode (" + str(msg) + ")")
-            else:
-                logger.error("could not stop HackRF rx mode")
+            self.read_queue_thread.join(0.1)
+            logger.info("HackRF: Joined read_queue_thread")
 
+        if self.is_open:
+            logger.info("stopping HackRF rx mode ({0})".format(msg))
+            logger.warning("closing because stop_rx_mode of HackRF is bugged and will not allow re receive without close")
+            self.close()
 
     def switch_from_rx2tx(self):
         # https://github.com/mossmann/hackrf/pull/246/commits/4f9665fb3b43462e39a1592fc34f3dfb50de4a07
@@ -75,23 +92,20 @@ class HackRF(Device):
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None):
         if self.is_open:
             self.init_send_parameters(samples_to_send, repeats)
-
-            if hackrf.start_tx_mode(self.callback_send) == self.success:
+            retcode = hackrf.start_tx_mode(self.callback_send)
+            if retcode == self.success:
                 self.is_transmitting = True
-                self.sendbuffer_thread.start()
-                logger.info("successfully started HackRF tx mode")
+                self._start_sendbuffer_thread()
             else:
                 self.is_transmitting = False
-                logger.error("could not start HackRF tx mode")
         else:
-            logger.error("Could not start HackRF tx mode: Device not open")
-
+            retcode = self.error_not_open
+        self.log_retcode(retcode, "start_tx_mode")
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
         if self.sendbuffer_thread.is_alive():
-            logger.info("HackRF: closing send buffer thread")
-            self.sendbuffer_thread.join()
+            self.sendbuffer_thread.join(0.1)
 
         self.send_buffer_reader.close()
         self.send_buffer.close()
@@ -100,26 +114,20 @@ class HackRF(Device):
             logger.info("stopping HackRF tx mode ({0})".format(msg))
             logger.info("closing because stop_tx_mode of HackRF is bugged and never returns")
             self.close()
-            #if hackrf.stop_tx_mode() == self.success:
-            # if hackrf.close
-            #     logger.info("successfully stopped HackRF tx mode")
-            # else:
-            #     logger.error("could not stopped HackRF tx mode")
 
     def set_device_bandwidth(self, bw):
         if self.is_open:
-
-            if hackrf.set_baseband_filter_bandwidth(bw) == self.success:
-                logger.info("successfully set HackRF bandwidth to {0}".format(bw))
-            else:
-                logger.error("failed to set HackRF bandwidth to {0}".format(bw))
+            retcode = hackrf.set_baseband_filter_bandwidth(bw)
+        else:
+            retcode = self.error_not_open
+        self.log_retcode(retcode, "set_bandwidth", bw)
 
     def set_device_frequency(self, value):
         if self.is_open:
-            if hackrf.set_freq(value) == self.success:
-                logger.info("successfully set HackRF frequency to {0}".format(value))
-            else:
-                logger.error("failed to set HackRF frequency to {0}".format(value))
+            retcode = hackrf.set_freq(value)
+        else:
+            retcode = self.error_not_open
+        self.log_retcode(retcode, "set_frequency", value)
 
     def set_device_gain(self, gain):
         if self.is_open:
@@ -129,10 +137,11 @@ class HackRF(Device):
 
     def set_device_sample_rate(self, sample_rate):
         if self.is_open:
-            if hackrf.set_sample_rate(sample_rate) == self.success:
-                logger.info("successfully set HackRF sample rate to {0}".format(sample_rate))
-            else:
-                logger.error("failed to set HackRF sample rate to {0}".format(sample_rate))
+            retcode = hackrf.set_sample_rate(sample_rate)
+        else:
+            retcode = self.error_not_open
+
+        self.log_retcode(retcode, "set_sample_rate", sample_rate)
 
     def unpack_complex(self, buffer, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)

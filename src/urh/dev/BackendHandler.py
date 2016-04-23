@@ -66,6 +66,9 @@ class BackendHandler(object):
 
     def __init__(self):
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
+        self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+
+
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
         else:
@@ -80,12 +83,7 @@ class BackendHandler(object):
     def avail_devices(self):
         return set(devname for devname in self.DEVICE_NAMES if len(self.device_backends[devname.lower()].avail_backends) > 0)
 
-    @property
-    def gnuradio_installed(self) -> bool:
-        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-            return call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
-        else:
-            return False
+
     @property
     def hackrf_native_enabled(self) -> bool:
          try:

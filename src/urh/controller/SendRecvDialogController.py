@@ -3,6 +3,9 @@ import random
 import time
 from enum import Enum
 
+import gc
+
+import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
@@ -12,9 +15,6 @@ from urh import constants
 from urh.FFTSceneManager import FFTSceneManager
 from urh.LiveSceneManager import LiveSceneManager
 from urh.dev.VirtualDevice import Mode, VirtualDevice
-from urh.dev.gr.ReceiverThread import ReceiverThread
-from urh.dev.gr.SenderThread import SenderThread
-from urh.dev.gr.SpectrumThread import SpectrumThread
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -32,7 +32,6 @@ class SendRecvDialogController(QDialog):
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
-
 
         self.backend_handler = BackendHandler()
         self.update_interval = 125
@@ -64,6 +63,7 @@ class SendRecvDialogController(QDialog):
             self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
             self.setWindowTitle("Send signal")
             self.ui.btnStart.setToolTip("Send data")
+            self.ui.progressBar.setMaximum(len(modulated_data))
 
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
@@ -90,7 +90,7 @@ class SendRecvDialogController(QDialog):
 
         dev_name = self.ui.cbDevice.currentText()
         nrep = self.ui.spinBoxNRepeat.value()
-        self.device = VirtualDevice(dev_name, mode, bw, freq, gain, samp_rate, samples_to_send=modulated_data,
+        self.device = VirtualDevice(self.backend_handler, dev_name, mode, bw, freq, gain, samp_rate, samples_to_send=modulated_data,
                                     device_ip=self.ui.lineEditIP.text(), sending_repeats=nrep, parent=self)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
@@ -100,7 +100,7 @@ class SendRecvDialogController(QDialog):
         self.timer = QTimer(self)
 
         if mode == Mode.receive or mode == Mode.send:
-            self.scene_creator = LiveSceneManager(self.device.data.real, parent=self)
+            self.scene_creator = LiveSceneManager(np.array([]), parent=self) # set really in on_device_started
         else:
             self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.ui.graphicsView)
 
@@ -175,10 +175,15 @@ class SendRecvDialogController(QDialog):
     def on_selected_device_changed(self):
         dev_name = self.ui.cbDevice.currentText()
         nrep = self.ui.spinBoxNRepeat.value()
-        self.device = VirtualDevice(dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
-                                    self.device.sample_rate, self.device.samples_to_send, self.device.ip, nrep, self)
+        sts = self.device.samples_to_send
+        self.device.free_data()
+        gc.collect()
+        self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
+                                    self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()
-        self.scene_creator = LiveSceneManager(self.device.data.real, parent=self)
+        del self.scene_creator.plot_data
+        if self.mode == Mode.receive or self.mode == Mode.send:
+            self.scene_creator = LiveSceneManager(np.array([]), parent=self)
         self.ui.graphicsView.setScene(self.scene_creator.scene)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
@@ -187,6 +192,7 @@ class SendRecvDialogController(QDialog):
     def on_start_clicked(self):
         if self.mode == Mode.send and self.ui.progressBar.value() >= self.ui.progressBar.maximum() - 1:
             self.on_clear_clicked()
+
 
         self.ui.spinBoxFreq.editingFinished.emit()
         self.ui.lineEditIP.editingFinished.emit()
@@ -227,6 +233,9 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_device_started(self):
+        if self.mode == Mode.receive or self.mode == Mode.send:
+            self.scene_creator.plot_data = self.device.data.real
+
         self.ui.txtEditErrors.clear()
         self.scene_creator.set_text("Waiting for device..")
         self.ui.graphicsView.capturing_data = True
@@ -252,21 +261,20 @@ class SendRecvDialogController(QDialog):
         new_errors = self.device.read_errors()
 
         if "No devices found for" in new_errors:
-            self.device.stop("Could not establish connection to USRP")
+            self.device.stop_on_error("Could not establish connection to USRP")
             Errors.usrp_ip_not_found()
 
             self.on_clear_clicked()
 
         elif "FATAL: No supported devices found" in new_errors or \
                         "HACKRF_ERROR_NOT_FOUND" in new_errors or \
-                        "HACKRF_ERROR_LIBUSB" in new_errors or\
-                        "failed to open HackRF" in new_errors or "could not start HackRF rx mode" in new_errors:
-            self.device.stop("Could not establish connection to HackRF")
+                        "HACKRF_ERROR_LIBUSB" in new_errors:
+            self.device.stop_on_error("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()
 
         elif "No module named gnuradio" in new_errors:
-            self.device.stop("Did not find gnuradio.")
+            self.device.stop_on_error("Did not find gnuradio.")
             Errors.gnuradio_not_installed()
             self.on_clear_clicked()
 

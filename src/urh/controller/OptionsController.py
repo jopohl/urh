@@ -3,6 +3,7 @@ import os
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
+from subprocess import call, DEVNULL
 
 from urh import constants
 from urh.controller.PluginController import PluginController
@@ -149,6 +150,7 @@ class OptionsController(QDialog):
         python2_exe = self.ui.lineEditPython2Interpreter.text()
         if os.path.isfile(python2_exe) and os.access(python2_exe, os.X_OK):
             self.backend_handler.python2_exe = python2_exe
+            self.backend_handler.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
             constants.SETTINGS.setValue("python2_exe", python2_exe)
             self.refresh_device_tab()
         else:

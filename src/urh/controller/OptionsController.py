@@ -204,3 +204,7 @@ class OptionsController(QDialog):
 
         if not 'show_pause_as_time' in keys:
             settings.setValue('show_pause_as_time', False)
+
+        bh = BackendHandler()
+        for be in bh.device_backends.values():
+            be.write_settings()

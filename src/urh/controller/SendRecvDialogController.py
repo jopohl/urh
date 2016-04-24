@@ -9,7 +9,7 @@ from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 from urh.util.Logger import logger
 
-from urh.dev.BackendHandler import BackendHandler
+from urh.dev.BackendHandler import BackendHandler, Backends
 
 from urh import constants
 from urh.FFTSceneManager import FFTSceneManager
@@ -362,16 +362,14 @@ class SendRecvDialogController(QDialog):
                 return
 
         time.sleep(0.1)
-        self.device.cleanup()
-        self.files_recorded.emit(self.recorded_files)
-        self.recording_parameters.emit(str(self.device.frequency),
-                                       str(self.device.sample_rate),
-                                       str(self.device.bandwidth),
-                                       str(self.device.gain),
-                                       str(self.device.name))
-
-        #self.device_thread.quit()
-        #self.device_thread.deleteLater()
+        if self.device.backend != Backends.none:
+            self.device.cleanup()
+            self.files_recorded.emit(self.recorded_files)
+            self.recording_parameters.emit(str(self.device.frequency),
+                                           str(self.device.sample_rate),
+                                           str(self.device.bandwidth),
+                                           str(self.device.gain),
+                                           str(self.device.name))
 
         QCloseEvent.accept()
 

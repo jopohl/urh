@@ -8,6 +8,7 @@ ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh
 
 # Install HackRF
+RUN apt-get -y install build-essential cmake libusb-1.0-0-dev liblog4cpp5-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev swig
 WORKDIR /tmp
 RUN git clone https://github.com/mossmann/hackrf.git
 WORKDIR /tmp/hackrf/host

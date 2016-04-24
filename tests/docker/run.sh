@@ -1,3 +1,4 @@
 #!/bin/bash
+cd /tmp
 git clone https://github.com/jopohl/urh
-/urh/bin/urh
+/tmp/urh/bin/urh

@@ -7,6 +7,9 @@ RUN apt-get -y install python3-numpy python3-pyqt5 git g++ libpython3-dev
 ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh
 
+# Icons are optional but look nice
+RUN apt-get -y oxygen-icon-theme-complete
+
 # Install HackRF
 RUN apt-get -y install build-essential cmake libusb-1.0-0-dev liblog4cpp5-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev swig pkg-config
 WORKDIR /tmp
@@ -18,5 +21,8 @@ RUN cmake ../ -DINSTALL_UDEV_RULES=ON
 RUN make -j4
 RUN make install
 RUN ldconfig
+
+# Install Gnuradio
+apt-get -y install gnuradio gnuradio-dev gr-iqbal
 
 CMD /bin/run.sh

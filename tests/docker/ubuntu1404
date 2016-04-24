@@ -8,7 +8,7 @@ ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh
 
 # Icons are optional but look nice
-RUN apt-get -y oxygen-icon-theme-complete
+RUN apt-get -y install oxygen-icon-theme-complete
 
 # Install HackRF
 RUN apt-get -y install build-essential cmake libusb-1.0-0-dev liblog4cpp5-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev swig pkg-config

@@ -239,7 +239,8 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.txtEditErrors.append(txt)
 
     def closeEvent(self, event: QCloseEvent):
-        self.sniffer.stop()
+        if hasattr(self, "sniffer"):
+            self.sniffer.stop()
         event.accept()
 
     @pyqtSlot(str)

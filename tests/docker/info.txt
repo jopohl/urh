@@ -3,3 +3,6 @@ sudo docker build --tag ubuntu1404 -f ubuntu1404 .
 
 # Run
 sudo docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix ubuntu1404
+
+# On Ubuntu Host:
+xhost local:root # For enabling GUI

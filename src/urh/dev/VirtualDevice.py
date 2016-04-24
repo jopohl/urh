@@ -148,6 +148,8 @@ class VirtualDevice(QObject):
             self.__dev.usrp_ip = value
         elif self.backend == Backends.native:
             self.__dev.device_ip = value
+        elif self.backend == Backends.none:
+            pass
         else:
             raise ValueError("Unsupported Backend")
 

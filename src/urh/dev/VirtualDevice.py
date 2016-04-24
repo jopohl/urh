@@ -70,6 +70,8 @@ class VirtualDevice(QObject):
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
+        elif self.backend == Backends.none:
+            self.__dev = None
         else:
             raise ValueError("Unsupported Backend")
 

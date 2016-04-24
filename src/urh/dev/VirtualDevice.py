@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
-
+from urh.util.Logger import logger
 
 from urh.dev.BackendHandler import Backends, BackendHandler
 from enum import Enum
@@ -32,9 +32,16 @@ class VirtualDevice(QObject):
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False):
         super().__init__(parent)
         self.name = name
-        self.backend_handler = backend_handler
-        self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
         self.mode = mode
+        self.backend_handler = backend_handler
+        try:
+            self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
+        except KeyError:
+            logger.warning("Invalid device name: {0}".format(name))
+            self.backend = None
+            self.__dev = None
+            return
+
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:

@@ -23,6 +23,6 @@ RUN make install
 RUN ldconfig
 
 # Install Gnuradio
-apt-get -y install gnuradio gnuradio-dev gr-iqbal
+RUN apt-get -y install gnuradio gnuradio-dev gr-iqbal
 
 CMD /bin/run.sh

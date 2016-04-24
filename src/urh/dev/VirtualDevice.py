@@ -337,11 +337,19 @@ class VirtualDevice(QObject):
             if self.mode == Mode.send:
                 self.__dev.socket.close()
             self.__dev.quit()
+            self.data = None
 
         elif self.backend == Backends.native:
             self.__dev.close()
+            self.data = None
 
-        self.data = None
+        elif self.backend == Backends.none:
+            pass
+
+        else:
+            raise ValueError("Unsupported Backend")
+
+
 
     def emit_stopped_signal(self):
         self.stopped.emit()

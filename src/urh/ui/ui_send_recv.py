@@ -217,7 +217,7 @@ class Ui_SendRecvDialog(object):
         self.gridLayout_3.addLayout(self.verticalLayout, 0, 0, 2, 1)
         self.graphicsView = LiveGraphicView(SendRecvDialog)
         self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.graphicsView.setObjectName("graphicsView")
         self.gridLayout_3.addWidget(self.graphicsView, 0, 1, 2, 1)
         self.label_6 = QtWidgets.QLabel(SendRecvDialog)
@@ -236,8 +236,19 @@ class Ui_SendRecvDialog(object):
 
         self.retranslateUi(SendRecvDialog)
         QtCore.QMetaObject.connectSlotsByName(SendRecvDialog)
-        SendRecvDialog.setTabOrder(self.cbDevice, self.spinBoxGain)
-        SendRecvDialog.setTabOrder(self.spinBoxGain, self.graphicsView)
+        SendRecvDialog.setTabOrder(self.cbDevice, self.lineEditIP)
+        SendRecvDialog.setTabOrder(self.lineEditIP, self.spinBoxFreq)
+        SendRecvDialog.setTabOrder(self.spinBoxFreq, self.spinBoxSampleRate)
+        SendRecvDialog.setTabOrder(self.spinBoxSampleRate, self.spinBoxBandwidth)
+        SendRecvDialog.setTabOrder(self.spinBoxBandwidth, self.spinBoxGain)
+        SendRecvDialog.setTabOrder(self.spinBoxGain, self.spinBoxNRepeat)
+        SendRecvDialog.setTabOrder(self.spinBoxNRepeat, self.btnStart)
+        SendRecvDialog.setTabOrder(self.btnStart, self.btnStop)
+        SendRecvDialog.setTabOrder(self.btnStop, self.btnSave)
+        SendRecvDialog.setTabOrder(self.btnSave, self.btnClear)
+        SendRecvDialog.setTabOrder(self.btnClear, self.graphicsView)
+        SendRecvDialog.setTabOrder(self.graphicsView, self.sliderYscale)
+        SendRecvDialog.setTabOrder(self.sliderYscale, self.txtEditErrors)
 
     def retranslateUi(self, SendRecvDialog):
         _translate = QtCore.QCoreApplication.translate

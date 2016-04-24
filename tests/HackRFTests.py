@@ -73,8 +73,9 @@ class TestHackRF(unittest.TestCase):
         hfc.open()
         hfc.start_rx_mode()
         i = 0
-        while i < 5:
-            print("{0}/{1}".format(i+1, 5))
+        TIME_TOTAL = 5
+        while i <TIME_TOTAL:
+            print("{0}/{1}".format(i+1, TIME_TOTAL))
             time.sleep(1)
             i+=1
         print("{0:,}".format(hfc.current_recv_index))

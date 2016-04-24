@@ -17,7 +17,6 @@ class Device(QObject):
 
     def __init__(self, bw, freq, gain, srate, bufsize=8e9, is_ringbuffer=False):
         super().__init__()
-        self.byte_buffer = b''
 
         self.__bandwidth = bw
         self.__frequency = freq
@@ -201,18 +200,16 @@ class Device(QObject):
         self.set_device_sample_rate(self.sample_rate)
 
     def read_receiving_queue(self):
-        clear_byte_buffer = False
         while self.is_receiving:
             while not self.queue.empty():
-                self.byte_buffer += self.queue.get()
+                byte_buffer = self.queue.get()
                 old_index = self.current_recv_index
 
-                nsamples = len(self.byte_buffer) // self.BYTES_PER_SAMPLE
+                nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:
                     if self.current_recv_index + nsamples >= len(self.receive_buffer):
                         if self.is_ringbuffer:
                             self.current_recv_index = 0
-                            clear_byte_buffer = True
                             if nsamples >= len(self.receive_buffer):
                                # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
                                 nsamples = len(self.receive_buffer) - 1
@@ -223,16 +220,10 @@ class Device(QObject):
 
                     end = nsamples*self.BYTES_PER_SAMPLE
                     self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
-                        self.unpack_complex(self.byte_buffer[:end], nsamples)
+                        self.unpack_complex(byte_buffer[:end], nsamples)
                     self.current_recv_index += nsamples
 
                     self.rcv_index_changed.emit(old_index, self.current_recv_index)
-
-                    if clear_byte_buffer:
-                        self.byte_buffer = b""
-                        clear_byte_buffer = False
-                    else:
-                        self.byte_buffer = self.byte_buffer[end:]
 
             time.sleep(0.01)
 
@@ -264,13 +255,12 @@ class Device(QObject):
         while (self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1) and self.is_transmitting:
                 self.reset_send_buffer()
                 while self.is_transmitting and self.send_buffer_reader.peek():
-                    time.sleep(0.1)
                     try:
                         self.current_sent_sample = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
                     except ValueError:
                         # I/O operation on closed file. --> Buffer was closed
                         return 0
-                    continue # Still data in send buffer
+                    time.sleep(0.01)
 
                 self.current_sending_repeat += 1
 

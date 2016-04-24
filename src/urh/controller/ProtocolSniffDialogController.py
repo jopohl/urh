@@ -29,12 +29,6 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.spinboxErrorTolerance.setValue(tolerance)
         self.ui.comboxModulation.setCurrentIndex(modulation_type_index)
 
-        self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
-                                       modulation_type_index, samp_rate, freq,
-                                       gain, bw, device)
-
-        self.sniffer.usrp_ip = self.ui.lineEditIP.text()
-
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
 
@@ -53,7 +47,13 @@ class ProtocolSniffDialogController(QDialog):
             self.close()
             return
 
-        self.on_device_edited()
+        device = self.ui.cbDevice.currentText()
+        self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
+                               modulation_type_index, samp_rate, freq,
+                               gain, bw, device)
+
+        self.sniffer.usrp_ip = self.ui.lineEditIP.text()
+
 
         ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
         ipRegex = QRegExp("^" + ipRange

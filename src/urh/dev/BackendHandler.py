@@ -66,7 +66,10 @@ class BackendHandler(object):
 
     def __init__(self):
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
-        self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
+            self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+        else:
+            self.gnuradio_installed = False
 
 
         if not hasattr(sys, 'frozen'):

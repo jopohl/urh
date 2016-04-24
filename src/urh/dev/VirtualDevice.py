@@ -199,6 +199,8 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.native:
             del self.__dev.samples_to_send
             del self.__dev.receive_buffer
+        elif self.backend == Backends.none:
+            pass
         else:
             raise ValueError("Unsupported Backend")
 

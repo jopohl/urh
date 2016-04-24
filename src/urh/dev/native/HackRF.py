@@ -77,7 +77,7 @@ class HackRF(Device):
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        if self.read_queue_thread.is_alive():
+        if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
             try:
                 self.read_queue_thread.join()
                 logger.info("HackRF: Joined read_queue_thread")
@@ -109,7 +109,7 @@ class HackRF(Device):
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        if self.sendbuffer_thread.is_alive():
+        if hasattr(self, "sendbuffer_thread") and self.sendbuffer_thread.is_alive():
             self.sendbuffer_thread.join(0.1)
 
         self.send_buffer_reader.close()

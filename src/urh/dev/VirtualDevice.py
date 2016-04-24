@@ -315,6 +315,8 @@ class VirtualDevice(QObject):
             else:
                self.__dev.stop_rx_mode(msg)
             self.emit_stopped_signal()
+        elif self.backend == Backends.none:
+            pass
         else:
             raise ValueError("Unsupported Backend")
 

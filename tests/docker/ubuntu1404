@@ -22,7 +22,7 @@ RUN make -j4
 RUN make install
 RUN ldconfig
 
-# Install Gnuradio
-RUN apt-get -y install libuhd-dev gnuradio gnuradio-dev gr-iqbal
+# Install Gnuradio - Doesnt work fails with package uhd-host
+# RUN apt-get -y install gnuradio gnuradio-dev gr-iqbal
 
 CMD /bin/run.sh

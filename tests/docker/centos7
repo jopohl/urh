@@ -1,0 +1,16 @@
+FROM centos:7
+
+RUN yum -y update
+RUN yum -y install git epel-release wget make gcc-c++
+RUN yum -y install python34 python34-numpy qt5-qtbase-devel qt5-qttools-devel net-tools
+WORKDIR /tmp
+RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN python3 get-pip.py
+RUN wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.5.1/PyQt-gpl-5.5.1.tar.gz
+RUN tar xf PyQt-gpl-5.5.1.tar.gz
+WORKDIR /tmp/PyQt-gpl-5.5.1
+#RUN python3 configure.py --qmake /usr/bin/qmake-qt5 --confirm-license
+#ADD run.sh /bin/run.sh
+#RUN chmod +x /bin/run.sh
+
+#CMD /bin/run.sh

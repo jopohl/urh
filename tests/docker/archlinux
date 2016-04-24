@@ -1,0 +1,9 @@
+FROM nfnty/arch-mini
+RUN mkdir -p /root/.gnupg
+RUN pacman -Syu --noconfirm
+RUN pacman -S git python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu --noconfirm
+
+ADD run.sh /bin/run.sh
+RUN chmod +x /bin/run.sh
+
+CMD /bin/run.sh

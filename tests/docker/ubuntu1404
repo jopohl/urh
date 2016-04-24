@@ -7,4 +7,15 @@ RUN apt-get -y install python3-numpy python3-pyqt5 git g++ libpython3-dev
 ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh
 
+# Install HackRF
+WORKDIR /tmp
+RUN git clone https://github.com/mossmann/hackrf.git
+WORKDIR /tmp/hackrf/host
+RUN mkdir build
+WORKDIR /tmp/hackrf/host/build
+RUN cmake ../ -DINSTALL_UDEV_RULES=ON
+RUN make -j4
+RUN make install
+RUN ldconfig
+
 CMD /bin/run.sh

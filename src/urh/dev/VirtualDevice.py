@@ -38,7 +38,7 @@ class VirtualDevice(QObject):
             self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
         except KeyError:
             logger.warning("Invalid device name: {0}".format(name))
-            self.backend = None
+            self.backend = Backends.none
             self.__dev = None
             return
 
@@ -320,7 +320,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.none:
             pass
         else:
-            logger.error("Stop device: Unsupported backend "+self.backend.name)
+            logger.error("Stop device: Unsupported backend "+str(self.backend))
 
     def stop_on_error(self, msg: str):
         if self.backend == Backends.grc:

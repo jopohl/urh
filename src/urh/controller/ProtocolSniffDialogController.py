@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 from urh import constants
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_proto_sniff import Ui_SniffProtocol
+from urh.util.Errors import Errors
 
 
 class ProtocolSniffDialogController(QDialog):
@@ -46,6 +47,11 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.cbDevice.addItems(items)
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
+
+        if self.ui.cbDevice.count() == 0:
+            Errors.no_device()
+            self.close()
+            return
 
         self.on_device_edited()
 

@@ -24,9 +24,7 @@ cpdef setup():
     return open()
 
 cpdef exit():
-    ret = close()
-    chackrf.hackrf_exit()
-    return ret
+    return chackrf.hackrf_exit()
 
 cpdef reopen():
     close()

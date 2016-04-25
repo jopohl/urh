@@ -46,19 +46,27 @@ class HackRF(Device):
         if self.is_open:
             hackrf.reopen()
 
-    def open(self):
+    def open(self, init=True):
         if not self.is_open:
-            ret = hackrf.setup()
+            if init:
+                ret = hackrf.setup()
+            else:
+                ret = hackrf.open()
+
             self.is_open = ret == self.success
             self.log_retcode(ret, "open")
 
 
-    def close(self):
+    def close(self, exit=True):
         if self.is_open:
-            ret = hackrf.exit()
+            ret = hackrf.close()
             self.is_open = ret != self.success
             self.log_retcode(ret, "close")
+            if exit:
+                self.exit()
 
+    def exit(self):
+        return hackrf.exit()
 
     def start_rx_mode(self):
         if self.is_open:
@@ -90,7 +98,7 @@ class HackRF(Device):
         if self.is_open:
             logger.info("stopping HackRF rx mode ({0})".format(msg))
             logger.warning("closing because stop_rx_mode of HackRF is bugged and will not allow re receive without close")
-            self.close()
+            self.close(exit=False)
 
 
 
@@ -102,6 +110,7 @@ class HackRF(Device):
         if self.is_open:
             self.init_send_parameters(samples_to_send, repeats)
             retcode = hackrf.start_tx_mode(self.callback_send)
+
             if retcode == self.success:
                 self.is_transmitting = True
                 self._start_sendbuffer_thread()
@@ -125,7 +134,7 @@ class HackRF(Device):
         if self.is_open:
             logger.info("stopping HackRF tx mode ({0})".format(msg))
             logger.info("closing because stop_tx_mode of HackRF is bugged and never returns")
-            self.close()
+            self.close(exit=False)
 
     def set_device_bandwidth(self, bw):
         if self.is_open:

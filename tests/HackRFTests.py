@@ -89,7 +89,7 @@ class TestHackRF(unittest.TestCase):
     def test_hackrf_class_send(self):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
         hfc.open()
-        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64), repeats=10)
+        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64), repeats=1)
         while not hfc.sending_finished:
             print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat+1, hfc.current_sent_sample))
             time.sleep(1)
@@ -115,10 +115,9 @@ class TestHackRF(unittest.TestCase):
 
             t = time.time()
             hfc.stop_rx_mode("Finished test")
-            #hfc.reopen()
-            #print("reopen", 1000*(time.time()-t))
-            #hfc.close()
-            hfc.open()
+            print("             Time stopping rx mode: {0}".format(1000*(time.time()-t)))
+            hfc.open(init=False)
+            print("             Reopen device: {0}".format(1000*(time.time()-t)))
             hfc.start_tx_mode(rcv_data, repeats=1)
             print("             Switch time:", 1000*(time.time()-t), "ms")
             t = time.time()
@@ -130,6 +129,7 @@ class TestHackRF(unittest.TestCase):
             hfc.stop_tx_mode("Test finished")
             #hfc.close()
             print("Close time", time.time()-t)
+            hfc.close()
 
     def test_lookup(self):
         # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127

@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
@@ -77,9 +78,10 @@ class HackRF(Device):
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
+
         if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
             try:
-                self.read_queue_thread.join()
+                self.read_queue_thread.join(0.001)
                 logger.info("HackRF: Joined read_queue_thread")
             except RuntimeError:
                 logger.error("HackRF: Could not join read_queue_thread")
@@ -89,6 +91,8 @@ class HackRF(Device):
             logger.info("stopping HackRF rx mode ({0})".format(msg))
             logger.warning("closing because stop_rx_mode of HackRF is bugged and will not allow re receive without close")
             self.close()
+
+
 
     def switch_from_rx2tx(self):
         # https://github.com/mossmann/hackrf/pull/246/commits/4f9665fb3b43462e39a1592fc34f3dfb50de4a07

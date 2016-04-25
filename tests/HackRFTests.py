@@ -120,7 +120,7 @@ class TestHackRF(unittest.TestCase):
             #hfc.close()
             hfc.open()
             hfc.start_tx_mode(rcv_data, repeats=1)
-            print("Switch time:", 1000*(time.time()-t), "ms")
+            print("             Switch time:", 1000*(time.time()-t), "ms")
             t = time.time()
             while not hfc.sending_finished:
                 #print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat + 1, hfc.current_sent_sample))

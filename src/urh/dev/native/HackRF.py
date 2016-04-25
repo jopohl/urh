@@ -112,8 +112,11 @@ class HackRF(Device):
         if hasattr(self, "sendbuffer_thread") and self.sendbuffer_thread.is_alive():
             self.sendbuffer_thread.join(0.1)
 
-        self.send_buffer_reader.close()
-        self.send_buffer.close()
+        try:
+            self.send_buffer_reader.close()
+            self.send_buffer.close()
+        except AttributeError:
+            logger.warning("HackRF: Could not close send buffer, because it was not open yet")
 
         if self.is_open:
             logger.info("stopping HackRF tx mode ({0})".format(msg))

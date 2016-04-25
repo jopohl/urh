@@ -70,7 +70,7 @@ class Device(QObject):
                     break
                 except (OSError, MemoryError, ValueError):
                     self.receive_buffer_size //= 2
-        logger.info("Initialized receiving buffer with size {0}MB".format(self.receive_buffer_size/(1024*1024)))
+        logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer_size/(1024*1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -232,6 +232,12 @@ class Device(QObject):
             self.set_device_parameters()
 
         if samples_to_send is not None:
+            try:
+                self.send_buffer_reader.close()
+                self.send_buffer.close()
+            except AttributeError:
+                pass
+
             self.samples_to_send = samples_to_send
 
         if self.send_buffer is None or self.send_buffer.closed:
@@ -252,6 +258,8 @@ class Device(QObject):
 
     def check_send_buffer(self):
          # sendning_repeats -1 = forever
+        assert len(self.samples_to_send) == len(self.send_buffer_reader.read()) // self.BYTES_PER_SAMPLE
+        self.send_buffer.seek(0)
         while (self.current_sending_repeat < self.sending_repeats or self.sending_repeats == -1) and self.is_transmitting:
                 self.reset_send_buffer()
                 while self.is_transmitting and self.send_buffer_reader.peek():
@@ -259,12 +267,16 @@ class Device(QObject):
                         self.current_sent_sample = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
                     except ValueError:
                         # I/O operation on closed file. --> Buffer was closed
-                        return 0
+                        break
                     time.sleep(0.01)
 
+                self.current_sent_sample = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
                 self.current_sending_repeat += 1
 
-        if self.current_sent_sample >= len(self.samples_to_send) - 1: # Mark transmission as finished
+        if self.current_sent_sample >= len(self.samples_to_send) - 1:
+            self.current_sent_sample = len(self.samples_to_send)  # Mark transmission as finished
+        else:
+            logger.warning("Skipped {0:d} samples in sending".format(len(self.samples_to_send) - self.current_sent_sample))
             self.current_sent_sample = len(self.samples_to_send)
 
 

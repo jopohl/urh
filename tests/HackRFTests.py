@@ -115,10 +115,10 @@ class TestHackRF(unittest.TestCase):
 
             t = time.time()
             hfc.stop_rx_mode("Finished test")
-            hfc.reopen()
+            #hfc.reopen()
             #print("reopen", 1000*(time.time()-t))
             #hfc.close()
-            #hfc.open()
+            hfc.open()
             hfc.start_tx_mode(rcv_data, repeats=1)
             print("Switch time:", 1000*(time.time()-t), "ms")
             t = time.time()

@@ -62,7 +62,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("HackRF", "USRP")
+    DEVICE_NAMES = ("HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle")
 
     def __init__(self):
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
@@ -108,7 +108,6 @@ class BackendHandler(object):
         devname = devname.lower()
         has_send_file = False
         has_recv_file = False
-
         for f in os.listdir(script_path):
             if f == "{0}_send.py".format(devname):
                 has_send_file = True

@@ -66,10 +66,10 @@ class OptionsController(QDialog):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
         if self.backend_handler.gnuradio_installed:
             self.ui.lGnuradioInstalled.setStyleSheet("")
-            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio installation found"))
+            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio interface is working."))
         else:
             self.ui.lGnuradioInstalled.setStyleSheet("color: red")
-            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio installation not found"))
+            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio is not installed or incompatible with python2 interpreter."))
 
 
     def show_selected_device_params(self):
@@ -150,7 +150,7 @@ class OptionsController(QDialog):
         python2_exe = self.ui.lineEditPython2Interpreter.text()
         if os.path.isfile(python2_exe) and os.access(python2_exe, os.X_OK):
             self.backend_handler.python2_exe = python2_exe
-            self.backend_handler.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+            self.backend_handler.gnuradio_installed = call([python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
             constants.SETTINGS.setValue("python2_exe", python2_exe)
             self.refresh_device_tab()
         else:

@@ -38,7 +38,7 @@
     </param>
     <param>
       <key>generate_options</key>
-      <value>no_gui</value>
+      <value>wx_gui</value>
     </param>
     <param>
       <key>hier_block_src_path</key>
@@ -93,7 +93,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(168, 237)</value>
+      <value>(216, 237)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -105,7 +105,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>200000</value>
+      <value>96000</value>
     </param>
   </block>
   <block>
@@ -132,7 +132,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>433000</value>
+      <value>433920000</value>
     </param>
   </block>
   <block>
@@ -147,7 +147,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(96, 237)</value>
+      <value>(120, 237)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -190,7 +190,7 @@
     </param>
   </block>
   <block>
-    <key>blks2_tcp_source</key>
+    <key>blks2_tcp_sink</key>
     <param>
       <key>addr</key>
       <value>127.0.0.1</value>
@@ -209,11 +209,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(320, 174)</value>
+      <value>(504, 102)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -221,23 +221,15 @@
     </param>
     <param>
       <key>id</key>
-      <value>blks2_tcp_source_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>server</key>
-      <value>False</value>
+      <value>blks2_tcp_sink_0</value>
     </param>
     <param>
       <key>type</key>
       <value>complex</value>
+    </param>
+    <param>
+      <key>server</key>
+      <value>True</value>
     </param>
     <param>
       <key>port</key>
@@ -249,11 +241,7 @@
     </param>
   </block>
   <block>
-    <key>blocks_file_sink</key>
-    <param>
-      <key>append</key>
-      <value>False</value>
-    </param>
+    <key>fcd_source_c</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -267,16 +255,32 @@
       <value></value>
     </param>
     <param>
+      <key>dci</key>
+      <value>0.0</value>
+    </param>
+    <param>
+      <key>dcq</key>
+      <value>0.0</value>
+    </param>
+    <param>
+      <key>device_name</key>
+      <value>hw:1</value>
+    </param>
+    <param>
       <key>_enabled</key>
       <value>0</value>
     </param>
     <param>
-      <key>file</key>
-      <value>/tmp/send_test.complex</value>
+      <key>freq</key>
+      <value>freq</value>
+    </param>
+    <param>
+      <key>ppm</key>
+      <value>-120</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(752, 302)</value>
+      <value>(408, 468)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -284,54 +288,19 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_file_sink_0</value>
+      <value>fcd_source_c_0</value>
     </param>
     <param>
-      <key>type</key>
-      <value>complex</value>
+      <key>iq_gain</key>
+      <value>1.0</value>
     </param>
     <param>
-      <key>unbuffered</key>
-      <value>True</value>
+      <key>iq_phase</key>
+      <value>0.0</value>
     </param>
     <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_throttle</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(528, 196)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_throttle_0</value>
-    </param>
-    <param>
-      <key>ignoretag</key>
-      <value>True</value>
+      <key>lna</key>
+      <value>gain</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -342,20 +311,79 @@
       <value>0</value>
     </param>
     <param>
-      <key>samples_per_second</key>
-      <value>samp_rate</value>
+      <key>mixer</key>
+      <value>+12</value>
+    </param>
+  </block>
+  <block>
+    <key>fcdproplus_fcdproplus</key>
+    <param>
+      <key>alias</key>
+      <value></value>
     </param>
     <param>
-      <key>type</key>
-      <value>complex</value>
+      <key>comment</key>
+      <value></value>
     </param>
     <param>
-      <key>vlen</key>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>device_name</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>freq</key>
+      <value>freq</value>
+    </param>
+    <param>
+      <key>ppm</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(160, 362)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>fcdproplus_fcdproplus_0</value>
+    </param>
+    <param>
+      <key>if_gain</key>
+      <value>gain</value>
+    </param>
+    <param>
+      <key>lnaswitch</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>mixergainswitch</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>unit</key>
       <value>1</value>
     </param>
   </block>
   <block>
-    <key>osmosdr_sink</key>
+    <key>osmosdr_source</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -373,6 +401,10 @@
       <value>bw</value>
     </param>
     <param>
+      <key>dc_offset_mode0</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>corr0</key>
       <value>0</value>
     </param>
@@ -381,8 +413,16 @@
       <value>freq</value>
     </param>
     <param>
+      <key>gain_mode0</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>if_gain0</key>
       <value>gain</value>
+    </param>
+    <param>
+      <key>iq_balance_mode0</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain0</key>
@@ -401,6 +441,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>dc_offset_mode1</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>corr1</key>
       <value>0</value>
     </param>
@@ -409,8 +453,16 @@
       <value>100e6</value>
     </param>
     <param>
+      <key>gain_mode1</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>if_gain1</key>
       <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode1</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain1</key>
@@ -429,6 +481,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>dc_offset_mode2</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>corr2</key>
       <value>0</value>
     </param>
@@ -437,8 +493,16 @@
       <value>100e6</value>
     </param>
     <param>
+      <key>gain_mode2</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>if_gain2</key>
       <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode2</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain2</key>
@@ -457,6 +521,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>dc_offset_mode3</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>corr3</key>
       <value>0</value>
     </param>
@@ -465,8 +533,16 @@
       <value>100e6</value>
     </param>
     <param>
+      <key>gain_mode3</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>if_gain3</key>
       <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode3</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain3</key>
@@ -485,6 +561,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>dc_offset_mode4</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>corr4</key>
       <value>0</value>
     </param>
@@ -493,8 +573,16 @@
       <value>100e6</value>
     </param>
     <param>
+      <key>gain_mode4</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>if_gain4</key>
       <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode4</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain4</key>
@@ -514,11 +602,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(744, 42)</value>
+      <value>(200, 53)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -526,36 +614,153 @@
     </param>
     <param>
       <key>id</key>
-      <value>osmosdr_sink_0</value>
+      <value>osmosdr_source_0</value>
     </param>
     <param>
-      <key>type</key>
-      <value>fc32</value>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
     </param>
     <param>
       <key>nchan</key>
       <value>1</value>
     </param>
     <param>
+      <key>type</key>
+      <value>fc32</value>
+    </param>
+    <param>
       <key>sample_rate</key>
       <value>samp_rate</value>
     </param>
   </block>
+  <block>
+    <key>wxgui_fftsink2</key>
+    <param>
+      <key>avg_alpha</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>average</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>baseband_freq</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fft_size</key>
+      <value>1024</value>
+    </param>
+    <param>
+      <key>freqvar</key>
+      <value>None</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(488, 213)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>grid_pos</key>
+      <value></value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>wxgui_fftsink2_0</value>
+    </param>
+    <param>
+      <key>notebook</key>
+      <value></value>
+    </param>
+    <param>
+      <key>peak_hold</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>ref_level</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>ref_scale</key>
+      <value>2.0</value>
+    </param>
+    <param>
+      <key>fft_rate</key>
+      <value>15</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>title</key>
+      <value>FFT Plot</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>win_size</key>
+      <value></value>
+    </param>
+    <param>
+      <key>win</key>
+      <value>None</value>
+    </param>
+    <param>
+      <key>y_divs</key>
+      <value>10</value>
+    </param>
+    <param>
+      <key>y_per_div</key>
+      <value>10</value>
+    </param>
+  </block>
   <connection>
-    <source_block_id>blks2_tcp_source_0</source_block_id>
-    <sink_block_id>blocks_throttle_0</sink_block_id>
+    <source_block_id>fcd_source_c_0</source_block_id>
+    <sink_block_id>wxgui_fftsink2_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_throttle_0</source_block_id>
-    <sink_block_id>blocks_file_sink_0</sink_block_id>
+    <source_block_id>fcdproplus_fcdproplus_0</source_block_id>
+    <sink_block_id>wxgui_fftsink2_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_throttle_0</source_block_id>
-    <sink_block_id>osmosdr_sink_0</sink_block_id>
+    <source_block_id>osmosdr_source_0</source_block_id>
+    <sink_block_id>blks2_tcp_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>osmosdr_source_0</source_block_id>
+    <sink_block_id>wxgui_fftsink2_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

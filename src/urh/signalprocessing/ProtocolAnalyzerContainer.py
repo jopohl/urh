@@ -36,6 +36,10 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def protocol_labels(self):
         return self.__group.labels
 
+    @protocol_labels.setter
+    def protocol_labels(self, val):
+        self.__group.set_labels(val)
+
     @property
     def num_blocks_successive_fuzzing(self):
         result = self.num_blocks

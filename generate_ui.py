@@ -1,6 +1,7 @@
 import sys
 import os
 from subprocess import call
+import fileinput
 sys.dont_write_bytecode = True
 
 def gen():
@@ -29,6 +30,15 @@ def gen():
         outfile = "ui_" + f.replace(".ui", ".py")
         out_file_path = os.path.join(out_path, outfile)
         call([uic_path, "--from-imports", file_path, "-o", out_file_path])
+
+        # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
+        # to avoid useless git updates when working on another computer
+        for line in fileinput.input(out_file_path, inplace=True):
+            if line.startswith("# Form implementation generated from reading ui file"):
+                continue
+            print(line, end='')
+
+
 
     for f in rc_files:
         file_path = os.path.join(rc_path, f)

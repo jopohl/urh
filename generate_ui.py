@@ -38,8 +38,6 @@ def gen():
                 continue
             print(line, end='')
 
-
-
     for f in rc_files:
         file_path = os.path.join(rc_path, f)
         out_file = f.replace(".qrc", "_rc.py")

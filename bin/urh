@@ -49,10 +49,14 @@ def main(argv):
 
     app = QApplication(argv)
 
-    if os.name != "posix":
-        # noinspection PyUnresolvedReferences
-        import urh.ui.xtra_icons_rc  # Fallback Theme for Windows
-        QIcon.setThemeName("oxy")
+    # noinspection PyUnresolvedReferences
+    import urh.ui.xtra_icons_rc  # Use oxy theme always
+    QIcon.setThemeName("oxy")
+
+    #if os.name != "posix":
+    #    # noinspection PyUnresolvedReferences
+    #    import urh.ui.xtra_icons_rc  # Fallback Theme for Windows
+    #    QIcon.setThemeName("oxy")
 
     mainwindow = MainController()
     mainwindow.showMaximized()

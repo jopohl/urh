@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/ryu/util/Eigene Dateien/Subversion/urh/ui/options.ui'
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/options.ui'
 #
 # Created by: PyQt5 UI code generator 5.5.1
 #

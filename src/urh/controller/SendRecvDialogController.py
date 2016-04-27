@@ -79,14 +79,10 @@ class SendRecvDialogController(QDialog):
 
         self.ui.cbDevice.clear()
         items = []
-        if constants.SETTINGS.value('usrp_is_enabled', True, type=bool):
-            items.append("USRP")
-        if constants.SETTINGS.value('hackrf_is_enabled', True, type=bool):
-            items.append("HackRF")
-        if constants.SETTINGS.value('rtl-sdr_is_enabled', True, type=bool):
-            items.append("RTL-SDR")
-        if constants.SETTINGS.value('funcube-dongle_is_enabled', True, type=bool):
-            items.append("FUNcube-Dongle")
+        for device_name in self.backend_handler.DEVICE_NAMES:
+            if constants.SETTINGS.value(device_name.lower() + '_is_enabled', type=bool):
+                items.append(device_name)
+
         self.ui.cbDevice.addItems(items)
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))

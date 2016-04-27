@@ -80,7 +80,7 @@ def copy_icons(icon_names: set):
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.move("/tmp/xtra_icons_rc.py", tar_path)
 
-
-icons = get_used_icon_names()
-#print(icons)
-copy_icons(icons)
+if __name__ == "__main__":
+    icons = get_used_icon_names()
+    #print(icons)
+    copy_icons(icons)

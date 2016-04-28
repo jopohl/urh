@@ -34,7 +34,10 @@ class SendRecvDialogController(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.backend_handler = BackendHandler()
-        self.update_interval = 125
+        if mode == Mode.spectrum:
+            self.update_interval = 1
+        else:
+            self.update_interval = 50
 
         if mode == Mode.send and modulated_data is None:
             raise ValueError("I need modulated data to send!")

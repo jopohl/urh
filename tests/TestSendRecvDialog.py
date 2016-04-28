@@ -24,8 +24,7 @@ class TestSendRecvDialog(unittest.TestCase):
         timer.timeout.connect(self.__confirm_message_box)
         timer.start(100)
 
-        while rcv_dialog.device_thread.isRunning():
-            QTest.qWait(100)
+        QTest.qWait(100)
 
         self.assertTrue(True)
 

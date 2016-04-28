@@ -70,4 +70,4 @@ class TestModulator(unittest.TestCase):
         modulator.modulation_type = 1
         modulator.modulate([True]*1000, pause=10000000)
         elapsed = time.time() - t
-        self.assertLess(elapsed, 0.1)
+        self.assertLess(elapsed, 0.15)

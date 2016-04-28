@@ -82,15 +82,15 @@ def get_device_modules():
 #generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 setup(
-    name="Universal_Radio_Hacker",
+    name="urh",
     version=version.VERSION,
-    description="Hacking wireless protocols made easy",
+    description="Universal Radio Hacker: Hacking wireless protocols made easy",
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},
     package_data=get_package_data(),
     url="https://github.com/jopohl/urh",
-    download_url="https://github.com/jopohl/urh/tarball/v0.9.3",
+    download_url="https://github.com/jopohl/urh/tarball/v0.9.4",
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],

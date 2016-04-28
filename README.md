@@ -5,8 +5,15 @@
 - C++ Compiler
 
 # Installation
+## From pip
+```bash
+pip3 install urh
+```
 
-```python
+## From cloned repository
+```bash
+git clone https://github.com/jopohl/urh/
+cd urh
 sudo python setup.py install
 ```
 

@@ -74,6 +74,14 @@ class Ui_SendRecvDialog(object):
         self.spinBoxBandwidth.setMaximum(1000000000000.0)
         self.spinBoxBandwidth.setObjectName("spinBoxBandwidth")
         self.gridLayout.addWidget(self.spinBoxBandwidth, 4, 1, 1, 1)
+        self.btnLockBWSR = QtWidgets.QToolButton(SendRecvDialog)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/data/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btnLockBWSR.setIcon(icon)
+        self.btnLockBWSR.setCheckable(True)
+        self.btnLockBWSR.setChecked(True)
+        self.btnLockBWSR.setObjectName("btnLockBWSR")
+        self.gridLayout.addWidget(self.btnLockBWSR, 3, 2, 2, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.groupBox = QtWidgets.QGroupBox(SendRecvDialog)
         self.groupBox.setTitle("")
@@ -263,6 +271,7 @@ class Ui_SendRecvDialog(object):
         self.spinBoxNRepeat.setSpecialValueText(_translate("SendRecvDialog", "Infinite"))
         self.label.setText(_translate("SendRecvDialog", "Frequency (Hz):"))
         self.labelNRepeat.setText(_translate("SendRecvDialog", "Repeat:"))
+        self.btnLockBWSR.setText(_translate("SendRecvDialog", "..."))
         self.progressBar.setFormat(_translate("SendRecvDialog", "%v/%m"))
         self.lSamplesSentText.setText(_translate("SendRecvDialog", "Samples sent:"))
         self.lTimeText.setText(_translate("SendRecvDialog", "Time (in seconds):"))
@@ -281,3 +290,4 @@ class Ui_SendRecvDialog(object):
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.LiveGraphicView import LiveGraphicView
+from . import urh_rc

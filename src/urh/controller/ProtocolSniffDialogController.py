@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, pyqtSlot, QRegExp, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator, QCloseEvent
+from PyQt5.QtGui import QRegExpValidator, QCloseEvent, QIcon
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 from urh.dev.BackendHandler import BackendHandler
 
@@ -54,6 +54,7 @@ class ProtocolSniffDialogController(QDialog):
                                gain, bw, device)
 
         self.sniffer.usrp_ip = self.ui.lineEditIP.text()
+        self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
 
 
         ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
@@ -91,6 +92,8 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.lineEditIP.editingFinished.connect(self.on_usrp_ip_edited)
         self.ui.cbDevice.currentIndexChanged.connect(self.on_device_edited)
 
+        self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
+
         self.ui.spinboxNoise.editingFinished.connect(self.on_noise_edited)
         self.ui.spinboxCenter.editingFinished.connect(self.on_center_edited)
         self.ui.spinboxBitLen.editingFinished.connect(self.on_bit_len_edited)
@@ -111,6 +114,9 @@ class ProtocolSniffDialogController(QDialog):
     @pyqtSlot()
     def on_sample_rate_edited(self):
         self.sniffer.rcv_device.sample_rate = self.ui.spinBoxSampleRate.value()
+        if self.bw_sr_are_locked:
+            self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
+            self.sniffer.rcv_device.bandwidth = self.ui.spinBoxBandwidth.value()
 
     @pyqtSlot()
     def on_freq_edited(self):
@@ -119,6 +125,9 @@ class ProtocolSniffDialogController(QDialog):
     @pyqtSlot()
     def on_bw_edited(self):
         self.sniffer.rcv_device.bandwidth = self.ui.spinBoxBandwidth.value()
+        if self.bw_sr_are_locked:
+            self.ui.spinBoxSampleRate.setValue(self.ui.spinBoxBandwidth.value())
+            self.sniffer.rcv_device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
     def on_usrp_ip_edited(self):
@@ -211,6 +220,13 @@ class ProtocolSniffDialogController(QDialog):
 
         self.ui.lineEditIP.setDisabled(True)
         self.ui.cbDevice.setDisabled(True)
+
+    def on_btn_lock_bw_sr_clicked(self):
+        self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
+        if self.bw_sr_are_locked:
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
+        else:
+             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 
     @pyqtSlot()
     def on_clear_clicked(self):

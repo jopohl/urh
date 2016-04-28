@@ -70,6 +70,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnSave.setEnabled(False)
         self.start = 0
         self.already_saved = True
+        self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
 
         self.ui.spinBoxFreq.setValue(freq)
         self.ui.spinBoxSampleRate.setValue(samp_rate)
@@ -132,6 +133,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_nrepeat_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slideyscale_value_changed)
         self.ui.graphicsView.freq_clicked.connect(self.on_graphics_view_freq_clicked)
+        self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.ui.graphicsView.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
         self.ui.graphicsView.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
@@ -152,6 +154,9 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_sample_rate_changed(self):
         self.device.sample_rate = self.ui.spinBoxSampleRate.value()
+        if self.bw_sr_are_locked:
+            self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
+            self.device.bandwidth = self.ui.spinBoxBandwidth.value()
 
     @pyqtSlot()
     def on_freq_changed(self):
@@ -163,6 +168,9 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_bw_changed(self):
         self.device.bandwidth = self.ui.spinBoxBandwidth.value()
+        if self.bw_sr_are_locked:
+            self.ui.spinBoxSampleRate.setValue(self.ui.spinBoxBandwidth.value())
+            self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
     def on_usrp_ip_changed(self):
@@ -378,6 +386,14 @@ class SendRecvDialogController(QDialog):
             x1 = self.ui.graphicsView.view_rect().x()
             x2 = x1 + self.ui.graphicsView.view_rect().width()
             self.scene_creator.show_scene_section(x1, x2)
+
+    def on_btn_lock_bw_sr_clicked(self):
+        self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
+        if self.bw_sr_are_locked:
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
+        else:
+             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
+
 
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):

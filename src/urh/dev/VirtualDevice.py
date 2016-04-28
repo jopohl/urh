@@ -369,6 +369,6 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             return self.__dev.read_errors()
         elif self.backend == Backends.native:
-            errors = "\n".join(self.__dev.errors)
-            self.__dev.errors[:] = []
+            errors = "\n\n".join(self.__dev.errors)
+            self.__dev.errors.clear()
             return errors

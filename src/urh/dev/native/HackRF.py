@@ -14,6 +14,12 @@ class HackRF(Device):
         self.success = 0
         self.error_not_open = -4242
 
+
+        self._max_bandwidth = 28e6
+        self._max_frequency = 6e9
+        self._max_sample_rate = 20e6
+        self._max_gain = 40
+
         self.error_codes = {
             0: "HACKRF_SUCCESS",
             1: "HACKRF_TRUE",

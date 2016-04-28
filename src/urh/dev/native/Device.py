@@ -9,6 +9,7 @@ import time
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 class Device(QObject):
@@ -25,9 +26,14 @@ class Device(QObject):
 
         self.is_open = False
 
+        self._max_bandwidth = 1
+        self._max_frequency = 1
+        self._max_sample_rate = 1
+        self._max_gain = 1
+
         self.success = 0
         self.error_codes = {}
-        self.errors = []
+        self.errors = set()
 
         self.queue = Queue()
         self.send_buffer = None
@@ -84,7 +90,7 @@ class Device(QObject):
                 err = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, self.error_codes[retcode], retcode, msg)
             else:
                 err = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, self.error_codes[retcode], retcode)
-            self.errors.append(err)
+            self.errors.add(err)
             logger.error(err)
 
 
@@ -107,6 +113,14 @@ class Device(QObject):
 
     @bandwidth.setter
     def bandwidth(self, value):
+        if value > self._max_bandwidth:
+            err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
+                                                                         Formatter.big_value_with_suffix(value),
+                                                                         Formatter.big_value_with_suffix(self._max_bandwidth))
+            self.errors.add(err)
+            logger.warning(err)
+            value = self._max_bandwidth
+
         if value != self.__bandwidth:
             self.__bandwidth = value
             if self.is_open:
@@ -122,6 +136,14 @@ class Device(QObject):
 
     @frequency.setter
     def frequency(self, value):
+        if value > self._max_frequency:
+            err = "{0} frequency {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
+                                                                             Formatter.big_value_with_suffix(value),
+                                                                             Formatter.big_value_with_suffix(self._max_frequency))
+            self.errors.add(err)
+            logger.warning(err)
+            value = self._max_frequency
+
         if value != self.__frequency:
             self.__frequency = value
             if self.is_open:
@@ -137,6 +159,12 @@ class Device(QObject):
 
     @gain.setter
     def gain(self, value):
+        if value > self._max_gain:
+            err = "{0} gain {1} too high. Correcting to {2}".format(type(self).__name__, value, self._max_gain)
+            self.errors.add(err)
+            logger.warning(err)
+            value = self._max_gain
+
         if value != self.__gain:
             self.__gain = value
             if self.is_open:
@@ -152,6 +180,14 @@ class Device(QObject):
 
     @sample_rate.setter
     def sample_rate(self, value):
+        if value > self._max_sample_rate:
+            err = "{0} sample rate {1}Sps too high. Correcting to {2}Sps".format(type(self).__name__,
+                                                                                 Formatter.big_value_with_suffix(value),
+                                                                                 Formatter.big_value_with_suffix(self._max_sample_rate))
+            self.errors.add(err)
+            logger.warning(err)
+            value = self._max_sample_rate
+
         if value != self.__sample_rate:
             self.__sample_rate = value
             if self.is_open:

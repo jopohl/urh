@@ -82,7 +82,7 @@ def get_device_modules():
 #generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 setup(
-    name="Universal Radio Hacker",
+    name="Universal_Radio_Hacker",
     version=version.VERSION,
     description="Hacking wireless protocols made easy",
     author="Johannes Pohl",

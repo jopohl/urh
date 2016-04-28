@@ -90,7 +90,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     url="https://github.com/jopohl/urh",
-    download_url="https://github.com/jopohl/urh/tarball/v0.9.2",
+    download_url="https://github.com/jopohl/urh/tarball/v0.9.3",
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],

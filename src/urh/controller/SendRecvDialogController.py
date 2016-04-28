@@ -311,10 +311,11 @@ class SendRecvDialogController(QDialog):
             self.scene_creator.end = self.device.current_index
         elif self.mode == Mode.spectrum:
             x, y = self.device.spectrum
-            self.scene_creator.scene.frequencies = x
-            self.scene_creator.plot_data = y
             if x is None or y is None:
                 return
+            self.scene_creator.scene.frequencies = x
+            self.scene_creator.plot_data = y
+
 
         self.scene_creator.init_scene()
         self.scene_creator.show_full_scene()

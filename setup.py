@@ -82,7 +82,7 @@ def get_device_modules():
 #generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 # Release PyPi
-# Adapt version.VERSION and downloadurl version
+# Adapt version.VERSION
 # git tag v0.9.4 -m 'version 0.9.4'
 # git push origin --tags  # Creates tar package on https://github.com/jopohl/urh/tarball/v0.9.4
 # python setup.py register -r pypi
@@ -99,7 +99,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     url="https://github.com/jopohl/urh",
-    download_url="https://github.com/jopohl/urh/tarball/v0.9.4",
+    download_url="https://github.com/jopohl/urh/tarball/v"+str(version.VERSION),
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],

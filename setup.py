@@ -88,6 +88,9 @@ def get_device_modules():
 # python setup.py register -r pypi
 # python setup.py sdist upload -r pypi
 
+# Release AUR
+# Adapt pkgver
+# Regen md5sum and sha256sum
 
 
 setup(

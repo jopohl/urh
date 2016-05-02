@@ -12,27 +12,28 @@ optdepends=(
   'gnuradio: for USRP gnuradio backend'
   'gnuradio-osmosdr: for more gnuradio device backends (HackRF, FunCubeDongle, RTL-SDR'
 )
-source=(https://github.com/jopohl/urh/tarball/v$pkgver)
-md5sums=('07d90809e81e269412e5ab6080f76fe5')
-sha256sums=('a83cc8c80ad91617326e5062c62a17c352c7ff05b770b34c03bd2b49a2b9e15a')
+source=($pkgname-$pkgver.tar.gz::https://github.com/jopohl/urh/tarball/v$pkgver)
+md5sums=('81f6940b016fd953592b7e85a887b3c3')
+sha256sums=('64207be2c69dd0f3d6bb3ea9b904bb0acd23e5729ed9f9a88b30941cb225b351')
 
-build() {
-  cd "$srcdir"
-  mkdir -p $pkgname-$pkgver
-  tar xf v$pkgver --directory $pkgname-$pkgver --strip 1
-  cd "$srcdir/$pkgname-$pkgver/"
+
+build()
+{
+  cd "$pkgname-$pkgver"
+  msg 'Building C++ Extensions...'
   python setup.py build_ext
 }
 
-package() {
+
+package()
+{
   cd "$srcdir/$pkgname-$pkgver/"
 
-  # Desktop file
-  install -Dm644 urh.desktop "$pkgdir/usr/share/applications/urh.desktop"
+  python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
 
-  python setup.py install
+  install -Dm644 urh.desktop "${pkgdir}/usr/share/applications/urh.desktop"
+  install -Dm644 ./data/icons/appicon.png "${pkgdir}/usr/share/pixmaps/urh.png"
 
-  install -Dm644 ./data/icons/appicon.png "$pkgdir/usr/share/pixmaps/urh.png"
   #install -Dm644 LICENSE "$pkgdir/usr/share/licenses/${pkgname}/LICENSE"
-  install -Dm644 README.md "$pkgdir/usr/share/docs/${pkgname}/README.md"
+  install -Dm644 README.md "${pkgdir}/usr/share/docs/${pkgname}/README.md"
 }

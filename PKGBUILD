@@ -19,9 +19,12 @@ sha256sums=('64207be2c69dd0f3d6bb3ea9b904bb0acd23e5729ed9f9a88b30941cb225b351')
 
 build()
 {
+  cd "$srcdir"
+  mv jopohl* "$pkgname-$pkgver"
   cd "$pkgname-$pkgver"
-  msg 'Building C++ Extensions...'
+  msg 'Building C++ extensions...'
   python setup.py build_ext
+  msg 'Successfully built C++ extensions'
 }
 
 
@@ -29,7 +32,7 @@ package()
 {
   cd "$srcdir/$pkgname-$pkgver/"
 
-  python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
+  python setup.py install --root="$pkgdir/" --optimize=1
 
   install -Dm644 urh.desktop "${pkgdir}/usr/share/applications/urh.desktop"
   install -Dm644 ./data/icons/appicon.png "${pkgdir}/usr/share/pixmaps/urh.png"

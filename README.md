@@ -5,6 +5,11 @@
 - C++ Compiler
 
 # Installation
+## Arch Linux
+```bash
+yaourt -S urh
+```
+
 ## From pip
 ```bash
 pip3 install urh

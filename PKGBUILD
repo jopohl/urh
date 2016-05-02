@@ -10,7 +10,7 @@ makedepends=('gcc')
 optdepends=(
   'hackrf: for native hackrf backend'
   'gnuradio: for USRP gnuradio backend'
-  'gnuradio-osmosdr: for more gnuradio device backends (HackRF, FunCubeDongle, RTL-SDR'
+  'gnuradio-osmosdr: for more gnuradio device backends (HackRF, FunCubeDongle, RTL-SDR)'
 )
 source=($pkgname-$pkgver.tar.gz::https://github.com/jopohl/urh/tarball/v$pkgver)
 md5sums=('81f6940b016fd953592b7e85a887b3c3')

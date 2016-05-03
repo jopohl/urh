@@ -53,6 +53,10 @@ class ProtocolSniffDialogController(QDialog):
                                modulation_type_index, samp_rate, freq,
                                gain, bw, device)
 
+        self.ui.lineEditIP.setVisible(device == "USRP")
+        self.ui.labelIP.setVisible(device == "USRP")
+
+
         self.sniffer.usrp_ip = self.ui.lineEditIP.text()
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
 

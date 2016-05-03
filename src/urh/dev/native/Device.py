@@ -237,29 +237,32 @@ class Device(QObject):
 
     def read_receiving_queue(self):
         while self.is_receiving:
-            while not self.queue.empty():
-                byte_buffer = self.queue.get()
-                old_index = self.current_recv_index
+            try:
+                while not self.queue.empty():
+                    byte_buffer = self.queue.get()
+                    old_index = self.current_recv_index
 
-                nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
-                if nsamples > 0:
-                    if self.current_recv_index + nsamples >= len(self.receive_buffer):
-                        if self.is_ringbuffer:
-                            self.current_recv_index = 0
-                            if nsamples >= len(self.receive_buffer):
-                               # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
-                                nsamples = len(self.receive_buffer) - 1
+                    nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
+                    if nsamples > 0:
+                        if self.current_recv_index + nsamples >= len(self.receive_buffer):
+                            if self.is_ringbuffer:
+                                self.current_recv_index = 0
+                                if nsamples >= len(self.receive_buffer):
+                                   # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
+                                    nsamples = len(self.receive_buffer) - 1
 
-                        else:
-                            self.stop_rx_mode("Receiving Buffer is full.")
-                            return
+                            else:
+                                self.stop_rx_mode("Receiving Buffer is full.")
+                                return
 
-                    end = nsamples*self.BYTES_PER_SAMPLE
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
-                        self.unpack_complex(byte_buffer[:end], nsamples)
-                    self.current_recv_index += nsamples
+                        end = nsamples*self.BYTES_PER_SAMPLE
+                        self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
+                            self.unpack_complex(byte_buffer[:end], nsamples)
+                        self.current_recv_index += nsamples
 
-                    self.rcv_index_changed.emit(old_index, self.current_recv_index)
+                        self.rcv_index_changed.emit(old_index, self.current_recv_index)
+            except BrokenPipeError:
+                pass
 
             time.sleep(0.01)
 
@@ -317,8 +320,14 @@ class Device(QObject):
 
 
     def callback_recv(self, buffer):
-        self.queue.put(buffer)
+        try:
+            self.queue.put(buffer)
+        except BrokenPipeError:
+            pass
         return 0
 
     def callback_send(self, buffer_length):
-        return self.send_buffer_reader.read(buffer_length)
+        try:
+            return self.send_buffer_reader.read(buffer_length)
+        except BrokenPipeError:
+            return b""

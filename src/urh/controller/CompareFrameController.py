@@ -318,7 +318,7 @@ class CompareFrameController(QFrame):
     def add_protocol(self, protocol: ProtocolAnalyzer, group_id: int = 0) -> ProtocolAnalyzer:
         self.__protocols = None
         group =self.proto_tree_model.add_protocol(protocol, group_id)
-        protocol.decoder = group.decoding
+        protocol.set_decoder_for_blocks(group.decoding)
         protocol.qt_signals.protocol_updated.connect(self.set_shown_protocols)
         if protocol.signal:
             protocol.signal.sample_rate_changed.connect(self.set_shown_protocols)  # Refresh times
@@ -375,8 +375,8 @@ class CompareFrameController(QFrame):
     def add_sniffed_protocol_blocks(self, blocks: list):
         if len(blocks) > 0:
             proto_analyzer = ProtocolAnalyzer(None)
-            proto_analyzer.blocks = copy.deepcopy(blocks)
-            self.add_protocol(proto_analyzer)
+            proto_analyzer.blocks = blocks
+            self.add_protocol(proto_analyzer, group_id=self.proto_tree_model.ngroups - 1)
             self.refresh()
 
     def remove_protocol(self, protocol: ProtocolAnalyzer):

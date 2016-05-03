@@ -223,7 +223,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_stop_clicked(self):
-        self.device.stop("Stopped receiving due to user interaction")
+        self.device.stop("Stopped receiving: Stop button clicked")
 
     @pyqtSlot()
     def on_device_stopped(self):
@@ -245,29 +245,28 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_device_started(self):
-        if self.device.data is not None:
-            if self.mode == Mode.receive or self.mode == Mode.send:
-                self.scene_creator.plot_data = self.device.data.real
+        if self.mode == Mode.receive or self.mode == Mode.send:
+            self.scene_creator.plot_data = self.device.data.real if self.device.data is not None else None
 
-            self.ui.txtEditErrors.clear()
-            self.scene_creator.set_text("Waiting for device..")
-            self.ui.graphicsView.capturing_data = True
-            self.ui.btnSave.setEnabled(False)
-            self.ui.btnStart.setEnabled(False)
-            self.ui.btnClear.setEnabled(self.mode == Mode.spectrum)
-            self.ui.spinBoxNRepeat.setEnabled(False)
-            self.ui.btnStop.setEnabled(True)
+        self.ui.txtEditErrors.clear()
+        self.scene_creator.set_text("Waiting for device..")
+        self.ui.graphicsView.capturing_data = True
+        self.ui.btnSave.setEnabled(False)
+        self.ui.btnStart.setEnabled(False)
+        self.ui.btnClear.setEnabled(self.mode == Mode.spectrum)
+        self.ui.spinBoxNRepeat.setEnabled(False)
+        self.ui.btnStop.setEnabled(True)
 
-            if self.mode != Mode.spectrum:
-                self.ui.spinBoxSampleRate.setDisabled(True)
-                self.ui.spinBoxFreq.setDisabled(True)
-                self.ui.spinBoxGain.setDisabled(True)
-                self.ui.spinBoxBandwidth.setDisabled(True)
+        if self.mode != Mode.spectrum:
+            self.ui.spinBoxSampleRate.setDisabled(True)
+            self.ui.spinBoxFreq.setDisabled(True)
+            self.ui.spinBoxGain.setDisabled(True)
+            self.ui.spinBoxBandwidth.setDisabled(True)
 
-            self.ui.lineEditIP.setDisabled(True)
-            self.ui.cbDevice.setDisabled(True)
-            self.timer.start(self.update_interval)
-            self.already_saved = False
+        self.ui.lineEditIP.setDisabled(True)
+        self.ui.cbDevice.setDisabled(True)
+        self.timer.start(self.update_interval)
+        self.already_saved = False
 
     def update_view(self):
         txt = self.ui.txtEditErrors.toPlainText()

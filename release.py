@@ -40,7 +40,7 @@ print("md5sum", md5sum)
 print("sha256sum", sha256sum)
 
 
-shutil.rmtree("aur")
+shutil.rmtree("aur", ignore_errors=True)
 os.mkdir("aur")
 os.chdir("aur")
 call(["git", "clone", "git+ssh://aur@aur.archlinux.org/urh.git"])

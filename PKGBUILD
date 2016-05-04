@@ -2,6 +2,7 @@
 pkgname=urh
 pkgver=0.9.5
 pkgrel=1
+license=('Apache')
 pkgdesc="Universal Radio Hacker - Wireless Hacking made easy"
 arch=('i686' 'x86_64')
 url="https://github.com/jopohl/urh"

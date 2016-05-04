@@ -95,7 +95,8 @@ setup(
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],
-        scripts=["bin/urh"], requires=['PyQt5', 'numpy']
+    scripts=["bin/urh"],
+    install_requires=['PyQt5', 'numpy']
 )
 
 # python setup.py sdist --> Source distribution

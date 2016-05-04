@@ -2,7 +2,6 @@ import os
 import sys
 from distutils.core import setup, Extension
 from distutils import ccompiler
-import numpy
 import src.urh.version as version
 
 if sys.platform == "win32":
@@ -42,6 +41,7 @@ def get_package_data():
     return package_data
 
 def get_ext_modules():
+    import numpy
     ext = ".cpp"
 
     filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(ext)]
@@ -96,7 +96,7 @@ setup(
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],
     scripts=["bin/urh"],
-    install_requires=['PyQt5', 'numpy'],
+    install_requires=['numpy'],
     setup_requires=['numpy']
 )
 

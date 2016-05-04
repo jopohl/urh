@@ -92,12 +92,12 @@ setup(
     url="https://github.com/jopohl/urh",
     license="Apache License 2.0",
     download_url="https://github.com/jopohl/urh/tarball/v"+str(version.VERSION),
+    install_requires=['numpy'],
+    setup_requires=['numpy'],
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     # data_files=[("data", "")],
-    scripts=["bin/urh"],
-    install_requires=['numpy'],
-    setup_requires=['numpy']
+    scripts=["bin/urh"]
 )
 
 # python setup.py sdist --> Source distribution

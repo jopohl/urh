@@ -8,7 +8,7 @@ from urh import constants
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from xml.dom import minidom
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator
 
@@ -305,8 +305,11 @@ class ProjectManager(QObject):
                 label_tag.set("restrictive", restrictive)
                 label_tag.set("apply_decoding", apply_decoding)
 
-
-        tree.write(self.project_file)
+        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
+        with open(self.project_file, "w") as f:
+            for line in xmlstr.split("\n"):
+                if line.strip():
+                    f.write(line+"\n")
 
     def read_decodings(self) -> dict:
         if self.project_file is None:

@@ -10,9 +10,11 @@
 yaourt -S urh
 ```
 
-## From pip
+## Ubuntu/Debian
 ```bash
-pip3 install urh
+sudo apt-get update
+sudo apt-get install python3-numpy python3-pyqt5 g++ libpython3-dev python3-pip
+sudo pip3 install urh
 ```
 
 ## From cloned repository
@@ -23,11 +25,11 @@ sudo python setup.py install
 ```
 
 # Running from source
-To execute urh without installation, just run:
+To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
 cd urh/bin
 ./urh
 ```
 
-Note, on first use the C++ extensions will be built.
+Note, before first usage the C++ extensions will be built.

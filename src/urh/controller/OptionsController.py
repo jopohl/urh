@@ -104,6 +104,21 @@ class OptionsController(QDialog):
             self.ui.rbGnuradioBackend.setChecked(dev.selected_backend == Backends.grc)
             self.ui.rbNativeBackend.setChecked(dev.selected_backend == Backends.native)
 
+            if dev.supports_tx and dev.supports_rx:
+                self.ui.lSupport.setText(self.tr("device supports sending and receiving"))
+                self.ui.lSupport.setStyleSheet("color: green")
+            elif dev.supports_rx and not dev.supports_tx:
+                self.ui.lSupport.setText(self.tr("device supports receiving only"))
+                self.ui.lSupport.setStyleSheet("color: blue")
+            elif not dev.supports_rx and dev.supports_tx:
+                self.ui.lSupport.setText(self.tr("device supports sending only"))
+                self.ui.lSupport.setStyleSheet("color: blue")
+            else:
+                self.ui.lSupport.setText(self.tr("device supports neither sending nor receiving"))
+                self.ui.lSupport.setStyleSheet("color: red")
+
+
+
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
         if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:

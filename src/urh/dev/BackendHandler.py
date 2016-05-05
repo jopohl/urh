@@ -12,7 +12,7 @@ class Backends(Enum):
 
 
 class BackendContainer(object):
-    def __init__(self, name, avail_backends: set):
+    def __init__(self, name, avail_backends: set, supports_rx: bool, supports_tx: bool):
         self.name = name
         self.avail_backends = avail_backends
         settings = constants.SETTINGS
@@ -26,12 +26,21 @@ class BackendContainer(object):
             self.selected_backend = Backends.none
 
         self.is_enabled = settings.value(name+"_is_enabled", True, bool)
+        self.__supports_rx = supports_rx
+        self.__supports_tx = supports_tx
         if len(self.avail_backends) == 0:
             self.is_enabled = False
 
     def __repr__(self):
         return "avail backends: " +str(self.avail_backends) + "| selected backend:" + str(self.selected_backend)
 
+    @property
+    def supports_rx(self) -> bool:
+        return self.__supports_rx
+
+    @property
+    def supports_tx(self) -> bool:
+        return self.__supports_tx
 
     @property
     def has_gnuradio_backend(self):
@@ -83,12 +92,7 @@ class BackendHandler(object):
         self.get_backends()
 
     @property
-    def avail_devices(self):
-        return set(devname for devname in self.DEVICE_NAMES if len(self.device_backends[devname.lower()].avail_backends) > 0)
-
-
-    @property
-    def hackrf_native_enabled(self) -> bool:
+    def __hackrf_native_enabled(self) -> bool:
          try:
              from urh.dev.native.lib import hackrf
              return True
@@ -96,14 +100,14 @@ class BackendHandler(object):
              return False
 
     @property
-    def usrp_native_enabled(self) -> bool:
+    def __usrp_native_enabled(self) -> bool:
          try:
              from urh.dev.native.lib import uhd
              return True
          except ImportError:
              return False
 
-    def device_has_gr_scripts(self, devname: str):
+    def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
         devname = devname.lower()
         has_send_file = False
@@ -114,26 +118,27 @@ class BackendHandler(object):
             elif f == "{0}_recv.py".format(devname):
                 has_recv_file = True
 
-        return has_send_file and has_recv_file
+        return has_recv_file, has_send_file
 
-    def avail_backends_for_device(self, devname: str):
+    def __avail_backends_for_device(self, devname: str):
         backends = set()
-        if self.gnuradio_installed and self.device_has_gr_scripts(devname):
+        supports_rx, supports_tx = self.__device_has_gr_scripts(devname)
+        if self.gnuradio_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
 
-        if devname.lower() == "hackrf" and self.hackrf_native_enabled:
+        if devname.lower() == "hackrf" and self.__hackrf_native_enabled:
             backends.add(Backends.native)
 
-        if devname.lower() == "usrp" and self.usrp_native_enabled:
+        if devname.lower() == "usrp" and self.__usrp_native_enabled:
             backends.add(Backends.native)
 
-        return backends
+        return backends, supports_rx, supports_tx
 
     def get_backends(self):
         self.device_backends.clear()
         for device_name in self.DEVICE_NAMES:
-            ab = self.avail_backends_for_device(device_name)
-            self.device_backends[device_name.lower()] = BackendContainer(device_name.lower(), ab)
+            ab, rx_suprt, tx_suprt = self.__avail_backends_for_device(device_name)
+            self.device_backends[device_name.lower()] = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
 
     def __get_python2_interpreter(self):
         paths = os.get_exec_path()

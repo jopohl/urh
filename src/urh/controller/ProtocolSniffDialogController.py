@@ -35,11 +35,14 @@ class ProtocolSniffDialogController(QDialog):
 
         self.ui.cbDevice.clear()
         items = []
-        for device_name in BackendHandler.DEVICE_NAMES:
-            if constants.SETTINGS.value(device_name.lower() + '_is_enabled', type=bool):
+        bh = BackendHandler()
+        for device_name in bh.DEVICE_NAMES:
+            dev = bh.device_backends[device_name.lower()]
+            if dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
 
         self.ui.cbDevice.addItems(items)
+        del bh
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
 
@@ -82,8 +85,8 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
         self.ui.btnClose.clicked.connect(self.close)
 
-        self.sniffer.rcv_device.started.connect(self.on_sniffer_rcv_started)
-        self.sniffer.rcv_device.stopped.connect(self.on_sniffer_rcv_stopped)
+        self.sniffer.started.connect(self.on_sniffer_rcv_started)
+        self.sniffer.stopped.connect(self.on_sniffer_rcv_stopped)
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
         self.sniffer.qt_signals.sniff_device_errors_changed.connect(
             self.on_device_errors_changed)

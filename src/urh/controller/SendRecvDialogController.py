@@ -84,7 +84,10 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.clear()
         items = []
         for device_name in self.backend_handler.DEVICE_NAMES:
-            if constants.SETTINGS.value(device_name.lower() + '_is_enabled', type=bool):
+            dev = self.backend_handler.device_backends[device_name.lower()]
+            if mode == Mode.send and dev.is_enabled and dev.supports_tx:
+                items.append(device_name)
+            elif mode in (Mode.receive, Mode.spectrum) and dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
 
         self.ui.cbDevice.addItems(items)

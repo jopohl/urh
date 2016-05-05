@@ -3,7 +3,7 @@ import time
 
 import gc
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot
+from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtWidgets import QApplication
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler
@@ -16,11 +16,13 @@ from urh.signalprocessing.Signal import Signal
 from urh.util.Errors import Errors
 
 
-class ProtocolSniffer(ProtocolAnalyzer):
+class ProtocolSniffer(ProtocolAnalyzer, QObject):
     """
     This class is used for live sniffing a protocol
     with certain signal parameters.
     """
+    started = pyqtSignal()
+    stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance:
     int, modulation_type: int, sample_rate: float, freq: float, gain: int,
@@ -31,12 +33,15 @@ class ProtocolSniffer(ProtocolAnalyzer):
         signal.noise_treshold = noise
         signal.tolerance = tolerance
         signal.silent_set_modulation_type(modulation_type)
-        super().__init__(signal)
+        ProtocolAnalyzer.__init__(self, signal)
+        QObject.__init__(self, None)
 
         self.backend_handler = BackendHandler()
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, bandwidth, freq, gain, sample_rate, device_ip=usrp_ip, is_ringbuffer=True)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
+        self.rcv_device.started.connect(self.__emit_started)
+        self.rcv_device.stopped.connect(self.__emit_stopped)
 
         self.rcv_timer = QTimer()
         self.rcv_timer.setInterval(1000)
@@ -83,6 +88,8 @@ class ProtocolSniffer(ProtocolAnalyzer):
             self.rcv_device = VirtualDevice(self.backend_handler, value, self.rcv_device.mode, self.rcv_device.bandwidth, self.rcv_device.frequency, self.rcv_device.gain,
                                         self.rcv_device.sample_rate, device_ip=self.rcv_device.ip, is_ringbuffer=True)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
+            self.rcv_device.started.connect(self.__emit_started)
+            self.rcv_device.stopped.connect(self.__emit_stopped)
 
     @property
     def usrp_ip(self):
@@ -215,3 +222,10 @@ class ProtocolSniffer(ProtocolAnalyzer):
             self.rcv_device.port += 1
             self.stop()
             self.sniff()
+
+
+    def __emit_started(self):
+        self.started.emit()
+
+    def __emit_stopped(self):
+        self.stopped.emit()

@@ -21,7 +21,7 @@ sudo pip3 install urh
 1. Install [Visual Studio 2015 Community](https://www.visualstudio.com/de-de/downloads/download-visual-studio-vs.aspx) - ensure you tick C++ language
 2. Install [Python 3.5 for Windows](https://www.python.org/downloads/windows/)
 3. Install [PyQt5 for Windows](https://www.riverbankcomputing.com/software/pyqt/download5)
-4. Open a terminal (__cmd__) an type: ```pip install numpy```
+4. Open a terminal (__cmd__) and type: ```pip install numpy```
 5. After that, type ```pip install urh```
 6. Navigate to ```C:\Users\<Your-Username>\AppData\Local\Programs\Python\Python35\Scripts```
 7. In a terminal (__cmd__) type ```python urh```

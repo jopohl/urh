@@ -4,7 +4,7 @@ import os
 
 import numpy
 import sys
-from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
+from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QDropEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication
 
@@ -801,7 +801,7 @@ class CompareFrameController(QFrame):
 
         self.updateUI(ignore_table_model=ignore_table_model_on_update)
 
-    @pyqtSlot(int)
+    @pyqtSlot(QModelIndex)
     def handle_group_added(self, index):
         self.ui.treeViewProtocols.edit(index)
 

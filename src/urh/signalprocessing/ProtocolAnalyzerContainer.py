@@ -1,5 +1,7 @@
 import copy
 import itertools
+from xml.dom import minidom
+import xml.etree.ElementTree as ET
 
 import numpy
 
@@ -287,3 +289,16 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def set_decoder_for_blocks(self, decoder, blocks=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
+
+    def to_xml_file(self, filename: str):
+        root = ET.Element("fuzz_profile")
+        modulators_tag = ET.SubElement(root, "modulators")
+        for modulator in self.modulators:
+            ET.SubElement(modulators_tag, modulator.to_xml())
+
+        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
+        print(xmlstr)
+        # with open(filename, "w") as f:
+        #     for line in xmlstr.split("\n"):
+        #         if line.strip():
+        #             f.write(line+"\n")

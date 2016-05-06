@@ -10,6 +10,8 @@ from urh.cythonext import path_creator
 from urh.cythonext.signalFunctions import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 
+import xml.etree.ElementTree as ET
+
 class Modulator(object):
     """
     This class can modulate bits to a carrier.
@@ -231,3 +233,14 @@ class Modulator(object):
             return locale.format_string("%.4fk",value / 10 ** 3)
         else:
             return locale.format_string("%f", value)
+
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("modulator")
+
+        for attr, val in vars(self).items():
+            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate"):
+                root.set(attr, str(val))
+
+        root.set("sample_rate", str(self.__sample_rate))
+        return root
+

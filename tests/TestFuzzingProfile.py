@@ -2,8 +2,10 @@ import unittest
 import os
 import tempfile
 
+from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.encoding import encoding
 
 
@@ -17,4 +19,6 @@ class TestFuzzing(unittest.TestCase):
         decoders = [encoding(["NRZ"])]
 
         pac = ProtocolAnalyzerContainer([mod1, mod2], decoders)
+        pac.blocks.append(ProtocolBlock([True, False, False, True, "A"], 100, [], decoder=decoders[0]))
+        pac.used_symbols.add(Symbol("A", 1, 1, 100))
         pac.to_xml_file(filename)

@@ -246,11 +246,18 @@ class Modulator(object):
         return root
 
     @staticmethod
-    def from_xml(tag: ET.Element) -> Modulator:
+    def from_xml(tag: ET.Element):
         result = Modulator("")
         for attrib, value in tag.attrib.items():
-            if
-            setattr(result, attrib, float(value))
+            if attrib == "name":
+                setattr(result, attrib, str(value))
+            elif attrib == "modulation_type":
+                setattr(result, attrib, int(value))
+            elif attrib == "sample_rate":
+                result.sample_rate = float(value) if value != "None" else None
+            else:
+                setattr(result, attrib, float(value))
+        return result
 
 
 

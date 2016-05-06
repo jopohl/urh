@@ -292,10 +292,37 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def to_xml_file(self, filename: str):
         root = ET.Element("fuzz_profile")
+
+        # Save modulators
         modulators_tag = ET.SubElement(root, "modulators")
         for modulator in self.modulators:
             modulators_tag.append(modulator.to_xml())
-            #ET.SubElement(modulators_tag, modulator.to_xml())
+
+        # Save decodings
+        decodings_tag = ET.SubElement(root, "decodings")
+        for decoding in self.decoders:
+            dec_str = ""
+            for chn in decoding.get_chain():
+                dec_str += repr(chn) + ", "
+            dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.text = dec_str
+
+        # Save symbols
+        if len(self.used_symbols) > 0:
+            symbols_tag = ET.SubElement(root, "symbols")
+            for symbol in self.used_symbols:
+                ET.SubElement(symbols_tag, "symbol", attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
+                                                            "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
+
+        # Save data
+        data_tag = ET.SubElement(root, "data")
+        for block in self.blocks:
+            block_tag = ET.SubElement(data_tag, "block")
+            block_tag.set("modulator_index", str(block.modulator_indx))
+            block_tag.set("decoding_index", str(self.decoders.index(block.decoder)))
+            block_tag.text = block.plain_bits_str
+
+        # TODO save labels
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         print(xmlstr)

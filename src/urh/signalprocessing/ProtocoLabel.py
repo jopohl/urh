@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
+import xml.etree.ElementTree as ET
 
 
 class LabelSignals(QObject):
@@ -158,3 +159,12 @@ class ProtocolLabel(object):
         cur_val = self.fuzz_values[-1]
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
+
+
+    def to_xml(self) -> ET.Element:
+        return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end),
+                                            "refblock": str(self.__refblock), "refblock_offset": str(self.refblock_offset),
+                                            "apply_decoding": str(self.__apply_decoding), "restrictive": str(self.restrictive),
+                                            "color_index": str(self.color_index),  "show": str(self.show),
+                                            "fuzz_me": str(self.fuzz_me), "nfuzzed": str(self.nfuzzed),
+                                            "fuzz_values": ",".join(self.fuzz_values)})

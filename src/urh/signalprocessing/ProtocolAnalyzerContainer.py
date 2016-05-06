@@ -313,18 +313,20 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             for symbol in self.used_symbols:
                 ET.SubElement(symbols_tag, "symbol", attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
                                                             "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
-
         # Save data
         data_tag = ET.SubElement(root, "data")
         for block in self.blocks:
-            block_tag = ET.SubElement(data_tag, "block")
-            block_tag.set("modulator_index", str(block.modulator_indx))
-            block_tag.set("decoding_index", str(self.decoders.index(block.decoder)))
+            block_tag = ET.SubElement(data_tag, "block", attrib={"modulator_index": str(block.modulator_indx),
+                                                                 "decoding_index": str(self.decoders.index(block.decoder))})
             block_tag.text = block.plain_bits_str
 
-        # TODO save labels
+        # Save labels
+        if len(self.protocol_labels) > 0:
+            labels_tag = ET.SubElement(root, "labels")
+            for lbl in self.protocol_labels:
+                labels_tag.append(lbl.to_xml())
 
-        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
+        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
         print(xmlstr)
         # with open(filename, "w") as f:
         #     for line in xmlstr.split("\n"):

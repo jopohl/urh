@@ -294,7 +294,8 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         root = ET.Element("fuzz_profile")
         modulators_tag = ET.SubElement(root, "modulators")
         for modulator in self.modulators:
-            ET.SubElement(modulators_tag, modulator.to_xml())
+            modulators_tag.append(modulator.to_xml())
+            #ET.SubElement(modulators_tag, modulator.to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         print(xmlstr)

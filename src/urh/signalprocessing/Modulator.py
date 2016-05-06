@@ -238,9 +238,19 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate"):
+            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate", "default_sample_rate"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
+
         return root
+
+    @staticmethod
+    def from_xml(tag: ET.Element) -> Modulator:
+        result = Modulator("")
+        for attrib, value in tag.attrib.items():
+            if
+            setattr(result, attrib, float(value))
+
+
 

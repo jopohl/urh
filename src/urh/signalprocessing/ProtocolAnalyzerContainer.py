@@ -326,7 +326,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         for i, block in enumerate(self.blocks):
             block_tag = ET.SubElement(data_tag, "block", attrib={"modulator_index": str(block.modulator_indx),
                                                                  "decoding_index": str(decoders.index(block.decoder)),
-                                                                 "index": str(i)})
+                                                                 "pause": str(block.pause),"index": str(i)})
             block_tag.text = block.plain_bits_str
 
         # Save labels
@@ -378,6 +378,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             block = ProtocolBlock.from_plain_bits_str(block_tag.text, {s.name: s for s in self.used_symbols})
             block.modulator_indx = int(block_tag.get("modulator_index"))
             block.decoder = decoders[int(block_tag.get("decoding_index"))]
+            block.pause = int(block_tag.get("pause"))
             self.blocks[int(block_tag.get("index"))] = block
 
         self.protocol_labels[:] = []
@@ -387,3 +388,5 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             self.protocol_labels = [None] * len(label_tags)
             for label_tag in label_tags:
                 self.protocol_labels[int(label_tag.get("index"))] = ProtocolLabel.from_xml(label_tag)
+
+        self.refresh_protolabel_blocks()

@@ -241,7 +241,7 @@ class MainController(QMainWindow):
         self.dialog.setViewMode(QFileDialog.Detail)
         self.dialog.setNameFilter(
             "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
-            "Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+            "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
         self.dialog.currentChanged.connect(self.handle_dialog_selection_changed)
 
@@ -265,12 +265,12 @@ class MainController(QMainWindow):
             self.dialog.setFileMode(QFileDialog.Directory)
             self.dialog.setNameFilter(
                 "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
-                "Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
         else:
             self.dialog.setFileMode(QFileDialog.ExistingFiles)
             self.dialog.setNameFilter(
                 "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
-                "Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
 
     def add_protocol_file(self, filename):
@@ -283,6 +283,13 @@ class MainController(QMainWindow):
             self.signal_protocol_dict[sf] = pa
             self.set_frame_numbers()
             self.file_proxy_model.open_files.add(filename)
+
+
+    def add_fuzz_profile(self, filename):
+        self.ui.tabWidget.setCurrentIndex(2)
+        self.generator_tab_controller.load_from_file(filename)
+
+
 
     def add_signalfile(self, filename: str, group_id=0):
         if not os.path.exists(filename):
@@ -503,6 +510,8 @@ class MainController(QMainWindow):
                 self.add_protocol_file(file)
             elif fileExtension == ".wav":
                 self.add_signalfile(file, group_id)
+            elif fileExtension == ".fuzz":
+                self.add_fuzz_profile(file)
             else:
                 self.add_signalfile(file, group_id)
 

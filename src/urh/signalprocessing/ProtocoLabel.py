@@ -169,6 +169,7 @@ class ProtocolLabel(object):
                                             "refblock": str(self.__refblock), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.__apply_decoding), "index": str(index),
                                             "show": str(self.show), "restrictive": str(self.restrictive),
+                                            "reference_bits": str(self.reference_bits), "refblock_offset": str(self.refblock_offset),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
 
     @staticmethod
@@ -180,6 +181,8 @@ class ProtocolLabel(object):
 
         result = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
+        result.reference_bits = tag.get("reference_bits")
+        result.refblock_offset = int(tag.get("refblock_offset"))
         result.show = Qt.Checked if int(tag.get("show", 0)) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if int(tag.get("fuzz_me", 0)) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")

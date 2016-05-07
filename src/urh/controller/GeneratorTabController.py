@@ -449,3 +449,11 @@ class GeneratorTabController(QWidget):
         filename = FileOperator.get_save_file_name("profile", parent=self, caption="Save fuzz profile")
         if filename:
             self.table_model.protocol.to_xml_file(filename)
+
+    def load_from_file(self, filename):
+        self.table_model.protocol.from_xml_file(filename)
+        self.refresh_pause_list()
+        self.refresh_estimated_time()
+        self.refresh_modulators()
+        self.refresh_protocol_labels()
+        self.refresh_table()

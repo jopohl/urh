@@ -12,9 +12,9 @@ from urh.ui.actions.InsertColumn import InsertColumn
 
 
 class GeneratorTableModel(TableModel):
-    def __init__(self, tree_root_item: ProtocolTreeItem, modulators, decoders, parent = None):
+    def __init__(self, tree_root_item: ProtocolTreeItem, modulators, parent = None):
         super().__init__(parent)
-        self.protocol = ProtocolAnalyzerContainer(modulators, decoders)
+        self.protocol = ProtocolAnalyzerContainer(modulators)
         self.tree_root_item = tree_root_item
         self.dropped_row = -1
 

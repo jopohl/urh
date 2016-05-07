@@ -209,6 +209,8 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
         filter = "Complex files (*.complex);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         if wav_only:
             filter = "wav files (*.wav);;all files (*)"
+    elif caption == "Save fuzz profile":
+        filter = "Fuzzfiles (*.fuzz);;All files (*)"
     else:
         filter = "Textfiles (*.txt);;All files (*)"
 

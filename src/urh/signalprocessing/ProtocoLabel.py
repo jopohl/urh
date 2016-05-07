@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
+import xml.etree.ElementTree as ET
 
 
 class LabelSignals(QObject):
@@ -146,6 +147,9 @@ class ProtocolLabel(object):
     def __eq__(self, other):
         return self.start == other.start and self.end == other.end and self.name == other.name
 
+    def __repr__(self):
+        return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)
+
     def add_fuzz_value(self):
         cur_val = self.fuzz_values[-1]
         format_string = "{0:0" + str(len(cur_val)) + "b}"
@@ -158,3 +162,29 @@ class ProtocolLabel(object):
         cur_val = self.fuzz_values[-1]
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
+
+
+    def to_xml(self, index:int) -> ET.Element:
+        return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end),
+                                            "refblock": str(self.__refblock), "color_index": str(self.color_index),
+                                            "apply_decoding": str(self.__apply_decoding), "index": str(index),
+                                            "show": str(self.show), "restrictive": str(self.restrictive),
+                                            "reference_bits": str(self.reference_bits), "refblock_offset": str(self.refblock_offset),
+                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
+
+    @staticmethod
+    def from_xml(tag: ET.Element):
+        name = tag.get("name")
+        start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
+        refblock, color_index = int(tag.get("refblock", 0)), int(tag.get("color_index", 0))
+        restrictive = True if tag.get("restrictive", 'True') == "True" else False
+
+        result = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
+        result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
+        result.reference_bits = tag.get("reference_bits")
+        result.refblock_offset = int(tag.get("refblock_offset"))
+        result.show = Qt.Checked if int(tag.get("show", 0)) else Qt.Unchecked
+        result.fuzz_me = Qt.Checked if int(tag.get("fuzz_me", 0)) else Qt.Unchecked
+        result.fuzz_values = tag.get("fuzz_values", "").split(",")
+
+        return result

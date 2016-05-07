@@ -10,6 +10,8 @@ from urh.cythonext import path_creator
 from urh.cythonext.signalFunctions import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 
+import xml.etree.ElementTree as ET
+
 class Modulator(object):
     """
     This class can modulate bits to a carrier.
@@ -154,7 +156,7 @@ class Modulator(object):
             self.data = data
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
-        total_samples = sum(bit.nsamples if type(bit) == Symbol else self.samples_per_bit for bit in data) + pause
+        total_samples = int(sum(bit.nsamples if type(bit) == Symbol else self.samples_per_bit for bit in data) + pause)
 
         self.modulated_samples = np.zeros(total_samples, dtype=np.complex64)
 
@@ -164,11 +166,11 @@ class Modulator(object):
 
         for i, bit in enumerate(data):
             if type(bit) == Symbol:
-                samples_per_bit = bit.nsamples
+                samples_per_bit = int(bit.nsamples)
                 log_bit = True if bit.pulsetype == 1 else False
             else:
                 log_bit = bit
-                samples_per_bit = self.samples_per_bit
+                samples_per_bit = int(self.samples_per_bit)
 
             if mod_type == "FSK" or mod_type == "GFSK":
                 param = 1 if log_bit else -1
@@ -231,3 +233,34 @@ class Modulator(object):
             return locale.format_string("%.4fk",value / 10 ** 3)
         else:
             return locale.format_string("%f", value)
+
+    def to_xml(self, index: int) -> ET.Element:
+        root = ET.Element("modulator")
+
+        for attr, val in vars(self).items():
+            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate", "default_sample_rate"):
+                root.set(attr, str(val))
+
+        root.set("sample_rate", str(self.__sample_rate))
+        root.set("index", str(index))
+
+        return root
+
+    @staticmethod
+    def from_xml(tag: ET.Element):
+        result = Modulator("")
+        for attrib, value in tag.attrib.items():
+            if attrib == "index":
+                continue
+            elif attrib == "name":
+                setattr(result, attrib, str(value))
+            elif attrib == "modulation_type":
+                setattr(result, attrib, int(value))
+            elif attrib == "sample_rate":
+                result.sample_rate = float(value) if value != "None" else None
+            else:
+                setattr(result, attrib, float(value))
+        return result
+
+
+

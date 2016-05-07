@@ -234,7 +234,7 @@ class Modulator(object):
         else:
             return locale.format_string("%f", value)
 
-    def to_xml(self) -> ET.Element:
+    def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
@@ -242,6 +242,7 @@ class Modulator(object):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
+        root.set("index", str(index))
 
         return root
 
@@ -249,7 +250,9 @@ class Modulator(object):
     def from_xml(tag: ET.Element):
         result = Modulator("")
         for attrib, value in tag.attrib.items():
-            if attrib == "name":
+            if attrib == "index":
+                continue
+            elif attrib == "name":
                 setattr(result, attrib, str(value))
             elif attrib == "modulation_type":
                 setattr(result, attrib, int(value))

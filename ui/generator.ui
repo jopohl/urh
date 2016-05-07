@@ -368,7 +368,7 @@
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0" colspan="4">
+       <item row="2" column="0" colspan="4">
         <widget class="GeneratorTableView" name="tableBlocks">
          <property name="acceptDrops">
           <bool>true</bool>
@@ -408,7 +408,7 @@
          </attribute>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="lEstimatedTime">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per block and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -418,7 +418,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -431,7 +431,7 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="2">
+       <item row="3" column="2">
         <widget class="QLabel" name="lViewType">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -444,7 +444,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
+       <item row="3" column="3">
         <widget class="QComboBox" name="cbViewType">
          <item>
           <property name="text">
@@ -463,7 +463,17 @@
          </item>
         </widget>
        </item>
-       <item row="0" column="0" colspan="4">
+       <item row="1" column="3">
+        <widget class="QToolButton" name="btnSave">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-save"/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="3">
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>

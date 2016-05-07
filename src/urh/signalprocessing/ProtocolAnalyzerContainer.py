@@ -5,12 +5,16 @@ import xml.etree.ElementTree as ET
 
 import numpy
 
+from urh.cythonext.signalFunctions import Symbol
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.signalprocessing.encoding import encoding
+from urh.util.Logger import logger
+
 
 class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     """
@@ -18,15 +22,13 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     This class is used by the generator to manage distinct protocols
     """
 
-    def __init__(self, modulators, decoders):
+    def __init__(self, modulators):
         """
 
         :type modulators: list of Modulator
-        :type decoders: list of encoding
         """
         super().__init__(None)
         self.modulators = modulators
-        self.decoders = decoders
 
         self.fuzz_pause = 10000
         self.created_fuz_blocks = []
@@ -295,16 +297,22 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         # Save modulators
         modulators_tag = ET.SubElement(root, "modulators")
-        for modulator in self.modulators:
-            modulators_tag.append(modulator.to_xml())
+        for i, modulator in enumerate(self.modulators):
+            modulators_tag.append(modulator.to_xml(i))
 
         # Save decodings
         decodings_tag = ET.SubElement(root, "decodings")
-        for decoding in self.decoders:
+        decoders = []
+        for block in self.blocks:
+            if block.decoder not in decoders:
+                decoders.append(block.decoder)
+
+        for i, decoding in enumerate(decoders):
             dec_str = ""
             for chn in decoding.get_chain():
                 dec_str += repr(chn) + ", "
             dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.set("index", str(i))
             dec_tag.text = dec_str
 
         # Save symbols
@@ -315,19 +323,67 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                                             "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
         # Save data
         data_tag = ET.SubElement(root, "data")
-        for block in self.blocks:
+        for i, block in enumerate(self.blocks):
             block_tag = ET.SubElement(data_tag, "block", attrib={"modulator_index": str(block.modulator_indx),
-                                                                 "decoding_index": str(self.decoders.index(block.decoder))})
+                                                                 "decoding_index": str(decoders.index(block.decoder)),
+                                                                 "index": str(i)})
             block_tag.text = block.plain_bits_str
 
         # Save labels
         if len(self.protocol_labels) > 0:
             labels_tag = ET.SubElement(root, "labels")
-            for lbl in self.protocol_labels:
-                labels_tag.append(lbl.to_xml())
+            for i, lbl in enumerate(self.protocol_labels):
+                labels_tag.append(lbl.to_xml(i))
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
         with open(filename, "w") as f:
             for line in xmlstr.split("\n"):
                 if line.strip():
                     f.write(line+"\n")
+
+    def from_xml_file(self, filename: str):
+        try:
+            tree = ET.parse(filename)
+        except FileNotFoundError:
+            logger.error("Could not find file "+filename)
+            return
+
+        root = tree.getroot()
+        self.clear()
+
+        mod_tags = root.find("modulators").findall("modulator")
+        self.modulators[:] = [None] * len(mod_tags)
+        for modulator_tag in mod_tags:
+            self.modulators[int(modulator_tag.get("index"))] = Modulator.from_xml(modulator_tag)
+
+
+        decodings_tags = root.find("decodings").findall("decoding")
+        decoders = [None] * len(decodings_tags)
+        for decoding_tag in decodings_tags:
+            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
+            decoders[int(decoding_tag.get("index"))] = encoding(conf)
+
+        self.used_symbols.clear()
+        symbols_tag = root.find("symbols")
+        if symbols_tag:
+            for symbol_tag in symbols_tag.findall("symbol"):
+                s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
+                           int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
+                self.used_symbols.add(s)
+
+        block_tags = root.find("data").findall("block")
+        self.blocks[:] = [None] * len(block_tags)
+
+        for block_tag in block_tags:
+            block = ProtocolBlock.from_plain_bits_str(block_tag.text, {s.name: s for s in self.used_symbols})
+            block.modulator_indx = int(block_tag.get("modulator_index"))
+            block.decoder = decoders[int(block_tag.get("decoding_index"))]
+            self.blocks[int(block_tag.get("index"))] = block
+
+        self.protocol_labels[:] = []
+        labels_tag = root.find("labels")
+        if labels_tag:
+            label_tags = labels_tag.findall("label")
+            self.protocol_labels = [None] * len(label_tags)
+            for label_tag in label_tags:
+                self.protocol_labels[int(label_tag.get("index"))] = ProtocolLabel.from_xml(label_tag)

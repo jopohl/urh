@@ -26,7 +26,7 @@ from urh.util.ProjectManager import ProjectManager
 
 class GeneratorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
-                 project_manager: ProjectManager, encoders, parent=None):
+                 project_manager: ProjectManager, parent=None):
         """
         :type encoders: list of encoding
         :return:
@@ -35,7 +35,6 @@ class GeneratorTabController(QWidget):
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
 
-        self.encoders = encoders
         self.modulated_scene_is_locked = False
 
         self.ui.treeProtocols.setHeaderHidden(True)
@@ -48,8 +47,7 @@ class GeneratorTabController(QWidget):
 
         self.has_default_modulation = True
 
-        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
-                                               self.modulators, self.encoders)
+        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, self.modulators)
         """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableBlocks.setModel(self.table_model)
@@ -79,6 +77,7 @@ class GeneratorTabController(QWidget):
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.btnSend.clicked.connect(self.on_btn_send_clicked)
+        self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
 
         self.label_list_model.protolabel_removed.connect(self.handle_proto_label_removed)
 
@@ -443,3 +442,10 @@ class GeneratorTabController(QWidget):
 
         dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
         dialog.show()
+
+
+    @pyqtSlot()
+    def on_btn_save_clicked(self):
+        filename = FileOperator.get_save_file_name("profile", parent=self, caption="Save fuzz profile")
+        if filename:
+            self.table_model.protocol.to_xml_file(filename)

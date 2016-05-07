@@ -164,10 +164,10 @@ class ProtocolLabel(object):
         self.fuzz_values.append(format_string.format(val))
 
 
-    def to_xml(self) -> ET.Element:
+    def to_xml(self, index:int) -> ET.Element:
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end),
                                             "refblock": str(self.__refblock), "color_index": str(self.color_index),
-                                            "apply_decoding": str(self.__apply_decoding),
+                                            "apply_decoding": str(self.__apply_decoding), "index": str(index),
                                             "show": str(self.show), "restrictive": str(self.restrictive),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
 
@@ -183,6 +183,5 @@ class ProtocolLabel(object):
         result.show = Qt.Checked if int(tag.get("show", 0)) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if int(tag.get("fuzz_me", 0)) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
-
 
         return result

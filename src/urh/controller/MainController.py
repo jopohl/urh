@@ -51,7 +51,6 @@ class MainController(QMainWindow):
 
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
                                                                self.project_manager,
-                                                               self.compare_frame_controller.decodings,
                                                                parent=self.ui.tab_generator)
 
         self.undo_group = QUndoGroup()

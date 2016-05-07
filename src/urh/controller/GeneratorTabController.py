@@ -457,7 +457,7 @@ class GeneratorTabController(QWidget):
         if filename:
             self.table_model.protocol.to_xml_file(filename)
 
-    def load_from_file(self, filename):
+    def load_from_file(self, filename: str):
         self.table_model.protocol.from_xml_file(filename)
         self.refresh_pause_list()
         self.refresh_estimated_time()
@@ -465,3 +465,4 @@ class GeneratorTabController(QWidget):
         self.show_modulation_info()
         self.refresh_protocol_labels()
         self.refresh_table()
+        self.set_fuzzing_ui_status()

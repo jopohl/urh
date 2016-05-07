@@ -327,8 +327,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 labels_tag.append(lbl.to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
-        print(xmlstr)
-        # with open(filename, "w") as f:
-        #     for line in xmlstr.split("\n"):
-        #         if line.strip():
-        #             f.write(line+"\n")
+        with open(filename, "w") as f:
+            for line in xmlstr.split("\n"):
+                if line.strip():
+                    f.write(line+"\n")

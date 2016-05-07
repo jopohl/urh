@@ -23,3 +23,6 @@ class TestFuzzing(unittest.TestCase):
         pac.used_symbols.add(Symbol("A", 1, 1, 100))
         pac.create_fuzzing_label(1, 10, 0)
         pac.to_xml_file(filename)
+
+    def test_load_profile(self):
+        pass

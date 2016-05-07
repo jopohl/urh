@@ -42,12 +42,10 @@ class GeneratorTabController(QWidget):
         self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
-        self.modulators = [Modulator("Modulation")]
-        """:type: list of Modulator """
 
         self.has_default_modulation = True
 
-        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, self.modulators)
+        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")])
         """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableBlocks.setModel(self.table_model)
@@ -98,6 +96,15 @@ class GeneratorTabController(QWidget):
     @property
     def active_groups(self):
         return self.tree_model.groups
+
+    @property
+    def modulators(self):
+        return self.table_model.protocol.modulators
+
+    @modulators.setter
+    def modulators(self, value):
+        assert type(value) == list
+        self.table_model.protocol.modulators = value
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -455,5 +462,6 @@ class GeneratorTabController(QWidget):
         self.refresh_pause_list()
         self.refresh_estimated_time()
         self.refresh_modulators()
+        self.show_modulation_info()
         self.refresh_protocol_labels()
         self.refresh_table()

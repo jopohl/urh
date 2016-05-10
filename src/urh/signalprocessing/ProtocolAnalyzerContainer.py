@@ -115,13 +115,16 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.refresh_protolabel_blocks()
 
     def duplicate_line(self, row: int):
-        self.blocks.insert(row + 1, copy.deepcopy(self.blocks[row]))
-        plabels = [l for l in self.protocol_labels if l.refblock > row]
-        for pl in plabels:
-            pl.refblock += 1
+        try:
+            self.blocks.insert(row + 1, copy.deepcopy(self.blocks[row]))
+            plabels = [l for l in self.protocol_labels if l.refblock > row]
+            for pl in plabels:
+                pl.refblock += 1
 
-        self.refresh_protolabel_blocks()
-        self.qt_signals.line_duplicated.emit()
+            self.refresh_protolabel_blocks()
+            self.qt_signals.line_duplicated.emit()
+        except Exception as e:
+            logger.error("Duplicating line ", str(e))
 
     def refresh_protolabel_blocks(self):
         self.__group.refresh_labels(decode=False)

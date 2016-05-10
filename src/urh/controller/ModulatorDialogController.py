@@ -494,6 +494,7 @@ class ModulatorDialogController(QDialog):
         signal = self.ui.gVOriginalSignal.scene_creator.signal
         freq = signal.estimate_frequency(start, start + nsamples, self.current_modulator.sample_rate)
         self.ui.doubleSpinBoxCarrierFreq.setValue(freq)
+        self.ui.doubleSpinBoxCarrierFreq.editingFinished.emit()
         self.autodetect_fsk_freqs()
 
     def autodetect_fsk_freqs(self):
@@ -513,6 +514,9 @@ class ModulatorDialogController(QDialog):
         except AttributeError:
             self.ui.spinBoxParameter0.setValue(self.current_modulator.carrier_freq_hz / 2)
             self.ui.spinBoxParameter1.setValue(self.current_modulator.carrier_freq_hz)
+
+        self.ui.spinBoxParameter0.editingFinished.emit()
+        self.ui.spinBoxParameter1.editingFinished.emit()
 
     def __trim_number(self, number):
         if abs(number) >= 1e9:  # giga

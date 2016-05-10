@@ -3,6 +3,8 @@ from copy import deepcopy
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 import xml.etree.ElementTree as ET
 
+from urh.util.Formatter import Formatter
+
 
 class LabelSignals(QObject):
     def __init__(self, parent=None):
@@ -108,6 +110,7 @@ class ProtocolLabel(object):
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
 
+
     def find_block_numbers(self, proto_blocks):
         """
 
@@ -154,7 +157,7 @@ class ProtocolLabel(object):
         cur_val = self.fuzz_values[-1]
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         maximum = 2 ** len(cur_val)
-        cur_val = format_string.format((int(cur_val, 2) + 1) % maximum)
+        cur_val = format_string.format((int(str(Formatter.str2val(cur_val, int)), 2) + 1) % maximum)
 
         self.fuzz_values.append(cur_val)
 
@@ -182,9 +185,9 @@ class ProtocolLabel(object):
         result = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
         result.reference_bits = tag.get("reference_bits")
-        result.refblock_offset = int(tag.get("refblock_offset"))
-        result.show = Qt.Checked if int(tag.get("show", 0)) else Qt.Unchecked
-        result.fuzz_me = Qt.Checked if int(tag.get("fuzz_me", 0)) else Qt.Unchecked
+        result.refblock_offset = Formatter.str2val(tag.get("refblock_offset"), int)
+        result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
+        result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
 
         return result

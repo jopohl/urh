@@ -9,6 +9,7 @@ from urh import constants
 from urh.cythonext import path_creator
 from urh.cythonext.signalFunctions import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
+from urh.util.Formatter import Formatter
 
 import xml.etree.ElementTree as ET
 
@@ -255,11 +256,11 @@ class Modulator(object):
             elif attrib == "name":
                 setattr(result, attrib, str(value))
             elif attrib == "modulation_type":
-                setattr(result, attrib, int(value))
+                setattr(result, attrib, Formatter.str2val(value, int, 0))
             elif attrib == "sample_rate":
-                result.sample_rate = float(value) if value != "None" else None
+                result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
             else:
-                setattr(result, attrib, float(value))
+                setattr(result, attrib, Formatter.str2val(value, float, 1))
         return result
 
 

@@ -1,5 +1,6 @@
 import copy
 import itertools
+import xml
 from xml.dom import minidom
 import xml.etree.ElementTree as ET
 
@@ -13,6 +14,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.signalprocessing.encoding import encoding
+from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 
@@ -347,14 +349,17 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         except FileNotFoundError:
             logger.error("Could not find file "+filename)
             return
+        except xml.etree.ElementTree.ParseError:
+            logger.error("Could not parse file " + filename)
+            return
 
         root = tree.getroot()
         self.clear()
 
         mod_tags = root.find("modulators").findall("modulator")
-        self.modulators[:] = [None] * len(mod_tags)
+        self.modulators[:] = [Modulator("Bugged")] * len(mod_tags)
         for modulator_tag in mod_tags:
-            self.modulators[int(modulator_tag.get("index"))] = Modulator.from_xml(modulator_tag)
+            self.modulators[Formatter.str2val(modulator_tag.get("index"), int) % len(self.modulators)] = Modulator.from_xml(modulator_tag)
 
 
         decodings_tags = root.find("decodings").findall("decoding")
@@ -376,10 +381,11 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         for block_tag in block_tags:
             block = ProtocolBlock.from_plain_bits_str(block_tag.text, {s.name: s for s in self.used_symbols})
-            block.modulator_indx = int(block_tag.get("modulator_index"))
-            block.decoder = decoders[int(block_tag.get("decoding_index"))]
-            block.pause = int(block_tag.get("pause"))
-            self.blocks[int(block_tag.get("index"))] = block
+            block.modulator_indx = Formatter.str2val(block_tag.get("modulator_index"), int, 0)
+            block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]
+            self.blocks[Formatter.str2val(block_tag.get("index"), int)] = block
+            block.pause = Formatter.str2val(block_tag.get("pause"), int)
+
 
         self.protocol_labels[:] = []
         labels_tag = root.find("labels")

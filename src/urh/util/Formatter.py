@@ -2,6 +2,8 @@ import locale
 
 
 # locale.setlocale(locale.LC_ALL, '')
+from urh.util.Logger import logger
+
 
 class Formatter():
     @staticmethod
@@ -32,3 +34,12 @@ class Formatter():
             return locale.format_string(fmt_str+"K", value / 1e3)
         else:
             return locale.format_string(fmt_str, value)
+
+
+    @staticmethod
+    def str2val(str_val, dtype, default=0):
+        try:
+            return dtype(str_val)
+        except (ValueError, TypeError):
+            logger.warning("The {0} is not a valid {1}, assuming {2}".format(str_val, str(dtype), str(default)))
+            return default

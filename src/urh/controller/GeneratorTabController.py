@@ -22,6 +22,7 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.ProjectManager import ProjectManager
+from urh.util.Logger import logger
 
 
 class GeneratorTabController(QWidget):
@@ -458,11 +459,14 @@ class GeneratorTabController(QWidget):
             self.table_model.protocol.to_xml_file(filename)
 
     def load_from_file(self, filename: str):
-        self.table_model.protocol.from_xml_file(filename)
-        self.refresh_pause_list()
-        self.refresh_estimated_time()
-        self.refresh_modulators()
-        self.show_modulation_info()
-        self.refresh_protocol_labels()
-        self.refresh_table()
-        self.set_fuzzing_ui_status()
+        try:
+            self.table_model.protocol.from_xml_file(filename)
+            self.refresh_pause_list()
+            self.refresh_estimated_time()
+            self.refresh_modulators()
+            self.show_modulation_info()
+            self.refresh_protocol_labels()
+            self.refresh_table()
+            self.set_fuzzing_ui_status()
+        except:
+            logger.error("You done something wrong to the xml fuzzing profile.")

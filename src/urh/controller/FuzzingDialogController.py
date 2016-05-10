@@ -47,9 +47,14 @@ class FuzzingDialogController(QDialog):
         cur_label = self.proto_container.protocol_labels[self.current_label_index]
         if cur_label.refblock >= self.proto_container.num_blocks:
             cur_label.refblock = 0
+
+        for i in range(len(cur_label.fuzz_values)):
+            if len(cur_label.fuzz_values[i]) == 0:
+                # Remove this for whatever reason
+                del cur_label.fuzz_values[i]
+
         if len(cur_label.fuzz_values) == 0:
-            cur_label.fuzz_values.append(
-                self.proto_container.plain_bits_str[cur_label.refblock][cur_label.start:cur_label.end])
+            cur_label.fuzz_values.append(self.proto_container.plain_bits_str[cur_label.refblock][cur_label.start:cur_label.end])
         return cur_label
 
     @property

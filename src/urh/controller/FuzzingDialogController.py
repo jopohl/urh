@@ -48,7 +48,7 @@ class FuzzingDialogController(QDialog):
         if cur_label.refblock >= self.proto_container.num_blocks:
             cur_label.refblock = 0
 
-        cur_label.fuzz_values = list(filter(bool, cur_label.fuzz_values)) # Remove empty strings from list
+        cur_label.fuzz_values = [fv for fv in cur_label.fuzz_values if fv] # Remove empty strings
 
         if len(cur_label.fuzz_values) == 0:
             cur_label.fuzz_values.append(self.proto_container.plain_bits_str[cur_label.refblock][cur_label.start:cur_label.end])

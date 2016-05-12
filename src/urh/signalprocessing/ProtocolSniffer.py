@@ -130,9 +130,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
                                 signal.tolerance, signal.modulation_type)
 
-        del self.bit_sample_pos[:]
-        bit_data, pauses = self._ppseq_to_bits(ppseq, bit_len,
-                                               self.rel_symbol_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
         i = 0
         first_block = True
@@ -140,7 +138,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         for bits, pause in zip(bit_data, pauses):
             if first_block or self.blocks[-1].pause > 8 * bit_len:
                 # Create new Block
-                middle_bit_pos = self.bit_sample_pos[i][int(len(bits) / 2)]
+                middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
                 rssi = np.mean(np.abs(signal._fulldata[start:end]))
                 block = ProtocolBlock(bits, pause, self.bit_alignment_positions,
@@ -182,8 +180,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
                                 signal.tolerance, signal.modulation_type)
 
-        bit_data, pauses = self._ppseq_to_bits(ppseq, bit_len,
-                                               self.rel_symbol_len)
+        bit_data, pauses = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
         return bool(bit_data)
 
@@ -197,7 +194,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def clear(self):
         del self.data_cache[:]
         del self.blocks[:]
-        del self.bit_sample_pos[:]
 
     def on_rcv_timer_timeout(self):
         new_errors = self.rcv_device.read_errors()

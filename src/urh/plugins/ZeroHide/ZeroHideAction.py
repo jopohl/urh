@@ -36,7 +36,6 @@ class ZeroHideAction(QUndoCommand):
                 start = seq[0] * factor
                 end = seq[1] * factor
                 pa.blocks[i].decoded_bits = full_bits[:start] + full_bits[end:]
-                # pa.bit_sample_pos[i] = pa.bit_sample_pos[i][:start] + pa.blocks[i][end:]
 
     def undo(self):
         self.protocol.clear_decoded_bits()

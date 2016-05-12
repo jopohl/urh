@@ -418,10 +418,10 @@ class CompareFrameController(QFrame):
                         continue
 
                     try:
-                        tmp = abs_time
-                        abs_time = proto.bit_sample_pos[i][0] / proto.signal.sample_rate
-                        rel_time = abs_time - tmp
-                    except IndexError:
+                        if i > 0:
+                            rel_time = proto.blocks[i-1].get_duration(proto.signal.sample_rate)
+                            abs_time += rel_time
+                    except (IndexError, AttributeError):
                         pass  # No signal, loaded from protocol file
 
                     block.absolute_time = abs_time

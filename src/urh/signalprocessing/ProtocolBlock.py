@@ -55,6 +55,10 @@ class ProtocolBlock(object):
             self.bit_sample_pos = []
         else:
             self.bit_sample_pos = bit_sample_pos
+            """
+            :param bit_sample_pos: Position of samples for each bit. Last position is pause so last bit is on pos -2.
+            :type  bit_sample_pos: list of int
+            """
 
     @property
     def plain_bits(self):
@@ -398,6 +402,12 @@ class ProtocolBlock(object):
         else:
             raise NotImplementedError("Only Three View Types (Bit/Hex/ASCII)")
 
+
+    def get_duration(self, sample_rate: int):
+        if len(self.bit_sample_pos) < 2:
+            raise ValueError("Not enough bit samples for calculating duration")
+
+        return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
 
     @staticmethod
     def __blocks_to_hex(blocks) -> str:

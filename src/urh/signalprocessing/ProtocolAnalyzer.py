@@ -48,12 +48,6 @@ class ProtocolAnalyzer(object):
     """
 
     def __init__(self, signal: Signal):
-        # Erster Index gibt die Blocknummer an.
-        # Letzter Index einer Zeile gibt Ende der Pause an.
-        # Letztes Bit steht also an vorletzter Stelle
-        self.bit_sample_pos = []
-        """:type: list of [list of int]"""
-
         self._protocol_labels = []
         """:type: list of ProtocolLabel """
 
@@ -197,8 +191,6 @@ class ProtocolAnalyzer(object):
             self.blocks = None
             return
 
-        self.bit_sample_pos[:] = []
-
         if self.blocks is not None:
             self.blocks[:] = []
         else:
@@ -214,16 +206,16 @@ class ProtocolAnalyzer(object):
                                                 signal.tolerance,
                                                 signal.modulation_type)
 
-        bit_data, pauses = self._ppseq_to_bits(ppseq, bit_len, rel_symbol_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, rel_symbol_len)
 
 
         i = 0
         for bits, pause in zip(bit_data, pauses):
-            middle_bit_pos = self.bit_sample_pos[i][int(len(bits) / 2)]
+            middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
             block = ProtocolBlock(bits, pause, self.bit_alignment_positions,
-                                  bit_len=bit_len, rssi=rssi, decoder=self.decoder)
+                                  bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.blocks.append(block)
             i += 1
 
@@ -237,12 +229,13 @@ class ProtocolAnalyzer(object):
             rel_symbol_len = 0.1
         return rel_symbol_len
 
-    def _ppseq_to_bits(self, ppseq, bit_len: int, rel_symbol_len: float):
+    def _ppseq_to_bits(self, ppseq, bit_len: int, rel_symbol_len: float, write_bit_sample_pos=True):
         self.used_symbols.clear()
-        self.bit_sample_pos[:] = []
+        bit_sampl_pos = []
+        bit_sample_positions = []
+
         data_bits = []
         resulting_data_bits = []
-        bit_sampl_pos = []
         pauses = []
         start = 0
         total_samples = 0
@@ -282,55 +275,59 @@ class ProtocolAnalyzer(object):
                                                   avail_symbol_names)
 
                 data_bits.append(symbol)
-                bit_sampl_pos.append(total_samples)
+                if write_bit_sample_pos:
+                    bit_sampl_pos.append(total_samples)
+
                 total_samples += num_samples
                 continue
 
             if cur_pulse_type == pause_type:
                 # OOK abdecken
                 if num_bits < 9:
-                    for k in range(num_bits):
-                        data_bits.append(False)
-                        bit_sampl_pos.append(total_samples + k * bit_len)
+                    data_bits.extend([False] * num_bits)
+                    if write_bit_sample_pos:
+                        bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
 
                 elif not there_was_data:
                     # Ignore this pause, if there were no informations
                     # transmittted previously
-                    del data_bits[:]
-                    del bit_sampl_pos[:]
+                    data_bits[:] = []
+                    bit_sampl_pos[:] = []
 
                 else:
-                    bit_sampl_pos.append(total_samples)
-                    bit_sampl_pos.append(total_samples + num_samples)
-                    self.bit_sample_pos.append(bit_sampl_pos[:])
-                    del bit_sampl_pos[:]
+                    if write_bit_sample_pos:
+                        bit_sampl_pos.append(total_samples)
+                        bit_sampl_pos.append(total_samples + num_samples)
+                        bit_sample_positions.append(bit_sampl_pos[:])
+                        bit_sampl_pos[:] = []
 
                     resulting_data_bits.append(data_bits[:])
-                    del data_bits[:]
+                    data_bits[:] = []
                     pauses.append(num_samples)
                     there_was_data = False
 
             elif cur_pulse_type == zero_pulse_type:
-                for k in range(num_bits):
-                    data_bits.append(False)
-                    bit_sampl_pos.append(total_samples + k * bit_len)
+                data_bits.extend([False] * num_bits)
+                if write_bit_sample_pos:
+                    bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
 
             elif cur_pulse_type == one_pulse_type:
                 if not there_was_data:
                     there_was_data = num_bits > 0
-                for k in range(num_bits):
-                    data_bits.append(True)
-                    bit_sampl_pos.append(total_samples + k * bit_len)
+                data_bits.extend([True] * num_bits)
+                if write_bit_sample_pos:
+                    bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
 
             total_samples += num_samples
 
         if there_was_data:
             resulting_data_bits.append(data_bits[:])
-            self.bit_sample_pos.append(bit_sampl_pos[:] + [total_samples])
+            if write_bit_sample_pos:
+                bit_sample_positions.append(bit_sampl_pos[:] + [total_samples])
             pause = ppseq[-1, 1] if ppseq[-1, 0] == pause_type else 0
             pauses.append(pause)
 
-        return resulting_data_bits, pauses
+        return resulting_data_bits, pauses, bit_sample_positions
 
     def __find_matching_symbol(self, num_bits: int, pulsetype: int):
         for s in self.used_symbols:
@@ -368,12 +365,10 @@ class ProtocolAnalyzer(object):
                                 endblock: int, endindex: int,
                                 include_pause: bool):
         """
-        Bestimmt an welcher Stelle (Samplemäßig) sich eine Bitsequenz befindet, die durch
-        start und ende des Bitstrings gegeben ist
-
+        Determine on which place (regarding samples) a bit sequence is
         :rtype: tuple[int,int]
         """
-        lookup = self.bit_sample_pos
+        lookup = {i: block.bit_sample_pos for i, block in enumerate(self.blocks)}
 
         if startblock > endblock:
             startblock, endblock = endblock, startblock
@@ -406,11 +401,12 @@ class ProtocolAnalyzer(object):
         start_index = -1
         end_block = -1
         end_index = -1
+        lookup =  [block.bit_sample_pos for block in self.blocks]
 
-        if selection_start + selection_width < self.bit_sample_pos[0][0] or selection_width < bitlen:
+        if selection_start + selection_width < lookup[0][0] or selection_width < bitlen:
             return start_block, start_index, end_block, end_index
 
-        for j, block_sample_pos in enumerate(self.bit_sample_pos):
+        for j, block_sample_pos in enumerate(lookup):
             if block_sample_pos[-2] < selection_start:
                 continue
             elif start_block == -1:
@@ -435,8 +431,8 @@ class ProtocolAnalyzer(object):
                         end_index = i
                         return start_block, start_index, end_block, end_index
 
-        last_block = len(self.bit_sample_pos) - 1
-        last_index = len(self.bit_sample_pos[last_block]) - 1
+        last_block = len(lookup) - 1
+        last_index = len(lookup[last_block]) - 1
         return start_block, start_index, last_block, last_index
 
     def delete_blocks(self, block_start: int, block_end: int, start: int, end: int, view: int, decoded: bool,
@@ -576,7 +572,6 @@ class ProtocolAnalyzer(object):
     def destroy(self):
         self.bit_alignment_positions = None
         self.protocol_labels = None
-        self.bit_sample_pos = None
         self.blocks = None
 
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:

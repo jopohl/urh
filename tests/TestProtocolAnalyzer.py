@@ -17,7 +17,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.num_blocks, 1)
-        for i, pos in enumerate(proto_analyzer.bit_sample_pos[0]):
+        for i, pos in enumerate(proto_analyzer.blocks[0].bit_sample_pos):
             self.assertLess(pos, signal.num_samples, msg = i)
 
     def test_fsk_freq_detection(self):

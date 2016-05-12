@@ -557,7 +557,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Block Start&lt;/span&gt; is the point in time when a protocol block begins. Additionally the relative time (+ ...) from the previous block is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Block start:</string>
+              <string>Timestamp:</string>
              </property>
             </widget>
            </item>

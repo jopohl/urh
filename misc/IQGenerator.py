@@ -160,12 +160,3 @@ if __name__ == "__main__":
 
     Plotter.generic_plot(*plot)
     iq_data.tofile("../tests/data/psk_gen_noisy.complex")
-
-    # x_range = np.arange(0, len(iq_data))
-    # polar_discr = signalFunctions.quadrature_demod(iq_data, 0)
-    # polar_discr[0] = 0
-    # resulting_data_bits, pauses, resulting_bit_sample_positions = signalFunctions.get_protocol(polar_discr, 0.5, 3,
-    #                                                                                            iqg.bit_len, 0, [])
-    # print(resulting_data_bits)
-    # Plotter.generic_plot(x_range, polar_discr, "Polar")
-    # Plotter.generic_plot(x_range, iq_data.real, "I,"+iqg.modulation)

@@ -635,25 +635,13 @@ class DecoderWidgetController(QDialog):
         self.ui.graphicsView_signal.setScene(tmp_scene)
         QApplication.processEvents()
 
-        # scene = ZoomableScene()
         if signal is not None:
             last_block = pa.blocks[-1]
-            lookup = pa.bit_sample_pos
+            lookup = {i: block.bit_sample_pos for i, block in enumerate(pa.blocks)}
+
             plot_data = signal.qad[lookup[0][0]:lookup[pa.num_blocks - 1][len(last_block) - 1]]
             self.ui.graphicsView_signal.plot_data(plot_data)
-            # num_samples = len(plot_data)
-            # minimum = -numpy.max(plot_data)
-            # maximum = -numpy.min(plot_data)
-            # scene.setSceneRect(0, minimum, num_samples, maximum - minimum)
-            # scene.setBackgroundBrush(constants.BGCOLOR)
-            # scene.addLine(0, 0, num_samples, 0, constants.AXISCOLOR)
-            # precise_path = path_creator.create_precise_path(plot_data)
-            # for subpath in precise_path:
-            #     scene.addPath(subpath, constants.LINECOLOR)
 
-        # self.ui.graphicsView_signal.setScene(scene)
-        # self.ui.graphicsView_signal.update()
-        # self.ui.graphicsView_signal.scale(1, 1)
         self.ui.graphicsView_signal.centerOn(0, 0)
         QApplication.restoreOverrideCursor()
 

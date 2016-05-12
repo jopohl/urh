@@ -1,12 +1,13 @@
+import os
 import struct
 import time
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class PCAP(object):
     def __init__(self):
         self.timestamp_sec = None
         self.timestamp_nsec = None
-
 
     def build_global_header(self) -> bytes:
         MAGIC_NUMBER = 0xa1b23c4d # Nanosecond resolution
@@ -32,6 +33,24 @@ class PCAP(object):
 
         l = len(data)
         return struct.pack(">IIII", self.timestamp_sec, self.timestamp_nsec, l, l) + data
+
+    def write_packets(self, packets, filename: str):
+        """
+
+        :type packets: list of ProtocolBlock
+        :param filename:
+        :return:
+        """
+        if not os.path.isfile(filename):
+            with open(filename, "wb") as f:
+                f.write(self.build_global_header())
+
+        #with open(filename, "ab") as f:
+        #    for pkt in packets:
+        #        pkt.absolute_time
+
+
+
 
 
     @staticmethod

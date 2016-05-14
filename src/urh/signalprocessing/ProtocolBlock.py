@@ -3,6 +3,7 @@ import math
 
 import sys
 
+import numpy as np
 from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.encoding import encoding
 from urh.util.Formatter import Formatter
@@ -289,6 +290,11 @@ class ProtocolBlock(object):
         return str(self)
 
     @property
+    def decoded_bits_buffer(self) -> bytes:
+        bits = [b if isinstance(b, bool) else True if b.pulsetype == 1 else False for b in self.decoded_bits]
+        return np.packbits(bits).tobytes()
+
+    @property
     def plain_hex_str(self) -> str:
         splitted_blocks = self.split(decode=False)
         padded_blocks = [self.pad_block(b, 4) for b in splitted_blocks]
@@ -403,7 +409,7 @@ class ProtocolBlock(object):
             raise NotImplementedError("Only Three View Types (Bit/Hex/ASCII)")
 
 
-    def get_duration(self, sample_rate: int):
+    def get_duration(self, sample_rate: int) -> float:
         if len(self.bit_sample_pos) < 2:
             raise ValueError("Not enough bit samples for calculating duration")
 

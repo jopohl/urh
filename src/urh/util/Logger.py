@@ -2,9 +2,9 @@ import logging
 
 
 logger = logging.getLogger("urh")
-logger.setLevel(logging.ERROR)
+#logger.setLevel(logging.ERROR)
 #logger.setLevel(logging.WARNING)
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 # create console handler and set level to debug
 ch = logging.StreamHandler()

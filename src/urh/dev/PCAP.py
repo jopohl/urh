@@ -1,11 +1,18 @@
 import os
 import struct
 import time
+
+from urh.util.Logger import logger
+
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class PCAP(object):
     def __init__(self):
+        self.timestamp_sec = None
+        self.timestamp_nsec = None
+
+    def reset_timestamp(self):
         self.timestamp_sec = None
         self.timestamp_nsec = None
 
@@ -15,43 +22,43 @@ class PCAP(object):
         THISZONE = 0
         SIGFIGS = 0
         SNAPLEN = 65535
-        NETWORK = 1337 # TODO Find a good type: https://wiki.wireshark.org/Development/LibpcapFileFormat
+        NETWORK = 147 # TODO Find a good type: https://wiki.wireshark.org/Development/LibpcapFileFormat
+
+        self.reset_timestamp()
 
         return struct.pack(">IHHiIII", MAGIC_NUMBER, VERSION_MAJOR, VERSION_MINOR, THISZONE, SIGFIGS, SNAPLEN, NETWORK)
 
-    def build_packet(self, ts_sec: int, ts_nsec: int, data: bytes, first=False) -> bytes:
-        if first:
+    def build_packet(self, ts_sec: int, ts_nsec: int, data: bytes) -> bytes:
+        if self.timestamp_nsec is None or self.timestamp_sec is None:
             self.timestamp_sec, self.timestamp_nsec = self.get_seconds_nseconds(time.time())
 
-        self.timestamp_sec += ts_sec
-        self.timestamp_nsec += ts_nsec
+        self.timestamp_sec += int(ts_sec)
+        self.timestamp_nsec += int(ts_nsec)
         if self.timestamp_nsec >= 1e9:
             self.timestamp_sec += int(self.timestamp_nsec / 1e9)
             self.timestamp_nsec = int(self.timestamp_nsec % 1e9)
 
-        print(self.timestamp_sec, self.timestamp_nsec)
-
         l = len(data)
         return struct.pack(">IIII", self.timestamp_sec, self.timestamp_nsec, l, l) + data
 
-    def write_packets(self, packets, filename: str):
+    def write_packets(self, packets, filename: str, sample_rate: int):
         """
 
         :type packets: list of ProtocolBlock
         :param filename:
         :return:
         """
-        if not os.path.isfile(filename):
-            with open(filename, "wb") as f:
-                f.write(self.build_global_header())
+        if os.path.isfile(filename):
+            logger.warning("{0} already exists. Overwriting it".format(filename))
 
-        #with open(filename, "ab") as f:
-        #    for pkt in packets:
-        #        pkt.absolute_time
+        with open(filename, "wb") as f:
+            f.write(self.build_global_header())
 
-
-
-
+        with open(filename, "ab") as f:
+            rel_time_offset_ns = 0
+            for pkt in packets:
+                f.write(self.build_packet(0, rel_time_offset_ns, pkt.decoded_bits_buffer))
+                rel_time_offset_ns = pkt.get_duration(sample_rate) * 10 ** 9
 
     @staticmethod
     def get_seconds_nseconds(timestamp):

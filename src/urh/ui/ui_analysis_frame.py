@@ -453,7 +453,7 @@ class Ui_FAnalysis(object):
         self.lblRSSI.setToolTip(_translate("FAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Received Signal Strength Indicator</span> indicates the average signal power of the current block.</p></body></html>"))
         self.lblRSSI.setText(_translate("FAnalysis", "1.04"))
         self.label_3.setToolTip(_translate("FAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Block Start</span> is the point in time when a protocol block begins. Additionally the relative time (+ ...) from the previous block is shown.</p></body></html>"))
-        self.label_3.setText(_translate("FAnalysis", "Block start:"))
+        self.label_3.setText(_translate("FAnalysis", "Timestamp:"))
         self.lTime.setToolTip(_translate("FAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Block Start</span> is the point in time when a protocol block begins. Additionally the relative time (+ ...) from the previous block is shown.</p></body></html>"))
         self.lTime.setText(_translate("FAnalysis", "0 (+0)"))
         self.lBits.setText(_translate("FAnalysis", "Bit:"))

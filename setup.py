@@ -26,9 +26,9 @@ def get_packages():
     packages = [URH_DIR]
     separator = os.path.normpath("/")
     for dirpath, dirnames, filenames in os.walk(os.path.join("./src/", URH_DIR)):
-        package_path = os.path.relpath(dirpath, os.path.join("./src/",URH_DIR)).replace(separator, ".")
+        package_path = os.path.relpath(dirpath, os.path.join("./src/", URH_DIR)).replace(separator, ".")
         if len(package_path) > 1:
-            packages.append(URH_DIR+"."+package_path)
+            packages.append(URH_DIR + "." + package_path)
 
     return packages
 
@@ -39,6 +39,7 @@ def get_package_data():
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
 
     return package_data
+
 
 def get_ext_modules():
     import numpy
@@ -54,32 +55,34 @@ def get_ext_modules():
 
     return extensions
 
+
 def get_device_modules():
     compiler = ccompiler.new_compiler()
 
     extensions = []
     devices = {
-                "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
-              }
+        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+    }
 
     for dev_name, params in devices.items():
         if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
             print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
-            e = Extension("urh.dev.native.lib."+dev_name, ["src/urh/dev/native/lib/{0}.cpp".format(dev_name)],
-                          extra_compile_args= ["-static", "-static-libgcc", OPEN_MP_FLAG],
+            e = Extension("urh.dev.native.lib." + dev_name, ["src/urh/dev/native/lib/{0}.cpp".format(dev_name)],
+                          extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
                           extra_link_args=[OPEN_MP_FLAG], language="c++",
                           libraries=[params["lib"]])
             extensions.append(e)
         else:
-             print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
+            print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
         try:
-            os.remove("a.out") # Temp file for checking
+            os.remove("a.out")  # Temp file for checking
         except OSError:
             pass
     return extensions
 
-#import generate_ui
-#generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
+
+# import generate_ui
+# generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
 setup(
     name="urh",
@@ -91,7 +94,7 @@ setup(
     package_data=get_package_data(),
     url="https://github.com/jopohl/urh",
     license="Apache License 2.0",
-    download_url="https://github.com/jopohl/urh/tarball/v"+str(version.VERSION),
+    download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=['numpy'],
     setup_requires=['numpy'],
     packages=get_packages(),

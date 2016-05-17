@@ -1,10 +1,3 @@
-from libcpp cimport bool
-
-cdef bool PRINT_TIMINGS = False # Acceptable performance
-if PRINT_TIMINGS:
-    import time
-
-
 import struct
 
 from PyQt5.QtCore import QByteArray, QDataStream
@@ -30,9 +23,6 @@ cpdef create_path(float[:] samples, long long start, long long end):
     samples_per_pixel = <long long>(num_samples / pixels_on_path)
 
     if samples_per_pixel > 1:
-        if PRINT_TIMINGS:
-            t = time.time()
-
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
@@ -55,9 +45,6 @@ cpdef create_path(float[:] samples, long long start, long long end):
             values[index] = minimum
             values[index + 1] = maximum
 
-        if PRINT_TIMINGS:
-            print("create_path:", time.time()-t)
-
         return array_to_QPath(np.repeat(sample_rng, 2).astype(np.int64), values)
     else:
         return array_to_QPath_mem_opt(start, end, samples)
@@ -72,9 +59,6 @@ cdef array_to_QPath_mem_opt(long long start, long long end, float[:] samples):
     gibt den Speicher dann nicht mehr frei. Deshalb übernimmt diese Methode nur das gesamte Array von Samples
     und bildet die Teilbereiche selbst lokal. Auf diese Weise wird es vermieden, kleine Kopien des Sample-Arrays anzulegen.
     """
-    if PRINT_TIMINGS:
-        t = time.time()
-
     path = QPainterPath()
     cdef long long n = end - start
     # create empty array, pad with extra space on either end
@@ -113,9 +97,6 @@ cdef array_to_QPath_mem_opt(long long start, long long end, float[:] samples):
     ds = QDataStream(buf)
     ds >> path
 
-    if PRINT_TIMINGS:
-        print("array_to_QPath_mem_opt", time.time()-t)
-
     return path
 
 cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
@@ -131,9 +112,6 @@ cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
     ##    0(i4)
     ##
     ## All values are big endian--pack using struct.pack('>d') or struct.pack('>i')
-    if PRINT_TIMINGS:
-        t = time.time()
-
 
     path = QPainterPath()
     cdef long long n = x.shape[0]
@@ -172,9 +150,5 @@ cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
 
     ds = QDataStream(buf)
     ds >> path
-
-    if PRINT_TIMINGS:
-        print("array_to_QPath:", time.time()-t)
-
 
     return path

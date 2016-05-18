@@ -25,6 +25,7 @@ class ProjectManager(QObject):
         self.frequency = 43392e4
         self.gain = 20
         self.device = "USRP"
+        self.description = ""
         self.project_path = ""
         self.project_file = None
 
@@ -45,28 +46,17 @@ class ProjectManager(QObject):
         self.gain = int(gain)
         self.device = device
 
-    def read_recording_parameters(self):
+    def read_parameters(self):
         if self.project_file is None:
             return
         tree = ET.parse(self.project_file)
         root = tree.getroot()
 
-        try:
-            self.frequency = float(root.attrib["frequency"])
-        except KeyError:
-            self.frequency = 433.92e6
-        try:
-            self.sample_rate = float(root.attrib["sample_rate"])
-        except KeyError:
-            self.sample_rate = 1e6
-        try:
-            self.bandwidth = float(root.attrib["bandwidth"])
-        except KeyError:
-            self.bandwidth = 1e6
-        try:
-            self.gain = int(root.attrib["gain"])
-        except KeyError:
-            self.gain = 20
+        self.frequency = float(root.get("frequency", 433.92e6))
+        self.sample_rate = float(root.get("sample_rate", 1e6))
+        self.bandwidth = float(root.get("bandwidth", 1e6))
+        self.gain = int(root.get("gain", 20))
+        self.description = root.get("description", "")
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
@@ -94,7 +84,7 @@ class ProjectManager(QObject):
                 tree = ET.ElementTree(root)
                 tree.write(self.project_file)
         else:
-            self.read_recording_parameters()
+            self.read_parameters()
             self.maincontroller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups() # Labels are read out here
             cfc = self.maincontroller.compare_frame_controller
@@ -238,6 +228,7 @@ class ProjectManager(QObject):
         root.set("sample_rate", str(self.sample_rate))
         root.set("bandwidth", str(self.bandwidth))
         root.set("gain", str(self.gain))
+        root.set("description", str(self.description))
 
         for open_file in root.findall('open_file'):
             root.remove(open_file)
@@ -432,6 +423,9 @@ class ProjectManager(QObject):
             self.set_project_folder(dialog.path, ask_for_new_project=False)
             self.frequency = dialog.freq
             self.sample_rate = dialog.sample_rate
+            self.gain = dialog.gain
+            self.bandwidth = dialog.bandwidth
+            self.description  = dialog.description
 
     def on_dialog_finished(self):
         if self.sender().commited:

@@ -2,6 +2,12 @@ from PyQt5.QtWidgets import QMessageBox, QWidget
 
 
 class Errors:
+
+    @staticmethod
+    def generic_error(title: str, msg: str):
+        w = QWidget()
+        QMessageBox.critical(w, title, msg)
+
     @staticmethod
     def no_device():
         w = QWidget()

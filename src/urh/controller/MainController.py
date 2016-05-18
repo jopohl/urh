@@ -245,19 +245,23 @@ class MainController(QMainWindow):
 
         self.dialog.currentChanged.connect(self.handle_dialog_selection_changed)
 
+
         if self.dialog.exec_():
-            fileNames = self.dialog.selectedFiles()
-            folders = [folder for folder in fileNames if os.path.isdir(folder)]
+            try:
+                fileNames = self.dialog.selectedFiles()
+                folders = [folder for folder in fileNames if os.path.isdir(folder)]
 
-            if len(folders) > 0:
-                folder = folders[0]
-                for f in self.signal_tab_controller.signal_frames:
-                    self.close_signal_frame(f)
+                if len(folders) > 0:
+                    folder = folders[0]
+                    for f in self.signal_tab_controller.signal_frames:
+                        self.close_signal_frame(f)
 
-                self.project_manager.set_project_folder(folder)
-            else:
-                fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
-                self.add_files(fileNames)
+                    self.project_manager.set_project_folder(folder)
+                else:
+                    fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
+                    self.add_files(fileNames)
+            except Exception as e:
+                Errors.generic_error(self.tr("Failed to open"), str(e))
 
     @pyqtSlot(str)
     def handle_dialog_selection_changed(self, path: str):
@@ -428,10 +432,13 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def openRecent(self):
         action = self.sender()
-        if os.path.isdir(action.data()):
-            self.project_manager.set_project_folder(action.data())
-        elif os.path.isfile(action.data()):
-            self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
+        try:
+            if os.path.isdir(action.data()):
+                self.project_manager.set_project_folder(action.data())
+            elif os.path.isfile(action.data()):
+                self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
+        except Exception as e:
+            Errors.generic_error(self.tr("Failed to open"), str(e))
 
     @pyqtSlot()
     def show_about(self):

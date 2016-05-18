@@ -27,7 +27,7 @@ class SendRecvDialogController(QDialog):
     files_recorded = pyqtSignal(list)
     recording_parameters = pyqtSignal(str, str, str, str, str)
 
-    def __init__(self, freq, samp_rate, bw, gain, device, mode: Mode, modulated_data=None, parent=None):
+    def __init__(self, freq, samp_rate, bw, gain, device: str, mode: Mode, modulated_data=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)

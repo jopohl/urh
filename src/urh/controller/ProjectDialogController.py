@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QCoreApplication
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
@@ -122,7 +122,14 @@ class ProjectDialogController(QDialog):
 
     @pyqtSlot(QTableWidgetItem)
     def on_participant_item_changed(self, item: QTableWidgetItem):
-        self.participants = self.__read_participants_from_table()
+        row, col = item.row(), item.column()
+        if row < len(self.participants) and row >= 0:
+            if col == 0:
+                self.participants[row].name = item.text()
+            elif col == 1:
+                self.participants[row].shortname = item.text()
+            elif col == 2:
+                self.participants[row].address_hex = item.text()
 
     def set_path(self, path):
         self.path = path

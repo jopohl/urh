@@ -191,8 +191,6 @@ class Ui_ProjectDialog(object):
         item.setText(_translate("ProjectDialog", "Device A"))
         item = self.tblParticipants.item(0, 1)
         item.setText(_translate("ProjectDialog", "A"))
-        item = self.tblParticipants.item(0, 2)
-        item.setText(_translate("ProjectDialog", "may be empty"))
         self.tblParticipants.setSortingEnabled(__sortingEnabled)
         self.label_8.setText(_translate("ProjectDialog", "Description:"))
         self.lblNewPath.setText(_translate("ProjectDialog", "<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>"))

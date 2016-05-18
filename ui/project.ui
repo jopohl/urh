@@ -93,7 +93,7 @@
        </item>
        <item row="0" column="2">
         <property name="text">
-         <string>may be empty</string>
+         <string/>
         </property>
        </item>
       </widget>

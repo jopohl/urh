@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMessageBox
 from urh import constants
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from xml.dom import minidom
 from urh.signalprocessing.Signal import Signal
@@ -28,6 +29,7 @@ class ProjectManager(QObject):
         self.description = ""
         self.project_path = ""
         self.project_file = None
+        self.participants = []
 
     @property
     def sample_rate(self):
@@ -57,6 +59,11 @@ class ProjectManager(QObject):
         self.bandwidth = float(root.get("bandwidth", 1e6))
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "")
+
+        try:
+            self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("participants").findall("participant")]
+        except AttributeError:
+            self.participants = []
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
@@ -219,8 +226,14 @@ class ProjectManager(QObject):
         if self.project_file is None or not os.path.isfile(self.project_file):
             return
 
+        # Recreate file
+        open(self.project_file, 'w').close()
+        root = ET.Element("UniversalRadioHackerProject")
+        tree = ET.ElementTree(root)
+        tree.write(self.project_file)
+
         #self.write_labels(self.maincontroller.compare_frame_controller.proto_analyzer)
-        self.write_modulators_to_project_file(self.maincontroller.generator_tab_controller.modulators)
+        self.write_modulators_to_project_file(self.maincontroller.generator_tab_controller.modulators, tree=tree)
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
@@ -230,8 +243,9 @@ class ProjectManager(QObject):
         root.set("gain", str(self.gain))
         root.set("description", str(self.description))
 
-        for open_file in root.findall('open_file'):
-            root.remove(open_file)
+        parts_tag = ET.SubElement(root, "participants")
+        for parti in self.participants:
+            parts_tag.append(parti.to_xml())
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
@@ -426,6 +440,7 @@ class ProjectManager(QObject):
             self.gain = dialog.gain
             self.bandwidth = dialog.bandwidth
             self.description  = dialog.description
+            self.participants = dialog.participants
 
     def on_dialog_finished(self):
         if self.sender().commited:

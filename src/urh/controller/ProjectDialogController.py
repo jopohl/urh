@@ -10,6 +10,7 @@ from urh.ui.ui_project import Ui_ProjectDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
 
+import string
 
 class ProjectDialogController(QDialog):
     def __init__(self, new_project=True, parent=None):
@@ -55,6 +56,7 @@ class ProjectDialogController(QDialog):
 
         self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
         self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
+        self.ui.tblParticipants.itemChanged.connect(self.on_participant_item_changed)
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_path_edited)
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
@@ -75,13 +77,14 @@ class ProjectDialogController(QDialog):
         return result
 
     def __write_participants_to_table(self):
+        self.ui.tblParticipants.blockSignals(True)
         self.ui.tblParticipants.setRowCount(0)
         for i, prtcpnt in enumerate(self.participants):
             self.ui.tblParticipants.insertRow(i)
             self.ui.tblParticipants.setItem(i, 0, QTableWidgetItem(prtcpnt.name, 0))
             self.ui.tblParticipants.setItem(i, 1, QTableWidgetItem(prtcpnt.shortname, 0))
             self.ui.tblParticipants.setItem(i, 2, QTableWidgetItem(prtcpnt.address_hex, 0))
-
+        self.ui.tblParticipants.blockSignals(False)
 
     def on_sample_rate_changed(self):
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -117,6 +120,10 @@ class ProjectDialogController(QDialog):
         self.commited = True
         self.close()
 
+    @pyqtSlot(QTableWidgetItem)
+    def on_participant_item_changed(self, item: QTableWidgetItem):
+        self.participants = self.__read_participants_from_table()
+
     def set_path(self, path):
         self.path = path
         self.ui.lineEdit_Path.setText(self.path)
@@ -150,14 +157,35 @@ class ProjectDialogController(QDialog):
 
 
     def on_btn_add_participant_clicked(self):
-        self.participants.append(Participant("Device"))
+        used_shortnames = {p.shortname for p in self.participants}
+        nchars = 0
+        participant = None
+        while participant is None:
+            nchars += 1
+            for c in string.ascii_uppercase:
+                shortname = nchars * str(c)
+                if shortname not in used_shortnames:
+                    participant = Participant("Device "+shortname, shortname)
+                    break
+
+        self.participants.append(participant)
         self.__write_participants_to_table()
         self.ui.btnRemoveParticipant.setEnabled(True)
 
     def on_btn_remove_participant_clicked(self):
-        nrows = self.ui.tblParticipants.rowCount()
-        if nrows > 1:
-            self.ui.tblParticipants.removeRow(nrows-1)
-            self.participants = self.__read_participants_from_table()
-            if self.ui.tblParticipants.rowCount() <= 1:
-                self.ui.btnRemoveParticipant.setDisabled(True)
+        if len(self.participants) <= 1:
+            return
+
+        try:
+            srange = self.ui.tblParticipants.selectedRanges()[0]
+            start, end = srange.topRow(), srange.bottomRow()
+        except IndexError: #nothing selected
+            start, end = len(self.participants) - 1, len(self.participants) - 1 # delete last element
+
+        if end - start >= len(self.participants) - 1:
+            # Ensure one left
+            start += 1
+
+        del self.participants[start:end+1]
+        self.__write_participants_to_table()
+        self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)

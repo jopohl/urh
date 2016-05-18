@@ -50,17 +50,7 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="10" column="0" colspan="2">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Description:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="2" rowspan="3">
+     <item row="11" column="3" rowspan="3">
       <widget class="QTableWidget" name="tblParticipants">
        <property name="alternatingRowColors">
         <bool>true</bool>
@@ -88,7 +78,7 @@
        </column>
        <column>
         <property name="text">
-         <string>Address</string>
+         <string>Address (hex)</string>
         </property>
        </column>
        <item row="0" column="0">
@@ -108,7 +98,17 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0" colspan="5">
+     <item row="10" column="0" colspan="2">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="6">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -122,14 +122,14 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="1" column="3">
       <widget class="QLabel" name="lblNewPath">
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note: A new directory will be created.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="3" colspan="2">
+     <item row="4" column="4" colspan="2">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Hz</string>
@@ -149,24 +149,24 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3" colspan="2">
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="lineEdit_Path">
+       <property name="statusTip">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4" colspan="2">
       <widget class="QToolButton" name="btnSelectPath">
        <property name="text">
         <string>...</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="3" colspan="2">
+     <item row="3" column="4" colspan="2">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Sps</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLineEdit" name="lineEdit_Path">
-       <property name="statusTip">
-        <string/>
        </property>
       </widget>
      </item>
@@ -177,7 +177,7 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="3" colspan="2">
+     <item row="13" column="4" colspan="2">
       <spacer name="verticalSpacer_3">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -190,7 +190,7 @@
        </property>
       </spacer>
      </item>
-     <item row="3" column="2">
+     <item row="3" column="3">
       <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
        <property name="decimals">
         <number>3</number>
@@ -206,14 +206,14 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="5">
+     <item row="9" column="0" colspan="6">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="4" column="3">
       <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
        <property name="decimals">
         <number>3</number>
@@ -236,7 +236,7 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="3" colspan="2">
+     <item row="11" column="4" colspan="2">
       <widget class="QToolButton" name="btnAddParticipant">
        <property name="text">
         <string>...</string>
@@ -247,7 +247,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0" colspan="3">
+     <item row="8" column="0" colspan="4">
       <widget class="QLabel" name="lOpenSpectrumAnalyzer">
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tip: Open &lt;a href=&quot;open_spectrum_analyzer&quot;&gt;spectrum analyzer&lt;/a&gt; to find these values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -260,7 +260,14 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="3" colspan="2">
+     <item row="11" column="0" rowspan="3" colspan="2">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Participants:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="4" colspan="2">
       <widget class="QToolButton" name="btnRemoveParticipant">
        <property name="text">
         <string>...</string>
@@ -271,13 +278,6 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="0" rowspan="3" colspan="2">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Participants:</string>
-       </property>
-      </widget>
-     </item>
      <item row="5" column="0" colspan="2">
       <widget class="QLabel" name="label_10">
        <property name="text">
@@ -285,14 +285,7 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="2">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Default gain:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
+     <item row="5" column="3">
       <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
        <property name="decimals">
         <number>3</number>
@@ -305,7 +298,10 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="2">
+     <item row="10" column="3">
+      <widget class="QPlainTextEdit" name="txtEdDescription"/>
+     </item>
+     <item row="6" column="3">
       <widget class="QSpinBox" name="spinBoxGain">
        <property name="minimum">
         <number>1</number>
@@ -315,15 +311,19 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="3" colspan="2">
+     <item row="5" column="4" colspan="2">
       <widget class="QLabel" name="label_12">
        <property name="text">
         <string>Hz</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="2">
-      <widget class="QPlainTextEdit" name="txtEdDescription"/>
+     <item row="6" column="0" colspan="2">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Default gain:</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

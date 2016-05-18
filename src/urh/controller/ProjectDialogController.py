@@ -1,10 +1,11 @@
 import os
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
+from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import Mode
+from urh.signalprocessing.Participant import Participant
 from urh.ui.ui_project import Ui_ProjectDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -22,6 +23,9 @@ class ProjectDialogController(QDialog):
         self.bandwidth = self.ui.spinBoxBandwidth.value()
         self.gain = self.ui.spinBoxGain.value()
         self.description = self.ui.txtEdDescription.toPlainText()
+
+        self.participants = self.__read_participants_from_table()
+        self.ui.btnRemoveParticipant.setDisabled(self.ui.tblParticipants.rowCount() <= 1)
 
         self.path = self.ui.lineEdit_Path.text()
         self.new_project = new_project
@@ -49,10 +53,35 @@ class ProjectDialogController(QDialog):
         self.ui.spinBoxGain.valueChanged.connect(self.on_gain_changed)
         self.ui.txtEdDescription.textChanged.connect(self.on_description_changed)
 
+        self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
+        self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
+
         self.ui.lineEdit_Path.textEdited.connect(self.on_path_edited)
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
+
+    def __read_participants_from_table(self):
+        """
+
+        :rtype: list of Participant
+        """
+        result = []
+        for i in range(self.ui.tblParticipants.rowCount()):
+            name = self.ui.tblParticipants.item(i, 0).text()
+            shortname = self.ui.tblParticipants.item(i, 1).text()
+            address_hex = self.ui.tblParticipants.item(i, 2).text()
+            result.append(Participant(name, shortname, address_hex))
+        return result
+
+    def __write_participants_to_table(self):
+        self.ui.tblParticipants.setRowCount(0)
+        for i, prtcpnt in enumerate(self.participants):
+            self.ui.tblParticipants.insertRow(i)
+            self.ui.tblParticipants.setItem(i, 0, QTableWidgetItem(prtcpnt.name, 0))
+            self.ui.tblParticipants.setItem(i, 1, QTableWidgetItem(prtcpnt.shortname, 0))
+            self.ui.tblParticipants.setItem(i, 2, QTableWidgetItem(prtcpnt.address_hex, 0))
+
 
     def on_sample_rate_changed(self):
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -118,3 +147,17 @@ class ProjectDialogController(QDialog):
        self.ui.spinBoxSampleRate.setValue(float(sample_rate))
        self.ui.spinBoxBandwidth.setValue(float(bw))
        self.ui.spinBoxGain.setValue(int(gain))
+
+
+    def on_btn_add_participant_clicked(self):
+        self.participants.append(Participant("Device"))
+        self.__write_participants_to_table()
+        self.ui.btnRemoveParticipant.setEnabled(True)
+
+    def on_btn_remove_participant_clicked(self):
+        nrows = self.ui.tblParticipants.rowCount()
+        if nrows > 1:
+            self.ui.tblParticipants.removeRow(nrows-1)
+            self.participants = self.__read_participants_from_table()
+            if self.ui.tblParticipants.rowCount() <= 1:
+                self.ui.btnRemoveParticipant.setDisabled(True)

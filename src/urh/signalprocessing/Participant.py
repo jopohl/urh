@@ -9,12 +9,15 @@ class Participant(QObject):
     name_changed = pyqtSignal(str)
     shortname_changed = pyqtSignal(str)
     address_hex_changed = pyqtSignal(str)
+    color_index_changed = pyqtSignal(int)
 
-    def __init__(self, name: str, shortname: str = None, address_hex: str = None, id: str = None):
+    def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None):
         super().__init__()
         self.__name = name if name else "unknown"
         self.__shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
         self.__address_hex = address_hex if address_hex else ""
+        self.__color_index = color_index
+
         if id is None:
             self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
         else:
@@ -50,6 +53,17 @@ class Participant(QObject):
             self.__address_hex = value
             self.address_hex_changed.emit(self.__address_hex)
 
+    @property
+    def color_index(self):
+        return self.__color_index
+
+    @color_index.setter
+    def color_index(self, value):
+        if value != self.__color_index:
+            self.__color_index = value
+            self.color_index_changed.emit(self.__color_index)
+
+
     def __repr__(self):
         return "Participant: {0} ({1}) addr: {2}".format(self.name, self.shortname, self.address_hex)
 
@@ -61,6 +75,7 @@ class Participant(QObject):
         root.set("name", self.name)
         root.set("shortname", self.shortname)
         root.set("address_hex", self.address_hex)
+        root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
 
         return root
@@ -70,4 +85,5 @@ class Participant(QObject):
         name = tag.get("name", "Empty")
         shortname = tag.get("shortname", "X")
         address_hex = tag.get("address_hex", "")
-        return Participant(name, shortname=shortname, address_hex=address_hex, id = tag.attrib["id"])
+        color_index = int(tag.get("color_index", 0))
+        return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index, id = tag.attrib["id"])

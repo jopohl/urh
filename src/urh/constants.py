@@ -64,6 +64,7 @@ LABEL_COLORS = [QColor.fromRgb(255, 255, 0, 75), QColor.fromRgb(244, 164, 96, 75
                 QColor.fromRgb(0, 0, 255, 75), QColor.fromRgb(205, 38, 38, 75),
                 QColor.fromRgb(105, 105, 105, 150)]
 
+PARTICIPANT_COLORS = LABEL_COLORS[:]
 
 HIGHLIGHT_TEXT_BACKGROUND_COLOR = QColor("orange")
 HIGHLIGHT_TEXT_FOREGROUND_COLOR = QColor("white")

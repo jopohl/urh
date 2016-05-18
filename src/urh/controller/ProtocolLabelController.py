@@ -32,8 +32,9 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(3, CheckBoxDelegate(self))
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(5,
-                                                            ComboBoxDelegate([""] * len(constants.LABEL_COLORS), True,
-                                                                             self))
+                                                            ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
+                                                                             colors=constants.LABEL_COLORS,
+                                                                             parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(6, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(7, DeleteButtonDelegate(self))
 

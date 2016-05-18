@@ -1,11 +1,15 @@
 import os
+import random
 
-from PyQt5.QtCore import pyqtSlot, QCoreApplication
+import numpy
+from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
+from urh import constants
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import Mode
 from urh.signalprocessing.Participant import Participant
+from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_project import Ui_ProjectDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -13,11 +17,78 @@ from urh.util.Errors import Errors
 import string
 
 class ProjectDialogController(QDialog):
+    class ProtocolParticipantModel(QAbstractTableModel):
+        def __init__(self, participants):
+            super().__init__()
+            self.participants = participants
+            self.header_labels = ["Name", "Shortname", "Color", "Address (hex)"]
+
+        def update(self):
+            self.layoutChanged.emit()
+
+        def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
+            return len(self.header_labels)
+
+        def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
+            return len(self.participants)
+
+        def headerData(self, section, orientation, role=Qt.DisplayRole):
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+                return self.header_labels[section]
+            return super().headerData(section, orientation, role)
+
+        def data(self, index: QModelIndex, role=Qt.DisplayRole):
+            if role == Qt.DisplayRole:
+                i = index.row()
+                j = index.column()
+                part = self.participants[i]
+                if j == 0:
+                    return part.name
+                elif j == 1:
+                    return part.shortname
+                elif j == 2:
+                    return part.color_index
+                elif j == 3:
+                    return part.address_hex
+
+        def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
+            i = index.row()
+            j = index.column()
+            if i >= len(self.participants):
+                return False
+
+            parti = self.participants[i]
+
+            if j == 0:
+                parti.name = value
+            elif j == 1:
+                parti.shortname = value
+            elif j == 2:
+                parti.color_index = int(value)
+            elif j == 3:
+                parti.address_hex = value
+
+            return True
+
+        def flags(self, index: QModelIndex):
+            if not index.isValid():
+                return Qt.NoItemFlags
+
+            return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
     def __init__(self, new_project=True, parent=None):
         super().__init__(parent)
 
         self.ui = Ui_ProjectDialog()
         self.ui.setupUi(self)
+
+        self.parti_table_model = self.ProtocolParticipantModel([])
+
+       # self.ui.tblParticipants.verticalHeader().sectionResizeMode(QHeaderView.Fixed)
+        self.ui.tblParticipants.setModel(self.parti_table_model)
+        self.ui.tblParticipants.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(constants.PARTICIPANT_COLORS),
+                                                                            colors=constants.PARTICIPANT_COLORS,
+                                                                            parent=self))
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
         self.freq = self.ui.spinBoxFreq.value()
@@ -25,8 +96,7 @@ class ProjectDialogController(QDialog):
         self.gain = self.ui.spinBoxGain.value()
         self.description = self.ui.txtEdDescription.toPlainText()
 
-        self.participants = self.__read_participants_from_table()
-        self.ui.btnRemoveParticipant.setDisabled(self.ui.tblParticipants.rowCount() <= 1)
+        self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)
 
         self.path = self.ui.lineEdit_Path.text()
         self.new_project = new_project
@@ -47,6 +117,16 @@ class ProjectDialogController(QDialog):
         self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
         self.on_path_edited()
 
+        self.open_editors()
+
+    @property
+    def participants(self):
+        """
+
+        :rtype: list of Participant
+        """
+        return self.parti_table_model.participants
+
     def create_connects(self):
         self.ui.spinBoxFreq.valueChanged.connect(self.on_frequency_changed)
         self.ui.spinBoxSampleRate.valueChanged.connect(self.on_sample_rate_changed)
@@ -56,35 +136,11 @@ class ProjectDialogController(QDialog):
 
         self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
         self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
-        self.ui.tblParticipants.itemChanged.connect(self.on_participant_item_changed)
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_path_edited)
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
-
-    def __read_participants_from_table(self):
-        """
-
-        :rtype: list of Participant
-        """
-        result = []
-        for i in range(self.ui.tblParticipants.rowCount()):
-            name = self.ui.tblParticipants.item(i, 0).text()
-            shortname = self.ui.tblParticipants.item(i, 1).text()
-            address_hex = self.ui.tblParticipants.item(i, 2).text()
-            result.append(Participant(name, shortname, address_hex))
-        return result
-
-    def __write_participants_to_table(self):
-        self.ui.tblParticipants.blockSignals(True)
-        self.ui.tblParticipants.setRowCount(0)
-        for i, prtcpnt in enumerate(self.participants):
-            self.ui.tblParticipants.insertRow(i)
-            self.ui.tblParticipants.setItem(i, 0, QTableWidgetItem(prtcpnt.name, 0))
-            self.ui.tblParticipants.setItem(i, 1, QTableWidgetItem(prtcpnt.shortname, 0))
-            self.ui.tblParticipants.setItem(i, 2, QTableWidgetItem(prtcpnt.address_hex, 0))
-        self.ui.tblParticipants.blockSignals(False)
 
     def on_sample_rate_changed(self):
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -120,17 +176,6 @@ class ProjectDialogController(QDialog):
         self.commited = True
         self.close()
 
-    @pyqtSlot(QTableWidgetItem)
-    def on_participant_item_changed(self, item: QTableWidgetItem):
-        row, col = item.row(), item.column()
-        if row < len(self.participants) and row >= 0:
-            if col == 0:
-                self.participants[row].name = item.text()
-            elif col == 1:
-                self.participants[row].shortname = item.text()
-            elif col == 2:
-                self.participants[row].address_hex = item.text()
-
     def set_path(self, path):
         self.path = path
         self.ui.lineEdit_Path.setText(self.path)
@@ -165,6 +210,13 @@ class ProjectDialogController(QDialog):
 
     def on_btn_add_participant_clicked(self):
         used_shortnames = {p.shortname for p in self.participants}
+        used_colors = set(p.color_index for p in self.participants)
+        avail_colors = set(range(0, len(constants.PARTICIPANT_COLORS))) - used_colors
+        if len(avail_colors) > 0:
+            color_index = avail_colors.pop()
+        else:
+            color_index = random.choice(range(len(constants.PARTICIPANT_COLORS)))
+
         nchars = 0
         participant = None
         while participant is None:
@@ -172,27 +224,33 @@ class ProjectDialogController(QDialog):
             for c in string.ascii_uppercase:
                 shortname = nchars * str(c)
                 if shortname not in used_shortnames:
-                    participant = Participant("Device "+shortname, shortname)
+                    participant = Participant("Device "+shortname, shortname=shortname, color_index=color_index)
                     break
 
         self.participants.append(participant)
-        self.__write_participants_to_table()
+        self.parti_table_model.update()
         self.ui.btnRemoveParticipant.setEnabled(True)
+        self.open_editors()
 
     def on_btn_remove_participant_clicked(self):
         if len(self.participants) <= 1:
             return
 
-        try:
-            srange = self.ui.tblParticipants.selectedRanges()[0]
-            start, end = srange.topRow(), srange.bottomRow()
-        except IndexError: #nothing selected
-            start, end = len(self.participants) - 1, len(self.participants) - 1 # delete last element
+        selected = self.ui.tblParticipants.selectionModel().selection()
+        if selected.isEmpty():
+            start, end = len(self.participants) - 1, len(self.participants) - 1  # delete last element
+        else:
+            start, end = numpy.min([rng.top() for rng in selected]), numpy.max([rng.bottom() for rng in selected])
 
         if end - start >= len(self.participants) - 1:
             # Ensure one left
             start += 1
 
         del self.participants[start:end+1]
-        self.__write_participants_to_table()
+        self.parti_table_model.update()
         self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)
+        self.open_editors()
+
+    def open_editors(self):
+        for row in range(len(self.participants)):
+            self.ui.tblParticipants.openPersistentEditor(self.parti_table_model.index(row, 2))

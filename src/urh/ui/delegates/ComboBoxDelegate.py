@@ -2,26 +2,26 @@ from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
 from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
-from urh import constants
-
 
 class ComboBoxDelegate(QItemDelegate):
-    def __init__(self, items, coloring, parent=None):
+    def __init__(self, items, colors=None, parent=None):
         super().__init__(parent)
         self.items = items
-        self.coloring = coloring
+        self.colors = colors
+        if colors:
+            assert len(items) == len(colors)
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
         editor.addItems(self.items)
-        if self.coloring:
+        if self.colors:
             img = QImage(16, 16, QImage.Format_RGB32)
             painter = QPainter(img)
 
             painter.fillRect(img.rect(), Qt.black)
             rect = img.rect().adjusted(1, 1, -1, -1)
             for i, item in enumerate(self.items):
-                color = constants.LABEL_COLORS[i]
+                color = self.colors[i]
                 painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
                 editor.setItemData(i, QPixmap.fromImage(img), Qt.DecorationRole)
 

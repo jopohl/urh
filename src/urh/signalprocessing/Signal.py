@@ -273,10 +273,10 @@ class Signal(QObject):
     def quad_demod(self):
         return signal_functions.afp_demod(self.data, self.noise_treshold, self.modulation_type)
 
-    def calc_noise_treshold(self, noise_start, noise_end):
+    def calc_noise_treshold(self, noise_start: int, noise_end: int):
         NDIGITS = 4
         self.noise_treshold = np.ceil(
-            np.max(np.absolute(self.data[noise_start:noise_end])) * 10 ** NDIGITS) / 10 ** NDIGITS
+            np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
 
     def estimate_bitlen(self) -> int:
         bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]

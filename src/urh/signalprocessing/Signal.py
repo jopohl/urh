@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QApplication
 import urh.cythonext.signalFunctions as signal_functions
 from urh import constants
 from urh.util import FileOperator
+from urh.util.Logger import logger
 
 
 class Signal(QObject):
@@ -275,8 +276,11 @@ class Signal(QObject):
 
     def calc_noise_treshold(self, noise_start: int, noise_end: int):
         NDIGITS = 4
-        self.noise_treshold = np.ceil(
-            np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
+        try:
+            self.noise_treshold = np.ceil(
+                np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
+        except ValueError:
+            logger.warning("Could not caluclate noise treshold for range {}-{}".format(int(noise_start),int(noise_end)))
 
     def estimate_bitlen(self) -> int:
         bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]

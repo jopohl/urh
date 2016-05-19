@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QPen
 from PyQt5.QtWidgets import QGraphicsRectItem
 
 from urh import constants
@@ -27,7 +27,7 @@ class ROI(QGraphicsRectItem):
         self.resizing = False
 
         self.setBrush(fillcolor)
-        self.setPen(QColor(Qt.transparent))
+        self.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
         self.setOpacity(opacity)
 
     @property

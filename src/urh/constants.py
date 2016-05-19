@@ -19,7 +19,6 @@ TRANSPARENT_COLOR = QColor(Qt.transparent)
 LINECOLOR = QColor.fromRgb(225, 225, 225)
 BGCOLOR = QColor.fromRgb(55, 53, 53)
 AXISCOLOR = QColor.fromRgb(200, 200, 200, 100)
-NOISELINECOLOR = QColor.fromRgb(255, 107, 104)
 ARROWCOLOR = QColor.fromRgb(204, 120, 50)
 
 # ROI-SELECTION COLORS

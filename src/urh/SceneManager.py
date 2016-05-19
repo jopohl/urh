@@ -1,7 +1,8 @@
 from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QPainterPath, QFont, QPen
+from PyQt5.QtGui import QPainterPath, QFont, QPen, QColor
 import math
 import numpy as np
+from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.ui.ZoomableScene import ZoomableScene
@@ -18,8 +19,6 @@ class SceneManager(QObject):
         self.text_item = self.scene.addText("",  QFont("Helvetica", 20))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
-        self.path_item = self.scene.addPath(QPainterPath(), QPen(constants.LINECOLOR,  Qt.FlatCap))
-        """:type: QGraphicsPathItem """
 
         self.padding = 1.25
 
@@ -27,16 +26,30 @@ class SceneManager(QObject):
     def num_samples(self):
         return len(self.plot_data)
 
-    def show_scene_section(self, x1: float, x2: float):
-        path = path_creator.create_path(self.plot_data, self.__limit_value(x1), self.__limit_value(x2))
-        self.path_item.setPath(path)
+    def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
+        """
 
-    def __limit_value(self, val):
-        if val < 0:
-            return 0
-        elif val > self.num_samples:
-            return self.num_samples
-        return int(val)
+        :param x1: start of section to show
+        :param x2: end of section to show
+        :param subpath_ranges: for coloring subpaths
+        :type subpath_ranges: list of tuple
+        :param colors: for coloring the subpaths
+        :type color: list of QColor
+        :return:
+        """
+        paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1), end=self.__limit_value(x2),
+                                                         subpath_ranges=subpath_ranges)
+        self.set_path(paths, colors=colors)
+
+    def set_path(self, paths: list, colors=None):
+        self.clear_path()
+        colors = [constants.LINECOLOR] * len(paths) if colors is None else colors
+        assert len(paths) == len(colors)
+        for path, color in zip(paths, colors):
+            self.scene.addPath(path, QPen(color if color else constants.LINECOLOR,  Qt.FlatCap))
+
+    def __limit_value(self, val: float) -> int:
+        return 0 if val < 0  else self.num_samples if val > self.num_samples else int(val)
 
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)
@@ -65,7 +78,11 @@ class SceneManager(QObject):
         self.line_item.setLine(0, 0, self.num_samples, 0)
 
     def clear_path(self):
-        self.path_item.setPath(QPainterPath())
+        for item in self.scene.items():
+            if isinstance(item, QGraphicsPathItem):
+                self.scene.removeItem(item)
+                item.setParentItem(None)
+                del item
 
     def set_text(self, text):
         self.text_item.setPlainText(text)

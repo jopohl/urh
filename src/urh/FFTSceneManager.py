@@ -18,8 +18,6 @@ class FFTSceneManager(SceneManager):
         self.scene.setBackgroundBrush(constants.BGCOLOR)
 
         self.init_scene(draw_grid=False)
-        self.path_item = self.scene.addPath(QPainterPath(), QPen(constants.LINECOLOR,  Qt.FlatCap))
-        """:type: QGraphicsPathItem """
 
         self.peak_item = self.scene.addPath(QPainterPath(), QPen(constants.PEAK_COLOR, Qt.FlatCap))
         """:type: QGraphicsPathItem """
@@ -31,12 +29,12 @@ class FFTSceneManager(SceneManager):
     def show_scene_section(self, x1: float, x2: float):
         start = int(x1) if x1 > 0 else 0
         end = int(x2) if x2 < self.num_samples else self.num_samples
-        path = path_creator.create_path(np.log10(self.plot_data), start, end)
-        self.path_item.setPath(path)
+        paths = path_creator.create_path(np.log10(self.plot_data), start, end)
+        self.set_path(paths, colors=None)
 
         try:
             if len(self.peak) > 0:
-                peak_path = path_creator.create_path(np.log10(self.peak), start, end)
+                peak_path = path_creator.create_path(np.log10(self.peak), start, end)[0]
                 self.peak_item.setPath(peak_path)
         except RuntimeWarning:
             pass

@@ -13,9 +13,6 @@ class SignalSceneManager(SceneManager):
     def __init__(self, signal: Signal, parent):
         super().__init__(parent)
         self.signal = signal
-        self.noise_line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.NOISE_COLOR, Qt.FlatCap))
-        self.path_item = self.scene.addPath(QPainterPath(), QPen(constants.LINECOLOR,  Qt.FlatCap))
-        """:type: QGraphicsPathItem """
         self.text_item = self.scene.addText("Loading...", QFont("Helvetica", 72))
         self.scene_type = 0 # 0 = Analog Signal, 1 = QuadDemodView
 
@@ -34,7 +31,6 @@ class SignalSceneManager(SceneManager):
             # Ensure Real plot have same y Axis
             #minimum, maximum = util.minmax(self.signal.real_plot_data)
             self.plot_data = self.signal.real_plot_data
-            self.noise_line_item.setLine(0, 0, 0, 0)
         else:
             noise_val = signalFunctions.get_noise_for_mod_type(self.scene_type - 1)
             # Bypass Min/Max calculation
@@ -44,7 +40,6 @@ class SignalSceneManager(SceneManager):
             else:
                 self.minimum, self.maximum = 0, self.padding * noise_val
             self.plot_data = self.signal.qad
-            self.noise_line_item.setLine(0, -noise_val, self.num_samples, -noise_val)
 
         super().init_scene()
         self.minimum, self.maximum = stored_minimum, stored_maximum

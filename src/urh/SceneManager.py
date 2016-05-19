@@ -46,14 +46,10 @@ class SceneManager(QObject):
         colors = [constants.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
-            self.scene.addPath(path, QPen(color,  Qt.FlatCap))
+            self.scene.addPath(path, QPen(color if color else constants.LINECOLOR,  Qt.FlatCap))
 
-    def __limit_value(self, val):
-        if val < 0:
-            return 0
-        elif val > self.num_samples:
-            return self.num_samples
-        return int(val)
+    def __limit_value(self, val: float) -> int:
+        return 0 if val < 0  else self.num_samples if val > self.num_samples else int(val)
 
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)

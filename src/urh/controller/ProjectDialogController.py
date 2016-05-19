@@ -16,6 +16,9 @@ from urh.util.Errors import Errors
 
 import string
 
+from urh.util.ProjectManager import ProjectManager
+
+
 class ProjectDialogController(QDialog):
     class ProtocolParticipantModel(QAbstractTableModel):
         def __init__(self, participants):
@@ -76,19 +79,38 @@ class ProjectDialogController(QDialog):
 
             return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-    def __init__(self, new_project=True, parent=None):
+    def __init__(self, new_project=True, project_manager:ProjectManager=None, parent=None):
         super().__init__(parent)
+        if not new_project:
+            assert  project_manager is not None
 
         self.ui = Ui_ProjectDialog()
         self.ui.setupUi(self)
 
-        self.parti_table_model = self.ProtocolParticipantModel([])
+        if new_project:
+            self.parti_table_model = self.ProtocolParticipantModel([])
+        else:
+            self.parti_table_model = self.ProtocolParticipantModel(project_manager.participants)
 
-       # self.ui.tblParticipants.verticalHeader().sectionResizeMode(QHeaderView.Fixed)
+            self.ui.spinBoxSampleRate.setValue(project_manager.sample_rate)
+            self.ui.spinBoxFreq.setValue(project_manager.frequency)
+            self.ui.spinBoxBandwidth.setValue(project_manager.bandwidth)
+            self.ui.spinBoxGain.setValue(project_manager.gain)
+            self.ui.txtEdDescription.setPlainText(project_manager.description)
+            self.ui.lineEdit_Path.setText(project_manager.project_path)
+
+            self.ui.btnSelectPath.hide()
+            self.ui.lineEdit_Path.setDisabled(True)
+            self.setWindowTitle("Edit project settings")
+            self.ui.lNewProject.setText("Edit project")
+            self.ui.btnOK.setText("Accept")
+
         self.ui.tblParticipants.setModel(self.parti_table_model)
         self.ui.tblParticipants.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(constants.PARTICIPANT_COLORS),
                                                                             colors=constants.PARTICIPANT_COLORS,
                                                                             parent=self))
+
+
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
         self.freq = self.ui.spinBoxFreq.value()
@@ -107,14 +129,11 @@ class ProjectDialogController(QDialog):
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_Path.setCompleter(completer)
 
-        if not self.new_project:
-            self.ui.btnSelectPath.hide()
-            self.ui.lineEdit_Path.setDisabled(True)
-
-        self.ui.lblNewPath.hide()
         self.create_connects()
 
-        self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
+        if new_project:
+            self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
+
         self.on_path_edited()
 
         self.open_editors()

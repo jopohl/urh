@@ -174,6 +174,7 @@ class MainController(QMainWindow):
             self.handle_files_dropped)
 
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
+        self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
@@ -691,13 +692,18 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_project_settings_clicked(self):
-        pass
+        pdc = ProjectDialogController(new_project=False, project_manager=self.project_manager, parent=self)
+        pdc.finished.connect(self.on_project_dialog_finished)
+        pdc.show()
+
 
     @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().commited:
-            for f in self.signal_tab_controller.signal_frames:
-                self.close_signal_frame(f)
+            if self.sender().new_project:
+                for f in self.signal_tab_controller.signal_frames:
+                    self.close_signal_frame(f)
+
             self.project_manager.from_dialog(self.sender())
 
     def apply_default_view(self):

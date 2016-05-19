@@ -5,7 +5,6 @@ from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -15,6 +14,7 @@ from urh.util import FileOperator
 
 
 class ProjectManager(QObject):
+    NEWLINE_CODE = "###~~~***~~~###_--:;;-__***~~~###" # Newlines dont get loaded from xml properly
     AUTOSAVE_INTERVAL_MINUTES = 5
 
     sample_rate_changed = pyqtSignal(float)
@@ -73,7 +73,7 @@ class ProjectManager(QObject):
         self.sample_rate = float(root.get("sample_rate", 1e6))
         self.bandwidth = float(root.get("bandwidth", 1e6))
         self.gain = int(root.get("gain", 20))
-        self.description = root.get("description", "")
+        self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
         try:
             self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("participants").findall("participant")]
@@ -93,11 +93,7 @@ class ProjectManager(QObject):
                                              QMessageBox.Yes | QMessageBox.No)
 
                 if reply == QMessageBox.Yes:
-                    dialog = ProjectDialogController(new_project=False, parent=self.maincontroller)
-                    dialog.set_path(path)
-                    dialog.finished.connect(self.on_dialog_finished)
-                    dialog.exec_()
-
+                    self.maincontroller.on_project_settings_clicked()
                 else:
                     self.project_file = None
 
@@ -141,16 +137,7 @@ class ProjectManager(QObject):
 
     def convert_folder_to_project(self):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
-        dialog = ProjectDialogController(new_project=False, parent=self.maincontroller)
-        dialog.set_path(self.project_path)
-        dialog.finished.connect(self.on_dialog_finished)
-        dialog.exec_()
-
-        if self.project_file is not None:
-            root = ET.Element("UniversalRadioHackerProject")
-            tree = ET.ElementTree(root)
-            tree.write(self.project_file)
-            self.maincontroller.ui.actionConvert_Folder_to_Project.setEnabled(False)
+        self.maincontroller.on_project_settings_clicked()
 
     def write_signal_information_to_project_file(self, signal: Signal, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
@@ -258,7 +245,7 @@ class ProjectManager(QObject):
         root.set("sample_rate", str(self.sample_rate))
         root.set("bandwidth", str(self.bandwidth))
         root.set("gain", str(self.gain))
-        root.set("description", str(self.description))
+        root.set("description", str(self.description).replace("\n",self.NEWLINE_CODE))
 
         parts_tag = ET.SubElement(root, "participants")
         for parti in self.participants:
@@ -449,19 +436,13 @@ class ProjectManager(QObject):
 
         self.maincontroller.compare_frame_controller.refresh()
 
-    def from_dialog(self, dialog: ProjectDialogController):
+    def from_dialog(self, dialog):
         if dialog.commited:
-            self.set_project_folder(dialog.path, ask_for_new_project=False)
+            if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, constants.PROJECT_FILE)):
+                self.set_project_folder(dialog.path, ask_for_new_project=False)
             self.frequency = dialog.freq
             self.sample_rate = dialog.sample_rate
             self.gain = dialog.gain
             self.bandwidth = dialog.bandwidth
             self.description  = dialog.description
             self.participants = dialog.participants
-
-    def on_dialog_finished(self):
-        if self.sender().commited:
-            self.frequency = self.sender().freq
-            self.sample_rate = self.sender().sample_rate
-        else:
-            self.project_file = None

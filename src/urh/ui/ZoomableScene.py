@@ -28,7 +28,7 @@ class ZoomableScene(QGraphicsScene):
 
         if self.noise_area is None or self.noise_area.scene() != self:
             roi = ROI(x, y, w, h, fillcolor=constants.NOISE_COLOR, opacity=constants.NOISE_OPACITY)
-            roi.setPen(QPen(constants.NOISE_COLOR, Qt.FlatCap))
+           # roi.setPen(QPen(constants.NOISE_COLOR, Qt.FlatCap))
             self.noise_area = roi
             self.addItem(self.noise_area)
         else:

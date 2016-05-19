@@ -12,9 +12,10 @@ from cython.parallel import prange
 from urh import constants
 
 cpdef create_path(float[:] samples, long long start, long long end, list subpath_ranges=None):
-    cdef float[::1] values
+    cdef float[:] values
     cdef long long[::1] sample_rng
-    cdef float sample, minimum, maximum, tmp
+    cdef np.int64_t[::1] x
+    cdef float sample, minimum, maximum, tmp, scale_factor
     cdef long long i,j,index, chunk_end, num_samples, pixels_on_path, samples_per_pixel
     num_samples = end - start
 
@@ -26,6 +27,7 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
     if samples_per_pixel > 1:
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
+        scale_factor = num_samples / (2 * len(sample_rng))
         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
             chunk_end = i + samples_per_pixel
             if chunk_end >= end:
@@ -46,9 +48,18 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
             values[index] = minimum
             values[index + 1] = maximum
 
-        return array_to_QPath(np.repeat(sample_rng, 2).astype(np.int64), values)
+        x = np.repeat(sample_rng, 2)
     else:
-        return array_to_QPath(np.arange(start, end).astype(np.int64), samples[start:end])
+        x = np.arange(start, end, dtype=np.int64)
+        values = samples[start:end]
+        scale_factor = 1.0
+
+    cdef list result = []
+    for subpath_range in subpath_ranges:
+        substart = int((subpath_range[0]-start)/scale_factor)
+        subend = int((subpath_range[1]-start)/scale_factor) + 1
+        result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
+    return result
 
 
 cpdef create_live_path(float[:] samples, unsigned int start, unsigned int end):

@@ -6,7 +6,7 @@ from urh import constants
 
 
 class ROI(QGraphicsRectItem):
-    def __init__(self, *args, fillcolor, parent=None):
+    def __init__(self, *args, fillcolor, opacity, parent=None):
         self.padding = 0
         if len(args) == 0:
             super().__init__(parent)
@@ -28,7 +28,7 @@ class ROI(QGraphicsRectItem):
 
         self.setBrush(fillcolor)
         self.setPen(QColor(Qt.transparent))
-        self.setOpacity(constants.SELECTION_OPACITY)
+        self.setOpacity(opacity)
 
     @property
     def is_empty(self) -> bool:

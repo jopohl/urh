@@ -14,7 +14,7 @@ class ZoomableScene(QGraphicsScene):
         self.zeros_area = None
         self.ones_arrow = None
         self.zeros_arrow = None
-        self.selection_area = ROI(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR)
+        self.selection_area = ROI(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR, opacity=constants.SELECTION_OPACITY)
         self.addItem(self.selection_area)
 
     def draw_noise_area(self, y, h):
@@ -27,7 +27,7 @@ class ZoomableScene(QGraphicsScene):
             self.zeros_area.hide()
 
         if self.noise_area is None or self.noise_area.scene() != self:
-            roi = ROI(x, y, w, h, fillcolor=constants.NOISE_COLOR)
+            roi = ROI(x, y, w, h, fillcolor=constants.NOISE_COLOR, opacity=constants.NOISE_OPACITY)
             roi.setPen(QPen(constants.NOISE_COLOR, Qt.FlatCap))
             self.noise_area = roi
             self.addItem(self.noise_area)

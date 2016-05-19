@@ -16,7 +16,9 @@ from urh.util import FileOperator
 
 class ProjectManager(QObject):
     AUTOSAVE_INTERVAL_MINUTES = 5
+
     sample_rate_changed = pyqtSignal(float)
+    project_loaded_status_changed = pyqtSignal(bool)
 
     def __init__(self, maincontroller):
         super().__init__()
@@ -28,8 +30,21 @@ class ProjectManager(QObject):
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
-        self.project_file = None
+        self.__project_file = None
         self.participants = []
+
+    @property
+    def project_loaded(self) -> bool:
+        return self.project_file is not None
+
+    @property
+    def project_file(self):
+        return self.__project_file
+
+    @project_file.setter
+    def project_file(self, value):
+        self.__project_file = value
+        self.project_loaded_status_changed.emit(self.project_loaded)
 
     @property
     def sample_rate(self):
@@ -121,6 +136,8 @@ class ProjectManager(QObject):
         self.maincontroller.ui.fileTree.setToolTip(path)
         self.maincontroller.ui.splitter.setSizes([1, 1])
         self.maincontroller.setWindowTitle("Universal Radio Hacker [" + path + "]")
+
+        self.project_loaded_status_changed.emit(self.project_loaded)
 
     def convert_folder_to_project(self):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)

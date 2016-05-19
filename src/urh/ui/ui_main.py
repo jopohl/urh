@@ -216,7 +216,10 @@ class Ui_MainWindow(object):
         self.actionNew_Project.setObjectName("actionNew_Project")
         self.actionSniff_protocol = QtWidgets.QAction(MainWindow)
         self.actionSniff_protocol.setObjectName("actionSniff_protocol")
+        self.actionProject_settings = QtWidgets.QAction(MainWindow)
+        self.actionProject_settings.setObjectName("actionProject_settings")
         self.menuFile.addAction(self.actionNew_Project)
+        self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionRecord)
         self.menuFile.addAction(self.actionSniff_protocol)
@@ -292,6 +295,7 @@ class Ui_MainWindow(object):
         self.actionShow_file_tree.setText(_translate("MainWindow", "Show file tree"))
         self.actionNew_Project.setText(_translate("MainWindow", "New Project.."))
         self.actionSniff_protocol.setText(_translate("MainWindow", "Sniff protocol..."))
+        self.actionProject_settings.setText(_translate("MainWindow", "Project settings..."))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

@@ -150,6 +150,7 @@
      <string>Fi&amp;le</string>
     </property>
     <addaction name="actionNew_Project"/>
+    <addaction name="actionProject_settings"/>
     <addaction name="actionOpen"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
@@ -493,6 +494,11 @@
   <action name="actionSniff_protocol">
    <property name="text">
     <string>Sniff protocol...</string>
+   </property>
+  </action>
+  <action name="actionProject_settings">
+   <property name="text">
+    <string>Project settings...</string>
    </property>
   </action>
  </widget>

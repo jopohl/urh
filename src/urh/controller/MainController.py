@@ -127,11 +127,14 @@ class MainController(QMainWindow):
         self.apply_default_view()
         self.project_save_timer.start(ProjectManager.AUTOSAVE_INTERVAL_MINUTES * 60 * 1000)
 
+        self.ui.actionProject_settings.setVisible(False)
+
 
     def create_connects(self):
         self.ui.menuView.aboutToShow.connect(self.on_menu_view_clicked)
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_clicked)
         self.ui.actionShow_file_tree.triggered.connect(self.on_show_file_tree_clicked)
+        self.ui.actionProject_settings.triggered.connect(self.on_project_settings_clicked)
         self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
         self.ui.actionShow_Confirm_Close_Dialog.triggered.connect(self.update_confirm_dialogs_settings)
         self.ui.actionHold_Shift_to_Drag.triggered.connect(self.set_hold_shift)
@@ -170,6 +173,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(
             self.handle_files_dropped)
 
+        self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
@@ -684,6 +688,10 @@ class MainController(QMainWindow):
         pdc = ProjectDialogController(parent=self)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
+
+    @pyqtSlot()
+    def on_project_settings_clicked(self):
+        pass
 
     @pyqtSlot()
     def on_project_dialog_finished(self):

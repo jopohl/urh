@@ -16,9 +16,9 @@ class SignalSceneManager(SceneManager):
         self.text_item = self.scene.addText("Loading...", QFont("Helvetica", 72))
         self.scene_type = 0 # 0 = Analog Signal, 1 = QuadDemodView
 
-    def show_scene_section(self, x1: float, x2: float):
+    def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         self.plot_data = self.signal.real_plot_data if self.scene_type == 0 else self.signal.qad
-        super().show_scene_section(x1, x2)
+        super().show_scene_section(x1, x2, subpath_ranges=subpath_ranges, colors=colors)
 
     def init_scene(self):
         #self.text_item.setPlainText("")

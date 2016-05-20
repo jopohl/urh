@@ -284,7 +284,8 @@ class SignalFrameController(QFrame):
 
         vr = self.ui.gvSignal.view_rect()
         self.scene_creator.init_scene()
-        self.scene_creator.show_scene_section(vr.x(), vr.x() + vr.width())
+        start, end = vr.x(), vr.x() + vr.width()
+        self.scene_creator.show_scene_section(start, end, *self.__get_subpath_ranges_and_colors(start, end))
 
         if ind > 0:
             self.ui.gvLegend.y_scene = self.scene_creator.scene.sceneRect().y()
@@ -949,7 +950,8 @@ class SignalFrameController(QFrame):
     def display_scene(self):
         self.scene_creator.scene_type = self.ui.cbSignalView.currentIndex()
         vr = self.ui.gvSignal.view_rect()
-        self.scene_creator.show_scene_section(vr.x(), vr.x() + vr.width())
+        start, end = vr.x(), vr.x() + vr.width()
+        self.scene_creator.show_scene_section(start, end, *self.__get_subpath_ranges_and_colors(start, end))
 
     def delete_from_protocol_selection(self):
         if not self.ui.gvSignal.selection_area.is_empty:
@@ -1063,7 +1065,36 @@ class SignalFrameController(QFrame):
 
     def redraw_signal(self):
         vr = self.ui.gvSignal.view_rect()
-        self.scene_creator.show_scene_section(vr.x(), vr.x() + vr.width())
+        start, end = vr.x(), vr.x() + vr.width()
+        self.scene_creator.show_scene_section(start, end, *self.__get_subpath_ranges_and_colors(start, end))
+
+    def __get_subpath_ranges_and_colors(self, start: float, end: float):
+        subpath_ranges = []
+        colors = []
+        start = int(start)
+        end = int(end) if end == int(end) else int(end) + 1
+
+        for block in self.proto_analyzer.blocks:
+            if block.bit_sample_pos[0] < start:
+                continue
+
+            color = None if block.participant is None else constants.PARTICIPANT_COLORS[block.participant.color_index]
+            subpath_ranges.append((start, block.bit_sample_pos[0]))
+            colors.append(None)
+
+            if block.bit_sample_pos[-2] > end:
+                subpath_ranges.append((block.bit_sample_pos[0], end))
+                colors.append(color)
+                break
+
+            subpath_ranges.append((block.bit_sample_pos[0], block.bit_sample_pos[-2]))
+            colors.append(color)
+
+            start = block.bit_sample_pos[-2] + 1
+
+        subpath_ranges = subpath_ranges if subpath_ranges else None
+        colors = colors if colors else None
+        return subpath_ranges, colors
 
     def on_spinBoxNoiseTreshold_editingFinished(self):
         if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():

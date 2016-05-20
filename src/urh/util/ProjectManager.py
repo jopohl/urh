@@ -19,6 +19,7 @@ class ProjectManager(QObject):
 
     sample_rate_changed = pyqtSignal(float)
     project_loaded_status_changed = pyqtSignal(bool)
+    project_updated = pyqtSignal()
 
     def __init__(self, maincontroller):
         super().__init__()
@@ -134,6 +135,7 @@ class ProjectManager(QObject):
         self.maincontroller.setWindowTitle("Universal Radio Hacker [" + path + "]")
 
         self.project_loaded_status_changed.emit(self.project_loaded)
+        self.project_updated.emit()
 
     def convert_folder_to_project(self):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
@@ -446,3 +448,4 @@ class ProjectManager(QObject):
             self.bandwidth = dialog.bandwidth
             self.description  = dialog.description
             self.participants = dialog.participants
+            self.project_updated.emit()

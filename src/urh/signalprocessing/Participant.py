@@ -10,6 +10,7 @@ class Participant(QObject):
     shortname_changed = pyqtSignal(str)
     address_hex_changed = pyqtSignal(str)
     color_index_changed = pyqtSignal(int)
+    show_changed = pyqtSignal(bool)
 
     def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None):
         super().__init__()
@@ -17,6 +18,7 @@ class Participant(QObject):
         self.__shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
         self.__address_hex = address_hex if address_hex else ""
         self.__color_index = color_index
+        self.__show = True
 
         if id is None:
             self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
@@ -65,6 +67,17 @@ class Participant(QObject):
         if value != self.__color_index:
             self.__color_index = value
             self.color_index_changed.emit(self.__color_index)
+
+    @property
+    def show(self) -> bool:
+        return self.__show
+
+    @show.setter
+    def show(self, value: bool):
+        value = bool(value)
+        if value != self.show:
+            self.__show = value
+            self.show_changed.emit(self.__show)
 
     @property
     def id(self):

@@ -13,6 +13,7 @@ from urh.controller.OptionsController import OptionsController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.models.LabelValueTableModel import LabelValueTableModel
+from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
@@ -101,6 +102,9 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.group_deleted.connect(self.handle_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
+
+        self.participant_list_model = ParticipantListModel(project_manager.participants)
+        self.ui.listViewParticipants.setModel(self.participant_list_model)
 
     @property
     def active_group_ids(self):
@@ -263,6 +267,7 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.edit_label_clicked.connect(self.on_edit_label_clicked_in_table)
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
+        self.project_manager.project_updated.connect(self.on_project_updated)
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -1248,3 +1253,7 @@ class CompareFrameController(QFrame):
             offset += group.num_blocks
 
         return result
+
+    def on_project_updated(self):
+        self.participant_list_model.participants = self.project_manager.participants
+        self.participant_list_model.update()

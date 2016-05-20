@@ -267,6 +267,23 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Show these participants:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListView" name="listViewParticipants">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="cbShowDiffs">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

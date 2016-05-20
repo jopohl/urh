@@ -38,10 +38,16 @@ class TextEditProtocolView(QPlainTextEdit):
 
         menu.addSeparator()
 
-        if self.participants and self.blocks:
-            cursor = self.textCursor()
-            if not cursor.selection().isEmpty() and not "\n" in cursor.selection().toPlainText():
-                selected_block = self.blocks[cursor.blockNumber()]
+        particpnt_actions = {}
+        selected_blocks = []
+        cursor = self.textCursor()
+        if self.participants and self.blocks and not cursor.selection().isEmpty():
+            selected_blocks = []
+            for i in range(0, cursor.selection().toPlainText().count("\n") + 1):
+                selected_blocks.append(self.blocks[cursor.blockNumber()+i])
+
+            if len(selected_blocks) == 1:
+                selected_block = selected_blocks[0]
             else:
                 selected_block = None
 
@@ -50,6 +56,7 @@ class TextEditProtocolView(QPlainTextEdit):
             none_partipnt_action = participant_menu.addAction("None")
             none_partipnt_action.setCheckable(True)
             none_partipnt_action.setActionGroup(partigroup)
+
             if selected_block and selected_block.participant is None:
                 none_partipnt_action.setChecked(True)
 
@@ -60,6 +67,9 @@ class TextEditProtocolView(QPlainTextEdit):
                 if selected_block and selected_block.participant == particpnt:
                     pa.setChecked(True)
 
+                particpnt_actions[pa] = particpnt
+        else:
+            none_partipnt_action = 42
 
         show_proto_action = menu.addAction("Zoom to bits in signal")
 
@@ -105,6 +115,12 @@ class TextEditProtocolView(QPlainTextEdit):
                 self.setLineWrapMode(QPlainTextEdit.NoWrap)
         elif action == show_proto_action:
             self.show_proto_clicked.emit()
+        elif action == none_partipnt_action:
+            for block in selected_blocks:
+                block.participant = None
+        elif action in particpnt_actions:
+            for block in selected_blocks:
+                block.participant = particpnt_actions[action]
 
     def textCursor(self) -> QTextCursor:
         return super().textCursor()

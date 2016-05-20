@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QPlainTextEdit, QApplication, QMenu, QActionGroup
 
 class TextEditProtocolView(QPlainTextEdit):
     proto_view_changed = pyqtSignal()
-    pause_len_clicked = pyqtSignal()
     deletion_wanted = pyqtSignal()
     show_proto_clicked = pyqtSignal()
 
@@ -14,6 +13,9 @@ class TextEditProtocolView(QPlainTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.cur_view = 0
+        self.participants = None
+        """:type: list of Participant """
+        self.blocks = None
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
@@ -34,6 +36,18 @@ class TextEditProtocolView(QPlainTextEdit):
 
         menu.addSeparator()
 
+        if self.participants:# and self.blocks:
+            partigroup = QActionGroup(self)
+            participant_menu = menu.addMenu("Participant")
+            none_partipnt_action = participant_menu.addAction("None")
+            none_partipnt_action.setCheckable(True)
+            none_partipnt_action.setActionGroup(partigroup)
+            for particpnt in self.participants:
+                pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
+                pa.setCheckable(True)
+                pa.setActionGroup(partigroup)
+
+
         show_proto_action = menu.addAction("Zoom to bits in signal")
 
         menu.addSeparator()
@@ -45,11 +59,7 @@ class TextEditProtocolView(QPlainTextEdit):
 
         linewrapAction.setChecked(linewrap)
 
-        pauseAction = None
         sel_text = self.textCursor().selectedText().replace("\n", "")
-        if len(sel_text) > 0 and not "1" in sel_text:
-            menu.addSeparator()
-            pauseAction = menu.addAction("Set Pause Len (Samples!)")
 
         bitAction.setActionGroup(viewgroup)
         hexAction.setActionGroup(viewgroup)
@@ -82,8 +92,6 @@ class TextEditProtocolView(QPlainTextEdit):
                 self.setLineWrapMode(QPlainTextEdit.WidgetWidth)
             else:
                 self.setLineWrapMode(QPlainTextEdit.NoWrap)
-        elif action == pauseAction:
-            self.pause_len_clicked.emit()
         elif action == show_proto_action:
             self.show_proto_clicked.emit()
 

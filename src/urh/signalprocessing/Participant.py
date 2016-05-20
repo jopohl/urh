@@ -23,6 +23,9 @@ class Participant(QObject):
         else:
             self.__id = id
 
+    def __eq__(self, other):
+        return isinstance(other, Participant) and self.id_match(other.id)
+
     @property
     def name(self) -> str:
         return self.__name
@@ -63,6 +66,9 @@ class Participant(QObject):
             self.__color_index = value
             self.color_index_changed.emit(self.__color_index)
 
+    @property
+    def id(self):
+        return self.__id
 
     def __repr__(self):
         return "Participant: {0} ({1}) addr: {2}".format(self.name, self.shortname, self.address_hex)

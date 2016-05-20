@@ -31,6 +31,8 @@ class ProtocolBlock(object):
         self.pause = pause
         self.modulator_indx = modulator_indx
         self.rssi = rssi
+        self.participant = None
+        """:type: Participant """
 
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame

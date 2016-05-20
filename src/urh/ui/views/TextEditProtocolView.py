@@ -38,16 +38,27 @@ class TextEditProtocolView(QPlainTextEdit):
 
         menu.addSeparator()
 
-        if self.participants:# and self.blocks:
+        if self.participants and self.blocks:
+            cursor = self.textCursor()
+            if not cursor.selection().isEmpty() and not "\n" in cursor.selection().toPlainText():
+                selected_block = self.blocks[cursor.blockNumber()]
+            else:
+                selected_block = None
+
             partigroup = QActionGroup(self)
             participant_menu = menu.addMenu("Participant")
             none_partipnt_action = participant_menu.addAction("None")
             none_partipnt_action.setCheckable(True)
             none_partipnt_action.setActionGroup(partigroup)
+            if selected_block and selected_block.participant is None:
+                none_partipnt_action.setChecked(True)
+
             for particpnt in self.participants:
                 pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
                 pa.setCheckable(True)
                 pa.setActionGroup(partigroup)
+                if selected_block and selected_block.participant == particpnt:
+                    pa.setChecked(True)
 
 
         show_proto_action = menu.addAction("Zoom to bits in signal")
@@ -60,8 +71,6 @@ class TextEditProtocolView(QPlainTextEdit):
         linewrap = self.lineWrapMode() == QPlainTextEdit.WidgetWidth
 
         linewrapAction.setChecked(linewrap)
-
-        sel_text = self.textCursor().selectedText().replace("\n", "")
 
         bitAction.setActionGroup(viewgroup)
         hexAction.setActionGroup(viewgroup)

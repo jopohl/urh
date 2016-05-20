@@ -20,7 +20,7 @@ AXISCOLOR = QColor.fromRgb(200, 200, 200, 100)
 ARROWCOLOR = QColor.fromRgb(204, 120, 50)
 
 # ROI-SELECTION COLORS
-SELECTION_COLOR = None # overwritten by system color (bin/urh)
+SELECTION_COLOR = QColor("darkblue") # overwritten by system color (bin/urh)
 NOISE_COLOR = QColor("red")
 SELECTION_OPACITY = 0.8
 NOISE_OPACITY = 0.4

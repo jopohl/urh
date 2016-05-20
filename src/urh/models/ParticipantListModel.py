@@ -1,8 +1,10 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
+from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
 from urh.signalprocessing.Participant import Participant
 
 
 class ParticipantListModel(QAbstractListModel):
+    show_state_changed = pyqtSignal()
+
     def __init__(self, participants, parent=None):
         """
 
@@ -37,11 +39,15 @@ class ParticipantListModel(QAbstractListModel):
 
     def setData(self, index: QModelIndex, value, role=None):
         if index.row() == 0 and role == Qt.CheckStateRole:
-            self.show_unassigned = bool(value)
+            if bool(value) != self.show_unassigned:
+                self.show_unassigned = bool(value)
+                self.show_state_changed.emit()
 
         elif role == Qt.CheckStateRole:
             try:
-                self.participants[index.row()-1].show = value
+                if self.participants[index.row()-1].show != value:
+                    self.participants[index.row()-1].show = value
+                    self.show_state_changed.emit()
             except IndexError:
                 return False
 

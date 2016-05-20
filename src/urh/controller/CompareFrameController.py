@@ -56,6 +56,9 @@ class CompareFrameController(QFrame):
         clocale = QLocale()
         self.decimal_point = clocale.decimalPoint()
 
+        self.participant_list_model = ParticipantListModel(project_manager.participants)
+        self.ui.listViewParticipants.setModel(self.participant_list_model)
+
         self.__active_group_ids = [0]
         self.selected_protocols = set()
 
@@ -103,8 +106,6 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
-        self.participant_list_model = ParticipantListModel(project_manager.participants)
-        self.ui.listViewParticipants.setModel(self.participant_list_model)
 
     @property
     def active_group_ids(self):
@@ -268,6 +269,7 @@ class CompareFrameController(QFrame):
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
         self.project_manager.project_updated.connect(self.on_project_updated)
+        self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -418,8 +420,13 @@ class CompareFrameController(QFrame):
             abs_time = 0
             rel_time = 0
             if proto.show:
+                num_blocks = 0
                 for i, block in enumerate(proto.blocks):
                     if not block:
+                        continue
+                    if block.participant is None and not self.participant_list_model.show_unassigned:
+                        continue
+                    if block.participant is not None and not block.participant.show:
                         continue
 
                     try:
@@ -432,17 +439,19 @@ class CompareFrameController(QFrame):
                     block.absolute_time = abs_time
                     block.relative_time = rel_time
 
+                    num_blocks += 1
                     self.proto_analyzer.blocks.append(block)
 
                 self.proto_analyzer.used_symbols |= proto.used_symbols
 
-                line += proto.num_blocks
+                line += num_blocks
                 rows_for_cur_proto = list(range(prev_line, line))
                 self.rows_for_protocols[proto] = rows_for_cur_proto[:]
 
 
                 prev_line = line
-                first_block_indices.append(line)
+                if line != 0:
+                    first_block_indices.append(line)
 
         for group in self.groups:
             if not group.loaded_from_file:
@@ -462,7 +471,7 @@ class CompareFrameController(QFrame):
                 for rel_pos in relative_hidden_row_positions[proto]:
                     self.ui.tblViewProtocol.hideRow(start + rel_pos)
                     self.protocol_model.hidden_rows.add(start + rel_pos)
-            except KeyError:
+            except (KeyError, ValueError):
                 pass
 
 

@@ -164,7 +164,7 @@ class SignalFrameController(QFrame):
         self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.handle_spinbox_xzoom_value_changed)
 
-
+        self.ui.txtEdProto.participant_changed.connect(self.redraw_signal)
 
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
 

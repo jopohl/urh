@@ -8,7 +8,7 @@ class TextEditProtocolView(QPlainTextEdit):
     proto_view_changed = pyqtSignal()
     deletion_wanted = pyqtSignal()
     show_proto_clicked = pyqtSignal()
-
+    participant_changed = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -43,8 +43,10 @@ class TextEditProtocolView(QPlainTextEdit):
         cursor = self.textCursor()
         if self.participants and self.blocks and not cursor.selection().isEmpty():
             selected_blocks = []
-            for i in range(0, cursor.selection().toPlainText().count("\n") + 1):
-                selected_blocks.append(self.blocks[cursor.blockNumber()+i])
+            start_block = self.toPlainText()[0:cursor.selectionStart()].count("\n")
+            end_block = self.toPlainText()[0:cursor.selectionEnd()].count("\n") + 1
+            for i in range(start_block, end_block):
+                selected_blocks.append(self.blocks[i])
 
             if len(selected_blocks) == 1:
                 selected_block = selected_blocks[0]
@@ -118,9 +120,12 @@ class TextEditProtocolView(QPlainTextEdit):
         elif action == none_partipnt_action:
             for block in selected_blocks:
                 block.participant = None
+            self.participant_changed.emit()
+
         elif action in particpnt_actions:
             for block in selected_blocks:
                 block.participant = particpnt_actions[action]
+            self.participant_changed.emit()
 
     def textCursor(self) -> QTextCursor:
         return super().textCursor()

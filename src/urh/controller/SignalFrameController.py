@@ -1079,6 +1079,8 @@ class SignalFrameController(QFrame):
                 continue
 
             color = None if block.participant is None else constants.PARTICIPANT_COLORS[block.participant.color_index]
+
+            # Append the pause until first bit of block
             subpath_ranges.append((start, block.bit_sample_pos[0]))
             colors.append(None)
 
@@ -1087,6 +1089,7 @@ class SignalFrameController(QFrame):
                 colors.append(color)
                 break
 
+            # Data part of the block
             subpath_ranges.append((block.bit_sample_pos[0], block.bit_sample_pos[-2]))
             colors.append(color)
 

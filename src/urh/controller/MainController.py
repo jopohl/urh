@@ -1,5 +1,6 @@
 import copy
 import os
+import traceback
 
 from PyQt5.QtCore import pyqtSignal, QDir, Qt, pyqtSlot, QFileInfo, QTimer
 from PyQt5.QtGui import QIcon, QResizeEvent, QCloseEvent
@@ -266,7 +267,7 @@ class MainController(QMainWindow):
                     fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
                     self.add_files(fileNames)
             except Exception as e:
-                Errors.generic_error(self.tr("Failed to open"), str(e))
+                Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
 
     @pyqtSlot(str)
     def handle_dialog_selection_changed(self, path: str):
@@ -443,7 +444,7 @@ class MainController(QMainWindow):
             elif os.path.isfile(action.data()):
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
         except Exception as e:
-            Errors.generic_error(self.tr("Failed to open"), str(e))
+            Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
 
     @pyqtSlot()
     def show_about(self):

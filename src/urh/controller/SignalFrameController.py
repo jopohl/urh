@@ -1075,14 +1075,17 @@ class SignalFrameController(QFrame):
         end = int(end) if end == int(end) else int(end) + 1
 
         for block in self.proto_analyzer.blocks:
-            if block.bit_sample_pos[0] < start:
+            if block.bit_sample_pos[-2] < start:
                 continue
 
             color = None if block.participant is None else constants.PARTICIPANT_COLORS[block.participant.color_index]
 
             # Append the pause until first bit of block
             subpath_ranges.append((start, block.bit_sample_pos[0]))
-            colors.append(None)
+            if start < block.bit_sample_pos[0]:
+                colors.append(None)
+            else:
+                colors.append(color) # Zoomed inside a block
 
             if block.bit_sample_pos[-2] > end:
                 subpath_ranges.append((block.bit_sample_pos[0], end))

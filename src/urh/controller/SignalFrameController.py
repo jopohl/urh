@@ -42,6 +42,7 @@ class SignalFrameController(QFrame):
         self.ui.setupUi(self)
 
         self.ui.txtEdProto.setFont(FontHelper.getMonospaceFont())
+        self.ui.txtEdProto.participants = project_manager.participants
 
         self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
         self.is_minimized = False

@@ -177,6 +177,8 @@ class MainController(QMainWindow):
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
 
+        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.redraw_signals)
+
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
             recentFileAction = QAction(self)

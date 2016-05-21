@@ -19,6 +19,7 @@ class ProtocolTableView(TableView):
     revert_sync_cropping_wanted = pyqtSignal()
     edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
+    participant_changed = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -109,6 +110,42 @@ class ProtocolTableView(TableView):
         row = self.rowAt(event.pos().y())
         cols = [index.column() for index in self.selectionModel().selectedIndexes() if index.row() == row]
         cols.sort()
+
+        pos = event.pos()
+        row = self.rowAt(pos.y())
+        min_row, max_row, start, end = self.selection_range()
+        selected_blocks = []
+        particpnt_actions = {}
+
+        if self.model().participants and self.model().protocol and not self.selectionModel().selection().isEmpty():
+            for i in range(min_row, max_row + 1):
+                selected_blocks.append(self.model().protocol.blocks[i])
+
+            if len(selected_blocks) == 1:
+                selected_block = selected_blocks[0]
+            else:
+                selected_block = None
+
+            partigroup = QActionGroup(self)
+            participant_menu = menu.addMenu("Participant")
+            none_partipnt_action = participant_menu.addAction("None")
+            none_partipnt_action.setCheckable(True)
+            none_partipnt_action.setActionGroup(partigroup)
+
+            if selected_block and selected_block.participant is None:
+                none_partipnt_action.setChecked(True)
+
+            for particpnt in self.model().participants:
+                pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
+                pa.setCheckable(True)
+                pa.setActionGroup(partigroup)
+                if selected_block and selected_block.participant == particpnt:
+                    pa.setChecked(True)
+
+                particpnt_actions[pa] = particpnt
+        else:
+            none_partipnt_action = 42
+
         try:
             selected_label = self.controller.get_labels_from_selection(row, row, cols[0],
                                                                       cols[-1])[0]
@@ -167,9 +204,6 @@ class ProtocolTableView(TableView):
             writeAbleAction.setCheckable(True)
             writeAbleAction.setChecked(False)
 
-        pos = event.pos()
-        row = self.rowAt(pos.y())
-        min_row, max_row, start, end = self.selection_range()
         menu.addSeparator()
         undo_stack = self.model().undo_stack
         view = self.model().proto_view
@@ -216,3 +250,11 @@ class ProtocolTableView(TableView):
             self.protocol_view_change_clicked.emit(2)
         elif action == writeAbleAction:
             self.writeable_changed.emit(writeAbleAction.isChecked())
+        elif action == none_partipnt_action:
+            for block in selected_blocks:
+                block.participant = None
+            self.participant_changed.emit()
+        elif action in particpnt_actions:
+            for block in selected_blocks:
+                block.participant = particpnt_actions[action]
+            self.participant_changed.emit()

@@ -286,3 +286,7 @@ class SignalTabController(QWidget):
                 pos += 1
             sorted_positions.append(pos)
         return sorted_positions
+
+    def redraw_signals(self):
+        for sframe in self.signal_frames:
+            sframe.redraw_signal()

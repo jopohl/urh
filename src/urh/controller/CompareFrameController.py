@@ -34,6 +34,7 @@ class CompareFrameController(QFrame):
     show_interpretation_clicked = pyqtSignal(int, int, int, int)
     show_decoding_clicked = pyqtSignal()
     files_dropped = pyqtSignal(list)
+    participant_changed = pyqtSignal()
 
     def __init__(self, plugin_manager: PluginManager,
                  project_manager: ProjectManager, parent):
@@ -62,7 +63,7 @@ class CompareFrameController(QFrame):
         self.__active_group_ids = [0]
         self.selected_protocols = set()
 
-        self.protocol_model = ProtocolTableModel(self.proto_analyzer, self)
+        self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants, self)
         """:type: ProtocolTableModel"""
         self.protocol_label_list_model = ProtocolLabelListModel(self.proto_analyzer, controller=self)
         """:type:  ProtocolLabelListModel"""
@@ -270,6 +271,8 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
         self.project_manager.project_updated.connect(self.on_project_updated)
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
+        self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
+        self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -1266,3 +1269,4 @@ class CompareFrameController(QFrame):
     def on_project_updated(self):
         self.participant_list_model.participants = self.project_manager.participants
         self.participant_list_model.update()
+        self.protocol_model.participants = self.project_manager.participants

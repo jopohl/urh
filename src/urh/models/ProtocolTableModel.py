@@ -12,11 +12,12 @@ from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 class ProtocolTableModel(TableModel):
     ref_index_changed = pyqtSignal(int)
 
-    def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
+    def __init__(self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None):
         super().__init__(parent)
 
         self.controller = controller
         self.protocol = proto_analyzer
+        self.participants = participants
 
         self.active_group_ids = [0]
 

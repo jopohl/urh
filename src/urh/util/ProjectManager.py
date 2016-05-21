@@ -141,7 +141,7 @@ class ProjectManager(QObject):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         self.maincontroller.on_project_settings_clicked()
 
-    def write_signal_information_to_project_file(self, signal: Signal, tree=None):
+    def write_signal_information_to_project_file(self, signal: Signal, blocks, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
             return
 
@@ -172,6 +172,10 @@ class ProjectManager(QObject):
         signal_tag.set("auto_detect_on_modulation_changed", str(signal.auto_detect_on_modulation_changed))
         signal_tag.set("modulation_type", str(signal.modulation_type))
         signal_tag.set("sample_rate", str(signal.sample_rate))
+
+        blocks_tag = ET.SubElement(signal_tag, "blocks")
+        for block in blocks:
+            blocks_tag.append(block.to_xml())
 
         tree.write(self.project_file)
 
@@ -255,7 +259,7 @@ class ProjectManager(QObject):
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
-            self.write_signal_information_to_project_file(sf.signal, tree=tree)
+            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.blocks, tree=tree)
             try:
                 pf = self.maincontroller.signal_protocol_dict[sf]
                 filename = pf.filename
@@ -279,6 +283,7 @@ class ProjectManager(QObject):
             root.remove(group_tag)
 
         cfc = self.maincontroller.compare_frame_controller
+
         for i, group in enumerate(cfc.groups):
             group_tag = ET.SubElement(root, "group")
             group_tag.set("name", str(group.name))
@@ -338,6 +343,24 @@ class ProjectManager(QObject):
 
         return decodings
 
+    def read_participants_for_signal(self, signal: Signal, blocks):
+        if self.project_file is None or len(signal.filename) == 0:
+            return False
+
+        tree = ET.parse(self.project_file)
+        root = tree.getroot()
+
+        for sig_tag in root.iter("signal"):
+            if sig_tag.attrib["filename"] == os.path.relpath(signal.filename, self.project_path):
+                blocks_tag = sig_tag.find("blocks")
+                if blocks_tag:
+                    for i, block_tag in enumerate(blocks_tag.iter("block")):
+                        blocks[i].from_xml(block_tag, self.participants)
+                return True
+
+        return False
+
+
 
     def read_project_file_for_signal(self, signal: Signal):
         if self.project_file is None or len(signal.filename) == 0:
@@ -364,6 +387,7 @@ class ProjectManager(QObject):
                 signal.bit_len = int(sig_tag.attrib["bit_length"])
                 signal.modulation_type = int(sig_tag.attrib["modulation_type"])
                 break
+
         return True
 
     def read_opened_filenames(self):

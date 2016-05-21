@@ -353,12 +353,14 @@ class MainController(QMainWindow):
         self.ui.progressBar.setValue(70)
         QApplication.processEvents()
 
-        #pa.protocol_labels = self.project_manager.read_labels_for_filename(signal.filename)
         self.signal_protocol_dict[sframe] = pa
         self.ui.progressBar.setValue(80)
         QApplication.processEvents()
 
         sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
+        if self.project_manager.read_participants_for_signal(signal, pa.blocks):
+            sframe.redraw_signal()
+
         sframe.ui.gvSignal.autofit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
@@ -368,7 +370,7 @@ class MainController(QMainWindow):
         self.ui.progressBar.hide()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
-        self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
+        self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.blocks)
         try:
             proto = self.signal_protocol_dict[signal_frame]
         except KeyError:

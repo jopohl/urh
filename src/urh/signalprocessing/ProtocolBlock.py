@@ -1,12 +1,13 @@
 import copy
 import math
-
+import xml.etree.ElementTree as ET
 import sys
 
 import numpy as np
 from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.encoding import encoding
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 
 class ProtocolBlock(object):
@@ -525,3 +526,20 @@ class ProtocolBlock(object):
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
         return ProtocolBlock(plain_bits, 0, [])
+
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("block")
+        if self.participant is not None:
+            root.set("participant_id",  self.participant.id)
+        return root
+
+    def from_xml(self, tag: ET.Element, participants):
+        part_id = tag.get("participant_id", None)
+
+        if part_id:
+            for participant in participants:
+                if participant.id_match(part_id):
+                    self.participant = participant
+                    break
+            if self.participant is None:
+                logger.warning("No participant matched the id {0} from xml".format(part_id))

@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.fileTree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.fileTree.setSortingEnabled(False)
         self.fileTree.setObjectName("fileTree")
-        self.fileTree.header().setCascadingSectionResizes(False)
+        self.fileTree.header().setCascadingSectionResizes(True)
         self.fileTree.header().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.fileTree)
         self.tabWidget = QtWidgets.QTabWidget(self.splitter)

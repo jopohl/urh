@@ -87,7 +87,7 @@
            <bool>false</bool>
           </property>
           <attribute name="headerCascadingSectionResizes">
-           <bool>false</bool>
+           <bool>true</bool>
           </attribute>
           <attribute name="headerStretchLastSection">
            <bool>false</bool>

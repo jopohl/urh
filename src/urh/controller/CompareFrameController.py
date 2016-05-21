@@ -595,7 +595,7 @@ class CompareFrameController(QFrame):
                 for lbl in group.labels:
                     self.set_protocol_label_visibility(lbl, group)
 
-            self.ui.tblViewProtocol.resize_it()
+            self.ui.tblViewProtocol.resize_columns()
 
 
     def __set_decoding_error_label(self, block: ProtocolBlock):
@@ -841,7 +841,7 @@ class CompareFrameController(QFrame):
         self.protocol_label_list_model.update()
 
         if resize_table:
-            self.ui.tblViewProtocol.resize_it()
+            self.ui.tblViewProtocol.resize_columns()
 
     def refresh(self):
         self.__protocols = None
@@ -890,7 +890,7 @@ class CompareFrameController(QFrame):
                 self.set_protocol_label_visibility(lbl, group)
         self.handle_show_only_checkbox_changed()
         self.protocol_model.update()
-        self.ui.tblViewProtocol.resize_it()
+        self.ui.tblViewProtocol.resize_columns()
 
     @pyqtSlot()
     def search(self):
@@ -1047,7 +1047,7 @@ class CompareFrameController(QFrame):
                 for lbl in group.labels:
                     self.set_protocol_label_visibility(lbl, group)
 
-            self.ui.tblViewProtocol.resize_it()
+            self.ui.tblViewProtocol.resize_columns()
 
         self.protocol_model.update()
         self.protocol_label_list_model.update()
@@ -1080,7 +1080,7 @@ class CompareFrameController(QFrame):
         else:
             self.restore_visibility()
 
-        self.ui.tblViewProtocol.resize_it()
+        self.ui.tblViewProtocol.resize_columns()
 
     def show_only_labels(self):
         visible_columns = set()

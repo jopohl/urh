@@ -600,7 +600,8 @@ class MainController(QMainWindow):
             self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
         elif indx == 1:
             self.undo_group.setActiveStack(self.compare_frame_controller.protocol_undo_stack)
-            self.compare_frame_controller.ui.tblViewProtocol.resize_it()
+            self.compare_frame_controller.ui.tblViewProtocol.resize_columns()
+            self.compare_frame_controller.ui.tblViewProtocol.resize_vertical_header()
         elif indx == 2:
             self.undo_group.setActiveStack(self.generator_tab_controller.generator_undo_stack)
 

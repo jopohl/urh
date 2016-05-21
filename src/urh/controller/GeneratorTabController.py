@@ -116,7 +116,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def refresh_table(self):
         self.table_model.update()
-        self.ui.tableBlocks.resize_it()
+        self.ui.tableBlocks.resize_columns()
         is_data_there = self.table_model.display_data is not None and len(self.table_model.display_data) > 0
         self.ui.btnSend.setEnabled(is_data_there)
         self.ui.btnGenerate.setEnabled(is_data_there)
@@ -419,7 +419,7 @@ class GeneratorTabController(QWidget):
     def on_view_type_changed(self):
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.table_model.update()
-        self.ui.tableBlocks.resize_it()
+        self.ui.tableBlocks.resize_columns()
 
     def refresh_protocol_labels(self):
         self.table_model.protocol.refresh_protolabel_blocks()

@@ -35,6 +35,12 @@ class ProtocolTableModel(TableModel):
             self.update()
             self.ref_index_changed.emit(self._refindex)
 
+
+    def headerData(self, section: int, orientation, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole and orientation == Qt.Vertical and self.protocol.blocks[section].participant:
+            return  "{0} ({1})".format(section + 1, self.protocol.blocks[section].participant.shortname)
+        return super().headerData(section, orientation, role)
+
     def addProtoLabel(self, start, end, blocknr, restrictive):
         self.controller.add_protocol_label(start, end, blocknr, self.proto_view, restrictive)
 

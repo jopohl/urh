@@ -1061,7 +1061,7 @@ class SignalFrameController(QFrame):
                 continue
 
     def on_signal_scrolled(self):
-        self.redraw_signal()
+        self.redraw_timer.start(0)
 
     def redraw_signal(self):
         vr = self.ui.gvSignal.view_rect()

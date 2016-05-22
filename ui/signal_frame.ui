@@ -561,11 +561,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <string>PSK demodulated</string>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>QAM (ASK+PSK) demodulated</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="9" column="0">

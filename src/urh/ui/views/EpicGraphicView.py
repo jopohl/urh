@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QRectF, Qt, QPoint, QSize, pyqtSignal
 from PyQt5.QtGui import QMouseEvent, QKeyEvent, QCursor, QPen, QPainter, QPixmap, QIcon, QKeySequence, \
     QContextMenuEvent, QWheelEvent
-from PyQt5.QtWidgets import QGraphicsView, QApplication, QMenu
+from PyQt5.QtWidgets import QGraphicsView, QApplication, QMenu, QActionGroup
 
 from urh import constants
 from urh.ui.ROI import ROI
@@ -19,6 +19,7 @@ class EpicGraphicView(SelectableGraphicView):
     deletion_wanted = pyqtSignal(int, int)
     mute_wanted = pyqtSignal(int, int)
     ctrl_state_changed = pyqtSignal(bool)
+    participant_changed = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -26,6 +27,8 @@ class EpicGraphicView(SelectableGraphicView):
         self.autoRangeY = True
         self.show_full_signal = True
         self.nsamples = 0
+
+        self.participants = []
 
         self.y_sep = 0
         self.is_locked = False
@@ -99,6 +102,40 @@ class EpicGraphicView(SelectableGraphicView):
             zoomAction = menu.addAction(self.tr("Zoom Selection"))
             createAction = menu.addAction(self.tr("Create Signal from Selection"))
 
+            pa = self.parent_frame.proto_analyzer
+            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, self.selection_area.width, self.signal.bit_len)
+            selected_blocks =  pa.blocks[sb:eb+1]
+        else:
+            selected_blocks = []
+
+        if len(selected_blocks) == 1:
+            selected_block = selected_blocks[0]
+        else:
+            selected_block = None
+
+        particpnt_actions = {}
+
+        if len(selected_blocks) > 0:
+            partigroup = QActionGroup(self)
+            participant_menu = menu.addMenu("Participant")
+            none_partipnt_action = participant_menu.addAction("None")
+            none_partipnt_action.setCheckable(True)
+            none_partipnt_action.setActionGroup(partigroup)
+
+            if selected_block and selected_block.participant is None:
+                none_partipnt_action.setChecked(True)
+
+            for particpnt in self.participants:
+                pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
+                pa.setCheckable(True)
+                pa.setActionGroup(partigroup)
+                if selected_block and selected_block.participant == particpnt:
+                    pa.setChecked(True)
+
+                particpnt_actions[pa] = particpnt
+        else:
+            none_partipnt_action = 42
+
         if self.scene_type == 0:
             if not self.selection_area.is_empty:
                 menu.addSeparator()
@@ -129,6 +166,16 @@ class EpicGraphicView(SelectableGraphicView):
             self.deletion_wanted.emit(self.selection_area.x, self.selection_area.end)
         elif action == muteAction:
             self.mute_wanted.emit(self.selection_area.x, self.selection_area.end)
+
+        elif action == none_partipnt_action:
+            for block in selected_blocks:
+                block.participant = None
+            self.participant_changed.emit()
+
+        elif action in particpnt_actions:
+            for block in selected_blocks:
+                block.participant = particpnt_actions[action]
+            self.participant_changed.emit()
 
     def zoom_all_signals(self, factor, event:QWheelEvent=None):
         if self.parent_frame.common_zoom:

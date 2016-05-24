@@ -45,6 +45,8 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.blocks  = proto_analyzer.blocks
 
+        self.ui.gvSignal.participants = project_manager.participants
+
         self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
         self.is_minimized = False
         self.common_zoom = False
@@ -165,7 +167,8 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxXZoom.valueChanged.connect(self.handle_spinbox_xzoom_value_changed)
 
         self.project_manager.project_updated.connect(self.redraw_signal)
-        self.ui.txtEdProto.participant_changed.connect(self.redraw_signal)
+        self.ui.txtEdProto.participant_changed.connect(self.on_participant_changed)
+        self.ui.gvSignal.participant_changed.connect(self.on_participant_changed)
 
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
 
@@ -1133,3 +1136,6 @@ class SignalFrameController(QFrame):
         if self.signal.auto_detect_on_modulation_changed:
             self.signal.auto_detect_on_modulation_changed = False
             self.ui.btnAutoDetect.setChecked(False)
+
+    def on_participant_changed(self):
+        self.redraw_signal()

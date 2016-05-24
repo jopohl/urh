@@ -179,6 +179,33 @@ class ProtocolAnalyzer(object):
                                               sample_rate=srate
                                               ) for block in self.blocks)
 
+
+    def plain_to_html(self, view, show_pauses=True) -> str:
+        time = constants.SETTINGS.value('show_pause_as_time', type=bool)
+        if show_pauses and time and self.signal:
+            srate = self.signal.sample_rate
+        else:
+            srate = None
+
+        result = []
+        for block in self.blocks:
+            cur_str = ""
+            if block.participant:
+                bgcolor = constants.PARTICIPANT_COLORS[block.participant.color_index]
+                red, green, blue  = bgcolor.red(), bgcolor.green(), bgcolor.blue()
+                #fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
+                #cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue, fgcolor)
+                cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
+
+            cur_str += block.view_to_string(view, False, show_pauses, sample_rate=srate)
+
+            if block.participant:
+                cur_str += '</span>'
+
+            result.append(cur_str)
+
+        return "<br>".join(result)
+
     def set_decoder_for_blocks(self, decoder: encoding, blocks=None):
         blocks = blocks if blocks is not None else self.blocks
         self.decoder = decoder

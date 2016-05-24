@@ -1,10 +1,10 @@
 
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QKeyEvent, QContextMenuEvent, QTextCursor
-from PyQt5.QtWidgets import QPlainTextEdit, QApplication, QMenu, QActionGroup
+from PyQt5.QtWidgets import QTextEdit, QApplication, QMenu, QActionGroup
 
 
-class TextEditProtocolView(QPlainTextEdit):
+class TextEditProtocolView(QTextEdit):
     proto_view_changed = pyqtSignal()
     deletion_wanted = pyqtSignal()
     show_proto_clicked = pyqtSignal()
@@ -80,7 +80,7 @@ class TextEditProtocolView(QPlainTextEdit):
         linewrapAction = menu.addAction("Linewrap (may take a while for long protocols)")
         linewrapAction.setCheckable(True)
 
-        linewrap = self.lineWrapMode() == QPlainTextEdit.WidgetWidth
+        linewrap = self.lineWrapMode() == QTextEdit.WidgetWidth
 
         linewrapAction.setChecked(linewrap)
 
@@ -112,9 +112,9 @@ class TextEditProtocolView(QPlainTextEdit):
             linewrap = linewrapAction.isChecked()
 
             if linewrap:
-                self.setLineWrapMode(QPlainTextEdit.WidgetWidth)
+                self.setLineWrapMode(QTextEdit.WidgetWidth)
             else:
-                self.setLineWrapMode(QPlainTextEdit.NoWrap)
+                self.setLineWrapMode(QTextEdit.NoWrap)
         elif action == show_proto_action:
             self.show_proto_clicked.emit()
         elif action == none_partipnt_action:

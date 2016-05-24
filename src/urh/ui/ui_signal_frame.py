@@ -418,10 +418,6 @@ class Ui_SignalFrame(object):
         self.txtEdProto.setBaseSize(QtCore.QSize(0, 0))
         self.txtEdProto.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.txtEdProto.setAcceptDrops(False)
-        self.txtEdProto.setUndoRedoEnabled(False)
-        self.txtEdProto.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
-        self.txtEdProto.setReadOnly(True)
-        self.txtEdProto.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
         self.txtEdProto.setObjectName("txtEdProto")
         self.horizontalLayout.addWidget(self.splitter)
 

@@ -166,7 +166,7 @@ class SignalFrameController(QFrame):
         self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.handle_spinbox_xzoom_value_changed)
 
-        self.project_manager.project_updated.connect(self.redraw_signal)
+        self.project_manager.project_updated.connect(self.on_participant_changed)
         self.ui.txtEdProto.participant_changed.connect(self.on_participant_changed)
         self.ui.gvSignal.participant_changed.connect(self.on_participant_changed)
 
@@ -588,7 +588,8 @@ class SignalFrameController(QFrame):
 
     def on_protocol_updated(self):
         self.ui.txtEdProto.setEnabled(True)
-        self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
+        #self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
+        self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
 
     def show_protocol(self, old_view=-1, refresh=False):
         if not self.proto_analyzer:
@@ -644,7 +645,8 @@ class SignalFrameController(QFrame):
                     end_block += 1
                     read_pause = False
 
-            self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
+            self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
+            #self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
             self.restore_protocol_selection(sel_start, sel_end, start_block, end_block, old_view)
 
             self.ui.txtEdProto.blockSignals(False)
@@ -1139,3 +1141,4 @@ class SignalFrameController(QFrame):
 
     def on_participant_changed(self):
         self.redraw_signal()
+        self.on_protocol_updated()

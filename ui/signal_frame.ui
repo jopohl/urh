@@ -1088,18 +1088,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
-      <property name="undoRedoEnabled">
-       <bool>false</bool>
-      </property>
-      <property name="lineWrapMode">
-       <enum>QPlainTextEdit::NoWrap</enum>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-      </property>
      </widget>
     </widget>
    </item>
@@ -1118,7 +1106,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   </customwidget>
   <customwidget>
    <class>TextEditProtocolView</class>
-   <extends>QPlainTextEdit</extends>
+   <extends>QTextEdit</extends>
    <header>urh.ui.views.TextEditProtocolView.h</header>
   </customwidget>
  </customwidgets>

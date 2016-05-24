@@ -191,11 +191,12 @@ class ProtocolAnalyzer(object):
         for block in self.blocks:
             cur_str = ""
             if block.participant:
-                bgcolor = constants.PARTICIPANT_COLORS[block.participant.color_index]
-                red, green, blue  = bgcolor.red(), bgcolor.green(), bgcolor.blue()
-                #fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
-                #cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue, fgcolor)
-                cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
+                color = constants.PARTICIPANT_COLORS[block.participant.color_index]
+                red, green, blue  = color.red(), color.green(), color.blue()
+                fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
+                cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue, fgcolor)
+
+                #cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
 
             cur_str += block.view_to_string(view, False, show_pauses, sample_rate=srate)
 

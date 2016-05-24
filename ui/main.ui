@@ -34,7 +34,7 @@
        <bool>true</bool>
       </property>
       <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,3,0,1">
         <item>
          <widget class="QLineEdit" name="lnEdtTreeFilter">
           <property name="sizePolicy">
@@ -93,6 +93,16 @@
            <bool>false</bool>
           </attribute>
          </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Participants:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListView" name="listViewParticipants"/>
         </item>
        </layout>
       </widget>

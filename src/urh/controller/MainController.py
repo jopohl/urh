@@ -19,6 +19,7 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController, Mo
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
+from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
 from urh.plugins.PluginManager import PluginManager
@@ -61,7 +62,8 @@ class MainController(QMainWindow):
         self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
         self.ui.progressBar.hide()
 
-
+        self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
+        self.ui.listViewParticipants.setModel(self.participant_legend_model)
 
         gtc = self.generator_tab_controller
         gtc.ui.splitter.setSizes([gtc.width() / 0.7, gtc.width() / 0.3])
@@ -176,6 +178,7 @@ class MainController(QMainWindow):
 
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
+        self.project_manager.project_updated.connect(self.on_project_updated)
 
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.redraw_signals)
 
@@ -716,3 +719,7 @@ class MainController(QMainWindow):
         view_index = constants.SETTINGS.value('default_view', type = int)
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
         self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
+
+    def on_project_updated(self):
+        self.participant_legend_model.participants = self.project_manager.participants
+        self.participant_legend_model.update()

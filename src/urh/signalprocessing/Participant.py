@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import string
 import random
+from copy import deepcopy
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -27,6 +28,17 @@ class Participant(QObject):
 
     def __eq__(self, other):
         return isinstance(other, Participant) and self.id_match(other.id)
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k != "signals":
+                setattr(result, k, deepcopy(v, memo))
+        #result.signals = LabelSignals()
+        return result
+
 
     @property
     def name(self) -> str:

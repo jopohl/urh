@@ -42,7 +42,6 @@ class ProtocolTableModel(TableModel):
         if role == Qt.DisplayRole and orientation == Qt.Vertical and self.protocol.blocks[section].participant:
             return  "{0} ({1})".format(section + 1, self.protocol.blocks[section].participant.shortname)
 
-
         if role == Qt.BackgroundColorRole and orientation == Qt.Vertical and self.protocol.blocks[section].participant:
             return constants.PARTICIPANT_COLORS[self.protocol.blocks[section].participant.color_index]
 

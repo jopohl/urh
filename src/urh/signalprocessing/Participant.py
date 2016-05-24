@@ -1,25 +1,15 @@
 import xml.etree.ElementTree as ET
 import string
 import random
-from copy import deepcopy
 
-from PyQt5.QtCore import QObject, pyqtSignal
-
-
-class Participant(QObject):
-    name_changed = pyqtSignal(str)
-    shortname_changed = pyqtSignal(str)
-    address_hex_changed = pyqtSignal(str)
-    color_index_changed = pyqtSignal(int)
-    show_changed = pyqtSignal(bool)
+class Participant(object):
 
     def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None):
-        super().__init__()
-        self.__name = name if name else "unknown"
-        self.__shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
-        self.__address_hex = address_hex if address_hex else ""
-        self.__color_index = color_index
-        self.__show = True
+        self.name = name if name else "unknown"
+        self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
+        self.address_hex = address_hex if address_hex else ""
+        self.color_index = color_index
+        self.show = True
 
         if id is None:
             self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
@@ -28,68 +18,6 @@ class Participant(QObject):
 
     def __eq__(self, other):
         return isinstance(other, Participant) and self.id_match(other.id)
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            if k != "signals":
-                setattr(result, k, deepcopy(v, memo))
-        #result.signals = LabelSignals()
-        return result
-
-
-    @property
-    def name(self) -> str:
-        return self.__name
-
-    @name.setter
-    def name(self, value: str):
-        if value != self.__name:
-            self.__name = value
-            self.name_changed.emit(self.__name)
-
-    @property
-    def shortname(self) -> str:
-        return self.__shortname
-
-    @shortname.setter
-    def shortname(self, value: str):
-        if value != self.__shortname:
-            self.__shortname = value
-            self.shortname_changed.emit(self.__shortname)
-
-    @property
-    def address_hex(self) -> str:
-        return self.__address_hex
-
-    @address_hex.setter
-    def address_hex(self, value: str):
-        if self.__address_hex != value:
-            self.__address_hex = value
-            self.address_hex_changed.emit(self.__address_hex)
-
-    @property
-    def color_index(self):
-        return self.__color_index
-
-    @color_index.setter
-    def color_index(self, value):
-        if value != self.__color_index:
-            self.__color_index = value
-            self.color_index_changed.emit(self.__color_index)
-
-    @property
-    def show(self) -> bool:
-        return self.__show
-
-    @show.setter
-    def show(self, value: bool):
-        value = bool(value)
-        if value != self.show:
-            self.__show = value
-            self.show_changed.emit(self.__show)
 
     @property
     def id(self):

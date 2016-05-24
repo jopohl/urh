@@ -7,7 +7,7 @@ import sys
 import time
 
 from PyQt5.QtGui import QPalette, QIcon
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -53,10 +53,8 @@ def main(argv):
     import urh.ui.xtra_icons_rc  # Use oxy theme always
     QIcon.setThemeName("oxy")
 
-    #if os.name != "posix":
-    #    # noinspection PyUnresolvedReferences
-    #    import urh.ui.xtra_icons_rc  # Fallback Theme for Windows
-    #    QIcon.setThemeName("oxy")
+    # Colored Table Headers not supported in GTK+
+    # QApplication.setStyle(QStyleFactory.create("Fusion"))
 
     mainwindow = MainController()
     mainwindow.showMaximized()

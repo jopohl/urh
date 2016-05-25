@@ -11,7 +11,7 @@ from urh.signalprocessing.encoding import encoding
 
 
 class TestFuzzing(unittest.TestCase):
-    def test_save_profile(self):
+    def setUp(self):
         filename = os.path.join(tempfile.gettempdir(), "test.fuzz")
         mod1 = Modulator("mod 1")
         mod2 = Modulator("mod 2")

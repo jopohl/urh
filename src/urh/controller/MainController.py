@@ -131,6 +131,7 @@ class MainController(QMainWindow):
         self.project_save_timer.start(ProjectManager.AUTOSAVE_INTERVAL_MINUTES * 60 * 1000)
 
         self.ui.actionProject_settings.setVisible(False)
+        self.ui.actionSave_project.setVisible(False)
 
 
     def create_connects(self):
@@ -138,6 +139,7 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_clicked)
         self.ui.actionShow_file_tree.triggered.connect(self.on_show_file_tree_clicked)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_clicked)
+        self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
         self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
         self.ui.actionShow_Confirm_Close_Dialog.triggered.connect(self.update_confirm_dialogs_settings)
         self.ui.actionHold_Shift_to_Drag.triggered.connect(self.set_hold_shift)
@@ -177,6 +179,7 @@ class MainController(QMainWindow):
             self.handle_files_dropped)
 
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
+        self.project_manager.project_loaded_status_changed.connect(self.ui.actionSave_project.setVisible)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
         self.project_manager.project_updated.connect(self.on_project_updated)
 

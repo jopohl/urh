@@ -152,7 +152,7 @@
      <x>0</x>
      <y>0</y>
      <width>1017</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -161,6 +161,8 @@
     </property>
     <addaction name="actionNew_Project"/>
     <addaction name="actionProject_settings"/>
+    <addaction name="actionSave_project"/>
+    <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
@@ -509,6 +511,11 @@
   <action name="actionProject_settings">
    <property name="text">
     <string>Project settings...</string>
+   </property>
+  </action>
+  <action name="actionSave_project">
+   <property name="text">
+    <string>Save project</string>
    </property>
   </action>
  </widget>

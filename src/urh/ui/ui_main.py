@@ -227,6 +227,8 @@ class Ui_MainWindow(object):
         self.actionProject_settings = QtWidgets.QAction(MainWindow)
         self.actionProject_settings.setObjectName("actionProject_settings")
         self.actionSave_project = QtWidgets.QAction(MainWindow)
+        icon = QtGui.QIcon.fromTheme("document-save")
+        self.actionSave_project.setIcon(icon)
         self.actionSave_project.setObjectName("actionSave_project")
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)

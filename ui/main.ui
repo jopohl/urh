@@ -514,6 +514,9 @@
    </property>
   </action>
   <action name="actionSave_project">
+   <property name="icon">
+    <iconset theme="document-save"/>
+   </property>
    <property name="text">
     <string>Save project</string>
    </property>

@@ -937,7 +937,15 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.setFocus()
 
     def filter_search_results(self):
-        print("not implemented yet")
+        self.search()
+        self.ui.tblLabelValues.clearSelection()
+
+        matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
+        self.ui.tblViewProtocol.blockSignals(True)
+        for i in set(range(0, self.protocol_model.row_count)) - matching_rows:
+            self.ui.tblViewProtocol.hide_row(row=i)
+        self.ui.tblViewProtocol.blockSignals(False)
+        self.ui.tblViewProtocol.row_visibilty_changed.emit()
 
     @pyqtSlot()
     def next_search_result(self):

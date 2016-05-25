@@ -67,11 +67,11 @@ class ProtocolTableView(TableView):
         else:
             self.model().refindex = self.rowAt(y)
 
-    def hide_row(self, *args, y=None):
-        if y is None:
+    def hide_row(self, *args, row=None):
+        if row is None:
             rows = [index.row() for index in self.selectionModel().selectedIndexes()]
         else:
-            rows = [self.rowAt(y)]
+            rows = [row]
 
         refindex = self.model().refindex
         for row in rows:

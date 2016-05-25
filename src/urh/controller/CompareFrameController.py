@@ -1,12 +1,10 @@
-import copy
 import locale
 import os
 
 import numpy
-import sys
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, QModelIndex
-from PyQt5.QtGui import QContextMenuEvent, QDropEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication
+from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
 
 from urh import constants
 from urh.controller.OptionsController import OptionsController
@@ -63,6 +61,12 @@ class CompareFrameController(QFrame):
         self.__active_group_ids = [0]
         self.selected_protocols = set()
 
+        self.searchselectsearch_menu = QMenu()
+        self.search_action = self.searchselectsearch_menu.addAction("Search")
+        self.select_action = self.searchselectsearch_menu.addAction("Select all")
+        self.filter_action = self.searchselectsearch_menu.addAction("Filter")
+        self.ui.btnSearchSelectFilter.setMenu(self.searchselectsearch_menu)
+
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants, self)
         """:type: ProtocolTableModel"""
         self.protocol_label_list_model = ProtocolLabelListModel(self.proto_analyzer, controller=self)
@@ -106,6 +110,8 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.group_deleted.connect(self.handle_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
+
+
 
 
     @property
@@ -244,16 +250,16 @@ class CompareFrameController(QFrame):
     def create_connects(self):
         self.protocol_undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
 
-        self.ui.btnSelectAll.clicked.connect(self.select_all_search_results)
         self.ui.cbShowDiffs.stateChanged.connect(self.on_chkbox_show_differences_changed)
         self.ui.cbProtoView.currentIndexChanged.connect(self.on_protocol_view_changed)
         self.ui.tblViewProtocol.protocol_view_change_clicked.connect(self.ui.cbProtoView.setCurrentIndex)
         self.ui.cbDecoding.currentIndexChanged.connect(self.on_cbDecoding_currentIndexChanged)
         self.ui.tblViewProtocol.show_interpretation_clicked.connect(self.show_interpretation_clicked.emit)
-        self.ui.btnFind.clicked.connect(self.search)
+
+        self.ui.btnSearchSelectFilter.clicked.connect(self.search)
+
         self.ui.btnNextSearch.clicked.connect(self.next_search_result)
         self.ui.btnPrevSearch.clicked.connect(self.prev_search_result)
-        self.ui.cbSearchType.currentIndexChanged.connect(self.clear_search)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.set_protocol_label_visibility)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.label_value_model.update)
         self.ui.btnSaveProto.clicked.connect(self.save_protocol)
@@ -273,6 +279,10 @@ class CompareFrameController(QFrame):
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
         self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
         self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
+
+        self.search_action.triggered.connect(self.__set_mode_to_search)
+        self.select_action.triggered.connect(self.__set_mode_to_select_all)
+        self.filter_action.triggered.connect(self.__set_mode_to_filter)
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -898,16 +908,6 @@ class CompareFrameController(QFrame):
     @pyqtSlot()
     def search(self):
         value = self.ui.lineEditSearch.text()
-        if self.ui.cbSearchType.currentIndex() == 1:
-            view = self.ui.cbProtoView.currentIndex()
-            if view == 0:
-                value = "{0:b}".format(int(value))
-            elif view == 1:
-                value = "{0:x}".format(int(value))
-            elif view == 2:
-                self.ui.lineEditSearch.setText("Number not supported with ASCII.")
-                return
-
         nresults = self.protocol_model.find_protocol_value(value)
 
         if nresults > 0:
@@ -935,6 +935,17 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.PositionAtCenter)
 
         self.ui.tblViewProtocol.setFocus()
+
+    def filter_search_results(self):
+        self.search()
+        self.ui.tblLabelValues.clearSelection()
+
+        matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
+        self.ui.tblViewProtocol.blockSignals(True)
+        for i in set(range(0, self.protocol_model.row_count)) - matching_rows:
+            self.ui.tblViewProtocol.hide_row(row=i)
+        self.ui.tblViewProtocol.blockSignals(False)
+        self.ui.tblViewProtocol.row_visibilty_changed.emit()
 
     @pyqtSlot()
     def next_search_result(self):
@@ -1270,3 +1281,28 @@ class CompareFrameController(QFrame):
         self.participant_list_model.participants = self.project_manager.participants
         self.participant_list_model.update()
         self.protocol_model.participants = self.project_manager.participants
+
+    def set_search_ui_visibility(self, visible: bool):
+        self.ui.btnPrevSearch.setVisible(visible)
+        self.ui.lSearchCurrent.setVisible(visible)
+        self.ui.lSlash.setVisible(visible)
+        self.ui.lSearchTotal.setVisible(visible)
+        self.ui.btnNextSearch.setVisible(visible)
+
+    def __set_mode_to_search(self):
+        self.ui.btnSearchSelectFilter.setText("Search")
+        self.set_search_ui_visibility(True)
+        self.ui.btnSearchSelectFilter.clicked.disconnect()
+        self.ui.btnSearchSelectFilter.clicked.connect(self.search)
+
+    def __set_mode_to_select_all(self):
+        self.ui.btnSearchSelectFilter.setText("Select all")
+        self.set_search_ui_visibility(False)
+        self.ui.btnSearchSelectFilter.clicked.disconnect()
+        self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
+
+    def __set_mode_to_filter(self):
+        self.ui.btnSearchSelectFilter.setText("Filter")
+        self.set_search_ui_visibility(False)
+        self.ui.btnSearchSelectFilter.clicked.disconnect()
+        self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)

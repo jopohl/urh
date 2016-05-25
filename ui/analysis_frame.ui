@@ -365,35 +365,15 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbSearchType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <item>
-              <property name="text">
-               <string>Sequence</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Number</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnFind">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QToolButton" name="btnSearchSelectFilter">
              <property name="text">
-              <string>Find</string>
+              <string>Search</string>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::MenuButtonPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextOnly</enum>
              </property>
             </widget>
            </item>
@@ -512,13 +492,6 @@
              <property name="icon">
               <iconset theme="go-next">
                <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnSelectAll">
-             <property name="text">
-              <string>Select all</string>
              </property>
             </widget>
            </item>

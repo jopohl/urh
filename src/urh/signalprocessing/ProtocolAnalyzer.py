@@ -44,7 +44,7 @@ class ProtocolAnalyzer(object):
     """
     The ProtocolAnalyzer is what you would refer to as "protocol".
     The data is stored in the blocks variable.
-    This class offers serveral methods for protocol analysis.
+    This class offers several methods for protocol analysis.
     """
 
     def __init__(self, signal: Signal):

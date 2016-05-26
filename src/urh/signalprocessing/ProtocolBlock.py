@@ -35,6 +35,9 @@ class ProtocolBlock(object):
         self.participant = None
         """:type: Participant """
 
+        self.labelset = None
+        """:type: LabelSet """
+
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 

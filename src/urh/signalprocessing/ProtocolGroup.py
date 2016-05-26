@@ -12,7 +12,6 @@ class ProtocolGroup(object):
     def __init__(self, name: str, decoding: encoding = encoding(["Non Return To Zero (NRZ)"])):
         self.name = name
         self.__decoding = decoding
-        self.__labels = []
         self.__items = []
 
         self.loaded_from_file = False

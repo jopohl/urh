@@ -105,8 +105,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
 
-        self.refresh_protolabel_blocks()
-
     def duplicate_line(self, row: int):
         try:
             self.blocks.insert(row + 1, copy.deepcopy(self.blocks[row]))
@@ -114,13 +112,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             for pl in plabels:
                 pl.refblock += 1
 
-            self.refresh_protolabel_blocks()
             self.qt_signals.line_duplicated.emit()
         except Exception as e:
             logger.error("Duplicating line ", str(e))
-
-    def refresh_protolabel_blocks(self):
-        self.__group.refresh_labels(decode=False)
 
     def fuzz_successive(self):
         """
@@ -166,7 +160,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         self.blocks = result
         """:type: list of ProtocolBlock """
-        self.refresh_protolabel_blocks()
 
     def fuzz_concurrent(self):
         """
@@ -219,7 +212,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         self.blocks = result
         """:type: list of ProtocolBlock """
-        self.refresh_protolabel_blocks()
 
     def fuzz_exhaustive(self):
         """
@@ -272,7 +264,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         self.blocks = result
         """:type: list of ProtocolBlock """
-        self.refresh_protolabel_blocks()
 
     def clear(self):
         self.blocks[:] = []
@@ -395,5 +386,3 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             self.protocol_labels = [None] * len(label_tags)
             for label_tag in label_tags:
                 self.protocol_labels[int(label_tag.get("index"))] = ProtocolLabel.from_xml(label_tag)
-
-        self.refresh_protolabel_blocks()

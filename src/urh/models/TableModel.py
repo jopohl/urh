@@ -118,7 +118,7 @@ class TableModel(QAbstractTableModel):
         self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
-        for i, block in self.controller.proto_analyzer.blocks:
+        for i, block in enumerate(self.controller.proto_analyzer.blocks):
             for lbl in block.labelset:
                 bg_color = label_colors[lbl.color_index]
                 start, end = block.get_label_range(lbl, self.proto_view, self.decode)
@@ -178,11 +178,9 @@ class TableModel(QAbstractTableModel):
             if self.proto_view == 0:
                 if value in ("0", "1"):
                     self.protocol.blocks[i][j] = bool(int(value))
-                    self.controller.refresh_protocol_labels()
                     self.update()
                 elif value in self.symbols.keys():
                     self.protocol.blocks[i][j] = self.symbols[value]
-                    self.controller.refresh_protocol_labels()
                     self.update()
             elif self.proto_view == 1:
                 if value in hex_chars:
@@ -196,7 +194,6 @@ class TableModel(QAbstractTableModel):
                                 break
                         except IndexError:
                             break
-                    self.controller.refresh_protocol_labels()
                     self.update()
                 elif value in self.symbols.keys():
                     QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
@@ -214,8 +211,6 @@ class TableModel(QAbstractTableModel):
                             break
                     except IndexError:
                         break
-
-                self.controller.refresh_protocol_labels()
                 self.update()
         return True
 

@@ -26,7 +26,6 @@ class ProtocolGroup(object):
             self.__decoding = val
             for proto in self.protocols:
                 proto.set_decoder_for_blocks(self.decoding)
-            self.refresh_labels()
 
     @property
     def items(self):
@@ -104,25 +103,9 @@ class ProtocolGroup(object):
     def protocol_at(self, index: int) -> ProtocolAnalyzer:
         try:
             proto = self.items[index].protocol
-            proto.set_labels(self.labels) # Ensure Protocol has same labels as group
             return proto
         except IndexError:
             return None
-
-    def refresh_label(self, lbl: ProtocolLabel, decode=True):
-        if lbl not in self.labels:
-            print("Label {0} is not in Group {1}".format(lbl.name, self.name), file=sys.stderr)
-            return
-
-        if decode:
-            lbl.find_block_numbers(self.decoded_bits_str)
-        else:
-            lbl.find_block_numbers(self.plain_bits_str)
-
-    def refresh_labels(self, decode=True):
-        for lbl in self.labels:
-            #lbl.signals.apply_decoding_changed.emit(lbl) # Update DnD Labels for new blocks
-            self.refresh_label(lbl, decode)
 
     def convert_index(self, index: int, from_view: int, to_view: int, decoded: bool, block_indx=-1) -> tuple:
         """
@@ -213,8 +196,6 @@ class ProtocolGroup(object):
         if lbl not in self.labels:
             lbl.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
             self.labels.append(lbl)
-            if refresh:
-                self.refresh_label(lbl, decode=decode)
             self.labels.sort()
 
     def handle_plabel_apply_decoding_changed(self, lbl: ProtocolLabel):

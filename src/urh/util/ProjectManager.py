@@ -114,7 +114,6 @@ class ProjectManager(QObject):
                 cfc.groups[group_id].decoding = cfc.decodings[decoding_index]
 
             #cfc.ui.cbDecoding.setCurrentIndex(index)
-            cfc.refresh_protocol_labels()
             cfc.updateUI()
             modulators = self.read_modulators_from_project_file()
             self.maincontroller.generator_tab_controller.modulators = modulators if modulators else [

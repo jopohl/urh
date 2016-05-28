@@ -467,10 +467,6 @@ class CompareFrameController(QFrame):
                 if line != 0:
                     first_block_indices.append(line)
 
-        for group in self.groups:
-            if not group.loaded_from_file:
-                group.refresh_labels()
-
         if not self.show_protocol_seperation:
             self.protocol_model.first_blocks[:] = []
             self.updateUI()
@@ -870,13 +866,8 @@ class CompareFrameController(QFrame):
             block.exclude_from_decoding_labels[:] = []
         self.refresh()
 
-    def refresh_protocol_labels(self):
-        for group in self.groups:
-            group.refresh_labels()
-
     @pyqtSlot(int)
     def on_undo_stack_index_changed(self, index: int):
-        self.refresh_protocol_labels()
         self.protocol_model.update()
         self.protocol_label_list_model.update()
 
@@ -899,9 +890,8 @@ class CompareFrameController(QFrame):
         self.protocol_label_list_model.update()
         self.label_value_model.update()
         self.show_all_cols()
-        for group in self.groups:
-            for lbl in group.labels:
-                self.set_protocol_label_visibility(lbl, group)
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl, group)
         self.handle_show_only_checkbox_changed()
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()

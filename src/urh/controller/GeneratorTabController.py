@@ -422,9 +422,6 @@ class GeneratorTabController(QWidget):
         self.table_model.update()
         self.ui.tableBlocks.resize_columns()
 
-    def refresh_protocol_labels(self):
-        self.table_model.protocol.refresh_protolabel_blocks()
-
     def close_all(self):
         self.tree_model.rootItem.clearChilds()
         self.tree_model.rootItem.addGroup()
@@ -466,7 +463,6 @@ class GeneratorTabController(QWidget):
             self.refresh_estimated_time()
             self.refresh_modulators()
             self.show_modulation_info()
-            self.refresh_protocol_labels()
             self.refresh_table()
             self.set_fuzzing_ui_status()
         except:

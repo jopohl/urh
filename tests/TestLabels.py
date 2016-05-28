@@ -54,11 +54,6 @@ class TestLabels(unittest.TestCase):
 
         labels = self.cframe.groups[0].labels
         self.assertEqual(len(labels), 2)
-        self.assertEqual(labels[0].reference_bits, "10101010101010101010101010101010101010101")
-        self.assertEqual(labels[1].reference_bits, "1")
-        self.assertEqual(len(labels[0].block_numbers), 3)
-        self.assertEqual(labels[0].refblock, 1)
-        self.assertEqual(labels[1].refblock, 2)
 
         # Open Protocol in Generator
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -75,10 +70,6 @@ class TestLabels(unittest.TestCase):
         # Check Label in Generator
         labels = self.gframe.table_model.protocol.protocol_labels
         self.assertEqual(len(labels), 2)
-        self.assertEqual(labels[0].reference_bits, "10101010101010101010101010101010101010101")
-        self.assertEqual(labels[1].reference_bits, "1")
-        self.assertEqual(len(labels[0].block_numbers), 3)
-        self.assertEqual(labels[0].refblock, 1)
 
         # Fuzz Label
         lbl = labels[1]

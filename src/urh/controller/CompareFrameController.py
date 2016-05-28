@@ -768,14 +768,15 @@ class CompareFrameController(QFrame):
 
                 if reply == QMessageBox.Yes:
                     group.split_for_new_label(label)
-                    group.add_protocol_label(label.start, label.end-1, label.refblock, 0,
-                                             label.restrictive, label.name, color_ind=label.color_index)
+                    group.add_protocol_label(start=label.start, end=label.end-1,
+                                             type_index=0,
+                                             name=label.name, color_ind=label.color_index)
                 else:
                     continue
             else:
                 if group.num_protocols > 0:
-                    group.add_protocol_label(label.start, label.end-1, label.refblock, 0,
-                             label.restrictive, label.name, color_ind=label.color_index)
+                    group.add_protocol_label(start=label.start, end=label.end-1, type_index=0,
+                             name=label.name, color_ind=label.color_index)
                 else:
                     Errors.empty_group()
 
@@ -1164,7 +1165,7 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(min_row, start))
 
     def add_protocol_label(self, start: int, end: int, blocknr: int,
-                           proto_view: int, restrictive: bool, edit_label_name=True):
+                           proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
         active_group_id = self.active_group_ids[0] if self.active_group_ids else 0
         group = self.proto_tree_model.group_at(active_group_id)
@@ -1184,8 +1185,7 @@ class CompareFrameController(QFrame):
             else:
                 return False
 
-        offset = sum(self.groups[i].num_blocks for i in range(0, active_group_id))
-        proto_label = group.add_protocol_label(start, end, blocknr-offset, proto_view, restrictive)
+        proto_label = group.add_protocol_label(start=start, end=end, type_index=proto_view)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()

@@ -310,15 +310,11 @@ class ProjectManager(QObject):
                 label_tag.set("name", plabel.name)
                 label_tag.set("start", str(plabel.start))
                 label_tag.set("end", str(plabel.end - 1))
-                label_tag.set("refblock", str(plabel.refblock))
-                label_tag.set("refbits", plabel.reference_bits)
                 label_tag.set("display_type_index", str(plabel.display_type_index))
 
-                restrictive = "1" if plabel.restrictive else "0"
                 apply_decoding = "1" if plabel.apply_decoding else "0"
 
                 label_tag.set("color_index", str(plabel.color_index))
-                label_tag.set("restrictive", restrictive)
                 label_tag.set("apply_decoding", apply_decoding)
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
@@ -447,14 +443,10 @@ class ProjectManager(QObject):
                 name = label_tag.attrib["name"]
                 start = int(label_tag.attrib["start"])
                 end = int(label_tag.attrib["end"])
-                refblock = int(label_tag.attrib["refblock"])
                 color_index = int(label_tag.attrib["color_index"])
-                restrictive = int(label_tag.attrib["restrictive"]) == 1
 
-                proto_label = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
-                proto_label.reference_bits = label_tag.attrib["refbits"]
+                proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index= 0, color_index=color_index)
                 proto_label.display_type_index = int(label_tag.attrib["display_type_index"])
-                proto_label.apply_decoding = int(label_tag.attrib["apply_decoding"]) == 1
 
                 group.add_label(proto_label)
 

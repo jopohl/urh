@@ -50,15 +50,12 @@ class TestFuzzing(unittest.TestCase):
 
         # Serial Part 1: Bits 207-226 (Dezimal: 91412) (20 Bits)
         self.cframe.add_protocol_label(206, 225, 0, 0, False, edit_label_name = False)
-        self.assertEqual(int(self.cframe.groups[0].labels[0].reference_bits,2), 91412)
 
         # Zeros: Bits 227-244 (18 Bits)
         self.cframe.add_protocol_label(226, 243, 0, 0, False, edit_label_name = False)
-        self.assertEqual(int(self.cframe.groups[0].labels[1].reference_bits,2), 0)
 
         # Serial Part 2: Bit 245 - 264 (Dezimal: 1034678) (20 Bits)
         self.cframe.add_protocol_label(244, 263, 0, 0, False, edit_label_name = False)
-        self.assertEqual(int(self.cframe.groups[0].labels[2].reference_bits, 2), 1034678)
         QTest.qWait(10)
 
         self.form.ui.tabWidget.setCurrentIndex(2)

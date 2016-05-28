@@ -47,8 +47,7 @@ class AmbleAssignAction(QUndoCommand):
                         name = "Preamble"
                     else:
                         name = "Amble #{0:d}".format(count)
-                    lbl = ProtocolLabel(name, start, end - 1, k, 0, -1, True)
-                    lbl.reference_bits = bit_str[start:end]
+                    lbl = ProtocolLabel(name=name, start=start, end = end - 1, val_type_index= 0, color_index=-1)
                     lbl.apply_decoding = False
                     labels[k].append(lbl)
                     indx = bit_str.find(amble_sequence, end - 1)

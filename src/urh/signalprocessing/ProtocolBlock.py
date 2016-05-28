@@ -48,14 +48,14 @@ class ProtocolBlock(object):
 
         self.bit_alignment_positions = bit_alignment_positions
         self.fuzz_created = fuzz_created if fuzz_created is not None else []
-        self.fuzz_labels = []
+        self.fuzz_labels = [] # Todo: remove
         """:type: list of ProtocolLabel """
 
         self.__decoded_bits = None
         self.__encoded_bits = None
         self.decoding_errors = 0
 
-        self.exclude_from_decoding_labels = [] if exclude_from_decoding_labels is None else exclude_from_decoding_labels
+        self.exclude_from_decoding_labels = [] if exclude_from_decoding_labels is None else exclude_from_decoding_labels # Todo: remove
         """:type: list of ProtocolLabel """
 
         self.bit_len = bit_len  # Für Übernahme in Modulator

@@ -54,8 +54,6 @@ class ProtocolLabelController(QDialog):
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
-        self.model.restrictive_changed.connect(self.handle_restrictive_changed)
-        self.ui.tblViewProtoLabels.clicked.connect(self.on_table_clicked)
 
     @pyqtSlot()
     def confirm(self):
@@ -70,26 +68,7 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 6))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 7))
 
-    @pyqtSlot(int, bool)
-    def handle_restrictive_changed(self, row: int, restrictive: bool):
-        self.model.update()
-
     @pyqtSlot(int)
     def set_view_index(self, ind):
         self.model.proto_view = ind
         self.model.update()
-
-    @pyqtSlot(QModelIndex)
-    def on_table_clicked(self, index: QModelIndex):
-        if not index.isValid():
-            return
-
-        i = index.row()
-        lbl = self.model.protocol_labels[i]
-        j = index.column()
-        if j == 4 and lbl.restrictive:
-            seqs, indexes = self.model.get_protocol_sequences(lbl.start, lbl.end)
-            item, ok = QInputDialog.getItem(self, "Choose matching pattern", "Pattern", seqs)
-            if ok and item:
-                self.model.set_refblock(lbl, indexes[seqs.index(item)])
-                self.model.update()

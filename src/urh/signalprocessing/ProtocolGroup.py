@@ -173,35 +173,28 @@ class ProtocolGroup(object):
             self.remove_label(lbl)
             if ostart > lbl.start:
 
-                left_part = self.add_protocol_label(lbl.start, ostart - 1, lbl.refblock, 0, lbl.restrictive)
+                left_part = self.add_protocol_label(lbl.start, ostart - 1, 0)
                 left_part.name = lbl.name + "-Left"
-                left_part.find_block_numbers(self.decoded_bits_str)
 
             if oend < lbl.end:
-                right_part = self.add_protocol_label(oend, lbl.end - 1, lbl.refblock, 0, lbl.restrictive)
+                right_part = self.add_protocol_label(oend, lbl.end - 1, 0)
                 right_part.name = lbl.name + "-Right"
-                right_part.find_block_numbers(self.decoded_bits_str)
 
     def split_for_new_label(self, label: ProtocolLabel):
         overlapping_labels = self.find_overlapping_labels(label.start, label.end - 1, 0)
         for lbl in overlapping_labels:
             self.remove_label(lbl)
             if label.start > lbl.start:
-                left_part = self.add_protocol_label(lbl.start, label.start - 1, lbl.refblock, 0, lbl.restrictive)
+                left_part = self.add_protocol_label(lbl.start, label.start - 1, 0)
                 left_part.name = lbl.name + "-Left"
-                left_part.find_block_numbers(self.decoded_bits_str)
+
 
             if label.start < lbl.end:
-                right_part = self.add_protocol_label(label.end, lbl.end - 1, lbl.refblock, 0, lbl.restrictive)
+                right_part = self.add_protocol_label(label.end, lbl.end - 1, 0)
                 right_part.name = lbl.name + "-Right"
-                right_part.find_block_numbers(self.decoded_bits_str)
 
-    def add_protocol_label(self, start: int, end: int, refblock: int, type_index: int,
-                            restrictive: bool, name=None, color_ind=None) -> \
+    def add_protocol_label(self, start: int, end: int, refblock: int, type_index: int, name=None, color_ind=None) -> \
             ProtocolLabel:
-
-        if refblock >= self.num_blocks:
-            refblock = 0
 
         name = "Label {0:d}".format(len(self.labels) + 1) if not name else name
         used_colors = [p.color_index for p in self.labels]
@@ -213,14 +206,9 @@ class ProtocolGroup(object):
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name, start, end, refblock, type_index, color_ind, restrictive)
-        try:
-            proto_label.reference_bits = self.decoded_bits_str[refblock][proto_label.start:proto_label.end]
-        except IndexError:
-            return None
+        proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index= type_index, color_index=color_ind)
 
         proto_label.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
-        proto_label.find_block_numbers(self.decoded_bits_str)
         self.labels.append(proto_label)
         self.labels.sort()
 

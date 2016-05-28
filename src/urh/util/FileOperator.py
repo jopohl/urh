@@ -60,7 +60,6 @@ def save_protocol(filename: str, viewtype: int, groups, decoding_names: list, sy
                 f.write("\n\n")
                 f.write("Name: {0}\n".format(label.name))
                 f.write("Bits: {0}-{1}\n".format(label.start+1, label.end))
-                f.write("Restrictive: {0}\n".format(label.restrictive))
                 f.write("Reference Block: {0}\n".format(label.refblock+1))
                 f.write("DO NOT CHANGE NEXT LINE:\n")
                 f.write("Applies for Blocks: {0}\n".format(", ".join(map(str, label.block_numbers))))
@@ -78,7 +77,6 @@ def read_protocol(filename: str):
         reading_symbols = False
         label_name = None
         label_start = label_end = label_ref_block = -1
-        label_restrictive = None
         label_blocks = None
         apply_decoding = None
         symbols = dict()
@@ -135,11 +133,6 @@ def read_protocol(filename: str):
                 label_start, label_end = map(int, line.replace("Bits: ", "").split("-"))
                 label_start -= 1
                 label_end -= 1
-            elif reading_labels and line.startswith("Restrictive"):
-                if line.replace("Restrictive: ", "") == "True":
-                    label_restrictive = True
-                else:
-                    label_restrictive = False
             elif reading_labels and line.startswith("Reference Block"):
                 label_ref_block = int(line.replace("Reference Block: ", "")) - 1
             elif reading_labels and line.startswith("Applies for Blocks: "):
@@ -148,21 +141,18 @@ def read_protocol(filename: str):
                 apply_decoding = False if line.replace("Apply Decoding: ", "") == "False" else True
 
 
-            if label_name is not None and label_start >= 0 and label_end >= 0 and label_restrictive is not None\
+            if label_name is not None and label_start >= 0 and label_end >= 0\
                     and label_ref_block >= 0 and label_blocks is not None and apply_decoding is not None:
                 color_index = len(groups[cur_group]["labels"])
-                proto_label = ProtocolLabel(label_name, label_start, label_end,
-                                            label_ref_block, 0, color_index, label_restrictive)
+                proto_label = ProtocolLabel(name=label_name, start=label_start, end=label_end,
+                                            val_type_index=0, color_index=color_index)
                 proto_label.block_numbers = label_blocks[:]
                 proto_label.apply_decoding = apply_decoding
                 groups[cur_group]["labels"].append(proto_label)
 
                 label_name = None
                 label_start = label_end = label_ref_block = -1
-                label_restrictive = None
                 label_blocks = None
-
-
 
         if len(groups) == 0:
             raise SyntaxError("Did not find a PROTOCOL in file " + filename)

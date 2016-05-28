@@ -9,6 +9,8 @@ from PyQt5.QtCore import pyqtSlot, QObject, pyqtSignal, Qt
 from urh import constants
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
+
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
@@ -71,6 +73,12 @@ class ProtocolAnalyzer(object):
 
         self.decoder = encoding(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
         # Blocks
+
+        self.labelsets = [LabelSet("default")]
+
+    @property
+    def default_labelset(self):
+        return self.labelsets[0]
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -242,7 +250,7 @@ class ProtocolAnalyzer(object):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
-            block = ProtocolBlock(bits, pause, self.bit_alignment_positions,
+            block = ProtocolBlock(bits, pause, self.bit_alignment_positions, labelset=self.default_labelset,
                                   bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.blocks.append(block)
             i += 1

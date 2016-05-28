@@ -6,6 +6,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 class LabelSet(list):
     def __init__(self, name: str, iterable=None, id=None):
+        iterable = iterable if iterable else []
         super().__init__(iterable)
 
         self.name = name

@@ -12,6 +12,7 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController, Mo
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
@@ -198,9 +199,9 @@ class GeneratorTabController(QWidget):
                 block = self.table_model.protocol.blocks[min_row]
                 preselected_index = block.modulator_indx
             except IndexError:
-                block = ProtocolBlock([True, False, True, False], 0, [])
+                block = ProtocolBlock([True, False, True, False], 0, [], LabelSet("empty"))
         else:
-            block = ProtocolBlock([True, False, True, False], 0, [])
+            block = ProtocolBlock([True, False, True, False], 0, [], LabelSet("empty"))
             if len(self.table_model.protocol.blocks) > 0:
                 block.bit_len = self.table_model.protocol.blocks[0].bit_len
 

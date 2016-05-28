@@ -86,8 +86,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
-        blocks = [ProtocolBlock(copy.copy(block.decoded_bits), block.pause,
-                                self.bit_alignment_positions, block.rssi, 0, block.decoder, bit_len=block.bit_len,
+        blocks = [ProtocolBlock(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
+                                bit_alignment_positions=self.bit_alignment_positions, labelset = block.labelset,
+                                rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len,
                                 exclude_from_decoding_labels=copy.copy(block.exclude_from_decoding_labels))
                   for block in proto_analyzer.blocks if block]
 
@@ -158,8 +159,11 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     bool_fuzz_val = [True if bit == "1" else False for bit in fuzz_val]
                     cpy_bits = copy.deepcopy(block.plain_bits)
                     cpy_bits[l.start:l.end] = bool_fuzz_val
-                    fuz_block = ProtocolBlock(cpy_bits, block.pause, self.bit_alignment_positions, block.rssi,
-                                              block.modulator_indx, block.decoder, [(l.start, l.end)])
+                    fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
+                                              bit_alignment_positions=self.bit_alignment_positions, rssi=block.rssi,
+                                              labelset=block.labelset,
+                                              modulator_indx=block.modulator_indx, decoder=block.decoder,
+                                              fuzz_created=[(l.start, l.end)])
                     fuz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                     appd_result(fuz_block)
 
@@ -206,8 +210,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[l.start:l.end] = bool_fuzz_val
                     fuzz_created.append((l.start, l.end))
 
-                fuzz_block = ProtocolBlock(cpy_bits, block.pause, self.bit_alignment_positions, block.rssi,
-                                           block.modulator_indx, block.decoder, fuzz_created[:])
+                fuzz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
+                                           rssi=block.rssi, labelset=block.labelset,
+                                           modulator_indx=block.modulator_indx, decoder=block.decoder, fuzz_created=fuzz_created[:])
                 fuzz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                 appd_result(fuzz_block)
 
@@ -257,9 +262,10 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[start:end] = bool_fuzz_val
                     fuzz_created.append((start, end))
 
-                fuz_block = ProtocolBlock(cpy_bits, block.pause, self.bit_alignment_positions, block.rssi,
-                                          block.modulator_indx,
-                                          block.decoder, fuzz_created)
+                fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
+                                          rssi=block.rssi, labelset=block.labelset,
+                                          modulator_indx=block.modulator_indx,
+                                          decoder=block.decoder, fuzz_created=fuzz_created)
                 fuz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                 appd_result(fuz_block)
 

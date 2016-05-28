@@ -5,6 +5,8 @@ import sys
 
 import numpy as np
 from urh.cythonext.signalFunctions import Symbol
+
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.encoding import encoding
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -15,7 +17,7 @@ class ProtocolBlock(object):
     A protocol block is a single line of a protocol.
     """
 
-    def __init__(self, plain_bits, pause: int, bit_alignment_positions, rssi=0, modulator_indx=0, decoder=None,
+    def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
                  fuzz_created=None, bit_sample_pos=None, bit_len=100, exclude_from_decoding_labels=None):
         """
 
@@ -35,7 +37,7 @@ class ProtocolBlock(object):
         self.participant = None
         """:type: Participant """
 
-        self.labelset = None
+        self.labelset = labelset
         """:type: LabelSet """
 
         self.absolute_time = 0  # set in Compare Frame
@@ -514,7 +516,7 @@ class ProtocolBlock(object):
         self.__encoded_bits = None
 
     @staticmethod
-    def from_plain_bits_str(bits, symbols: dict):
+    def from_plain_bits_str(bits, symbols: dict, labelset:LabelSet):
         plain_bits = []
         for b in bits:
             if b == "0":
@@ -528,16 +530,18 @@ class ProtocolBlock(object):
                     print("[Warning] Did not find symbol name", file=sys.stderr)
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
-        return ProtocolBlock(plain_bits, 0, [])
+        return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=labelset)
 
     def to_xml(self) -> ET.Element:
         root = ET.Element("block")
+        root.set("labelset_id", self.labelset.id)
         if self.participant is not None:
             root.set("participant_id",  self.participant.id)
         return root
 
-    def from_xml(self, tag: ET.Element, participants):
+    def from_xml(self, tag: ET.Element, participants, labelsets):
         part_id = tag.get("participant_id", None)
+        labelset_id = tag.get("labelset_id", None)
 
         if part_id:
             for participant in participants:
@@ -546,3 +550,9 @@ class ProtocolBlock(object):
                     break
             if self.participant is None:
                 logger.warning("No participant matched the id {0} from xml".format(part_id))
+
+        if labelset_id:
+            for labelset in labelsets:
+                if labelset.id == labelset_id:
+                    self.labelset = labelset
+                    break

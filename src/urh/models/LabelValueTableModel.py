@@ -63,7 +63,7 @@ class LabelValueTableModel(QAbstractTableModel):
             elif j == 1:
                 return lbl.DISPLAY_TYPES[lbl.display_type_index]
             elif j == 2:
-                group = self.controller.get_group_for_label(lbl)
+                group = self.controller.get_labelset_for_label(lbl)
                 if not group:
                     return None
                 start, end = group.get_label_range(lbl, lbl.display_type_index % 3, True)

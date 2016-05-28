@@ -149,11 +149,6 @@ class ProtocolGroup(object):
 
         return int(start), int(math.ceil(end))
 
-    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
-        start = self.convert_index(lbl.start, 0, view, decode, block_indx = lbl.refblock)[0]
-        end = self.convert_index(lbl.end, 0, view, decode, block_indx = lbl.refblock)[1]
-        return int(start), int(end)
-
     def find_overlapping_labels(self, start: int, end: int, proto_view):
         ostart = self.convert_index(start, proto_view, 0, True)[0]
         oend = self.convert_index(end, proto_view, 0, True)[1]

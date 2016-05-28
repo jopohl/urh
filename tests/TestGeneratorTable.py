@@ -34,7 +34,6 @@ class TestGeneratorTable(unittest.TestCase):
 
         self.__add_labels()
         QTest.qWait(10)
-        self.assertEqual(len(self.cframe.groups[0].labels), self.NUM_LABELS)
 
     def test_performance(self):
         item = self.gframe.tree_model.rootItem.children[0].children[0]

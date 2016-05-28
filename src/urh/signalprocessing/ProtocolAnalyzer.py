@@ -50,9 +50,6 @@ class ProtocolAnalyzer(object):
     """
 
     def __init__(self, signal: Signal):
-        self._protocol_labels = []
-        """:type: list of ProtocolLabel """
-
         self.bit_alignment_positions = []
         """:param bit_alignment_positions:
         Um die Hex ASCII Darstellungen an beliebigen stellen auszurichten """
@@ -79,6 +76,10 @@ class ProtocolAnalyzer(object):
     @property
     def default_labelset(self):
         return self.labelsets[0]
+
+    @property
+    def protocol_labels(self):
+        return [lbl for labelset in self.labelsets for lbl in labelset]
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -107,12 +108,10 @@ class ProtocolAnalyzer(object):
     def pauses(self):
         return [block.pause for block in self.blocks]
 
-    @property
-    def protocol_labels(self):
-        return self._protocol_labels
 
     @protocol_labels.setter
     def protocol_labels(self, value):
+        # TODO remove this
         """
 
         :type value: list of ProtocolLabel
@@ -653,3 +652,8 @@ class ProtocolAnalyzer(object):
 
     def set_labels(self, val):
         self._protocol_labels = val
+
+
+    def get_label_range(self, lbl, viewtype, decoded: bool):
+        # TODO
+        start, end = self.proto_analyzer.get_label_range(lbl, self.ui.cbProtoView.currentIndex())

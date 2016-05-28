@@ -34,7 +34,7 @@ class TestProtocolTable(unittest.TestCase):
 
         self.__add_labels()
         QTest.qWait(10)
-        self.assertEqual(len(self.cframe.groups[0].labels), self.NUM_LABELS)
+        self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
 
 
     def test_performance(self):

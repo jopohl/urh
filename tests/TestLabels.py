@@ -52,7 +52,7 @@ class TestLabels(unittest.TestCase):
 
     def test_generator_label(self):
 
-        labels = self.cframe.groups[0].labels
+        labels = self.cframe.proto_analyzer.protocol_labels
         self.assertEqual(len(labels), 2)
 
         # Open Protocol in Generator

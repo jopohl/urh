@@ -118,16 +118,13 @@ class TableModel(QAbstractTableModel):
         self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
-        offset = 0
-        for group in self.controller.groups:
-            for lbl in group.labels:
+        for i, block in self.controller.proto_analyzer.blocks:
+            for lbl in block.labelset:
                 bg_color = label_colors[lbl.color_index]
-                for i in lbl.block_numbers:
-                    start, end = group.get_label_range(lbl, self.proto_view, self.decode)
-                    for j in range(start, end):
-                        self.background_colors[i+offset, j] = bg_color
-                        self.tooltips[i+offset, j] = lbl.name
-            offset += group.num_blocks
+                start, end = block.get_label_range(lbl, self.proto_view, self.decode)
+                for j in range(start, end):
+                    self.background_colors[i, j] = bg_color
+                    self.tooltips[i, j] = lbl.name
 
     def refresh_fonts(self):
         """

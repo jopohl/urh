@@ -108,18 +108,6 @@ class ProtocolAnalyzer(object):
     def pauses(self):
         return [block.pause for block in self.blocks]
 
-
-    @protocol_labels.setter
-    def protocol_labels(self, value):
-        # TODO remove this
-        """
-
-        :type value: list of ProtocolLabel
-        """
-        self._protocol_labels = value
-        if self._protocol_labels:
-            self._protocol_labels.sort()
-
     @property
     def plain_bits_str(self):
         return [str(block) for block in self.blocks]
@@ -527,11 +515,11 @@ class ProtocolAnalyzer(object):
     def copy_data(self):
         """
 
-        :rtype: list of ProtocolBlock, list of ProtocolLabel
+        :rtype: list of ProtocolBlock, list of LabelSet
         """
-        return copy.deepcopy(self.blocks), copy.deepcopy(self.protocol_labels)
+        return copy.deepcopy(self.blocks), copy.deepcopy(self.labelsets)
 
-    def revert_to(self, orig_blocks, orig_labels):
+    def revert_to(self, orig_blocks, orig_labelsets):
         """
         Revert to previous state
 
@@ -542,7 +530,7 @@ class ProtocolAnalyzer(object):
         """
         self.blocks = orig_blocks
         """:type: list of ProtocolBlock """
-        self.protocol_labels = orig_labels
+        self.labelsets = orig_labelsets
 
     def find_differences(self, refindex: int, view: int):
         """
@@ -606,7 +594,9 @@ class ProtocolAnalyzer(object):
 
     def destroy(self):
         self.bit_alignment_positions = None
-        self.protocol_labels = None
+        for labelset in self.labelsets:
+            labelset.clear()
+        self.labelsets = None
         self.blocks = None
 
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:

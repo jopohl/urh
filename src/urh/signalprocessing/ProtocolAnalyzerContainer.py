@@ -39,14 +39,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.__group.add_protocol_item(ProtocolTreeItem(self, None)) # Warning: parent is None
 
     @property
-    def protocol_labels(self):
-        return self.__group.labels
-
-    @protocol_labels.setter
-    def protocol_labels(self, val):
-        self.__group.set_labels(val)
-
-    @property
     def num_blocks_successive_fuzzing(self):
         result = self.num_blocks
         for i in range(self.num_blocks):
@@ -395,7 +387,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             self.blocks[Formatter.str2val(block_tag.get("index"), int)] = block
             block.pause = Formatter.str2val(block_tag.get("pause"), int)
 
-
+        # Todo read labelsets instead labels
         self.protocol_labels[:] = []
         labels_tag = root.find("labels")
         if labels_tag:

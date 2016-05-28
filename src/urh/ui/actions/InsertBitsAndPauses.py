@@ -14,10 +14,10 @@ class InsertBitsAndPauses(QUndoCommand):
             self.index = len(self.proto_analyzer_container.blocks)
 
         self.setText("Insert Bits at index {0:d}".format(self.index))
-        self.orig_blocks, self.orig_labels = self.proto_analyzer_container.copy_data()
+        self.orig_blocks, self.orig_labelsets = self.proto_analyzer_container.copy_data()
 
     def redo(self):
         self.proto_analyzer_container.insert_protocol_analyzer(self.index, self.proto_analyzer)
 
     def undo(self):
-        self.proto_analyzer_container.revert_to(self.orig_blocks, self.orig_labels)
+        self.proto_analyzer_container.revert_to(self.orig_blocks, self.orig_labelsets)

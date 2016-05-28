@@ -18,7 +18,7 @@ class DeleteBitsAndPauses(QUndoCommand):
         self.proto_analyzer = proto_analyzer
         self.blockranges_for_groups = blockranges_for_groups
         self.decoded = decoded
-        self.orig_blocks, self.orig_labels = self.proto_analyzer.copy_data()
+        self.orig_blocks, self.orig_labelsets = self.proto_analyzer.copy_data()
         self.subproto_hist = {}  # for CFC
         for subproto in self.subprotos:
             self.subproto_hist[subproto] = subproto.copy_data()
@@ -32,6 +32,6 @@ class DeleteBitsAndPauses(QUndoCommand):
                                           self.blockranges_for_groups)
 
     def undo(self):
-        self.proto_analyzer.revert_to(self.orig_blocks, self.orig_labels)
+        self.proto_analyzer.revert_to(self.orig_blocks, self.orig_labelsets)
         for subproto in self.subproto_hist.keys():
             subproto.revert_to(*self.subproto_hist[subproto])

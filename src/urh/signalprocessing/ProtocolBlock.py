@@ -558,6 +558,7 @@ class ProtocolBlock(object):
                     self.labelset = labelset
                     break
 
+
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
         end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]

@@ -588,8 +588,11 @@ class ProtocolAnalyzer(object):
 
     def destroy(self):
         self.bit_alignment_positions = None
-        for labelset in self.labelsets:
-            labelset.clear()
+        try:
+            for labelset in self.labelsets:
+                labelset.clear()
+        except TypeError:
+            pass # No labelsets defined
         self.labelsets = None
         self.blocks = None
 

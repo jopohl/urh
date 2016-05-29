@@ -32,7 +32,7 @@ class LabelSet(list):
 
     @property
     def id(self) -> str:
-        return self.id
+        return self.__id
 
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)

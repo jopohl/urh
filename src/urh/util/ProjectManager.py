@@ -304,8 +304,14 @@ class ProjectManager(QObject):
             for label in group_tag.findall('label'):
                 group_tag.remove(label)
 
-            for plabel in group.labels:
-                label_tag = ET.SubElement(group_tag, "label")
+
+        for labelset in cfc.proto_analyzer.labelsets:
+            labelset_tag = ET.SubElement(root, "labelset")
+            labelset_tag.set("name", str(labelset.name))
+            labelset_tag.set("id", str(labelset.id))
+
+            for plabel in labelset:
+                label_tag = ET.SubElement(labelset_tag, "label")
                 label_tag.set("name", plabel.name)
                 label_tag.set("start", str(plabel.start))
                 label_tag.set("end", str(plabel.end - 1))

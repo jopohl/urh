@@ -106,7 +106,6 @@ class CompareFrameController(QFrame):
 
         self.protocol_model.ref_index_changed.connect(self.handle_ref_index_changed)
         self.ui.tblViewProtocol.row_visibilty_changed.connect(self.set_shown_protocols)
-        self.proto_tree_model.labels_on_group_dropped.connect(self.add_labels_to_group)
         self.ui.treeViewProtocols.selection_changed.connect(self.handle_tree_view_selection_changed)
         self.proto_tree_model.group_deleted.connect(self.handle_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
@@ -146,6 +145,11 @@ class CompareFrameController(QFrame):
         """
         return [self.proto_tree_model.group_at(i) for i in self.active_group_ids]
 
+
+    @property
+    def active_labelset(self):
+        # Todo: Write logic for this
+        return self.proto_analyzer.default_labelset
 
     def handle_files_dropped(self, files: list):
         self.files_dropped.emit(files)
@@ -744,40 +748,6 @@ class CompareFrameController(QFrame):
         self.set_shown_protocols()
         self.ui.treeViewProtocols.clearSelection()
 
-    def add_labels_to_group(self, label_ids, group_id: int):
-        labels = [self.protocol_label_list_model.proto_labels[i] for i in label_ids]
-        group = self.groups[group_id]
-        for label in labels:
-            ol = group.find_overlapping_labels(label.start, label.end, 0)
-            if len(ol) > 0:
-                reply = QMessageBox.question(self, self.tr("Overlapping Label"),
-                                             self.tr(
-                                                 "Adding label {0} to group {1} would overlap with existing label(s) {2}.\n\n"
-                                                 "Do you want to split the existing labels in order to add {0}?\n"
-                                                 "If you choose 'no' the label will not be added to group.\n\n"
-                                                 "Note, only partial overlapped labels will be splitted."
-                                                 "Fully overlapped labels will be removed.".
-                                                 format(label.name, group.name,
-                                                        ",".join([lbl.name for lbl in ol]))),
-                                             QMessageBox.Yes | QMessageBox.No)
-
-                if reply == QMessageBox.Yes:
-                    group.split_for_new_label(label)
-                    group.add_protocol_label(start=label.start, end=label.end-1,
-                                             type_index=0,
-                                             name=label.name, color_ind=label.color_index)
-                else:
-                    continue
-            else:
-                if group.num_protocols > 0:
-                    group.add_protocol_label(start=label.start, end=label.end-1, type_index=0,
-                             name=label.name, color_ind=label.color_index)
-                else:
-                    Errors.empty_group()
-
-
-        self.refresh()
-
     @pyqtSlot()
     def handle_tree_view_selection_changed(self):
         indexes = self.ui.treeViewProtocols.selectedIndexes()
@@ -880,9 +850,8 @@ class CompareFrameController(QFrame):
     @pyqtSlot(int)
     def show_protocol_labels(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        active_group = self.active_groups[0] if self.active_groups else self.groups[0]
-        offset = sum(self.groups[i].num_blocks for i in range(0, self.groups.index(active_group)))
-        label_controller = ProtocolLabelController(preselected_index, active_group, offset,
+        label_controller = ProtocolLabelController(preselected_index=preselected_index, labelset=self.active_labelset,
+                                                   max_end=numpy.max([len(block) for block in self.proto_analyzer.blocks]),
                                                    viewtype=view_type,
                                                    parent=self)
         label_controller.exec_()
@@ -891,7 +860,7 @@ class CompareFrameController(QFrame):
         self.label_value_model.update()
         self.show_all_cols()
         for lbl in self.proto_analyzer.protocol_labels:
-            self.set_protocol_label_visibility(lbl, group)
+            self.set_protocol_label_visibility(lbl)
         self.handle_show_only_checkbox_changed()
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()
@@ -1153,25 +1122,7 @@ class CompareFrameController(QFrame):
     def add_protocol_label(self, start: int, end: int, blocknr: int,
                            proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
-        active_group_id = self.active_group_ids[0] if self.active_group_ids else 0
-        group = self.proto_tree_model.group_at(active_group_id)
-
-        overlapping_labels = group.find_overlapping_labels(start, end, proto_view)
-        if len(overlapping_labels) > 0:
-            reply = QMessageBox.question(self, self.tr("Overlapping Label"),
-                                         self.tr("This label would overlap with existing label(s) {0}.\n\n"
-                                                 "Do you want to split the existing labels in order to create the new one?\n"
-                                                 "If you choose 'no' label creation will be cancelled.\n\n"
-                                                 "Note, only partial overlapped labels will be splitted."
-                                                 "Fully overlapped labels will be removed.".
-                                                 format(",".join([lbl.name for lbl in overlapping_labels]))),
-                                         QMessageBox.Yes | QMessageBox.No)
-            if reply == QMessageBox.Yes:
-                group.split_labels(start, end, proto_view)
-            else:
-                return False
-
-        proto_label = group.add_protocol_label(start=start, end=end, type_index=proto_view)
+        proto_label = self.active_labelset.add_protocol_label(start=start, end=end, type_index=proto_view)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()

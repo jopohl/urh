@@ -87,7 +87,7 @@ class ProtocolLabelListView(QListView):
             self.model().hideAll()
         elif action in assign_actions:
             group_id = group_names.index(action.text())
-            self.model().add_labels_to_group(min_row, max_row, group_id)
+            self.model().add_labels_to_labelset(min_row, max_row, group_id)
 
 
     def delete_rows(self):

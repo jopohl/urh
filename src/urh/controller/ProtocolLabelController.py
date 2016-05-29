@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
@@ -14,29 +15,21 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 
 
 class ProtocolLabelController(QDialog):
-    def __init__(self, preselected_index, proto_group: ProtocolGroup, offset: int, viewtype: int,
-                 parent=None):
+    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
-        self.model = PLabelTableModel(proto_group, offset)
+        self.model = PLabelTableModel(labelset)
         self.preselected_index = preselected_index
 
-        if proto_group.num_blocks > 0:
-            maxval = numpy.max([len(block) for block in proto_group.decoded_bits_str])
-        else:
-            maxval = 42000
-
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, maxval, self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, maxval, self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(3, CheckBoxDelegate(self))
-
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(5,
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, max_end, self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(3,
                                                             ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
                                                                              colors=constants.LABEL_COLORS,
                                                                              parent=self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(6, CheckBoxDelegate(self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(7, DeleteButtonDelegate(self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(5, DeleteButtonDelegate(self))
 
         self.ui.tblViewProtoLabels.setModel(self.model)
         self.ui.tblViewProtoLabels.selectRow(preselected_index)
@@ -45,7 +38,7 @@ class ProtocolLabelController(QDialog):
             self.openEditors(i)
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
-        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % proto_group.name)
+        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % labelset.name)
 
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)

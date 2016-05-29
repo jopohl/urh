@@ -132,65 +132,6 @@ class ProtocolGroup(object):
 
         return int(start), int(math.ceil(end))
 
-    def find_overlapping_labels(self, start: int, end: int, proto_view):
-        ostart = self.convert_index(start, proto_view, 0, True)[0]
-        oend = self.convert_index(end, proto_view, 0, True)[1]
-
-
-        overlapping_labels = [lbl for lbl in self.labels
-                              if any(i in range(lbl.start, lbl.end) for i in range(ostart, oend))]
-
-        return overlapping_labels
-
-    def split_labels(self, start: int, end: int, proto_view: int):
-        overlapping_labels = self.find_overlapping_labels(start, end, proto_view)
-        ostart = self.convert_index(start, proto_view, 0, True)[0]
-        oend = self.convert_index(end, proto_view, 0, True)[1]
-
-        for lbl in overlapping_labels:
-            self.remove_label(lbl)
-            if ostart > lbl.start:
-
-                left_part = self.add_protocol_label(lbl.start, ostart - 1, 0)
-                left_part.name = lbl.name + "-Left"
-
-            if oend < lbl.end:
-                right_part = self.add_protocol_label(oend, lbl.end - 1, 0)
-                right_part.name = lbl.name + "-Right"
-
-    def split_for_new_label(self, label: ProtocolLabel):
-        overlapping_labels = self.find_overlapping_labels(label.start, label.end - 1, 0)
-        for lbl in overlapping_labels:
-            self.remove_label(lbl)
-            if label.start > lbl.start:
-                left_part = self.add_protocol_label(lbl.start, label.start - 1, 0)
-                left_part.name = lbl.name + "-Left"
-
-
-            if label.start < lbl.end:
-                right_part = self.add_protocol_label(label.end, lbl.end - 1, 0)
-                right_part.name = lbl.name + "-Right"
-
-    def add_protocol_label(self, start: int, end: int, refblock: int, type_index: int, name=None, color_ind=None) -> \
-            ProtocolLabel:
-
-        name = "Label {0:d}".format(len(self.labels) + 1) if not name else name
-        used_colors = [p.color_index for p in self.labels]
-        avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
-
-        if color_ind is None:
-            if len(avail_colors) > 0:
-                color_ind = avail_colors[random.randint(0, len(avail_colors)-1)]
-            else:
-                color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
-
-        proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index= type_index, color_index=color_ind)
-
-        proto_label.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
-        self.labels.append(proto_label)
-        self.labels.sort()
-
-        return proto_label
 
     def add_label(self, lbl: ProtocolLabel, refresh=True, decode=True):
         if lbl not in self.labels:
@@ -198,23 +139,6 @@ class ProtocolGroup(object):
             self.labels.append(lbl)
             self.labels.sort()
 
-    def handle_plabel_apply_decoding_changed(self, lbl: ProtocolLabel):
-        apply_decoding = lbl.apply_decoding
-        for i, block in enumerate(self.blocks):
-            if i in lbl.block_numbers:
-                if apply_decoding:
-                    try:
-                        block.exclude_from_decoding_labels.remove(lbl)
-                        block.clear_decoded_bits()
-                        block.clear_encoded_bits()
-                    except ValueError:
-                        continue
-                else:
-                    if lbl not in block.exclude_from_decoding_labels:
-                        block.exclude_from_decoding_labels.append(lbl)
-                        block.exclude_from_decoding_labels.sort()
-                        block.clear_decoded_bits()
-                        block.clear_encoded_bits()
 
     def remove_label(self, label: ProtocolLabel):
         try:

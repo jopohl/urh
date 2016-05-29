@@ -27,8 +27,8 @@ class TestLabels(unittest.TestCase):
 
         # Create two labels on Compare Frame
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.cframe.add_protocol_label(0, 40, 1, 0, True, edit_label_name = False)  # Sync
-        self.cframe.add_protocol_label(43, 43, 2, 0, True, edit_label_name = False)  # FuzzBit
+        self.cframe.add_protocol_label(0, 40, 1, 0, edit_label_name = False)  # Sync
+        self.cframe.add_protocol_label(43, 43, 2, 0, edit_label_name = False)  # FuzzBit
 
     def tearDown(self):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length

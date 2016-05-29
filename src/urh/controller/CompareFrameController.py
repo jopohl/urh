@@ -535,9 +535,9 @@ class CompareFrameController(QFrame):
         startRow, endRow = numpy.min(sel_rows), numpy.max(sel_rows)
         new_view = self.ui.cbProtoView.currentIndex()
 
-        group = self.get_group_for_row(startRow)
-        startCol = group.convert_index(startCol, old_view, new_view, True)[0]
-        endCol = group.convert_index(endCol, old_view, new_view, True)[1]
+        block = self.proto_analyzer.blocks[endRow]
+        startCol = block.convert_index(startCol, old_view, new_view, True)[0]
+        endCol = block.convert_index(endCol, old_view, new_view, True)[1]
 
         startindex = self.protocol_model.index(startRow, startCol)
         endindex = self.protocol_model.index(endRow, endCol)

@@ -1,7 +1,3 @@
-import random
-import sys
-import math
-from urh import constants
 from urh.signalprocessing.encoding import encoding
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -36,7 +32,7 @@ class ProtocolGroup(object):
         return self.__items
 
     @property
-    def labels(self):
+    def labels(self): # todo: remove (check usages)
         """
 
         :rtype: list of ProtocolLabel
@@ -107,33 +103,7 @@ class ProtocolGroup(object):
         except IndexError:
             return None
 
-    def convert_index(self, index: int, from_view: int, to_view: int, decoded: bool, block_indx=-1) -> tuple:
-        """
-        Konvertiert einen Index aus der einen Sicht (z.B. Bit) in eine andere (z.B. Hex)
-
-        :param block_indx: Wenn -1, wird der Block mit der maximalen Länge ausgewählt
-        :return:
-        """
-        if len(self.blocks) == 0:
-            return (0, 0)
-
-        if block_indx == -1:
-            block_indx = self.blocks.index(max(self.blocks, key=len)) # Longest Block
-
-        if block_indx >= len(self.blocks):
-            block_indx = len(self.blocks) - 1
-
-        return self.blocks[block_indx].convert_index(index, from_view, to_view, decoded)
-
-    def convert_range(self, index1: int, index2: int, from_view: int,
-                      to_view: int, decoded: bool, block_indx=-1):
-        start = self.convert_index(index1, from_view, to_view, decoded, block_indx=block_indx)[0]
-        end = self.convert_index(index2, from_view, to_view, decoded, block_indx=block_indx)[1]
-
-        return int(start), int(math.ceil(end))
-
-
-    def remove_label(self, label: ProtocolLabel):
+    def remove_label(self, label: ProtocolLabel): # todo remove this method (check usages!)
         try:
             self.labels.remove(label)
         except ValueError:

@@ -49,8 +49,6 @@ class ProtocolBlock(object):
 
         self.bit_alignment_positions = bit_alignment_positions
         self.fuzz_created = fuzz_created if fuzz_created is not None else []
-        self.fuzz_labels = [] # Todo: remove
-        """:type: list of ProtocolLabel """
 
         self.__decoded_bits = None
         self.__encoded_bits = None
@@ -85,6 +83,10 @@ class ProtocolBlock(object):
         self.clear_encoded_bits()
 
 
+    @property
+    def active_fuzzing_labels(self):
+        return [lbl for lbl in self.labelset if lbl.active_fuzzing]
+
     def __getitem__(self, index: int):
         return self.plain_bits[index]
 
@@ -107,40 +109,39 @@ class ProtocolBlock(object):
                 step = 1
             number_elements = len(range(index.start, index.stop, step))
 
-            for l in self.fuzz_labels[:]:
+            for l in self.labelset[:]:
                 if index.start <= l.start and index.stop >= l.end:
-                    self.fuzz_labels.remove(l)
+                    self.labelset.remove(l)
 
                 elif index.stop - 1 < l.start:
                     l_cpy = copy.deepcopy(l)
                     l_cpy.start -= number_elements
                     l_cpy.end -= number_elements
-                    self.fuzz_labels.remove(l)
-                    self.fuzz_labels.append(l_cpy)
+                    self.labelset.remove(l)
+                    self.labelset.append(l_cpy)
 
                 elif index.start <= l.start and index.stop >= l.start:
-                    self.fuzz_labels.remove(l)
+                    self.labelset.remove(l)
 
                 elif index.start >= l.start and index.stop <= l.end:
-                    self.fuzz_labels.remove(l)
+                    self.labelset.remove(l)
 
                 elif index.start >= l.start and index.start < l.end:
-                    self.fuzz_labels.remove(l)
+                    self.labelset.remove(l)
         else:
-            fuzz_labels = self.fuzz_labels
-            for l in fuzz_labels:
+            for l in self.labelset:
                 if index < l.start:
                     l_cpy = copy.deepcopy(l)
                     l_cpy.start -= 1
                     l_cpy.end -= 1
-                    self.fuzz_labels.remove(l)
-                    self.fuzz_labels.append(l_cpy)
+                    self.labelset.remove(l)
+                    self.labelset.append(l_cpy)
                 elif l.start < index < l.end:
                     l_cpy = copy.deepcopy(l)
                     l_cpy.start = index - 1
-                    self.fuzz_labels.remove(l)
+                    self.labelset.remove(l)
                     if l_cpy.end - l_cpy.start > 0:
-                        self.fuzz_labels.append(l_cpy)
+                        self.labelset.append(l_cpy)
 
         del self.plain_bits[index]
 
@@ -371,7 +372,7 @@ class ProtocolBlock(object):
             result += factor * (from_index - cur_index)
 
         end = result + factor - 1
-        end = end if end < len(bits) else len(bits) - 1
+        #end = end if end < len(bits) else len(bits) - 1
 
         return result, end
 

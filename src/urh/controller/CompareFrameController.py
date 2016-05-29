@@ -26,6 +26,7 @@ from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -435,6 +436,7 @@ class CompareFrameController(QFrame):
         first_block_indices = []
         prev_line = 0
         for proto in self.protocol_list:
+            proto.default_labelset = self.proto_analyzer.default_labelset
             abs_time = 0
             rel_time = 0
             if proto.show:
@@ -458,6 +460,7 @@ class CompareFrameController(QFrame):
                     block.relative_time = rel_time
 
                     num_blocks += 1
+                    block.labelset = self.proto_analyzer.default_labelset
                     self.proto_analyzer.blocks.append(block)
 
                 self.proto_analyzer.used_symbols |= proto.used_symbols
@@ -968,12 +971,15 @@ class CompareFrameController(QFrame):
         self.protocol_model.search_results[:] = []
         self.protocol_model.search_value = ""
 
-    def set_protocol_label_visibility(self, lbl: ProtocolLabel, group: ProtocolGroup = None):
-        group = self.get_labelset_for_label(lbl) if not group else group
-        start, end = group.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
+    def set_protocol_label_visibility(self, lbl: ProtocolLabel, block: ProtocolBlock = None):
+        try:
+            block = block if block else next(block for block in self.proto_analyzer.blocks if lbl in block.labelset)
+            start, end = block.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
 
-        for i in range(start, end):
-            self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
+            for i in range(start, end):
+                self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
+        except Exception as e:
+            logger.warning(e)
 
     def get_labelset_for_label(self, lbl: ProtocolLabel) -> LabelSet:
         for lblset in self.proto_analyzer.labelsets:
@@ -1057,11 +1063,12 @@ class CompareFrameController(QFrame):
 
     def show_only_labels(self):
         visible_columns = set()
-        for lbl in self.proto_analyzer.protocol_labels:
-            if lbl.show:
-                start, end = self.proto_analyzer.get_label_range(lbl, self.ui.cbProtoView.currentIndex(),
-                                                   True)
-                visible_columns |= (set(range(start, end)))
+        for block in self.proto_analyzer.blocks:
+            for lbl in block.labelset:
+                if lbl.show:
+                    start, end = block.get_label_range(lbl=lbl, view=self.ui.cbProtoView.currentIndex(),
+                                                       decode=True)
+                    visible_columns |= (set(range(start, end)))
 
         for i in range(self.protocol_model.col_count):
             if i in visible_columns:

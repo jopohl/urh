@@ -77,6 +77,11 @@ class ProtocolAnalyzer(object):
     def default_labelset(self):
         return self.labelsets[0]
 
+    @default_labelset.setter
+    def default_labelset(self, val: LabelSet):
+        self.labelsets[0] = val
+
+
     @property
     def protocol_labels(self):
         return [lbl for labelset in self.labelsets for lbl in labelset]
@@ -471,17 +476,6 @@ class ProtocolAnalyzer(object):
                     removable_block_indices.append(i)
             except IndexError:
                 continue
-
-        # Refblocks der Labels updaten
-        for i in removable_block_indices:
-            labels_before = [p for p in self.protocol_labels
-                             if p.refblock < i < p.refblock + p.nfuzzed]
-            labels_after = [p for p in self.protocol_labels if p.refblock > i]
-            for label in labels_after:
-                label.refblock -= 1
-
-            for label in labels_before:
-                label.nfuzzed -= 1
 
         # Remove Empty Blocks and Pause after empty Blocks
         for i in reversed(removable_block_indices):

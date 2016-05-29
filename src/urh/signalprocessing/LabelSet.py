@@ -52,9 +52,14 @@ class LabelSet(list):
 
         proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index=type_index, color_index=color_ind)
 
-        proto_label.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
-        self.append(proto_label)
-        self.sort()
+        if proto_label not in self:
+            proto_label.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
+            self.append(proto_label)
+            self.sort()
+
+    def add_label(self, lbl: ProtocolLabel):
+        self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
+
 
     def handle_plabel_apply_decoding_changed(self):
         pass

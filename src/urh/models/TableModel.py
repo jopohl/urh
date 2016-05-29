@@ -118,7 +118,7 @@ class TableModel(QAbstractTableModel):
         self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
-        for i, block in enumerate(self.controller.proto_analyzer.blocks):
+        for i, block in enumerate(self.protocol.blocks):
             for lbl in block.labelset:
                 bg_color = label_colors[lbl.color_index]
                 start, end = block.get_label_range(lbl, self.proto_view, self.decode)

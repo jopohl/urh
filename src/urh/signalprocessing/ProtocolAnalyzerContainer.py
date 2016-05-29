@@ -38,6 +38,15 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.__group = ProtocolGroup("GeneratorGroup")
         self.__group.add_protocol_item(ProtocolTreeItem(self, None)) # Warning: parent is None
 
+
+    @property
+    def protocol_labels(self):
+        result = list(set(lbl for block in self.blocks for lbl in block.labelset))
+        result.sort()
+        return  result
+
+
+
     @property
     def num_blocks_successive_fuzzing(self):
         result = self.num_blocks
@@ -79,28 +88,13 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
         blocks = [ProtocolBlock(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
-                                bit_alignment_positions=self.bit_alignment_positions, labelset = block.labelset,
+                                bit_alignment_positions=self.bit_alignment_positions, labelset=copy.deepcopy(block.labelset),
                                 rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len,
                                 exclude_from_decoding_labels=copy.copy(block.exclude_from_decoding_labels))
                   for block in proto_analyzer.blocks if block]
 
         self.blocks[index:0] = blocks
         self.used_symbols |= proto_analyzer.used_symbols
-
-        proto_labels = [copy.deepcopy(lbl) for lbl in proto_analyzer.protocol_labels]
-
-        for l in proto_labels:
-            l.refblock += index
-
-        for l in self.protocol_labels:
-            if l.refblock > index:
-                l.refblock += proto_analyzer.num_blocks
-
-        for p in proto_labels:
-            self.__group.add_label(p, decode=False)
-
-        for block in self.blocks:
-            block.fuzz_labels[index:0] = [p for p in proto_labels if p not in block.fuzz_labels]
 
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
@@ -126,10 +120,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         """
         result = []
         appd_result = result.append
-        block_offsets = {}
 
         for i, block in enumerate(self.blocks):
-            labels = [l for l in self.active_fuzzing_labels if l.refblock == i]
+            labels = block.active_fuzzing_labels
 
             if len(labels) == 0:
                 appd_result(block)
@@ -137,7 +130,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
             labels.sort()
             n = sum([len(l.fuzz_values) for l in labels])
-            block_offsets[i] = n - 1
 
             for l in labels:
                 l.nfuzzed = n
@@ -147,16 +139,10 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[l.start:l.end] = bool_fuzz_val
                     fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
                                               bit_alignment_positions=self.bit_alignment_positions, rssi=block.rssi,
-                                              labelset=block.labelset,
+                                              labelset=copy.deepcopy(block.labelset),
                                               modulator_indx=block.modulator_indx, decoder=block.decoder,
                                               fuzz_created=[(l.start, l.end)])
-                    fuz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                     appd_result(fuz_block)
-
-        # Refblockindizes anpassen
-        for l in self.protocol_labels:
-            offset = sum(block_offsets[i] for i in block_offsets.keys() if i < l.refblock)
-            l.refblock_offset += offset
 
         self.blocks = result
         """:type: list of ProtocolBlock """
@@ -196,9 +182,8 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     fuzz_created.append((l.start, l.end))
 
                 fuzz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                           rssi=block.rssi, labelset=block.labelset,
+                                           rssi=block.rssi, labelset=copy.deepcopy(block.labelset),
                                            modulator_indx=block.modulator_indx, decoder=block.decoder, fuzz_created=fuzz_created[:])
-                fuzz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                 appd_result(fuzz_block)
 
             block_offsets[i] = nvalues - 1
@@ -247,10 +232,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     fuzz_created.append((start, end))
 
                 fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                          rssi=block.rssi, labelset=block.labelset,
+                                          rssi=block.rssi, labelset=copy.deepcopy(block.labelset),
                                           modulator_indx=block.modulator_indx,
                                           decoder=block.decoder, fuzz_created=fuzz_created)
-                fuz_block.fuzz_labels = copy.deepcopy(block.fuzz_labels)
                 appd_result(fuz_block)
 
             block_offsets[i] = n - 1
@@ -267,7 +251,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def clear(self):
         self.blocks[:] = []
-        self.__group.clear_labels()
         self.protocol_labels[:] = []
 
 
@@ -277,7 +260,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def create_fuzzing_label(self, start, end, refblock) -> ProtocolLabel:
         fuz_lbl = self.__group.add_protocol_label(start, end, refblock, 0, False)
         for block in self.blocks:
-            block.fuzz_labels.append(fuz_lbl)
+            block.labelset.append(fuz_lbl)
         return fuz_lbl
 
     def remove_label(self, label: ProtocolLabel):

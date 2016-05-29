@@ -133,13 +133,6 @@ class ProtocolGroup(object):
         return int(start), int(math.ceil(end))
 
 
-    def add_label(self, lbl: ProtocolLabel, refresh=True, decode=True):
-        if lbl not in self.labels:
-            lbl.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
-            self.labels.append(lbl)
-            self.labels.sort()
-
-
     def remove_label(self, label: ProtocolLabel):
         try:
             self.labels.remove(label)
@@ -163,8 +156,6 @@ class ProtocolGroup(object):
     def set_labels(self, val):
         self.__labels = val # For AmbleAssignPlugin
 
-    def clear_labels(self):
-        self.__labels[:] = []
 
     def add_protocol_item(self, protocol_item):
         """

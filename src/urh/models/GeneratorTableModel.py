@@ -23,19 +23,6 @@ class GeneratorTableModel(TableModel):
         self.decode = False
         self.is_generator = True
 
-    def refresh_bgcolors_and_tooltips(self):
-        self.background_colors.clear()
-        self.tooltips.clear()
-        label_colors = constants.LABEL_COLORS
-
-        for lbl in self.protocol.protocol_labels:
-            bg_color = label_colors[lbl.color_index]
-            for i in lbl.block_numbers:
-                start, end = self.protocol.get_label_range(lbl, self.proto_view, self.decode)
-                for j in range(start, end):
-                    self.background_colors[i, j] = bg_color
-                    self.tooltips[i, j] = lbl.name
-
     def refresh_fonts(self):
         self.bold_fonts.clear()
         self.text_colors.clear()
@@ -46,10 +33,8 @@ class GeneratorTableModel(TableModel):
                 for j in range(f[0], f[1]):
                     self.bold_fonts[i, j] = True
 
-        for lbl in pac.protocol_labels:
-            if lbl.active_fuzzing:
-                i = lbl.refblock
-                for j in range(*pac.get_label_range(lbl, self.proto_view, False)):
+            for lbl in block.active_fuzzing_labels:
+                for j in range(*block.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
                     self.bold_fonts[i, j] = True
                     self.text_colors[i, j] = QColor("orange")
 

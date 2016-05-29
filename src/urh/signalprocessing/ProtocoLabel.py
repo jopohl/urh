@@ -107,6 +107,9 @@ class ProtocolLabel(object):
     def __eq__(self, other):
         return self.start == other.start and self.end == other.end and self.name == other.name
 
+    def __hash__(self):
+        return hash("{}/{}/{}".format(self.start, self.end, self.name))
+
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)
 

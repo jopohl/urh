@@ -30,6 +30,8 @@ class TestLabels(unittest.TestCase):
         self.cframe.add_protocol_label(0, 40, 1, 0, edit_label_name = False)  # Sync
         self.cframe.add_protocol_label(43, 43, 2, 0, edit_label_name = False)  # FuzzBit
 
+        self.assertEqual(len(self.cframe.active_labelset), 2)
+
     def tearDown(self):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
 
@@ -72,7 +74,7 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(len(labels), 2)
 
         # Fuzz Label
-        lbl = labels[1]
+        lbl = self.gframe.table_model.protocol.blocks[0].labelset[1]
         lbl.fuzz_values.append("1")
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
@@ -84,8 +86,9 @@ class TestLabels(unittest.TestCase):
         self.gframe.refresh_table()
         self.gframe.ui.btnFuzz.setEnabled(True)
         self.gframe.ui.btnFuzz.click()
+        self.assertTrue(lbl.active_fuzzing)
+        self.assertIn(lbl, self.gframe.table_model.protocol.blocks[0].labelset)
         self.assertEqual(self.gframe.table_model.row_count, 4 + 3)
-        self.assertEqual(lbl.refblock, 2)
 
         # Check if Background for fuzzed labels is drawn correctly
         self.__check_background_is_drawn(lbl, 43, 43)
@@ -108,8 +111,8 @@ class TestLabels(unittest.TestCase):
     def __check_background_is_drawn(self, lbl, lbl_start, lbl_end):
         pac = self.gframe.table_model.protocol
         for i in range(self.gframe.table_model.row_count):
-            labels_for_block = pac.blocks[i].fuzz_labels
+            labels_for_block = pac.blocks[i].labelset
             self.assertIn(lbl, labels_for_block)
-            start, end = pac.get_label_range(lbl, self.gframe.table_model.proto_view, False)
+            start, end = pac.blocks[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
             self.assertEqual(start, lbl_start)
             self.assertEqual(end, lbl_end + 1)

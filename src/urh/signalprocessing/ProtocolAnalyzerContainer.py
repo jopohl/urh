@@ -253,14 +253,8 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.blocks[:] = []
         self.protocol_labels[:] = []
 
-
-    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
-        return self.__group.get_label_range(lbl, view, decode)
-
     def create_fuzzing_label(self, start, end, refblock) -> ProtocolLabel:
-        fuz_lbl = self.__group.add_protocol_label(start, end, refblock, 0, False)
-        for block in self.blocks:
-            block.labelset.append(fuz_lbl)
+        fuz_lbl = self.blocks[refblock].labelset.add_protocol_label(start=start, end=end, type_index= 0)
         return fuz_lbl
 
     def remove_label(self, label: ProtocolLabel):
@@ -301,10 +295,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         # Save data
         data_tag = ET.SubElement(root, "data")
         for i, block in enumerate(self.blocks):
-            block_tag = ET.SubElement(data_tag, "block", attrib={"modulator_index": str(block.modulator_indx),
-                                                                 "decoding_index": str(decoders.index(block.decoder)),
-                                                                 "pause": str(block.pause),"index": str(i)})
-            block_tag.text = block.plain_bits_str
+            block_tag = block.to_xml(decoders=decoders, include_labelset=True)
+            block_tag.set("bits", block.plain_bits_str)
+            data_tag.append(block_tag)
 
         # Save labels
         if len(self.protocol_labels) > 0:
@@ -352,20 +345,13 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 self.used_symbols.add(s)
 
         block_tags = root.find("data").findall("block")
-        self.blocks[:] = [None] * len(block_tags)
+        self.blocks[:] = []
 
         for block_tag in block_tags:
-            block = ProtocolBlock.from_plain_bits_str(block_tag.text, {s.name: s for s in self.used_symbols})
+            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"), symbols={s.name: s for s in self.used_symbols},
+                                                      labelset=None)
+            block.from_xml(tag=block_tag, participants=None, decoders=decoders)
             block.modulator_indx = Formatter.str2val(block_tag.get("modulator_index"), int, 0)
             block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]
-            self.blocks[Formatter.str2val(block_tag.get("index"), int)] = block
             block.pause = Formatter.str2val(block_tag.get("pause"), int)
-
-        # Todo read labelsets instead labels
-        self.protocol_labels[:] = []
-        labels_tag = root.find("labels")
-        if labels_tag:
-            label_tags = labels_tag.findall("label")
-            self.protocol_labels = [None] * len(label_tags)
-            for label_tag in label_tags:
-                self.protocol_labels[int(label_tag.get("index"))] = ProtocolLabel.from_xml(label_tag)
+            self.blocks.append(block)

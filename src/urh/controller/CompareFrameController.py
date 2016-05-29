@@ -853,9 +853,10 @@ class CompareFrameController(QFrame):
     @pyqtSlot(int)
     def show_protocol_labels(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
+        block = next(block for block in self.proto_analyzer.blocks if self.active_labelset.id == block.labelset.id)
         label_controller = ProtocolLabelController(preselected_index=preselected_index, labelset=self.active_labelset,
                                                    max_end=numpy.max([len(block) for block in self.proto_analyzer.blocks]),
-                                                   viewtype=view_type,
+                                                   viewtype=view_type, block=block,
                                                    parent=self)
         label_controller.exec_()
 

@@ -534,16 +534,27 @@ class ProtocolBlock(object):
 
         return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=labelset)
 
-    def to_xml(self) -> ET.Element:
+    def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
         root = ET.Element("block")
         root.set("labelset_id", self.labelset.id)
+        root.set("modulator_index", str(self.modulator_indx))
+        root.set("pause", str(self.pause))
+        if decoders:
+            root.set("decoding_index", str(decoders.index(self.decoder)))
         if self.participant is not None:
             root.set("participant_id",  self.participant.id)
+        if include_labelset:
+            root.append(self.labelset.to_xml())
         return root
 
-    def from_xml(self, tag: ET.Element, participants, labelsets):
+    def from_xml(self, tag: ET.Element, participants, decoders=None, labelsets=None):
         part_id = tag.get("participant_id", None)
         labelset_id = tag.get("labelset_id", None)
+        self.modulator_indx = int(tag.get("modulator_index", self.modulator_indx))
+        self.pause = int(tag.get("pause", self.pause))
+        decoding_index = tag.get("decoding_index", None)
+        if decoding_index:
+            self.decoder = decoders[int(decoding_index)]
 
         if part_id:
             for participant in participants:
@@ -553,11 +564,15 @@ class ProtocolBlock(object):
             if self.participant is None:
                 logger.warning("No participant matched the id {0} from xml".format(part_id))
 
-        if labelset_id:
+        if labelset_id and labelsets:
             for labelset in labelsets:
                 if labelset.id == labelset_id:
                     self.labelset = labelset
                     break
+
+        labelset_tag = tag.find("labelset")
+        if labelset_tag:
+            self.labelset = LabelSet.from_xml(labelset_tag)
 
 
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):

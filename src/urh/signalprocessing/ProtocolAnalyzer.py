@@ -639,9 +639,3 @@ class ProtocolAnalyzer(object):
 
     def set_labels(self, val):
         self._protocol_labels = val
-
-
-    def get_label_range(self, lbl, viewtype, decoded: bool):
-        # TODO
-        start, end = self.proto_analyzer.get_label_range(lbl, self.ui.cbProtoView.currentIndex())
-

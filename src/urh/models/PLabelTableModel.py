@@ -3,6 +3,7 @@ from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 
@@ -11,7 +12,7 @@ class PLabelTableModel(QAbstractTableModel):
 
     label_removed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, labelset: LabelSet, parent=None):
+    def __init__(self, labelset: LabelSet, block: ProtocolBlock, parent=None):
         super().__init__(parent)
         self.row_count = len(labelset)
         self.proto_view = 0
@@ -45,9 +46,9 @@ class PLabelTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return self.labelset.get_label_range(lbl, self.proto_view, True)[0] + 1
+                return self.block.get_label_range(lbl, self.proto_view, True)[0] + 1
             elif j == 2:
-                return self.labelset.get_label_range(lbl, self.proto_view, True)[1]
+                return self.block.get_label_range(lbl, self.proto_view, True)[1]
             elif j == 3:
                 return lbl.color_index
             elif j == 4:

@@ -50,7 +50,7 @@ class TestProtocolTable(unittest.TestCase):
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_BLOCKS):
-            b = ProtocolBlock([True] * self.BITS_PER_BLOCK, pause=1000, bit_alignment_positions=[])
+            b = ProtocolBlock([True] * self.BITS_PER_BLOCK, pause=1000, bit_alignment_positions=[], labelset=result.default_labelset)
             result.blocks.append(b)
         return result
 
@@ -58,7 +58,7 @@ class TestProtocolTable(unittest.TestCase):
         start = 0
         label_len = 3
         for i in range(self.NUM_LABELS):
-            self.cframe.add_protocol_label(start, start+label_len, 0, 0, False, edit_label_name=False)
+            self.cframe.add_protocol_label(start, start+label_len, 0, 0, edit_label_name=False)
             start += label_len +1
 
     def __role_to_str(self, role):

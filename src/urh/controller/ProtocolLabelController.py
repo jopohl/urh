@@ -6,6 +6,7 @@ from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -15,11 +16,11 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 
 
 class ProtocolLabelController(QDialog):
-    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, parent=None):
+    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, block:ProtocolBlock, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
-        self.model = PLabelTableModel(labelset)
+        self.model = PLabelTableModel(labelset, block=block)
         self.preselected_index = preselected_index
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))

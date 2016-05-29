@@ -4,7 +4,7 @@ import string
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.util.Logger import logger
-
+import xml.etree.ElementTree as ET
 
 class LabelSet(list):
     def __init__(self, name: str, iterable=None, id=None):
@@ -13,21 +13,6 @@ class LabelSet(list):
 
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
-
-
-    def get_label_range(self):
-        pass # TODO
-
-    def find_overlapping_labels(self, start: int, end: int, proto_view):
-        ostart = self.convert_index(start, proto_view, 0, True)[0]
-        oend = self.convert_index(end, proto_view, 0, True)[1]
-
-
-        overlapping_labels = [lbl for lbl in self.labels
-                              if any(i in range(lbl.start, lbl.end) for i in range(ostart, oend))]
-
-        return overlapping_labels
-
 
 
     @property
@@ -86,3 +71,18 @@ class LabelSet(list):
 
     def __getitem__(self, index) -> ProtocolLabel:
         return super().__getitem__(index)
+
+    def to_xml(self) -> ET.Element:
+        result = ET.Element("labelset", attrib={"name": self.name, "id": self.id})
+        for lbl in self:
+            result.append(lbl.to_xml(-1))
+        return result
+
+    @staticmethod
+    def from_xml(tag:  ET.Element):
+        name = tag.get("name", "blank")
+        id = tag.get("id", None)
+        labels = []
+        for lbl_tag in tag.findall("label"):
+            labels.append(ProtocolLabel.from_xml(lbl_tag))
+        return LabelSet(name=name, iterable=labels, id=id)

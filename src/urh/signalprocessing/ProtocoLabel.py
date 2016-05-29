@@ -23,6 +23,7 @@ class ProtocolLabel(object):
     DISPLAY_TYPES = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
+
     def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int):
         self.signals = LabelSignals()
         self.__block_numbers = []

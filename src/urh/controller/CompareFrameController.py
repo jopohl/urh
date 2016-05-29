@@ -835,8 +835,6 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.rootItem.addGroup()
         for labelset in self.proto_analyzer.labelsets:
             labelset.clear()
-        for block in self.proto_analyzer.blocks:
-            block.exclude_from_decoding_labels[:] = []
         self.refresh()
 
     @pyqtSlot(int)

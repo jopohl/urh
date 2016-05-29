@@ -72,7 +72,6 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzingStart.valueChanged.connect(self.on_fuzzing_start_changed)
         self.ui.spinBoxFuzzingEnd.valueChanged.connect(self.on_fuzzing_end_changed)
         self.ui.comboBoxFuzzingLabel.currentIndexChanged.connect(self.on_current_label_changed)
-        self.ui.spinBoxRefBlock.valueChanged.connect(self.on_fuzzing_ref_block_changed)
         self.ui.btnAddRow.clicked.connect(self.on_btn_add_row_clicked)
         self.ui.btnDelRow.clicked.connect(self.on_btn_del_row_clicked)
         self.ui.tblFuzzingValues.deletion_wanted.connect(self.delete_lines)
@@ -138,7 +137,6 @@ class FuzzingDialogController(QDialog):
         self.ui.lFuzzingReferenceBlock.hide()
         self.ui.spinBoxFuzzingStart.hide()
         self.ui.spinBoxFuzzingEnd.hide()
-        self.ui.spinBoxRefBlock.hide()
         self.ui.lFuzzedValues.setText(
             self.tr("In this dialog you can add fuzzed values to all labels for convenience."))
         self.ui.tblFuzzingValues.setDisabled(True)
@@ -177,14 +175,6 @@ class FuzzingDialogController(QDialog):
             self.fuzz_table_model.update()
             self.update_block_data_string()
             self.ui.tblFuzzingValues.resize_me()
-
-    @pyqtSlot()
-    def on_fuzzing_ref_block_changed(self):
-        self.current_label.refblock = self.ui.spinBoxRefBlock.value() - 1
-        self.update_block_data_string()
-        self.ui.spinBoxFuzzingStart.setMaximum(len(self.block_data))
-        self.ui.spinBoxFuzzingEnd.setMaximum(len(self.block_data))
-        self.ui.tblFuzzingValues.resize_me()
 
     @pyqtSlot()
     def on_btn_add_row_clicked(self):

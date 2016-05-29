@@ -19,7 +19,7 @@ class ProtocolBlock(object):
     """
 
     def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
-                 fuzz_created=None, bit_sample_pos=None, bit_len=100, exclude_from_decoding_labels=None):
+                 fuzz_created=None, bit_sample_pos=None, bit_len=100):
         """
 
         :param pause: Pause NACH dem Block in Samples
@@ -54,9 +54,6 @@ class ProtocolBlock(object):
         self.__encoded_bits = None
         self.decoding_errors = 0
 
-        self.exclude_from_decoding_labels = [] if exclude_from_decoding_labels is None else exclude_from_decoding_labels # Todo: remove
-        """:type: list of ProtocolLabel """
-
         self.bit_len = bit_len  # Für Übernahme in Modulator
 
         if bit_sample_pos is None:
@@ -86,6 +83,10 @@ class ProtocolBlock(object):
     @property
     def active_fuzzing_labels(self):
         return [lbl for lbl in self.labelset if lbl.active_fuzzing]
+
+    @property
+    def exclude_from_decoding_labels(self):
+        return [lbl for lbl in self.labelset if not lbl.apply_decoding]
 
     def __getitem__(self, index: int):
         return self.plain_bits[index]

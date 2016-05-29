@@ -36,22 +36,6 @@ class GeneratorListModel(QAbstractListModel):
             return self.proto_container.protocol_labels[row].fuzz_me
         elif role == Qt.BackgroundColorRole:
             return constants.LABEL_COLORS[self.proto_container.protocol_labels[row].color_index]
-        elif role == Qt.TextColorRole or role == Qt.ToolTipRole:
-            cur_label = self.proto_container.protocol_labels[row]
-            same_ref_labels = [l for l in self.proto_container.protocol_labels if l != cur_label and
-                               cur_label.refblock == l.refblock]
-
-            overlapping_labels = []
-            for l in same_ref_labels:
-                if any(x in range(cur_label.start, cur_label.end) for x in range(l.start, l.end)):
-                    overlapping_labels.append(l)
-
-            if len(overlapping_labels) > 0:
-                if role == Qt.TextColorRole:
-                    return QColor("red")
-                elif role == Qt.ToolTipRole:
-                    return "Label overlaps with {0}. " \
-                           "This may cause problems when fuzzing.".format(overlapping_labels[0].name)
 
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):

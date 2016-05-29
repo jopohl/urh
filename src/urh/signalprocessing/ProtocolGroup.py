@@ -139,17 +139,6 @@ class ProtocolGroup(object):
         except ValueError:
             return
 
-        for block in self.blocks:
-            try:
-                block.exclude_from_decoding_labels.remove(label)
-            except ValueError:
-                continue
-
-            try:
-                block.fuzz_labels.remove(label)
-            except ValueError:
-                continue
-
     def __repr__(self):
         return "{0} ({1})".format(self.name, self.decoding.name)
 

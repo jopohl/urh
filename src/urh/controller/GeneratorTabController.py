@@ -378,7 +378,7 @@ class GeneratorTabController(QWidget):
             self.ui.btnFuzz.setFont(font)
             self.ui.btnFuzz.setStyleSheet("")
 
-        has_same_block = pac.has_fuzz_labels_with_same_block
+        has_same_block = pac.multiple_fuzz_labels_per_block
         self.ui.rBSuccessive.setEnabled(has_same_block)
         self.ui.rBExhaustive.setEnabled(has_same_block)
         self.ui.rbConcurrent.setEnabled(has_same_block)
@@ -399,10 +399,10 @@ class GeneratorTabController(QWidget):
         self.ui.lEstimatedTime.setText(locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
 
     @pyqtSlot(int, int, int)
-    def create_fuzzing_label(self, refblock: int, start: int, end: int):
+    def create_fuzzing_label(self, block_index: int, start: int, end: int):
         con = self.table_model.protocol
-        start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, refblock)
-        lbl = con.create_fuzzing_label(start, end, refblock)
+        start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, block_index)
+        lbl = con.create_fuzzing_label(start, end, block_index)
         self.show_fuzzing_dialog(con.protocol_labels.index(lbl))
 
     @pyqtSlot()

@@ -20,11 +20,11 @@ class BlockBreakAction(QUndoCommand):
         block = copy.deepcopy(self.proto_analyzer.blocks[self.block_nr])
         block1 = ProtocolBlock(plain_bits=block.plain_bits[:self.pos], pause=0,
                                bit_alignment_positions=self.proto_analyzer.bit_alignment_positions, rssi=0, decoder=block.decoder, labelset=block.labelset,
-                               bit_len=block.bit_len, exclude_from_decoding_labels=block.exclude_from_decoding_labels)
+                               bit_len=block.bit_len)
         block2 = ProtocolBlock(plain_bits=block.plain_bits[self.pos:], pause=block.pause,
                                bit_alignment_positions=self.proto_analyzer.bit_alignment_positions,
                                rssi=0, decoder=block.decoder, labelset=block.labelset,
-                               bit_len=block.bit_len, exclude_from_decoding_labels=block.exclude_from_decoding_labels)
+                               bit_len=block.bit_len)
         self.proto_analyzer.blocks[self.block_nr] = block1
         self.proto_analyzer.blocks.insert(self.block_nr + 1, block2)
 

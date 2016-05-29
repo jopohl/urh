@@ -60,7 +60,6 @@ def save_protocol(filename: str, viewtype: int, groups, decoding_names: list, sy
                 f.write("\n\n")
                 f.write("Name: {0}\n".format(label.name))
                 f.write("Bits: {0}-{1}\n".format(label.start+1, label.end))
-                f.write("Reference Block: {0}\n".format(label.refblock+1))
                 f.write("DO NOT CHANGE NEXT LINE:\n")
                 f.write("Applies for Blocks: {0}\n".format(", ".join(map(str, label.block_numbers))))
                 f.write("Apply Decoding: {0}\n".format(label.apply_decoding))

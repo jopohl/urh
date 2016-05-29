@@ -96,6 +96,12 @@ class GeneratorTabController(QWidget):
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 
     @property
+    def selected_block(self):
+        # TODO return selected block, if no blocks there return None
+        return self.table_model.protocol.blocks[0]
+
+
+    @property
     def active_groups(self):
         return self.tree_model.groups
 
@@ -316,21 +322,24 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
-        fdc = FuzzingDialogController(self.table_model.protocol, label_index, view, parent=self)
-        fdc.show()
-        fdc.finished.connect(self.refresh_label_list)
-        fdc.finished.connect(self.refresh_table)
-        fdc.finished.connect(self.set_fuzzing_ui_status)
+        if self.selected_block is not None:
+            fdc = FuzzingDialogController(self.selected_block, label_index, view, parent=self)
+            fdc.show()
+            fdc.finished.connect(self.refresh_label_list)
+            fdc.finished.connect(self.refresh_table)
+            fdc.finished.connect(self.set_fuzzing_ui_status)
 
     @pyqtSlot()
     def show_epic_fuzzing_dialog(self):
+        # TODO Change to select block in dialog
         view = self.ui.cbViewType.currentIndex()
-        fdc = FuzzingDialogController(self.table_model.protocol, 0, view, parent=self)
-        fdc.enter_epic_mode()
-        fdc.show()
-        fdc.finished.connect(self.refresh_label_list)
-        fdc.finished.connect(self.refresh_table)
-        fdc.finished.connect(self.set_fuzzing_ui_status)
+        if self.table_model.protocol.num_blocks > 0:
+            fdc = FuzzingDialogController(self.table_model.protocol, 0, view, parent=self)
+            fdc.enter_epic_mode()
+            fdc.show()
+            fdc.finished.connect(self.refresh_label_list)
+            fdc.finished.connect(self.refresh_table)
+            fdc.finished.connect(self.set_fuzzing_ui_status)
 
     @pyqtSlot()
     def handle_plabel_fuzzing_state_changed(self):

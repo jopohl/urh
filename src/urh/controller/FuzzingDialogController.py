@@ -6,17 +6,18 @@ from PyQt5.QtWidgets import QDialog
 from urh.models.FuzzingTableModel import FuzzingTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.ui.ui_fuzzing import Ui_FuzzingDialog
 
 
 class FuzzingDialogController(QDialog):
-    def __init__(self, proto_container: ProtocolAnalyzerContainer, label_index, proto_view: int, parent=None):
+    def __init__(self, proto_block: ProtocolBlock, label_index, proto_view: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_FuzzingDialog()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.current_label_index = label_index
-        self.proto_container = proto_container
+        self.block = proto_block
 
         self.proto_view = proto_view
         self.fuzz_table_model = FuzzingTableModel(self.current_label, proto_view)
@@ -24,12 +25,9 @@ class FuzzingDialogController(QDialog):
         self.ui.tblFuzzingValues.setModel(self.fuzz_table_model)
         self.fuzz_table_model.update()
 
-        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.proto_container.protocol_labels])
+        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.block.labelset])
         self.ui.comboBoxFuzzingLabel.setCurrentIndex(self.current_label_index)
-        self.ui.spinBoxRefBlock.setMinimum(1)
-        self.ui.spinBoxRefBlock.setMaximum(self.proto_container.num_blocks)
 
-        self.ui.spinBoxRefBlock.setValue(self.current_label.refblock + 1)
         self.ui.spinBoxFuzzingStart.setValue(self.current_label_start + 1)
         self.ui.spinBoxFuzzingEnd.setValue(self.current_label_end)
         self.ui.spinBoxFuzzingStart.setMaximum(len(self.block_data))
@@ -44,32 +42,29 @@ class FuzzingDialogController(QDialog):
 
     @property
     def current_label(self) -> ProtocolLabel:
-        cur_label = self.proto_container.protocol_labels[self.current_label_index]
-        if cur_label.refblock >= self.proto_container.num_blocks:
-            cur_label.refblock = 0
-
+        cur_label = self.block.labelset[self.current_label_index]
         cur_label.fuzz_values = [fv for fv in cur_label.fuzz_values if fv] # Remove empty strings
 
         if len(cur_label.fuzz_values) == 0:
-            cur_label.fuzz_values.append(self.proto_container.plain_bits_str[cur_label.refblock][cur_label.start:cur_label.end])
+            cur_label.fuzz_values.append(self.block.plain_bits_str[cur_label.start:cur_label.end])
         return cur_label
 
     @property
     def current_label_start(self):
-        return self.proto_container.get_label_range(self.current_label, self.proto_view, False)[0]
+        return self.block.get_label_range(self.current_label, self.proto_view, False)[0]
 
     @property
     def current_label_end(self):
-        return self.proto_container.get_label_range(self.current_label, self.proto_view, False)[1]
+        return self.block.get_label_range(self.current_label, self.proto_view, False)[1]
 
     @property
     def block_data(self):
         if self.proto_view == 0:
-            return self.proto_container.plain_bits_str[self.current_label.refblock]
+            return self.block.plain_bits_str
         elif self.proto_view == 1:
-            return self.proto_container.plain_hex_str[self.current_label.refblock]
+            return self.block.plain_hex_str
         elif self.proto_view == 2:
-            return self.proto_container.plain_ascii_str[self.current_label.refblock]
+            return self.block.plain_ascii_str
         else:
             return None
 
@@ -156,8 +151,8 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzingEnd.setMinimum(self.ui.spinBoxFuzzingStart.value())
         value = self.ui.spinBoxFuzzingStart.value()
         new_start = \
-        self.proto_container.convert_index(value - 1, self.proto_view, 0, False, self.current_label.refblock)[0]
-        self.proto_container.protocol_labels[self.current_label_index].start = new_start
+        self.block.convert_index(value - 1, self.proto_view, 0, False)[0]
+        self.block.labelset[self.current_label_index].start = new_start
         self.current_label.fuzz_values[:] = []
         self.update_block_data_string()
         self.fuzz_table_model.update()
@@ -167,9 +162,8 @@ class FuzzingDialogController(QDialog):
     def on_fuzzing_end_changed(self):
         self.ui.spinBoxFuzzingStart.setMaximum(self.ui.spinBoxFuzzingEnd.value())
         value = self.ui.spinBoxFuzzingEnd.value()
-        new_end = self.proto_container.convert_index(value - 1, self.proto_view, 0, False, self.current_label.refblock)[
-                      1] + 1
-        self.proto_container.protocol_labels[self.current_label_index].end = new_end
+        new_end = self.block.convert_index(value - 1, self.proto_view, 0, False)[1] + 1
+        self.block.labelset[self.current_label_index].end = new_end
         self.current_label.fuzz_values[:] = []
         self.update_block_data_string()
         self.fuzz_table_model.update()
@@ -302,7 +296,7 @@ class FuzzingDialogController(QDialog):
         if not self.epic_mode:
             self.fuzz_table_model.add_range(start, end + 1, step)
         else:
-            self.fuzz_table_model.add_range(start, end + 1, step, self.proto_container.protocol_labels)
+            self.fuzz_table_model.add_range(start, end + 1, step, self.block.labelset)
             self.remove_duplicates()
 
     @pyqtSlot()
@@ -321,7 +315,7 @@ class FuzzingDialogController(QDialog):
             self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
         else:
             self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals,
-                                                 self.proto_container.protocol_labels)
+                                                 self.block.labelset)
             self.remove_duplicates()
 
     @pyqtSlot()
@@ -333,12 +327,12 @@ class FuzzingDialogController(QDialog):
         if not self.epic_mode:
             self.fuzz_table_model.add_random(n, minimum, maximum)
         else:
-            self.fuzz_table_model.add_random(n, minimum, maximum, self.proto_container.protocol_labels)
+            self.fuzz_table_model.add_random(n, minimum, maximum, self.block.labelset)
             self.remove_duplicates()
 
     def remove_duplicates(self):
         if self.epic_mode and self.ui.chkBRemoveDuplicates.isChecked():
-            for lbl in self.proto_container.protocol_labels:
+            for lbl in self.block.labelset:
                 seq = lbl.fuzz_values[:]
                 seen = set()
                 add_seen = seen.add
@@ -346,6 +340,6 @@ class FuzzingDialogController(QDialog):
 
     @pyqtSlot()
     def set_current_label_name(self):
-        lbl = self.proto_container.protocol_labels[self.ui.comboBoxFuzzingLabel.currentIndex()]
+        lbl = self.block.labelset[self.ui.comboBoxFuzzingLabel.currentIndex()]
         lbl.name = self.ui.comboBoxFuzzingLabel.currentText()
         self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), lbl.name)

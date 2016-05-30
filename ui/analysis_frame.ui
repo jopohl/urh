@@ -803,6 +803,9 @@
           </widget>
          </item>
          <item>
+          <widget class="QComboBox" name="cbLabelsets"/>
+         </item>
+         <item>
           <widget class="ProtocolLabelListView" name="listViewLabelNames">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">

@@ -42,6 +42,8 @@ class LabelSet(list):
             self.append(proto_label)
             self.sort()
 
+        return proto_label # Return label to set editor focus after adding
+
     def add_label(self, lbl: ProtocolLabel):
         self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
 

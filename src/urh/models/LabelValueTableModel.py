@@ -26,6 +26,13 @@ class LabelValueTableModel(QAbstractTableModel):
         self.__block_index = value
         self.update()
 
+    @property
+    def block(self):
+        if self.block_index != -1:
+            return self.proto_analyzer.blocks[self.block_index]
+        else:
+            return None
+
     def update(self):
         self.display_labels = self.controller.active_labelset
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
@@ -60,10 +67,9 @@ class LabelValueTableModel(QAbstractTableModel):
             elif j == 1:
                 return lbl.DISPLAY_TYPES[lbl.display_type_index]
             elif j == 2:
-                group = self.controller.get_labelset_for_label(lbl)
-                if not group:
+                if not self.block:
                     return None
-                start, end = group.get_label_range(lbl, lbl.display_type_index % 3, True)
+                start, end = self.block.get_label_range(lbl, lbl.display_type_index % 3, True)
                 if lbl.display_type_index == 0:
                     try:
                         return self.bit_str[self.block_index][start:end]

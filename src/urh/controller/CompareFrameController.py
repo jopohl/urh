@@ -57,6 +57,9 @@ class CompareFrameController(QFrame):
         clocale = QLocale()
         self.decimal_point = clocale.decimalPoint()
 
+        self.__selected_labelset = self.proto_analyzer.default_labelset
+        self.fill_labelset_combobox()
+
         self.participant_list_model = ParticipantListModel(project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_list_model)
 
@@ -113,8 +116,6 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
 
-
-
     @property
     def active_group_ids(self):
         """
@@ -149,8 +150,21 @@ class CompareFrameController(QFrame):
 
     @property
     def active_labelset(self):
-        # Todo: Write logic for this
-        return self.proto_analyzer.default_labelset
+        return self.__selected_labelset
+
+    @active_labelset.setter
+    def active_labelset(self, val):
+        if val not in self.proto_analyzer.labelsets:
+            logger.error("Labelset {} not in labelsets".format(val.name))
+            return
+
+        if val != self.active_labelset:
+            self.__selected_labelset = val
+
+            self.ui.cbLabelsets.blockSignals(True)
+            self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
+            self.ui.cbLabelsets.blockSignals(False)
+
 
     def handle_files_dropped(self, files: list):
         self.files_dropped.emit(files)
@@ -290,6 +304,8 @@ class CompareFrameController(QFrame):
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
 
+        self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
+
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
         self.ui.cbDecoding.blockSignals(True)
@@ -303,6 +319,13 @@ class CompareFrameController(QFrame):
         self.ui.cbDecoding.addItem("...")
         self.ui.cbDecoding.setCurrentIndex(prev_index)
         self.ui.cbDecoding.blockSignals(False)
+
+    def fill_labelset_combobox(self):
+        self.ui.cbLabelsets.blockSignals(True)
+        self.ui.cbLabelsets.clear()
+        for labelset in self.proto_analyzer.labelsets:
+            self.ui.cbLabelsets.addItem(labelset.name)
+        self.ui.cbLabelsets.blockSignals(False)
 
     def on_chkbox_show_differences_changed(self):
         chkd = self.ui.cbShowDiffs.isChecked()
@@ -637,6 +660,7 @@ class CompareFrameController(QFrame):
             self.ui.lNumSelectedColumns.setText("0")
             self.ui.lblLabelValues.setText(self.tr("Label values for block "))
             self.label_value_model.block_index = -1
+            self.active_labelset = self.proto_analyzer.default_labelset
             return -1, -1
 
         min_row = numpy.min([rng.top() for rng in selected])
@@ -649,6 +673,8 @@ class CompareFrameController(QFrame):
 
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
+
+        self.active_labelset = self.proto_analyzer.blocks[min_row].labelset
 
         if cur_view == 1:
             start *= 4
@@ -1246,3 +1272,6 @@ class CompareFrameController(QFrame):
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
+
+    def on_cblabelset_index_changed(self):
+        self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]

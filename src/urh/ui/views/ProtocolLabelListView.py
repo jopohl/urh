@@ -53,23 +53,23 @@ class ProtocolLabelListView(QListView):
         editAction = menu.addAction("Edit Protocol Label...")
 
         assign_actions = []
-        group_names = []
+        labelset_names = []
 
 
         if min_row > -1:
             menu.addAction(self.del_rows_action)
-            group_names = [group.name for group in self.model().controller.groups]
+            labelset_names = [lset.name for lset in self.model().controller.proto_analyzer.labelsets]
 
             try:
                 proto_label = self.model().get_label_at(index.row())
-                avail_groups = []
-                for group in self.model().controller.groups:
-                    if proto_label not in group.labels:
-                        avail_groups.append(group)
+                avail_labelsets = []
+                for lblset in self.model().controller.proto_analyzer.labelsets:
+                    if proto_label not in lblset:
+                        avail_labelsets.append(lblset)
 
-                if avail_groups:
-                    assign_menu = menu.addMenu("Copy label(s) to group")
-                    assign_actions = [assign_menu.addAction(group.name) for group in avail_groups]
+                if avail_labelsets:
+                    assign_menu = menu.addMenu("Copy label(s) to labelset")
+                    assign_actions = [assign_menu.addAction(labelset.name) for labelset in avail_labelsets]
             except IndexError:
                 pass
 
@@ -86,8 +86,8 @@ class ProtocolLabelListView(QListView):
         elif action == hideAllAction:
             self.model().hideAll()
         elif action in assign_actions:
-            group_id = group_names.index(action.text())
-            self.model().add_labels_to_labelset(min_row, max_row, group_id)
+            labelset_id = labelset_names.index(action.text())
+            self.model().add_labels_to_labelset(min_row, max_row, labelset_id)
 
 
     def delete_rows(self):

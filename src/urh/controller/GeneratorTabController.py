@@ -97,8 +97,11 @@ class GeneratorTabController(QWidget):
 
     @property
     def selected_block(self):
-        # TODO return selected block, if no blocks there return None
-        return self.table_model.protocol.blocks[0]
+        min_row, _, _, _ = self.ui.tableBlocks.selection_range()
+        if min_row == -1:
+            return None
+
+        return self.table_model.protocol.blocks[min_row]
 
 
     @property

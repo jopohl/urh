@@ -71,8 +71,7 @@ class ProtocolLabelListModel(QAbstractListModel):
     def delete_label_at(self, label_id: int):
         try:
             lbl = self.proto_labels[label_id]
-            for group in self.controller.active_groups:
-                group.remove_label(lbl)
+            self.proto_labels.remove(lbl)
             self.label_removed.emit(lbl)
         except IndexError:
             pass
@@ -81,9 +80,9 @@ class ProtocolLabelListModel(QAbstractListModel):
         for row in range(end, start-1, -1):
             self.delete_label_at(row)
 
-    def add_labels_to_labelset(self, start: int, end: int, group_id: int):
-        pass # TODO
-        #self.controller.add_labels_to_labelset(list(range(start, end + 1)), group_id)
+    def add_labels_to_labelset(self, start: int, end: int, labelset_id: int):
+        for lbl in self.proto_labels:
+            self.controller.proto_analyzer.labelsets[labelset_id].add_label(lbl)
 
     def flags(self, index):
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable |\

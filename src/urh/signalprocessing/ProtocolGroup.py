@@ -103,12 +103,6 @@ class ProtocolGroup(object):
         except IndexError:
             return None
 
-    def remove_label(self, label: ProtocolLabel): # todo remove this method (check usages!)
-        try:
-            self.labels.remove(label)
-        except ValueError:
-            return
-
     def __repr__(self):
         return "{0} ({1})".format(self.name, self.decoding.name)
 

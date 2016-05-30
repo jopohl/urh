@@ -52,7 +52,7 @@ class GeneratorTabController(QWidget):
         self.table_model.controller = self
         self.ui.tableBlocks.setModel(self.table_model)
 
-        self.label_list_model = GeneratorListModel(self.table_model.protocol)
+        self.label_list_model = GeneratorListModel(None)
         self.ui.listViewProtoLabels.setModel(self.label_list_model)
 
         self.refresh_modulators()
@@ -244,10 +244,12 @@ class GeneratorTabController(QWidget):
         if min_row == -1:
             self.ui.lEncodingValue.setText("-")  #
             self.ui.lEncodingValue.setToolTip("")
+            self.label_list_model.block = None
             return
 
         container = self.table_model.protocol
         block = container.blocks[min_row]
+        self.label_list_model.block = block
         decoder_name = block.decoder.name
         metrics = QFontMetrics(self.ui.lEncodingValue.font())
         elidedName = metrics.elidedText(decoder_name, Qt.ElideRight, self.ui.lEncodingValue.width())

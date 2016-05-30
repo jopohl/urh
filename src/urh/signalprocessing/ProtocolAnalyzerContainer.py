@@ -210,9 +210,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         fuz_lbl = self.blocks[block_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)
         return fuz_lbl
 
-    def remove_label(self, label: ProtocolLabel):
-        self.__group.remove_label(label)
-
     def set_decoder_for_blocks(self, decoder, blocks=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
 

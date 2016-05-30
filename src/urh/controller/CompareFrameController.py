@@ -381,6 +381,9 @@ class CompareFrameController(QFrame):
 
         :rtype: list of ProtocolAnalyzer
         """
+        # TODO: Use xml method from Container
+
+
         try:
             view, groups, symbols = ProtocolAnalyzer.from_file(filename)
         except Exception as e:
@@ -406,7 +409,7 @@ class CompareFrameController(QFrame):
             protolist.append(pa)
 
             for lbl in group_data["labels"]:
-                group.add_label(lbl, refresh=False)
+                group.add_label(lbl, refresh=False)  # remove after refactoring
 
         if protolist:
             self.ui.cbDecoding.blockSignals(True)
@@ -1188,7 +1191,7 @@ class CompareFrameController(QFrame):
         self.setCursor(Qt.WaitCursor)
         self.protocol_model.undo_stack.blockSignals(True)
         for p in active_analyze_plugins:
-            self.protocol_model.undo_stack.push(p.get_action(self.groups))
+            self.protocol_model.undo_stack.push(p.get_action(self.groups, self.proto_analyzer.default_labelset))
         self.protocol_model.undo_stack.blockSignals(False)
         self.protocol_model.update()
         self.protocol_label_list_model.update()

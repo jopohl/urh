@@ -1,5 +1,4 @@
 from urh.signalprocessing.encoding import encoding
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
@@ -30,14 +29,6 @@ class ProtocolGroup(object):
         :rtype: list of ProtocolTreeItem
         """
         return self.__items
-
-    @property
-    def labels(self): # todo: remove (check usages)
-        """
-
-        :rtype: list of ProtocolLabel
-        """
-        return self.__labels
 
     @property
     def num_protocols(self):

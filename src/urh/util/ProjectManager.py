@@ -453,6 +453,7 @@ class ProjectManager(QObject):
                 proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index= 0, color_index=color_index)
                 proto_label.display_type_index = int(label_tag.attrib["display_type_index"])
 
+                # Todo Remove group.add_label
                 group.add_label(proto_label)
 
             self.maincontroller.compare_frame_controller.expand_group_node(int(id))

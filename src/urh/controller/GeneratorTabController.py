@@ -87,7 +87,6 @@ class GeneratorTabController(QWidget):
         self.ui.lWPauses.doubleClicked.connect(self.on_lWPauses_double_clicked)
         self.ui.btnGenerate.clicked.connect(self.generate_file)
         self.ui.listViewProtoLabels.editActionTriggered.connect(self.show_fuzzing_dialog)
-        self.ui.listViewProtoLabels.editAllActionTriggered.connect(self.show_epic_fuzzing_dialog)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.handle_plabel_fuzzing_state_changed)
         self.ui.btnFuzz.clicked.connect(self.on_btn_fuzzing_clicked)
         self.ui.tableBlocks.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
@@ -329,18 +328,6 @@ class GeneratorTabController(QWidget):
         view = self.ui.cbViewType.currentIndex()
         if self.selected_block is not None:
             fdc = FuzzingDialogController(self.selected_block, label_index, view, parent=self)
-            fdc.show()
-            fdc.finished.connect(self.refresh_label_list)
-            fdc.finished.connect(self.refresh_table)
-            fdc.finished.connect(self.set_fuzzing_ui_status)
-
-    @pyqtSlot()
-    def show_epic_fuzzing_dialog(self):
-        # TODO Change to select block in dialog
-        view = self.ui.cbViewType.currentIndex()
-        if self.table_model.protocol.num_blocks > 0:
-            fdc = FuzzingDialogController(self.table_model.protocol, 0, view, parent=self)
-            fdc.enter_epic_mode()
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)

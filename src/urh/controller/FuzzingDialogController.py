@@ -33,8 +33,6 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzingStart.setMaximum(len(self.block_data))
         self.ui.spinBoxFuzzingEnd.setMaximum(len(self.block_data))
 
-        self.epic_mode = False
-
         self.update_block_data_string()
         self.ui.tblFuzzingValues.resize_me()
 
@@ -117,32 +115,6 @@ class FuzzingDialogController(QDialog):
         self.ui.lFuzzedBits.setText(self.block_data[fuz_start:fuz_end] + fuzamble)
         self.ui.lPostBits.setText(self.block_data[self.current_label_end:proto_end] + postambel)
         self.set_add_spinboxes_maximum_on_label_change()
-
-    def enter_epic_mode(self):
-        """
-        Versetzt den Dialog in den Epic Mode: Alle Labels sind gleichzeitig editierbar,
-        d.h. ihnen können alle auf einmal Werte hinzugefügt werden
-        :return:
-        """
-        self.ui.comboBoxFuzzingLabel.setEnabled(False)
-        self.ui.comboBoxFuzzingLabel.blockSignals(True)
-        self.ui.comboBoxFuzzingLabel.addItem("All Labels")
-        self.ui.comboBoxFuzzingLabel.setCurrentIndex(self.ui.comboBoxFuzzingLabel.count() - 1)
-        self.ui.lSourceBlock.hide()
-        self.ui.lPreBits.hide()
-        self.ui.lFuzzedBits.hide()
-        self.ui.lPostBits.hide()
-        self.ui.lFuzzingStart.hide()
-        self.ui.lFuzzingEnd.hide()
-        self.ui.lFuzzingReferenceBlock.hide()
-        self.ui.spinBoxFuzzingStart.hide()
-        self.ui.spinBoxFuzzingEnd.hide()
-        self.ui.lFuzzedValues.setText(
-            self.tr("In this dialog you can add fuzzed values to all labels for convenience."))
-        self.ui.tblFuzzingValues.setDisabled(True)
-        self.ui.btnAddRow.hide()
-        self.ui.btnDelRow.hide()
-        self.epic_mode = True
 
     @pyqtSlot()
     def on_fuzzing_start_changed(self):
@@ -283,11 +255,7 @@ class FuzzingDialogController(QDialog):
         start = self.ui.sBAddRangeStart.value()
         end = self.ui.sBAddRangeEnd.value()
         step = self.ui.sBAddRangeStep.value()
-        if not self.epic_mode:
-            self.fuzz_table_model.add_range(start, end + 1, step)
-        else:
-            self.fuzz_table_model.add_range(start, end + 1, step, self.block.labelset)
-            self.remove_duplicates()
+        self.fuzz_table_model.add_range(start, end + 1, step)
 
     @pyqtSlot()
     def on_btn_add_boundaries_clicked(self):
@@ -300,28 +268,17 @@ class FuzzingDialogController(QDialog):
             upper_bound = self.ui.spinBoxUpperBound.value()
 
         num_vals = self.ui.spinBoxBoundaryNumber.value()
-
-        if not self.epic_mode:
-            self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
-        else:
-            self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals,
-                                                 self.block.labelset)
-            self.remove_duplicates()
+        self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
 
     @pyqtSlot()
     def on_btn_add_random_clicked(self):
         n = self.ui.spinBoxNumberRandom.value()
         minimum = self.ui.spinBoxRandomMinimum.value()
         maximum = self.ui.spinBoxRandomMaximum.value()
-
-        if not self.epic_mode:
-            self.fuzz_table_model.add_random(n, minimum, maximum)
-        else:
-            self.fuzz_table_model.add_random(n, minimum, maximum, self.block.labelset)
-            self.remove_duplicates()
+        self.fuzz_table_model.add_random(n, minimum, maximum)
 
     def remove_duplicates(self):
-        if self.epic_mode and self.ui.chkBRemoveDuplicates.isChecked():
+        if self.ui.chkBRemoveDuplicates.isChecked():
             for lbl in self.block.labelset:
                 seq = lbl.fuzz_values[:]
                 seen = set()

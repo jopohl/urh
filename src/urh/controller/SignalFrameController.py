@@ -1140,5 +1140,6 @@ class SignalFrameController(QFrame):
             self.ui.btnAutoDetect.setChecked(False)
 
     def on_participant_changed(self):
-        self.redraw_signal()
-        self.on_protocol_updated()
+        if self.proto_analyzer.blocks is not None:
+            self.redraw_signal()
+            self.on_protocol_updated()

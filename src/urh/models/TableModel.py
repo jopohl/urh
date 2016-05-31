@@ -39,7 +39,6 @@ class TableModel(QAbstractTableModel):
 
         self.background_colors = defaultdict(lambda: None)
         self.bold_fonts = defaultdict(lambda: False)
-        self.italic_fonts = defaultdict(lambda: False)
         self.text_colors = defaultdict(lambda: None)
         self.tooltips = defaultdict(lambda: None)
 
@@ -159,7 +158,6 @@ class TableModel(QAbstractTableModel):
         elif role == Qt.FontRole:
             font = QFont()
             font.setBold(self.bold_fonts[i, j])
-            font.setItalic(self.italic_fonts[i, j])
             return font
 
         elif role == Qt.TextColorRole:

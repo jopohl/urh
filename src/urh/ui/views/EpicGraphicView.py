@@ -103,7 +103,7 @@ class EpicGraphicView(SelectableGraphicView):
             createAction = menu.addAction(self.tr("Create Signal from Selection"))
 
             pa = self.parent_frame.proto_analyzer
-            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, self.selection_area.width, self.signal.bit_len)
+            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width), self.signal.bit_len)
             selected_blocks =  pa.blocks[sb:eb+1]
         else:
             selected_blocks = []

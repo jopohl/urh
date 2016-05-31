@@ -14,6 +14,7 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
 from urh.util import FileOperator
+from urh.util.Formatter import Formatter
 
 
 class color:
@@ -198,11 +199,12 @@ class ProtocolAnalyzer(object):
 
                 #cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
 
-            cur_str += block.view_to_string(view, False, show_pauses, sample_rate=srate)
+            cur_str += block.view_to_string(view=view, decoded=False, show_pauses=False, sample_rate=srate)
 
             if block.participant:
                 cur_str += '</span>'
 
+            cur_str += block.get_pause_str(sample_rate=srate)
             result.append(cur_str)
 
         return "<br>".join(result)

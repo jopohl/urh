@@ -497,12 +497,17 @@ class ProtocolBlock(object):
             return None
 
         if show_pauses:
-            if sample_rate:
-                return '%s [Pause: %s]' % (proto, Formatter.science_time(self.pause / sample_rate))
-            else:
-                return '%s [Pause: %d samples]' % (proto, self.pause)
+            return '%s %s' % (proto, self.get_pause_str(sample_rate))
         else:
             return proto
+
+
+    def get_pause_str(self, sample_rate):
+        if sample_rate:
+            return ' [<b>Pause:</b> %s]' % (Formatter.science_time(self.pause / sample_rate))
+        else:
+            return ' [<b>Pause:</b> %d samples]' % (self.pause)
+
 
     def clear_decoded_bits(self):
         self.__decoded_bits = None

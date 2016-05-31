@@ -54,8 +54,11 @@ def main(argv):
     QIcon.setThemeName("oxy")
 
     # Colored Table Headers not supported in GTK+
-    # QApplication.setStyle(QStyleFactory.create("Fusion"))
+    #QApplication.setStyle(QStyleFactory.create("Fusion"))
 
+    print(QApplication.instance().style().metaObject().className())
+
+    print(QStyleFactory.keys())
     mainwindow = MainController()
     mainwindow.showMaximized()
 

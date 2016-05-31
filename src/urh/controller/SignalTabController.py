@@ -99,7 +99,6 @@ class SignalTabController(QWidget):
     def handle_files_dropped(self, files):
         self.files_dropped.emit(files)
 
-    @pyqtSlot(SignalFrameController)
     def close_frame(self, frame:SignalFrameController):
         self.frame_closed.emit(frame)
 

@@ -41,6 +41,7 @@ class TextEditProtocolView(QTextEdit):
         particpnt_actions = {}
         selected_blocks = []
         cursor = self.textCursor()
+        print(self.participants, self.blocks, cursor.selection().isEmpty())
         if self.participants and self.blocks and not cursor.selection().isEmpty():
             selected_blocks = []
             start_block = self.toPlainText()[0:cursor.selectionStart()].count("\n")

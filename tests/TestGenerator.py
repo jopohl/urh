@@ -48,6 +48,7 @@ class TestGenerator(unittest.TestCase):
 
         # Move with encoding to generator
         gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(0)
         item = gframe.tree_model.rootItem.children[0].children[0]
         index = gframe.tree_model.createIndex(0, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)

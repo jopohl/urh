@@ -163,9 +163,9 @@ class EpicGraphicView(SelectableGraphicView):
         elif action == bitaction:
             self.signal.bit_len = (abs(int(self.selection_area.width)))
         elif action == deleteAction:
-            self.deletion_wanted.emit(self.selection_area.x, self.selection_area.end)
+            self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
         elif action == muteAction:
-            self.mute_wanted.emit(self.selection_area.x, self.selection_area.end)
+            self.mute_wanted.emit(self.selection_area.start, self.selection_area.end)
 
         elif action == none_partipnt_action:
             for block in selected_blocks:
@@ -261,7 +261,7 @@ class EpicGraphicView(SelectableGraphicView):
 
         elif key == Qt.Key_Delete:
             if not self.selection_area.is_empty:
-                self.deletion_wanted.emit(self.selection_area.x, self.selection_area.x + self.selection_area.width)
+                self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
 
     def draw_full_signal(self):
         if hasattr(self.parent_frame, "scene_creator"):

@@ -43,7 +43,7 @@ class ParticipantLegendListModel(QAbstractListModel):
                     return None
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return Qt.ItemIsEnabled
 
     def update(self):
         self.layoutChanged.emit()

@@ -378,6 +378,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="lFilterShown">
+             <property name="text">
+              <string>shown: 42/108</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QToolButton" name="btnPrevSearch">
              <property name="enabled">
               <bool>false</bool>

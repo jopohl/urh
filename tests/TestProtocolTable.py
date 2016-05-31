@@ -23,6 +23,7 @@ class TestProtocolTable(unittest.TestCase):
         QTest.qWait(10)
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
+        self.cframe.ui.cbProtoView.setCurrentIndex(0)
 
         proto = self.__build_protocol()
         self.cframe.add_protocol(proto)

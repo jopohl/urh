@@ -67,6 +67,8 @@ class CompareFrameController(QFrame):
         self.filter_action = self.searchselectsearch_menu.addAction("Filter")
         self.ui.btnSearchSelectFilter.setMenu(self.searchselectsearch_menu)
 
+        self.ui.lFilterShown.hide()
+
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants, self)
         """:type: ProtocolTableModel"""
         self.protocol_label_list_model = ProtocolLabelListModel(self.proto_analyzer, controller=self)
@@ -343,6 +345,7 @@ class CompareFrameController(QFrame):
         if protocol.signal:
             protocol.signal.sample_rate_changed.connect(self.set_shown_protocols)  # Refresh times
         protocol.qt_signals.show_state_changed.connect(self.set_shown_protocols)
+        protocol.qt_signals.show_state_changed.connect(self.filter_search_results)
         for i in range(self.proto_tree_model.ngroups):
             self.expand_group_node(i)
         return protocol
@@ -937,15 +940,29 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.setFocus()
 
     def filter_search_results(self):
-        self.search()
-        self.ui.tblLabelValues.clearSelection()
+        if self.ui.btnSearchSelectFilter.text() != "Filter":
+            return
 
-        matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
-        self.ui.tblViewProtocol.blockSignals(True)
-        for i in set(range(0, self.protocol_model.row_count)) - matching_rows:
-            self.ui.tblViewProtocol.hide_row(row=i)
-        self.ui.tblViewProtocol.blockSignals(False)
-        self.ui.tblViewProtocol.row_visibilty_changed.emit()
+
+        if self.ui.lineEditSearch.text():
+            self.search()
+            self.ui.tblLabelValues.clearSelection()
+
+            matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
+            self.ui.tblViewProtocol.blockSignals(True)
+            rc = self.protocol_model.row_count
+            for i in set(range(0, rc)) - matching_rows:
+                self.ui.tblViewProtocol.hide_row(row=i)
+            self.ui.tblViewProtocol.blockSignals(False)
+            self.ui.tblViewProtocol.row_visibilty_changed.emit()
+
+            self.ui.lFilterShown.setText(self.tr("shown: {}/{}".format(rc-len(self.protocol_model.hidden_rows), rc)))
+
+        else:
+            for i in range(0, self.protocol_model.row_count):
+                self.ui.tblViewProtocol.showRow(i)
+
+            self.ui.lFilterShown.setText("")
 
     @pyqtSlot()
     def next_search_result(self):
@@ -1290,18 +1307,28 @@ class CompareFrameController(QFrame):
         self.ui.btnNextSearch.setVisible(visible)
 
     def __set_mode_to_search(self):
+        self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Search")
         self.set_search_ui_visibility(True)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.search)
 
     def __set_mode_to_select_all(self):
+        self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Select all")
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
 
     def __set_mode_to_filter(self):
+        if len(self.protocol_model.hidden_rows) == 0:
+            self.ui.lFilterShown.setText("")
+        else:
+            nhidden = len(self.protocol_model.hidden_rows)
+            rc = self.protocol_model.row_count
+            self.ui.lFilterShown.setText("shown: {}/{}".format(rc-nhidden, rc))
+
+        self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()

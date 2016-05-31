@@ -184,6 +184,7 @@ class MainController(QMainWindow):
         self.project_manager.project_updated.connect(self.on_project_updated)
 
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.redraw_signals)
+        self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
@@ -371,6 +372,8 @@ class MainController(QMainWindow):
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
         QApplication.processEvents()
+
+        self.compare_frame_controller.filter_search_results()
 
         self.refresh_main_menu()
         self.ui.progressBar.hide()

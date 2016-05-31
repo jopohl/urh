@@ -18,13 +18,13 @@ class TestSendRecvDialog(unittest.TestCase):
     def test_recv(self):
         rcv_dialog = SendRecvDialogController(433e6, 1e6, 500e3, 20, "USRP", Mode.receive, parent = self.form)
         rcv_dialog.ui.btnStart.click()
-        QTest.qWait(100)
+        QTest.qWait(1000)
 
         timer = QTimer()
         timer.timeout.connect(self.__confirm_message_box)
-        timer.start(100)
+        timer.start(1000)
 
-        QTest.qWait(100)
+        QTest.qWait(1000)
 
         self.assertTrue(True)
 

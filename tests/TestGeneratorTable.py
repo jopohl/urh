@@ -23,11 +23,14 @@ class TestGeneratorTable(unittest.TestCase):
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
+        self.cframe.ui.cbProtoView.setCurrentIndex(0)
+        self.gframe.ui.cbViewType.setCurrentIndex(0)
 
         proto = self.__build_protocol()
         self.cframe.add_protocol(proto)
         proto.qt_signals.protocol_updated.emit()
         QTest.qWait(10)
+
 
         self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_BLOCKS)
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_BLOCK)

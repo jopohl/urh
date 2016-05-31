@@ -87,24 +87,22 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         for i, block in enumerate(self.blocks):
             labels = block.active_fuzzing_labels
 
-            if len(labels) == 0:
-                appd_result(block)
-                continue
+            appd_result(block)
 
             labels.sort()
-            n = sum([len(l.fuzz_values) for l in labels])
+            n = sum([len(l.fuzz_values[1:]) for l in labels])
 
             for l in labels:
                 l.nfuzzed = n
-                for fuzz_val in l.fuzz_values:
+                for fuzz_val in l.fuzz_values[1:]:
                     bool_fuzz_val = [True if bit == "1" else False for bit in fuzz_val]
                     cpy_bits = copy.deepcopy(block.plain_bits)
                     cpy_bits[l.start:l.end] = bool_fuzz_val
                     fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
                                               bit_alignment_positions=self.bit_alignment_positions, rssi=block.rssi,
-                                              labelset=copy.deepcopy(block.labelset),
+                                              labelset=block.labelset.copy_for_fuzzing(),
                                               modulator_indx=block.modulator_indx, decoder=block.decoder,
-                                              fuzz_created=[(l.start, l.end)])
+                                              fuzz_created=True)
                     appd_result(fuz_block)
 
         self.blocks = result
@@ -115,8 +113,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         Führt ein gleichzeitiges Fuzzing durch, das heißt bei mehreren Labels pro Block werden alle Labels
         gleichzeitig iteriert. Wenn ein Label keine FuzzValues mehr übrig hat,
         wird der erste Fuzzing Value (per Definition der Standardwert) genommen.
-
-        :rtype: list of ProtocolBlock
         """
         result = []
         appd_result = result.append
@@ -124,29 +120,23 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         for i, block in enumerate(self.blocks):
             labels = block.active_fuzzing_labels
+            appd_result(block)
 
-
-            if len(labels) == 0:
-                appd_result(block)
-                continue
-
-            nvalues = numpy.max([len(l.fuzz_values) for l in labels])
+            nvalues = numpy.max([len(l.fuzz_values[1:]) for l in labels])
             for j in range(nvalues):
                 cpy_bits = copy.deepcopy(block.plain_bits)
-                fuzz_created = []
                 for l in labels:
                     index = j
 
-                    if index >= len(l.fuzz_values):
+                    if index >= len(l.fuzz_values[1:]):
                         index = 0
 
-                    bool_fuzz_val = [True if bit == "1" else False for bit in l.fuzz_values[index]]
+                    bool_fuzz_val = [True if bit == "1" else False for bit in l.fuzz_values[1:][index]]
                     cpy_bits[l.start:l.end] = bool_fuzz_val
-                    fuzz_created.append((l.start, l.end))
 
                 fuzz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                           rssi=block.rssi, labelset=copy.deepcopy(block.labelset),
-                                           modulator_indx=block.modulator_indx, decoder=block.decoder, fuzz_created=fuzz_created[:])
+                                           rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
+                                           modulator_indx=block.modulator_indx, decoder=block.decoder, fuzz_created=True)
                 appd_result(fuzz_block)
 
             block_offsets[i] = nvalues - 1
@@ -160,42 +150,33 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         """
         Führt ein vollständiges Fuzzing durch. D.h. wenn es mehrere Label pro Block gibt, werden alle
         möglichen Kombinationen erzeugt (Kreuzprodukt!)
-
-        :rtype: list of str
         """
         result = []
         appd_result = result.append
-        block_offsets = {}
 
         for i, block in enumerate(self.blocks):
             labels = block.active_fuzzing_labels
-
-            if len(labels) == 0:
-                appd_result(block)
-                continue
+            appd_result(block)
 
             pool = []
             for l in labels:
-                pool.append([(l.start, l.end, fv) for fv in l.fuzz_values])
+                pool.append([(l.start, l.end, fv) for fv in l.fuzz_values[1:]])
 
             n = 0
 
             for combination in itertools.product(*pool):
                 n += 1
                 cpy_bits = copy.deepcopy(block.plain_bits)
-                fuzz_created = []
                 for start, end, fuz_val in combination:
                     bool_fuzz_val = [True if bit == "1" else False for bit in fuz_val]
                     cpy_bits[start:end] = bool_fuzz_val
-                    fuzz_created.append((start, end))
 
                 fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                          rssi=block.rssi, labelset=copy.deepcopy(block.labelset),
+                                          rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
                                           modulator_indx=block.modulator_indx,
-                                          decoder=block.decoder, fuzz_created=fuzz_created)
+                                          decoder=block.decoder, fuzz_created=True)
                 appd_result(fuz_block)
 
-            block_offsets[i] = n - 1
             for l in labels:
                 l.nfuzzed = n
 

@@ -1,5 +1,6 @@
 import random
 import string
+from copy import deepcopy
 
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -78,6 +79,13 @@ class LabelSet(list):
         result = ET.Element("labelset", attrib={"name": self.name, "id": self.id})
         for lbl in self:
             result.append(lbl.to_xml(-1))
+        return result
+
+    def copy_for_fuzzing(self):
+        result = deepcopy(self)
+        for lbl in result:
+            lbl.fuzz_values = []
+            lbl.fuzz_created = True
         return result
 
     @staticmethod

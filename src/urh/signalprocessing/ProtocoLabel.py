@@ -24,7 +24,7 @@ class ProtocolLabel(object):
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
 
-    def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int):
+    def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int, fuzz_created=False):
         self.signals = LabelSignals()
         self.__block_numbers = []
         self.__name = name
@@ -45,6 +45,8 @@ class ProtocolLabel(object):
 
         self.fuzz_me = Qt.Checked
         self.fuzz_values = []
+
+        self.fuzz_created = fuzz_created
 
         self.display_type_index = 0
         self.nfuzzed = 0  # Für Anzeige der erzeugten gefuzzten Blöcken

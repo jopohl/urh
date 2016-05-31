@@ -94,13 +94,20 @@ class GeneratorTabController(QWidget):
         self.ui.listViewProtoLabels.selection_changed.connect(self.handle_label_selection_changed)
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 
+
     @property
-    def selected_block(self):
+    def selected_block_index(self) -> int:
         min_row, _, _, _ = self.ui.tableBlocks.selection_range()
-        if min_row == -1:
+        return min_row#
+
+
+    @property
+    def selected_block(self) -> ProtocolBlock:
+        selected_block_index = self.selected_block_index
+        if selected_block_index == -1:
             return None
 
-        return self.table_model.protocol.blocks[min_row]
+        return self.table_model.protocol.blocks[selected_block_index]
 
 
     @property
@@ -327,7 +334,8 @@ class GeneratorTabController(QWidget):
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
         if self.selected_block is not None:
-            fdc = FuzzingDialogController(self.selected_block, label_index, view, parent=self)
+            fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
+                                          block_index=self.selected_block_index, proto_view=view, parent=self)
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)
@@ -406,16 +414,10 @@ class GeneratorTabController(QWidget):
         maxrow = numpy.max(rows)
 
         label = self.table_model.protocol.protocol_labels[maxrow]
-        if not label.show:
-            return
-        start, end = self.table_model.protocol.get_label_range(label, self.table_model.proto_view,
-                                                                               False)
-
-        # start = int(label.start / factor)
-        # end = math.ceil(label.end / factor)
-        indx = self.table_model.index(0, int((start + end) / 2))
-
-        self.ui.tableBlocks.scrollTo(indx)
+        if label.show and self.selected_block:
+            start, end = self.selected_block.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
+            indx = self.table_model.index(0, int((start + end) / 2))
+            self.ui.tableBlocks.scrollTo(indx)
 
     @pyqtSlot()
     def on_view_type_changed(self):

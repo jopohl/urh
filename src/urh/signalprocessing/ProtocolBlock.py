@@ -19,7 +19,7 @@ class ProtocolBlock(object):
     """
 
     def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
-                 fuzz_created=None, bit_sample_pos=None, bit_len=100):
+                 fuzz_created=False, bit_sample_pos=None, bit_len=100):
         """
 
         :param pause: Pause NACH dem Block in Samples
@@ -28,7 +28,7 @@ class ProtocolBlock(object):
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
         :param bit_len: Für Übernahme der Bitlänge in Modulator Dialog
-        :param fuzz_created: Eine Liste von Tupeln von Start und End Indizes, wenn dieser Block durch Fuzzing erzeugt wurde
+        :param fuzz_created: Block was created thrugh fuzzing
         :return:
         """
         self.__plain_bits = plain_bits
@@ -48,7 +48,7 @@ class ProtocolBlock(object):
         """:type: encoding """
 
         self.bit_alignment_positions = bit_alignment_positions
-        self.fuzz_created = fuzz_created if fuzz_created is not None else []
+        self.fuzz_created = fuzz_created
 
         self.__decoded_bits = None
         self.__encoded_bits = None

@@ -155,18 +155,7 @@ class ProtocolTableView(TableView):
             editLabelAction = 42
             selected_label = None
 
-        try:
-            data = self.model().display_data[row]
-            if len(cols) <= 10:
-                val_string = data[cols[0]:cols[-1] + 1]
-            else:
-                val_string = data[cols[0]:cols[0] + 5] + " ... " + data[cols[-1] - 4:cols[-1] + 1]
-            labelMenu = menu.addMenu(self.tr("Add Protocol Label"))
-            unrestrictiveLabelAction = labelMenu.addAction(
-            self.tr("Match range {0:d}-{1:d} only".format(cols[0] + 1, cols[-1] + 1)))
-        except (IndexError, TypeError):
-            labelMenu = 42
-            unrestrictiveLabelAction = 42
+        createLabelAction = menu.addAction(self.tr("add protocol label"))
 
         if not self.model().is_writeable:
             showInterpretationAction = menu.addAction(self.tr("Show in Interpretation"))
@@ -218,7 +207,7 @@ class ProtocolTableView(TableView):
             self.set_ref_block(y=pos.y())
         elif action == editLabelAction:
             self.edit_label_clicked.emit(selected_label)
-        elif action == unrestrictiveLabelAction:
+        elif action == createLabelAction:
             self.model().addProtoLabel(start, end - 1, row)
         elif action == showInterpretationAction:
             self.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)

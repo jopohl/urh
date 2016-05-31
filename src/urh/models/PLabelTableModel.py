@@ -17,6 +17,7 @@ class PLabelTableModel(QAbstractTableModel):
         self.row_count = len(labelset)
         self.proto_view = 0
         self.labelset = labelset
+        self.block = block
         self.layoutChanged.emit()
 
     def update(self):

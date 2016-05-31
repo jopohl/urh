@@ -66,6 +66,10 @@ class SignalFrameController(QFrame):
         self.proto_selection_timer.setSingleShot(True)
         self.proto_selection_timer.setInterval(1)
 
+        # Disabled because never used (see also set_protocol_visibilty())
+        self.ui.chkBoxSyncSelection.hide()
+        self.ui.btnMinimize.hide()
+
         if self.signal is not None:
             if self.signal.qad_demod_file_loaded:
                 self.ui.lSignalTyp.setText("Quad-Demod Signal (*.wav)")
@@ -268,7 +272,8 @@ class SignalFrameController(QFrame):
         if checked:
             self.show_protocol()
             self.ui.cbProtoView.setEnabled(True)
-            self.ui.chkBoxSyncSelection.show()
+            # Disabled because never used
+            #self.ui.chkBoxSyncSelection.show()
             self.ui.txtEdProto.show()
         else:
             self.ui.txtEdProto.hide()

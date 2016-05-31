@@ -133,6 +133,10 @@ class MainController(QMainWindow):
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
 
+        # Disabled because never used
+        self.ui.actionMinimize_all.setVisible(False)
+        self.ui.actionMaximize_all.setVisible(False)
+
 
     def create_connects(self):
         self.ui.menuView.aboutToShow.connect(self.on_menu_view_clicked)

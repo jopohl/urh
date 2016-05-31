@@ -158,12 +158,11 @@ class CompareFrameController(QFrame):
             logger.error("Labelset {} not in labelsets".format(val.name))
             return
 
-        if val != self.active_labelset:
-            self.__selected_labelset = val
+        self.__selected_labelset = val
 
-            self.ui.cbLabelsets.blockSignals(True)
-            self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
-            self.ui.cbLabelsets.blockSignals(False)
+        self.ui.cbLabelsets.blockSignals(True)
+        self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
+        self.ui.cbLabelsets.blockSignals(False)
 
 
     def handle_files_dropped(self, files: list):
@@ -299,12 +298,17 @@ class CompareFrameController(QFrame):
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
         self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
         self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
+        self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
+        self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
+
+        self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
+        self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
 
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
 
-        self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
+
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -1278,3 +1282,21 @@ class CompareFrameController(QFrame):
 
     def on_cblabelset_index_changed(self):
         self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]
+        self.protocol_label_list_model.update()
+
+    def on_labelsetname_edited(self):
+        self.active_labelset.name = self.ui.cbLabelsets.currentText()
+
+    def on_new_labelset_clicked(self, selected_blocks: list):
+        self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)
+        self.fill_labelset_combobox()
+        self.active_labelset = self.proto_analyzer.labelsets[-1]
+        for block in selected_blocks:
+            block.labelset = self.active_labelset
+        self.ui.cbLabelsets.setFocus()
+
+    def on_labelset_selected(self, labelset: LabelSet, selected_blocks):
+        for block in selected_blocks:
+            block.labelset = labelset
+        self.active_labelset  = labelset
+        self.protocol_model.update()

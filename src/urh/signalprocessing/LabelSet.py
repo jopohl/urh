@@ -88,6 +88,15 @@ class LabelSet(list):
             lbl.fuzz_created = True
         return result
 
+    def __repr__(self):
+        return self.name + " " + super().__repr__()
+
+    def __eq__(self, other):
+        if isinstance(other, LabelSet):
+            return self.id == other.id
+        else:
+            return super().__eq__(other)
+
     @staticmethod
     def from_xml(tag:  ET.Element):
         name = tag.get("name", "blank")

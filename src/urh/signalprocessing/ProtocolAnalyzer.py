@@ -639,3 +639,13 @@ class ProtocolAnalyzer(object):
 
     def set_labels(self, val):
         self._protocol_labels = val
+
+    def add_new_labelset(self, labels):
+        names = set(labelset.name for labelset in self.labelsets)
+        name = "Labelset #"
+        i = 0
+        while True:
+            i += 1
+            if name + str(i) not in names:
+                self.labelsets.append(LabelSet(name=name+str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
+                break

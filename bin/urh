@@ -53,12 +53,11 @@ def main(argv):
     import urh.ui.xtra_icons_rc  # Use oxy theme always
     QIcon.setThemeName("oxy")
 
-    # Colored Table Headers not supported in GTK+
-    #QApplication.setStyle(QStyleFactory.create("Fusion"))
+    constants.SETTINGS.setValue("default_theme", QApplication.style().objectName())
 
-    print(QApplication.instance().style().metaObject().className())
+    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
 
-    print(QStyleFactory.keys())
     mainwindow = MainController()
     mainwindow.showMaximized()
 

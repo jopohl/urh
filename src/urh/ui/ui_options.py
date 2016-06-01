@@ -102,6 +102,9 @@ class Ui_DialogOptions(object):
         self.checkBoxPauseTime = QtWidgets.QCheckBox(self.tabView)
         self.checkBoxPauseTime.setObjectName("checkBoxPauseTime")
         self.verticalLayout_4.addWidget(self.checkBoxPauseTime)
+        self.checkBoxFallBackTheme = QtWidgets.QCheckBox(self.tabView)
+        self.checkBoxFallBackTheme.setObjectName("checkBoxFallBackTheme")
+        self.verticalLayout_4.addWidget(self.checkBoxFallBackTheme)
         spacerItem2 = QtWidgets.QSpacerItem(20, 383, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem2)
         self.tabWidget.addTab(self.tabView, "")
@@ -186,7 +189,7 @@ class Ui_DialogOptions(object):
         self.horizontalLayout.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(DialogOptions)
 
     def retranslateUi(self, DialogOptions):
@@ -208,6 +211,8 @@ class Ui_DialogOptions(object):
         self.comboBoxDefaultView.setItemText(1, _translate("DialogOptions", "Hex"))
         self.comboBoxDefaultView.setItemText(2, _translate("DialogOptions", "ASCII"))
         self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
+        self.checkBoxFallBackTheme.setToolTip(_translate("DialogOptions", "Tick this option if you experience problems with you current Qt theme like no colors in table headers."))
+        self.checkBoxFallBackTheme.setText(_translate("DialogOptions", "Use fallback application theme (fusion)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabView), _translate("DialogOptions", "View"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_plugins), _translate("DialogOptions", "Plugins"))
         self.chkBoxDeviceEnabled.setText(_translate("DialogOptions", "Enabled"))

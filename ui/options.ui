@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabInterpretation">
       <attribute name="title">
@@ -200,6 +200,16 @@
         <widget class="QCheckBox" name="checkBoxPauseTime">
          <property name="text">
           <string>Show pauses as time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxFallBackTheme">
+         <property name="toolTip">
+          <string>Tick this option if you experience problems with you current Qt theme like no colors in table headers.</string>
+         </property>
+         <property name="text">
+          <string>Use fallback application theme (fusion)</string>
          </property>
         </widget>
        </item>

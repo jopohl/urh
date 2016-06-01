@@ -5,6 +5,9 @@ from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 from subprocess import call, DEVNULL
 
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QStyleFactory
+
 from urh import constants
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
@@ -26,6 +29,9 @@ class OptionsController(QDialog):
         self.plugin_controller = PluginController(installed_plugins, highlighted_plugins, parent=self)
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
+
+
+        self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
 
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
@@ -71,6 +77,8 @@ class OptionsController(QDialog):
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
         self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
+        self.ui.checkBoxFallBackTheme.clicked.connect(self.on_checkbox_fallback_theme_clicked)
+
 
     def set_device_enabled_suffix(self):
         for i in range(self.ui.listWidgetDevices.count()):
@@ -178,6 +186,14 @@ class OptionsController(QDialog):
                     int((1 + rel_val) * bit_len), int((1 + rel_val) * bit_len + rel_symbol_len * bit_len),
                     int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
         self.ui.lExplanation.setText(txt)
+
+    def on_checkbox_fallback_theme_clicked(self):
+        use_fallback = bool(self.ui.checkBoxFallBackTheme.isChecked())
+        constants.SETTINGS.setValue('use_fallback_theme', use_fallback)
+        if use_fallback:
+            QApplication.setStyle(QStyleFactory.create("Fusion"))
+        else:
+            QApplication.setStyle(constants.SETTINGS.value("default_theme", type=str))
 
     @pyqtSlot()
     def on_python2_exe_path_edited(self):

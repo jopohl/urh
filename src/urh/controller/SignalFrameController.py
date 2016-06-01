@@ -592,9 +592,11 @@ class SignalFrameController(QFrame):
         self.proto_analyzer.get_protocol_from_signal()
 
     def on_protocol_updated(self):
+        self.redraw_signal() # Participants may have changed
         self.ui.txtEdProto.setEnabled(True)
-        #self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
+        cur_scroll = self.ui.txtEdProto.verticalScrollBar().value()
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
+        self.ui.txtEdProto.verticalScrollBar().setValue(cur_scroll)
 
     def show_protocol(self, old_view=-1, refresh=False):
         if not self.proto_analyzer:
@@ -1146,5 +1148,4 @@ class SignalFrameController(QFrame):
 
     def on_participant_changed(self):
         if self.proto_analyzer.blocks is not None:
-            self.redraw_signal()
             self.on_protocol_updated()

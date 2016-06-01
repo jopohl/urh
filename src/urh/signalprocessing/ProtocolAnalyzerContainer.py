@@ -57,7 +57,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
         blocks = [ProtocolBlock(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
                                 bit_alignment_positions=self.bit_alignment_positions, labelset=copy.deepcopy(block.labelset),
-                                rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len)
+                                rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len, participant=block.participant)
                   for block in proto_analyzer.blocks if block]
 
         self.blocks[index:0] = blocks

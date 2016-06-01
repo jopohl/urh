@@ -19,7 +19,7 @@ class ProtocolBlock(object):
     """
 
     def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
-                 fuzz_created=False, bit_sample_pos=None, bit_len=100):
+                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
         :param pause: Pause NACH dem Block in Samples
@@ -35,7 +35,7 @@ class ProtocolBlock(object):
         self.pause = pause
         self.modulator_indx = modulator_indx
         self.rssi = rssi
-        self.participant = None
+        self.participant = participant
         """:type: Participant """
 
         self.labelset = labelset

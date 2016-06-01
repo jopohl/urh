@@ -118,16 +118,13 @@ class TableModel(QAbstractTableModel):
         self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
-        offset = 0
-        for group in self.controller.groups:
-            for lbl in group.labels:
+        for i, block in enumerate(self.protocol.blocks):
+            for lbl in block.labelset:
                 bg_color = label_colors[lbl.color_index]
-                for i in lbl.block_numbers:
-                    start, end = group.get_label_range(lbl, self.proto_view, self.decode)
-                    for j in range(start, end):
-                        self.background_colors[i+offset, j] = bg_color
-                        self.tooltips[i+offset, j] = lbl.name
-            offset += group.num_blocks
+                start, end = block.get_label_range(lbl, self.proto_view, self.decode)
+                for j in range(start, end):
+                    self.background_colors[i, j] = bg_color
+                    self.tooltips[i, j] = lbl.name
 
     def refresh_fonts(self):
         """
@@ -158,9 +155,9 @@ class TableModel(QAbstractTableModel):
         elif role == Qt.BackgroundColorRole:
             return self.background_colors[i, j]
 
-        elif role == Qt.FontRole and self.bold_fonts[i, j]:
+        elif role == Qt.FontRole:
             font = QFont()
-            font.setBold(True)
+            font.setBold(self.bold_fonts[i, j])
             return font
 
         elif role == Qt.TextColorRole:
@@ -181,11 +178,9 @@ class TableModel(QAbstractTableModel):
             if self.proto_view == 0:
                 if value in ("0", "1"):
                     self.protocol.blocks[i][j] = bool(int(value))
-                    self.controller.refresh_protocol_labels()
                     self.update()
                 elif value in self.symbols.keys():
                     self.protocol.blocks[i][j] = self.symbols[value]
-                    self.controller.refresh_protocol_labels()
                     self.update()
             elif self.proto_view == 1:
                 if value in hex_chars:
@@ -199,7 +194,6 @@ class TableModel(QAbstractTableModel):
                                 break
                         except IndexError:
                             break
-                    self.controller.refresh_protocol_labels()
                     self.update()
                 elif value in self.symbols.keys():
                     QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
@@ -217,8 +211,6 @@ class TableModel(QAbstractTableModel):
                             break
                     except IndexError:
                         break
-
-                self.controller.refresh_protocol_labels()
                 self.update()
         return True
 

@@ -5,6 +5,7 @@ from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -64,12 +65,7 @@ class ProjectManager(QObject):
         self.gain = int(gain)
         self.device = device
 
-    def read_parameters(self):
-        if self.project_file is None:
-            return
-        tree = ET.parse(self.project_file)
-        root = tree.getroot()
-
+    def read_parameters(self, root):
         self.frequency = float(root.get("frequency", 433.92e6))
         self.sample_rate = float(root.get("sample_rate", 1e6))
         self.bandwidth = float(root.get("bandwidth", 1e6))
@@ -80,6 +76,22 @@ class ProjectManager(QObject):
             self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("participants").findall("participant")]
         except AttributeError:
             self.participants = []
+
+    def read_compare_frame_blocks(self, root, compare_frame_controller):
+        tag = root.find("protocol")
+        cfc = compare_frame_controller
+        cfc.proto_analyzer.from_xml(protocol_tag=tag, participants=self.participants, decoders=cfc.decodings)
+
+    def read_labelsets(self):
+        if self.project_file is None:
+            return None
+
+        tree = ET.parse(self.project_file)
+        root = tree.getroot()
+        try:
+            return [LabelSet.from_xml(lblset_tag) for lblset_tag in root.find("labelsets").findall("labelset")]
+        except AttributeError:
+            return []
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
@@ -103,9 +115,12 @@ class ProjectManager(QObject):
                 tree = ET.ElementTree(root)
                 tree.write(self.project_file)
         else:
-            self.read_parameters()
+            tree = ET.parse(self.project_file)
+            root = tree.getroot()
+
+            self.read_parameters(root)
             self.maincontroller.add_files(self.read_opened_filenames())
-            self.read_compare_frame_groups() # Labels are read out here
+            self.read_compare_frame_groups(root)
             cfc = self.maincontroller.compare_frame_controller
             cfc.load_decodings()
             cfc.fill_decoding_combobox()
@@ -113,8 +128,11 @@ class ProjectManager(QObject):
             for group_id, decoding_index in self.read_decodings().items():
                 cfc.groups[group_id].decoding = cfc.decodings[decoding_index]
 
+            cfc.proto_analyzer.labelsets = self.read_labelsets()
+            cfc.fill_labelset_combobox()
+            self.read_compare_frame_blocks(root=root, compare_frame_controller=cfc)
+
             #cfc.ui.cbDecoding.setCurrentIndex(index)
-            cfc.refresh_protocol_labels()
             cfc.updateUI()
             modulators = self.read_modulators_from_project_file()
             self.maincontroller.generator_tab_controller.modulators = modulators if modulators else [
@@ -289,6 +307,7 @@ class ProjectManager(QObject):
             group_tag.set("name", str(group.name))
             group_tag.set("id", str(i))
 
+            # TODO Remove as decoding will be blockwise
             try:
                 decoding_index = cfc.decodings.index(group.decoding)
             except ValueError:
@@ -302,24 +321,11 @@ class ProjectManager(QObject):
                     show = "1" if proto_frame.show else "0"
                     proto_tag.set("show", show)
 
-            for label in group_tag.findall('label'):
-                group_tag.remove(label)
+        root.append(cfc.proto_analyzer.to_xml(decoders=cfc.decodings))
 
-            for plabel in group.labels:
-                label_tag = ET.SubElement(group_tag, "label")
-                label_tag.set("name", plabel.name)
-                label_tag.set("start", str(plabel.start))
-                label_tag.set("end", str(plabel.end - 1))
-                label_tag.set("refblock", str(plabel.refblock))
-                label_tag.set("refbits", plabel.reference_bits)
-                label_tag.set("display_type_index", str(plabel.display_type_index))
-
-                restrictive = "1" if plabel.restrictive else "0"
-                apply_decoding = "1" if plabel.apply_decoding else "0"
-
-                label_tag.set("color_index", str(plabel.color_index))
-                label_tag.set("restrictive", restrictive)
-                label_tag.set("apply_decoding", apply_decoding)
+        labelsets_tag = ET.SubElement(root, "labelsets")
+        for labelset in cfc.proto_analyzer.labelsets:
+            labelsets_tag.append(labelset.to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         with open(self.project_file, "w") as f:
@@ -405,13 +411,7 @@ class ProjectManager(QObject):
             return fileNames
         return []
 
-    def read_compare_frame_groups(self):
-        if self.project_file is None:
-            return
-
-        tree = ET.parse(self.project_file)
-        root = tree.getroot()
-
+    def read_compare_frame_groups(self, root):
         proto_tree_model = self.maincontroller.compare_frame_controller.proto_tree_model
         tree_root = proto_tree_model.rootItem
         pfi = proto_tree_model.protocol_tree_items
@@ -440,23 +440,6 @@ class ProjectManager(QObject):
                 if proto_frame_item is not None:
                     group.appendChild(proto_frame_item)
                     proto_frame_item.show_in_compare_frame = Qt.Checked if show == "1" else Qt.Unchecked
-
-            group = proto_tree_model.groups[int(id)]
-
-            for label_tag in group_tag.iter("label"):
-                name = label_tag.attrib["name"]
-                start = int(label_tag.attrib["start"])
-                end = int(label_tag.attrib["end"])
-                refblock = int(label_tag.attrib["refblock"])
-                color_index = int(label_tag.attrib["color_index"])
-                restrictive = int(label_tag.attrib["restrictive"]) == 1
-
-                proto_label = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
-                proto_label.reference_bits = label_tag.attrib["refbits"]
-                proto_label.display_type_index = int(label_tag.attrib["display_type_index"])
-                proto_label.apply_decoding = int(label_tag.attrib["apply_decoding"]) == 1
-
-                group.add_label(proto_label)
 
             self.maincontroller.compare_frame_controller.expand_group_node(int(id))
 

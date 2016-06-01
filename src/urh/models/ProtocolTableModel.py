@@ -48,8 +48,8 @@ class ProtocolTableModel(TableModel):
 
         return super().headerData(section, orientation, role)
 
-    def addProtoLabel(self, start, end, blocknr, restrictive):
-        self.controller.add_protocol_label(start, end, blocknr, self.proto_view, restrictive)
+    def addProtoLabel(self, start, end, blocknr):
+        self.controller.add_protocol_label(start, end, blocknr, self.proto_view)
 
     def refresh_fonts(self):
         self.bold_fonts.clear()

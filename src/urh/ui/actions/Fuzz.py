@@ -10,7 +10,7 @@ class Fuzz(QUndoCommand):
         self.fuz_mode = fuz_mode
 
         self.setText("{0} Fuzzing".format(self.fuz_mode))
-        self.orig_blocks, self.orig_labels = self.proto_analyzer_container.copy_data()
+        self.orig_blocks, self.orig_labelsets = self.proto_analyzer_container.copy_data()
 
     def redo(self):
         if self.fuz_mode == "Successive":
@@ -21,4 +21,4 @@ class Fuzz(QUndoCommand):
             self.proto_analyzer_container.fuzz_exhaustive()
 
     def undo(self):
-        self.proto_analyzer_container.revert_to(self.orig_blocks, self.orig_labels)
+        self.proto_analyzer_container.revert_to(self.orig_blocks, self.orig_labelsets)

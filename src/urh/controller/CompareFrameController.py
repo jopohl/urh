@@ -16,6 +16,7 @@ from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
@@ -25,6 +26,7 @@ from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -54,6 +56,9 @@ class CompareFrameController(QFrame):
         self.plugin_manager = plugin_manager
         clocale = QLocale()
         self.decimal_point = clocale.decimalPoint()
+
+        self.__selected_labelset = self.proto_analyzer.default_labelset
+        self.fill_labelset_combobox()
 
         self.participant_list_model = ParticipantListModel(project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_list_model)
@@ -107,13 +112,10 @@ class CompareFrameController(QFrame):
 
         self.protocol_model.ref_index_changed.connect(self.handle_ref_index_changed)
         self.ui.tblViewProtocol.row_visibilty_changed.connect(self.set_shown_protocols)
-        self.proto_tree_model.labels_on_group_dropped.connect(self.add_labels_to_group)
         self.ui.treeViewProtocols.selection_changed.connect(self.handle_tree_view_selection_changed)
         self.proto_tree_model.group_deleted.connect(self.handle_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
-
-
 
 
     @property
@@ -146,6 +148,23 @@ class CompareFrameController(QFrame):
         :rtype: list of ProtocolGroup
         """
         return [self.proto_tree_model.group_at(i) for i in self.active_group_ids]
+
+
+    @property
+    def active_labelset(self):
+        return self.__selected_labelset
+
+    @active_labelset.setter
+    def active_labelset(self, val):
+        if val not in self.proto_analyzer.labelsets:
+            logger.error("Labelset {} not in labelsets".format(val.name))
+            return
+
+        self.__selected_labelset = val
+
+        self.ui.cbLabelsets.blockSignals(True)
+        self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
+        self.ui.cbLabelsets.blockSignals(False)
 
 
     def handle_files_dropped(self, files: list):
@@ -281,10 +300,17 @@ class CompareFrameController(QFrame):
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
         self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
         self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
+        self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
+        self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
+
+        self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
+        self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
 
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
+
+
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -299,6 +325,13 @@ class CompareFrameController(QFrame):
         self.ui.cbDecoding.addItem("...")
         self.ui.cbDecoding.setCurrentIndex(prev_index)
         self.ui.cbDecoding.blockSignals(False)
+
+    def fill_labelset_combobox(self):
+        self.ui.cbLabelsets.blockSignals(True)
+        self.ui.cbLabelsets.clear()
+        for labelset in self.proto_analyzer.labelsets:
+            self.ui.cbLabelsets.addItem(labelset.name)
+        self.ui.cbLabelsets.blockSignals(False)
 
     def on_chkbox_show_differences_changed(self):
         chkd = self.ui.cbShowDiffs.isChecked()
@@ -355,6 +388,9 @@ class CompareFrameController(QFrame):
 
         :rtype: list of ProtocolAnalyzer
         """
+        # TODO: Use xml method from Container
+
+
         try:
             view, groups, symbols = ProtocolAnalyzer.from_file(filename)
         except Exception as e:
@@ -380,7 +416,7 @@ class CompareFrameController(QFrame):
             protolist.append(pa)
 
             for lbl in group_data["labels"]:
-                group.add_label(lbl, refresh=False)
+                group.add_label(lbl, refresh=False)  # remove after refactoring
 
         if protolist:
             self.ui.cbDecoding.blockSignals(True)
@@ -433,6 +469,7 @@ class CompareFrameController(QFrame):
         first_block_indices = []
         prev_line = 0
         for proto in self.protocol_list:
+            proto.default_labelset = self.proto_analyzer.default_labelset
             abs_time = 0
             rel_time = 0
             if proto.show:
@@ -456,6 +493,7 @@ class CompareFrameController(QFrame):
                     block.relative_time = rel_time
 
                     num_blocks += 1
+                    block.labelset = self.proto_analyzer.default_labelset
                     self.proto_analyzer.blocks.append(block)
 
                 self.proto_analyzer.used_symbols |= proto.used_symbols
@@ -468,10 +506,6 @@ class CompareFrameController(QFrame):
                 prev_line = line
                 if line != 0:
                     first_block_indices.append(line)
-
-        for group in self.groups:
-            if not group.loaded_from_file:
-                group.refresh_labels()
 
         if not self.show_protocol_seperation:
             self.protocol_model.first_blocks[:] = []
@@ -519,9 +553,8 @@ class CompareFrameController(QFrame):
         self.protocol_model.proto_view = self.ui.cbProtoView.currentIndex()
         self.clear_search()
 
-        for group in self.groups:
-            for lbl in group.labels:
-                self.set_protocol_label_visibility(lbl, group)
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl)
 
         self.handle_show_only_checkbox_changed()
 
@@ -535,9 +568,9 @@ class CompareFrameController(QFrame):
         startRow, endRow = numpy.min(sel_rows), numpy.max(sel_rows)
         new_view = self.ui.cbProtoView.currentIndex()
 
-        group = self.get_group_for_row(startRow)
-        startCol = group.convert_index(startCol, old_view, new_view, True)[0]
-        endCol = group.convert_index(endCol, old_view, new_view, True)[1]
+        block = self.proto_analyzer.blocks[endRow]
+        startCol = block.convert_index(startCol, old_view, new_view, True)[0]
+        endCol = block.convert_index(endCol, old_view, new_view, True)[1]
 
         startindex = self.protocol_model.index(startRow, startCol)
         endindex = self.protocol_model.index(endRow, endCol)
@@ -607,9 +640,8 @@ class CompareFrameController(QFrame):
             self.protocol_label_list_model.update()
             self.label_value_model.update()
 
-            for group in self.groups:
-                for lbl in group.labels:
-                    self.set_protocol_label_visibility(lbl, group)
+            for lbl in self.proto_analyzer.protocol_labels:
+                self.set_protocol_label_visibility(lbl)
 
             self.ui.tblViewProtocol.resize_columns()
 
@@ -638,6 +670,7 @@ class CompareFrameController(QFrame):
             self.ui.lNumSelectedColumns.setText("0")
             self.ui.lblLabelValues.setText(self.tr("Label values for block "))
             self.label_value_model.block_index = -1
+            self.active_labelset = self.proto_analyzer.default_labelset
             return -1, -1
 
         min_row = numpy.min([rng.top() for rng in selected])
@@ -650,6 +683,8 @@ class CompareFrameController(QFrame):
 
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
+
+        self.active_labelset = self.proto_analyzer.blocks[min_row].labelset
 
         if cur_view == 1:
             start *= 4
@@ -752,39 +787,6 @@ class CompareFrameController(QFrame):
         self.set_shown_protocols()
         self.ui.treeViewProtocols.clearSelection()
 
-    def add_labels_to_group(self, label_ids, group_id: int):
-        labels = [self.protocol_label_list_model.proto_labels[i] for i in label_ids]
-        group = self.groups[group_id]
-        for label in labels:
-            ol = group.find_overlapping_labels(label.start, label.end, 0)
-            if len(ol) > 0:
-                reply = QMessageBox.question(self, self.tr("Overlapping Label"),
-                                             self.tr(
-                                                 "Adding label {0} to group {1} would overlap with existing label(s) {2}.\n\n"
-                                                 "Do you want to split the existing labels in order to add {0}?\n"
-                                                 "If you choose 'no' the label will not be added to group.\n\n"
-                                                 "Note, only partial overlapped labels will be splitted."
-                                                 "Fully overlapped labels will be removed.".
-                                                 format(label.name, group.name,
-                                                        ",".join([lbl.name for lbl in ol]))),
-                                             QMessageBox.Yes | QMessageBox.No)
-
-                if reply == QMessageBox.Yes:
-                    group.split_for_new_label(label)
-                    group.add_protocol_label(label.start, label.end-1, label.refblock, 0,
-                                             label.restrictive, label.name, color_ind=label.color_index)
-                else:
-                    continue
-            else:
-                if group.num_protocols > 0:
-                    group.add_protocol_label(label.start, label.end-1, label.refblock, 0,
-                             label.restrictive, label.name, color_ind=label.color_index)
-                else:
-                    Errors.empty_group()
-
-
-        self.refresh()
-
     @pyqtSlot()
     def handle_tree_view_selection_changed(self):
         indexes = self.ui.treeViewProtocols.selectedIndexes()
@@ -867,46 +869,47 @@ class CompareFrameController(QFrame):
     def reset(self):
         self.proto_tree_model.rootItem.clearChilds()
         self.proto_tree_model.rootItem.addGroup()
-        for group in self.groups:
-            group.labels[:] = []
-        for block in self.proto_analyzer.blocks:
-            block.exclude_from_decoding_labels[:] = []
+        for labelset in self.proto_analyzer.labelsets:
+            labelset.clear()
         self.refresh()
-
-    def refresh_protocol_labels(self):
-        for group in self.groups:
-            group.refresh_labels()
 
     @pyqtSlot(int)
     def on_undo_stack_index_changed(self, index: int):
-        self.refresh_protocol_labels()
         self.protocol_model.update()
         self.protocol_label_list_model.update()
 
     @pyqtSlot(ProtocolLabel)
     def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):
-        group = self.get_group_for_label(proto_label)
-        self.show_protocol_labels(group.labels.index(proto_label))
+
+        labelset = self.get_labelset_for_label(proto_label)
+        self.show_protocol_labels(labelset.index(proto_label))
 
     @pyqtSlot(int)
     def show_protocol_labels(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        active_group = self.active_groups[0] if self.active_groups else self.groups[0]
-        offset = sum(self.groups[i].num_blocks for i in range(0, self.groups.index(active_group)))
-        label_controller = ProtocolLabelController(preselected_index, active_group, offset,
-                                                   viewtype=view_type,
+        block = next(block for block in self.proto_analyzer.blocks if self.active_labelset.id == block.labelset.id)
+        label_controller = ProtocolLabelController(preselected_index=preselected_index, labelset=self.active_labelset,
+                                                   max_end=numpy.max([len(block) for block in self.proto_analyzer.blocks]),
+                                                   viewtype=view_type, block=block,
                                                    parent=self)
+        label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         label_controller.exec_()
 
         self.protocol_label_list_model.update()
         self.label_value_model.update()
         self.show_all_cols()
-        for group in self.groups:
-            for lbl in group.labels:
-                self.set_protocol_label_visibility(lbl, group)
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl)
         self.handle_show_only_checkbox_changed()
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()
+
+    @pyqtSlot(ProtocolLabel, LabelSet)
+    def on_apply_decoding_changed(self, lbl: ProtocolLabel, labelset: LabelSet):
+        for block in self.proto_analyzer.blocks:
+            if block.labelset == labelset:
+                block.clear_decoded_bits()
+                block.clear_encoded_bits()
 
     @pyqtSlot()
     def search(self):
@@ -1025,17 +1028,20 @@ class CompareFrameController(QFrame):
         self.protocol_model.search_results[:] = []
         self.protocol_model.search_value = ""
 
-    def set_protocol_label_visibility(self, lbl: ProtocolLabel, group: ProtocolGroup = None):
-        group = self.get_group_for_label(lbl) if not group else group
-        start, end = group.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
+    def set_protocol_label_visibility(self, lbl: ProtocolLabel, block: ProtocolBlock = None):
+        try:
+            block = block if block else next(block for block in self.proto_analyzer.blocks if lbl in block.labelset)
+            start, end = block.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
 
-        for i in range(start, end):
-            self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
+            for i in range(start, end):
+                self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
+        except Exception as e:
+            logger.warning(e)
 
-    def get_group_for_label(self, lbl: ProtocolLabel) -> ProtocolGroup:
-        for group in self.groups:
-            if lbl in group.labels:
-                return group
+    def get_labelset_for_label(self, lbl: ProtocolLabel) -> LabelSet:
+        for lblset in self.proto_analyzer.labelsets:
+            if lbl in lblset:
+                return lblset
         return None
 
     def show_all_cols(self):
@@ -1074,9 +1080,8 @@ class CompareFrameController(QFrame):
     def handle_label_removed(self, plabel: ProtocolLabel):
         if not plabel.show:
             self.show_all_cols()
-            for group in self.groups:
-                for lbl in group.labels:
-                    self.set_protocol_label_visibility(lbl, group)
+            for lbl in self.proto_analyzer.protocol_labels:
+                self.set_protocol_label_visibility(lbl)
 
             self.ui.tblViewProtocol.resize_columns()
 
@@ -1095,8 +1100,8 @@ class CompareFrameController(QFrame):
         if not label.show:
             return
 
-        group = self.get_group_for_label(label)
-        start, end = group.get_label_range(label, self.protocol_model.proto_view, True)
+        block = next(block for block in self.proto_analyzer.blocks if label if block.labelset)
+        start, end = block.get_label_range(label, self.protocol_model.proto_view, True)
         indx = self.protocol_model.index(0, int((start + end) / 2))
 
         self.ui.tblViewProtocol.scrollTo(indx)
@@ -1115,11 +1120,11 @@ class CompareFrameController(QFrame):
 
     def show_only_labels(self):
         visible_columns = set()
-        for group in self.groups:
-            for lbl in group.labels:
+        for block in self.proto_analyzer.blocks:
+            for lbl in block.labelset:
                 if lbl.show:
-                    start, end = group.get_label_range(lbl, self.ui.cbProtoView.currentIndex(),
-                                                       True)
+                    start, end = block.get_label_range(lbl=lbl, view=self.ui.cbProtoView.currentIndex(),
+                                                       decode=True)
                     visible_columns |= (set(range(start, end)))
 
         for i in range(self.protocol_model.col_count):
@@ -1145,12 +1150,11 @@ class CompareFrameController(QFrame):
 
     def show_only_diffs_and_labels(self):
         visible_label_columns = set()
-        for group in self.groups:
-            for lbl in group.labels:
-                if lbl.show:
-                    start, end = group.get_label_range(lbl, self.ui.cbProtoView.currentIndex(),
-                                                       True)
-                    visible_label_columns |= (set(range(start, end)))
+        for lbl in self.proto_analyzer.protocol_labels:
+            if lbl.show:
+                start, end = self.proto_analyzer.get_label_range(lbl, self.ui.cbProtoView.currentIndex(),
+                                                   True)
+                visible_label_columns |= (set(range(start, end)))
 
         visible_rows = [i for i in range(self.protocol_model.row_count) if not self.ui.tblViewProtocol.isRowHidden(i)
                         and i != self.protocol_model.refindex]
@@ -1171,9 +1175,8 @@ class CompareFrameController(QFrame):
         for i in range(self.protocol_model.col_count):
             self.ui.tblViewProtocol.showColumn(i)
 
-        for group in self.groups:
-            for lbl in group.labels:
-                self.set_protocol_label_visibility(lbl, group)
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl)
 
         if not selected.isEmpty():
             min_row = numpy.min([rng.top() for rng in selected])
@@ -1181,28 +1184,9 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(min_row, start))
 
     def add_protocol_label(self, start: int, end: int, blocknr: int,
-                           proto_view: int, restrictive: bool, edit_label_name=True):
+                           proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
-        active_group_id = self.active_group_ids[0] if self.active_group_ids else 0
-        group = self.proto_tree_model.group_at(active_group_id)
-
-        overlapping_labels = group.find_overlapping_labels(start, end, proto_view)
-        if len(overlapping_labels) > 0:
-            reply = QMessageBox.question(self, self.tr("Overlapping Label"),
-                                         self.tr("This label would overlap with existing label(s) {0}.\n\n"
-                                                 "Do you want to split the existing labels in order to create the new one?\n"
-                                                 "If you choose 'no' label creation will be cancelled.\n\n"
-                                                 "Note, only partial overlapped labels will be splitted."
-                                                 "Fully overlapped labels will be removed.".
-                                                 format(",".join([lbl.name for lbl in overlapping_labels]))),
-                                         QMessageBox.Yes | QMessageBox.No)
-            if reply == QMessageBox.Yes:
-                group.split_labels(start, end, proto_view)
-            else:
-                return False
-
-        offset = sum(self.groups[i].num_blocks for i in range(0, active_group_id))
-        proto_label = group.add_protocol_label(start, end, blocknr-offset, proto_view, restrictive)
+        proto_label = self.active_labelset.add_protocol_label(start=start, end=end, type_index=proto_view)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()
@@ -1236,7 +1220,7 @@ class CompareFrameController(QFrame):
         self.setCursor(Qt.WaitCursor)
         self.protocol_model.undo_stack.blockSignals(True)
         for p in active_analyze_plugins:
-            self.protocol_model.undo_stack.push(p.get_action(self.groups))
+            self.protocol_model.undo_stack.push(p.get_action(self.groups, self.proto_analyzer.default_labelset))
         self.protocol_model.undo_stack.blockSignals(False)
         self.protocol_model.update()
         self.protocol_label_list_model.update()
@@ -1281,16 +1265,13 @@ class CompareFrameController(QFrame):
         col_end += 1
 
         view = self.ui.cbProtoView.currentIndex()
-        offset = 0
         result = []
-        for group in self.groups:
-            for lbl in group.labels:
-                lbl_start, lbl_end = group.get_label_range(lbl, view, True)
-                if any(i-offset in lbl.block_numbers for i in range(row_start, row_end)) and\
-                    any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)):
-                    result.append(lbl)
-
-            offset += group.num_blocks
+        for i in range(row_start, row_end):
+            block = self.proto_analyzer.blocks[i]
+            for label in block.labelset:
+                lbl_start, lbl_end = block.get_label_range(lbl=label, view=view, decode=True)
+                if any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)) and not label in result:
+                    result.append(label)
 
         return result
 
@@ -1333,3 +1314,24 @@ class CompareFrameController(QFrame):
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
+
+    def on_cblabelset_index_changed(self):
+        self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]
+        self.protocol_label_list_model.update()
+
+    def on_labelsetname_edited(self):
+        self.active_labelset.name = self.ui.cbLabelsets.currentText()
+
+    def on_new_labelset_clicked(self, selected_blocks: list):
+        self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)
+        self.fill_labelset_combobox()
+        self.active_labelset = self.proto_analyzer.labelsets[-1]
+        for block in selected_blocks:
+            block.labelset = self.active_labelset
+        self.ui.cbLabelsets.setFocus()
+
+    def on_labelset_selected(self, labelset: LabelSet, selected_blocks):
+        for block in selected_blocks:
+            block.labelset = labelset
+        self.active_labelset  = labelset
+        self.protocol_model.update()

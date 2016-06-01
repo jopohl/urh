@@ -141,7 +141,7 @@ class GeneratorTableView(TableView):
         pos = event.pos()
         min_row, max_row, start, end = self.selection_range()
 
-        selected_label_indx = self.model().get_selected_label_index(self.columnAt(event.pos().x()))
+        selected_label_indx = self.model().get_selected_label_index(row=self.rowAt(event.pos().y()),column=self.columnAt(event.pos().x()))
 
         if selected_label_indx == -1:
             fuzzingAction = menu.addAction("Create Fuzzing Label...")

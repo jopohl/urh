@@ -19,7 +19,7 @@ class FuzzingTableModel(QAbstractTableModel):
         self.remove_duplicates = True
 
     def update(self):
-        if len(self.fuzzing_label.fuzz_values) > 0:
+        if self.fuzzing_label and len(self.fuzzing_label.fuzz_values) > 0:
             if self.remove_duplicates:
                 seq = self.fuzzing_label.fuzz_values[:]
                 seen = set()

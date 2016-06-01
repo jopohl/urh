@@ -4,81 +4,83 @@ from PyQt5.QtGui import QColor
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class GeneratorListModel(QAbstractListModel):
     protolabel_fuzzing_status_changed = pyqtSignal(ProtocolLabel)
     protolabel_removed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, proto_container: ProtocolAnalyzerContainer, parent=None):
+    def __init__(self, block: ProtocolBlock, parent=None):
         super().__init__(parent)
-        self.proto_container = proto_container
+        self.__block = block
+    
+    @property
+    def labels(self):
+        if self.block:
+            return self.block.labelset
+        else:
+            return []
+    
+    @property
+    def block(self):
+        return self.__block
+
+    @block.setter
+    def block(self, value: ProtocolBlock):
+        if value != self.block:
+            self.__block = value
+            self.update()
 
     def last_index(self):
-        return self.index(len(self.proto_container.protocol_labels) - 1)
+        return self.index(len(self.labels) - 1)
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
-        return len(self.proto_container.protocol_labels)
+        return len(self.labels)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
-        if row >= len(self.proto_container.protocol_labels):
+        if row >= len(self.labels):
             return
 
         if role == Qt.DisplayRole:
-            nfuzzval = len(self.proto_container.protocol_labels[row].fuzz_values)
+            nfuzzval = len(self.labels[row].fuzz_values)
             nfuzzval = str(nfuzzval - 1) if nfuzzval > 1 else "empty"
             try:
-                return self.proto_container.protocol_labels[row].name + " (" + nfuzzval + ")"
+                return self.labels[row].name + " (" + nfuzzval + ")"
             except TypeError:
                 return ""
         elif role == Qt.CheckStateRole:
-            return self.proto_container.protocol_labels[row].fuzz_me
+            return self.labels[row].fuzz_me
         elif role == Qt.BackgroundColorRole:
-            return constants.LABEL_COLORS[self.proto_container.protocol_labels[row].color_index]
-        elif role == Qt.TextColorRole or role == Qt.ToolTipRole:
-            cur_label = self.proto_container.protocol_labels[row]
-            same_ref_labels = [l for l in self.proto_container.protocol_labels if l != cur_label and
-                               cur_label.refblock == l.refblock]
-
-            overlapping_labels = []
-            for l in same_ref_labels:
-                if any(x in range(cur_label.start, cur_label.end) for x in range(l.start, l.end)):
-                    overlapping_labels.append(l)
-
-            if len(overlapping_labels) > 0:
-                if role == Qt.TextColorRole:
-                    return QColor("red")
-                elif role == Qt.ToolTipRole:
-                    return "Label overlaps with {0}. " \
-                           "This may cause problems when fuzzing.".format(overlapping_labels[0].name)
+            return constants.LABEL_COLORS[self.labels[row].color_index]
 
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
         if role == Qt.CheckStateRole:
-            proto_label = self.proto_container.protocol_labels[index.row()]
+            proto_label = self.labels[index.row()]
             proto_label.fuzz_me = value
             self.protolabel_fuzzing_status_changed.emit(proto_label)
         elif role == Qt.EditRole:
             if len(value) > 0:
-                self.proto_container.protocol_labels[index.row()].name = value
+                self.labels[index.row()].name = value
         return True
 
     def fuzzAll(self):
-        unfuzzedLabels = [label for label in self.proto_container.protocol_labels if not label.fuzz_me]
+        unfuzzedLabels = [label for label in self.labels if not label.fuzz_me]
         for label in unfuzzedLabels:
             label.fuzz_me = Qt.Checked
             self.protolabel_fuzzing_status_changed.emit(label)
 
     def unfuzzAll(self):
-        fuzzedLabels = [label for label in self.proto_container.protocol_labels if label.fuzz_me]
+        fuzzedLabels = [label for label in self.labels if label.fuzz_me]
         for label in fuzzedLabels:
             label.fuzz_me = Qt.Unchecked
             self.protolabel_fuzzing_status_changed.emit(label)
 
     def delete_label_at(self, row: int):
-        lbl = self.proto_container.protocol_labels[row]
-        self.proto_container.remove_label(lbl)
+        lbl = self.labels[row]
+        self.labels.remove(lbl)
         self.protolabel_removed.emit(lbl)
 
     def update(self):
@@ -88,7 +90,7 @@ class GeneratorListModel(QAbstractListModel):
         flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
         try:
-            lbl = self.proto_container.protocol_labels[index.row()]
+            lbl = self.labels[index.row()]
         except IndexError:
             return flags
 

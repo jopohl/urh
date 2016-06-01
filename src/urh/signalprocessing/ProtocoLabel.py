@@ -1,16 +1,8 @@
-from copy import deepcopy
-
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
+from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
 from urh.util.Formatter import Formatter
 
-
-class LabelSignals(QObject):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    apply_decoding_changed = pyqtSignal(object)
 
 class ProtocolLabel(object):
     """
@@ -23,13 +15,10 @@ class ProtocolLabel(object):
     DISPLAY_TYPES = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    def __init__(self, name: str, start: int, end: int, refblock: int, val_type_index: int,
-                 color_index: int, restrictive: bool):
-        self.signals = LabelSignals()
+
+    def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int, fuzz_created=False):
         self.__block_numbers = []
         self.__name = name
-        self.__refblock = refblock
-        self.refblock_offset = 0  # Offset, für Fuzzing Labels
         val_type = self.VALUE_TYPES[val_type_index]
         if val_type == "Bits":
             self.start = start
@@ -41,31 +30,17 @@ class ProtocolLabel(object):
             self.start = 8 * start
             self.end = 8 * (end + 1)
 
-        self.__apply_decoding = True
+        self.apply_decoding = True
         self.color_index = color_index
-        self.restrictive = restrictive
-        self.reference_bits = ""
         self.show = Qt.Checked
 
         self.fuzz_me = Qt.Checked
         self.fuzz_values = []
 
+        self.fuzz_created = fuzz_created
+
         self.display_type_index = 0
-
         self.nfuzzed = 0  # Für Anzeige der erzeugten gefuzzten Blöcken
-
-    @property
-    def block_numbers(self):
-        """
-        List of Blockindices the label matches
-
-        :type: list of int
-        """
-        return self.__block_numbers
-
-    @block_numbers.setter
-    def block_numbers(self, val):
-        self.__block_numbers = val
 
     @property
     def name(self):
@@ -80,26 +55,8 @@ class ProtocolLabel(object):
             self.__name = val
 
     @property
-    def apply_decoding(self):
-        return self.__apply_decoding
-
-    @apply_decoding.setter
-    def apply_decoding(self, value: bool):
-        if self.__apply_decoding != value:
-            self.__apply_decoding = value
-            self.signals.apply_decoding_changed.emit(self)
-
-    @property
     def fuzz_maximum(self):
         return 2 ** (self.end - self.start)
-
-    @property
-    def refblock(self):
-        return self.__refblock + self.refblock_offset
-
-    @refblock.setter
-    def refblock(self, val):
-        self.__refblock = val
 
     @property
     def active_fuzzing(self) -> bool:
@@ -109,33 +66,6 @@ class ProtocolLabel(object):
     def range_complete_fuzzed(self) -> bool:
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
-
-
-    def find_block_numbers(self, proto_blocks):
-        """
-
-        :type proto_blocks: list of str
-        """
-        old_numbers = self.block_numbers[:]
-
-        if self.restrictive:
-            self.block_numbers = [i for i, p in enumerate(proto_blocks)
-                                  if p[self.start:self.end] == self.reference_bits]
-        else:
-            self.block_numbers = list(range(len(proto_blocks)))
-
-        if old_numbers != self.block_numbers and not self.apply_decoding:
-            self.signals.apply_decoding_changed.emit(self)
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            if k != "signals":
-                setattr(result, k, deepcopy(v, memo))
-        result.signals = LabelSignals()
-        return result
 
     def __lt__(self, other):
         if self.start != other.start:
@@ -149,6 +79,9 @@ class ProtocolLabel(object):
 
     def __eq__(self, other):
         return self.start == other.start and self.end == other.end and self.name == other.name
+
+    def __hash__(self):
+        return hash("{}/{}/{}".format(self.start, self.end, self.name))
 
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)
@@ -168,24 +101,19 @@ class ProtocolLabel(object):
 
 
     def to_xml(self, index:int) -> ET.Element:
-        return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end),
-                                            "refblock": str(self.__refblock), "color_index": str(self.color_index),
-                                            "apply_decoding": str(self.__apply_decoding), "index": str(index),
-                                            "show": str(self.show), "restrictive": str(self.restrictive),
-                                            "reference_bits": str(self.reference_bits), "refblock_offset": str(self.refblock_offset),
+        return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
+                                            "apply_decoding": str(self.apply_decoding), "index": str(index),
+                                            "show": str(self.show),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
 
     @staticmethod
     def from_xml(tag: ET.Element):
         name = tag.get("name")
         start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
-        refblock, color_index = int(tag.get("refblock", 0)), int(tag.get("color_index", 0))
-        restrictive = True if tag.get("restrictive", 'True') == "True" else False
+        color_index = int(tag.get("color_index", 0))
 
-        result = ProtocolLabel(name, start, end, refblock, 0, color_index, restrictive)
+        result = ProtocolLabel(name=name, start=start, end=end, val_type_index=0, color_index=color_index)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
-        result.reference_bits = tag.get("reference_bits")
-        result.refblock_offset = Formatter.str2val(tag.get("refblock_offset"), int)
         result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")

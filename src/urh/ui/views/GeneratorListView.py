@@ -8,7 +8,6 @@ from urh.models.GeneratorListModel import GeneratorListModel
 class GeneratorListView(QListView):
     editActionTriggered = pyqtSignal(int)
     selection_changed = pyqtSignal()
-    editAllActionTriggered = pyqtSignal()
     edit_on_item_triggered = pyqtSignal(int)
 
     def __init__(self, parent):
@@ -28,7 +27,6 @@ class GeneratorListView(QListView):
         delAction = 42
         if index.isValid():
             delAction = menu.addAction("Delete Fuzzing Label")
-        editAllAction = menu.addAction("Edit all Fuzzing Values...")
 
 
         menu.addSeparator()
@@ -44,8 +42,6 @@ class GeneratorListView(QListView):
             self.model().fuzzAll()
         elif action == unfuzzAllAction:
             self.model().unfuzzAll()
-        elif action == editAllAction:
-            self.editAllActionTriggered.emit()
 
     def selectionChanged(self, QItemSelection, QItemSelection_1):
         self.selection_changed.emit()

@@ -20,8 +20,8 @@ class TestFuzzing(unittest.TestCase):
         decoders = [encoding(["NRZ"]), encoding(["NRZ-I", constants.DECODING_INVERT])]
 
         pac = ProtocolAnalyzerContainer([mod1, mod2])
-        pac.blocks.append(ProtocolBlock([True, False, False, True, "A"], 100, [], decoder=decoders[0]))
-        pac.blocks.append(ProtocolBlock([False, False, False, False, "A"], 200, [], decoder=decoders[1]))
+        pac.blocks.append(ProtocolBlock([True, False, False, True, "A"], 100, [], decoder=decoders[0], labelset=pac.default_labelset))
+        pac.blocks.append(ProtocolBlock([False, False, False, False, "A"], 200, [], decoder=decoders[1], labelset=pac.default_labelset))
         pac.used_symbols.add(Symbol("A", 1, 1, 100))
         pac.create_fuzzing_label(1, 10, 0)
         pac.to_xml_file(filename)

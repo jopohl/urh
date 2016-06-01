@@ -57,4 +57,4 @@ class TestProjectManager(unittest.TestCase):
         self.form.close_all()
         QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
-        self.assertIsNone(self.form.project_manager.project_file)
+        self.assertEqual(self.form.project_manager.project_file, None)

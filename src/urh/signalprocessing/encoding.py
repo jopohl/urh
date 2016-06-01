@@ -623,5 +623,8 @@ class encoding(object):
         return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
 
 
+    def __eq__(self, other):
+        return self.get_chain() == other.get_chain()
+
 if __name__ == "__main__":
     e = encoding()

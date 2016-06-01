@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QFont
 
 from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
@@ -9,6 +9,7 @@ from urh.ui.actions.Clear import Clear
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 from urh.ui.actions.InsertBitsAndPauses import InsertBitsAndPauses
 from urh.ui.actions.InsertColumn import InsertColumn
+from urh.util.Logger import logger
 
 
 class GeneratorTableModel(TableModel):
@@ -23,33 +24,18 @@ class GeneratorTableModel(TableModel):
         self.decode = False
         self.is_generator = True
 
-    def refresh_bgcolors_and_tooltips(self):
-        self.background_colors.clear()
-        self.tooltips.clear()
-        label_colors = constants.LABEL_COLORS
-
-        for lbl in self.protocol.protocol_labels:
-            bg_color = label_colors[lbl.color_index]
-            for i in lbl.block_numbers:
-                start, end = self.protocol.get_label_range(lbl, self.proto_view, self.decode)
-                for j in range(start, end):
-                    self.background_colors[i, j] = bg_color
-                    self.tooltips[i, j] = lbl.name
-
     def refresh_fonts(self):
         self.bold_fonts.clear()
         self.text_colors.clear()
         pac = self.protocol
         for i, block in enumerate(pac.blocks):
-            fc = [pac.convert_range(start, end, 0, self.proto_view, False) for start, end in block.fuzz_created]
-            for f in fc:
-                for j in range(f[0], f[1]):
-                    self.bold_fonts[i, j] = True
+            if block.fuzz_created:
+                for lbl in (lbl for lbl in block.labelset if lbl.fuzz_created):
+                    for j in range(*block.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
+                        self.bold_fonts[i, j] = True
 
-        for lbl in pac.protocol_labels:
-            if lbl.active_fuzzing:
-                i = lbl.refblock
-                for j in range(*pac.get_label_range(lbl, self.proto_view, False)):
+            for lbl in block.active_fuzzing_labels:
+                for j in range(*block.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
                     self.bold_fonts[i, j] = True
                     self.text_colors[i, j] = QColor("orange")
 
@@ -115,9 +101,15 @@ class GeneratorTableModel(TableModel):
         self.protocol.duplicate_line(row)
         self.update()
 
-    def get_selected_label_index(self, selected_col: int):
-        for i, lbl in enumerate(self.protocol.protocol_labels):
-            if selected_col in range(*self.protocol.get_label_range(lbl, self.proto_view, False)):
+    def get_selected_label_index(self, row: int, column: int):
+        try:
+            block = self.protocol.blocks[row]
+        except IndexError:
+            logger.warning("{} is out of range for generator protocol".format(row))
+            return -1
+
+        for i, lbl in enumerate(block.labelset):
+            if column in range(*block.get_label_range(lbl, self.proto_view, False)):
                 return i
 
         return -1

@@ -1,14 +1,16 @@
 import copy
 import math
-import random
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, QObject, pyqtSignal, Qt
+from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
+
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
@@ -45,13 +47,10 @@ class ProtocolAnalyzer(object):
     """
     The ProtocolAnalyzer is what you would refer to as "protocol".
     The data is stored in the blocks variable.
-    This class offers serveral methods for protocol analysis.
+    This class offers several methods for protocol analysis.
     """
 
     def __init__(self, signal: Signal):
-        self._protocol_labels = []
-        """:type: list of ProtocolLabel """
-
         self.bit_alignment_positions = []
         """:param bit_alignment_positions:
         Um die Hex ASCII Darstellungen an beliebigen stellen auszurichten """
@@ -72,6 +71,26 @@ class ProtocolAnalyzer(object):
 
         self.decoder = encoding(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
         # Blocks
+
+        self.labelsets = [LabelSet("default")]
+
+    @property
+    def default_labelset(self):
+        if len(self.labelsets) == 0:
+            self.labelsets.append(LabelSet("default"))
+
+        return self.labelsets[0]
+
+    @default_labelset.setter
+    def default_labelset(self, val: LabelSet):
+        if len(self.labelsets) > 0:
+            self.labelsets[0] = val
+        else:
+            self.labelsets.append(val)
+
+    @property
+    def protocol_labels(self):
+        return [lbl for labelset in self.labelsets for lbl in labelset]
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -99,20 +118,6 @@ class ProtocolAnalyzer(object):
     @property
     def pauses(self):
         return [block.pause for block in self.blocks]
-
-    @property
-    def protocol_labels(self):
-        return self._protocol_labels
-
-    @protocol_labels.setter
-    def protocol_labels(self, value):
-        """
-
-        :type value: list of ProtocolLabel
-        """
-        self._protocol_labels = value
-        if self._protocol_labels:
-            self._protocol_labels.sort()
 
     @property
     def plain_bits_str(self):
@@ -244,7 +249,7 @@ class ProtocolAnalyzer(object):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
-            block = ProtocolBlock(bits, pause, self.bit_alignment_positions,
+            block = ProtocolBlock(bits, pause, self.bit_alignment_positions, labelset=self.default_labelset,
                                   bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.blocks.append(block)
             i += 1
@@ -479,17 +484,6 @@ class ProtocolAnalyzer(object):
             except IndexError:
                 continue
 
-        # Refblocks der Labels updaten
-        for i in removable_block_indices:
-            labels_before = [p for p in self.protocol_labels
-                             if p.refblock < i < p.refblock + p.nfuzzed]
-            labels_after = [p for p in self.protocol_labels if p.refblock > i]
-            for label in labels_after:
-                label.refblock -= 1
-
-            for label in labels_before:
-                label.nfuzzed -= 1
-
         # Remove Empty Blocks and Pause after empty Blocks
         for i in reversed(removable_block_indices):
             del self.blocks[i]
@@ -522,11 +516,11 @@ class ProtocolAnalyzer(object):
     def copy_data(self):
         """
 
-        :rtype: list of ProtocolBlock, list of ProtocolLabel
+        :rtype: list of ProtocolBlock, list of LabelSet
         """
-        return copy.deepcopy(self.blocks), copy.deepcopy(self.protocol_labels)
+        return copy.deepcopy(self.blocks), copy.deepcopy(self.labelsets)
 
-    def revert_to(self, orig_blocks, orig_labels):
+    def revert_to(self, orig_blocks, orig_labelsets):
         """
         Revert to previous state
 
@@ -537,7 +531,7 @@ class ProtocolAnalyzer(object):
         """
         self.blocks = orig_blocks
         """:type: list of ProtocolBlock """
-        self.protocol_labels = orig_labels
+        self.labelsets = orig_labelsets
 
     def find_differences(self, refindex: int, view: int):
         """
@@ -601,7 +595,12 @@ class ProtocolAnalyzer(object):
 
     def destroy(self):
         self.bit_alignment_positions = None
-        self.protocol_labels = None
+        try:
+            for labelset in self.labelsets:
+                labelset.clear()
+        except TypeError:
+            pass # No labelsets defined
+        self.labelsets = []
         self.blocks = None
 
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:
@@ -647,3 +646,52 @@ class ProtocolAnalyzer(object):
 
     def set_labels(self, val):
         self._protocol_labels = val
+
+    def add_new_labelset(self, labels):
+        names = set(labelset.name for labelset in self.labelsets)
+        name = "Labelset #"
+        i = 0
+        while True:
+            i += 1
+            if name + str(i) not in names:
+                self.labelsets.append(LabelSet(name=name+str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
+                break
+
+
+    def to_xml(self, decoders) -> ET.Element:
+        root = ET.Element("protocol")
+
+        # Save symbols
+        if len(self.used_symbols) > 0:
+            symbols_tag = ET.SubElement(root, "symbols")
+            for symbol in self.used_symbols:
+                ET.SubElement(symbols_tag, "symbol",
+                              attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
+                                      "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
+        # Save data
+        data_tag = ET.SubElement(root, "blocks")
+        for i, block in enumerate(self.blocks):
+            data_tag.append(block.to_xml(decoders=decoders, include_labelset=False))
+
+        # Save labelsets separatively as not saved in blocks already
+        labelsets_tag = ET.SubElement(root, "labelsets")
+        for labelset in self.labelsets:
+            labelsets_tag.append(labelset.to_xml())
+
+        return root
+
+    def from_xml(self, protocol_tag: ET.Element, participants, decoders):
+        if protocol_tag:
+            self.used_symbols.clear()
+            symbols_tag = protocol_tag.find("symbols")
+            if symbols_tag:
+                for symbol_tag in symbols_tag.findall("symbol"):
+                    s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
+                               int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
+                    self.used_symbols.add(s)
+
+            block_tags = protocol_tag.find("blocks").findall("block")
+
+            for i, block_tag in enumerate(block_tags):
+                self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+                self.blocks[i].pause = Formatter.str2val(block_tag.get("pause"), int)

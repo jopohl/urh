@@ -1,6 +1,4 @@
-from copy import deepcopy
-
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
+from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
 from urh.util.Formatter import Formatter
@@ -68,16 +66,6 @@ class ProtocolLabel(object):
     def range_complete_fuzzed(self) -> bool:
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            if k != "signals":
-                setattr(result, k, deepcopy(v, memo))
-        result.signals = LabelSignals()
-        return result
 
     def __lt__(self, other):
         if self.start != other.start:

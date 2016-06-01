@@ -47,24 +47,6 @@ class LabelSet(list):
     def add_label(self, lbl: ProtocolLabel):
         self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
 
-
-    def handle_plabel_apply_decoding_changed(self):
-        pass
-        # Todo
-    #     try:
-    #         block.exclude_from_decoding_labels.remove(lbl)
-    #         block.clear_decoded_bits()
-    #         block.clear_encoded_bits()
-    #     except ValueError:
-    #         continue
-    #
-    # else:
-    # if lbl not in block.exclude_from_decoding_labels:
-    #     block.exclude_from_decoding_labels.append(lbl)
-    #     block.exclude_from_decoding_labels.sort()
-    #     block.clear_decoded_bits()
-    #     block.clear_encoded_bits()
-
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:
             super().remove(lbl)

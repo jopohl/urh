@@ -889,6 +889,7 @@ class CompareFrameController(QFrame):
                                                    max_end=numpy.max([len(block) for block in self.proto_analyzer.blocks]),
                                                    viewtype=view_type, block=block,
                                                    parent=self)
+        label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         label_controller.exec_()
 
         self.protocol_label_list_model.update()
@@ -899,6 +900,13 @@ class CompareFrameController(QFrame):
         self.handle_show_only_checkbox_changed()
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()
+
+    @pyqtSlot(ProtocolLabel, LabelSet)
+    def on_apply_decoding_changed(self, lbl: ProtocolLabel, labelset: LabelSet):
+        for block in self.proto_analyzer.blocks:
+            if block.labelset == labelset:
+                block.clear_decoded_bits()
+                block.clear_encoded_bits()
 
     @pyqtSlot()
     def search(self):

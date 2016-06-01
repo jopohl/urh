@@ -652,23 +652,8 @@ class ProtocolAnalyzer(object):
                 break
 
 
-    def to_xml(self) -> ET.Element:
+    def to_xml(self, decoders) -> ET.Element:
         root = ET.Element("protocol")
-
-        # Save decodings
-        decodings_tag = ET.SubElement(root, "decodings")
-        decoders = []
-        for block in self.blocks:
-            if block.decoder not in decoders:
-                decoders.append(block.decoder)
-
-        for i, decoding in enumerate(decoders):
-            dec_str = ""
-            for chn in decoding.get_chain():
-                dec_str += repr(chn) + ", "
-            dec_tag = ET.SubElement(decodings_tag, "decoding")
-            dec_tag.set("index", str(i))
-            dec_tag.text = dec_str
 
         # Save symbols
         if len(self.used_symbols) > 0:
@@ -691,13 +676,7 @@ class ProtocolAnalyzer(object):
 
         return root
 
-    def from_xml(self, protocol_tag: ET.Element):
-        decodings_tags = protocol_tag.find("decodings").findall("decoding")
-        decoders = [None] * len(decodings_tags)
-        for decoding_tag in decodings_tags:
-            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-            decoders[int(decoding_tag.get("index"))] = encoding(conf)
-
+    def from_xml(self, protocol_tag: ET.Element, participants, decoders):
         self.used_symbols.clear()
         symbols_tag = protocol_tag.find("symbols")
         if symbols_tag:
@@ -707,15 +686,7 @@ class ProtocolAnalyzer(object):
                 self.used_symbols.add(s)
 
         block_tags = protocol_tag.find("data").findall("block")
-        self.blocks[:] = []
 
-        for block_tag in block_tags:
-            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"),
-                                                      symbols={s.name: s for s in self.used_symbols})
-            block.from_xml(tag=block_tag, participants=None, decoders=decoders)
-            block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]
-            block.pause = Formatter.str2val(block_tag.get("pause"), int)
-            self.blocks.append(block)
-
-        # TODO: Return decoders to show them in Combobox
-        # TODO: No need
+        for i, block_tag in enumerate(block_tags):
+            self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders)
+            self.blocks[i].pause = Formatter.str2val(block_tag.get("pause"), int)

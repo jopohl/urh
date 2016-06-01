@@ -279,8 +279,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.blocks[:] = []
 
         for block_tag in block_tags:
-            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"), symbols={s.name: s for s in self.used_symbols},
-                                                      labelset=None)
+            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"), symbols={s.name: s for s in self.used_symbols})
             block.from_xml(tag=block_tag, participants=None, decoders=decoders)
             block.modulator_indx = Formatter.str2val(block_tag.get("modulator_index"), int, 0)
             block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]

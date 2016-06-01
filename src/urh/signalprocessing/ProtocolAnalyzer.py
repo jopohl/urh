@@ -1,10 +1,10 @@
 import copy
 import math
-import random
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, QObject, pyqtSignal, Qt
+from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.cythonext import signalFunctions
@@ -16,6 +16,7 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
 from urh.util import FileOperator
+from urh.util.Formatter import Formatter
 
 
 class color:
@@ -649,3 +650,72 @@ class ProtocolAnalyzer(object):
             if name + str(i) not in names:
                 self.labelsets.append(LabelSet(name=name+str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
+
+
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("protocol")
+
+        # Save decodings
+        decodings_tag = ET.SubElement(root, "decodings")
+        decoders = []
+        for block in self.blocks:
+            if block.decoder not in decoders:
+                decoders.append(block.decoder)
+
+        for i, decoding in enumerate(decoders):
+            dec_str = ""
+            for chn in decoding.get_chain():
+                dec_str += repr(chn) + ", "
+            dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.set("index", str(i))
+            dec_tag.text = dec_str
+
+        # Save symbols
+        if len(self.used_symbols) > 0:
+            symbols_tag = ET.SubElement(root, "symbols")
+            for symbol in self.used_symbols:
+                ET.SubElement(symbols_tag, "symbol",
+                              attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
+                                      "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
+        # Save data
+        data_tag = ET.SubElement(root, "blocks")
+        for i, block in enumerate(self.blocks):
+            block_tag = block.to_xml(decoders=decoders, include_labelset=False)
+            block_tag.set("bits", block.plain_bits_str)
+            data_tag.append(block_tag)
+
+        # Save labelsets separatively as not saved in blocks already
+        labelsets_tag = ET.SubElement(root, "labelsets")
+        for labelset in self.labelsets:
+            labelsets_tag.append(labelset.to_xml())
+
+        return root
+
+    def from_xml(self, protocol_tag: ET.Element):
+        decodings_tags = protocol_tag.find("decodings").findall("decoding")
+        decoders = [None] * len(decodings_tags)
+        for decoding_tag in decodings_tags:
+            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
+            decoders[int(decoding_tag.get("index"))] = encoding(conf)
+
+        self.used_symbols.clear()
+        symbols_tag = protocol_tag.find("symbols")
+        if symbols_tag:
+            for symbol_tag in symbols_tag.findall("symbol"):
+                s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
+                           int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
+                self.used_symbols.add(s)
+
+        block_tags = protocol_tag.find("data").findall("block")
+        self.blocks[:] = []
+
+        for block_tag in block_tags:
+            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"),
+                                                      symbols={s.name: s for s in self.used_symbols})
+            block.from_xml(tag=block_tag, participants=None, decoders=decoders)
+            block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]
+            block.pause = Formatter.str2val(block_tag.get("pause"), int)
+            self.blocks.append(block)
+
+        # TODO: Return decoders to show them in Combobox
+        # TODO: No need

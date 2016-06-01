@@ -125,7 +125,7 @@ def read_protocol(filename: str):
                 except ValueError:
                     continue
             elif reading_proto and len(line) > 0:
-                groups[cur_group]["blocks"].append(ProtocolBlock.from_plain_bits_str(line, symbols, LabelSet("none")))
+                groups[cur_group]["blocks"].append(ProtocolBlock.from_plain_bits_str(line, symbols))
             elif reading_labels and line.startswith("Name"):
                 label_name = line.replace("Name: ","")
             elif reading_labels and line.startswith("Bits"):

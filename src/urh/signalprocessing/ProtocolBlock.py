@@ -519,7 +519,7 @@ class ProtocolBlock(object):
         self.__encoded_bits = None
 
     @staticmethod
-    def from_plain_bits_str(bits, symbols: dict, labelset:LabelSet):
+    def from_plain_bits_str(bits, symbols: dict):
         plain_bits = []
         for b in bits:
             if b == "0":
@@ -533,7 +533,7 @@ class ProtocolBlock(object):
                     print("[Warning] Did not find symbol name", file=sys.stderr)
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
-        return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=labelset)
+        return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=LabelSet("none"))
 
     def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
         root = ET.Element("block")

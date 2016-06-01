@@ -1,14 +1,11 @@
-import numpy
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog
+from PyQt5.QtWidgets import QDialog
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
-from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.DeleteButtonDelegate import DeleteButtonDelegate

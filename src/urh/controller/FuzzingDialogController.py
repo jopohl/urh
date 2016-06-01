@@ -20,7 +20,7 @@ class FuzzingDialogController(QDialog):
         block_index = block_index if block_index != -1 else 0
         self.ui.spinBoxFuzzBlock.setValue(block_index+1)
         self.ui.spinBoxFuzzBlock.setMinimum(1)
-        self.ui.spinBoxFuzzBlock.setMaximum(self.protocol.num_blocks+1)
+        self.ui.spinBoxFuzzBlock.setMaximum(self.protocol.num_blocks)
 
         self.proto_view = proto_view
         self.fuzz_table_model = FuzzingTableModel(self.current_label, proto_view)

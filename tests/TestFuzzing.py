@@ -80,7 +80,7 @@ class TestFuzzing(unittest.TestCase):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
         QTest.qWait(10)
 
-        fdc = FuzzingDialogController(self.gframe.table_model.protocol.blocks[0], 0, 0, parent=self.gframe)
+        fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, block_index=0, proto_view=0, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
         fdc.finished.connect(self.gframe.refresh_table)
         fdc.finished.connect(self.gframe.set_fuzzing_ui_status)
@@ -95,7 +95,7 @@ class TestFuzzing(unittest.TestCase):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
         QTest.qWait(10)
 
-        fdc = FuzzingDialogController(self.gframe.table_model.protocol.blocks[0], 0, 1, parent=self.gframe)
+        fdc = FuzzingDialogController(self.gframe.table_model.protocol, 0, 1, 1, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
         fdc.finished.connect(self.gframe.refresh_table)
         fdc.finished.connect(self.gframe.set_fuzzing_ui_status)

@@ -76,12 +76,17 @@ class ProtocolAnalyzer(object):
 
     @property
     def default_labelset(self):
+        if len(self.labelsets) == 0:
+            self.labelsets.append(LabelSet("default"))
+
         return self.labelsets[0]
 
     @default_labelset.setter
     def default_labelset(self, val: LabelSet):
-        self.labelsets[0] = val
-
+        if len(self.labelsets) > 0:
+            self.labelsets[0] = val
+        else:
+            self.labelsets.append(val)
 
     @property
     def protocol_labels(self):
@@ -594,7 +599,7 @@ class ProtocolAnalyzer(object):
                 labelset.clear()
         except TypeError:
             pass # No labelsets defined
-        self.labelsets = None
+        self.labelsets = []
         self.blocks = None
 
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:
@@ -665,9 +670,7 @@ class ProtocolAnalyzer(object):
         # Save data
         data_tag = ET.SubElement(root, "blocks")
         for i, block in enumerate(self.blocks):
-            block_tag = block.to_xml(decoders=decoders, include_labelset=False)
-            block_tag.set("bits", block.plain_bits_str)
-            data_tag.append(block_tag)
+            data_tag.append(block.to_xml(decoders=decoders, include_labelset=False))
 
         # Save labelsets separatively as not saved in blocks already
         labelsets_tag = ET.SubElement(root, "labelsets")
@@ -677,16 +680,17 @@ class ProtocolAnalyzer(object):
         return root
 
     def from_xml(self, protocol_tag: ET.Element, participants, decoders):
-        self.used_symbols.clear()
-        symbols_tag = protocol_tag.find("symbols")
-        if symbols_tag:
-            for symbol_tag in symbols_tag.findall("symbol"):
-                s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
-                           int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
-                self.used_symbols.add(s)
+        if protocol_tag:
+            self.used_symbols.clear()
+            symbols_tag = protocol_tag.find("symbols")
+            if symbols_tag:
+                for symbol_tag in symbols_tag.findall("symbol"):
+                    s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
+                               int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
+                    self.used_symbols.add(s)
 
-        block_tags = protocol_tag.find("data").findall("block")
+            block_tags = protocol_tag.find("blocks").findall("block")
 
-        for i, block_tag in enumerate(block_tags):
-            self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders)
-            self.blocks[i].pause = Formatter.str2val(block_tag.get("pause"), int)
+            for i, block_tag in enumerate(block_tags):
+                self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+                self.blocks[i].pause = Formatter.str2val(block_tag.get("pause"), int)

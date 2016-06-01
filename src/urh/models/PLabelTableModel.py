@@ -11,6 +11,7 @@ class PLabelTableModel(QAbstractTableModel):
     header_labels = ["Name", "Start", "End", 'Color', 'Apply decoding', 'Delete']
 
     label_removed = pyqtSignal(ProtocolLabel)
+    apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
     def __init__(self, labelset: LabelSet, block: ProtocolBlock, parent=None):
         super().__init__(parent)
@@ -81,7 +82,9 @@ class PLabelTableModel(QAbstractTableModel):
         elif j == 3:
             lbl.color_index = value
         elif j == 4:
-            lbl.apply_decoding = bool(value)
+            if bool(value) != lbl.apply_decoding:
+                lbl.apply_decoding = bool(value)
+                self.apply_decoding_changed.emit(lbl)
         elif j == 5:
             self.remove_label(self.labelset[i])
 

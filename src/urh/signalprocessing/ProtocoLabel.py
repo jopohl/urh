@@ -6,12 +6,6 @@ import xml.etree.ElementTree as ET
 from urh.util.Formatter import Formatter
 
 
-class LabelSignals(QObject):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    apply_decoding_changed = pyqtSignal(object)
-
 class ProtocolLabel(object):
     """
     Eine Eigenschaft des Protokolls (zum Beispiel Temperatur), die an einer bestimmten Stelle steht.
@@ -25,7 +19,6 @@ class ProtocolLabel(object):
 
 
     def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int, fuzz_created=False):
-        self.signals = LabelSignals()
         self.__block_numbers = []
         self.__name = name
         val_type = self.VALUE_TYPES[val_type_index]
@@ -39,7 +32,7 @@ class ProtocolLabel(object):
             self.start = 8 * start
             self.end = 8 * (end + 1)
 
-        self.__apply_decoding = True
+        self.apply_decoding = True
         self.color_index = color_index
         self.show = Qt.Checked
 
@@ -62,16 +55,6 @@ class ProtocolLabel(object):
     def name(self, val):
         if val:
             self.__name = val
-
-    @property
-    def apply_decoding(self):
-        return self.__apply_decoding
-
-    @apply_decoding.setter
-    def apply_decoding(self, value: bool):
-        if self.__apply_decoding != value:
-            self.__apply_decoding = value
-            self.signals.apply_decoding_changed.emit(self)
 
     @property
     def fuzz_maximum(self):
@@ -131,7 +114,7 @@ class ProtocolLabel(object):
 
     def to_xml(self, index:int) -> ET.Element:
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
-                                            "apply_decoding": str(self.__apply_decoding), "index": str(index),
+                                            "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
 

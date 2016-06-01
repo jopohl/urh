@@ -39,7 +39,6 @@ class LabelSet(list):
         proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index=type_index, color_index=color_ind)
 
         if proto_label not in self:
-            proto_label.signals.apply_decoding_changed.connect(self.handle_plabel_apply_decoding_changed)
             self.append(proto_label)
             self.sort()
 

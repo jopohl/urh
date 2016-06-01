@@ -1,10 +1,11 @@
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot, QModelIndex
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
@@ -16,6 +17,9 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 
 
 class ProtocolLabelController(QDialog):
+    apply_decoding_changed = pyqtSignal(ProtocolLabel, LabelSet)
+
+
     def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, block:ProtocolBlock, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
@@ -48,6 +52,7 @@ class ProtocolLabelController(QDialog):
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
+        self.model.apply_decoding_changed.connect(self.on_apply_decoding_changed)
 
     @pyqtSlot()
     def confirm(self):
@@ -66,3 +71,7 @@ class ProtocolLabelController(QDialog):
     def set_view_index(self, ind):
         self.model.proto_view = ind
         self.model.update()
+
+    @pyqtSlot(ProtocolLabel)
+    def on_apply_decoding_changed(self, lbl: ProtocolLabel):
+        self.apply_decoding_changed.emit(lbl, self.model.labelset)

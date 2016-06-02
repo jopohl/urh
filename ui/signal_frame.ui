@@ -254,7 +254,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </font>
        </property>
        <property name="text">
-        <string>Signal View/Demod:</string>
+        <string>Signal View:</string>
        </property>
       </widget>
      </item>
@@ -530,50 +530,10 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="14" column="0" colspan="2">
-      <widget class="QComboBox" name="cbSignalView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; text-decoration: underline;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; text-decoration: underline;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Analog signal </string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ASK demodulated</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>FSK demodulated</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>PSK demodulated</string>
-        </property>
-       </item>
-      </widget>
-     </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Modulation:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QLabel" name="labelModulation">
-       <property name="text">
-        <string>FSK</string>
        </property>
       </widget>
      </item>
@@ -641,6 +601,51 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        <property name="checked">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QComboBox" name="cbModulationType">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>ASK</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string extracomment="effgfdg">FSK</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PSK</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <widget class="QComboBox" name="cbSignalView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; text-decoration: underline;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; text-decoration: underline;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>analog</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>demodulated</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -1120,7 +1125,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   <tabstop>spinBoxCenterOffset</tabstop>
   <tabstop>spinBoxInfoLen</tabstop>
   <tabstop>spinBoxTolerance</tabstop>
-  <tabstop>cbSignalView</tabstop>
   <tabstop>chkBoxShowProtocol</tabstop>
   <tabstop>cbProtoView</tabstop>
   <tabstop>chkBoxSyncSelection</tabstop>

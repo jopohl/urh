@@ -180,6 +180,8 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.cbSignalView.currentIndexChanged.connect(self.on_cb_signal_view_index_changed)
 
+        self.ui.cbModulationType.currentIndexChanged.connect(self.on_cbmodulationtype_index_changed)
+
         self.ui.chkBoxShowProtocol.stateChanged.connect(self.set_protocol_visibilty)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.txtEdProto.proto_view_changed.connect(self.show_protocol)
@@ -245,6 +247,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.hide()
         self.ui.gvLegend.hide()
         self.ui.cbSignalView.hide()
+        self.ui.cbModulationType.hide()
         #self.ui.btnCloseSignal.hide()
         self.ui.btnSaveSignal.hide()
         self.ui.btnMinimize.hide()
@@ -287,9 +290,6 @@ class SignalFrameController(QFrame):
         ind = self.ui.cbSignalView.currentIndex()
         self.scene_creator.scene_type = ind
         gvs = self.ui.gvSignal
-
-        if ind > 0:
-            self.signal.modulation_type = ind - 1
 
         vr = self.ui.gvSignal.view_rect()
         self.scene_creator.init_scene()
@@ -1125,16 +1125,9 @@ class SignalFrameController(QFrame):
         sdc.exec_()
 
     def show_modulation_type(self):
-        mod = self.signal.modulation_type
-        if mod == 0:
-            self.ui.labelModulation.setText("ASK")
-        elif mod == 1:
-            self.ui.labelModulation.setText("FSK")
-        elif mod == 2:
-            self.ui.labelModulation.setText("PSK")
-        elif mod == 3:
-            self.ui.labelModulation.setText("QAM (ASK+PSK)")
-
+        self.ui.cbModulationType.blockSignals(True)
+        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.cbModulationType.blockSignals(False)
 
     def disable_auto_detection(self):
         """
@@ -1149,3 +1142,6 @@ class SignalFrameController(QFrame):
     def on_participant_changed(self):
         if self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
+
+    def on_cbmodulationtype_index_changed(self):
+        self.signal.modulation_type = self.ui.cbModulationType.currentIndex()

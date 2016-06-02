@@ -1,6 +1,7 @@
 import copy
 import math
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 from collections import defaultdict
 
 import numpy as np
@@ -11,12 +12,15 @@ from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
 
 from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 
 class color:
@@ -585,24 +589,6 @@ class ProtocolAnalyzer(object):
 
         return differences
 
-    @staticmethod
-    def from_file(filename: str):
-        """
-        :rtype: int, list of ProtocolGroup, set of Symbol
-        """
-        view_type, groups, symbols = FileOperator.read_protocol(filename)
-        return view_type, groups, symbols
-
-    def destroy(self):
-        self.bit_alignment_positions = None
-        try:
-            for labelset in self.labelsets:
-                labelset.clear()
-        except TypeError:
-            pass # No labelsets defined
-        self.labelsets = []
-        self.blocks = None
-
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:
         """
         Calculates the frequency of at most nbits logical ones and returns the mean of these frequencies
@@ -657,9 +643,14 @@ class ProtocolAnalyzer(object):
                 self.labelsets.append(LabelSet(name=name+str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
 
+    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_labelsets=False, write_bits=False) -> ET.Element:
+        root = ET.Element(tag_name)
 
-    def to_xml(self, decoders) -> ET.Element:
-        root = ET.Element("protocol")
+        # Save modulators
+        if hasattr(self, "modulators"): # For protocol analyzer container
+            modulators_tag = ET.SubElement(root, "modulators")
+            for i, modulator in enumerate(self.modulators):
+                modulators_tag.append(modulator.to_xml(i))
 
         # Save symbols
         if len(self.used_symbols) > 0:
@@ -668,30 +659,148 @@ class ProtocolAnalyzer(object):
                 ET.SubElement(symbols_tag, "symbol",
                               attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
                                       "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
+
+        # Save decodings
+        if not decodings:
+            decodings = []
+            for block in self.blocks:
+                if block.decoder not in decodings:
+                    decodings.append(block.decoder)
+
+        decodings_tag = ET.SubElement(root, "decodings")
+        for decoding in decodings:
+            dec_str = ""
+            for chn in decoding.get_chain():
+                dec_str += repr(chn) + ", "
+            dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.text = dec_str
+
+        # Save participants
+        if not participants:
+            participants = []
+            for block in self.blocks:
+                if block.participant and block.participant not in participants:
+                    participants.append(block.participant)
+
+        participants_tag = ET.SubElement(root, "participants")
+        for participant in participants:
+            participants_tag.append(participant.to_xml())
+
         # Save data
         data_tag = ET.SubElement(root, "blocks")
         for i, block in enumerate(self.blocks):
-            data_tag.append(block.to_xml(decoders=decoders, include_labelset=False))
+            block_tag = block.to_xml(decoders=decodings, include_labelset=include_labelsets)
+            if write_bits:
+                block_tag.set("bits", block.plain_bits_str)
+            data_tag.append(block_tag)
 
         # Save labelsets separatively as not saved in blocks already
-        labelsets_tag = ET.SubElement(root, "labelsets")
-        for labelset in self.labelsets:
-            labelsets_tag.append(labelset.to_xml())
+        if not include_labelsets:
+            labelsets_tag = ET.SubElement(root, "labelsets")
+            for labelset in self.labelsets:
+                labelsets_tag.append(labelset.to_xml())
 
         return root
 
-    def from_xml(self, protocol_tag: ET.Element, participants, decoders):
-        if protocol_tag:
-            self.used_symbols.clear()
-            symbols_tag = protocol_tag.find("symbols")
-            if symbols_tag:
-                for symbol_tag in symbols_tag.findall("symbol"):
-                    s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
-                               int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
-                    self.used_symbols.add(s)
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_labelset=False, write_bits=False):
+        tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name, include_labelsets=include_labelset, write_bits=write_bits)
 
-            block_tags = protocol_tag.find("blocks").findall("block")
+        xmlstr = minidom.parseString(ET.tostring(tag)).toprettyxml(indent="   ")
+        with open(filename, "w") as f:
+            for line in xmlstr.split("\n"):
+                if line.strip():
+                    f.write(line+"\n")
 
+
+    def from_xml_tag(self, root: ET.Element, read_bits=False):
+        if not root:
+            return None
+
+        if root.find("modulators") and hasattr(self, "modulators"):
+            self.modulators[:] = []
+            for mod_tag in root.find("modulators").findall("modulator"):
+                self.modulators.append(Modulator.from_xml(mod_tag))
+
+        decoders = self.read_decoders_from_xml_tag(root)
+
+        self.used_symbols.clear()
+        try:
+            for symbol_tag in root.find("symbols").findall("symbol"):
+                s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
+                           int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
+                self.used_symbols.add(s)
+        except AttributeError:
+            pass
+
+        try:
+            participants = []
+            for parti_tag in root.find("participants").findall("participant"):
+                participants.append(Participant.from_xml(parti_tag))
+        except AttributeError:
+            participants = []
+            logger.warning("no participants found in xml")
+
+        if read_bits:
+            self.blocks[:] = []
+
+        try:
+            labelsets = []
+            for lblset_tag in root.find("labelsets").findall("labelset"):
+                labelsets.append(LabelSet.from_xml(lblset_tag))
+        except AttributeError:
+            labelsets = []
+
+
+        for labelset in labelsets:
+            if labelset not in self.labelsets:
+                self.labelsets.append(labelset)
+
+        try:
+            block_tags = root.find("blocks").findall("block")
             for i, block_tag in enumerate(block_tags):
-                self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
-                self.blocks[i].pause = Formatter.str2val(block_tag.get("pause"), int)
+                if read_bits:
+                    block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"),
+                                                              symbols={s.name: s for s in self.used_symbols})
+                    block.from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+                    self.blocks.append(block)
+                else:
+                    self.blocks[i].from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+
+        except AttributeError:
+            pass
+
+    def read_decoders_from_xml_tag(self, root: ET.Element):
+        try:
+            decoders = []
+            for decoding_tag in root.find("decodings").findall("decoding"):
+                conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
+                decoders.append(encoding(conf))
+            return decoders
+        except AttributeError:
+            logger.error("no decodings found in xml")
+            return []
+
+
+    def from_xml_file(self, filename: str, read_bits=False):
+        try:
+            tree = ET.parse(filename)
+        except FileNotFoundError:
+            logger.error("Could not find file "+filename)
+            return
+        except ET.ParseError:
+            logger.error("Could not parse file " + filename)
+            return
+
+        root = tree.getroot()
+        self.from_xml_tag(root, read_bits=read_bits)
+
+
+    def destroy(self):
+        self.bit_alignment_positions = None
+        try:
+            for labelset in self.labelsets:
+                labelset.clear()
+        except TypeError:
+            pass  # No labelsets defined
+        self.labelsets = []
+        self.blocks = None

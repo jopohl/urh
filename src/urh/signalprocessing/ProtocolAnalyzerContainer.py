@@ -38,7 +38,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.__group = ProtocolGroup("GeneratorGroup")
         self.__group.add_protocol_item(ProtocolTreeItem(self, None)) # Warning: parent is None
 
-
     @property
     def protocol_labels(self):
         result = list(set(lbl for block in self.blocks for lbl in block.labelset))
@@ -183,10 +182,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.blocks = result
         """:type: list of ProtocolBlock """
 
-    def clear(self):
-        self.blocks[:] = []
-        self.protocol_labels[:] = []
-
     def create_fuzzing_label(self, start, end, block_index) -> ProtocolLabel:
         fuz_lbl = self.blocks[block_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)
         return fuz_lbl
@@ -194,94 +189,11 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def set_decoder_for_blocks(self, decoder, blocks=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
 
-    def to_xml_file(self, filename: str):
-        root = ET.Element("fuzz_profile")
+    def to_xml_file(self, filename: str, decoders=None, participants=None, tag_name="fuzz_profile", include_labelset=True, write_bits=True):
+        super().to_xml_file(filename=filename, decoders=None, participants=participants, tag_name=tag_name, include_labelset=include_labelset, write_bits=write_bits)
 
-        # Save modulators
-        modulators_tag = ET.SubElement(root, "modulators")
-        for i, modulator in enumerate(self.modulators):
-            modulators_tag.append(modulator.to_xml(i))
+    def from_xml_file(self, filename: str, read_bits=True):
+        super().from_xml_file(filename=filename, read_bits=read_bits)
 
-        # Save decodings
-        decodings_tag = ET.SubElement(root, "decodings")
-        decoders = []
-        for block in self.blocks:
-            if block.decoder not in decoders:
-                decoders.append(block.decoder)
-
-        for i, decoding in enumerate(decoders):
-            dec_str = ""
-            for chn in decoding.get_chain():
-                dec_str += repr(chn) + ", "
-            dec_tag = ET.SubElement(decodings_tag, "decoding")
-            dec_tag.set("index", str(i))
-            dec_tag.text = dec_str
-
-        # Save symbols
-        if len(self.used_symbols) > 0:
-            symbols_tag = ET.SubElement(root, "symbols")
-            for symbol in self.used_symbols:
-                ET.SubElement(symbols_tag, "symbol", attrib={"name": symbol.name, "pulsetype": str(symbol.pulsetype),
-                                                            "nbits": str(symbol.nbits), "nsamples": str(symbol.nsamples)})
-        # Save data
-        data_tag = ET.SubElement(root, "data")
-        for i, block in enumerate(self.blocks):
-            block_tag = block.to_xml(decoders=decoders, include_labelset=True)
-            block_tag.set("bits", block.plain_bits_str)
-            data_tag.append(block_tag)
-
-        # Save labels
-        if len(self.protocol_labels) > 0:
-            labels_tag = ET.SubElement(root, "labels")
-            for i, lbl in enumerate(self.protocol_labels):
-                labels_tag.append(lbl.to_xml(i))
-
-        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
-        with open(filename, "w") as f:
-            for line in xmlstr.split("\n"):
-                if line.strip():
-                    f.write(line+"\n")
-
-    def from_xml_file(self, filename: str):
-        try:
-            tree = ET.parse(filename)
-        except FileNotFoundError:
-            logger.error("Could not find file "+filename)
-            return
-        except xml.etree.ElementTree.ParseError:
-            logger.error("Could not parse file " + filename)
-            return
-
-        root = tree.getroot()
-        self.clear()
-
-        mod_tags = root.find("modulators").findall("modulator")
-        self.modulators[:] = [Modulator("Bugged")] * len(mod_tags)
-        for modulator_tag in mod_tags:
-            self.modulators[Formatter.str2val(modulator_tag.get("index"), int) % len(self.modulators)] = Modulator.from_xml(modulator_tag)
-
-
-        decodings_tags = root.find("decodings").findall("decoding")
-        decoders = [None] * len(decodings_tags)
-        for decoding_tag in decodings_tags:
-            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-            decoders[int(decoding_tag.get("index"))] = encoding(conf)
-
-        self.used_symbols.clear()
-        symbols_tag = root.find("symbols")
-        if symbols_tag:
-            for symbol_tag in symbols_tag.findall("symbol"):
-                s = Symbol(symbol_tag.get("name"), int(symbol_tag.get("nbits")),
-                           int(symbol_tag.get("pulsetype")), int(symbol_tag.get("nsamples")))
-                self.used_symbols.add(s)
-
-        block_tags = root.find("data").findall("block")
+    def clear(self):
         self.blocks[:] = []
-
-        for block_tag in block_tags:
-            block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"), symbols={s.name: s for s in self.used_symbols})
-            block.from_xml(tag=block_tag, participants=None, decoders=decoders)
-            block.modulator_indx = Formatter.str2val(block_tag.get("modulator_index"), int, 0)
-            block.decoder = decoders[Formatter.str2val(block_tag.get("decoding_index"), int, 0)]
-            block.pause = Formatter.str2val(block_tag.get("pause"), int)
-            self.blocks.append(block)

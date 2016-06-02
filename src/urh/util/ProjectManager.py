@@ -73,14 +73,14 @@ class ProjectManager(QObject):
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
         try:
-            self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("participants").findall("participant")]
+            self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("protocol").find("participants").findall("participant")]
         except AttributeError:
             self.participants = []
 
     def read_compare_frame_blocks(self, root, compare_frame_controller):
         tag = root.find("protocol")
         cfc = compare_frame_controller
-        cfc.proto_analyzer.from_xml(protocol_tag=tag, participants=self.participants, decoders=cfc.decodings)
+        cfc.proto_analyzer.from_xml_tag(root=tag)
 
     def read_labelsets(self):
         if self.project_file is None:
@@ -122,7 +122,9 @@ class ProjectManager(QObject):
             self.maincontroller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
             cfc = self.maincontroller.compare_frame_controller
-            cfc.load_decodings()
+            decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
+            if decodings:
+                cfc.decodings = decodings
             cfc.fill_decoding_combobox()
 
             for group_id, decoding_index in self.read_decodings().items():
@@ -271,10 +273,6 @@ class ProjectManager(QObject):
         root.set("gain", str(self.gain))
         root.set("description", str(self.description).replace("\n",self.NEWLINE_CODE))
 
-        parts_tag = ET.SubElement(root, "participants")
-        for parti in self.participants:
-            parts_tag.append(parti.to_xml())
-
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
             self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.blocks, tree=tree)
@@ -321,7 +319,7 @@ class ProjectManager(QObject):
                     show = "1" if proto_frame.show else "0"
                     proto_tag.set("show", show)
 
-        root.append(cfc.proto_analyzer.to_xml(decoders=cfc.decodings))
+        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants))
 
         labelsets_tag = ET.SubElement(root, "labelsets")
         for labelset in cfc.proto_analyzer.labelsets:

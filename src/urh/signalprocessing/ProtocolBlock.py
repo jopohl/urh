@@ -560,7 +560,10 @@ class ProtocolBlock(object):
         self.pause = int(tag.get("pause", self.pause))
         decoding_index = tag.get("decoding_index", None)
         if decoding_index:
-            self.decoder = decoders[int(decoding_index)]
+            try:
+                self.decoder = decoders[int(decoding_index)]
+            except IndexError:
+                pass
 
         if part_id:
             for participant in participants:

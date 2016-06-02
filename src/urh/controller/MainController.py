@@ -259,7 +259,7 @@ class MainController(QMainWindow):
         self.dialog.setOptions(QFileDialog.DontUseNativeDialog | QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)
         self.dialog.setNameFilter(
-            "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
+            "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
             "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
         self.dialog.currentChanged.connect(self.handle_dialog_selection_changed)
@@ -287,23 +287,21 @@ class MainController(QMainWindow):
         if os.path.isdir(path):
             self.dialog.setFileMode(QFileDialog.Directory)
             self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
+                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
                 "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
         else:
             self.dialog.setFileMode(QFileDialog.ExistingFiles)
             self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.txt (*.txt);;"
+                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
                 "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
 
     def add_protocol_file(self, filename):
 
-        protolist = self.compare_frame_controller.add_protocol_from_file(filename)
-        protolist = protolist if protolist is not None else []
-
-        for pa in protolist:
-            sf = self.signal_tab_controller.add_empty_frame(filename, pa.decoded_proto_bits_str)
-            self.signal_protocol_dict[sf] = pa
+        proto = self.compare_frame_controller.add_protocol_from_file(filename)
+        if proto:
+            sf = self.signal_tab_controller.add_empty_frame(filename, proto)
+            self.signal_protocol_dict[sf] = proto
             self.set_frame_numbers()
             self.file_proxy_model.open_files.add(filename)
 
@@ -536,7 +534,7 @@ class MainController(QMainWindow):
                 self.add_signalfile(file, group_id)
             elif fileExtension == ".coco":
                 self.add_signalfile(file, group_id)
-            elif fileExtension == ".txt":
+            elif fileExtension == ".proto":
                 self.add_protocol_file(file)
             elif fileExtension == ".wav":
                 self.add_signalfile(file, group_id)

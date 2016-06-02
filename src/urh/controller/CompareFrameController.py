@@ -383,53 +383,24 @@ class CompareFrameController(QFrame):
             self.expand_group_node(i)
         return protocol
 
-    def add_protocol_from_file(self, filename: str):
+    def add_protocol_from_file(self, filename: str) -> ProtocolAnalyzer:
         """
 
         :rtype: list of ProtocolAnalyzer
         """
-        # TODO: Use xml method from Container
+        pa = ProtocolAnalyzer(signal=None)
+        pa.name = "Loaded Protocol"
+        pa.filename = filename
+        pa.from_xml_file(filename=filename, read_bits=True)
+        for labelset in pa.labelsets:
+            if labelset not in self.proto_analyzer.labelsets:
+                self.proto_analyzer.labelsets.append(labelset)
 
-
-        try:
-            view, groups, symbols = ProtocolAnalyzer.from_file(filename)
-        except Exception as e:
-            QMessageBox.critical(self, self.tr("Error while loading protocol file"), e.args[0])
-            return None
-
-        protolist = []
-        for i, group_data in enumerate(groups):
-            name = group_data["name"]
-            self.proto_tree_model.addGroup(name)
-            group = self.proto_tree_model.groups[-1]
-            try:
-                group.decoding = self.decodings[group_data["decoding_index"]]
-                group.loaded_from_file = True
-            except IndexError:
-                pass
-            pa = ProtocolAnalyzer(None)
-            pa.used_symbols = symbols
-            pa.name = "Protocol " + str(i)
-            pa.filename = filename
-            pa.blocks = group_data["blocks"]
-            self.add_protocol(pa, group_id=self.proto_tree_model.ngroups - 1)
-            protolist.append(pa)
-
-            for lbl in group_data["labels"]:
-                group.add_label(lbl, refresh=False)  # remove after refactoring
-
-        if protolist:
-            self.ui.cbDecoding.blockSignals(True)
-            try:
-                self.ui.cbDecoding.setCurrentIndex(groups[0]["decoding_index"])
-            except IndexError:
-                pass
-            self.ui.cbDecoding.blockSignals(False)
+        self.fill_labelset_combobox()
+        self.add_protocol(protocol=pa)
 
         self.set_shown_protocols()
-        self.ui.cbProtoView.setCurrentIndex(view)
-
-        return protolist
+        return pa
 
     def add_sniffed_protocol_blocks(self, blocks: list):
         if len(blocks) > 0:
@@ -469,7 +440,6 @@ class CompareFrameController(QFrame):
         first_block_indices = []
         prev_line = 0
         for proto in self.protocol_list:
-            proto.default_labelset = self.proto_analyzer.default_labelset
             abs_time = 0
             rel_time = 0
             if proto.show:
@@ -493,7 +463,8 @@ class CompareFrameController(QFrame):
                     block.relative_time = rel_time
 
                     num_blocks += 1
-                    block.labelset = self.proto_analyzer.default_labelset
+                    if block.labelset not in self.proto_analyzer.labelsets:
+                        block.labelset = self.proto_analyzer.default_labelset
                     self.proto_analyzer.blocks.append(block)
 
                 self.proto_analyzer.used_symbols |= proto.used_symbols
@@ -1049,8 +1020,6 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.showColumn(i)
 
     def save_protocol(self):
-        viewtype = self.ui.cbProtoView.currentIndex()
-
         for group in self.groups:
             if not group.decoding.is_nrz:
                 reply = QMessageBox.question(self, "Saving of protocol",
@@ -1063,14 +1032,12 @@ class CompareFrameController(QFrame):
                     break
 
         text = "protocol"
-        filename = FileOperator.get_save_file_name("{0}.txt".format(text), parent=self, caption="Save protocol")
+        filename = FileOperator.get_save_file_name("{0}.proto".format(text), parent=self, caption="Save protocol")
 
         if not filename:
             return
 
-
-        FileOperator.save_protocol(filename, viewtype, self.groups, list(map(str, self.decodings)),
-                                   self.proto_analyzer.used_symbols)
+        self.proto_analyzer.to_xml_file(filename=filename, decoders=self.decodings, participants=self.project_manager.participants, write_bits=True)
 
     def handle_writeable_changed(self, writeable_status: bool):
         self.protocol_model.is_writeable = writeable_status

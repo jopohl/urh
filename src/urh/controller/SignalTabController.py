@@ -169,8 +169,9 @@ class SignalTabController(QWidget):
 
         return sig_frame
 
-    def add_empty_frame(self, filename: str, proto_bits):
-        sig_frame = SignalFrameController(None, self.undo_stack, self.project_manager, proto_bits=proto_bits,
+    def add_empty_frame(self, filename: str, proto):
+        sig_frame = SignalFrameController(proto_analyzer=proto, undo_stack=self.undo_stack,
+                                          project_manager=self.project_manager, proto_bits=proto.decoded_proto_bits_str,
                                           parent=self)
 
         sig_frame.ui.lineEditSignalName.setText(filename)

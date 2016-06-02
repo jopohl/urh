@@ -28,7 +28,7 @@ class LabelValueTableModel(QAbstractTableModel):
 
     @property
     def block(self):
-        if self.block_index != -1:
+        if self.block_index != -1 and self.block_index < len(self.proto_analyzer.blocks):
             return self.proto_analyzer.blocks[self.block_index]
         else:
             return None

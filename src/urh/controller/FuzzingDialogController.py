@@ -22,14 +22,15 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzBlock.setMinimum(1)
         self.ui.spinBoxFuzzBlock.setMaximum(self.protocol.num_blocks)
 
+        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.block.labelset])
+        self.ui.comboBoxFuzzingLabel.setCurrentIndex(label_index)
+
         self.proto_view = proto_view
         self.fuzz_table_model = FuzzingTableModel(self.current_label, proto_view)
         self.fuzz_table_model.remove_duplicates = self.ui.chkBRemoveDuplicates.isChecked()
         self.ui.tblFuzzingValues.setModel(self.fuzz_table_model)
         self.fuzz_table_model.update()
 
-        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.block.labelset])
-        self.ui.comboBoxFuzzingLabel.setCurrentIndex(label_index)
 
         self.ui.spinBoxFuzzingStart.setValue(self.current_label_start + 1)
         self.ui.spinBoxFuzzingEnd.setValue(self.current_label_end)

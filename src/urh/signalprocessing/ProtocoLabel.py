@@ -40,7 +40,6 @@ class ProtocolLabel(object):
         self.fuzz_created = fuzz_created
 
         self.display_type_index = 0
-        self.nfuzzed = 0  # Für Anzeige der erzeugten gefuzzten Blöcken
 
     @property
     def name(self):

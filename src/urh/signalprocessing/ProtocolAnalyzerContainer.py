@@ -16,7 +16,12 @@ from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.signalprocessing.encoding import encoding
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
+from enum import Enum
 
+class FuzzMode(Enum):
+    successive = 0
+    concurrent = 1
+    exhaustive = 2
 
 class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     """
@@ -72,40 +77,48 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         except Exception as e:
             logger.error("Duplicating line ", str(e))
 
-    def fuzz_successive(self):
-        """
-        Führt ein sukzessives Fuzzing über alle aktiven Fuzzing Label durch.
-        Sequentiell heißt, ein Label wird durchgefuzzt und alle anderen Labels bleiben auf Standardwert.
-        Das entspricht dem Vorgang nacheinander immer nur ein Label aktiv zu setzen.
-
-        :rtype: list of ProtocolBlock
-        """
+    def fuzz(self, mode: FuzzMode):
         result = []
         appd_result = result.append
 
         for i, block in enumerate(self.blocks):
             labels = block.active_fuzzing_labels
-
             appd_result(block)
 
-            labels.sort()
-            n = sum([len(l.fuzz_values[1:]) for l in labels])
+            if mode == FuzzMode.successive:
+                combinations = [[(l.start, l.end, fuzz_val)] for l in labels for fuzz_val in l.fuzz_values[1:]]
+            elif mode == FuzzMode.concurrent:
+                nval = numpy.max([len(l.fuzz_values) for l in labels]) if labels else 0
+                f = lambda index, label: index if index < len(label.fuzz_values) else 0
+                combinations = [[(l.start, l.end, l.fuzz_values[f(j, l)]) for l in labels] for j in range(1, nval)]
+            elif mode == FuzzMode.exhaustive:
+                pool = [[(l.start, l.end, fv) for fv in l.fuzz_values[1:]] for l in labels]
+                combinations = itertools.product(*pool) if labels else []
+            else:
+                raise ValueError("Unknown fuzz mode")
 
-            for l in labels:
-                l.nfuzzed = n
-                for fuzz_val in l.fuzz_values[1:]:
-                    bool_fuzz_val = [True if bit == "1" else False for bit in fuzz_val]
-                    cpy_bits = copy.deepcopy(block.plain_bits)
-                    cpy_bits[l.start:l.end] = bool_fuzz_val
-                    fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
-                                              bit_alignment_positions=self.bit_alignment_positions, rssi=block.rssi,
-                                              labelset=block.labelset.copy_for_fuzzing(),
-                                              modulator_indx=block.modulator_indx, decoder=block.decoder,
-                                              fuzz_created=True)
-                    appd_result(fuz_block)
+            for combination in combinations:
+                cpy_bits = block.plain_bits[:]
+                for start, end, fuz_val in combination:
+                    cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
+
+                fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
+                                          bit_alignment_positions=self.bit_alignment_positions,
+                                          rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
+                                          modulator_indx=block.modulator_indx,
+                                          decoder=block.decoder, fuzz_created=True)
+                appd_result(fuz_block)
 
         self.blocks = result
         """:type: list of ProtocolBlock """
+
+    def fuzz_successive(self):
+        """
+        Führt ein sukzessives Fuzzing über alle aktiven Fuzzing Label durch.
+        Sequentiell heißt, ein Label wird durchgefuzzt und alle anderen Labels bleiben auf Standardwert.
+        Das entspricht dem Vorgang nacheinander immer nur ein Label aktiv zu setzen.
+        """
+        self.fuzz(FuzzMode.successive)
 
     def fuzz_concurrent(self):
         """
@@ -113,74 +126,14 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         gleichzeitig iteriert. Wenn ein Label keine FuzzValues mehr übrig hat,
         wird der erste Fuzzing Value (per Definition der Standardwert) genommen.
         """
-        result = []
-        appd_result = result.append
-        block_offsets = {}
-
-        for i, block in enumerate(self.blocks):
-            labels = block.active_fuzzing_labels
-            appd_result(block)
-
-            nvalues = numpy.max([len(l.fuzz_values[1:]) for l in labels])
-            for j in range(nvalues):
-                cpy_bits = copy.deepcopy(block.plain_bits)
-                for l in labels:
-                    index = j
-
-                    if index >= len(l.fuzz_values[1:]):
-                        index = 0
-
-                    bool_fuzz_val = [True if bit == "1" else False for bit in l.fuzz_values[1:][index]]
-                    cpy_bits[l.start:l.end] = bool_fuzz_val
-
-                fuzz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                           rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
-                                           modulator_indx=block.modulator_indx, decoder=block.decoder, fuzz_created=True)
-                appd_result(fuzz_block)
-
-            block_offsets[i] = nvalues - 1
-            for l in labels:
-                l.nfuzzed = nvalues
-
-        self.blocks = result
-        """:type: list of ProtocolBlock """
+        self.fuzz(FuzzMode.concurrent)
 
     def fuzz_exhaustive(self):
         """
         Führt ein vollständiges Fuzzing durch. D.h. wenn es mehrere Label pro Block gibt, werden alle
         möglichen Kombinationen erzeugt (Kreuzprodukt!)
         """
-        result = []
-        appd_result = result.append
-
-        for i, block in enumerate(self.blocks):
-            labels = block.active_fuzzing_labels
-            appd_result(block)
-
-            pool = []
-            for l in labels:
-                pool.append([(l.start, l.end, fv) for fv in l.fuzz_values[1:]])
-
-            n = 0
-
-            for combination in itertools.product(*pool):
-                n += 1
-                cpy_bits = copy.deepcopy(block.plain_bits)
-                for start, end, fuz_val in combination:
-                    bool_fuzz_val = [True if bit == "1" else False for bit in fuz_val]
-                    cpy_bits[start:end] = bool_fuzz_val
-
-                fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause, bit_alignment_positions=self.bit_alignment_positions,
-                                          rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
-                                          modulator_indx=block.modulator_indx,
-                                          decoder=block.decoder, fuzz_created=True)
-                appd_result(fuz_block)
-
-            for l in labels:
-                l.nfuzzed = n
-
-        self.blocks = result
-        """:type: list of ProtocolBlock """
+        self.fuzz(FuzzMode.exhaustive)
 
     def create_fuzzing_label(self, start, end, block_index) -> ProtocolLabel:
         fuz_lbl = self.blocks[block_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)

@@ -22,6 +22,7 @@ class LabelSet(list):
 
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)
+        self.sort()
 
     def add_protocol_label(self, start: int, end: int, type_index: int, name=None, color_ind=None) -> \
             ProtocolLabel:

@@ -712,7 +712,7 @@ class ProtocolAnalyzer(object):
                     f.write(line+"\n")
 
 
-    def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None):
+    def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None, decodings=None):
         if not root:
             return None
 
@@ -721,7 +721,7 @@ class ProtocolAnalyzer(object):
             for mod_tag in root.find("modulators").findall("modulator"):
                 self.modulators.append(Modulator.from_xml(mod_tag))
 
-        decoders = self.read_decoders_from_xml_tag(root)
+        decoders = self.read_decoders_from_xml_tag(root) if decodings is None else decodings
 
         self.used_symbols.clear()
         try:

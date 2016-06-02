@@ -4,23 +4,10 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class ProtocolGroup(object):
-    def __init__(self, name: str, decoding: encoding = encoding(["Non Return To Zero (NRZ)"])):
+    def __init__(self, name: str):
         self.name = name
-        self.__decoding = decoding
         self.__items = []
-
         self.loaded_from_file = False
-
-    @property
-    def decoding(self) -> encoding:
-        return self.__decoding
-
-    @decoding.setter
-    def decoding(self, val:encoding):
-        if self.decoding != val:
-            self.__decoding = val
-            for proto in self.protocols:
-                proto.set_decoder_for_blocks(self.decoding)
 
     @property
     def items(self):
@@ -95,7 +82,7 @@ class ProtocolGroup(object):
             return None
 
     def __repr__(self):
-        return "{0} ({1})".format(self.name, self.decoding.name)
+        return "Group: {0}".format(self.name)
 
     def set_labels(self, val):
         self.__labels = val # For AmbleAssignPlugin

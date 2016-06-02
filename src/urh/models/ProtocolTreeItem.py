@@ -113,10 +113,7 @@ class ProtocolTreeItem(object):
         return 1
 
     def data(self):
-        display_name = self.__itemData.name
-        if isinstance(self.__itemData, ProtocolGroup):
-            display_name += " (%s)" % self.__itemData.decoding.name
-        return display_name
+        return self.__itemData.name
 
     def setData(self, value):
         self.__itemData.name = value

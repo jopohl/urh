@@ -72,11 +72,6 @@ class ProjectManager(QObject):
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
-    def read_compare_frame_blocks(self, root, compare_frame_controller):
-        tag = root.find("protocol")
-        cfc = compare_frame_controller
-        cfc.proto_analyzer.from_xml_tag(root=tag, participants=self.participants)
-
     def read_labelsets(self):
         if self.project_file is None:
             return None
@@ -123,12 +118,9 @@ class ProjectManager(QObject):
                 cfc.decodings = decodings
             cfc.fill_decoding_combobox()
 
-            for group_id, decoding_index in self.read_decodings().items():
-                cfc.groups[group_id].decoding = cfc.decodings[decoding_index]
-
             cfc.proto_analyzer.labelsets = self.read_labelsets()
             cfc.fill_labelset_combobox()
-            self.read_compare_frame_blocks(root=root, compare_frame_controller=cfc)
+            cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants, decodings=cfc.decodings)
 
             #cfc.ui.cbDecoding.setCurrentIndex(index)
             cfc.updateUI()
@@ -301,13 +293,6 @@ class ProjectManager(QObject):
             group_tag.set("name", str(group.name))
             group_tag.set("id", str(i))
 
-            # TODO Remove as decoding will be blockwise
-            try:
-                decoding_index = cfc.decodings.index(group.decoding)
-            except ValueError:
-                decoding_index = 0
-            group_tag.set("decoding_index", str(decoding_index))
-
             for proto_frame in cfc.protocols[i]:
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
@@ -326,22 +311,6 @@ class ProjectManager(QObject):
             for line in xmlstr.split("\n"):
                 if line.strip():
                     f.write(line+"\n")
-
-    def read_decodings(self) -> dict:
-        if self.project_file is None:
-            return
-
-        tree = ET.parse(self.project_file)
-        root = tree.getroot()
-        decodings = {}
-        for group_tag in root.iter("group"):
-            id = group_tag.attrib["id"]
-            try:
-                decodings[int(id)] = int(group_tag.attrib["decoding_index"])
-            except KeyError:
-                decodings[int(id)] = 0
-
-        return decodings
 
     def read_participants_for_signal(self, signal: Signal, blocks):
         if self.project_file is None or len(signal.filename) == 0:

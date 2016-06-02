@@ -119,6 +119,20 @@ class CompareFrameController(QFrame):
 
 
     @property
+    def selected_blocks(self):
+        selected = self.ui.tblViewProtocol.selectionModel().selection()
+        """:type: QtWidgets.QItemSelection """
+
+        if selected.isEmpty():
+            return []
+
+        min_row = numpy.min([rng.top() for rng in selected])
+        max_row = numpy.max([rng.bottom() for rng in selected])
+
+        return self.proto_analyzer.blocks[min_row:max_row+1]
+
+
+    @property
     def active_group_ids(self):
         """
         Returns a list of currently selected group indices
@@ -373,8 +387,7 @@ class CompareFrameController(QFrame):
 
     def add_protocol(self, protocol: ProtocolAnalyzer, group_id: int = 0) -> ProtocolAnalyzer:
         self.__protocols = None
-        group =self.proto_tree_model.add_protocol(protocol, group_id)
-        protocol.set_decoder_for_blocks(group.decoding)
+        self.proto_tree_model.add_protocol(protocol, group_id)
         protocol.qt_signals.protocol_updated.connect(self.set_shown_protocols)
         if protocol.signal:
             protocol.signal.sample_rate_changed.connect(self.set_shown_protocols)  # Refresh times
@@ -577,21 +590,33 @@ class CompareFrameController(QFrame):
         if new_index == self.ui.cbDecoding.count() - 1:
             self.set_decoding(None)
         else:
-            self.set_decoding(self.decodings[new_index], for_all_blocks=False)
+            self.set_decoding(self.decodings[new_index], blocks=self.selected_blocks if self.selected_blocks else None)
 
-    def set_decoding(self, decoding: encoding, for_all_blocks=True):
+    def set_decoding(self, decoding: encoding, blocks=None):
+        """
+
+        :param decoding:
+        :param blocks: None = set for all blocks
+        :return:
+        """
         if decoding is None:
             self.show_decoding_clicked.emit()
         else:
+            if blocks is None:
+                blocks = self.proto_analyzer.blocks
+                if len(blocks) > 10:
+                    reply = QMessageBox.question(self, "Set decoding", "Do you want to apply the selected decoding to {} blocks?".format(len(blocks)), QMessageBox.Yes | QMessageBox.No);
+                    if reply != QMessageBox.Yes:
+                        self.ui.cbDecoding.blockSignals(True)
+                        self.ui.cbDecoding.setCurrentText("...")
+                        self.ui.cbDecoding.blockSignals(False)
+                        return
+
             self.show_all_cols()
 
-            if for_all_blocks:
-                for group in self.groups:
-                    group.decoding = decoding
 
-            else:
-                for i in self.active_group_ids:
-                    self.groups[i].decoding = decoding
+            for block in blocks:
+                block.decoder = decoding
 
             self.clear_search()
 
@@ -725,9 +750,17 @@ class CompareFrameController(QFrame):
 
         # Set Decoding Combobox
         self.ui.cbDecoding.blockSignals(True)
-        group = self.get_group_for_row(min_row)
-        if group:
-            self.ui.cbDecoding.setCurrentText(group.decoding.name)
+        different_encodings = False
+        enc = self.selected_blocks[0].decoder
+        for block in self.selected_blocks:
+            if block.decoder != enc:
+                different_encodings = True
+                break
+
+        if not different_encodings:
+            self.ui.cbDecoding.setCurrentText(self.proto_analyzer.blocks[min_row].decoder.name)
+        else:
+            self.ui.cbDecoding.setCurrentText("...")
         self.ui.cbDecoding.blockSignals(False)
 
         self.ui.treeViewProtocols.blockSignals(True)
@@ -794,11 +827,6 @@ class CompareFrameController(QFrame):
             ignore_table_model_on_update = False
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
-
-        if show_decoding:
-            self.ui.cbDecoding.blockSignals(True)
-            self.ui.cbDecoding.setCurrentText(self.groups[self.active_group_ids[0]].decoding.name)
-            self.ui.cbDecoding.blockSignals(False)
 
         self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
         self.ui.tblViewProtocol.blockSignals(False)
@@ -1021,8 +1049,8 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.showColumn(i)
 
     def save_protocol(self):
-        for group in self.groups:
-            if not group.decoding.is_nrz:
+        for block in self.proto_analyzer.blocks:
+            if not block.decoder.is_nrz:
                 reply = QMessageBox.question(self, "Saving of protocol",
                                              "You want to save this protocol with an encoding different from NRZ.\n"
                                              "This may cause loss of information if you load it again.\n\n"

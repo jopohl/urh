@@ -72,15 +72,10 @@ class ProjectManager(QObject):
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
-        try:
-            self.participants = [Participant.from_xml(part_tag) for part_tag in root.find("protocol").find("participants").findall("participant")]
-        except AttributeError:
-            self.participants = []
-
     def read_compare_frame_blocks(self, root, compare_frame_controller):
         tag = root.find("protocol")
         cfc = compare_frame_controller
-        cfc.proto_analyzer.from_xml_tag(root=tag)
+        cfc.proto_analyzer.from_xml_tag(root=tag, participants=self.participants)
 
     def read_labelsets(self):
         if self.project_file is None:
@@ -118,10 +113,11 @@ class ProjectManager(QObject):
             tree = ET.parse(self.project_file)
             root = tree.getroot()
 
+            cfc = self.maincontroller.compare_frame_controller
             self.read_parameters(root)
+            self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
             self.maincontroller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
-            cfc = self.maincontroller.compare_frame_controller
             decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
             if decodings:
                 cfc.decodings = decodings
@@ -451,6 +447,7 @@ class ProjectManager(QObject):
             self.sample_rate = dialog.sample_rate
             self.gain = dialog.gain
             self.bandwidth = dialog.bandwidth
-            self.description  = dialog.description
-            self.participants = dialog.participants
+            self.description = dialog.description
+            if dialog.new_project:
+                self.participants = dialog.participants
             self.project_updated.emit()

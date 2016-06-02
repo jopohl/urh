@@ -65,6 +65,7 @@ class GeneratorTabController(QWidget):
 
     def create_connects(self, compare_frame_controller):
         compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
+        compare_frame_controller.participant_changed.connect(self.table_model.refresh_vertical_header)
         self.ui.btnEditModulation.clicked.connect(self.show_modulation_dialog)
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
         self.ui.tableBlocks.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
@@ -78,6 +79,8 @@ class GeneratorTabController(QWidget):
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.btnSend.clicked.connect(self.on_btn_send_clicked)
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
+
+        self.project_manager.project_updated.connect(self.on_project_updated)
 
         self.label_list_model.protolabel_removed.connect(self.handle_proto_label_removed)
 
@@ -470,3 +473,8 @@ class GeneratorTabController(QWidget):
             self.set_fuzzing_ui_status()
         except:
             logger.error("You done something wrong to the xml fuzzing profile.")
+
+
+    def on_project_updated(self):
+        self.table_model.participants = self.project_manager.participants
+        self.table_model.refresh_vertical_header()

@@ -41,6 +41,8 @@ class TableModel(QAbstractTableModel):
         self.bold_fonts = defaultdict(lambda: False)
         self.text_colors = defaultdict(lambda: None)
         self.tooltips = defaultdict(lambda: None)
+        self.vertical_header_text = defaultdict(lambda: None)
+        self.vertical_header_colors = defaultdict(lambda: None)
 
         self._diffs = defaultdict(set)
         """:type: dict[int, set[int]] """
@@ -59,12 +61,11 @@ class TableModel(QAbstractTableModel):
         self.update()
 
     def headerData(self, section: int, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Vertical and self.protocol.blocks[section].participant:
-            return  "{0} ({1})".format(section + 1, self.protocol.blocks[section].participant.shortname)
-
-        if role == Qt.BackgroundColorRole and orientation == Qt.Vertical and self.protocol.blocks[section].participant:
-            return constants.PARTICIPANT_COLORS[self.protocol.blocks[section].participant.color_index]
-
+        if orientation == Qt.Vertical:
+            if role == Qt.DisplayRole:
+                return self.vertical_header_text[section]
+            elif role == Qt.BackgroundColorRole:
+                return self.vertical_header_colors[section]
 
         return super().headerData(section, orientation, role)
 
@@ -113,6 +114,7 @@ class TableModel(QAbstractTableModel):
         # Cache background colors for performance
         self.refresh_bgcolors_and_tooltips()
         self.refresh_fonts()  # Will be overriden
+        self.refresh_vertical_header()
 
         self.layoutChanged.emit()
         self.locked = False
@@ -143,6 +145,21 @@ class TableModel(QAbstractTableModel):
         :return:
         """
         pass
+
+    def refresh_vertical_header(self):
+        self.vertical_header_colors.clear()
+        self.vertical_header_text.clear()
+        for i in range(self.row_count):
+            try:
+                participant = self.protocol.blocks[i].participant
+            except IndexError:
+                participant = None
+            if participant:
+                self.vertical_header_text[i] = "{0} ({1})".format(i + 1, participant.shortname)
+                self.vertical_header_colors[i] = constants.PARTICIPANT_COLORS[participant.color_index]
+            else:
+                self.vertical_header_text[i] = str(i+1)
+
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         if not index.isValid():

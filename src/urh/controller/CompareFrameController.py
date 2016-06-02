@@ -298,6 +298,7 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
         self.project_manager.project_updated.connect(self.on_project_updated)
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
+        self.ui.tblViewProtocol.participant_changed.connect(self.protocol_model.refresh_vertical_header)
         self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
         self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
         self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
@@ -1246,6 +1247,7 @@ class CompareFrameController(QFrame):
         self.participant_list_model.participants = self.project_manager.participants
         self.participant_list_model.update()
         self.protocol_model.participants = self.project_manager.participants
+        self.protocol_model.refresh_vertical_header()
 
     def set_search_ui_visibility(self, visible: bool):
         self.ui.btnPrevSearch.setVisible(visible)

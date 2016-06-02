@@ -712,7 +712,7 @@ class ProtocolAnalyzer(object):
                     f.write(line+"\n")
 
 
-    def from_xml_tag(self, root: ET.Element, read_bits=False):
+    def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None):
         if not root:
             return None
 
@@ -732,13 +732,9 @@ class ProtocolAnalyzer(object):
         except AttributeError:
             pass
 
-        try:
-            participants = []
-            for parti_tag in root.find("participants").findall("participant"):
-                participants.append(Participant.from_xml(parti_tag))
-        except AttributeError:
-            participants = []
-            logger.warning("no participants found in xml")
+        if participants is None:
+            participants = self.read_participants_from_xml_tag(root)
+
 
         if read_bits:
             self.blocks[:] = []
@@ -768,6 +764,16 @@ class ProtocolAnalyzer(object):
 
         except AttributeError:
             pass
+
+    def read_participants_from_xml_tag(self, root: ET.Element):
+        try:
+            participants = []
+            for parti_tag in root.find("participants").findall("participant"):
+                participants.append(Participant.from_xml(parti_tag))
+            return participants
+        except AttributeError:
+            logger.warning("no participants found in xml")
+            return []
 
     def read_decoders_from_xml_tag(self, root: ET.Element):
         try:

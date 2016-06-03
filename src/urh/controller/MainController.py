@@ -29,6 +29,7 @@ from urh.ui.WavFileDialog import WavFileDialog
 from urh.ui.ui_main import Ui_MainWindow
 from urh.util import FileOperator
 from urh.util.Errors import Errors
+from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -188,6 +189,7 @@ class MainController(QMainWindow):
         self.project_manager.project_updated.connect(self.on_project_updated)
 
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.redraw_signals)
+        self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
 
         self.ui.menuFile.addSeparator()
@@ -380,6 +382,14 @@ class MainController(QMainWindow):
         self.refresh_main_menu()
         self.ui.progressBar.hide()
 
+    def on_cfc_close_wanted(self, protocols):
+        frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
+        if len(frames) != len(protocols):
+            logger.error("failed to close {} protocols".format(len(protocols)-len(frames)))
+
+        for frame in frames:
+            self.close_signal_frame(frame)
+
     def close_signal_frame(self, signal_frame: SignalFrameController):
         self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.blocks)
         try:
@@ -409,6 +419,7 @@ class MainController(QMainWindow):
         signal_frame.destroy()
         QApplication.processEvents()
 
+        self.compare_frame_controller.ui.treeViewProtocols.expandAll()
         self.set_frame_numbers()
         self.refresh_main_menu()
 

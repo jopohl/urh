@@ -31,7 +31,7 @@ class Signal(QObject):
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
-    full_refresh_needed = pyqtSignal()  # On Crop/Mute/Delete etc.
+    data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
     def __init__(self, filename: str, name: str, wav_is_qad_demod=False,
                  modulation: str = None, sample_rate: float = 1e6, parent=None):

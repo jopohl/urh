@@ -4,11 +4,12 @@ import numpy as np
 import sys
 from PyQt5.QtWidgets import QUndoCommand
 
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
 class DeleteSignalRange(QUndoCommand):
-    def __init__(self, signal: Signal, start: int, end: int):
+    def __init__(self, signal: Signal, protocol: ProtocolAnalyzer, start: int, end: int):
         super().__init__()
 
         self.end = end
@@ -20,6 +21,8 @@ class DeleteSignalRange(QUndoCommand):
         self.orig_num_samples = self.signal.num_samples
         self.orig_parameter_cache = copy.deepcopy(self.signal.parameter_cache)
         self.signal_was_changed = self.signal.changed
+        self.protocol = protocol
+        self.orig_blocks, self.orig_labels = protocol.copy_data()
 
     def redo(self):
 
@@ -37,7 +40,8 @@ class DeleteSignalRange(QUndoCommand):
         self.signal.clear_parameter_cache()
 
         self.signal.changed = True
-        self.signal.full_refresh_needed.emit()
+        self.signal.data_edited.emit()
+        self.signal.protocol_needs_update.emit()
 
     def undo(self):
         self.signal._num_samples = self.orig_num_samples
@@ -45,5 +49,9 @@ class DeleteSignalRange(QUndoCommand):
         self.signal._qad = np.insert(self.signal._qad, self.start, self.deleted_qad)
         self.signal.parameter_cache = self.orig_parameter_cache
 
+        self.protocol.revert_to(self.orig_blocks, self.orig_labels)
+        self.protocol.qt_signals.protocol_updated.emit()
+
         self.signal.changed = self.signal_was_changed
-        self.signal.full_refresh_needed.emit()
+        self.signal.data_edited.emit()
+

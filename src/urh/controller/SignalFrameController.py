@@ -13,6 +13,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
+from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.actions.CropSignal import CropSignal
 from urh.ui.actions.DeleteSignalRange import DeleteSignalRange
 from urh.ui.actions.MuteSignalRange import MuteSignalRange
@@ -142,7 +143,7 @@ class SignalFrameController(QFrame):
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
-            self.signal.full_refresh_needed.connect(self.refresh)
+            self.signal.data_edited.connect(self.refresh_signal) # Crop/Delete Mute etc.
             self.signal.sample_rate_changed.connect(self.__set_duration)
             self.signal.sample_rate_changed.connect(self.show_protocol)  # Update times
 
@@ -498,7 +499,7 @@ class SignalFrameController(QFrame):
             if end < start:
                 start, end = end, start
 
-            crop_action = CropSignal(self.signal, start, end)
+            crop_action = CropSignal(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end)
             self.undo_stack.push(crop_action)
             # self.signal.crop(start, end)
             gvs.zoom((end-start)/w, supress_signal=True) # Zoomlevel von VorCrop auf NachCrop übertragen
@@ -869,8 +870,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(False)
         self.jump_sync = True
 
-    @pyqtSlot()
-    def refresh(self, draw_full_signal=False):
+    def refresh_signal(self, draw_full_signal=False):
         gvs = self.ui.gvSignal
         gvs.sel_area_active = False
         self.draw_signal(draw_full_signal)
@@ -886,15 +886,18 @@ class SignalFrameController(QFrame):
         self.__set_duration()
 
         self.set_qad_tooltip(self.signal.noise_treshold)
-        self.refresh_signal_informations(block=True)
+        gvs.sel_area_active = True
 
+    @pyqtSlot()
+    def refresh(self, draw_full_signal=False):
+        self.refresh_signal(draw_full_signal=draw_full_signal)
+        self.refresh_signal_informations(block=True)
         self.show_protocol(refresh=True)
 
-        gvs.sel_area_active = True
 
     def delete_selection(self, start, end):
         self.ui.gvSignal.clear_selection()
-        del_action = DeleteSignalRange(self.signal, start, end)
+        del_action = DeleteSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end)
         self.undo_stack.push(del_action)
         self.ui.gvSignal.centerOn(start, self.ui.gvSignal.y_center)
 
@@ -906,7 +909,9 @@ class SignalFrameController(QFrame):
     def on_spinBoxCenter_editingFinished(self):
         if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
             self.ui.spinBoxCenterOffset.blockSignals(True)
-            self.signal.qad_center = self.ui.spinBoxCenterOffset.value()
+            center_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                  parameter_name="qad_center", parameter_value=self.ui.spinBoxCenterOffset.value())
+            self.undo_stack.push(center_action)
             self.disable_auto_detection()
 
     def update_qad_center_view(self):
@@ -922,7 +927,10 @@ class SignalFrameController(QFrame):
     def on_spinBoxTolerance_editingFinished(self):
         if self.signal.tolerance != self.ui.spinBoxTolerance.value():
             self.ui.spinBoxTolerance.blockSignals(True)
-            self.signal.tolerance = self.ui.spinBoxTolerance.value()
+            tolerance_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                  parameter_name="tolerance",
+                                                  parameter_value=self.ui.spinBoxTolerance.value())
+            self.undo_stack.push(tolerance_action)
             self.ui.spinBoxTolerance.blockSignals(False)
             self.disable_auto_detection()
 
@@ -930,9 +938,21 @@ class SignalFrameController(QFrame):
     def on_spinBoxInfoLen_editingFinished(self):
         if self.signal.bit_len != self.ui.spinBoxInfoLen.value():
             self.ui.spinBoxInfoLen.blockSignals(True)
-            self.signal.bit_len = self.ui.spinBoxInfoLen.value()
+            bitlen_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                     parameter_name="bit_len",
+                                                     parameter_value=self.ui.spinBoxInfoLen.value())
+            self.undo_stack.push(bitlen_action)
             self.ui.spinBoxInfoLen.blockSignals(False)
             self.disable_auto_detection()
+
+    def on_spinBoxNoiseTreshold_editingFinished(self):
+        if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():
+            noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                  parameter_name="noise_treshold",
+                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
+            self.undo_stack.push(noise_action)
+            self.disable_auto_detection()
+
 
     @pyqtSlot()
     def handle_show_hide_start_end_clicked(self):
@@ -1115,11 +1135,6 @@ class SignalFrameController(QFrame):
         colors = colors if colors else None
         return subpath_ranges, colors
 
-    def on_spinBoxNoiseTreshold_editingFinished(self):
-        if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():
-            self.signal.noise_treshold = self.ui.spinBoxNoiseTreshold.value()
-            self.disable_auto_detection()
-
     def on_info_btn_clicked(self):
         sdc = SignalDetailsController(self.signal, self)
         sdc.exec_()
@@ -1144,4 +1159,8 @@ class SignalFrameController(QFrame):
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
     def on_cbmodulationtype_index_changed(self):
-        self.signal.modulation_type = self.ui.cbModulationType.currentIndex()
+        modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                              parameter_name="modulation_type",
+                                              parameter_value=self.ui.cbModulationType.currentIndex())
+
+        self.undo_stack.push(modulation_action)

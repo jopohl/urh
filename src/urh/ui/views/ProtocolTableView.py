@@ -48,7 +48,8 @@ class ProtocolTableView(TableView):
     @property
     def selected_blocks(self):
         blocks = self.model().protocol.blocks
-        return [blocks[i] for i in set(i.row() for i in self.selectionModel().selectedIndexes())]
+        rows = set(i.row() for i in self.selectionModel().selectedIndexes())
+        return [blocks[i] for i in rows]
 
     def selectionChanged(self, QItemSelection, QItemSelection_1):
         self.selection_changed.emit()
@@ -123,9 +124,6 @@ class ProtocolTableView(TableView):
         min_row, max_row, start, end = self.selection_range()
         selected_blocks = self.selected_blocks
         particpnt_actions = {}
-
-        for i in range(min_row, max_row + 1):
-            selected_blocks.append(self.model().protocol.blocks[i])
 
         if len(selected_blocks) == 0:
             selected_participant = -1
@@ -283,5 +281,5 @@ class ProtocolTableView(TableView):
         elif action == new_labelset_action:
             self.new_labelset_clicked.emit(selected_blocks)
         elif action in labelset_actions:
-            self.labelset_selected.emit(labelset_actions[action], self.selected_blocks)
+            self.labelset_selected.emit(labelset_actions[action], selected_blocks)
 

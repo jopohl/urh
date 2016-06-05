@@ -1,11 +1,13 @@
 # What's this?
 Universal Radio Hacker is a suite for investigating unknown wireless protocols. Features include
- * hardware interfaces for common Software Defined Radios
- * __easy demodulation__ of signals
- * __assigning participants__ to keep overview of your data
- * __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening
- * __assign labels__ to reveal the logic of the protocol
- * __fuzzing component__ to find security leaks
+
+* hardware interfaces for common Software Defined Radios
+* __easy demodulation__ of signals
+* __assigning participants__ to keep overview of your data
+* __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening
+* __assign labels__ to reveal the logic of the protocol
+* __fuzzing component__ to find security leaks
+* __modulation support__ to inject the data back into the system
 
  ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
 

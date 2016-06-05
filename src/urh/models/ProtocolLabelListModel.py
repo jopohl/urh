@@ -76,7 +76,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             self.delete_label_at(row)
 
     def add_labels_to_labelset(self, start: int, end: int, labelset_id: int):
-        for lbl in self.proto_labels:
+        for lbl in self.proto_labels[start:end+1]:
             self.controller.proto_analyzer.labelsets[labelset_id].add_label(lbl)
         self.controller.updateUI(resize_table=False)
 

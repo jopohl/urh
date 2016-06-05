@@ -311,7 +311,7 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
         self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
 
-        self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
+        self.ui.cbLabelsets.lineEdit().textEdited.connect(self.on_labelsetname_edited)
         self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
 
         self.search_action.triggered.connect(self.__set_mode_to_search)
@@ -1309,6 +1309,7 @@ class CompareFrameController(QFrame):
 
     def on_labelsetname_edited(self):
         self.active_labelset.name = self.ui.cbLabelsets.currentText()
+        self.fill_labelset_combobox()
 
     def on_new_labelset_clicked(self, selected_blocks: list):
         self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)

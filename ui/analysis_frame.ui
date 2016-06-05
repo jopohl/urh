@@ -815,7 +815,7 @@
             <bool>true</bool>
            </property>
            <property name="insertPolicy">
-            <enum>QComboBox::InsertAtCurrent</enum>
+            <enum>QComboBox::NoInsert</enum>
            </property>
           </widget>
          </item>

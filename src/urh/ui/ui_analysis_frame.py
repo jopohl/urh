@@ -373,7 +373,7 @@ class Ui_FAnalysis(object):
         self.verticalLayout_2.addWidget(self.label)
         self.cbLabelsets = QtWidgets.QComboBox(self.layoutWidget1)
         self.cbLabelsets.setEditable(True)
-        self.cbLabelsets.setInsertPolicy(QtWidgets.QComboBox.InsertAtCurrent)
+        self.cbLabelsets.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
         self.cbLabelsets.setObjectName("cbLabelsets")
         self.verticalLayout_2.addWidget(self.cbLabelsets)
         self.listViewLabelNames = ProtocolLabelListView(self.layoutWidget1)

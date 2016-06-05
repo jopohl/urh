@@ -83,6 +83,7 @@ class ProtocolLabelListModel(QAbstractListModel):
     def add_labels_to_labelset(self, start: int, end: int, labelset_id: int):
         for lbl in self.proto_labels:
             self.controller.proto_analyzer.labelsets[labelset_id].add_label(lbl)
+        self.controller.updateUI(resize_table=False)
 
     def flags(self, index):
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable |\

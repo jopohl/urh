@@ -118,18 +118,7 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
 
-    @property
-    def selected_blocks(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection()
-        """:type: QtWidgets.QItemSelection """
 
-        if selected.isEmpty():
-            return []
-
-        min_row = numpy.min([rng.top() for rng in selected])
-        max_row = numpy.max([rng.bottom() for rng in selected])
-
-        return self.proto_analyzer.blocks[min_row:max_row+1]
 
 
     @property
@@ -236,6 +225,10 @@ class CompareFrameController(QFrame):
         if len(self.decodings) == 0:
             self.decodings = fallback
 
+
+    @property
+    def selected_blocks(self):
+        return self.ui.tblViewProtocol.selected_blocks
 
     @property
     def protocol_undo_stack(self) -> QUndoStack:

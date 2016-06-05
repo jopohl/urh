@@ -14,7 +14,6 @@ class ProtocolLabelListModel(QAbstractListModel):
         super().__init__(parent)
         self.proto_analyzer = proto_analyzer
         self.proto_labels = controller.active_labelset
-        self.selected_labels = []
         self.controller = controller
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
@@ -36,10 +35,6 @@ class ProtocolLabelListModel(QAbstractListModel):
             return self.proto_labels[row].show
         elif role == Qt.BackgroundColorRole:
             return constants.LABEL_COLORS[self.proto_labels[row].color_index]
-        elif role == Qt.FontRole and self.proto_labels[row] in self.selected_labels:
-            font = QFont()
-            font.setBold(True)
-            return font
 
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):

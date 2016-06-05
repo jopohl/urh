@@ -668,13 +668,12 @@ class CompareFrameController(QFrame):
         start = numpy.min([rng.left() for rng in selected])
         end = numpy.max([rng.right() for rng in selected]) + 1
 
-        self.protocol_label_list_model.selected_labels = self.get_labels_from_selection(min_row, max_row,
-                                                                                        start, end - 1)
+        selected_blocks = self.selected_blocks
 
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
 
-        self.active_labelset = self.proto_analyzer.blocks[min_row].labelset
+        self.active_labelset = self.proto_analyzer.blocks[max_row].labelset
 
         if cur_view == 1:
             start *= 4
@@ -735,7 +734,6 @@ class CompareFrameController(QFrame):
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
 
-        block = self.proto_analyzer.blocks[min_row]
         self.ui.lblRSSI.setText(locale.format_string("%.2f", block.rssi))
         abs_time = Formatter.science_time(block.absolute_time)
         rel_time = Formatter.science_time(block.relative_time)
@@ -744,14 +742,14 @@ class CompareFrameController(QFrame):
         # Set Decoding Combobox
         self.ui.cbDecoding.blockSignals(True)
         different_encodings = False
-        enc = self.selected_blocks[0].decoder
-        for block in self.selected_blocks:
+        enc = block.decoder
+        for block in selected_blocks:
             if block.decoder != enc:
                 different_encodings = True
                 break
 
         if not different_encodings:
-            self.ui.cbDecoding.setCurrentText(self.proto_analyzer.blocks[min_row].decoder.name)
+            self.ui.cbDecoding.setCurrentText(block.decoder.name)
         else:
             self.ui.cbDecoding.setCurrentText("...")
         self.ui.cbDecoding.blockSignals(False)

@@ -1307,9 +1307,9 @@ class CompareFrameController(QFrame):
         self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]
         self.protocol_label_list_model.update()
 
-    def on_labelsetname_edited(self):
-        self.active_labelset.name = self.ui.cbLabelsets.currentText()
-        self.fill_labelset_combobox()
+    def on_labelsetname_edited(self, edited_str):
+        self.active_labelset.name = edited_str
+        self.ui.cbLabelsets.setItemText(self.ui.cbLabelsets.currentIndex(), edited_str)
 
     def on_new_labelset_clicked(self, selected_blocks: list):
         self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)

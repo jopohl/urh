@@ -441,6 +441,8 @@ class ProtocolAnalyzer(object):
         end_block = -1
         end_index = -1
         lookup =  [block.bit_sample_pos for block in self.blocks]
+        if not lookup:
+            return -1, -1, -1, -1
 
         if selection_start + selection_width < lookup[0][0] or selection_width < bitlen:
             return start_block, start_index, end_block, end_index

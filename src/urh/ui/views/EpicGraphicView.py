@@ -12,8 +12,8 @@ class EpicGraphicView(SelectableGraphicView):
     save_clicked = pyqtSignal()
     save_as_clicked = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
-    crop_clicked = pyqtSignal()
     show_crop_range_clicked = pyqtSignal()
+    crop_clicked = pyqtSignal()
     set_noise_clicked = pyqtSignal()
     zoomed = pyqtSignal()
     deletion_wanted = pyqtSignal(int, int)
@@ -86,7 +86,6 @@ class EpicGraphicView(SelectableGraphicView):
         zoomAction = None
         createAction = None
         noiseAction = None
-        bitaction = None
 
         menu.addSeparator()
         autorangeAction = menu.addAction(self.tr("Show Autocrop Range"))
@@ -96,8 +95,6 @@ class EpicGraphicView(SelectableGraphicView):
             cropAction = menu.addAction(self.tr("Crop to Selection"))
             deleteAction = menu.addAction(self.tr("Delete Selection"))
             muteAction = menu.addAction(self.tr("Mute Selection"))
-            menu.addSeparator()
-            bitaction = menu.addAction(self.tr("Set Bit Length"))
             menu.addSeparator()
             zoomAction = menu.addAction(self.tr("Zoom Selection"))
             createAction = menu.addAction(self.tr("Create Signal from Selection"))
@@ -160,8 +157,6 @@ class EpicGraphicView(SelectableGraphicView):
             self.crop_clicked.emit()
         elif action == noiseAction:
             self.set_noise_clicked.emit()
-        elif action == bitaction:
-            self.signal.bit_len = (abs(int(self.selection_area.width)))
         elif action == deleteAction:
             self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
         elif action == muteAction:

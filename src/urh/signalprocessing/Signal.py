@@ -90,7 +90,7 @@ class Signal(QObject):
             self._num_samples = len(self._fulldata)
 
             if not self.qad_demod_file_loaded:
-                self.calc_noise_treshold(int(0.99 * self.num_samples), self.num_samples)
+                self.noise_treshold = self.calc_noise_treshold(int(0.99 * self.num_samples), self.num_samples)
 
         else:
             self._num_samples = -1
@@ -277,10 +277,10 @@ class Signal(QObject):
     def calc_noise_treshold(self, noise_start: int, noise_end: int):
         NDIGITS = 4
         try:
-            self.noise_treshold = np.ceil(
-                np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
+            return np.ceil(np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
         except ValueError:
             logger.warning("Could not caluclate noise treshold for range {}-{}".format(int(noise_start),int(noise_end)))
+            return self.noise_treshold
 
     def estimate_bitlen(self) -> int:
         bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]

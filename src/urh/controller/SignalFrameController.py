@@ -128,7 +128,7 @@ class SignalFrameController(QFrame):
     def create_connects(self):
         self.ui.spinBoxSelectionStart.valueChanged.connect(self.set_selection_start)
         self.ui.spinBoxSelectionEnd.valueChanged.connect(self.set_selection_end)
-        self.ui.gvSignal.set_noise_clicked.connect(self.update_noise_min_max)
+        self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.btnCloseSignal.clicked.connect(self.my_close)
 
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
@@ -444,13 +444,14 @@ class SignalFrameController(QFrame):
         #
 
     @pyqtSlot()
-    def update_noise_min_max(self):
+    def on_set_noise_in_graphic_view_clicked(self):
         self.setCursor(Qt.WaitCursor)
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
-        self.signal.calc_noise_treshold(start, end)
-        self.redraw_noise()
+        new_tresh = self.signal.calc_noise_treshold(start, end)
+        self.ui.spinBoxNoiseTreshold.setValue(new_tresh)
+        self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
     def redraw_noise(self):
@@ -671,21 +672,8 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(float)
     def set_qad_center(self, th):
-        self.ui.gvLegend.ysep = -th
-
-        self.signal.qad_center = th
         self.ui.spinBoxCenterOffset.setValue(th)
-        self.proto_analyzer.blocks = None
-        if self.ui.cbSignalView.currentIndex() > 0:
-            self.scene_creator.scene.draw_sep_area(-self.signal.qad_center)
-            self.ui.gvLegend.refresh()
-        self.show_protocol()
-
-    @pyqtSlot()
-    def set_info_len_from_spinbox(self):
-        val = self.ui.spinBoxInfoLen.value()
-        if val != self.signal.bit_len:
-            self.signal.bit_len = val
+        self.ui.spinBoxCenterOffset.editingFinished.emit()
 
     def set_roi_from_protocol_analysis(self, start_block, start_pos, end_block, end_pos, view_type):
         if not self.proto_analyzer:

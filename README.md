@@ -1,10 +1,23 @@
-# Requirements
+# What's this?
+Universal Radio Hacker is a suite for investigating unknown wireless protocols. Features include
+ * hardware interfaces for common Software Defined Radios
+ * __easy demodulation__ of signals
+ * __assigning participants__ to keep overview of your data
+ * __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening
+ * __assign labels__ to reveal the logic of the protocol
+ * __fuzzing component__ to find security leaks
+
+ ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
+
+
+
+# Installation
+## Requirements
 - Python 3.4+
 - numpy
 - PyQt5
 - C++ Compiler
 
-# Installation
 ## Arch Linux
 ```bash
 yaourt -S urh
@@ -34,7 +47,7 @@ cd urh
 sudo python setup.py install
 ```
 
-# Running from source
+## Running from source
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/

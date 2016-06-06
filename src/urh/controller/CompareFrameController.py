@@ -60,6 +60,7 @@ class CompareFrameController(QFrame):
         self.__selected_labelset = self.proto_analyzer.default_labelset
         self.fill_labelset_combobox()
 
+
         self.participant_list_model = ParticipantListModel(project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_list_model)
 
@@ -167,6 +168,8 @@ class CompareFrameController(QFrame):
 
         self.ui.cbLabelsets.blockSignals(True)
         self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
+        self.__set_default_labelset_ui_status()
+        self.protocol_label_list_model.update()
         self.ui.cbLabelsets.blockSignals(False)
 
 
@@ -310,9 +313,11 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
         self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
         self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
+        self.ui.btnAddLabelset.clicked.connect(self.on_new_labelset_clicked)
+        self.ui.btnRemoveLabelset.clicked.connect(self.on_remove_labelset_clicked)
 
-        self.ui.cbLabelsets.lineEdit().textEdited.connect(self.on_labelsetname_edited)
         self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
+        self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
 
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
@@ -340,6 +345,8 @@ class CompareFrameController(QFrame):
         for labelset in self.proto_analyzer.labelsets:
             self.ui.cbLabelsets.addItem(labelset.name)
         self.ui.cbLabelsets.blockSignals(False)
+        if self.ui.cbLabelsets.count() <= 1:
+            self.ui.cbLabelsets.setEditable(False)
 
     def on_chkbox_show_differences_changed(self):
         chkd = self.ui.cbShowDiffs.isChecked()
@@ -1305,22 +1312,42 @@ class CompareFrameController(QFrame):
 
     def on_cblabelset_index_changed(self):
         self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]
-        self.protocol_label_list_model.update()
+
+    def __set_default_labelset_ui_status(self):
+        if self.active_labelset == self.proto_analyzer.default_labelset:
+            self.ui.cbLabelsets.setEditable(False)
+            self.ui.btnRemoveLabelset.hide()
+        else:
+            self.ui.cbLabelsets.setEditable(True)
+            self.ui.btnRemoveLabelset.show()
 
     def on_labelsetname_edited(self, edited_str):
-        self.active_labelset.name = edited_str
-        self.ui.cbLabelsets.setItemText(self.ui.cbLabelsets.currentIndex(), edited_str)
+        if self.active_labelset == self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]:
+            self.active_labelset.name = edited_str
+            self.ui.cbLabelsets.setItemText(self.ui.cbLabelsets.currentIndex(), edited_str)
 
-    def on_new_labelset_clicked(self, selected_blocks: list):
+    def on_new_labelset_clicked(self, selected_blocks: list = None):
+        selected_blocks = selected_blocks if isinstance(selected_blocks, list) else []
         self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)
         self.fill_labelset_combobox()
+        self.ui.cbLabelsets.setEditable(True)
         self.active_labelset = self.proto_analyzer.labelsets[-1]
         for block in selected_blocks:
             block.labelset = self.active_labelset
         self.ui.cbLabelsets.setFocus()
+        self.ui.btnRemoveLabelset.show()
 
     def on_labelset_selected(self, labelset: LabelSet, selected_blocks):
         for block in selected_blocks:
             block.labelset = labelset
         self.active_labelset  = labelset
         self.protocol_model.update()
+
+    def on_remove_labelset_clicked(self):
+        for block in self.proto_analyzer.blocks:
+            if block.labelset == self.active_labelset:
+                block.labelset = self.proto_analyzer.default_labelset
+        self.proto_analyzer.labelsets.remove(self.active_labelset)
+        self.fill_labelset_combobox()
+        self.protocol_model.update()
+        self.active_labelset = self.proto_analyzer.default_labelset

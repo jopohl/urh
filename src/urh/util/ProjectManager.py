@@ -79,7 +79,7 @@ class ProjectManager(QObject):
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         try:
-            return [LabelSet.from_xml(lblset_tag) for lblset_tag in root.find("labelsets").findall("labelset")]
+            return [LabelSet.from_xml(lblset_tag) for lblset_tag in root.find("protocol").find("labelsets").findall("labelset")]
         except AttributeError:
             return []
 
@@ -122,7 +122,6 @@ class ProjectManager(QObject):
             cfc.fill_labelset_combobox()
             cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants, decodings=cfc.decodings)
 
-            #cfc.ui.cbDecoding.setCurrentIndex(index)
             cfc.updateUI()
             modulators = self.read_modulators_from_project_file()
             self.maincontroller.generator_tab_controller.modulators = modulators if modulators else [
@@ -301,10 +300,6 @@ class ProjectManager(QObject):
                     proto_tag.set("show", show)
 
         root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants))
-
-        labelsets_tag = ET.SubElement(root, "labelsets")
-        for labelset in cfc.proto_analyzer.labelsets:
-            labelsets_tag.append(labelset.to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         with open(self.project_file, "w") as f:

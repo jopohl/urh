@@ -14,9 +14,7 @@ from urh.signalprocessing.Signal import Signal
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
-from urh.ui.actions.CropSignal import CropSignal
-from urh.ui.actions.DeleteSignalRange import DeleteSignalRange
-from urh.ui.actions.MuteSignalRange import MuteSignalRange
+from urh.ui.actions.ChangeSignalRange import ChangeSignalRange, RangeAction
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util import FontHelper
@@ -500,7 +498,7 @@ class SignalFrameController(QFrame):
             if end < start:
                 start, end = end, start
 
-            crop_action = CropSignal(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end)
+            crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.crop)
             self.undo_stack.push(crop_action)
             # self.signal.crop(start, end)
             gvs.zoom((end-start)/w, supress_signal=True) # Zoomlevel von VorCrop auf NachCrop übertragen
@@ -885,12 +883,12 @@ class SignalFrameController(QFrame):
 
     def delete_selection(self, start, end):
         self.ui.gvSignal.clear_selection()
-        del_action = DeleteSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end)
+        del_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.delete)
         self.undo_stack.push(del_action)
         self.ui.gvSignal.centerOn(start, self.ui.gvSignal.y_center)
 
     def mute_selection(self, start: int, end: int):
-        mute_action = MuteSignalRange(self.signal, start, end)
+        mute_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.mute)
         self.undo_stack.push(mute_action)
 
     @pyqtSlot()

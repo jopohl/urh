@@ -519,26 +519,6 @@ class ProtocolAnalyzer(object):
 
         return int(start), int(math.ceil(end))
 
-    def copy_data(self):
-        """
-
-        :rtype: list of ProtocolBlock, list of LabelSet
-        """
-        return copy.deepcopy(self.blocks), copy.deepcopy(self.labelsets)
-
-    def revert_to(self, orig_blocks, orig_labelsets):
-        """
-        Revert to previous state
-
-        :param orig_blocks: blocks to be restored
-        :type orig_blocks: list of ProtocolBlock
-        :param orig_labels: labels to be restored
-        :type orig_labels: list of ProtocolLabel
-        """
-        self.blocks = orig_blocks
-        """:type: list of ProtocolBlock """
-        self.labelsets = orig_labelsets
-
     def find_differences(self, refindex: int, view: int):
         """
         Sucht alle Unterschiede zwischen den Protokollblöcken, bezogen auf einen Referenzblock

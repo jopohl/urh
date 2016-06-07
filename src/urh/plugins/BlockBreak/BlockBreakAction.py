@@ -12,7 +12,7 @@ class BlockBreakAction(QUndoCommand):
         self.proto_analyzer = proto_analyzer
         self.block_nr = block_nr
         self.pos = pos
-        self.orig_blocks, self.orig_labelsets = proto_analyzer.copy_data()
+        self.orig_blocks = copy.deepcopy(proto_analyzer.blocks)
 
         self.setText("Break block behind selection")
 
@@ -29,7 +29,7 @@ class BlockBreakAction(QUndoCommand):
         self.proto_analyzer.blocks.insert(self.block_nr + 1, block2)
 
     def undo(self):
-        self.proto_analyzer.revert_to(self.orig_blocks, self.orig_labelsets)
+        self.proto_analyzer.blocks = self.orig_blocks
 
     def __get_zero_seq_indexes(self, block: str, following_zeros: int):
         """

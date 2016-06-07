@@ -1095,6 +1095,9 @@ class SignalFrameController(QFrame):
         start = int(start)
         end = int(end) if end == int(end) else int(end) + 1
 
+        if not self.proto_analyzer.blocks:
+            return None, None
+
         for block in self.proto_analyzer.blocks:
             if block.bit_sample_pos[-2] < start:
                 continue

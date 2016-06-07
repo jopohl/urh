@@ -102,7 +102,7 @@ class ProtocolLabel(object):
     def to_xml(self, index:int) -> ET.Element:
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
-                                            "show": str(self.show),
+                                            "show": str(self.show), "display_type_index": str(self.display_type_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
 
     @staticmethod
@@ -116,5 +116,6 @@ class ProtocolLabel(object):
         result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
+        result.display_type_index = int(tag.get("display_type_index", 0))
 
         return result

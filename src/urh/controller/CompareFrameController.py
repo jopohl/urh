@@ -316,6 +316,8 @@ class CompareFrameController(QFrame):
         self.ui.btnAddLabelset.clicked.connect(self.on_new_labelset_clicked)
         self.ui.btnRemoveLabelset.clicked.connect(self.on_remove_labelset_clicked)
 
+        self.ui.lineEditSearch.returnPressed.connect(self.ui.btnSearchSelectFilter.click)
+
         self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
         self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
 
@@ -964,6 +966,7 @@ class CompareFrameController(QFrame):
                 self.ui.tblViewProtocol.showRow(i)
 
             self.ui.lFilterShown.setText("")
+            self.set_shown_protocols()
 
     @pyqtSlot()
     def next_search_result(self):

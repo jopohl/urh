@@ -240,7 +240,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="13" column="0">
+     <item row="14" column="0">
       <widget class="QLabel" name="lSignalViewText">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -275,6 +275,37 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <string>ASCII</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lCenterOffset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Center:</string>
+       </property>
       </widget>
      </item>
      <item row="0" column="0" colspan="2">
@@ -468,37 +499,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </item>
       </layout>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="lCenterOffset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Center:</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="spinBoxCenterOffset">
        <property name="minimumSize">
@@ -530,6 +530,13 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
+     <item row="12" column="0" colspan="2">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -550,21 +557,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </spacer>
      </item>
-     <item row="11" column="0" colspan="2">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0" colspan="2">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
+     <item row="11" column="0">
       <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -577,30 +570,27 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </spacer>
      </item>
-     <item row="15" column="0" colspan="2">
-      <widget class="QPushButton" name="btnAutoDetect">
+     <item row="14" column="1">
+      <widget class="QComboBox" name="cbSignalView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; text-decoration: underline;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; text-decoration: underline;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text">
-        <string>Autodetect parameters</string>
-       </property>
-       <property name="icon">
-        <iconset theme="system-software-update">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
+       <item>
+        <property name="text">
+         <string>Analog</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Demodulated</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="9" column="1">
@@ -625,27 +615,30 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </item>
       </widget>
      </item>
-     <item row="13" column="1">
-      <widget class="QComboBox" name="cbSignalView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="10" column="0" colspan="2">
+      <widget class="QPushButton" name="btnAutoDetect">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; text-decoration: underline;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; text-decoration: underline;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <item>
-        <property name="text">
-         <string>analog</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>demodulated</string>
-        </property>
-       </item>
+       <property name="text">
+        <string>Autodetect parameters</string>
+       </property>
+       <property name="icon">
+        <iconset theme="system-software-update">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>

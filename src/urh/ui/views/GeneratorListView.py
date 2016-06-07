@@ -20,7 +20,7 @@ class GeneratorListView(QListView):
         menu = QMenu()
         pos = event.pos()
         index = self.indexAt(pos)
-        if len(self.model().proto_container.protocol_labels) == 0:
+        if len(self.model().block.labelset) == 0:
             return
 
         editAction = menu.addAction("Edit Fuzzing Label...")

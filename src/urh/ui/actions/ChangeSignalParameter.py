@@ -23,7 +23,16 @@ class ChangeSignalParameter(QUndoCommand):
         self.orig_blocks, self.orig_labels = protocol.copy_data()
 
     def redo(self):
+        block_data = [(block.decoder, block.participant, block.labelset) for block in self.protocol.blocks]
         setattr(self.signal, self.parameter_name, self.parameter_value)
+        # Restore block parameters
+        if len(block_data) == self.protocol.num_blocks:
+            for block, block_params in zip(self.protocol.blocks, block_data):
+                block.decoder = block_params[0]
+                block.participant = block_params[1]
+                block.labelset = block_params[2]
+            self.protocol.qt_signals.protocol_updated.emit()
+
 
     def undo(self):
         block_proto_update = self.signal.block_protocol_update

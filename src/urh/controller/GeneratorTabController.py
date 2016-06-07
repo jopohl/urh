@@ -370,7 +370,8 @@ class GeneratorTabController(QWidget):
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
         pac = self.table_model.protocol
-        self.ui.btnFuzz.setEnabled(len(pac.active_fuzzing_labels) > 0)
+        fuzz_active = any(lbl.active_fuzzing for block in pac.blocks for lbl in block.labelset)
+        self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()
             font.setBold(True)

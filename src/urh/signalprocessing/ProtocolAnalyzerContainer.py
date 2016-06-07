@@ -50,10 +50,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         return  result
 
     @property
-    def active_fuzzing_labels(self):
-        return [p for p in self.protocol_labels if p.active_fuzzing]
-
-    @property
     def multiple_fuzz_labels_per_block(self):
         return any(len(block.active_fuzzing_labels) > 1 for block in self.blocks)
 

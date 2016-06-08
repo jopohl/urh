@@ -92,3 +92,11 @@ class ChangeSignalRange(QUndoCommand):
 
         self.signal.changed = self.signal_was_changed
         self.signal.data_edited.emit()
+
+    def __find_block_indices_in_selection_range(self, start: int, end: int):
+        result = []
+        for i, block in enumerate(self.protocol.blocks):
+            if block.bit_sample_pos[0] > start and block.bit_sample_pos[-2] < end:
+                result.append(i)
+            elif block.bit_sample_pos[-2] >= end:
+                break

@@ -90,7 +90,7 @@ class encoding(object):
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
-                    self.chain.append("0xe9cae9ca;0x21;0xe") # Default Sync Bytes
+                    self.chain.append("0xe9cae9ca;0x21;0x8") # Default Sync Bytes
             elif constants.DECODING_CARRIER in names[i]:
                 self.chain.append(self.code_carrier)
                 i += 1

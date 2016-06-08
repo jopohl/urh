@@ -245,7 +245,7 @@ class DecoderWidgetController(QDialog):
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("0xe9cae9ca;0x21;0xe") # Default
+                    self.chainstr.append("0xe9cae9ca;0x21;0x8") # Default
 
         self.e.set_chain(self.chainstr)
         self.decoder_update()
@@ -499,8 +499,8 @@ class DecoderWidgetController(QDialog):
                 self.ui.datawhitening_sync.setText("0xe9cae9ca")
                 self.ui.datawhitening_polynomial.setText("0x21")
                 self.ui.datawhitening_applycrc.setChecked(True)
-                self.ui.datawhitening_preamble_rm.setChecked(True)
-                self.ui.datawhitening_sync_rm.setChecked(True)
+                self.ui.datawhitening_preamble_rm.setChecked(False)
+                self.ui.datawhitening_sync_rm.setChecked(False)
                 self.ui.datawhitening_crc_rm.setChecked(False)
             else:
                 if element in self.chainoptions:
@@ -509,8 +509,8 @@ class DecoderWidgetController(QDialog):
                         self.ui.datawhitening_sync.setText("0xe9cae9ca")
                         self.ui.datawhitening_polynomial.setText("0x21")
                         self.ui.datawhitening_applycrc.setChecked(True)
-                        self.ui.datawhitening_preamble_rm.setChecked(True)
-                        self.ui.datawhitening_sync_rm.setChecked(True)
+                        self.ui.datawhitening_preamble_rm.setChecked(False)
+                        self.ui.datawhitening_sync_rm.setChecked(False)
                         self.ui.datawhitening_crc_rm.setChecked(False)
                     else:
                         try:
@@ -528,8 +528,8 @@ class DecoderWidgetController(QDialog):
                             self.ui.datawhitening_sync.setText("0xe9cae9ca")
                             self.ui.datawhitening_polynomial.setText("0x21")
                             self.ui.datawhitening_applycrc.setChecked(True)
-                            self.ui.datawhitening_preamble_rm.setChecked(True)
-                            self.ui.datawhitening_sync_rm.setChecked(True)
+                            self.ui.datawhitening_preamble_rm.setChecked(False)
+                            self.ui.datawhitening_sync_rm.setChecked(False)
                             self.ui.datawhitening_crc_rm.setChecked(False)
 
             self.ui.datawhitening_sync.setEnabled(decoderEdit)

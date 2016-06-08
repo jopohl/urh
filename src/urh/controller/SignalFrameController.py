@@ -500,8 +500,6 @@ class SignalFrameController(QFrame):
 
             crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.crop)
             self.undo_stack.push(crop_action)
-            # self.signal.crop(start, end)
-            gvs.zoom((end-start)/w, supress_signal=True) # Zoomlevel von VorCrop auf NachCrop übertragen
 
     def show_autocrop_range(self):
         start = self.signal.get_signal_start()

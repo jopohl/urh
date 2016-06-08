@@ -1,7 +1,6 @@
 import copy
 
 import numpy as np
-import sys
 from PyQt5.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -53,11 +52,11 @@ class ChangeSignalRange(QUndoCommand):
         if self.mode in (RangeAction.delete, RangeAction.mute):
             removed_block_indices = self.__find_block_indices_in_sample_range(self.start, self.end)
             if removed_block_indices:
-                for i in range(len(self.protocol.num_blocks)):
+                for i in range(self.protocol.num_blocks):
                     if i < removed_block_indices[0]:
                         keep_bock_indices[i] = i
                     elif i > removed_block_indices[-1]:
-                        keep_bock_indices[i] = i-removed_block_indices[-1]
+                        keep_bock_indices[i] = i-len(removed_block_indices)
             else:
                 keep_bock_indices = {i: i for i in range(self.protocol.num_blocks)}
         elif self.mode == RangeAction.crop:
@@ -66,9 +65,9 @@ class ChangeSignalRange(QUndoCommand):
             last_removed_left = removed_left[-1] if removed_left else -1
             first_removed_right = removed_right[0] if removed_right else self.protocol.num_blocks + 1
 
-            for i in range(len(self.protocol.num_blocks)):
+            for i in range(self.protocol.num_blocks):
                 if i > last_removed_left and i < first_removed_right:
-                    keep_bock_indices[i] = i - last_removed_left if last_removed_left > -1 else i
+                    keep_bock_indices[i] = i - len(removed_left)
 
         if self.mode == RangeAction.delete:
             mask = np.ones(self.orig_num_samples, dtype=bool)
@@ -96,7 +95,8 @@ class ChangeSignalRange(QUndoCommand):
 
         # Restore old block data
         for old_index, new_index in keep_bock_indices.items():
-            old_block, new_block = self.orig_blocks[old_index], self.protocol.blocks[new_index]
+            old_block = self.orig_blocks[old_index]
+            new_block = self.protocol.blocks[new_index]
             new_block.decoder = old_block.decoder
             new_block.labelset = old_block.labelset
             new_block.participant = old_block.participant

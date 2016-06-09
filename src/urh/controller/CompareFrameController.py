@@ -7,6 +7,7 @@ from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
 
 from urh import constants
+from urh.controller.LabelsetOptionsDialogController import LabelsetOptionsDialogController
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
@@ -322,6 +323,8 @@ class CompareFrameController(QFrame):
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
+
+        self.ui.btnLabelsetSettings.clicked.connect(self.on_btn_labelset_settings_clicked)
 
 
 
@@ -1354,3 +1357,7 @@ class CompareFrameController(QFrame):
         self.fill_labelset_combobox()
         self.protocol_model.update()
         self.active_labelset = self.proto_analyzer.default_labelset
+
+    def on_btn_labelset_settings_clicked(self):
+        dialog = LabelsetOptionsDialogController(self.active_labelset, parent=self)
+        dialog.show()

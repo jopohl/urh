@@ -118,9 +118,7 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
-
-
-
+        self.__set_default_labelset_ui_status()
 
     @property
     def active_group_ids(self):
@@ -1320,9 +1318,11 @@ class CompareFrameController(QFrame):
         if self.active_labelset == self.proto_analyzer.default_labelset:
             self.ui.cbLabelsets.setEditable(False)
             self.ui.btnRemoveLabelset.hide()
+            self.ui.btnLabelsetSettings.hide()
         else:
             self.ui.cbLabelsets.setEditable(True)
             self.ui.btnRemoveLabelset.show()
+            self.ui.btnLabelsetSettings.show()
 
     def on_labelsetname_edited(self, edited_str):
         if self.active_labelset == self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]:

@@ -809,6 +809,19 @@
           </widget>
          </item>
          <item>
+          <widget class="QToolButton" name="btnLabelsetSettings">
+           <property name="toolTip">
+            <string>Settings for Labelset</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="preferences-other"/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="btnAddLabelset">
            <property name="toolTip">
             <string>Add a new labelset.</string>
@@ -817,7 +830,8 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset theme="list-add"/>
+            <iconset theme="list-add">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -830,7 +844,8 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset theme="list-remove"/>
+            <iconset theme="list-remove">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>

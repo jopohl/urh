@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from subprocess import call
 
 
-OXYGEN_PATH = "/usr/share/icons/oxygen"
+OXYGEN_PATH = "/usr/share/icons/oxygen/base"
 
 def get_python_files():
     python_files = []
@@ -78,7 +78,7 @@ def copy_icons(icon_names: set):
     call(["pyrcc5", "/tmp/xtra_icons.qrc", "-o", "/tmp/xtra_icons_rc.py"])
     tar_path = os.path.dirname(os.path.abspath(__file__))
     tar_path = os.path.join(tar_path, "src/urh/ui")
-    shutil.move("/tmp/xtra_icons_rc.py", tar_path)
+    shutil.copy("/tmp/xtra_icons_rc.py", tar_path)
 
 if __name__ == "__main__":
     icons = get_used_icon_names()

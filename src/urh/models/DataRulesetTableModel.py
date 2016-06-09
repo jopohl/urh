@@ -6,9 +6,9 @@ from urh.signalprocessing.Ruleset import Ruleset, DataRule
 class DataRulesetTableModel(QAbstractTableModel):
     header_labels = ["Start", 'End', "Viewtype", "Operator", 'Value']
 
-
-    def __init__(self, ruleset: Ruleset, parent=None):
+    def __init__(self, ruleset: Ruleset, operator_descriptions: list, parent=None):
         self.ruleset = ruleset
+        self.operator_descriptions = operator_descriptions
         super().__init__(parent)
 
     def update(self):
@@ -42,15 +42,27 @@ class DataRulesetTableModel(QAbstractTableModel):
             elif j == 2:
                 return rule.value_type
             elif j == 3:
-                return rule.operator
+                return rule.operator_description
             elif j == 4:
                 return rule.target_value
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
-            lbl = self.display_labels[index.row()]
-            if index.column() == 1:
-                lbl.display_type_index = value
+            i, j = index.row(), index.column()
+            rule = self.ruleset[i]
+            try:
+                if j == 0:
+                    rule.start = int(value)
+                elif j == 1:
+                    rule.end = int(value)
+                if j == 2:
+                    rule.value_type = int(value)
+                if j == 3:
+                    rule.operator_description = self.operator_descriptions[int(value)]
+                if j == 4:
+                    rule.target_value = value
+            except ValueError:
+                pass
 
     def flags(self, index: QModelIndex):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable

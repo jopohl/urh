@@ -1,5 +1,8 @@
 import operator
 from enum import Enum
+
+from urh.util.Logger import logger
+
 OPERATIONS = {
                 '>':  operator.gt,
                 '<':  operator.lt,
@@ -8,6 +11,8 @@ OPERATIONS = {
                 '=':  operator.eq,
                 '!=': operator.ne
              }
+
+OPERATION_DESCRIPTION = {">": "greater", "<": "lower", ">=": "greater equal", "<=": "lower equal", "=": "equal", "!=": "not equal"}
 
 class Mode(Enum):
     all_apply = 0
@@ -27,6 +32,18 @@ class DataRule(object):
     def applies_for_block(self, block):
         data = block.decoded_bits_str if self.value_type == 0 else block.decoded_hex_str if self.value_type == 1 else block.decoded_ascii_str
         return OPERATIONS[self.operator](data[self.start:self.end], self.target_value)
+
+    @property
+    def operator_description(self):
+        return OPERATION_DESCRIPTION[self.operator]
+
+    @operator_description.setter
+    def operator_description(self, value):
+        for key, val in OPERATION_DESCRIPTION.items():
+            if val == value:
+                self.operator = key
+                return
+        logger.warning("Could not find operator description " + str(value))
 
 class Ruleset(list):
     def __init__(self, mode: Mode = Mode.all_apply, rules = None):

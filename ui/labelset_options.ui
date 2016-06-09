@@ -28,10 +28,29 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" rowspan="3" colspan="2">
+   <item row="1" column="0" colspan="2">
+    <widget class="QComboBox" name="cbRulesetMode">
+     <item>
+      <property name="text">
+       <string>All rules must apply</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>At leat one rule must apply</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>No rule must apply</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="0" rowspan="3" colspan="2">
     <widget class="QTableView" name="tblViewRuleset"/>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="2">
     <widget class="QToolButton" name="btnAddRule">
      <property name="toolTip">
       <string>Add ruleset</string>
@@ -44,7 +63,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <widget class="QToolButton" name="btnRemoveRule">
      <property name="toolTip">
       <string>Remove ruleset</string>
@@ -57,7 +76,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
+   <item row="4" column="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -65,7 +84,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>176</height>
+       <height>145</height>
       </size>
      </property>
     </spacer>

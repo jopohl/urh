@@ -792,3 +792,10 @@ class ProtocolAnalyzer(object):
             pass  # No labelsets defined
         self.labelsets = []
         self.blocks = None
+
+    def update_auto_labelsets(self):
+        for block in self.blocks:
+            for labelset in (lblset for lblset in self.labelsets if lblset.assigned_automatically):
+                if labelset.ruleset.applies_for_block(block):
+                    block.labelset = labelset
+                    break

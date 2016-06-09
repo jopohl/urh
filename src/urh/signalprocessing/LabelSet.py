@@ -16,12 +16,12 @@ class LabelSet(list):
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
-        self.assign_automatically = False
+        self.assigned_automatically = False
         self.ruleset = Ruleset()
 
     @property
     def assign_manually(self):
-        return not self.assign_automatically
+        return not self.assigned_automatically
 
     @property
     def id(self) -> str:

@@ -1,5 +1,6 @@
 import unittest
 
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
@@ -15,4 +16,12 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(self.protocol.plain_hex_str[0][16:18], "2d")
 
     def test_assign_by_value(self):
+        start = 8
+        end = 15
+        hex_value = "9a7d9a7d"
+
+        lblset = LabelSet("autotest")
+        lblset.ruleset = []
+
+
         print("\n".join(self.protocol.plain_hex_str))

@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
 import xml.etree.ElementTree as ET
 
@@ -15,6 +16,12 @@ class LabelSet(list):
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
+        self.assign_automatically = False
+        self.ruleset = Ruleset()
+
+    @property
+    def assign_manually(self):
+        return not self.assign_automatically
 
     @property
     def id(self) -> str:

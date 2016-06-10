@@ -1,5 +1,6 @@
 import operator
 from enum import Enum
+import xml.etree.ElementTree as ET
 
 from urh.util.Logger import logger
 
@@ -23,11 +24,44 @@ class Mode(Enum):
 class DataRule(object):
     def __init__(self, start: int, end: int, operator: str, target_value: str, value_type: int):
         assert operator in OPERATIONS
-        self.start = start
-        self.end = end + 1
-        self.value_type = value_type # 0 = Bit, 1 = Hex, 2 = ASCII
+        self.__start = start
+        self.__end = end + 1
+        self.__value_type = value_type # 0 = Bit, 1 = Hex, 2 = ASCII
         self.operator = operator
         self.target_value = target_value
+
+    @property
+    def start(self):
+        return self.__start
+
+    @start.setter
+    def start(self, value):
+        try:
+            self.__start = int(value)
+        except ValueError:
+            logger.warning("{} could not be cast to integer".format(value))
+
+    @property
+    def end(self):
+        return self.__end
+
+    @end.setter
+    def end(self, value):
+        try:
+            self.__end = int(value)
+        except ValueError:
+            logger.warning("{} could not be cast to integer".format(value))
+
+    @property
+    def value_type(self):
+        return self.__value_type
+
+    @value_type.setter
+    def value_type(self, value):
+        try:
+            self.__value_type = value
+        except ValueError:
+            logger.warning("{} could not be cast to integer".format(value))
 
     def applies_for_block(self, block):
         data = block.decoded_bits_str if self.value_type == 0 else block.decoded_hex_str if self.value_type == 1 else block.decoded_ascii_str
@@ -44,6 +78,22 @@ class DataRule(object):
                 self.operator = key
                 return
         logger.warning("Could not find operator description " + str(value))
+
+    def to_xml(self, index:int) -> ET.Element:
+        root = ET.Element("datarule")
+
+        for attr, val in vars(self).items():
+            root.set(attr, str(val))
+
+        return root
+
+    @staticmethod
+    def from_xml(tag: ET.Element):
+        result = DataRule(start=-1, end=-1, operator="", target_value="", value_type=0)
+        for attrib, value in tag.attrib.items():
+            setattr(result, attrib, value)
+        return result
+
 
 class Ruleset(list):
     def __init__(self, mode: Mode = Mode.all_apply, rules = None):

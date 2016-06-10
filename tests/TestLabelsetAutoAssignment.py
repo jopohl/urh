@@ -3,7 +3,7 @@ import unittest
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
-from urh.signalprocessing.Ruleset import DataRule, Ruleset, Mode
+from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
 
 
 class TestLabels(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestLabels(unittest.TestCase):
         hex_value = "9a7d9a7d"
 
         lblset = LabelSet("autotest")
-        lblset.ruleset = Ruleset(Mode.all_apply, [DataRule(start, end, "=", hex_value, 1)])
+        lblset.ruleset = Ruleset(Mode.all_apply, [Rule(start, end, "=", hex_value, 1)])
         lblset.assigned_automatically = True
 
         self.protocol.labelsets.append(lblset)

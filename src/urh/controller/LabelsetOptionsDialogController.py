@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
-from urh.models.DataRulesetTableModel import DataRulesetTableModel
+from urh.models.RulesetTableModel import RulesetTableModel
 from urh.signalprocessing import Ruleset
 from urh.signalprocessing.LabelSet import LabelSet
-from urh.signalprocessing.Ruleset import DataRule, OPERATION_DESCRIPTION
+from urh.signalprocessing.Ruleset import Rule, OPERATION_DESCRIPTION
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_labelset_options import Ui_DialogLabelsetOptions
 
@@ -22,7 +22,7 @@ class LabelsetOptionsDialogController(QDialog):
 
         self.setWindowTitle(labelset.name)
         self.labelset = labelset
-        self.ruleset_table_model = DataRulesetTableModel(labelset.ruleset, operator_descriptions, parent=self)
+        self.ruleset_table_model = RulesetTableModel(labelset.ruleset, operator_descriptions, parent=self)
         self.ui.tblViewRuleset.setModel(self.ruleset_table_model)
 
         self.ui.btnRemoveRule.setEnabled(len(labelset.ruleset) > 0)
@@ -50,7 +50,7 @@ class LabelsetOptionsDialogController(QDialog):
 
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
-        self.labelset.ruleset.append(DataRule(start=0, end=0, operator="=", target_value="1", value_type=0))
+        self.labelset.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
         self.ruleset_table_model.update()
 
         for i in range(len(self.labelset.ruleset)):

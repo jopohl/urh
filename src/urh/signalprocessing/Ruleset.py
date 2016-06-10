@@ -21,7 +21,7 @@ class Mode(Enum):
     none_applies = 2
 
 
-class DataRule(object):
+class Rule(object):
     def __init__(self, start: int, end: int, operator: str, target_value: str, value_type: int):
         assert operator in OPERATIONS
         self.__start = start
@@ -79,8 +79,8 @@ class DataRule(object):
                 return
         logger.warning("Could not find operator description " + str(value))
 
-    def to_xml(self, index:int) -> ET.Element:
-        root = ET.Element("datarule")
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("rule")
 
         for attr, val in vars(self).items():
             root.set(attr, str(val))
@@ -89,7 +89,7 @@ class DataRule(object):
 
     @staticmethod
     def from_xml(tag: ET.Element):
-        result = DataRule(start=-1, end=-1, operator="", target_value="", value_type=0)
+        result = Rule(start=-1, end=-1, operator="=", target_value="", value_type=0)
         for attrib, value in tag.attrib.items():
             setattr(result, attrib, value)
         return result
@@ -112,3 +112,22 @@ class Ruleset(list):
             return napplied_rules == 0
         else:
             raise ValueError("Unknown behavior " + str(self.mode))
+
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("ruleset")
+        root.set("mode", str(self.mode.value))
+
+        for rule in self:
+            root.append(rule.to_xml())
+
+        return root
+
+    @staticmethod
+    def from_xml(tag: ET.Element):
+        if tag:
+            result = Ruleset(mode=Mode(int(tag.get("mode", 0))))
+            for rule in tag.findall("rule"):
+                result.append(Rule.from_xml(rule))
+            return result
+        else:
+            return Ruleset(mode=Mode.all_apply)

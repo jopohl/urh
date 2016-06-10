@@ -1,9 +1,9 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 
-from urh.signalprocessing.Ruleset import Ruleset, DataRule
+from urh.signalprocessing.Ruleset import Ruleset, Rule
 
 
-class DataRulesetTableModel(QAbstractTableModel):
+class RulesetTableModel(QAbstractTableModel):
     header_labels = ["Start", 'End', "Viewtype", "Operator", 'Value']
 
     def __init__(self, ruleset: Ruleset, operator_descriptions: list, parent=None):
@@ -33,7 +33,7 @@ class DataRulesetTableModel(QAbstractTableModel):
             i = index.row()
             j = index.column()
             rule = self.ruleset[i]
-            assert isinstance(rule, DataRule)
+            assert isinstance(rule, Rule)
 
             if j == 0:
                 return rule.start

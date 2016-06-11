@@ -47,7 +47,9 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">
-      <string notr="true">QSplitter::handle { background-color: gray }</string>
+      <string notr="true">QSplitter::handle {
+    background-color: #AAAAAA;
+}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -62,7 +64,7 @@
       <bool>true</bool>
      </property>
      <property name="handleWidth">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="">
       <layout class="QHBoxLayout" name="horizontalLayout_5">

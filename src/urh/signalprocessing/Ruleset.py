@@ -31,22 +31,22 @@ class Rule(object):
         self.target_value = target_value
 
     @property
-    def start(self):
-        return self.__start
+    def start(self) -> int:
+        return int(self.__start)
 
     @start.setter
-    def start(self, value):
+    def start(self, value: int):
         try:
             self.__start = int(value)
         except ValueError:
             logger.warning("{} could not be cast to integer".format(value))
 
     @property
-    def end(self):
-        return self.__end
+    def end(self) -> int:
+        return int(self.__end)
 
     @end.setter
-    def end(self, value):
+    def end(self, value: int):
         try:
             self.__end = int(value)
         except ValueError:
@@ -54,12 +54,12 @@ class Rule(object):
 
     @property
     def value_type(self):
-        return self.__value_type
+        return int(self.__value_type)
 
     @value_type.setter
-    def value_type(self, value):
+    def value_type(self, value: int):
         try:
-            self.__value_type = value
+            self.__value_type = int(value)
         except ValueError:
             logger.warning("{} could not be cast to integer".format(value))
 

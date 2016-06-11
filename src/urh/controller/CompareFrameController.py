@@ -1361,3 +1361,8 @@ class CompareFrameController(QFrame):
     def on_btn_labelset_settings_clicked(self):
         dialog = LabelsetOptionsDialogController(self.active_labelset, parent=self)
         dialog.show()
+        dialog.finished.connect(self.on_labelset_dialog_finished)
+
+    def on_labelset_dialog_finished(self):
+        self.proto_analyzer.update_auto_labelsets()
+        self.protocol_model.update()

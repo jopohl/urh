@@ -36,7 +36,7 @@ class RulesetTableModel(QAbstractTableModel):
             assert isinstance(rule, Rule)
 
             if j == 0:
-                return rule.start
+                return rule.start + 1
             elif j == 1:
                 return rule.end
             elif j == 2:
@@ -52,7 +52,7 @@ class RulesetTableModel(QAbstractTableModel):
             rule = self.ruleset[i]
             try:
                 if j == 0:
-                    rule.start = int(value)
+                    rule.start = int(value) - 1
                 elif j == 1:
                     rule.end = int(value)
                 if j == 2:
@@ -62,7 +62,9 @@ class RulesetTableModel(QAbstractTableModel):
                 if j == 4:
                     rule.target_value = value
             except ValueError:
-                pass
+                return False
+
+            return  True
 
     def flags(self, index: QModelIndex):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable

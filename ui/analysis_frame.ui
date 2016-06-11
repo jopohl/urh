@@ -47,15 +47,22 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">
-      <string notr="true">QSplitter::handle {
-    background-color: #AAAAAA;
-}</string>
+      <string notr="true">QSplitter::handle { background-color: gray }</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="midLineWidth">
       <number>0</number>
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="opaqueResize">
+      <bool>true</bool>
+     </property>
+     <property name="handleWidth">
+      <number>4</number>
      </property>
      <widget class="QWidget" name="">
       <layout class="QHBoxLayout" name="horizontalLayout_5">

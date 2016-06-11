@@ -7,6 +7,7 @@ from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
 
 from urh import constants
+from urh.controller.LabelsetOptionsDialogController import LabelsetOptionsDialogController
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
@@ -118,9 +119,7 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
-
-
-
+        self.__set_default_labelset_ui_status()
 
     @property
     def active_group_ids(self):
@@ -324,6 +323,8 @@ class CompareFrameController(QFrame):
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
+
+        self.ui.btnLabelsetSettings.clicked.connect(self.on_btn_labelset_settings_clicked)
 
 
 
@@ -1320,9 +1321,11 @@ class CompareFrameController(QFrame):
         if self.active_labelset == self.proto_analyzer.default_labelset:
             self.ui.cbLabelsets.setEditable(False)
             self.ui.btnRemoveLabelset.hide()
+            self.ui.btnLabelsetSettings.hide()
         else:
             self.ui.cbLabelsets.setEditable(True)
             self.ui.btnRemoveLabelset.show()
+            self.ui.btnLabelsetSettings.show()
 
     def on_labelsetname_edited(self, edited_str):
         if self.active_labelset == self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]:
@@ -1354,3 +1357,12 @@ class CompareFrameController(QFrame):
         self.fill_labelset_combobox()
         self.protocol_model.update()
         self.active_labelset = self.proto_analyzer.default_labelset
+
+    def on_btn_labelset_settings_clicked(self):
+        dialog = LabelsetOptionsDialogController(self.active_labelset, parent=self)
+        dialog.show()
+        dialog.finished.connect(self.on_labelset_dialog_finished)
+
+    def on_labelset_dialog_finished(self):
+        self.proto_analyzer.update_auto_labelsets()
+        self.protocol_model.update()

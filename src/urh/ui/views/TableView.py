@@ -89,7 +89,8 @@ class TableView(QTableView):
                 if len(text) > 0 and cell.row() != currentRow:
                     text += "\n"
                 currentRow = cell.row()
-                text += str(cell.data())
+                if cell.data():
+                    text += str(cell.data())
 
             QApplication.clipboard().setText(text)
             return

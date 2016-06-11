@@ -4,17 +4,24 @@ from copy import deepcopy
 
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
 import xml.etree.ElementTree as ET
 
 class LabelSet(list):
-    def __init__(self, name: str, iterable=None, id=None):
+    def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
         super().__init__(iterable)
 
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
+        self.assigned_automatically = False
+        self.ruleset = Ruleset() if ruleset is None else ruleset
+
+    @property
+    def assign_manually(self):
+        return not self.assigned_automatically
 
     @property
     def id(self) -> str:
@@ -61,6 +68,8 @@ class LabelSet(list):
         result = ET.Element("labelset", attrib={"name": self.name, "id": self.id})
         for lbl in self:
             result.append(lbl.to_xml(-1))
+
+        result.append(self.ruleset.to_xml())
         return result
 
     def copy_for_fuzzing(self):
@@ -86,4 +95,4 @@ class LabelSet(list):
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag))
-        return LabelSet(name=name, iterable=labels, id=id)
+        return LabelSet(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))

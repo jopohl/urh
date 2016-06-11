@@ -1342,6 +1342,7 @@ class CompareFrameController(QFrame):
             block.labelset = self.active_labelset
         self.ui.cbLabelsets.setFocus()
         self.ui.btnRemoveLabelset.show()
+        self.protocol_model.update()
 
     def on_labelset_selected(self, labelset: LabelSet, selected_blocks):
         for block in selected_blocks:

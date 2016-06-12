@@ -4,14 +4,14 @@ import random
 
 class Participant(object):
 
-    def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None):
+    def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
         self.name = name if name else "unknown"
         self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
         self.address_hex = address_hex if address_hex else ""
         self.color_index = color_index
         self.show = True
 
-        self.relative_rssi = 0
+        self.relative_rssi = relative_rssi
 
         if id is None:
             self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
@@ -38,6 +38,7 @@ class Participant(object):
         root.set("address_hex", self.address_hex)
         root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
+        root.set("relative_rssi", str(self.relative_rssi))
 
         return root
 
@@ -47,4 +48,5 @@ class Participant(object):
         shortname = tag.get("shortname", "X")
         address_hex = tag.get("address_hex", "")
         color_index = int(tag.get("color_index", 0))
-        return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index, id = tag.attrib["id"])
+        relative_rssi = int(tag.get("relative_rssi", 0))
+        return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index, id = tag.attrib["id"], relative_rssi=relative_rssi)

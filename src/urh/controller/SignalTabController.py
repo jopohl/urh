@@ -287,6 +287,6 @@ class SignalTabController(QWidget):
             sorted_positions.append(pos)
         return sorted_positions
 
-    def redraw_signals(self):
+    def refresh_participant_information(self):
         for sframe in self.signal_frames:
-            sframe.redraw_signal()
+            sframe.on_participant_changed()

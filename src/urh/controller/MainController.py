@@ -188,7 +188,7 @@ class MainController(QMainWindow):
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
         self.project_manager.project_updated.connect(self.on_project_updated)
 
-        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.redraw_signals)
+        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
         self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
 

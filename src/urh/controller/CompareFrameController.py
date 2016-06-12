@@ -74,6 +74,12 @@ class CompareFrameController(QFrame):
         self.filter_action = self.searchselectsearch_menu.addAction("Filter")
         self.ui.btnSearchSelectFilter.setMenu(self.searchselectsearch_menu)
 
+        self.analyze_menue = QMenu()
+        self.assign_participants_action = self.analyze_menue.addAction("Assign participants")
+        self.assign_participants_action.setCheckable(True)
+        self.assign_participants_action.setChecked(True)
+        self.ui.btnAnalyze.setMenu(self.analyze_menue)
+
         self.ui.lFilterShown.hide()
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants, self)
@@ -307,9 +313,7 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
         self.project_manager.project_updated.connect(self.on_project_updated)
         self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
-        self.ui.tblViewProtocol.participant_changed.connect(self.protocol_model.refresh_vertical_header)
-        self.ui.tblViewProtocol.participant_changed.connect(self.ui.tblViewProtocol.resize_vertical_header)
-        self.ui.tblViewProtocol.participant_changed.connect(self.participant_changed.emit)
+        self.ui.tblViewProtocol.participant_changed.connect(self.on_participant_edited)
         self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
         self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
         self.ui.btnAddLabelset.clicked.connect(self.on_new_labelset_clicked)
@@ -1202,27 +1206,34 @@ class CompareFrameController(QFrame):
 
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
-        available_analyze_plugins = self.plugin_manager.label_assign_plugins
-        if len(available_analyze_plugins) == 0:
-            QMessageBox.critical(self, self.tr("No analyze plugins available"),
-                                 self.tr("Could not find any plugins for protocol analysis."))
-            return
+        if self.assign_participants_action.isChecked():
+            for protocol in self.protocol_list:
+                protocol.auto_assign_participants(self.protocol_model.participants)
 
-        active_analyze_plugins = [p for p in available_analyze_plugins if p.enabled]
-        if len(active_analyze_plugins) == 0:
-            installed_plugins = self.plugin_manager.installed_plugins
-            options_controller = OptionsController(installed_plugins, highlighted_plugins=available_analyze_plugins)
-            options_controller.exec_()
-            return
+            self.on_participant_edited()
 
-        self.setCursor(Qt.WaitCursor)
-        self.protocol_model.undo_stack.blockSignals(True)
-        for p in active_analyze_plugins:
-            self.protocol_model.undo_stack.push(p.get_action(self.groups, self.proto_analyzer.default_labelset))
-        self.protocol_model.undo_stack.blockSignals(False)
-        self.protocol_model.update()
-        self.protocol_label_list_model.update()
-        self.unsetCursor()
+
+        # available_analyze_plugins = self.plugin_manager.label_assign_plugins
+        # if len(available_analyze_plugins) == 0:
+        #     QMessageBox.critical(self, self.tr("No analyze plugins available"),
+        #                          self.tr("Could not find any plugins for protocol analysis."))
+        #     return
+        #
+        # active_analyze_plugins = [p for p in available_analyze_plugins if p.enabled]
+        # if len(active_analyze_plugins) == 0:
+        #     installed_plugins = self.plugin_manager.installed_plugins
+        #     options_controller = OptionsController(installed_plugins, highlighted_plugins=available_analyze_plugins)
+        #     options_controller.exec_()
+        #     return
+        #
+        # self.setCursor(Qt.WaitCursor)
+        # self.protocol_model.undo_stack.blockSignals(True)
+        # for p in active_analyze_plugins:
+        #     self.protocol_model.undo_stack.push(p.get_action(self.groups, self.proto_analyzer.default_labelset))
+        # self.protocol_model.undo_stack.blockSignals(False)
+        # self.protocol_model.update()
+        # self.protocol_label_list_model.update()
+        # self.unsetCursor()
 
     def show_proto_sniff_dialog(self):
         pm = self.project_manager
@@ -1367,3 +1378,8 @@ class CompareFrameController(QFrame):
     def on_labelset_dialog_finished(self):
         self.proto_analyzer.update_auto_labelsets()
         self.protocol_model.update()
+
+    def on_participant_edited(self):
+        self.protocol_model.refresh_vertical_header()
+        self.ui.tblViewProtocol.resize_vertical_header()
+        self.participant_changed.emit()

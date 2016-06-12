@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex
+from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
 from urh import constants
 
@@ -21,10 +21,12 @@ from urh.util.ProjectManager import ProjectManager
 
 class ProjectDialogController(QDialog):
     class ProtocolParticipantModel(QAbstractTableModel):
+        parti_rssi_edited = pyqtSignal()
+
         def __init__(self, participants):
             super().__init__()
             self.participants = participants
-            self.header_labels = ["Name", "Shortname", "Color", "Address (hex)"]
+            self.header_labels = ["Name", "Shortname", "Color", "Relative RSSI", "Address (hex)"]
 
         def update(self):
             self.layoutChanged.emit()
@@ -52,6 +54,8 @@ class ProjectDialogController(QDialog):
                 elif j == 2:
                     return part.color_index
                 elif j == 3:
+                    return part.relative_rssi
+                elif j == 4:
                     return part.address_hex
 
         def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
@@ -69,6 +73,13 @@ class ProjectDialogController(QDialog):
             elif j == 2:
                 parti.color_index = int(value)
             elif j == 3:
+                for other in self.participants:
+                    if other.relative_rssi == int(value):
+                        other.relative_rssi = parti.relative_rssi
+                        break
+                parti.relative_rssi = int(value)
+                self.parti_rssi_edited.emit()
+            elif j == 4:
                 parti.address_hex = value
 
             return True
@@ -110,6 +121,7 @@ class ProjectDialogController(QDialog):
                                                                             colors=constants.PARTICIPANT_COLORS,
                                                                             parent=self))
 
+        self.__set_relative_rssi_delegate()
 
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -138,6 +150,26 @@ class ProjectDialogController(QDialog):
 
         self.open_editors()
 
+    def __set_relative_rssi_delegate(self):
+        n = len(self.participants)
+        if n == 0:
+            items = []
+        elif n == 1:
+            items = ["0"]
+        else:
+            items = [str(i) for i in range(n)]
+            items[0] += " (low)"
+            items[-1] += " (high)"
+
+        for row in range(len(self.participants)):
+            self.ui.tblParticipants.closePersistentEditor(self.parti_table_model.index(row, 3))
+
+        self.ui.tblParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
+
+    def __on_relative_rssi_edited(self):
+        self.__set_relative_rssi_delegate()
+        self.open_editors()
+
     @property
     def participants(self):
         """
@@ -160,6 +192,8 @@ class ProjectDialogController(QDialog):
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
+
+        self.parti_table_model.parti_rssi_edited.connect(self.__on_relative_rssi_edited)
 
     def on_sample_rate_changed(self):
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -247,6 +281,8 @@ class ProjectDialogController(QDialog):
                     break
 
         self.participants.append(participant)
+        participant.relative_rssi = len(self.participants) - 1
+        self.__set_relative_rssi_delegate()
         self.parti_table_model.update()
         self.ui.btnRemoveParticipant.setEnabled(True)
         self.open_editors()
@@ -266,6 +302,11 @@ class ProjectDialogController(QDialog):
             start += 1
 
         del self.participants[start:end+1]
+        nremoved = (end+1) - start
+        for parti in self.participants:
+            if parti.relative_rssi > len(self.participants) - 1:
+                parti.relative_rssi -= nremoved
+        self.__set_relative_rssi_delegate()
         self.parti_table_model.update()
         self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)
         self.open_editors()
@@ -273,3 +314,4 @@ class ProjectDialogController(QDialog):
     def open_editors(self):
         for row in range(len(self.participants)):
             self.ui.tblParticipants.openPersistentEditor(self.parti_table_model.index(row, 2))
+            self.ui.tblParticipants.openPersistentEditor(self.parti_table_model.index(row, 3))

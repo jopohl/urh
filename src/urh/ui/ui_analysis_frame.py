@@ -26,12 +26,14 @@ class Ui_FAnalysis(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(FAnalysis)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.splitter = QtWidgets.QSplitter(FAnalysis)
-        self.splitter.setStyleSheet("QSplitter::handle { background-color: gray }")
+        self.splitter.setStyleSheet("QSplitter::handle {\n"
+"    background-color: #AAAAAA;\n"
+"}")
         self.splitter.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.splitter.setMidLineWidth(0)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setOpaqueResize(True)
-        self.splitter.setHandleWidth(4)
+        self.splitter.setHandleWidth(2)
         self.splitter.setObjectName("splitter")
         self.widget = QtWidgets.QWidget(self.splitter)
         self.widget.setObjectName("widget")

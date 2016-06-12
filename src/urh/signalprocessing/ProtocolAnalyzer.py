@@ -18,8 +18,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
-from urh.util import FileOperator
-from urh.util.Formatter import Formatter
+from urh.cythonext import util
 from urh.util.Logger import logger
 
 
@@ -799,3 +798,36 @@ class ProtocolAnalyzer(object):
                 if labelset.ruleset.applies_for_block(block):
                     block.labelset = labelset
                     break
+
+    def auto_assign_participants(self, participants):
+        """
+
+        :type participants: list of Participant
+        :return:
+        """
+        if len(participants) == 0:
+            return
+
+        if len(participants) == 1:
+            for block in self.blocks:
+                block.participant = participants[0]
+            return
+
+        rssis = np.array([block.rssi for block in self.blocks], dtype=np.float32)
+        min_rssi, max_rssi = util.minmax(rssis)
+        center_spacing = (max_rssi - min_rssi) / (len(participants) - 1)
+        centers = [min_rssi + i*center_spacing for i in range(0, len(participants))]
+        rssi_assigned_centers = []
+
+        for rssi in rssis:
+            center_index = 0
+            diff = 999
+            for i, center in enumerate(centers):
+                if abs(center-rssi) < diff:
+                    center_index = i
+                    diff = abs(center-rssi)
+            rssi_assigned_centers.append(center_index)
+
+        participants.sort(key=lambda participant: participant.relative_rssi)
+        for block, center_index in zip(self.blocks, rssi_assigned_centers):
+            block.participant = participants[center_index]

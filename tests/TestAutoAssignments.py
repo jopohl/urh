@@ -43,11 +43,38 @@ class TestAutoAssignments(unittest.TestCase):
                  [0.26651502, 0.2073856, 0.13547869, 0.25948182, 0.28204739, 0.13716124, 0.13526952,
                  0.24828221, 0.25431305, 0.13681877, 0.13650328, 0.28083691, 0.25550124, 0.13498682,
                  0.13611424, 0.2629154, 0.26388499, 0.13780586, 0.13561584, 0.27228078, 0.1356563]]
+
+        proto1 = ProtocolAnalyzer(None)
+        proto2 = ProtocolAnalyzer(None)
+
+        for i in range(0, len(rssis[0])):
+            proto1.blocks.append(self.protocol.blocks[i])
+            proto1.blocks[i].rssi = rssis[0][i]
+
+        self.assertEqual(len(proto1.blocks), 21)
+
+
+        for i in range(0, len(rssis[1])):
+            proto2.blocks.append(self.protocol.blocks[21+i])
+            proto2.blocks[i].rssi = rssis[1][i]
+
+        self.assertEqual(len(proto2.blocks), 21)
+
         alice = Participant(name="Alice", shortname="A")
+        alice.relative_rssi = 1
         bob = Participant(name="Bob", shortname="B")
+        bob.relative_rssi = 0
         excpected_partis = [[alice, bob, bob, alice, alice, bob, bob,
                   alice, alice, bob, bob, alice, alice, bob,
                   bob, alice, alice, bob, bob, alice, bob],
                   [alice, bob, bob, alice, alice, bob, bob,
                    alice, alice, bob, bob, alice, alice, bob,
                    bob, alice, alice, bob, bob, alice, bob]]
+
+        proto1.auto_assign_participants([alice, bob])
+        for i, block in enumerate(proto1.blocks):
+            self.assertEqual(block.participant, excpected_partis[0][i])
+
+        proto2.auto_assign_participants([alice, bob])
+        for i, block in enumerate(proto2.blocks):
+            self.assertEqual(block.participant, excpected_partis[1][i])

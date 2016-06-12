@@ -11,6 +11,8 @@ class Participant(object):
         self.color_index = color_index
         self.show = True
 
+        self.relative_rssi = 0
+
         if id is None:
             self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
         else:

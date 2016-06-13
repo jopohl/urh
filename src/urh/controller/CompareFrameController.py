@@ -78,6 +78,9 @@ class CompareFrameController(QFrame):
         self.assign_participants_action = self.analyze_menue.addAction("Assign participants")
         self.assign_participants_action.setCheckable(True)
         self.assign_participants_action.setChecked(True)
+        self.assign_decodings_action = self.analyze_menue.addAction("Assign decodings")
+        self.assign_decodings_action.setCheckable(True)
+        self.assign_decodings_action.setChecked(True)
         self.ui.btnAnalyze.setMenu(self.analyze_menue)
 
         self.ui.lFilterShown.hide()
@@ -1206,11 +1209,20 @@ class CompareFrameController(QFrame):
 
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
+        self.setCursor(Qt.WaitCursor)
+
         if self.assign_participants_action.isChecked():
             for protocol in self.protocol_list:
                 protocol.auto_assign_participants(self.protocol_model.participants)
 
             self.on_participant_edited()
+
+        if self.assign_decodings_action.isChecked():
+            self.proto_analyzer.auto_assign_decodings(self.decodings)
+            self.protocol_model.update()
+            self.label_value_model.update()
+
+        self.unsetCursor()
 
 
         # available_analyze_plugins = self.plugin_manager.label_assign_plugins

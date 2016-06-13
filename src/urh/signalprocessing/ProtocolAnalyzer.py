@@ -831,3 +831,24 @@ class ProtocolAnalyzer(object):
         participants.sort(key=lambda participant: participant.relative_rssi)
         for block, center_index in zip(self.blocks, rssi_assigned_centers):
             block.participant = participants[center_index]
+
+    def auto_assign_decodings(self, decodings):
+        """
+        :type decodings: list of encoding
+        """
+        nrz_decodings = [decoding for decoding in decodings if decoding.is_nrz or decoding.is_nrzi]
+        fallback = nrz_decodings[0] if nrz_decodings else None
+        non_nrz_decodings = [decoding for decoding in decodings if not decoding in nrz_decodings]
+
+        for block in self.blocks:
+            decoder_found = False
+
+            for decoder in non_nrz_decodings:
+                if decoder.analyze(block.plain_bits) == 0:
+                    block.decoder = decoder
+                    decoder_found = True
+                    break
+
+            if not decoder_found and fallback:
+                block.decoder = fallback
+

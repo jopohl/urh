@@ -5,6 +5,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
+from urh.signalprocessing.encoding import encoding
 
 
 class TestAutoAssignments(unittest.TestCase):
@@ -17,6 +18,15 @@ class TestAutoAssignments(unittest.TestCase):
 
         self.assertEqual(self.protocol.num_blocks, 42)
         self.assertEqual(self.protocol.plain_hex_str[0][16:18], "2d")
+
+        self.decodings = []
+        self.decodings.append(encoding(['Non Return To Zero (NRZ)']))
+        self.decodings.append(encoding(['Non Return To Zero Inverted (NRZ-I)', 'Invert']))
+        self.decodings.append(encoding(['Manchester I', 'Edge Trigger']))
+        self.decodings.append(encoding(['Manchester II', 'Edge Trigger', 'Invert']))
+        self.decodings.append(encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding',]))
+        self.decodings.append(encoding(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
+        self.decodings.append(encoding(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
 
     def test_labelset_assign_by_value(self):
         start = 8
@@ -78,3 +88,17 @@ class TestAutoAssignments(unittest.TestCase):
         proto2.auto_assign_participants([alice, bob])
         for i, block in enumerate(proto2.blocks):
             self.assertEqual(block.participant, excpected_partis[1][i])
+
+    def test_assign_decodings(self):
+        self.undecoded_protocol = ProtocolAnalyzer(None)
+        with open("./data/rwe_undecoded.txt") as f:
+            for line in f:
+                self.undecoded_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+
+        self.undecoded_protocol.auto_assign_decodings(self.decodings)
+
+        for i, block in enumerate(self.undecoded_protocol.blocks):
+            if block.plain_hex_str[8:16] == "9a7d9a7d":
+                self.assertEqual(block.decoder.name, "DeWhitening Special", msg=str(i))
+            elif block.plain_hex_str[8:16] == "67686768":
+                self.assertEqual(block.decoder.name, "DeWhitening", msg=str(i))

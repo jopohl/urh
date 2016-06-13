@@ -63,6 +63,10 @@ class encoding(object):
     def is_nrz(self) -> bool:
         return len(self.chain) <= 1
 
+    @property
+    def is_nrzi(self) -> bool:
+        return len(self.chain) == 2 and self.chain[1] == self.code_invert
+
     def __str__(self):
         return self.name
 

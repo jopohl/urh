@@ -1,4 +1,5 @@
 import locale
+import traceback
 
 import numpy
 from PyQt5.QtCore import Qt, pyqtSlot
@@ -311,8 +312,12 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def generate_file(self):
-        modulated_samples = self.modulate_data()
-        FileOperator.save_data_dialog("", modulated_samples, parent=self)
+        try:
+            modulated_samples = self.modulate_data()
+            FileOperator.save_data_dialog("", modulated_samples, parent=self)
+        except Exception as e:
+            Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
+            self.unsetCursor()
 
     def modulate_data(self):
         pos = 0
@@ -440,21 +445,25 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_btn_send_clicked(self):
-        modulated_data = self.modulate_data()
-        dialog = SendRecvDialogController(self.project_manager.frequency,
-                                          self.project_manager.sample_rate,
-                                          self.project_manager.bandwidth,
-                                          self.project_manager.gain,
-                                          self.project_manager.device,
-                                          Mode.send, modulated_data=modulated_data,
-                                          parent=self)
-        if dialog.has_empty_device_list:
-            Errors.no_device()
-            dialog.close()
-            return
+        try:
+            modulated_data = self.modulate_data()
+            dialog = SendRecvDialogController(self.project_manager.frequency,
+                                              self.project_manager.sample_rate,
+                                              self.project_manager.bandwidth,
+                                              self.project_manager.gain,
+                                              self.project_manager.device,
+                                              Mode.send, modulated_data=modulated_data,
+                                              parent=self)
+            if dialog.has_empty_device_list:
+                Errors.no_device()
+                dialog.close()
+                return
 
-        dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
-        dialog.show()
+            dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
+            dialog.show()
+        except Exception as e:
+            Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
+            self.unsetCursor()
 
 
     @pyqtSlot()

@@ -469,7 +469,7 @@ class CompareFrameController(QFrame):
         for proto in self.protocol_list:
             abs_time = 0
             rel_time = 0
-            if proto.show:
+            if proto.show and proto.blocks:
                 num_blocks = 0
                 for i, block in enumerate(proto.blocks):
                     if not block:

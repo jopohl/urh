@@ -48,5 +48,6 @@ class Participant(object):
         shortname = tag.get("shortname", "X")
         address_hex = tag.get("address_hex", "")
         color_index = int(tag.get("color_index", 0))
+        color_index = 0 if color_index < 0 else color_index
         relative_rssi = int(tag.get("relative_rssi", 0))
         return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index, id = tag.attrib["id"], relative_rssi=relative_rssi)

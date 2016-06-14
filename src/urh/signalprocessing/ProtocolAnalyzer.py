@@ -407,24 +407,26 @@ class ProtocolAnalyzer(object):
         :rtype: tuple[int,int]
         """
         lookup = {i: block.bit_sample_pos for i, block in enumerate(self.blocks)}
+        try:
+            if startblock > endblock:
+                startblock, endblock = endblock, startblock
 
-        if startblock > endblock:
-            startblock, endblock = endblock, startblock
+            if startindex >= len(lookup[startblock]) - 1:
+                startindex = len(lookup[startblock]) - 1
+                if not include_pause:
+                    startindex -= 1
 
-        if startindex >= len(lookup[startblock]) - 1:
-            startindex = len(lookup[startblock]) - 1
-            if not include_pause:
-                startindex -= 1
+            if endindex >= len(lookup[endblock]) - 1:
+                endindex = len(lookup[endblock]) - 1
+                if not include_pause:
+                    endindex -= 1
 
-        if endindex >= len(lookup[endblock]) - 1:
-            endindex = len(lookup[endblock]) - 1
-            if not include_pause:
-                endindex -= 1
+            start = lookup[startblock][startindex]
+            end = lookup[endblock][endindex] - start
 
-        start = lookup[startblock][startindex]
-        end = lookup[endblock][endindex] - start
-
-        return start, end
+            return start, end
+        except KeyError:
+            return  -1, -1
 
     def get_bitseq_from_selection(self, selection_start: int, selection_width: int, bitlen: int):
         """

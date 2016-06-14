@@ -283,6 +283,8 @@ class MainController(QMainWindow):
                     self.add_files(fileNames)
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
+                self.ui.progressBar.hide()
+                self.unsetCursor()
 
     @pyqtSlot(str)
     def handle_dialog_selection_changed(self, path: str):
@@ -391,37 +393,43 @@ class MainController(QMainWindow):
             self.close_signal_frame(frame)
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
-        self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.blocks)
         try:
-            proto = self.signal_protocol_dict[signal_frame]
-        except KeyError:
-            proto = None
+            self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.blocks)
+            try:
+                proto = self.signal_protocol_dict[signal_frame]
+            except KeyError:
+                proto = None
 
-        if proto is not None:
-            self.compare_frame_controller.remove_protocol(proto)
+            if proto is not None:
+                self.compare_frame_controller.remove_protocol(proto)
 
-            proto.destroy()
-            del self.signal_protocol_dict[signal_frame]
+                proto.destroy()
+                del self.signal_protocol_dict[signal_frame]
 
-        if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
-            self.signal_tab_controller.ui.scrlAreaSignals.setMinimumHeight(
-                self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() - signal_frame.height())
+            if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
+                self.signal_tab_controller.ui.scrlAreaSignals.setMinimumHeight(
+                    self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() - signal_frame.height())
 
-        if signal_frame.signal is not None:
-            # Non-Empty Frame (when a signal and not a protocol is opended)
-            self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-            signal_frame.scene_creator.deleteLater()
-            signal_frame.signal.destroy()
-            signal_frame.signal.deleteLater()
-            signal_frame.proto_analyzer.destroy()
-        signal_frame.close()
-        QApplication.processEvents()
-        signal_frame.destroy()
-        QApplication.processEvents()
+            if signal_frame.signal is not None:
+                # Non-Empty Frame (when a signal and not a protocol is opended)
+                self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
+                signal_frame.scene_creator.deleteLater()
+                signal_frame.signal.destroy()
+                signal_frame.signal.deleteLater()
+                signal_frame.proto_analyzer.destroy()
+            signal_frame.close()
+            QApplication.processEvents()
+            signal_frame.destroy()
+            QApplication.processEvents()
 
-        self.compare_frame_controller.ui.treeViewProtocols.expandAll()
-        self.set_frame_numbers()
-        self.refresh_main_menu()
+            self.compare_frame_controller.ui.treeViewProtocols.expandAll()
+            self.set_frame_numbers()
+            self.refresh_main_menu()
+        except Exception as e:
+            Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
+            self.ui.progressBar.hide()
+            self.unsetCursor()
+
 
     def updateRecentActionList(self):
         recentFilePaths = constants.SETTINGS.value("recentFiles")
@@ -471,6 +479,8 @@ class MainController(QMainWindow):
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
         except Exception as e:
             Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
+            self.ui.progressBar.hide()
+            self.unsetCursor()
 
     @pyqtSlot()
     def show_about(self):

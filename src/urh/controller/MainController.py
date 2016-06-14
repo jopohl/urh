@@ -284,7 +284,7 @@ class MainController(QMainWindow):
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
                 self.ui.progressBar.hide()
-                self.unsetCursor()
+                QApplication.restoreOverrideCursor()
 
     @pyqtSlot(str)
     def handle_dialog_selection_changed(self, path: str):

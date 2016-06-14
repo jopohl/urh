@@ -67,7 +67,7 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
-     <item row="19" column="0">
+     <item row="18" column="0">
       <widget class="QCheckBox" name="chkBoxSyncSelection">
        <property name="toolTip">
         <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
@@ -96,7 +96,7 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
+     <item row="17" column="0">
       <widget class="QCheckBox" name="chkBoxShowProtocol">
        <property name="toolTip">
         <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
@@ -258,7 +258,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
+     <item row="17" column="1">
       <widget class="QComboBox" name="cbProtoView">
        <item>
         <property name="text">
@@ -275,6 +275,13 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <string>ASCII</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="12" column="0" colspan="2">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
       </widget>
      </item>
      <item row="3" column="0">
@@ -305,6 +312,63 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
        <property name="text">
         <string>Center:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="2">
+      <widget class="QPushButton" name="btnAutoDetect">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Autodetect parameters</string>
+       </property>
+       <property name="icon">
+        <iconset theme="system-software-update">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="spinBoxCenterOffset">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-3.150000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>6.280000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.000100000000000</double>
        </property>
       </widget>
      </item>
@@ -499,63 +563,12 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </item>
       </layout>
      </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="spinBoxCenterOffset">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="decimals">
-        <number>4</number>
-       </property>
-       <property name="minimum">
-        <double>-3.150000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>6.280000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.000100000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0" colspan="2">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Modulation:</string>
        </property>
       </widget>
-     </item>
-     <item row="17" column="0">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item row="11" column="0">
       <spacer name="verticalSpacer_2">
@@ -613,32 +626,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <string>PSK</string>
         </property>
        </item>
-      </widget>
-     </item>
-     <item row="10" column="0" colspan="2">
-      <widget class="QPushButton" name="btnAutoDetect">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Autodetect parameters</string>
-       </property>
-       <property name="icon">
-        <iconset theme="system-software-update">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
     </layout>

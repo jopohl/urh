@@ -34,7 +34,7 @@
        <bool>true</bool>
       </property>
       <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,3,0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,3,0">
         <item>
          <widget class="QLineEdit" name="lnEdtTreeFilter">
           <property name="sizePolicy">
@@ -95,14 +95,39 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Participants:</string>
+         <widget class="QTabWidget" name="tabWidget_Project">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tabParticipants">
+           <attribute name="title">
+            <string>Participants</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QListView" name="listViewParticipants"/>
+            </item>
+           </layout>
+           <zorder>listViewParticipants</zorder>
+           <zorder>listViewParticipants</zorder>
+          </widget>
+          <widget class="QWidget" name="tabDescription">
+           <attribute name="title">
+            <string>Description</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QTextEdit" name="textEditProjectDescription"/>
+            </item>
+           </layout>
+          </widget>
          </widget>
-        </item>
-        <item>
-         <widget class="QListView" name="listViewParticipants"/>
         </item>
        </layout>
       </widget>
@@ -152,7 +177,7 @@
      <x>0</x>
      <y>0</y>
      <width>1017</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -185,7 +210,7 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>Edi&amp;t</string>
     </property>
     <addaction name="actionMinimize_all"/>
     <addaction name="actionMaximize_all"/>
@@ -396,7 +421,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Seperate Protocols in Compare Frame</string>
+    <string>Seperate &amp;Protocols in Compare Frame</string>
    </property>
   </action>
   <action name="actionOpenArchive">
@@ -446,12 +471,12 @@
   </action>
   <action name="actionSort_Frames_by_Name">
    <property name="text">
-    <string>Sort Frames by Name</string>
+    <string>Sort &amp;Frames by Name</string>
    </property>
   </action>
   <action name="actionConvert_Folder_to_Project">
    <property name="text">
-    <string>Convert Folder to Project</string>
+    <string>Convert &amp;Folder to Project</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -459,12 +484,12 @@
   </action>
   <action name="actionDecoding">
    <property name="text">
-    <string>Decoding...</string>
+    <string>&amp;Decoding...</string>
    </property>
   </action>
   <action name="actionRecord">
    <property name="text">
-    <string>Record signal...</string>
+    <string>&amp;Record signal...</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -472,7 +497,7 @@
   </action>
   <action name="actionSpectrum_Analyzer">
    <property name="text">
-    <string>Spectrum Analyzer...</string>
+    <string>Spectrum &amp;Analyzer...</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -484,7 +509,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Options...</string>
+    <string>&amp;Options...</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -495,30 +520,31 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show file tree</string>
+    <string>Sh&amp;ow file tree</string>
    </property>
   </action>
   <action name="actionNew_Project">
    <property name="text">
-    <string>New Project..</string>
+    <string>&amp;New Project..</string>
    </property>
   </action>
   <action name="actionSniff_protocol">
    <property name="text">
-    <string>Sniff protocol...</string>
+    <string>Sn&amp;iff protocol...</string>
    </property>
   </action>
   <action name="actionProject_settings">
    <property name="text">
-    <string>Project settings...</string>
+    <string>&amp;Project settings...</string>
    </property>
   </action>
   <action name="actionSave_project">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Save project</string>
+    <string>Sa&amp;ve project</string>
    </property>
   </action>
  </widget>

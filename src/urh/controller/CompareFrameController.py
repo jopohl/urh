@@ -108,8 +108,6 @@ class CompareFrameController(QFrame):
         self.selection_timer.setSingleShot(True)
         self.selection_timer.timeout.connect(self.on_table_selection_timer_timeout)
         self.setFrameStyle(0)
-        self.ui.lSignalName.setText(self.tr("Compare your protocols here"))
-        self.ui.lSignalNr.setText("")
         self.setAcceptDrops(False)
 
         self.proto_tree_model = ProtocolTreeModel(controller=self)

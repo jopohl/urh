@@ -188,6 +188,9 @@ class MainController(QMainWindow):
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
         self.project_manager.project_updated.connect(self.on_project_updated)
 
+        self.ui.textEditProjectDescription.textChanged.connect(self.on_textEditProjectDescription_edited)
+        self.ui.tabWidget_Project.tabBarDoubleClicked.connect(self.on_project_tab_bar_double_clicked)
+
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
         self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
@@ -752,3 +755,17 @@ class MainController(QMainWindow):
     def on_project_updated(self):
         self.participant_legend_model.participants = self.project_manager.participants
         self.participant_legend_model.update()
+        self.ui.textEditProjectDescription.setText(self.project_manager.description)
+
+    def on_textEditProjectDescription_edited(self):
+        self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()
+
+    def on_project_tab_bar_double_clicked(self):
+        if self.ui.tabParticipants.isVisible():
+            self.ui.tabParticipants.hide()
+            self.ui.tabDescription.hide()
+            self.ui.tabWidget_Project.setMaximumHeight( self.ui.tabWidget_Project.tabBar().height())
+        else:
+            self.ui.tabDescription.show()
+            self.ui.tabParticipants.show()
+            self.ui.tabWidget_Project.setMaximumHeight(9000)

@@ -762,10 +762,16 @@ class MainController(QMainWindow):
 
     def on_project_tab_bar_double_clicked(self):
         if self.ui.tabParticipants.isVisible():
-            self.ui.tabParticipants.hide()
-            self.ui.tabDescription.hide()
-            self.ui.tabWidget_Project.setMaximumHeight( self.ui.tabWidget_Project.tabBar().height())
+            self.collapse_project_tab_bar()
         else:
-            self.ui.tabDescription.show()
-            self.ui.tabParticipants.show()
-            self.ui.tabWidget_Project.setMaximumHeight(9000)
+            self.uncollapse_project_tab_bar()
+
+    def collapse_project_tab_bar(self):
+        self.ui.tabParticipants.hide()
+        self.ui.tabDescription.hide()
+        self.ui.tabWidget_Project.setMaximumHeight(self.ui.tabWidget_Project.tabBar().height())
+
+    def uncollapse_project_tab_bar(self):
+        self.ui.tabDescription.show()
+        self.ui.tabParticipants.show()
+        self.ui.tabWidget_Project.setMaximumHeight(9000)

@@ -88,6 +88,7 @@ class ProjectManager(QObject):
             self.maincontroller.close_all()
         self.project_path = path
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
+        collapse_project_tabs = False
         if not os.path.isfile(self.project_file):
             if ask_for_new_project:
                 reply = QMessageBox.question(self.maincontroller, "Project File",
@@ -108,6 +109,7 @@ class ProjectManager(QObject):
             tree = ET.parse(self.project_file)
             root = tree.getroot()
 
+            collapse_project_tabs = bool(int(root.get("collapse_project_tabs", 0)))
             cfc = self.maincontroller.compare_frame_controller
             self.read_parameters(root)
             self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
@@ -139,6 +141,12 @@ class ProjectManager(QObject):
             self.maincontroller.file_proxy_model.mapFromSource(self.maincontroller.filemodel.index(path)))
         self.maincontroller.ui.fileTree.setToolTip(path)
         self.maincontroller.ui.splitter.setSizes([1, 1])
+        if collapse_project_tabs:
+            self.maincontroller.collapse_project_tab_bar()
+        else:
+            self.maincontroller.uncollapse_project_tab_bar()
+
+
         self.maincontroller.setWindowTitle("Universal Radio Hacker [" + path + "]")
 
         self.project_loaded_status_changed.emit(self.project_loaded)
@@ -259,6 +267,7 @@ class ProjectManager(QObject):
         root.set("bandwidth", str(self.bandwidth))
         root.set("gain", str(self.gain))
         root.set("description", str(self.description).replace("\n",self.NEWLINE_CODE))
+        root.set("collapse_project_tabs", str(int(not self.maincontroller.ui.tabParticipants.isVisible())))
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):

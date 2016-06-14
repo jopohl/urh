@@ -81,6 +81,9 @@ class CompareFrameController(QFrame):
         self.assign_decodings_action = self.analyze_menue.addAction("Assign decodings")
         self.assign_decodings_action.setCheckable(True)
         self.assign_decodings_action.setChecked(True)
+        self.assign_labelsets_action = self.analyze_menue.addAction("Assign labelsets")
+        self.assign_labelsets_action.setCheckable(True)
+        self.assign_labelsets_action.setChecked(True)
         self.ui.btnAnalyze.setMenu(self.analyze_menue)
 
         self.ui.lFilterShown.hide()
@@ -1221,6 +1224,9 @@ class CompareFrameController(QFrame):
             self.proto_analyzer.auto_assign_decodings(self.decodings)
             self.protocol_model.update()
             self.label_value_model.update()
+
+        if self.assign_labelsets_action.isChecked():
+            self.on_labelset_dialog_finished()
 
         self.unsetCursor()
 

@@ -65,7 +65,7 @@ class LabelSet(list):
         return super().__getitem__(index)
 
     def to_xml(self) -> ET.Element:
-        result = ET.Element("labelset", attrib={"name": self.name, "id": self.id})
+        result = ET.Element("labelset", attrib={"name": self.name, "id": self.id, "assigned_automatically": "1" if self.assigned_automatically else "0"})
         for lbl in self:
             result.append(lbl.to_xml(-1))
 
@@ -92,7 +92,10 @@ class LabelSet(list):
     def from_xml(tag:  ET.Element):
         name = tag.get("name", "blank")
         id = tag.get("id", None)
+        assigned_auto = bool(int(tag.get("assigned_automatically", 0)))
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag))
-        return LabelSet(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
+        result =  LabelSet(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
+        result.assigned_automatically = assigned_auto
+        return result

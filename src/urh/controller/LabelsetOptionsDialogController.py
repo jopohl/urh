@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
@@ -21,6 +23,7 @@ class LabelsetOptionsDialogController(QDialog):
         operator_descriptions.sort()
 
         self.setWindowTitle(labelset.name)
+        self.orig_labelset = copy.deepcopy(labelset)
         self.labelset = labelset
         self.ruleset_table_model = RulesetTableModel(labelset.ruleset, operator_descriptions, parent=self)
         self.ui.tblViewRuleset.setModel(self.ruleset_table_model)
@@ -48,6 +51,9 @@ class LabelsetOptionsDialogController(QDialog):
         self.ui.rbAssignManually.clicked.connect(self.on_rb_assign_manually_clicked)
         self.ui.cbRulesetMode.currentIndexChanged.connect(self.on_cb_rulesetmode_current_index_changed)
 
+        self.ui.btnSaveAndApply.clicked.connect(self.on_btn_save_and_apply_clicked)
+        self.ui.btnClose.clicked.connect(self.on_btn_close_clicked)
+
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
         self.labelset.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
@@ -55,6 +61,13 @@ class LabelsetOptionsDialogController(QDialog):
 
         for i in range(len(self.labelset.ruleset)):
             self.open_editors(i)
+
+    def on_btn_close_clicked(self):
+        self.labelset = self.orig_labelset
+        self.close()
+
+    def on_btn_save_and_apply_clicked(self):
+        self.close()
 
     def on_btn_remove_rule_clicked(self):
         self.ruleset_table_model.ruleset.remove(self.labelset.ruleset[-1])

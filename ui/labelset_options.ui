@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>471</width>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,14 @@
    <item row="0" column="0">
     <widget class="QRadioButton" name="rbAssignManually">
      <property name="text">
-      <string>Assign manually</string>
+      <string>Assi&amp;gn manually</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
     <widget class="QRadioButton" name="rbAssignAutomatically">
      <property name="text">
-      <string>Assign automatically</string>
+      <string>Assign a&amp;utomatically</string>
      </property>
     </widget>
    </item>
@@ -32,17 +32,17 @@
     <widget class="QComboBox" name="cbRulesetMode">
      <item>
       <property name="text">
-       <string>All rules must apply</string>
+       <string>All rules must apply (AND)</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>At leat one rule must apply</string>
+       <string>At leat one rule must apply (OR)</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>No rule must apply</string>
+       <string>No rule must apply (NOR)</string>
       </property>
      </item>
     </widget>
@@ -59,7 +59,8 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-add"/>
+      <iconset theme="list-add">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -72,7 +73,8 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -88,6 +90,24 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btnSaveAndApply">
+       <property name="text">
+        <string>Save and apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClose">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

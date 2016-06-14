@@ -830,7 +830,8 @@ class ProtocolAnalyzer(object):
 
         participants.sort(key=lambda participant: participant.relative_rssi)
         for block, center_index in zip(self.blocks, rssi_assigned_centers):
-            block.participant = participants[center_index]
+            if block.participant is None:
+                block.participant = participants[center_index]
 
     def auto_assign_decodings(self, decodings):
         """

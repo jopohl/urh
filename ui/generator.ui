@@ -7,27 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>1083</width>
-    <height>493</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QSplitter" name="splitter">
-     <property name="styleSheet">
-      <string notr="true">QSplitter::handle {
-    background-color: #AAAAAA;
-}</string>
-     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="handleWidth">
-      <number>2</number>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTabWidget" name="tabWidget">
@@ -36,6 +34,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="tabShape">
+          <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
           <number>0</number>
@@ -366,9 +370,15 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="4" column="2">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="0">
         <widget class="QToolButton" name="btnSave">
          <property name="text">
           <string>...</string>
@@ -379,7 +389,62 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="6">
+       <item row="2" column="1">
+        <widget class="QLabel" name="lEstimatedTime">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per block and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Estimated Time: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>38</width>
+           <height>22</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLabel" name="lViewType">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Viewtype:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QComboBox" name="cbViewType">
+         <item>
+          <property name="text">
+           <string>Bit</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hex</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ASCII</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="5">
         <widget class="GeneratorTableView" name="tableBlocks">
          <property name="acceptDrops">
           <bool>true</bool>
@@ -419,62 +484,7 @@
          </attribute>
         </widget>
        </item>
-       <item row="4" column="4">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>38</width>
-           <height>22</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="4" column="5">
-        <widget class="QLabel" name="lViewType">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Viewtype:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="6">
-        <widget class="QComboBox" name="cbViewType">
-         <item>
-          <property name="text">
-           <string>Bit</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Hex</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>ASCII</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="4" column="3">
-        <widget class="QLabel" name="lEstimatedTime">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per block and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Estimated Time: </string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="6">
+       <item row="0" column="0" colspan="5">
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
@@ -491,6 +501,14 @@
         </widget>
        </item>
       </layout>
+      <zorder>layoutWidget</zorder>
+      <zorder>cbViewType</zorder>
+      <zorder>lViewType</zorder>
+      <zorder>lEstimatedTime</zorder>
+      <zorder>label_3</zorder>
+      <zorder>tableBlocks</zorder>
+      <zorder>btnSave</zorder>
+      <zorder>horizontalSpacer_3</zorder>
      </widget>
     </widget>
    </item>

@@ -855,3 +855,6 @@ class ProtocolAnalyzer(object):
             if not decoder_found and fallback:
                 block.decoder = fallback
 
+    def auto_assign_labels(self):
+        pass
+

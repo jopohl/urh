@@ -2,6 +2,7 @@ import unittest
 
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
@@ -102,3 +103,14 @@ class TestAutoAssignments(unittest.TestCase):
                 self.assertEqual(block.decoder.name, "DeWhitening Special", msg=str(i))
             elif block.plain_hex_str[8:16] == "67686768":
                 self.assertEqual(block.decoder.name, "DeWhitening", msg=str(i))
+
+    def test_assign_labels(self):
+        preamble_start = 0
+        preamble_end = 31
+
+        self.protocol.auto_assign_labels()
+
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+
+        for block in self.protocol.blocks:
+            self.assertIn(preamble_label, block.labelset)

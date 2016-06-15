@@ -588,3 +588,17 @@ class ProtocolBlock(object):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
         end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]
         return int(start), int(end)
+
+    def find_preamble_end(self):
+        try:
+            start = 0 if self.decoded_bits[0] else 1
+            for i in range(start, len(self.decoded_bits), 2):
+                if self.decoded_bits[i] and not self.decoded_bits[i+1]:
+                    continue
+                else:
+                    return i - 1
+
+            return len(self.decoded_bits) - 1
+
+        except IndexError:
+            return None

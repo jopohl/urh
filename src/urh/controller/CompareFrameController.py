@@ -84,6 +84,9 @@ class CompareFrameController(QFrame):
         self.assign_labelsets_action = self.analyze_menue.addAction("Assign labelsets")
         self.assign_labelsets_action.setCheckable(True)
         self.assign_labelsets_action.setChecked(True)
+        self.assign_labels_action = self.analyze_menue.addAction("Assign labels")
+        self.assign_labels_action.setCheckable(True)
+        self.assign_labels_action.setChecked(True)
         self.ui.btnAnalyze.setMenu(self.analyze_menue)
 
         self.ui.lFilterShown.hide()
@@ -1225,6 +1228,12 @@ class CompareFrameController(QFrame):
 
         if self.assign_labelsets_action.isChecked():
             self.on_labelset_dialog_finished()
+
+        if self.assign_labels_action.isChecked():
+            self.proto_analyzer.auto_assign_labels()
+            self.protocol_model.update()
+            self.label_value_model.update()
+            self.protocol_label_list_model.update()
 
         self.unsetCursor()
 

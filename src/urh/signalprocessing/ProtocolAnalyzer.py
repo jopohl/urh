@@ -856,5 +856,13 @@ class ProtocolAnalyzer(object):
                 block.decoder = fallback
 
     def auto_assign_labels(self):
-        pass
+        preamble_ends = {i: None for i in range(0, len(self.labelsets))}
 
+        for block in self.blocks:
+            end = block.find_preamble_end()
+            labelset_index = self.labelsets.index(block.labelset)
+            if preamble_ends[labelset_index] is None or end < preamble_ends[labelset_index]:
+                preamble_ends[labelset_index] = end #make sure we only add the smallest preamble per labelset
+
+        for labelset_index, preamble_end in preamble_ends.items():
+            self.labelsets[labelset_index].add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")

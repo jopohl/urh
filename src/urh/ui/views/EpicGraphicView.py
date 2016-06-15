@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QRectF, Qt, QPoint, QSize, pyqtSignal
+from PyQt5.QtCore import Qt, QPoint, QSize, pyqtSignal
 from PyQt5.QtGui import QMouseEvent, QKeyEvent, QCursor, QPen, QPainter, QPixmap, QIcon, QKeySequence, \
     QContextMenuEvent, QWheelEvent
-from PyQt5.QtWidgets import QGraphicsView, QApplication, QMenu, QActionGroup
+from PyQt5.QtWidgets import QApplication, QMenu, QActionGroup
 
 from urh import constants
 from urh.ui.ROI import ROI
@@ -60,6 +60,15 @@ class EpicGraphicView(SelectableGraphicView):
         else:
             return -self.signal.qad_center
 
+    @property
+    def selected_blocks(self):
+        if not self.selection_area.is_empty:
+            pa = self.parent_frame.proto_analyzer
+            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width), self.signal.bit_len)
+            return pa.blocks[sb:eb+1]
+        else:
+            return []
+
     def is_pos_in_separea(self, pos: QPoint):
         if self.scene_type == 0:
             return False
@@ -99,11 +108,7 @@ class EpicGraphicView(SelectableGraphicView):
             zoomAction = menu.addAction(self.tr("Zoom Selection"))
             createAction = menu.addAction(self.tr("Create Signal from Selection"))
 
-            pa = self.parent_frame.proto_analyzer
-            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width), self.signal.bit_len)
-            selected_blocks =  pa.blocks[sb:eb+1]
-        else:
-            selected_blocks = []
+        selected_blocks = self.selected_blocks
 
         if len(selected_blocks) == 1:
             selected_block = selected_blocks[0]

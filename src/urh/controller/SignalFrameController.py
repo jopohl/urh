@@ -330,6 +330,11 @@ class SignalFrameController(QFrame):
     def update_nselected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
         self.__set_duration()
+        sel_blocks = self.ui.gvSignal.selected_blocks
+        if len(sel_blocks) == 1:
+            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_blocks[0].rssi)))
+        else:
+            self.ui.labelRSSI.setText("")
 
 
     @pyqtSlot(int, int)
@@ -418,8 +423,6 @@ class SignalFrameController(QFrame):
             self.signal_created.emit(new_signal)
         else:
             Errors.empty_selection()
-
-
 
     def my_close(self):
         settings = constants.SETTINGS

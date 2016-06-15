@@ -881,9 +881,9 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>|</string>
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
@@ -891,6 +891,20 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
           <widget class="QLabel" name="lDuration">
            <property name="text">
             <string>42 µs</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelRSSI">
+           <property name="text">
+            <string>RSSI: 0,434</string>
            </property>
           </widget>
          </item>

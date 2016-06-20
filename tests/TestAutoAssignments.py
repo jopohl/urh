@@ -107,12 +107,19 @@ class TestAutoAssignments(unittest.TestCase):
     def test_assign_labels(self):
         preamble_start = 0
         preamble_end = 31
+        sync_start = 32
+        sync_end = 63
 
         self.protocol.auto_assign_labels()
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+        sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
 
         self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Preamble"]))
+        self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Sync"]))
+
+        print(self.protocol.default_labelset)
 
         for block in self.protocol.blocks:
             self.assertIn(preamble_label, block.labelset)
+            self.assertIn(sync_label, block.labelset)

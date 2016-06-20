@@ -522,9 +522,9 @@ class ProtocolAnalyzer(object):
 
     def find_differences(self, refindex: int, view: int):
         """
-        Sucht alle Unterschiede zwischen den Protokollblöcken, bezogen auf einen Referenzblock
+        Search all differences between protocol blocks regarding a reference block
 
-        :param refindex: Index des Referenzblocks
+        :param refindex: index of reference block
         :rtype: dict[int, set[int]]
         """
         differences = defaultdict(set)
@@ -856,7 +856,25 @@ class ProtocolAnalyzer(object):
                 block.decoder = fallback
 
     def auto_assign_labels(self):
-        for block in self.blocks:
-            end = block.find_preamble_end()
-            if end is not None:
-                block.labelset.add_protocol_label(start=0, end=end, type_index=0, name="Preamble")
+        sync_pos = set()
+
+        for i, block in enumerate(self.blocks):
+            # searching preamble
+            preamble_end = block.find_preamble_end()
+            if preamble_end is None:
+                continue
+
+            block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
+
+            # searching synchronization
+            if i < len(self.blocks) - 1:
+                try:
+                    first_diff = next(j for j, (a, b) in enumerate(zip(block.decoded_bits[preamble_end:],
+                                                                     self.blocks[i+1].decoded_bits[preamble_end:])) if a != b)
+                    first_diff = 8 * (first_diff//8) # align to bytes
+                    if first_diff == 0:
+                        continue
+                except StopIteration:
+                    continue
+
+                block.labelset.add_protocol_label(start=preamble_end+1, end=preamble_end+first_diff, type_index=0, name="Sync")

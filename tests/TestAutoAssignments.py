@@ -112,5 +112,7 @@ class TestAutoAssignments(unittest.TestCase):
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
 
+        self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Preamble"]))
+
         for block in self.protocol.blocks:
             self.assertIn(preamble_label, block.labelset)

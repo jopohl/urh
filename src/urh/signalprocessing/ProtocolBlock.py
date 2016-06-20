@@ -592,8 +592,9 @@ class ProtocolBlock(object):
     def find_preamble_end(self):
         try:
             start = 0 if self.decoded_bits[0] else 1
-            for i in range(start, len(self.decoded_bits), 2):
-                if self.decoded_bits[i] and not self.decoded_bits[i+1]:
+            for i in range(start, len(self.decoded_bits), 4):
+                if self.decoded_bits[i] and not self.decoded_bits[i+1] \
+                        and self.decoded_bits[i+2] and not self.decoded_bits[i+3]:
                     continue
                 else:
                     return i - 1

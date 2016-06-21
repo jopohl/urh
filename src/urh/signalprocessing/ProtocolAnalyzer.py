@@ -900,7 +900,7 @@ class ProtocolAnalyzer(object):
                     constant_indices[(saved_k, 4*(end//4))].add(j)
 
         print(len(constant_indices))
-        for constant_range, applying_indices in constant_indices.items():
+        for constant_range, applying_indices in sorted(constant_indices.items()):
             if constant_range[0] == 0:
                 print(constant_range, len(applying_indices), encoding.bit2hex(self.blocks[next(iter(applying_indices))][constant_range[0]+preamble_end:constant_range[1]+preamble_end]))
 

@@ -1,5 +1,7 @@
 import unittest
 
+import time
+
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -110,7 +112,9 @@ class TestAutoAssignments(unittest.TestCase):
         sync_start = 32
         sync_end = 63
 
+        t = time.time()
         self.protocol.auto_assign_labels()
+        print("Time for auto assigning labels: ", str(time.time()-t))
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
         sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)

@@ -874,7 +874,7 @@ class ProtocolAnalyzer(object):
 
 
         # searching synchronization
-        constant_indices = defaultdict(set)
+        constant_indices = defaultdict(list)
 
         #const_c = [0]
 
@@ -891,37 +891,33 @@ class ProtocolAnalyzer(object):
                     else:
                         if count > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4*((k-1)//4)
-                            present_range = next(((start, end) for start, end in constant_indices[i] if saved_k == start), None)
+                            present_range = next((rng for rng in constant_indices[i] if saved_k == rng[0]), None)
                             if present_range is None:
-                                constant_indices[i].add((saved_k, range_end))
+                                constant_indices[i].append([saved_k, range_end])
                             elif range_end < present_range[1]:
-                                constant_indices[i].remove(present_range)
-                                constant_indices[i].add((saved_k, end))
+                                present_range[1] = range_end
 
-                            present_range = next(((start, end) for start, end in constant_indices[j] if saved_k == start), None)
+                            present_range = next((rng for rng in constant_indices[j] if saved_k == rng[0]), None)
                             if present_range is None:
-                                constant_indices[j].add((saved_k, range_end))
+                                constant_indices[j].append([saved_k, range_end])
                             elif range_end < present_range[1]:
-                                constant_indices[j].remove(present_range)
-                                constant_indices[j].add((saved_k, end))
+                                present_range[1] = range_end
                         count = 0
                         saved_k = k
 
                 if count > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
-                    present_range = next(((start, end) for start, end in constant_indices[i] if saved_k == start), None)
+                    present_range = next((rng for rng in constant_indices[i] if saved_k == rng[0]), None)
                     if present_range is None:
-                        constant_indices[i].add((saved_k, range_end))
+                        constant_indices[i].append([saved_k, range_end])
                     elif range_end < present_range[1]:
-                        constant_indices[i].remove(present_range)
-                        constant_indices[i].add((saved_k, end))
+                        present_range[1] = range_end
 
-                    present_range = next(((start, end) for start, end in constant_indices[j] if saved_k == start), None)
+                    present_range = next((rng for rng in constant_indices[j] if saved_k == rng[0]), None)
                     if present_range is None:
-                        constant_indices[j].add((saved_k, range_end))
+                        constant_indices[j].append([saved_k, range_end])
                     elif range_end < present_range[1]:
-                        constant_indices[j].remove(present_range)
-                        constant_indices[j].add((saved_k, end))
+                        present_range[1] = range_end
 
         for block_index, const_indices in sorted(constant_indices.items()):
             print(block_index, sorted(const_indices))

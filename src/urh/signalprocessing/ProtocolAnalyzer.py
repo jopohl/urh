@@ -856,25 +856,69 @@ class ProtocolAnalyzer(object):
                 block.decoder = fallback
 
     def auto_assign_labels(self):
-        sync_pos = set()
+        preamble_ends = list()
 
-        for i, block in enumerate(self.blocks):
+        for block in self.blocks:
             # searching preamble
             preamble_end = block.find_preamble_end()
-            if preamble_end is None:
+            if preamble_end is None or preamble_end < 1:
                 continue
+            preamble_ends.append(preamble_end)
+#            block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
 
-            block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
+        if len(preamble_ends) == 0:
+            return
 
-            # searching synchronization
-            if i < len(self.blocks) - 1:
-                try:
-                    first_diff = next(j for j, (a, b) in enumerate(zip(block.decoded_bits[preamble_end:],
-                                                                     self.blocks[i+1].decoded_bits[preamble_end:])) if a != b)
-                    first_diff = 8 * (first_diff//8) # align to bytes
-                    if first_diff == 0:
-                        continue
-                except StopIteration:
-                    continue
+        preamble_end = max(preamble_ends, key=preamble_ends.count)
+        block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
 
-                block.labelset.add_protocol_label(start=preamble_end+1, end=preamble_end+first_diff, type_index=0, name="Sync")
+
+        # searching synchronization
+        constant_indices = defaultdict(set)
+
+        #const_c = [0]
+
+        for i in range(0, len(self.blocks)):
+            for j in range(i+1, len(self.blocks)):
+                saved_k = 0
+                count = 0
+                bits_i = self.blocks[i].decoded_bits[preamble_end:]
+                bits_j = self.blocks[j].decoded_bits[preamble_end:]
+                end = min(len(bits_i), len(bits_j))-1
+                for k in range(0, end, 4):
+                    if bits_i[k:k+3] == bits_j[k:k+3]:
+                        count += 1
+                    else:
+                        if count > constants.SHORTEST_CONSTANT_IN_BITS:
+                            constant_indices[(saved_k, 4*((k-1)//4))].add(i)
+                            constant_indices[(saved_k, 4*((k-1)//4))].add(j)
+                        count = 0
+                        saved_k = k
+
+                if count > constants.SHORTEST_CONSTANT_IN_BITS:
+                    constant_indices[(saved_k, 4*(end//4))].add(i)
+                    constant_indices[(saved_k, 4*(end//4))].add(j)
+
+        print(len(constant_indices))
+        for constant_range, applying_indices in constant_indices.items():
+            if constant_range[0] == 0:
+                print(constant_range, len(applying_indices), encoding.bit2hex(self.blocks[next(iter(applying_indices))][constant_range[0]+preamble_end:constant_range[1]+preamble_end]))
+
+        #print(max(constantset, key=constantset.count))
+
+
+
+        #
+        #
+        # for i in range(0, len(self.blocks)):
+        #     if i < len(self.blocks) - 1:
+        #         try:
+        #             first_diff = next(j for j, (a, b) in enumerate(zip(block.decoded_bits[preamble_end:],
+        #                                                              self.blocks[i+1].decoded_bits[preamble_end:])) if a != b)
+        #             first_diff = 8 * (first_diff//8) # align to bytes
+        #             if first_diff == 0:
+        #                 continue
+        #         except StopIteration:
+        #             continue
+        #
+        #         block.labelset.add_protocol_label(start=preamble_end+1, end=preamble_end+first_diff, type_index=0, name="Sync")

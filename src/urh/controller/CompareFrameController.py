@@ -2,6 +2,7 @@ import locale
 import os
 
 import numpy
+import time
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, QModelIndex
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
@@ -1216,24 +1217,31 @@ class CompareFrameController(QFrame):
         self.setCursor(Qt.WaitCursor)
 
         if self.assign_participants_action.isChecked():
+            t = time.time()
             for protocol in self.protocol_list:
                 protocol.auto_assign_participants(self.protocol_model.participants)
-
             self.on_participant_edited()
+            logger.debug("Time for auto assigning participants: " + str(time.time() - t))
 
         if self.assign_decodings_action.isChecked():
+            t = time.time()
             self.proto_analyzer.auto_assign_decodings(self.decodings)
             self.protocol_model.update()
             self.label_value_model.update()
+            logger.debug("Time for auto assigning decodings: " + str(time.time() - t))
 
         if self.assign_labelsets_action.isChecked():
+            t = time.time()
             self.on_labelset_dialog_finished()
+            logger.debug("Time for auto assigning labelsets: " + str(time.time() - t))
 
         if self.assign_labels_action.isChecked():
+            t = time.time()
             self.proto_analyzer.auto_assign_labels()
             self.protocol_model.update()
             self.label_value_model.update()
             self.protocol_label_list_model.update()
+            logger.debug("Time for auto assigning labels: " + str(time.time() - t))
 
         self.unsetCursor()
 
@@ -1314,6 +1322,7 @@ class CompareFrameController(QFrame):
         self.participant_list_model.update()
         self.protocol_model.participants = self.project_manager.participants
         self.protocol_model.refresh_vertical_header()
+        self.active_labelset = self.proto_analyzer.default_labelset
 
     def set_search_ui_visibility(self, visible: bool):
         self.ui.btnPrevSearch.setVisible(visible)

@@ -79,3 +79,6 @@ SYMBOL_NAMES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 
 
 NUM_CENTERS = 16
+
+SHORTEST_PREAMBLE_IN_BITS = 8
+SHORTEST_CONSTANT_IN_BITS = 8

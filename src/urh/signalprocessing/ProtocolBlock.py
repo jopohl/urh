@@ -5,6 +5,8 @@ import sys
 
 import numpy as np
 from urh.cythonext.signalFunctions import Symbol
+
+from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.LabelSet import LabelSet
@@ -592,12 +594,10 @@ class ProtocolBlock(object):
     def find_preamble_end(self):
         try:
             start = 0 if self.decoded_bits[0] else 1
-            for i in range(start, len(self.decoded_bits), 4):
-                if self.decoded_bits[i] and not self.decoded_bits[i+1] \
-                        and self.decoded_bits[i+2] and not self.decoded_bits[i+3]:
-                    continue
-                else:
-                    return i - 1
+            for i in range(start, len(self.decoded_bits), constants.SHORTEST_PREAMBLE_IN_BITS):
+                for j in range(0, constants.SHORTEST_PREAMBLE_IN_BITS, 2):
+                    if not(self.decoded_bits[i+j] and not self.decoded_bits[i+j+1]):
+                        return i - 1
 
             return len(self.decoded_bits) - 1
 

@@ -890,20 +890,41 @@ class ProtocolAnalyzer(object):
                         count += 1
                     else:
                         if count > constants.SHORTEST_CONSTANT_IN_BITS:
-                            constant_indices[(saved_k, 4*((k-1)//4))].add(i)
-                            constant_indices[(saved_k, 4*((k-1)//4))].add(j)
+                            range_end = 4*((k-1)//4)
+                            present_range = next(((start, end) for start, end in constant_indices[i] if saved_k == start), None)
+                            if present_range is None:
+                                constant_indices[i].add((saved_k, range_end))
+                            elif range_end < present_range[1]:
+                                constant_indices[i].remove(present_range)
+                                constant_indices[i].add((saved_k, end))
+
+                            present_range = next(((start, end) for start, end in constant_indices[j] if saved_k == start), None)
+                            if present_range is None:
+                                constant_indices[j].add((saved_k, range_end))
+                            elif range_end < present_range[1]:
+                                constant_indices[j].remove(present_range)
+                                constant_indices[j].add((saved_k, end))
                         count = 0
                         saved_k = k
 
                 if count > constants.SHORTEST_CONSTANT_IN_BITS:
-                    constant_indices[(saved_k, 4*(end//4))].add(i)
-                    constant_indices[(saved_k, 4*(end//4))].add(j)
+                    range_end = 4 * ((end) // 4)
+                    present_range = next(((start, end) for start, end in constant_indices[i] if saved_k == start), None)
+                    if present_range is None:
+                        constant_indices[i].add((saved_k, range_end))
+                    elif range_end < present_range[1]:
+                        constant_indices[i].remove(present_range)
+                        constant_indices[i].add((saved_k, end))
 
-        print(len(constant_indices))
-        for constant_range, applying_indices in sorted(constant_indices.items()):
-            if constant_range[0] == 0:
-                print(constant_range, len(applying_indices), encoding.bit2hex(self.blocks[next(iter(applying_indices))][constant_range[0]+preamble_end:constant_range[1]+preamble_end]))
+                    present_range = next(((start, end) for start, end in constant_indices[j] if saved_k == start), None)
+                    if present_range is None:
+                        constant_indices[j].add((saved_k, range_end))
+                    elif range_end < present_range[1]:
+                        constant_indices[j].remove(present_range)
+                        constant_indices[j].add((saved_k, end))
 
+        for block_index, const_indices in sorted(constant_indices.items()):
+            print(block_index, sorted(const_indices))
         #print(max(constantset, key=constantset.count))
 
 

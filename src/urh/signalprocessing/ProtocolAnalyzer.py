@@ -884,8 +884,8 @@ class ProtocolAnalyzer(object):
                 bits_j = self.blocks[j].decoded_bits[preamble_end:]
                 end = min(len(bits_i), len(bits_j))-1
 
-                for k in range(0, end, 4):
-                    if bits_i[k:k+3] == bits_j[k:k+3]:
+                for k, (bit_i, bit_j) in enumerate(zip(bits_i, bits_j)):
+                    if bit_i == bit_j:
                         constant_length += 1
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:

@@ -874,7 +874,7 @@ class ProtocolAnalyzer(object):
 
 
         # searching synchronization
-        constant_indices = defaultdict(list)
+        constant_indices = defaultdict(set)
 
         for i in range(0, len(self.blocks)):
             for j in range(i+1, len(self.blocks)):
@@ -890,19 +890,37 @@ class ProtocolAnalyzer(object):
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4*((k-1)//4)
-                            self.__add_constant_range(constant_indices[i], range_start, range_end)
-                            self.__add_constant_range(constant_indices[j], range_start, range_end)
+                            constant_indices[i].add((range_start, range_end))
+                            constant_indices[j].add((range_start, range_end))
 
                         constant_length = 0
                         range_start = k
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
-                    self.__add_constant_range(constant_indices[i], range_start, range_end)
-                    self.__add_constant_range(constant_indices[j], range_start, range_end)
+                    constant_indices[i].add((range_start, range_end))
+                    constant_indices[j].add((range_start, range_end))
+
+        # Combine constant ranges
+        for block_index, constant_ranges in constant_indices.items():
+            combined_ranges = set()
+
+            for rng in sorted(constant_ranges):
+                # fix overlapping ranges
+                overlapping = next((crng for crng in combined_ranges if crng[0] < rng[0] < crng[1]), None)
+                if overlapping is not None:
+                    rng = (rng[0], overlapping[1])
+                    combined_ranges.remove(overlapping)
+
+                if not any(crng[0] == rng[0] for crng in combined_ranges):
+                    if rng[1] - rng[0] > constants.SHORTEST_CONSTANT_IN_BITS:
+                        combined_ranges.add(rng)
+
+            constant_indices[block_index] = combined_ranges
+
 
         for block_index, const_indices in sorted(constant_indices.items()):
-            print(block_index, sorted(const_indices))
+            print(block_index, sorted(const_indices), len(const_indices))
 
 
 

@@ -876,29 +876,27 @@ class ProtocolAnalyzer(object):
         # searching synchronization
         constant_indices = defaultdict(list)
 
-        #const_c = [0]
-
         for i in range(0, len(self.blocks)):
             for j in range(i+1, len(self.blocks)):
                 range_start = 0
-                count = 0
+                constant_length = 0
                 bits_i = self.blocks[i].decoded_bits[preamble_end:]
                 bits_j = self.blocks[j].decoded_bits[preamble_end:]
                 end = min(len(bits_i), len(bits_j))-1
 
                 for k in range(0, end, 4):
                     if bits_i[k:k+3] == bits_j[k:k+3]:
-                        count += 1
+                        constant_length += 1
                     else:
-                        if count > constants.SHORTEST_CONSTANT_IN_BITS:
+                        if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4*((k-1)//4)
                             self.__add_constant_range(constant_indices[i], range_start, range_end)
                             self.__add_constant_range(constant_indices[j], range_start, range_end)
 
-                        count = 0
+                        constant_length = 0
                         range_start = k
 
-                if count > constants.SHORTEST_CONSTANT_IN_BITS:
+                if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
                     self.__add_constant_range(constant_indices[i], range_start, range_end)
                     self.__add_constant_range(constant_indices[j], range_start, range_end)

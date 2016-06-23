@@ -1050,7 +1050,7 @@ class CompareFrameController(QFrame):
             for i in range(start, end):
                 self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
         except Exception as e:
-            logger.warning(e)
+            logger.warning("Could not set label visibility", str(e))
 
     def get_labelset_for_label(self, lbl: ProtocolLabel) -> LabelSet:
         for lblset in self.proto_analyzer.labelsets:

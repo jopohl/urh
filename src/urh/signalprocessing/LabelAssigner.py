@@ -51,7 +51,7 @@ class LabelAssigner(object):
                             self.constant_indices[j].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
 
                         constant_length = 0
-                        range_start = k
+                        range_start = 4 * ((k - 1) // 4)
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)

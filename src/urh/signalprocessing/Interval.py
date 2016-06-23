@@ -29,7 +29,7 @@ class Interval(object):
             return self.data < other
 
     def range(self):
-        return range(self.start, self.end+1)
+        return range(self.start, self.end)
 
     def __repr__(self):
         return "{}|{}".format(self.start, self.end)
@@ -40,4 +40,4 @@ class Interval(object):
     def find_common_interval(self, other_interval):
         sorted_intervals = sorted([self, other_interval])
         common_values = set(sorted_intervals[0].range()).intersection(sorted_intervals[1].range())
-        return Interval(min(common_values), max(common_values)) if common_values else None
+        return Interval(min(common_values), max(common_values) + 1) if common_values else None

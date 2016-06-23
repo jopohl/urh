@@ -58,22 +58,29 @@ class LabelAssigner(object):
                     self.constant_indices[i].add(Interval(range_start, range_end))
                     self.constant_indices[j].add(Interval(range_start, range_end))
 
+
+        # Combine intervals
+        combined_indices = dict()
+        for block_index, intervals in self.constant_indices.items():
+            combined_intervals = list()
+            for interval in sorted(intervals):
+                last_interval = None if len(combined_intervals) == 0 else combined_intervals[-1]
+                if last_interval and last_interval.overlaps_with(interval):
+                    combined_intervals.remove(last_interval)
+                    combined_intervals.append(last_interval.find_common_interval(interval))
+                else:
+                    combined_intervals.append(interval)
+
+                combined_indices[block_index] = combined_intervals
+
         for block_index in self.constant_indices:
             print(block_index, sorted(self.constant_indices[block_index]))
+            print(block_index, combined_indices[block_index])
 
-        # find patterns
-        patterns = defaultdict(int)
-
-        for block_index, intervals in self.constant_indices.items():
-            for interval in sorted(intervals):
-                start, end = self.blocks[block_index].convert_range(interval.start+self.preamble_end+1,
-                                                                    interval.end+self.preamble_end, from_view=0, to_view=1, decoded=True)
-                pattern = self.blocks[block_index].decoded_hex_str[start:end]
-                if not all(n == "0" for n in pattern):
-                    patterns[pattern] += len([pat for pat in patterns if pattern.startswith(pat)])
-        for pattern in sorted(patterns, key=patterns.__getitem__):
-            print(pattern, patterns[pattern])
-
+    def __get_hex_value_for_block(self, block, interval):
+        start, end = block.convert_range(interval.start + self.preamble_end + 1,
+                                   interval.end + self.preamble_end, from_view=0, to_view=1, decoded=True)
+        return block.decoded_hex_str[start:end]
 
     def find_sync(self) -> ProtocolLabel:
         if self.preamble_end == 0:

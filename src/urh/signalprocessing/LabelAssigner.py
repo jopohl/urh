@@ -60,25 +60,21 @@ class LabelAssigner(object):
 
 
         # Combine intervals
-        combined_indices = dict()
-        for block_index, intervals in self.constant_indices.items():
-            combined_intervals = list()
-            for interval in sorted(intervals):
-                last_interval = None if len(combined_intervals) == 0 else combined_intervals[-1]
-                if last_interval and last_interval.overlaps_with(interval):
-                    combined_intervals.remove(last_interval)
-                    combined_intervals.append(last_interval.find_common_interval(interval))
-                else:
-                    combined_intervals.append(interval)
+        # combined_indices = dict()
+        # for block_index, intervals in self.constant_indices.items():
+        #     combined_intervals = list()
+        #     for interval in sorted(intervals):
+        #         last_interval = None if len(combined_intervals) == 0 else combined_intervals[-1]
+        #         if last_interval and last_interval.overlaps_with(interval):
+        #             combined_intervals.remove(last_interval)
+        #             combined_intervals.append(last_interval.find_common_interval(interval))
+        #         else:
+        #             combined_intervals.append(interval)
+        #
+        #         combined_indices[block_index] = combined_intervals
 
-                combined_indices[block_index] = combined_intervals
-
-        for block_index in self.constant_indices:
+        #for block_index in self.constant_indices:
             #print(block_index, sorted(self.constant_indices[block_index]))
-            #print(block_index, combined_indices[block_index])
-            values = [self.__get_hex_value_for_block(self.blocks[block_index], interval) for interval in combined_indices[block_index]]
-            values = [val for val in values if val.replace("0", "")]
-            #print(block_index, " ".join(values))
 
     def __get_hex_value_for_block(self, block, interval):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)

@@ -47,16 +47,14 @@ class LabelAssigner(object):
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4 * ((k - 1) // 4)
-                            self.constant_indices[i].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
-                            self.constant_indices[j].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                            self.constant_indices[(i,j)].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
 
                         constant_length = 0
                         range_start = 4 * ((k - 1) // 4)
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
-                    self.constant_indices[i].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
-                    self.constant_indices[j].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                    self.constant_indices[(i,j)].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
 
 
         # Combine intervals
@@ -73,8 +71,9 @@ class LabelAssigner(object):
         #
         #         combined_indices[block_index] = combined_intervals
 
-        #for block_index in self.constant_indices:
-            #print(block_index, sorted(self.constant_indices[block_index]))
+        #for block_index in sorted(self.constant_indices):
+        #    print(block_index, sorted(self.constant_indices[block_index]), end=" ")
+        #    print(" ".join([self.__get_hex_value_for_block(self.blocks[block_index[0]], interval) for interval in sorted(self.constant_indices[block_index])]))
 
     def __get_hex_value_for_block(self, block, interval):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)

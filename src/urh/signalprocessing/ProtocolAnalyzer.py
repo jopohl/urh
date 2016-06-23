@@ -10,6 +10,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 from urh import constants
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.LabelAssigner import LabelAssigner
 
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
@@ -78,7 +79,7 @@ class ProtocolAnalyzer(object):
         self.labelsets = [LabelSet("default")]
 
     @property
-    def default_labelset(self):
+    def default_labelset(self) -> LabelSet:
         if len(self.labelsets) == 0:
             self.labelsets.append(LabelSet("default"))
 
@@ -856,92 +857,12 @@ class ProtocolAnalyzer(object):
                 block.decoder = fallback
 
     def auto_assign_labels(self):
-        preamble_ends = list()
+        label_assigner = LabelAssigner(self.blocks)
 
-        for block in self.blocks:
-            # searching preamble
-            preamble_end = block.find_preamble_end()
-            if preamble_end is None or preamble_end < 1:
-                continue
-            preamble_ends.append(preamble_end)
-#            block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
+        preamble = label_assigner.find_preamble()
+        if preamble is not None:
+            self.default_labelset.add_label(preamble)
 
-        if len(preamble_ends) == 0:
-            return
-
-        preamble_end = max(preamble_ends, key=preamble_ends.count)
-        block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
-
-
-        # find constants
-        constant_indices = defaultdict(set)
-
-        for i in range(0, len(self.blocks)):
-            for j in range(i+1, len(self.blocks)):
-                range_start = 0
-                constant_length = 0
-                bits_i = self.blocks[i].decoded_bits[preamble_end:]
-                bits_j = self.blocks[j].decoded_bits[preamble_end:]
-                end = min(len(bits_i), len(bits_j))-1
-
-                for k, (bit_i, bit_j) in enumerate(zip(bits_i, bits_j)):
-                    if bit_i == bit_j:
-                        constant_length += 1
-                    else:
-                        if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
-                            range_end = 4*((k-1)//4)
-                            constant_indices[i].add((range_start, range_end))
-                            constant_indices[j].add((range_start, range_end))
-
-                        constant_length = 0
-                        range_start = k
-
-                if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
-                    range_end = 4 * ((end) // 4)
-                    constant_indices[i].add((range_start, range_end))
-                    constant_indices[j].add((range_start, range_end))
-
-        # Combine constant ranges
-        for block_index, constant_ranges in constant_indices.items():
-            combined_ranges = set()
-
-            for rng in sorted(constant_ranges):
-                # fix overlapping ranges
-                overlapping = next((crng for crng in combined_ranges if crng[0] < rng[0] < crng[1]), None)
-                if overlapping is not None:
-                    rng = (rng[0], overlapping[1])
-                    combined_ranges.remove(overlapping)
-
-                if not any(crng[0] == rng[0] for crng in combined_ranges):
-                    if rng[1] - rng[0] > constants.SHORTEST_CONSTANT_IN_BITS:
-                        combined_ranges.add(rng)
-
-            constant_indices[block_index] = sorted(combined_ranges)
-
-        # Find sync
-        for block_index, const_indices in constant_indices.items():
-            print(block_index, const_indices, len(const_indices))
-
-
-
-        #
-        #
-        # for i in range(0, len(self.blocks)):
-        #     if i < len(self.blocks) - 1:
-        #         try:
-        #             first_diff = next(j for j, (a, b) in enumerate(zip(block.decoded_bits[preamble_end:],
-        #                                                              self.blocks[i+1].decoded_bits[preamble_end:])) if a != b)
-        #             first_diff = 8 * (first_diff//8) # align to bytes
-        #             if first_diff == 0:
-        #                 continue
-        #         except StopIteration:
-        #             continue
-        #
-        #         block.labelset.add_protocol_label(start=preamble_end+1, end=preamble_end+first_diff, type_index=0, name="Sync")
-
-    def __add_constant_range(self, ranges: list, range_start: int, range_end: int):
-        present_range = next((rng for rng in ranges if range_start == rng[0]), None)
-        if present_range is None:
-            ranges.append([range_start, range_end])
-        elif range_end < present_range[1]:
-            present_range[1] = range_end
+        sync = label_assigner.find_sync()
+        if sync is not None:
+            self.default_labelset.add_label(sync)

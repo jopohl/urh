@@ -106,6 +106,31 @@ class TestAutoAssignments(unittest.TestCase):
             elif block.plain_hex_str[8:16] == "67686768":
                 self.assertEqual(block.decoder.name, "DeWhitening", msg=str(i))
 
+
+    def test_assign_labels_trash_protocol(self):
+        preamble_start = 0
+        preamble_end = 31
+        sync_start = 32
+        sync_end = 63
+
+        decoded_trash_protocol = ProtocolAnalyzer(None)
+        with open("./data/rwe_decoded_with_trash.txt") as f:
+            for line in f:
+                decoded_trash_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                decoded_trash_protocol.blocks[-1].labelset = decoded_trash_protocol.default_labelset
+
+        decoded_trash_protocol.auto_assign_labels()
+
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+        sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
+
+        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_labelset if lbl.name == "Preamble"]))
+        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_labelset if lbl.name == "Sync"]))
+
+        for block in decoded_trash_protocol.blocks:
+            self.assertIn(preamble_label, block.labelset)
+            self.assertIn(sync_label, block.labelset)
+
     def test_assign_labels(self):
         preamble_start = 0
         preamble_end = 31
@@ -119,12 +144,8 @@ class TestAutoAssignments(unittest.TestCase):
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
         sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
 
-        print(self.protocol.default_labelset)
-
         self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Preamble"]))
         self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Sync"]))
-
-        print(self.protocol.default_labelset)
 
         for block in self.protocol.blocks:
             self.assertIn(preamble_label, block.labelset)

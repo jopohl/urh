@@ -72,8 +72,8 @@ class LabelAssigner(object):
         #         combined_indices[block_index] = combined_intervals
 
         #for block_index in sorted(self.constant_indices):
-        #    print(block_index, sorted(self.constant_indices[block_index]), end=" ")
-        #    print(" ".join([self.__get_hex_value_for_block(self.blocks[block_index[0]], interval) for interval in sorted(self.constant_indices[block_index])]))
+        #    print(block_index, sorted(r for r in self.constant_indices[block_index] if r.start != self.preamble_end), end=" ")
+        #    print(" ".join([self.__get_hex_value_for_block(self.blocks[block_index[0]], interval) for interval in sorted(r for r in self.constant_indices[block_index] if r.start!=self.preamble_end)]))
 
     def __get_hex_value_for_block(self, block, interval):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)

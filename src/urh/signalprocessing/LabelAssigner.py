@@ -47,16 +47,16 @@ class LabelAssigner(object):
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4 * ((k - 1) // 4)
-                            self.constant_indices[i].add(Interval(range_start, range_end))
-                            self.constant_indices[j].add(Interval(range_start, range_end))
+                            self.constant_indices[i].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                            self.constant_indices[j].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
 
                         constant_length = 0
                         range_start = k
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
-                    self.constant_indices[i].add(Interval(range_start, range_end))
-                    self.constant_indices[j].add(Interval(range_start, range_end))
+                    self.constant_indices[i].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                    self.constant_indices[j].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
 
 
         # Combine intervals
@@ -74,12 +74,14 @@ class LabelAssigner(object):
                 combined_indices[block_index] = combined_intervals
 
         for block_index in self.constant_indices:
-            print(block_index, sorted(self.constant_indices[block_index]))
-            print(block_index, combined_indices[block_index])
+            #print(block_index, sorted(self.constant_indices[block_index]))
+            #print(block_index, combined_indices[block_index])
+            values = [self.__get_hex_value_for_block(self.blocks[block_index], interval) for interval in combined_indices[block_index]]
+            values = [val for val in values if val.replace("0", "")]
+            #print(block_index, " ".join(values))
 
     def __get_hex_value_for_block(self, block, interval):
-        start, end = block.convert_range(interval.start + self.preamble_end + 1,
-                                   interval.end + self.preamble_end, from_view=0, to_view=1, decoded=True)
+        start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)
         return block.decoded_hex_str[start:end]
 
     def find_sync(self) -> ProtocolLabel:
@@ -91,12 +93,12 @@ class LabelAssigner(object):
         possible_sync_pos = defaultdict(int)
         for block_index, const_interval in self.constant_indices.items():
             for const_range in const_interval:
-                if const_range.start == 0:
+                if const_range.start == self.preamble_end:
                     possible_sync_pos[const_range] += 1
 
         sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
 
-        return ProtocolLabel(start=self.preamble_end + sync_interval.start + 1, end=self.preamble_end + sync_interval.end-1,
+        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end-1,
                              name="Sync", color_index=None, val_type_index=0)
 
 

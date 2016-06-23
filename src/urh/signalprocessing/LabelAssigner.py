@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from urh import constants
+from urh.signalprocessing.Interval import Interval
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 
@@ -46,16 +47,16 @@ class LabelAssigner(object):
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                             range_end = 4 * ((k - 1) // 4)
-                            self.constant_indices[i].add((range_start, range_end))
-                            self.constant_indices[j].add((range_start, range_end))
+                            self.constant_indices[i].add(Interval(range_start, range_end))
+                            self.constant_indices[j].add(Interval(range_start, range_end))
 
                         constant_length = 0
                         range_start = k
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
                     range_end = 4 * ((end) // 4)
-                    self.constant_indices[i].add((range_start, range_end))
-                    self.constant_indices[j].add((range_start, range_end))
+                    self.constant_indices[i].add(Interval(range_start, range_end))
+                    self.constant_indices[j].add(Interval(range_start, range_end))
 
         for block_index in self.constant_indices:
             print(block_index, sorted(self.constant_indices[block_index]))
@@ -63,9 +64,10 @@ class LabelAssigner(object):
         # find patterns
         patterns = defaultdict(int)
 
-        for block_index, ranges in self.constant_indices.items():
-            for rng in sorted(ranges):
-                start, end = self.blocks[block_index].convert_range(rng[0]+self.preamble_end+1, rng[1]+self.preamble_end, from_view=0, to_view=1, decoded=True)
+        for block_index, intervals in self.constant_indices.items():
+            for interval in sorted(intervals):
+                start, end = self.blocks[block_index].convert_range(interval.start+self.preamble_end+1,
+                                                                    interval.end+self.preamble_end, from_view=0, to_view=1, decoded=True)
                 pattern = self.blocks[block_index].decoded_hex_str[start:end]
                 if not all(n == "0" for n in pattern):
                     patterns[pattern] += len([pat for pat in patterns if pattern.startswith(pat)])
@@ -80,15 +82,14 @@ class LabelAssigner(object):
             self.find_constants()
 
         possible_sync_pos = defaultdict(int)
-        for block_index, const_ranges in self.constant_indices.items():
-            for const_range in const_ranges:
-                if const_range[0] == 0:
+        for block_index, const_interval in self.constant_indices.items():
+            for const_range in const_interval:
+                if const_range.start == 0:
                     possible_sync_pos[const_range] += 1
 
-        sync_range = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
+        sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
 
-        return ProtocolLabel(start=self.preamble_end + sync_range[0] + 1, end=self.preamble_end + sync_range[1]-1,
+        return ProtocolLabel(start=self.preamble_end + sync_interval.start + 1, end=self.preamble_end + sync_interval.end-1,
                              name="Sync", color_index=None, val_type_index=0)
 
 
-    

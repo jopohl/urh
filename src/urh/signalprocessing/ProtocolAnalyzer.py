@@ -516,10 +516,16 @@ class ProtocolAnalyzer(object):
 
     def convert_range(self, index1: int, index2: int, from_view: int,
                       to_view: int, decoded: bool, block_indx=-1):
-        start = self.convert_index(index1, from_view, to_view, decoded, block_indx=block_indx)[0]
-        end = self.convert_index(index2, from_view, to_view, decoded, block_indx=block_indx)[1]
+        if len(self.blocks) == 0:
+            return (0, 0)
 
-        return int(start), int(math.ceil(end))
+        if block_indx == -1:
+            block_indx = self.blocks.index(max(self.blocks, key=len)) # Longest Block
+
+        if block_indx >= len(self.blocks):
+            block_indx = len(self.blocks) - 1
+
+        return self.blocks[block_indx].convert_range(index1, index2, from_view, to_view, decoded)
 
     def find_differences(self, refindex: int, view: int):
         """

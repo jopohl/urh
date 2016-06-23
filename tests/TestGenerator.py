@@ -29,7 +29,7 @@ class TestGenerator(unittest.TestCase):
         self.form.add_signalfile("./data/ask.complex")
         QTest.qWait(10)
         sframe = self.form.signal_tab_controller.signal_frames[0]
-        sframe.ui.cbSignalView.setCurrentIndex(1) # ASK
+        sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
         sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
         sframe.refresh()

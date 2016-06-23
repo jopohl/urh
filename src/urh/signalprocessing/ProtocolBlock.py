@@ -421,6 +421,11 @@ class ProtocolBlock(object):
         else:
             raise NotImplementedError("Only Three View Types (Bit/Hex/ASCII)")
 
+    def convert_range(self, index1: int, index2: int, from_view: int, to_view: int, decoded: bool):
+        start = self.convert_index(index1, from_view, to_view, decoded)[0]
+        end = self.convert_index(index2, from_view, to_view, decoded)[1]
+
+        return int(start), int(math.ceil(end))
 
     def get_duration(self, sample_rate: int) -> float:
         if len(self.bit_sample_pos) < 2:

@@ -56,12 +56,21 @@ class LabelAssigner(object):
                     range_end = 4 * ((end) // 4)
                     self.constant_indices[i].add((range_start, range_end))
                     self.constant_indices[j].add((range_start, range_end))
-        #
-        # for block_index, ranges in self.constant_indices.items():
-        #     print("\n", block_index, ": ", end="")
-        #     for rng in ranges:
-        #         start, end = self.blocks[block_index].convert_range(rng[0]+self.preamble_end+1, rng[1]+self.preamble_end, from_view=0, to_view=1, decoded=True)
-        #         print(self.blocks[block_index].decoded_hex_str[start:end], end=" ")
+
+        for block_index in self.constant_indices:
+            print(block_index, sorted(self.constant_indices[block_index]))
+
+        # find patterns
+        patterns = defaultdict(int)
+
+        for block_index, ranges in self.constant_indices.items():
+            for rng in sorted(ranges):
+                start, end = self.blocks[block_index].convert_range(rng[0]+self.preamble_end+1, rng[1]+self.preamble_end, from_view=0, to_view=1, decoded=True)
+                pattern = self.blocks[block_index].decoded_hex_str[start:end]
+                if not all(n == "0" for n in pattern):
+                    patterns[pattern] += len([pat for pat in patterns if pattern.startswith(pat)])
+        for pattern in sorted(patterns, key=patterns.__getitem__):
+            print(pattern, patterns[pattern])
 
 
     def find_sync(self) -> ProtocolLabel:
@@ -80,3 +89,6 @@ class LabelAssigner(object):
 
         return ProtocolLabel(start=self.preamble_end + sync_range[0] + 1, end=self.preamble_end + sync_range[1]-1,
                              name="Sync", color_index=None, val_type_index=0)
+
+
+    

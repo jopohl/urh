@@ -56,6 +56,13 @@ class LabelAssigner(object):
                     range_end = 4 * ((end) // 4)
                     self.constant_indices[i].add((range_start, range_end))
                     self.constant_indices[j].add((range_start, range_end))
+        #
+        # for block_index, ranges in self.constant_indices.items():
+        #     print("\n", block_index, ": ", end="")
+        #     for rng in ranges:
+        #         start, end = self.blocks[block_index].convert_range(rng[0]+self.preamble_end+1, rng[1]+self.preamble_end, from_view=0, to_view=1, decoded=True)
+        #         print(self.blocks[block_index].decoded_hex_str[start:end], end=" ")
+
 
     def find_sync(self) -> ProtocolLabel:
         if self.preamble_end == 0:

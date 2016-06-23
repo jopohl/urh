@@ -873,7 +873,7 @@ class ProtocolAnalyzer(object):
         block.labelset.add_protocol_label(start=0, end=preamble_end, type_index=0, name="Preamble")
 
 
-        # searching synchronization
+        # find constants
         constant_indices = defaultdict(set)
 
         for i in range(0, len(self.blocks)):
@@ -916,11 +916,11 @@ class ProtocolAnalyzer(object):
                     if rng[1] - rng[0] > constants.SHORTEST_CONSTANT_IN_BITS:
                         combined_ranges.add(rng)
 
-            constant_indices[block_index] = combined_ranges
+            constant_indices[block_index] = sorted(combined_ranges)
 
-
-        for block_index, const_indices in sorted(constant_indices.items()):
-            print(block_index, sorted(const_indices), len(const_indices))
+        # Find sync
+        for block_index, const_indices in constant_indices.items():
+            print(block_index, const_indices, len(const_indices))
 
 
 

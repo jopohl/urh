@@ -14,7 +14,7 @@ from urh.signalprocessing.encoding import encoding
 class TestAutoAssignments(unittest.TestCase):
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
-        with open("./data/rwe_decoded_bits.txt") as f:
+        with open("./data/decoded_bits.txt") as f:
             for line in f:
                 self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.blocks[-1].labelset = self.protocol.default_labelset
@@ -94,7 +94,7 @@ class TestAutoAssignments(unittest.TestCase):
 
     def test_assign_decodings(self):
         self.undecoded_protocol = ProtocolAnalyzer(None)
-        with open("./data/rwe_undecoded.txt") as f:
+        with open("./data/undecoded.txt") as f:
             for line in f:
                 self.undecoded_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
 
@@ -114,7 +114,7 @@ class TestAutoAssignments(unittest.TestCase):
         sync_end = 63
 
         decoded_trash_protocol = ProtocolAnalyzer(None)
-        with open("./data/rwe_decoded_with_trash.txt") as f:
+        with open("./data/decoded_with_trash.txt") as f:
             for line in f:
                 decoded_trash_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
                 decoded_trash_protocol.blocks[-1].labelset = decoded_trash_protocol.default_labelset

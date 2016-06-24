@@ -20,7 +20,7 @@ class TestFuzzing(unittest.TestCase):
         QTest.qWait(10)
 
         self.form = MainController()
-        self.form.add_signalfile("./data/rwe_steckdose_anlernen.complex")
+        self.form.add_signalfile("./data/steckdose_anlernen.complex")
         QTest.qWait(10)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.setValue(0.06)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.editingFinished.emit()

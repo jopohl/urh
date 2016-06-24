@@ -11,7 +11,7 @@ class TestSignal(unittest.TestCase):
         constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
 
     def test_freq_detection(self):
-        s = Signal("./data/rwe_steckdose_anlernen.complex", "RWE")
+        s = Signal("./data/steckdose_anlernen.complex", "RWE")
         s.noise_treshold = 0.06
         s.qad_center = 0
         s.bit_len = 100

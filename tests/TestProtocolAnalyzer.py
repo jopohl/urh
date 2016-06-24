@@ -21,7 +21,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
             self.assertLess(pos, signal.num_samples, msg = i)
 
     def test_fsk_freq_detection(self):
-        s = Signal("./data/rwe_steckdose_anlernen.complex", "RWE")
+        s = Signal("./data/steckdose_anlernen.complex", "RWE")
         s.noise_treshold = 0.06
         s.qad_center = 0
         s.bit_len = 100

@@ -81,8 +81,10 @@ class LabelAssigner(object):
         # if labels overlap, there are different merge strategies
             # 1) choose the range that occurred most frequently
             # 2) split the overlapping ranges and create two labels -> not good as this changes the information
-            # 3) Use the smallest common range (hides possible informations)
-            # 4) make a new labelset if possible
+            # 3) Use the smallest common range (hides possible informations/broken protocols shrink information range)
+        # when to create a new labelset?
+           # 1) use information about diffs like (0, 2) [71-87, 135-155] 8070 00010 and put blocks in labelset
+            #  if they have enough in common
 
         # for block_index in sorted(self.constant_intervals_per_block):
         #     interval_info = ""

@@ -15,6 +15,8 @@ class LabelAssigner(object):
         self.preamble_end = 0
         self.constant_indices = defaultdict(set)
 
+        self.constant_intervals_per_block = defaultdict(list)
+
     def find_preamble(self) -> ProtocolLabel:
         preamble_ends = list()
 
@@ -46,15 +48,19 @@ class LabelAssigner(object):
                         constant_length += 1
                     else:
                         if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
-                            range_end = 4 * ((k - 1) // 4)
-                            self.constant_indices[(i,j)].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                            interval = Interval(self.preamble_end+range_start, self.preamble_end+4 * ((k - 1) // 4))
+                            self.constant_indices[(i,j)].add(interval)
+                            self.constant_intervals_per_block[i].append(interval)
+                            self.constant_intervals_per_block[j].append(interval)
 
                         constant_length = 0
                         range_start = 4 * ((k - 1) // 4)
 
                 if constant_length > constants.SHORTEST_CONSTANT_IN_BITS:
-                    range_end = 4 * ((end) // 4)
-                    self.constant_indices[(i,j)].add(Interval(self.preamble_end+range_start, self.preamble_end+range_end))
+                    interval = Interval(self.preamble_end+range_start, self.preamble_end+4 * ((end) // 4))
+                    self.constant_indices[(i,j)].add(interval)
+                    self.constant_intervals_per_block[i].append(interval)
+                    self.constant_intervals_per_block[j].append(interval)
 
 
         # Combine intervals
@@ -71,9 +77,23 @@ class LabelAssigner(object):
         #
         #         combined_indices[block_index] = combined_intervals
 
-        #for block_index in sorted(self.constant_indices):
-        #    print(block_index, sorted(r for r in self.constant_indices[block_index] if r.start != self.preamble_end), end=" ")
-        #    print(" ".join([self.__get_hex_value_for_block(self.blocks[block_index[0]], interval) for interval in sorted(r for r in self.constant_indices[block_index] if r.start!=self.preamble_end)]))
+        # Apply a label for each constant range
+        # if labels overlap, there are different merge strategies
+            # 1) choose the range that occurred most frequently
+            # 2) split the overlapping ranges and create two labels -> not good as this changes the information
+            # 3) Use the smallest common range (hides possible informations)
+            # 4) make a new labelset if possible
+
+        # for block_index in sorted(self.constant_intervals_per_block):
+        #     interval_info = ""
+        #     for interval in sorted(set(self.constant_intervals_per_block[block_index])):
+        #         interval_info += str(interval) + " (" + str(self.constant_intervals_per_block[block_index].count(interval)) + ") "
+        #
+        #     print(block_index, interval_info)
+        #
+        # for block_index in sorted(self.constant_indices):
+        #     print(block_index, sorted(r for r in self.constant_indices[block_index] if r.start != self.preamble_end), end=" ")
+        #     print(" ".join([self.__get_hex_value_for_block(self.blocks[block_index[0]], interval) for interval in sorted(r for r in self.constant_indices[block_index] if r.start!=self.preamble_end)]))
 
     def __get_hex_value_for_block(self, block, interval):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)

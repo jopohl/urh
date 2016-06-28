@@ -478,8 +478,7 @@ class ProtocolAnalyzer(object):
         last_index = len(lookup[last_block]) - 1
         return start_block, start_index, last_block, last_index
 
-    def delete_blocks(self, block_start: int, block_end: int, start: int, end: int, view: int, decoded: bool,
-                      blockranges_for_groups=None):
+    def delete_blocks(self, block_start: int, block_end: int, start: int, end: int, view: int, decoded: bool):
         removable_block_indices = []
 
         for i in range(block_start, block_end + 1):

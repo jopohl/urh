@@ -83,9 +83,6 @@ class MainController(QMainWindow):
         self.ui.actionNone.setActionGroup(group)
         self.ui.actionPSK.setActionGroup(group)
 
-        self.update_confirm_dialogs_checkbox()
-        self.set_hold_shift_checkbox()
-
         self.signal_tab_controller.ui.lCtrlStatus.clear()
         self.signal_tab_controller.ui.lShiftStatus.clear()
 
@@ -140,18 +137,13 @@ class MainController(QMainWindow):
 
 
     def create_connects(self):
-        self.ui.menuView.aboutToShow.connect(self.on_menu_view_clicked)
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_clicked)
-        self.ui.actionShow_file_tree.triggered.connect(self.on_show_file_tree_clicked)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_clicked)
         self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
         self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
-        self.ui.actionShow_Confirm_Close_Dialog.triggered.connect(self.update_confirm_dialogs_settings)
-        self.ui.actionHold_Shift_to_Drag.triggered.connect(self.set_hold_shift)
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.show_about)
         self.ui.actionRecord.triggered.connect(self.show_record_dialog)
         self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
-        self.signal_tab_controller.not_show_again_changed.connect(self.update_confirm_dialogs_checkbox)
         self.signal_tab_controller.signal_created.connect(self.add_signal)
         self.compare_frame_controller.show_interpretation_clicked.connect(
             self.show_protocol_selection_in_interpretation)
@@ -163,7 +155,6 @@ class MainController(QMainWindow):
         self.ui.actionMaximize_all.triggered.connect(self.maximize_all)
         self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
         self.ui.actionClose_all.triggered.connect(self.close_all)
-        self.ui.actionSeperate_Protocols_in_Compare_Frame.triggered.connect(self.handle_compare_frame_seperation_changed)
         self.ui.actionOpen.triggered.connect(self.open)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionMinimize_all.setShortcut("F10")
@@ -201,49 +192,6 @@ class MainController(QMainWindow):
             recentFileAction.triggered.connect(self.openRecent)
             self.recentFileActionList.append(recentFileAction)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
-
-    @pyqtSlot()
-    def update_confirm_dialogs_checkbox(self):
-        settings = constants.SETTINGS
-        try:
-            not_show = settings.value('not_show_close_dialog', type=bool)
-        except TypeError:
-            not_show = False
-        self.ui.actionShow_Confirm_Close_Dialog.setChecked(not not_show)
-
-    @pyqtSlot()
-    def update_confirm_dialogs_settings(self):
-        settings = constants.SETTINGS
-        settings.setValue('not_show_close_dialog', not self.ui.actionShow_Confirm_Close_Dialog.isChecked())
-
-    @pyqtSlot()
-    def on_menu_view_clicked(self):
-        file_tree_shown = self.ui.splitter.sizes()[0] > 0
-        self.ui.actionShow_file_tree.setChecked(file_tree_shown)
-
-    @pyqtSlot()
-    def on_show_file_tree_clicked(self):
-        show = self.ui.actionShow_file_tree.isChecked()
-        if show:
-            self.ui.splitter.setSizes([1, 1])
-        else:
-            self.ui.splitter.setSizes([0, 1])
-
-
-    def set_hold_shift_checkbox(self):
-        settings = constants.SETTINGS
-        if 'hold_shift_to_drag' in settings.allKeys():
-            hold_shift = settings.value('hold_shift_to_drag', type=bool)
-        else:
-            hold_shift = True
-            settings.setValue('hold_shift_to_drag', hold_shift)
-
-        self.ui.actionHold_Shift_to_Drag.setChecked(hold_shift)
-
-    @pyqtSlot()
-    def set_hold_shift(self):
-        hs = self.ui.actionHold_Shift_to_Drag.isChecked()
-        constants.SETTINGS.setValue('hold_shift_to_drag', hs)
 
     @pyqtSlot()
     def open(self):
@@ -579,11 +527,6 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def maximize_all(self):
         self.signal_tab_controller.maximize_all()
-
-    @pyqtSlot()
-    def handle_compare_frame_seperation_changed(self):
-        show_seperation = self.ui.actionSeperate_Protocols_in_Compare_Frame.isChecked()
-        self.compare_frame_controller.show_protocol_seperation = show_seperation
 
     @pyqtSlot()
     def handle_filtetree_filter_text_changed(self):

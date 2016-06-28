@@ -32,6 +32,8 @@ class OptionsController(QDialog):
 
 
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
+        self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
+        self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
 
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
@@ -78,6 +80,8 @@ class OptionsController(QDialog):
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
         self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
         self.ui.checkBoxFallBackTheme.clicked.connect(self.on_checkbox_fallback_theme_clicked)
+        self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
+        self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
 
 
     def set_device_enabled_suffix(self):
@@ -194,6 +198,12 @@ class OptionsController(QDialog):
             QApplication.setStyle(QStyleFactory.create("Fusion"))
         else:
             QApplication.setStyle(constants.SETTINGS.value("default_theme", type=str))
+
+    def on_checkbox_confirm_close_dialog_clicked(self):
+        constants.SETTINGS.setValue("not_show_close_dialog", not bool(self.ui.checkBoxShowConfirmCloseDialog.isChecked()))
+
+    def on_checkbox_hold_shift_to_drag_clicked(self):
+        constants.SETTINGS.setValue("hold_shift_to_drag", bool(self.ui.checkBoxHoldShiftToDrag.isChecked()))
 
     @pyqtSlot()
     def on_python2_exe_path_edited(self):

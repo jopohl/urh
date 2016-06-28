@@ -175,7 +175,7 @@
      <x>0</x>
      <y>0</y>
      <width>1017</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -196,15 +196,6 @@
     <addaction name="separator"/>
     <addaction name="actionConvert_Folder_to_Project"/>
    </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionHold_Shift_to_Drag"/>
-    <addaction name="actionShow_Confirm_Close_Dialog"/>
-    <addaction name="actionSeperate_Protocols_in_Compare_Frame"/>
-    <addaction name="actionShow_file_tree"/>
-   </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edi&amp;t</string>
@@ -223,7 +214,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

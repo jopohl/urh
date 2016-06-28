@@ -197,6 +197,20 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="checkBoxShowConfirmCloseDialog">
+         <property name="text">
+          <string>Show &quot;confirm close&quot; dialog</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxHoldShiftToDrag">
+         <property name="text">
+          <string>Hold shift to drag</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="checkBoxPauseTime">
          <property name="text">
           <string>Show pauses as time</string>

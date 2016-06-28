@@ -77,7 +77,12 @@ class TableView(QTableView):
             start = numpy.min([rng.left() for rng in selected])
             end = numpy.max([rng.right() for rng in selected])
 
+            self.setEnabled(False)
+            self.setCursor(Qt.WaitCursor)
             self.model().delete_range(min_row, max_row, start, end)
+            self.unsetCursor()
+            self.setEnabled(True)
+            self.setFocus()
 
         if event.matches(QKeySequence.Copy):
             cells = self.selectedIndexes()

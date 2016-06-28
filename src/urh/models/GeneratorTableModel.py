@@ -115,5 +115,5 @@ class GeneratorTableModel(TableModel):
         return -1
 
     def insert_column(self, index: int):
-        insert_action = InsertColumn(self.protocol, index)
+        insert_action = InsertColumn(self.protocol, index, self.proto_view)
         self.undo_stack.push(insert_action)

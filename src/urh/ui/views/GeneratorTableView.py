@@ -149,8 +149,11 @@ class GeneratorTableView(TableView):
             fuzzingAction = menu.addAction("Edit Fuzzing Label...")
 
         menu.addSeparator()
-        insertColLeft = menu.addAction("Add column on the left")
-        insertColRight = menu.addAction("Add column on the right")
+        column_menu = menu.addMenu("Add column")
+
+        insertColLeft = column_menu.addAction("on the left")
+        insertColRight = column_menu.addAction("on the right")
+
         duplicateAction = menu.addAction("Duplicate Line")
         menu.addSeparator()
         clearAction = menu.addAction("Clear Table")

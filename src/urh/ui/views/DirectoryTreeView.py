@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
 
@@ -39,7 +39,9 @@ class DirectoryTreeView(QTreeView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = QMenu(self)
         newdirAction = menu.addAction("New Directory")
+        newdirAction.setIcon(QIcon.fromTheme("folder"))
         delAction = menu.addAction("Delete")
+        delAction.setIcon(QIcon.fromTheme("edit-delete"))
 
         action = menu.exec_(self.mapToGlobal(event.pos()))
 

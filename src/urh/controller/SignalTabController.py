@@ -146,7 +146,6 @@ class SignalTabController(QWidget):
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
         sig_frame.files_dropped.connect(self.handle_files_dropped)
         sig_frame.apply_to_all_clicked.connect(self.handle_apply_to_all_clicked)
-        sig_frame.sort_action_clicked.connect(self.sort_frames_by_name)
 
 
         if prev_signal_frame is not None:
@@ -181,7 +180,6 @@ class SignalTabController(QWidget):
         sig_frame.setMinimumHeight(sig_frame.height())
         sig_frame.closed.connect(self.close_frame)
         sig_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', type=bool)
-        sig_frame.sort_action_clicked.connect(self.sort_frames_by_name)
         sig_frame.set_empty_frame_visibilities()
 
 
@@ -266,14 +264,6 @@ class SignalTabController(QWidget):
 
                 if proto_needs_update:
                     frame.signal.protocol_needs_update.emit()
-
-    @pyqtSlot()
-    def sort_frames_by_name(self):
-        sorted_positions = self.__get_sorted_positions()
-
-        for i, j in enumerate(sorted_positions):
-            self.splitter.insertWidget(i, self.signal_frames[j])
-            self.frame_was_dropped.emit(i, j)
 
     def __get_sorted_positions(self):
         frame_names = [sf.ui.lineEditSignalName.text() for sf in self.signal_frames]

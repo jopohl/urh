@@ -1215,6 +1215,11 @@ class CompareFrameController(QFrame):
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
         self.setCursor(Qt.WaitCursor)
+        self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(1)
+
+
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Detecting participants)")
+        self.ui.progressBarLogicAnalyzer.setValue(0)
 
         if self.assign_participants_action.isChecked():
             t = time.time()
@@ -1223,6 +1228,9 @@ class CompareFrameController(QFrame):
             self.on_participant_edited()
             logger.debug("Time for auto assigning participants: " + str(time.time() - t))
 
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign decodings)")
+        self.ui.progressBarLogicAnalyzer.setValue(25)
+
         if self.assign_decodings_action.isChecked():
             t = time.time()
             self.proto_analyzer.auto_assign_decodings(self.decodings)
@@ -1230,10 +1238,16 @@ class CompareFrameController(QFrame):
             self.label_value_model.update()
             logger.debug("Time for auto assigning decodings: " + str(time.time() - t))
 
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign labelsets by rules)")
+        self.ui.progressBarLogicAnalyzer.setValue(50)
+
         if self.assign_labelsets_action.isChecked():
             t = time.time()
             self.on_labelset_dialog_finished()
             logger.debug("Time for auto assigning labelsets: " + str(time.time() - t))
+
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Find new labels/labelsets)")
+        self.ui.progressBarLogicAnalyzer.setValue(75)
 
         if self.assign_labels_action.isChecked():
             t = time.time()
@@ -1243,8 +1257,9 @@ class CompareFrameController(QFrame):
             self.protocol_label_list_model.update()
             logger.debug("Time for auto assigning labels: " + str(time.time() - t))
 
+        self.ui.progressBarLogicAnalyzer.setValue(100)
         self.unsetCursor()
-
+        self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(0)
 
         # available_analyze_plugins = self.plugin_manager.label_assign_plugins
         # if len(available_analyze_plugins) == 0:

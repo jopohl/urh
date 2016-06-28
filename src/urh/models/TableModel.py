@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import numpy
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack, QMessageBox
 
 from urh import constants
@@ -66,6 +66,13 @@ class TableModel(QAbstractTableModel):
                 return self.vertical_header_text[section]
             elif role == Qt.BackgroundColorRole:
                 return self.vertical_header_colors[section]
+            elif role == Qt.TextColorRole:
+                color = self.vertical_header_colors[section]
+                if color:
+                    red, green, blue  = color.red(), color.green(), color.blue()
+                    return QColor("black") if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else QColor("white")
+                else:
+                    return None
 
         return super().headerData(section, orientation, role)
 

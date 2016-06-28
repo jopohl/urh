@@ -169,7 +169,6 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setShortcut("F10")
         self.ui.actionMaximize_all.setShortcut("F11")
         self.ui.lnEdtTreeFilter.textChanged.connect(self.handle_filtetree_filter_text_changed)
-        self.ui.actionSort_Frames_by_Name.triggered.connect(self.sort_frames_by_name)
         self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
         self.ui.actionDecoding.triggered.connect(self.show_decoding_dialog)
         self.compare_frame_controller.show_decoding_clicked.connect(self.show_decoding_dialog)
@@ -600,23 +599,6 @@ class MainController(QMainWindow):
     def closeEvent(self, event: QCloseEvent):
         self.project_manager.saveProject()
         event.accept()
-
-    @pyqtSlot()
-    def sort_frames_by_name(self):
-        sorted_frame_names = [frame.name for frame in self.compare_frame_controller.protocol_list]
-        sorted_frame_names.sort()
-        considered_frames = []
-        for i, sorted_frame_name in enumerate(sorted_frame_names):
-            cur_frame = self.compare_frame_controller.protocol_list[i]
-            if cur_frame.name != sorted_frame_name:
-                frame_should_be_here = next(f for f in self.compare_frame_controller.protocol_list
-                                            if f not in considered_frames and f.name == sorted_frame_name)
-                j = self.compare_frame_controller.protocol_list.index(frame_should_be_here)
-                self.signal_tab_controller.swap_frames(j, i)
-
-            considered_frames.append(self.compare_frame_controller.protocol_list[i])
-
-        self.set_frame_numbers()
 
     @pyqtSlot()
     def show_decoding_dialog(self):

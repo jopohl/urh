@@ -108,8 +108,8 @@ class LabelAssigner(object):
 
         sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
 
-        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1,
-                             name="Sync", color_index=None, val_type_index=0)
+        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1, name="Sync",
+                             color_index=None, val_type_index=0)
 
     def find_constants(self):
         """

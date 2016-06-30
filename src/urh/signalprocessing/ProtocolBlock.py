@@ -602,9 +602,9 @@ class ProtocolBlock(object):
             for i in range(start, len(self.decoded_bits), constants.SHORTEST_PREAMBLE_IN_BITS):
                 for j in range(0, constants.SHORTEST_PREAMBLE_IN_BITS, 2):
                     if not(self.decoded_bits[i+j] and not self.decoded_bits[i+j+1]):
-                        return i - 1
+                        return i - 1 if i - 1 >= 0 else None
 
-            return len(self.decoded_bits) - 1
+            return len(self.decoded_bits) - 1 if len(self.decoded_bits) - 1 >= 0 else None
 
         except IndexError:
             return None

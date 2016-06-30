@@ -13,7 +13,7 @@ class LabelAssigner(object):
         :type blocks: list of ProtocolBlock
         """
         self.__blocks = blocks
-        self.preamble_end = 0
+        self.preamble_end = None
         self.constant_intervals = defaultdict(set)
         self.constant_intervals_per_block = defaultdict(list)
 
@@ -21,23 +21,10 @@ class LabelAssigner(object):
     def is_initialized(self):
         return len(self.constant_intervals) > 0 if len(self.__blocks) > 0 else True
 
-    def find_preamble(self) -> ProtocolLabel:
-        preamble_ends = list()
+    def __search_constant_intervals(self):
+        if self.preamble_end is None:
+            self.find_preamble()
 
-        for block in self.__blocks:
-            # searching preamble
-            preamble_end = block.find_preamble_end()
-            if preamble_end is None or preamble_end < 1:
-                continue
-            preamble_ends.append(preamble_end)
-
-        if len(preamble_ends) == 0:
-            return None
-
-        self.preamble_end = max(preamble_ends, key=preamble_ends.count)
-        return ProtocolLabel(name="Preamble", start=0, end=self.preamble_end-1, val_type_index=0, color_index=None)
-
-    def __find_constant_intervals(self):
         self.constant_intervals.clear()
         self.constant_intervals_per_block.clear()
 
@@ -68,21 +55,6 @@ class LabelAssigner(object):
                     self.constant_intervals_per_block[i].append(interval)
                     self.constant_intervals_per_block[j].append(interval)
 
-
-        # Combine intervals
-        # combined_indices = dict()
-        # for block_index, intervals in self.constant_intervals.items():
-        #     combined_intervals = list()
-        #     for interval in sorted(intervals):
-        #         last_interval = None if len(combined_intervals) == 0 else combined_intervals[-1]
-        #         if last_interval and last_interval.overlaps_with(interval):
-        #             combined_intervals.remove(last_interval)
-        #             combined_intervals.append(last_interval.find_common_interval(interval))
-        #         else:
-        #             combined_intervals.append(interval)
-        #
-        #         combined_indices[block_index] = combined_intervals
-
         # Apply a label for each constant range
         # if labels overlap, there are different merge strategies
             # 1) choose the range that occurred most frequently
@@ -107,6 +79,38 @@ class LabelAssigner(object):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)
         return block.decoded_hex_str[start:end]
 
+    def find_preamble(self) -> ProtocolLabel:
+        preamble_ends = [pre_end for pre_end in (block.find_preamble_end() for block in self.__blocks) if pre_end]
+
+        if len(preamble_ends) == 0:
+            self.preamble_end = 0
+            return None
+
+        self.preamble_end = max(preamble_ends, key=preamble_ends.count)
+        return ProtocolLabel(name="Preamble", start=0, end=self.preamble_end-1, val_type_index=0, color_index=None)
+
+
+    def find_sync(self) -> ProtocolLabel:
+        """
+        Find synchronization sequence (sync) in protocol.
+        The sync starts right after preamble and is constant regarding range for all blocks. Different sync values are possible.
+        The sync is chosen by comparing all constant ranges that lay right behind the preamble and chose the most frequent one.
+
+        :return:
+        """
+        if not self.is_initialized:
+            self.__search_constant_intervals()
+
+        possible_sync_pos = defaultdict(int)
+        for const_range in (cr for const_interval in self.constant_intervals.values() for cr in const_interval):
+            const_range = Interval(4 * ((const_range.start + 1) // 4) - 1, 4 * ((const_range.end + 1) // 4) - 1) # align to nibbles
+            possible_sync_pos[const_range] += int(const_range.start == self.preamble_end)
+
+        sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
+
+        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1,
+                             name="Sync", color_index=None, val_type_index=0)
+
     def find_constants(self):
         """
         Return a list of labels over constants in the protocol.
@@ -116,14 +120,16 @@ class LabelAssigner(object):
         :rtype: list of ProtocolLabel
         """
         if not self.is_initialized:
-            self.__find_constant_intervals()
+            self.__search_constant_intervals()
 
         common_constant_intervals = set()
 
-        for interval in self.constant_intervals[(0,1)]:
-            candidate = interval
+        if (0,1) not in self.constant_intervals:
+            return []
+
+        for candidate in self.constant_intervals[(0,1)]:
             for j in range(1, len(self.__blocks)):
-                overlapping_intervals = {candidate.find_common_interval(other_interval) for other_interval in self.constant_intervals[(0, j)]}
+                overlapping_intervals = {candidate.find_common_interval(interval) for interval in self.constant_intervals[(0, j)]}
                 overlapping_intervals.discard(None)
 
                 if len(overlapping_intervals) == 0:
@@ -138,27 +144,9 @@ class LabelAssigner(object):
                 common_constant_intervals.add(candidate)
             else:
                 common_constant_intervals.remove(overlapping_candidate)
-                common_constant_intervals.add(max(candidate, overlapping_candidate))
+                common_constant_intervals.add(candidate.find_common_interval(overlapping_candidate))
 
         return [ProtocolLabel(start=interval.start, end=interval.end, name="Constant #{0}".format(i+1),
                               val_type_index=0, color_index=None) for i, interval in enumerate(common_constant_intervals)]
-
-    def find_sync(self) -> ProtocolLabel:
-        if self.preamble_end == 0:
-            self.find_preamble()
-        if not self.is_initialized:
-            self.__find_constant_intervals()
-
-        possible_sync_pos = defaultdict(int)
-        for block_index, const_interval in self.constant_intervals.items():
-            for const_range in const_interval:
-                const_range = Interval(4 * ((const_range.start + 1) // 4) - 1, 4 * ((const_range.end + 1) // 4) - 1) # align to nibbles
-                if const_range.start == self.preamble_end:
-                   possible_sync_pos[const_range] += 1
-
-        sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
-
-        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1,
-                             name="Sync", color_index=None, val_type_index=0)
 
 

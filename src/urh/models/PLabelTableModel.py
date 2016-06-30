@@ -74,10 +74,10 @@ class PLabelTableModel(QAbstractTableModel):
         if j == 0:
             lbl.name = value
         elif j == 1:
-            new_start = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True, i)[0])
+            new_start = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True)[0])
             lbl.start = new_start
         elif j == 2:
-            new_end = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True, i)[1]) + 1
+            new_end = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True)[1]) + 1
             lbl.end = new_end
         elif j == 3:
             lbl.color_index = value

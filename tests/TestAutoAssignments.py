@@ -150,3 +150,26 @@ class TestAutoAssignments(unittest.TestCase):
         for block in self.protocol.blocks:
             self.assertIn(preamble_label, block.labelset)
             self.assertIn(sync_label, block.labelset)
+
+
+    def test_assign_constants(self):
+        const_start = 82
+        const_end = 104
+        const = "1110001011110101010111"
+
+        const_protocol = ProtocolAnalyzer(None)
+        with open("./data/constant_bits.txt") as f:
+            for line in f:
+                const_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.assertEqual(const_protocol.blocks[-1].decoded_bits_str, line.replace("\n", ""))
+                const_protocol.blocks[-1].labelset = const_protocol.default_labelset
+
+        for block in const_protocol.blocks:
+            assert block.decoded_bits_str[const_start:const_end] == const
+
+        const_protocol.auto_assign_labels()
+        const_label = ProtocolLabel(name="Constant #1", start=const_start, end=const_end, val_type_index=0, color_index=0)
+        self.assertEqual(1, len([lbl for lbl in const_protocol.default_labelset if lbl.name == const_label.name]))
+
+        for block in const_protocol.blocks:
+            self.assertIn(const_label, block.labelset)

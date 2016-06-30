@@ -871,3 +871,7 @@ class ProtocolAnalyzer(object):
         sync = label_assigner.find_sync()
         if sync is not None:
             self.default_labelset.add_label(sync)
+
+        const_labels = label_assigner.find_constants()
+        for lbl in const_labels:
+            self.default_labelset.add_label(lbl)

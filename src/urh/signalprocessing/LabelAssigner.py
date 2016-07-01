@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from urh import constants
 from urh.signalprocessing.Interval import Interval
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 
@@ -142,12 +143,46 @@ class LabelAssigner(object):
                               val_type_index=0, color_index=None) for i, interval in enumerate(common_constant_intervals)]
 
     def find_byte_length(self):
+        """
+        Find the byte length using a scoring algorithm.
+
+        :return:
+        """
         if self.sync_end is None:
             self.find_sync()
 
-        for block in self.__blocks:
-            byte_len = block.get_byte_length(bit_start=self.sync_end+1, decoded=True)
-            for byte in block.get_bytes(bit_start=self.sync_end+1, decoded=True):
-                pass
-                #print(byte)
+        scores = defaultdict(int)
+        weights = {-5: 1, -4: 2, -3: 3, -2: 4, -1: 5, 0: 6}
 
+        for block in self.__blocks:
+            byte_start = int(block.convert_index(self.sync_end + 1, 0, 2, decoded=True)[0])
+            byte_len = block.get_byte_length(decoded=True) - byte_start
+            for i, byte in enumerate(block.get_bytes(start=byte_start, decoded=True)):
+                diff = byte - byte_len
+                bit_range = block.convert_index(byte_start + i, 2, 0, decoded=True)
+                if diff in weights:
+                    scores[bit_range] += weights[diff]
+        try:
+            length_range = max(scores, key=scores.__getitem__)
+        except ValueError:
+            return None
+
+        return ProtocolLabel(start=int(length_range[0]), end=int(length_range[1]) - 1,
+                             name="Length", color_index=None, val_type_index=0)
+
+    def auto_assign_to_labelset(self, labelset: LabelSet):
+        preamble = self.find_preamble()
+        if preamble is not None:
+            labelset.add_label(preamble)
+
+        sync = self.find_sync()
+        if sync is not None:
+            labelset.add_label(sync)
+
+        const_labels = self.find_constants()
+        for lbl in const_labels:
+            labelset.add_label(lbl)
+
+        length_label = self.find_byte_length()
+        if length_label is not None:
+            labelset.add_label(length_label)

@@ -863,17 +863,4 @@ class ProtocolAnalyzer(object):
 
     def auto_assign_labels(self):
         label_assigner = LabelAssigner(self.blocks)
-
-        preamble = label_assigner.find_preamble()
-        if preamble is not None:
-            self.default_labelset.add_label(preamble)
-
-        sync = label_assigner.find_sync()
-        if sync is not None:
-            self.default_labelset.add_label(sync)
-
-        const_labels = label_assigner.find_constants()
-        for lbl in const_labels:
-            self.default_labelset.add_label(lbl)
-
-        length_label = label_assigner.find_byte_length()
+        label_assigner.auto_assign_to_labelset(self.default_labelset)

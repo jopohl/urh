@@ -151,6 +151,18 @@ class ProtocolBlock(object):
     def __str__(self):
         return self.bits2string(self.plain_bits)
 
+    def get_byte_length(self, bit_start=0, decoded=True) -> int:
+        """
+        Return the length of this block in byte.
+
+        :param bit_start: Give the start from where to calculate the byte length. Useful if you want to exclude preamble/sync
+        :return: length of block in byte from bit_start on
+        """
+        start = self.convert_index(bit_start, 0, 2, decoded=decoded)[0]
+        end = len(self.decoded_bits) if decoded else len(self.__plain_bits)
+        end = self.convert_index(end, 0, 2, decoded=decoded)[0]
+        return int(end - start)
+
     def bits2string(self, bits) -> str:
         """
 

@@ -163,6 +163,11 @@ class ProtocolBlock(object):
         end = self.convert_index(end, 0, 2, decoded=decoded)[0]
         return int(end - start)
 
+    def get_bytes(self,  bit_start=0, decoded=True) -> list:
+        start = int(self.convert_index(bit_start, 0, 2, decoded=decoded)[0])
+        data = self.decoded_ascii_str[start:] if decoded else self.plain_ascii_str[start:]
+        return list(map(ord, data))
+
     def bits2string(self, bits) -> str:
         """
 

@@ -875,3 +875,5 @@ class ProtocolAnalyzer(object):
         const_labels = label_assigner.find_constants()
         for lbl in const_labels:
             self.default_labelset.add_label(lbl)
+
+        length_label = label_assigner.find_byte_length()

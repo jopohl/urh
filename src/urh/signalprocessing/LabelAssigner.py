@@ -1,4 +1,3 @@
-import copy
 from collections import defaultdict
 
 from urh import constants
@@ -13,6 +12,7 @@ class LabelAssigner(object):
         :type blocks: list of ProtocolBlock
         """
         self.__blocks = blocks
+        self.sync_end = None
         self.preamble_end = None
         self.constant_intervals = defaultdict(set)
         self.constant_intervals_per_block = defaultdict(list)
@@ -99,6 +99,7 @@ class LabelAssigner(object):
 
         sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
 
+        self.sync_end = sync_interval.end
         return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1, name="Sync",
                              color_index=None, val_type_index=0)
 
@@ -140,4 +141,13 @@ class LabelAssigner(object):
         return [ProtocolLabel(start=interval.start, end=interval.end, name="Constant #{0}".format(i+1),
                               val_type_index=0, color_index=None) for i, interval in enumerate(common_constant_intervals)]
 
+    def find_byte_length(self):
+        if self.sync_end is None:
+            self.find_sync()
+
+        for block in self.__blocks:
+            byte_len = block.get_byte_length(bit_start=self.sync_end+1, decoded=True)
+            for byte in block.get_bytes(bit_start=self.sync_end+1, decoded=True):
+                pass
+                #print(byte)
 

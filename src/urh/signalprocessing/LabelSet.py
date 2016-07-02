@@ -52,8 +52,9 @@ class LabelSet(list):
 
         return proto_label # Return label to set editor focus after adding
 
-    def add_label(self, lbl: ProtocolLabel):
-        self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
+    def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
+        if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
+            self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:

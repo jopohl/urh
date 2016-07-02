@@ -172,17 +172,16 @@ class LabelAssigner(object):
 
     def auto_assign_to_labelset(self, labelset: LabelSet):
         preamble = self.find_preamble()
-        if preamble is not None and not any(lbl.overlaps_with(preamble) for lbl in labelset):
-            labelset.add_label(preamble)
+        if preamble is not None:
+            labelset.add_label(preamble, allow_overlapping=False)
 
         sync = self.find_sync()
-        if sync is not None and not any(lbl.overlaps_with(sync) for lbl in labelset):
-            labelset.add_label(sync)
+        if sync is not None:
+            labelset.add_label(sync, allow_overlapping=False)
 
-        const_labels = self.find_constants()
-        for constant_lbl in (clbl for clbl in const_labels if not any(clbl.overlaps_with(lbl) for lbl in labelset)):
-            labelset.add_label(constant_lbl)
+        for constant_lbl in self.find_constants():
+            labelset.add_label(constant_lbl, allow_overlapping=False)
 
         length_label = self.find_byte_length()
-        if length_label is not None and not any(lbl.overlaps_with(length_label) for lbl in labelset):
-            labelset.add_label(length_label)
+        if length_label is not None:
+            labelset.add_label(length_label, allow_overlapping=False)

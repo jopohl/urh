@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
+from urh.signalprocessing.Interval import Interval
 from urh.util.Formatter import Formatter
 
 
@@ -84,6 +85,9 @@ class ProtocolLabel(object):
 
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)
+
+    def overlaps_with(self, other_label):
+        return Interval(self.start, self.end).overlaps_with(Interval(other_label.start, other_label.end))
 
     def add_fuzz_value(self):
         cur_val = self.fuzz_values[-1]

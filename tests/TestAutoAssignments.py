@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 import time
@@ -71,14 +72,18 @@ class TestAutoAssignments(unittest.TestCase):
         proto2 = ProtocolAnalyzer(None)
 
         for i in range(0, len(rssis[0])):
-            proto1.blocks.append(self.protocol.blocks[i])
+            block = copy.deepcopy(self.protocol.blocks[i])
+            block.participant = None
+            proto1.blocks.append(block)
             proto1.blocks[i].rssi = rssis[0][i]
 
         self.assertEqual(len(proto1.blocks), 21)
 
 
         for i in range(0, len(rssis[1])):
-            proto2.blocks.append(self.protocol.blocks[21+i])
+            block = copy.deepcopy(self.protocol.blocks[21+i])
+            block.participant = None
+            proto2.blocks.append(block)
             proto2.blocks[i].rssi = rssis[1][i]
 
         self.assertEqual(len(proto2.blocks), 21)

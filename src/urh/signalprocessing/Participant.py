@@ -31,6 +31,15 @@ class Participant(object):
     def id_match(self, id):
         return self.__id == id
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __lt__(self, other):
+        if isinstance(other, Participant):
+            return self.shortname < other.shortname
+        else:
+            return False
+
     def to_xml(self) -> ET.Element:
         root = ET.Element("participant")
         root.set("name", self.name)

@@ -72,8 +72,8 @@ class LabelAssigner(object):
         for participant in sorted({block.participant for block in self.__blocks}):
             name = participant.name if participant is not None else "None"
             print(name + "\n-----------------")
-            common_intervals_for_participant =  sorted(self.common_intervals_for_participant(participant))
-            for block_index in common_intervals_for_participant:
+            common_intervals_for_participant =  self.common_intervals_for_participant(participant)
+            for block_index in sorted(common_intervals_for_participant):
                 print(block_index,
                       sorted(r for r in common_intervals_for_participant[block_index] if r.start != self.preamble_end), end=" ")
                 print(" ".join([self.__get_hex_value_for_block(self.__blocks[block_index[0]], interval) for interval in

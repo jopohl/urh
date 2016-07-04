@@ -19,6 +19,16 @@ class TestAutoAssignments(unittest.TestCase):
                 self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.blocks[-1].labelset = self.protocol.default_labelset
 
+        # Assign participants
+        alice = Participant("Alice", "A")
+        bob = Participant("Bob", "B")
+        alice_indices = {1,2,5,6,9,10,13,14,17,18,20,22,23,26,27,30,31,34,35,38,39,41}
+        for i, block in enumerate(self.protocol.blocks):
+            if i in alice_indices:
+                block.participant = alice
+            else:
+                block.participant = bob
+
         self.assertEqual(self.protocol.num_blocks, 42)
         self.assertEqual(self.protocol.plain_hex_str[0][16:18], "2d")
 

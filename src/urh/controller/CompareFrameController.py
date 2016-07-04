@@ -1432,3 +1432,5 @@ class CompareFrameController(QFrame):
     def set_participant_visibility(self):
         for i, block in enumerate(self.proto_analyzer.blocks):
             self.ui.tblViewProtocol.setRowHidden(i, not block.participant.show)
+
+        self.ui.tblViewProtocol.hide_row() # Update data structures and call triggers after hiding rows

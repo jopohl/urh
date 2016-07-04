@@ -140,7 +140,7 @@ class TestAutoAssignments(unittest.TestCase):
         length_end = 71
 
         t = time.time()
-        self.protocol.auto_assign_labels()
+        self.protocol.auto_assign_labels(debug=True)
         print("Time for auto assigning labels: ", str(time.time()-t)) # 0.020628690719604492
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)

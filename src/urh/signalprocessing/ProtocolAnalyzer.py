@@ -861,6 +861,8 @@ class ProtocolAnalyzer(object):
             if not decoder_found and fallback:
                 block.decoder = fallback
 
-    def auto_assign_labels(self):
+    def auto_assign_labels(self, debug=False):
         label_assigner = LabelAssigner(self.blocks)
         label_assigner.auto_assign_to_labelset(self.default_labelset)
+        if debug:
+            label_assigner.print_common_intervals()

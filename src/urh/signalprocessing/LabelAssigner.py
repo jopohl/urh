@@ -3,6 +3,7 @@ from collections import defaultdict
 from urh import constants
 from urh.signalprocessing.Interval import Interval
 from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 
@@ -56,11 +57,27 @@ class LabelAssigner(object):
                     self.common_intervals_per_block[i].append(interval)
                     self.common_intervals_per_block[j].append(interval)
 
+    def common_intervals_for_participant(self, participant: Participant):
+        return {(i, j): intervals for (i, j), intervals in self.common_intervals.items()
+                if self.__blocks[i].participant == participant and self.__blocks[j].participant == participant}
+
+
     def print_common_intervals(self):
         print("Raw common intervals\n=================")
         for block_index in sorted(self.common_intervals):
             print(block_index, sorted(r for r in self.common_intervals[block_index] if r.start != self.preamble_end), end=" ")
             print(" ".join([self.__get_hex_value_for_block(self.__blocks[block_index[0]], interval) for interval in sorted(r for r in self.common_intervals[block_index] if r.start != self.preamble_end)]))
+
+        print("Common intervals per participant\n=================")
+        for participant in sorted({block.participant for block in self.__blocks}):
+            name = participant.name if participant is not None else "None"
+            print(name + "\n-----------------")
+            common_intervals_for_participant =  sorted(self.common_intervals_for_participant(participant))
+            for block_index in common_intervals_for_participant:
+                print(block_index,
+                      sorted(r for r in common_intervals_for_participant[block_index] if r.start != self.preamble_end), end=" ")
+                print(" ".join([self.__get_hex_value_for_block(self.__blocks[block_index[0]], interval) for interval in
+                                sorted(r for r in common_intervals_for_participant[block_index] if r.start != self.preamble_end)]))
 
         print("Merged common intervals\n=================")
         for block_index in sorted(self.common_intervals_per_block):
@@ -69,6 +86,8 @@ class LabelAssigner(object):
                 interval_info += str(interval) + " (" + str(self.common_intervals_per_block[block_index].count(interval)) + ") "
 
             print(block_index, interval_info)
+
+
 
     def __get_hex_value_for_block(self, block, interval):
         start, end = block.convert_range(interval.start + 1, interval.end, from_view=0, to_view=1, decoded=True)

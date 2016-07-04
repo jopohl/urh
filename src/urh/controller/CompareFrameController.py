@@ -320,7 +320,7 @@ class CompareFrameController(QFrame):
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
         self.ui.tblViewProtocol.files_dropped.connect(self.handle_files_dropped)
         self.project_manager.project_updated.connect(self.on_project_updated)
-        self.participant_list_model.show_state_changed.connect(self.set_shown_protocols)
+        self.participant_list_model.show_state_changed.connect(self.set_participant_visibility)
         self.ui.tblViewProtocol.participant_changed.connect(self.on_participant_edited)
         self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
         self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
@@ -475,10 +475,6 @@ class CompareFrameController(QFrame):
                 num_blocks = 0
                 for i, block in enumerate(proto.blocks):
                     if not block:
-                        continue
-                    if block.participant is None and not self.participant_list_model.show_unassigned:
-                        continue
-                    if block.participant is not None and not block.participant.show:
                         continue
 
                     try:
@@ -1432,3 +1428,7 @@ class CompareFrameController(QFrame):
         self.protocol_model.refresh_vertical_header()
         self.ui.tblViewProtocol.resize_vertical_header()
         self.participant_changed.emit()
+
+    def set_participant_visibility(self):
+        for i, block in enumerate(self.proto_analyzer.blocks):
+            self.ui.tblViewProtocol.setRowHidden(i, not block.participant.show)

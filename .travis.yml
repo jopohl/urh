@@ -8,12 +8,11 @@ python:
 # Install packages
 install:
   - sudo apt-get update
-  - sudo apt-get -y install python3-pyqt5
+  - sudo apt-get -y install python3-pyqt5 python3-numpy
 
 script:
   - cd ./src/urh/cythonext
   - python build.py
   - cd ../../../tests
   - export PYTHONPATH="../src"
-  - python setup.py install
-  - urh
+  - py.test -v

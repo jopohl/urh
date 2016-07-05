@@ -15,5 +15,4 @@ script:
   - python build.py
   - cd ../../../tests
   - export PYTHONPATH="../src"
-  - python -c "import PyQt5.QtTest"
-  - py.test test_modulator.py
+  - py.test test_labels.py

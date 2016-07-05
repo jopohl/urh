@@ -6,24 +6,23 @@ python:
   - "3.5"
   - "nightly"
 
-before_install:
-  - sudo apt-add-repository ppa:beineri/opt-qt551 -y
-  - sudo apt-get update
-  - sudo apt-get install qt-latest python3-numpy
-  - source /opt/qt55/bin/qt55-env.sh
 
+# Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
+  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+# Install packages
 install:
-  - sudo mkdir -p /builds && sudo chmod a+rw /builds
-  - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
-  - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.tar.gz
-  - curl -L -o /downloads/pyqt.tar.gz http://skylink.dl.sourceforge.net/project/pyqt/PyQt5/PyQt-5.5.1/PyQt-gpl-5.5.1.tar.gz
-  - tar xzf /downloads/sip.tar.gz -C /builds --keep-newer-files
-  - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
-  - cd /builds/sip-4.17 && python configure.py && sudo make && sudo make install
-  - cd /builds/PyQt-gpl-5.5.1 && python configure.py --confirm-license && sudo make && sudo make install
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy pyqt5
+  - python setup.py build_ext
 
 script:
-  - python setup.py build_ext
   - cd ./tests
   - export PYTHONPATH="../src"
   - py.test -v

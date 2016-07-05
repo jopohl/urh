@@ -7,24 +7,24 @@ python:
   - "nightly"
 
 
-# Setup anaconda
-before_install:
+# Install packages
+install:
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - export PATH="$HOME/miniconda/bin:$PATH"
   - ./miniconda.sh -b -p $HOME/miniconda
   - conda update --yes conda
-  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
-  - sudo rm -rf /dev/shm
-  - sudo ln -s /run/shm /dev/shm
-
-# Install packages
-install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy
-  - conda install --yes -c https://conda.anaconda.org/mmcauliffe pyqt5
-  - python setup.py build_ext
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+  - conda create -q -n test-environment -c m-labs python=$TRAVIS_PYTHON_VERSION numpy pyqt5
+  - source activate test-environment
 
 script:
-  - cd ./tests
+  - cd ./src/urh/cythonext
+  - python build.py
+  - cd ../../../tests
   - export PYTHONPATH="../src"
   - py.test -v

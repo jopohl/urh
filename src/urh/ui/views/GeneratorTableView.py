@@ -164,6 +164,8 @@ class GeneratorTableView(TableView):
         if self.model().col_count == 0:
             clearAction.setEnabled(False)
 
+        selected_rows = list(range(min_row, max_row + 1))
+
         action = menu.exec_(self.mapToGlobal(pos))
         if action == fuzzingAction:
             if selected_label_indx == -1:
@@ -176,8 +178,6 @@ class GeneratorTableView(TableView):
             row = self.rowAt(event.pos().y())
             self.model().duplicate_row(row)
         elif action == insertColLeft:
-            col = self.columnAt(event.pos().x())
-            self.model().insert_column(col)
+            self.model().insert_column(start, selected_rows)
         elif action == insertColRight:
-            col = self.columnAt(event.pos().x())
-            self.model().insert_column(col + 1)
+            self.model().insert_column(end, selected_rows)

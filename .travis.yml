@@ -6,7 +6,7 @@ python:
   - "3.5"
   - "nightly"
 
-install:
+before_install:
   - sudo apt-get update
   - sudo apt-get -y install python3-numpy python3-pyqt5 g++ libpython3-dev
 script:

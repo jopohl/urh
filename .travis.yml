@@ -11,8 +11,6 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install python3-numpy python3-pyqt5 g++ libpython3-dev
 script:
-  - export PYTHONPATH="./src"
-  - cd src/urh/cythonext
-  - python3 build.py
-  - cd ../../../tests
+  - pip install -e .
+  - cd ./tests
   - py.test

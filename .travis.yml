@@ -1,26 +1,14 @@
 language: python
 sudo: required
+dist: trusty
 
 python:
-  - "3.4"
-  - "3.5"
-  - "nightly"
-
+  - "3.4_with_system_site_packages"
 
 # Install packages
 install:
-  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - ./miniconda.sh -b -p $HOME/miniconda
-  - conda update --yes conda
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  # Useful for debugging any issues with conda
-  - conda info -a
-  - conda create -q -n test-environment -c m-labs python=$TRAVIS_PYTHON_VERSION numpy pyqt5
-  - source activate test-environment
+  - sudo apt-get update
+  - sudo apt-get -y install python3-pyqt5
 
 script:
   - cd ./src/urh/cythonext

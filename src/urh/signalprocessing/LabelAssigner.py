@@ -153,6 +153,9 @@ class LabelAssigner(object):
                 else:
                     candidate = max(overlapping_intervals)
 
+            if candidate is None:
+                continue
+
             overlapping_candidate = next((c for c in common_constant_intervals if c.overlaps_with(candidate)), None)
 
             if overlapping_candidate is None:

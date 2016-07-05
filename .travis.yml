@@ -17,4 +17,5 @@ before_install:
 script:
   - pip install -e .
   - cd ./tests
+  - export PYTHONPATH="../src"
   - py.test

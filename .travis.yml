@@ -15,4 +15,5 @@ script:
   - python build.py
   - cd ../../../tests
   - export PYTHONPATH="../src"
-  - py.test -v
+  - python setup.py install
+  - urh

@@ -5,6 +5,7 @@ python:
   - "nightly"
 
 install:
+  - sudo apt-get update
   - sudo apt-get install python3-numpy python3-pyqt5 git g++ libpython3-dev
 script:
   - export PYTHONPATH="./src"

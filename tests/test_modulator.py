@@ -13,7 +13,7 @@ from urh.signalprocessing.Signal import Signal
 
 class TestModulator(unittest.TestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
+        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', 0, type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
         self.modulation_data = [True, False, False, False, True, True, False, True]

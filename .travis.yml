@@ -1,0 +1,14 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "nightly"
+
+install:
+  - sudo apt-get install python3-numpy python3-pyqt5 git g++ libpython3-dev
+script:
+  - export PYTHONPATH="./src"
+  - cd src/urh/cythonext
+  - python3 build.py
+  - cd ../../../tests
+  - py.test

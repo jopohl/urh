@@ -14,8 +14,11 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install python3-numpy python3-pyqt5
 
+install:
+  - pip install vext.pyqt5
+  - pip install .
+
 script:
-  - pip install -e .
   - cd ./tests
   - export PYTHONPATH="../src"
   - py.test -v

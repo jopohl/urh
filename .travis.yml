@@ -8,11 +8,12 @@ python:
   - "nightly"
 
 install:
-  - pip3 install pyqt5
-  - pip3 install numpy
+  - wget https://pypi.python.org/packages/34/a7/ed3a2e7f74a7fcc112c1669968ca1be552f34d123bb4515a97520d69e8f3/PyQt5-5.6-cp35-cp35m-manylinux1_x86_64.whl#md5=787c331fb9b462a16f8526c964023c58
+  - pip install PyQt5-5.6-cp35-cp35m-manylinux1_x86_64.whl
+  - pip install numpy
 
 script:
-  - python3 setup.py build_ext
+  - python setup.py build_ext
   - cd ./tests
   - export PYTHONPATH="../src"
   - py.test -v

@@ -8,6 +8,8 @@ python:
   - "nightly"
 
 install:
+  - pip install --upgrade pip
+  - pip --version
   - pip install pyqt5
   - pip install numpy
 

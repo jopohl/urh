@@ -20,7 +20,8 @@ before_install:
 
 # Install packages
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy pyqt5
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy
+  - conda install --yes -c https://conda.anaconda.org/mmcauliffe pyqt5
   - python setup.py build_ext
 
 script:

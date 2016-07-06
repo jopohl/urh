@@ -6,6 +6,7 @@ import re
 import sys
 import time
 
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
@@ -70,7 +71,7 @@ def main(argv):
     constants.LINECOLOR = fgcolor
     constants.SELECTION_COLOR  = selection_color
 
-    return app.exec_()
+    return app
 
 if __name__ == "__main__":
     sys.dont_write_bytecode = True
@@ -89,4 +90,12 @@ if __name__ == "__main__":
             print("Will not regenerate UI, because script cant be found. This is okay in "
                   "release.", file=sys.stderr)
 
-    os._exit(main(sys.argv)) # sys.exit() is not enough on Windows and will result in crash on exit
+    app = main(sys.argv)
+
+    if "autoclose" in sys.argv:
+        # Autoclose after 1 second, this is useful for automated testing
+        timer = QTimer()
+        timer.timeout.connect(app.quit)
+        timer.start(1000)
+
+    os._exit(app.exec_()) # sys.exit() is not enough on Windows and will result in crash on exit

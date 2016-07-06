@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     app = main(sys.argv)
 
-    if "autoclose" in sys.argv:
+    if "autoclose" in sys.argv[1:]:
         # Autoclose after 1 second, this is useful for automated testing
         timer = QTimer()
         timer.timeout.connect(app.quit)

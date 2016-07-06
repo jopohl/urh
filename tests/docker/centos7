@@ -25,4 +25,6 @@ RUN make install
 ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh
 
+RUN dbus-uuidgen > /etc/machine-id
+
 CMD /bin/run.sh

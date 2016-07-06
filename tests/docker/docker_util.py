@@ -3,7 +3,7 @@ from subprocess import check_output, call
 import os, sys
 
 USE_SUDO = True
-SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404")
+SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404", "ubuntu1604")
 
 def is_image_there(imagename: str) -> bool:
     cmd = ["sudo"] if USE_SUDO else []
@@ -16,7 +16,8 @@ def build_image(imagename: str):
         sys.exit(1)
 
     cmd = ["sudo"] if USE_SUDO else []
-    cmd.extend(["docker", "build", "--tag", "urh/"+imagename, "-f", imagename, "."])
+    cmd.extend(["docker", "build", "--force-rm", "--no-cache",
+                "--tag", "urh/"+imagename, "-f", imagename, "."])
 
     script = __file__ if not os.path.islink(__file__) else os.readlink(__file__)
     os.chdir(os.path.realpath(os.path.join(script, "..")))
@@ -29,9 +30,18 @@ def run_image(imagename: str):
         build_image(imagename)
 
     cmd = ["sudo"] if USE_SUDO else []
+    call(cmd + ["xhost", "+"]) # Allow docker to connect to hosts X Server
+
     cmd.extend(["docker", "run", "-e", "DISPLAY=$DISPLAY", "-v", "/tmp/.X11-unix:/tmp/.X11-unix", "urh/"+imagename])
-    rc = call(cmd)
+    logger.info("call {}".format(" ".join(cmd)))
+    rc = call(" ".join(cmd), shell=True)
     return rc == 0
+
+def remove_containers():
+    logger.info("removing containers")
+    cmd = ["sudo"] if USE_SUDO else []
+    cmd.extend(["docker", "rm", "$({}docker ps -aq)".format("sudo " if USE_SUDO else "")])
+    call(" ".join(cmd), shell=True)
 
 if __name__ == "__main__":
     run_image("archlinux")

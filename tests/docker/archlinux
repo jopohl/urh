@@ -2,7 +2,8 @@ FROM  base/archlinux
 RUN mkdir -p /root/.gnupg
 RUN pacman -Sy --noconfirm archlinux-keyring
 RUN pacman -Syu --noconfirm && pacman-db-upgrade
-RUN pacman -S --noconfirm ca-certificates ca-certificates-mozilla git python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu
+RUN pacman -S --noconfirm ca-certificates ca-certificates-mozilla
+RUN pacman -S --noconfirm git python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu
 
 ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh

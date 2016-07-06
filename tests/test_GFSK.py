@@ -37,7 +37,7 @@ class GFSK(unittest.TestCase):
         plt.plot(qad)
         plt.title("Quad Demod")
 
-        plt.show()
+        #plt.show()
 
 
     def test_gfsk(self):

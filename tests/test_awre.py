@@ -8,6 +8,10 @@ from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
 from urh.awre.components.Synchronization import Synchronization
 from urh.awre.components.Type import Type
+from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class TestAWRE(unittest.TestCase):
@@ -43,4 +47,34 @@ class TestAWRE(unittest.TestCase):
         format_finder.sync_component.priority = 1
         format_finder.preamble_component.priority = 0
         self.assertTrue(format_finder.build_component_order())
+
+    def test_format_finding_rwe(self):
+        protocol = ProtocolAnalyzer(None)
+        with open("./data/decoded_bits.txt") as f:
+            for line in f:
+                protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                protocol.blocks[-1].labelset = protocol.default_labelset
+
+        # Assign participants
+        alice = Participant("Alice", "A")
+        bob = Participant("Bob", "B")
+        alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
+        for i, block in enumerate(protocol.blocks):
+            block.participant = alice if i in alice_indices else bob
+
+
+        preamble_start = 0
+        preamble_end = 31
+        sync_start = 32
+        sync_end = 63
+
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+        sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
+
+        ff = FormatFinder()
+        found_labels = ff.perform_iteration([block.plain_bits for block in protocol.blocks])
+
+        self.assertIn(preamble_label, found_labels)
+
+
 

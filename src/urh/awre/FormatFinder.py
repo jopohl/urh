@@ -24,7 +24,7 @@ class FormatFinder(object):
 
         :rtype: list of Component
         """
-        present_components = [item for item in self.__dict__.values() if isinstance(item, Component)]
+        present_components = [item for item in self.__dict__.values() if isinstance(item, Component) and item.enabled]
         result = [None] * len(present_components)
         used_prios = set()
         for component in present_components:
@@ -41,3 +41,17 @@ class FormatFinder(object):
                 raise ValueError("Component {} comes before at least one of its predecessors".format(component))
 
         return result
+
+    def perform_iteration(self, bitvectors):
+        exclude_indices = set()
+        result = []
+
+        for component in self.build_component_order():
+            lbl = component.find_field(bitvectors, exclude_indices)
+            if lbl:
+                result.append(lbl)
+                exclude_indices.update(set(range(lbl.start, lbl.end+1)))
+
+        return result
+
+

@@ -1,5 +1,9 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from enum import Enum
+
+from urh.util.Logger import logger
+
 
 class Component(metaclass=ABCMeta):
     """
@@ -9,7 +13,12 @@ class Component(metaclass=ABCMeta):
     Additionally, components can have a set of predecessors to define hard dependencies.
     """
 
-    def __init__(self, priority=0, predecessors=None):
+    class Backend(Enum):
+        python = 1
+        cython = 2
+        plainc = 3
+
+    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None):
         """
 
         :param priority: Priority for this Component. 0 is highest priority
@@ -17,20 +26,46 @@ class Component(metaclass=ABCMeta):
         :param predecessors: List of preceding components, that need to be run before this one
         :type predecessors: list of Component or None
         """
+        self.enabled = enabled
+        self.backend = backend if backend is not None else self.Backend.python
         self.priority = abs(priority)
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
 
-    @abstractmethod
-    def find_field(self, data) -> ProtocolLabel:
+    def find_field(self, bitvectors, exclude_indices) -> ProtocolLabel:
         """
-        Abstract method for subclasses to define the actual logic for finding a protocol field.
+        Wrapper method selecting the backend to find the protocol field.
         Various strategies are possible e.g.:
         1) Heuristics e.g. for Preamble
         2) Scoring based e.g. for Length
         3) Fulltext search for addresses based on participant subgroups
 
-        :param data: The data to be searched by this component
+        :param bitvectors: The data to be searched by this component
         :return: Highest probable label for this field
         """
-        pass
+        try:
+            if self.backend == self.Backend.python:
+                start, end = self._py_find_field(bitvectors, exclude_indices)
+            elif self.backend == self.Backend.cython:
+                start, end = self._cy_find_field(bitvectors, exclude_indices)
+            elif self.backend == self.Backend.plainc:
+                start, end = self._c_find_field(bitvectors, exclude_indices)
+            else:
+                raise ValueError("Unsupported backend {}".format(self.backend))
+        except NotImplementedError:
+            logger.info("Skipped {} because not implemented yet".format(self.__class__.__name__))
+            return None
+
+        if start == end == 0:
+            return None
+
+        return ProtocolLabel(name=self.__class__.__name__, start=0, end=end, val_type_index=0, color_index=None)
+
+    def _py_find_field(self, bitvectors, exclude_indices):
+        raise NotImplementedError()
+
+    def _cy_find_field(self, bitvectors, exclude_indices):
+        raise NotImplementedError()
+
+    def _c_find_field(self, bitvectors, exclude_indices):
+        raise NotImplementedError()

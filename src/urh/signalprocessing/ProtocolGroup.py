@@ -4,6 +4,8 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class ProtocolGroup(object):
+    __slots__ = ["name", "__items", "loaded_from_file"]
+
     def __init__(self, name: str):
         self.name = name
         self.__items = []

@@ -1,4 +1,6 @@
 class Interval(object):
+    __slots__ = ["data"]
+
     def __init__(self, start: int, end: int):
         self.data = (start, end)
 

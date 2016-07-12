@@ -9,6 +9,9 @@ from urh.util.Logger import logger
 import xml.etree.ElementTree as ET
 
 class LabelSet(list):
+
+    __slots__ = ["name", "__id", "assigned_automatically", "ruleset"]
+
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
         super().__init__(iterable)

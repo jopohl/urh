@@ -72,9 +72,10 @@ class TestAWRE(unittest.TestCase):
         sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
 
         ff = FormatFinder()
-        found_labels = ff.perform_iteration([block.plain_bits for block in protocol.blocks])
+        found_labels_for_blocks = ff.perform_iteration([block.plain_bits for block in protocol.blocks])
 
-        self.assertIn(preamble_label, found_labels)
-
+        for i in range(0, len(protocol.blocks)):
+            self.assertIn(preamble_label, found_labels_for_blocks[i])
+            self.assertIn(sync_label, found_labels_for_blocks[i])
 
 

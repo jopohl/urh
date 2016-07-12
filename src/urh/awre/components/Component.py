@@ -32,7 +32,9 @@ class Component(metaclass=ABCMeta):
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
 
-    def find_field(self, bitvectors, exclude_indices) -> ProtocolLabel:
+        self.rows = None
+
+    def find_field(self, bitvectors, column_ranges) -> ProtocolLabel:
         """
         Wrapper method selecting the backend to find the protocol field.
         Various strategies are possible e.g.:
@@ -40,16 +42,19 @@ class Component(metaclass=ABCMeta):
         2) Scoring based e.g. for Length
         3) Fulltext search for addresses based on participant subgroups
 
+        :param column_ranges: list of tuples of columns to search
+        :type column_ranges: dict[int, list of tuple]
         :param bitvectors: The data to be searched by this component
         :return: Highest probable label for this field
         """
         try:
+            rows = self.rows if self.rows is not None else range(0, len(bitvectors))
             if self.backend == self.Backend.python:
-                start, end = self._py_find_field(bitvectors, exclude_indices)
+                start, end = self._py_find_field(bitvectors, column_ranges, rows)
             elif self.backend == self.Backend.cython:
-                start, end = self._cy_find_field(bitvectors, exclude_indices)
+                start, end = self._cy_find_field(bitvectors, column_ranges, rows)
             elif self.backend == self.Backend.plainc:
-                start, end = self._c_find_field(bitvectors, exclude_indices)
+                start, end = self._c_find_field(bitvectors, column_ranges, rows)
             else:
                 raise ValueError("Unsupported backend {}".format(self.backend))
         except NotImplementedError:
@@ -59,13 +64,13 @@ class Component(metaclass=ABCMeta):
         if start == end == 0:
             return None
 
-        return ProtocolLabel(name=self.__class__.__name__, start=0, end=end, val_type_index=0, color_index=None)
+        return ProtocolLabel(name=self.__class__.__name__, start=start, end=end, val_type_index=0, color_index=None)
 
-    def _py_find_field(self, bitvectors, exclude_indices):
+    def _py_find_field(self, bitvectors, column_ranges, rows):
         raise NotImplementedError()
 
-    def _cy_find_field(self, bitvectors, exclude_indices):
+    def _cy_find_field(self, bitvectors, column_ranges, rows):
         raise NotImplementedError()
 
-    def _c_find_field(self, bitvectors, exclude_indices):
+    def _c_find_field(self, bitvectors, column_ranges, rows):
         raise NotImplementedError()

@@ -43,14 +43,25 @@ class FormatFinder(object):
         return result
 
     def perform_iteration(self, bitvectors):
-        exclude_indices = set()
-        result = []
+        include_ranges = {i: [(0, len(bv))] for i, bv in enumerate(bitvectors)}
+        result = {i: [] for i in range(len(bitvectors))}
 
         for component in self.build_component_order():
-            lbl = component.find_field(bitvectors, exclude_indices)
+            lbl = component.find_field(bitvectors, include_ranges)
             if lbl:
-                result.append(lbl)
-                exclude_indices.update(set(range(lbl.start, lbl.end+1)))
+                rows = component.rows if component.rows is not None else range(0, len(bitvectors)) # rows determine which rows (blocks) the component shall be applied to
+                for i in rows:
+                    result[i].append(lbl)
+                    # Update the include ranges for this block
+                    # Exclude the new label from consecutive component operations
+                    overlapping = next((rng for rng in include_ranges[i] if any(j in range(*rng) for j in range(lbl.start, lbl.end))))
+                    include_ranges[i].remove(overlapping)
+
+                    if overlapping[0] != lbl.start:
+                        include_ranges[i].append((overlapping[0], lbl.start))
+
+                    if overlapping[1] != lbl.end:
+                        include_ranges[i].append((lbl.end, overlapping[1]))
 
         return result
 

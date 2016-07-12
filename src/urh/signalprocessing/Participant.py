@@ -4,6 +4,8 @@ import random
 
 class Participant(object):
 
+    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "relative_rssi", "__id"]
+
     def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
         self.name = name if name else "unknown"
         self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"

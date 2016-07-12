@@ -20,6 +20,10 @@ class ProtocolBlock(object):
     A protocol block is a single line of a protocol.
     """
 
+    __slots__ = ["__plain_bits", "pause", "modulator_indx", "rssi", "participant", "labelset",
+                 "absolute_time", "relative_time", "__decoder", "bit_alignment_positions",
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
+
     def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """

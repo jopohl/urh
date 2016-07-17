@@ -67,9 +67,13 @@ class TestAWRE(unittest.TestCase):
         preamble_end = 31
         sync_start = 32
         sync_end = 63
+        length_start = 64
+        length_end = 71
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
         sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
+        length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, val_type_index=0, color_index=2)
+
 
         ff = FormatFinder()
         found_labels_for_blocks = ff.perform_iteration([block.plain_bits for block in protocol.blocks])
@@ -77,5 +81,6 @@ class TestAWRE(unittest.TestCase):
         for i in range(0, len(protocol.blocks)):
             self.assertIn(preamble_label, found_labels_for_blocks[i])
             self.assertIn(sync_label, found_labels_for_blocks[i])
+            self.assertIn(length_label, found_labels_for_blocks[i])
 
 

@@ -33,6 +33,12 @@ class Component(metaclass=ABCMeta):
         """:type: list of Component """
 
         self.rows = None
+        """
+        List of row indices where this component shall be searched.
+        Useful for defining logical groups e.g. based on participants.
+
+        :type: list of int
+        """
 
     def find_field(self, bitvectors, column_ranges) -> ProtocolLabel:
         """
@@ -64,7 +70,7 @@ class Component(metaclass=ABCMeta):
         if start == end == 0:
             return None
 
-        return ProtocolLabel(name=self.__class__.__name__, start=start, end=end, val_type_index=0, color_index=None)
+        return ProtocolLabel(name=self.__class__.__name__, start=start, end=end - 1, val_type_index=0, color_index=None)
 
     def _py_find_field(self, bitvectors, column_ranges, rows):
         raise NotImplementedError()

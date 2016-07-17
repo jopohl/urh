@@ -22,9 +22,9 @@ class Preamble(Component):
             for i in range(start+column_ranges[0][0], column_ranges[0][1], constants.SHORTEST_PREAMBLE_IN_BITS):
                 for j in range(0, constants.SHORTEST_PREAMBLE_IN_BITS, 2):
                     if not (bitvector[i + j] and not bitvector[i + j + 1]):
-                        return i - 1 if i - 1 >= 0 else None
+                        return i if i >= 0 else None
 
-            return len(bitvector) - 1 if len(bitvector) - 1 >= 0 else None
+            return len(bitvector) if len(bitvector) >= 0 else None
 
         except IndexError:
             return None

@@ -63,6 +63,9 @@ class FormatFinder(object):
                     if overlapping[1] != lbl.end:
                         include_ranges[i].append((lbl.end, overlapping[1]))
 
+                    if isinstance(component, Preamble) or isinstance(component, Synchronization):
+                        self.length_component.sync_end = lbl.end
+
         return result
 
 

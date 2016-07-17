@@ -20,8 +20,7 @@ class Synchronization(Component):
             bitvector_i = bitvectors[rows[i]]
             for j in range(i, len(rows)):
                 bitvector_j = bitvectors[rows[j]]
-                for col_range in column_ranges[i]:
-                    start, end = col_range
+                for start, end in column_ranges[i]:
                     bits_i = bitvector_i[start:end]
                     bits_j = bitvector_j[start:end]
                     try:
@@ -29,7 +28,7 @@ class Synchronization(Component):
                     except StopIteration:
                         continue
                     start = 4 * (start // 4)
-                    first_diff = start + 4 * (first_diff // 4) - 1
+                    first_diff = start + 4 * (first_diff // 4)
                     if start != first_diff:
                         possible_sync_pos[(start, first_diff)] += 1
 

@@ -1,5 +1,7 @@
 import unittest
 
+import numpy as np
+
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address
 from urh.awre.components.Flags import Flags
@@ -15,6 +17,20 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 
 
 class TestAWRE(unittest.TestCase):
+    def setUp(self):
+        self.protocol = ProtocolAnalyzer(None)
+        with open("./data/decoded_bits.txt") as f:
+            for line in f:
+                self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.blocks[-1].labelset = self.protocol.default_labelset
+
+        # Assign participants
+        alice = Participant("Alice", "A")
+        bob = Participant("Bob", "B")
+        alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
+        for i, block in enumerate(self.protocol.blocks):
+            block.participant = alice if i in alice_indices else bob
+
     def test_build_component_order(self):
         expected_default = [Preamble(), Synchronization(), Length(), Address(), SequenceNumber(), Type(), Flags()]
 
@@ -49,20 +65,6 @@ class TestAWRE(unittest.TestCase):
         self.assertTrue(format_finder.build_component_order())
 
     def test_format_finding_rwe(self):
-        protocol = ProtocolAnalyzer(None)
-        with open("./data/decoded_bits.txt") as f:
-            for line in f:
-                protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
-                protocol.blocks[-1].labelset = protocol.default_labelset
-
-        # Assign participants
-        alice = Participant("Alice", "A")
-        bob = Participant("Bob", "B")
-        alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
-        for i, block in enumerate(protocol.blocks):
-            block.participant = alice if i in alice_indices else bob
-
-
         preamble_start = 0
         preamble_end = 31
         sync_start = 32
@@ -75,12 +77,18 @@ class TestAWRE(unittest.TestCase):
         length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, val_type_index=0, color_index=2)
 
 
-        ff = FormatFinder()
-        found_labels_for_blocks = ff.perform_iteration([block.plain_bits for block in protocol.blocks])
+        ff = FormatFinder(self.protocol)
+        found_labels_for_blocks = ff.perform_iteration()
 
-        for i in range(0, len(protocol.blocks)):
+        for i in range(0, len(self.protocol.blocks)):
             self.assertIn(preamble_label, found_labels_for_blocks[i])
             self.assertIn(sync_label, found_labels_for_blocks[i])
             self.assertIn(length_label, found_labels_for_blocks[i])
+
+    def test_length_clustering(self):
+        ff = FormatFinder(self.protocol)
+        cluster = ff.cluster_lengths()
+        print(cluster)
+
 
 

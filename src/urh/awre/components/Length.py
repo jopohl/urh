@@ -9,7 +9,7 @@ class Length(Component):
     """
 
 
-    def __init__(self, priority=2, predecessors=None, enabled=True, backend=None):
+    def __init__(self, length_cluster, priority=2, predecessors=None, enabled=True, backend=None):
         super().__init__(priority, predecessors, enabled, backend )
         self.sync_end = 0
         """
@@ -18,6 +18,8 @@ class Length(Component):
 
         :type: int
         """
+
+        self.length_cluster = length_cluster
 
     def _py_find_field(self, bitvectors, column_ranges, rows):
         sync_len = self.__nbits2bytes(self.sync_end)

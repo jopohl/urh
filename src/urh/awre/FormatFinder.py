@@ -19,7 +19,7 @@ class FormatFinder(object):
     def __init__(self, protocol: ProtocolAnalyzer, participants):
         self.participants = participants
         protocol.auto_assign_participants(self.participants)
-        self.bitvectors = [block.plain_bits for block in protocol.blocks]
+        self.bitvectors = [block.decoded_bits for block in protocol.blocks]
         self.len_cluster = self.cluster_lengths()
         self.participant_cluster = self.cluster_participants()
 

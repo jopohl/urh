@@ -52,25 +52,28 @@ class FormatFinder(object):
         return result
 
     def perform_iteration(self):
-        include_ranges = {i: [(0, len(bv))] for i, bv in enumerate(self.bitvectors)}
-        result = {i: [] for i in range(len(self.bitvectors))}
+        message_types = {0: [i for i in range(len(self.bitvectors))]}
+        include_ranges_per_message_type = {0: [(0, len(bv))] for i, bv in enumerate(self.bitvectors)}
+        result = {0: []} # Key = message type, value = list of labels
 
         for component in self.build_component_order():
-            lbl = component.find_field(self.bitvectors, include_ranges)
-            if lbl:
-                rows = component.rows if component.rows is not None else range(0, len(self.bitvectors)) # rows determine which rows (blocks) the component shall be applied to
-                for i in rows:
-                    result[i].append(lbl)
+            # TODO: Creating new message types e.g. for addresses
+            for message_type in message_types:
+                include_range = include_ranges_per_message_type[message_type]
+                lbl = component.find_field(self.bitvectors, include_range, message_types[message_type])
+                if lbl:
+                    result[message_type].append(lbl)
+
                     # Update the include ranges for this block
                     # Exclude the new label from consecutive component operations
-                    overlapping = next((rng for rng in include_ranges[i] if any(j in range(*rng) for j in range(lbl.start, lbl.end))))
-                    include_ranges[i].remove(overlapping)
+                    overlapping = next((rng for rng in include_range if any(j in range(*rng) for j in range(lbl.start, lbl.end))))
+                    include_range.remove(overlapping)
 
                     if overlapping[0] != lbl.start:
-                        include_ranges[i].append((overlapping[0], lbl.start))
+                        include_range.append((overlapping[0], lbl.start))
 
                     if overlapping[1] != lbl.end:
-                        include_ranges[i].append((lbl.end, overlapping[1]))
+                        include_range.append((lbl.end, overlapping[1]))
 
                     if isinstance(component, Preamble) or isinstance(component, Synchronization):
                         self.length_component.sync_end = lbl.end

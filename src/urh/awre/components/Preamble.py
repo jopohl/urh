@@ -6,7 +6,7 @@ class Preamble(Component):
         super().__init__(priority, predecessors, enabled, backend)
 
     def _py_find_field(self, bitvectors, column_ranges, rows):
-        preamble_ends = [pre_end for pre_end in (self.__find_preamble_end(bitvectors[i], column_ranges[i]) for i in rows) if pre_end]
+        preamble_ends = [pre_end for pre_end in (self.__find_preamble_end(bitvectors[i], column_ranges) for i in rows) if pre_end]
 
         if len(preamble_ends) == 0:
             return 0, 0

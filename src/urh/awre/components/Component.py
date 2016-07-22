@@ -13,6 +13,9 @@ class Component(metaclass=ABCMeta):
     Additionally, components can have a set of predecessors to define hard dependencies.
     """
 
+
+    EQUAL_BIT_TRESHOLD = 0.9
+
     class Backend(Enum):
         python = 1
         cython = 2
@@ -32,15 +35,7 @@ class Component(metaclass=ABCMeta):
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
 
-        self.rows = None
-        """
-        List of row indices where this component shall be searched.
-        Useful for defining logical groups e.g. based on participants.
-
-        :type: list of int
-        """
-
-    def find_field(self, bitvectors, column_ranges) -> ProtocolLabel:
+    def find_field(self, bitvectors, column_ranges, rows) -> ProtocolLabel:
         """
         Wrapper method selecting the backend to find the protocol field.
         Various strategies are possible e.g.:
@@ -54,7 +49,6 @@ class Component(metaclass=ABCMeta):
         :return: Highest probable label for this field
         """
         try:
-            rows = self.rows if self.rows is not None else range(0, len(bitvectors))
             if self.backend == self.Backend.python:
                 start, end = self._py_find_field(bitvectors, column_ranges, rows)
             elif self.backend == self.Backend.cython:

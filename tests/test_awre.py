@@ -78,12 +78,11 @@ class TestAWRE(unittest.TestCase):
 
 
         ff = FormatFinder(self.protocol)
-        found_labels_for_blocks = ff.perform_iteration()
+        found_message_types = ff.perform_iteration()
 
-        for i in range(0, len(self.protocol.blocks)):
-            self.assertIn(preamble_label, found_labels_for_blocks[i])
-            self.assertIn(sync_label, found_labels_for_blocks[i])
-            self.assertIn(length_label, found_labels_for_blocks[i])
+        self.assertIn(preamble_label, found_message_types[0])
+        self.assertIn(sync_label, found_message_types[0])
+        self.assertIn(length_label, found_message_types[0])
 
     def test_length_clustering(self):
         ff = FormatFinder(self.protocol)

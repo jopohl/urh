@@ -20,7 +20,7 @@ class Synchronization(Component):
             bitvector_i = bitvectors[rows[i]]
             for j in range(i, len(rows)):
                 bitvector_j = bitvectors[rows[j]]
-                for start, end in column_ranges[i]:
+                for start, end in column_ranges:
                     bits_i = bitvector_i[start:end]
                     bits_j = bitvector_j[start:end]
                     try:

@@ -31,6 +31,8 @@ class TestAWRE(unittest.TestCase):
         for i, block in enumerate(self.protocol.blocks):
             block.participant = alice if i in alice_indices else bob
 
+        self.participants = [alice, bob]
+
     def test_build_component_order(self):
         expected_default = [Preamble(), Synchronization(), Length(), Address(), SequenceNumber(), Type(), Flags()]
 
@@ -77,7 +79,7 @@ class TestAWRE(unittest.TestCase):
         length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, val_type_index=0, color_index=2)
 
 
-        ff = FormatFinder(self.protocol)
+        ff = FormatFinder(self.protocol, self.participants)
         found_message_types = ff.perform_iteration()
 
         self.assertIn(preamble_label, found_message_types[0])
@@ -85,7 +87,7 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(length_label, found_message_types[0])
 
     def test_length_clustering(self):
-        ff = FormatFinder(self.protocol)
+        ff = FormatFinder(self.protocol, self.participants)
         cluster = ff.cluster_lengths()
         print(cluster)
 

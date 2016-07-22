@@ -14,10 +14,14 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class FormatFinder(object):
-    def __init__(self, protocol: ProtocolAnalyzer):
+    MIN_BLOCKS_PER_CLUSTER = 2 # If there is only one block per cluster it is not very significant
+
+    def __init__(self, protocol: ProtocolAnalyzer, participants):
+        self.participants = participants
+        protocol.auto_assign_participants(self.participants)
         self.bitvectors = [block.plain_bits for block in protocol.blocks]
         self.len_cluster = self.cluster_lengths()
-
+        self.participant_cluster = self.cluster_participants()
 
         self.preamble_component = Preamble(priority=0)
         self.sync_component = Synchronization(priority=1, predecessors=[self.preamble_component])
@@ -93,8 +97,7 @@ class FormatFinder(object):
         :param bitvectors:
         :rtype: dict[int, tuple[np.ndarray, int]]
         """
-        # If there is only one block per cluster it is not very significant
-        MIN_BLOCKS_PER_CLUSTER = 2
+
 
         number_ones = dict()
         cluster_sizes = defaultdict(int)
@@ -107,5 +110,13 @@ class FormatFinder(object):
 
         # Calculate the relative numbers and normalize the equalness so e.g. 0.3 becomes 0.7
         return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl] / cluster_sizes[vl]))
-            for vl in number_ones if cluster_sizes[vl] >= MIN_BLOCKS_PER_CLUSTER}
+            for vl in number_ones if cluster_sizes[vl] >= self.MIN_BLOCKS_PER_CLUSTER}
 
+    def cluster_participants(self):
+        # TODO: How to deal with vectors of different length?
+
+        number_ones = {p: [] for p in self.participants}
+        cluster_sizes = {p: 0 for p in self.participants}
+
+        for i, vector in enumerate(self.bitvectors):
+            pass

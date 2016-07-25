@@ -27,15 +27,13 @@ class FormatFinder(object):
         self.bitvectors = [np.array(block.decoded_bits, dtype=np.int8) for block in self.protocol.blocks]
         self.len_cluster = self.cluster_lengths()
         self.xor_matrix = self.build_xor_matrix()
-        self.participant_cluster = self.cluster_participants()
-
 
         self.preamble_component = Preamble(priority=0)
         self.sync_component = Synchronization(priority=1, predecessors=[self.preamble_component])
         self.length_component = Length(length_cluster=self.len_cluster, priority=2,
                                        predecessors=[self.preamble_component, self.sync_component])
         self.address_component = Address(participant_lut=[block.participant for block in self.protocol.blocks],
-                                         participant_cluster=self.participant_cluster, priority=3,
+                                         xor_matrix=self.xor_matrix, priority=3,
                                          predecessors=[self.preamble_component, self.sync_component])
         self.sequence_number_component = SequenceNumber(priority=4, predecessors=[self.preamble_component, self.sync_component])
         self.type_component = Type(priority=5, predecessors=[self.preamble_component, self.sync_component])
@@ -67,7 +65,8 @@ class FormatFinder(object):
 
     def perform_iteration(self):
         message_types = {0: [i for i in range(len(self.bitvectors))]}
-        include_ranges_per_message_type = {0: [(0, len(bv))] for i, bv in enumerate(self.bitvectors)}
+        max_bitvector = max([len(bitvector) for bitvector in self.bitvectors])
+        include_ranges_per_message_type = {0: [(0, max_bitvector)]}
         result = {0: []} # Key = message type, value = list of labels
 
         for component in self.build_component_order():
@@ -120,27 +119,6 @@ class FormatFinder(object):
         # Calculate the relative numbers and normalize the equalness so e.g. 0.3 becomes 0.7
         return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl][0] / number_ones[vl][1]))
                 for vl in number_ones if number_ones[vl][1] >= self.MIN_BLOCKS_PER_CLUSTER}
-
-    def cluster_participants(self):
-        """
-        Get the equal vectors based on participants. An example entry is:
-
-        cluster["alice"][180] = (0.7, 1.0, 0.5)
-
-        meaning the blocks with length 180 bit for participant alice were 70% equal in first bit, 100% in second and
-        50% equal in third bit.
-
-        :return:
-        """
-        participants = set(block.participant for block in self.protocol.blocks)
-        result = {p: dict() for p in participants}
-
-        for p in participants:
-            rows = [i for i, block in enumerate(self.protocol.blocks) if block.participant == p]
-            result[p] = [self.xor_matrix[i][j][self.xor_matrix[i][j] != -1] for i in rows for j in rows if j > i]
-
-        #print(result)
-        return result
 
     def build_xor_matrix(self):
         t = time.time()

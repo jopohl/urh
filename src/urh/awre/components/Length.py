@@ -27,7 +27,6 @@ class Length(Component):
         self.length_cluster = length_cluster
 
     def _py_find_field(self, bitvectors, column_ranges, rows):
-        # Find common equal ranges between intervals
         equal_ranges = defaultdict(list)
         for vec_len in set(len(bitvectors[row]) for row in rows):
             cluster = self.length_cluster[vec_len]
@@ -38,10 +37,6 @@ class Length(Component):
                         equal_ranges[vec_len].append((rng_start+start, rng_start+end-1))
                     start = end+1
 
-        if len(equal_ranges) == 0:
-            return 0,0
-
-        # Find common intervals
         common_intervals = []
         keys = sorted(equal_ranges)
         for interval in equal_ranges[keys[0]]:

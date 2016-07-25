@@ -1,4 +1,9 @@
 from abc import ABCMeta
+from collections import defaultdict
+
+import numpy as np
+
+from urh.signalprocessing.Interval import Interval
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from enum import Enum
 

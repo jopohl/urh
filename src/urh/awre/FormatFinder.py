@@ -1,6 +1,9 @@
 from collections import defaultdict
 
 import numpy as np
+import time
+
+from urh.util.Logger import logger
 
 from urh.awre.components.Address import Address
 from urh.awre.components.Component import Component
@@ -11,7 +14,7 @@ from urh.awre.components.SequenceNumber import SequenceNumber
 from urh.awre.components.Synchronization import Synchronization
 from urh.awre.components.Type import Type
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
+from urh.cythonext import util
 
 class FormatFinder(object):
     MIN_BLOCKS_PER_CLUSTER = 2 # If there is only one block per cluster it is not very significant
@@ -21,14 +24,19 @@ class FormatFinder(object):
             protocol.auto_assign_participants(participants)
 
         self.protocol = protocol
-        self.bitvectors = [block.decoded_bits for block in self.protocol.blocks]
+        self.bitvectors = [np.array(block.decoded_bits, dtype=np.int8) for block in self.protocol.blocks]
         self.len_cluster = self.cluster_lengths()
+        self.xor_matrix = self.build_xor_matrix()
         self.participant_cluster = self.cluster_participants()
+
 
         self.preamble_component = Preamble(priority=0)
         self.sync_component = Synchronization(priority=1, predecessors=[self.preamble_component])
-        self.length_component = Length(length_cluster=self.len_cluster, priority=2, predecessors=[self.preamble_component, self.sync_component])
-        self.address_component = Address(priority=3, predecessors=[self.preamble_component, self.sync_component])
+        self.length_component = Length(length_cluster=self.len_cluster, priority=2,
+                                       predecessors=[self.preamble_component, self.sync_component])
+        self.address_component = Address(participant_lut=[block.participant for block in self.protocol.blocks],
+                                         participant_cluster=self.participant_cluster, priority=3,
+                                         predecessors=[self.preamble_component, self.sync_component])
         self.sequence_number_component = SequenceNumber(priority=4, predecessors=[self.preamble_component, self.sync_component])
         self.type_component = Type(priority=5, predecessors=[self.preamble_component, self.sync_component])
         self.flags_component = Flags(priority=6, predecessors=[self.preamble_component, self.sync_component])
@@ -102,11 +110,8 @@ class FormatFinder(object):
         :rtype: dict[int, tuple[np.ndarray, int]]
         """
 
-        return self.__calc_relative_equal_vector(self.bitvectors)
-
-    def __calc_relative_equal_vector(self, bitvectors):
         number_ones = dict()  # dict of tuple. 0 = number ones vector, 1 = number of blocks for this vector
-        for vector in bitvectors:
+        for vector in self.bitvectors:
             if len(vector) not in number_ones:
                 number_ones[len(vector)] = [np.zeros(len(vector), dtype=int), 0]
             number_ones[len(vector)][0] += vector
@@ -131,6 +136,14 @@ class FormatFinder(object):
         result = {p: dict() for p in participants}
 
         for p in participants:
-            result[p] = self.__calc_relative_equal_vector([block.decoded_bits for block in self.protocol.blocks if block.participant == p])
+            rows = [i for i, block in enumerate(self.protocol.blocks) if block.participant == p]
+            result[p] = [self.xor_matrix[i][j][self.xor_matrix[i][j] != -1] for i in rows for j in rows if j > i]
 
+        #print(result)
         return result
+
+    def build_xor_matrix(self):
+        t = time.time()
+        xor_matrix = util.build_xor_matrix(self.bitvectors)
+        logger.debug("XOR matrix: {}s".format(time.time()-t))
+        return xor_matrix

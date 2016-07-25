@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address

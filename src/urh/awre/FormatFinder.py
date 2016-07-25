@@ -16,10 +16,12 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 class FormatFinder(object):
     MIN_BLOCKS_PER_CLUSTER = 2 # If there is only one block per cluster it is not very significant
 
-    def __init__(self, protocol: ProtocolAnalyzer, participants):
-        self.participants = participants
-        protocol.auto_assign_participants(self.participants)
-        self.bitvectors = [block.decoded_bits for block in protocol.blocks]
+    def __init__(self, protocol: ProtocolAnalyzer, participants=None):
+        if participants is not None:
+            protocol.auto_assign_participants(participants)
+
+        self.protocol = protocol
+        self.bitvectors = [block.decoded_bits for block in self.protocol.blocks]
         self.len_cluster = self.cluster_lengths()
         self.participant_cluster = self.cluster_participants()
 
@@ -92,31 +94,43 @@ class FormatFinder(object):
         4: [1, 0.75, 1, 1]
 
         Meaning there were two block lengths: 2 and 4 bit.
-        (0.5, 1) means, the first bit was equal in 50% of cases (meaning maximum difference) and bit 2 was equal fin all blocks
+        (0.5, 1) means, the first bit was equal in 50% of cases (meaning maximum difference) and bit 2 was equal in all blocks
+
+        A simple XOR would not work as it would be very error prone.
 
         :param bitvectors:
         :rtype: dict[int, tuple[np.ndarray, int]]
         """
 
+        return self.__calc_relative_equal_vector(self.bitvectors)
 
-        number_ones = dict()
-        cluster_sizes = defaultdict(int)
-
-        for vector in self.bitvectors:
+    def __calc_relative_equal_vector(self, bitvectors):
+        number_ones = dict()  # dict of tuple. 0 = number ones vector, 1 = number of blocks for this vector
+        for vector in bitvectors:
             if len(vector) not in number_ones:
-                number_ones[len(vector)] = np.zeros(len(vector), dtype=int)
-            number_ones[len(vector)] += vector
-            cluster_sizes[len(vector)] += 1
+                number_ones[len(vector)] = [np.zeros(len(vector), dtype=int), 0]
+            number_ones[len(vector)][0] += vector
+            number_ones[len(vector)][1] += 1
 
         # Calculate the relative numbers and normalize the equalness so e.g. 0.3 becomes 0.7
-        return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl] / cluster_sizes[vl]))
-            for vl in number_ones if cluster_sizes[vl] >= self.MIN_BLOCKS_PER_CLUSTER}
+        return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl][0] / number_ones[vl][1]))
+                for vl in number_ones if number_ones[vl][1] >= self.MIN_BLOCKS_PER_CLUSTER}
 
     def cluster_participants(self):
-        # TODO: How to deal with vectors of different length?
+        """
+        Get the equal vectors based on participants. An example entry is:
 
-        number_ones = {p: [] for p in self.participants}
-        cluster_sizes = {p: 0 for p in self.participants}
+        cluster["alice"][180] = (0.7, 1.0, 0.5)
 
-        for i, vector in enumerate(self.bitvectors):
-            pass
+        meaning the blocks with length 180 bit for participant alice were 70% equal in first bit, 100% in second and
+        50% equal in third bit.
+
+        :return:
+        """
+        participants = set(block.participant for block in self.protocol.blocks)
+        result = {p: dict() for p in participants}
+
+        for p in participants:
+            result[p] = self.__calc_relative_equal_vector([block.decoded_bits for block in self.protocol.blocks if block.participant == p])
+
+        return result

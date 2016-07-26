@@ -44,7 +44,7 @@ class PluginManager(object):
                 plugin.enabled = settings.value(plugin.name, type=bool) if plugin.name in settings.allKeys() else False
                 result.append(plugin)
             except ImportError as e:
-                logger.error("Could not load plugin {0} ({1} [{2}])".format(d, e, e.msg))
+                logger.error("Could not load plugin {0} ({1})".format(d, e))
                 continue
 
         return result

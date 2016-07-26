@@ -3,9 +3,27 @@ RUN mkdir -p /root/.gnupg
 RUN pacman -Sy --noconfirm archlinux-keyring
 RUN pacman -Syu --noconfirm && pacman-db-upgrade
 RUN pacman -S --noconfirm ca-certificates ca-certificates-mozilla
-RUN pacman -S --noconfirm git python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu
+RUN pacman -S --noconfirm ttf-dejavu
+# RUN pacman -S --noconfirm git curl base-devel python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu
+RUN pacman -S --noconfirm curl base-devel
 
-ADD run.sh /bin/run.sh
+RUN useradd -m -G wheel -s /bin/bash dockeruser
+RUN echo "dockeruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+WORKDIR /tmp
+RUN curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz
+RUN sudo -u dockeruser tar -xvzf package-query.tar.gz
+WORKDIR /tmp/package-query
+RUN sudo -u dockeruser makepkg -si --noconfirm
+
+WORKDIR /tmp
+RUN curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz
+RUN sudo -u dockeruser tar -xvzf yaourt.tar.gz
+WORKDIR /tmp/yaourt
+RUN sudo -u dockeruser makepkg -si --noconfirm
+
+RUN echo "#!/bin/bash" > /bin/run.sh
+RUN echo "sudo -u dockeruser yaourt -S --noconfirm urh" >> /bin/run.sh
+RUN echo "urh autoclose" >> /bin/run.sh
 RUN chmod +x /bin/run.sh
-
 CMD /bin/run.sh

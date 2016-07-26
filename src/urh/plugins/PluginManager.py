@@ -5,6 +5,7 @@ import sys
 
 from urh import constants
 from urh.plugins.Plugin import Plugin, ProtocolPlugin, LabelAssignPlugin
+from urh.util.Logger import logger
 
 
 class PluginManager(object):
@@ -34,13 +35,17 @@ class PluginManager(object):
         settings  = constants.SETTINGS
 
         for d in plugin_dirs:
-            class_module = self.load_plugin(d)
-            plugin = class_module()
-            plugin.plugin_path = os.path.join(self.plugin_path, plugin.name)
-            plugin.load_description()
-            plugin.load_settings_frame()
-            plugin.enabled = settings.value(plugin.name, type=bool) if plugin.name in settings.allKeys() else False
-            result.append(plugin)
+            try:
+                class_module = self.load_plugin(d)
+                plugin = class_module()
+                plugin.plugin_path = os.path.join(self.plugin_path, plugin.name)
+                plugin.load_description()
+                plugin.load_settings_frame()
+                plugin.enabled = settings.value(plugin.name, type=bool) if plugin.name in settings.allKeys() else False
+                result.append(plugin)
+            except ImportError as e:
+                logger.error("Could not load plugin {0} ({1} [{2}])".format(d, e, e.msg))
+                continue
 
         return result
 

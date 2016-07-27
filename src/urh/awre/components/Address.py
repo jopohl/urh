@@ -37,13 +37,13 @@ class Address(Component):
 
         for parti in sorted(equal_ranges_per_participant):
             print(parti)
-            # for row, p in enumerate(self.participant_lut):
-            #     if p == parti:
-            #         b = "".join(map(str,map(int,bitvectors[row])))
-            #         print(b)
-            #         hex_str = "".join([hex(int(b[i:i+4],2))[2:]for i in range(0,len(b),4)])
-            #         print(hex_str)
-            #         print()
+            for row, p in enumerate(self.participant_lut):
+                if p == parti:
+                    b = "".join(map(str,map(int,bitvectors[row])))[72:]
+                  #  print(b)
+                    hex_str = "".join([hex(int(b[i:i+4],2))[2:]for i in range(0,len(b),4)])
+                  #  print(hex_str)
+                  #  print()
 
 
             for rng in sorted(set(equal_ranges_per_participant[parti])):
@@ -53,7 +53,15 @@ class Address(Component):
                 bits_str = "".join(map(str, map(int, bitvectors[index][start:end])))
                 while len(bits) % 4 != 0:
                     bits = np.append(bits, 0)
-                print(start // 4 + 1, end // 4, "({})".format(len(equal_ranges_per_participant[parti][rng])),
-                      hex(int("".join(map(str, bits)), 2)), len(bitvectors[index]))
+                occurences = len(equal_ranges_per_participant[parti][rng])
+                if occurences >= 0:
+                   # For Bob the adress 1b60330 is found to be 0x8db0198000 which is correct,
+                   # as it starts with a leading 1 in all messages.
+                   # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
+                   # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
+                   print(start // 4 + 1, end // 4, "({})".format(occurences),
+                         hex(int("".join(map(str, bits)), 2)), len(bitvectors[index]), bits_str)
+
+
 
         raise NotImplementedError("Todo")

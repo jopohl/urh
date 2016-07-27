@@ -59,6 +59,7 @@ class Address(Component):
                    # as it starts with a leading 1 in all messages.
                    # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
                    # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
+                   # Therefore we need to check for partial bits inside the address candidates to be sure we find the correct ones
                    print(start // 4 + 1, end // 4, "({})".format(occurences),
                          hex(int("".join(map(str, bits)), 2)), len(bitvectors[index]), bits_str)
 

@@ -26,7 +26,7 @@ class Address(Component):
                         start = 0
                         for end in np.where(xor_vec[rng_start:rng_end] == 1)[0]:
                             if end - start >= self.MIN_ADDRESS_LENGTH:
-                                equal_range = (rng_start + start, rng_start + end-1)
+                                equal_range = (rng_start + start, rng_start + end)
                                 s = equal_ranges_per_participant[participant].setdefault(equal_range, set())
                                 s.add(i)
                                 s.add(j)
@@ -38,11 +38,11 @@ class Address(Component):
                 start, end = rng
                 index = next(iter(equal_ranges_per_participant[parti][rng]))
                 bits = bitvectors[index][start:end]
-                all_bits = "".join(map(str, map(int, bitvectors[index])))
+                bits_str = "".join(map(str, map(int, bitvectors[index][start:end])))
                 ell = len(bits)
                 while len(bits) % 4 != 0:
                     bits = np.append(bits, 0)
                 print(start // 4 + 1, end // 4, "({}) [{}]".format(len(equal_ranges_per_participant[parti][rng]), ell),
-                      hex(int("".join(map(str, bits)), 2)), all_bits, len(all_bits))
+                      hex(int("".join(map(str, bits)), 2)), bits_str, len(bitvectors[index]))
 
         raise NotImplementedError("Todo")

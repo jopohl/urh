@@ -32,18 +32,17 @@ class Address(Component):
                                 s.add(j)
                             start = end + 1
 
-
         for parti in sorted(equal_ranges_per_participant):
             print(parti)
             for rng in sorted(set(equal_ranges_per_participant[parti])):
                 start, end = rng
                 index = next(iter(equal_ranges_per_participant[parti][rng]))
                 bits = bitvectors[index][start:end]
+                all_bits = "".join(map(str, map(int, bitvectors[index])))
                 ell = len(bits)
                 while len(bits) % 4 != 0:
                     bits = np.append(bits, 0)
-                #bits[0:0] = [0] * (4-len(bits)  % 4)
-                #print(start//4+1, end//4, "({})".format(index), hex(int("".join(map(str, bits)),2)))
-                print(start // 4 + 1, end // 4, "({}) [{}]".format(len(equal_ranges_per_participant[parti][rng]), ell), hex(int("".join(map(str, bits)), 2)))
+                print(start // 4 + 1, end // 4, "({}) [{}]".format(len(equal_ranges_per_participant[parti][rng]), ell),
+                      hex(int("".join(map(str, bits)), 2)), all_bits, len(all_bits))
 
         raise NotImplementedError("Todo")

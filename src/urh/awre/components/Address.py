@@ -28,12 +28,17 @@ class Address(Component):
                             if end - start >= self.MIN_ADDRESS_LENGTH:
                                 equal_range = (rng_start + start, rng_start + end)
                                 s = equal_ranges_per_participant[participant].setdefault(equal_range, set())
-                                s.add(i)
-                                s.add(j)
+                                s.add(rows[i])
+                                s.add(rows[j])
                             start = end + 1
 
         for parti in sorted(equal_ranges_per_participant):
             print(parti)
+            for row, p in enumerate(self.participant_lut):
+                if p == parti:
+                    print("".join(map(str,map(int,bitvectors[row]))))
+
+
             for rng in sorted(set(equal_ranges_per_participant[parti])):
                 start, end = rng
                 index = next(iter(equal_ranges_per_participant[parti][rng]))

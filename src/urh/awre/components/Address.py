@@ -1,11 +1,13 @@
 from collections import defaultdict
 
 import numpy as np
+from urh import constants
 
 from urh.awre.components.Component import Component
 
+
 class Address(Component):
-    MIN_ADDRESS_LENGTH = 8 # Address should be at least one byte
+    MIN_ADDRESS_LENGTH = 8  # Address should be at least one byte
 
     def __init__(self, participant_lut, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None):
         super().__init__(priority, predecessors, enabled, backend)
@@ -17,6 +19,7 @@ class Address(Component):
         # Cluster participants
         equal_ranges_per_participant = defaultdict(dict)
 
+        # Step 1: Find equal ranges for participants by evaluating the XOR matrix participant wise
         for i, row in enumerate(rows):
             participant = self.participant_lut[row]
             for j in range(i, len(rows)):
@@ -35,16 +38,29 @@ class Address(Component):
                                 s.add(other_row)
                             start = end + 1
 
+        # Step 2: Eliminate all ranges that occur less than n times
+
         for parti in sorted(equal_ranges_per_participant):
             print(parti)
             for row, p in enumerate(self.participant_lut):
                 if p == parti:
-                    b = "".join(map(str,map(int,bitvectors[row])))[72:]
-                  #  print(b)
-                    hex_str = "".join([hex(int(b[i:i+4],2))[2:]for i in range(0,len(b),4)])
-                  #  print(hex_str)
-                  #  print()
+                    b = "".join(map(str, map(int, bitvectors[row])))[72:]
+                    #  print(b)
+                    hex_str = "".join([hex(int(b[i:i + 4], 2))[2:] for i in range(0, len(b), 4)])
+                    #  print(hex_str)
+                    #  print()
 
+            address1 = "000110110110000000110011"
+            address2 = "011110001110001010001001"
+
+            assert len(address1) % 8 == 0
+            assert len(address2) % 8 == 0
+
+            print("address1", constants.color.BLUE, address1 + " (" +hex(int("".join(map(str, address1)), 2)) +")", constants.color.END)
+            print("address2", constants.color.GREEN, address2 + " (" + hex(int("".join(map(str, address2)), 2)) + ")",
+                  constants.color.END)
+
+            print()
 
             for rng in sorted(set(equal_ranges_per_participant[parti])):
                 start, end = rng
@@ -55,14 +71,21 @@ class Address(Component):
                     bits = np.append(bits, 0)
                 occurences = len(equal_ranges_per_participant[parti][rng])
                 if occurences >= 0:
-                   # For Bob the adress 1b60330 is found to be 0x8db0198000 which is correct,
-                   # as it starts with a leading 1 in all messages.
-                   # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
-                   # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
-                   # Therefore we need to check for partial bits inside the address candidates to be sure we find the correct ones
-                   print(start // 4 + 1, end // 4, "({})".format(occurences),
-                         hex(int("".join(map(str, bits)), 2)), len(bitvectors[index]), bits_str)
+                    # For Bob the adress 1b60330 is found to be 0x8db0198000 which is correct,
+                    # as it starts with a leading 1 in all messages.
+                    # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
+                    # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
+                    # Therefore we need to check for partial bits inside the address candidates to be sure we find the correct ones
+                    format_start = ""
+                    if address1 in bits_str and address2 not in bits_str:
+                        format_start = constants.color.BLUE
+                    if address2 in bits_str and address1 not in bits_str:
+                        format_start = constants.color.GREEN
+                    if address1 in bits_str and address2 in bits_str:
+                        format_start = constants.color.RED + constants.color.BOLD
 
-
+                    print(start // 4 + 1, end // 4, "({})".format(occurences),
+                          format_start + hex(int("".join(map(str, bits)), 2)) + "\033[0m", len(bitvectors[index]),
+                          bits_str)
 
         raise NotImplementedError("Todo")

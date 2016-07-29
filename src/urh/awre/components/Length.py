@@ -29,13 +29,16 @@ class Length(Component):
     def _py_find_field(self, bitvectors, column_ranges, rows):
         equal_ranges = defaultdict(list)
         for vec_len in set(len(bitvectors[row]) for row in rows):
-            cluster = self.length_cluster[vec_len]
-            for rng_start, rng_end in column_ranges:
-                start = 0
-                for end in np.where(cluster[rng_start:rng_end] < self.EQUAL_BIT_TRESHOLD)[0]:
-                    if start < end-1:
-                        equal_ranges[vec_len].append((rng_start+start, rng_start+end-1))
-                    start = end+1
+            try:
+                cluster = self.length_cluster[vec_len]
+                for rng_start, rng_end in column_ranges:
+                    start = 0
+                    for end in np.where(cluster[rng_start:rng_end] < self.EQUAL_BIT_TRESHOLD)[0]:
+                        if start < end-1:
+                            equal_ranges[vec_len].append((rng_start+start, rng_start+end-1))
+                        start = end+1
+            except KeyError:
+                continue
 
         common_intervals = []
         keys = sorted(equal_ranges)

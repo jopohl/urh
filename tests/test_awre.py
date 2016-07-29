@@ -18,7 +18,7 @@ from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 class TestAWRE(unittest.TestCase):
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
-        with open("./data/decoded_bits.txt") as f:
+        with open("./data/awre_consistent_addresses.txt") as f:
             for line in f:
                 self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.blocks[-1].labelset = self.protocol.default_labelset

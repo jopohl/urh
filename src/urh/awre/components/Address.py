@@ -45,6 +45,9 @@ class Address(Component):
 
         # Step 2: Align sequences together (correct bit shifts, align to byte)
 
+
+
+
     def __output(self, equal_ranges_per_participant, bitvectors):
 
         for parti in sorted(equal_ranges_per_participant):
@@ -94,8 +97,8 @@ class Address(Component):
                             format_start = constants.color.RED + constants.color.BOLD
 
                         print(start, end,
-                              "({})".format(occurences),
+                              "({})\t".format(occurences),
                               format_start + hex(int("".join(map(str, padded_bits)), 2)) + "\033[0m", len(bitvectors[index]),
-                              bits_str)
+                              bits_str, "(" + ",".join(map(str, sorted(equal_ranges_per_participant[parti][rng][bits])))+ ")")
 
         raise NotImplementedError("Todo")

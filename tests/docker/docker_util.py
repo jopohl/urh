@@ -19,6 +19,8 @@ def build_image(imagename: str):
     cmd.extend(["docker", "build", "--force-rm", "--no-cache",
                 "--tag", "urh/"+imagename, "-f", imagename, "."])
 
+    print(" ".join(cmd))
+
     script = __file__ if not os.path.islink(__file__) else os.readlink(__file__)
     os.chdir(os.path.realpath(os.path.join(script, "..")))
 

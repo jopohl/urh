@@ -22,8 +22,6 @@ class Mode(Enum):
 
 
 class Rule(object):
-    __slots__ = ["__start", "__end", "__value_type", "operator", "target_value"]
-
     def __init__(self, start: int, end: int, operator: str, target_value: str, value_type: int):
         assert operator in OPERATIONS
         self.__start = start

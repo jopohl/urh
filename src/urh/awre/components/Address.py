@@ -24,9 +24,6 @@ class Address(Component):
             participant = self.participant_lut[row]
             for j in range(i, len(rows)):
                 other_row = rows[j]
-                if row == 9 and other_row == 13:
-                    print(participant)
-
                 if self.participant_lut[other_row] == participant:
                     xor_vec = self.xor_matrix[row, other_row][self.xor_matrix[row, other_row] != -1]
                     for rng_start, rng_end in column_ranges:
@@ -43,10 +40,15 @@ class Address(Component):
                                 s.add(other_row)
                             start = end + 1
 
-        # Step 2: Eliminate all ranges that occur less than n times
+        print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
+        self.__output(equal_ranges_per_participant, bitvectors)
+
+        # Step 2: Align sequences together (correct bit shifts, align to byte)
+
+    def __output(self, equal_ranges_per_participant, bitvectors):
 
         for parti in sorted(equal_ranges_per_participant):
-            print(parti)
+            print("\n" + constants.color.UNDERLINE + str(parti.name) + " (" + parti.shortname+ ")" + constants.color.END)
             for row, p in enumerate(self.participant_lut):
                 if p == parti:
                     b = "".join(map(str, map(int, bitvectors[row])))[72:]

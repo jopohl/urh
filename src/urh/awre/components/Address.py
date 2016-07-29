@@ -24,6 +24,9 @@ class Address(Component):
             participant = self.participant_lut[row]
             for j in range(i, len(rows)):
                 other_row = rows[j]
+                if row == 9 and other_row == 13:
+                    print(participant)
+
                 if self.participant_lut[other_row] == participant:
                     xor_vec = self.xor_matrix[row, other_row][self.xor_matrix[row, other_row] != -1]
                     for rng_start, rng_end in column_ranges:
@@ -33,7 +36,9 @@ class Address(Component):
                         for end in np.where(cmp_vector == 1)[0]:
                             if end - start >= self.MIN_ADDRESS_LENGTH:
                                 equal_range = (rng_start + start, rng_start + end)
-                                s = equal_ranges_per_participant[participant].setdefault(equal_range, set())
+                                d = equal_ranges_per_participant[participant].setdefault(equal_range, dict())
+                                bits = "".join(map(str, bitvectors[row][equal_range[0]:equal_range[1]]))
+                                s = d.setdefault(bits, set())
                                 s.add(row)
                                 s.add(other_row)
                             start = end + 1
@@ -64,28 +69,31 @@ class Address(Component):
 
             for rng in sorted(set(equal_ranges_per_participant[parti])):
                 start, end = rng
-                index = next(iter(equal_ranges_per_participant[parti][rng]))
-                bits = bitvectors[index][start:end]
-                bits_str = "".join(map(str, map(int, bitvectors[index][start:end])))
-                while len(bits) % 4 != 0:
-                    bits = np.append(bits, 0)
-                occurences = len(equal_ranges_per_participant[parti][rng])
-                if occurences >= 0:
-                    # For Bob the adress 1b60330 is found to be 0x8db0198000 which is correct,
-                    # as it starts with a leading 1 in all messages.
-                    # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
-                    # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
-                    # Therefore we need to check for partial bits inside the address candidates to be sure we find the correct ones
-                    format_start = ""
-                    if address1 in bits_str and address2 not in bits_str:
-                        format_start = constants.color.BLUE
-                    if address2 in bits_str and address1 not in bits_str:
-                        format_start = constants.color.GREEN
-                    if address1 in bits_str and address2 in bits_str:
-                        format_start = constants.color.RED + constants.color.BOLD
+                for bits in sorted(equal_ranges_per_participant[parti][rng]):
+                    bits_str = "".join(map(str, map(int, bits)))
 
-                    print(start // 4 + 1, end // 4, "({})".format(occurences),
-                          format_start + hex(int("".join(map(str, bits)), 2)) + "\033[0m", len(bitvectors[index]),
-                          bits_str)
+                    padded_bits = bits
+                    while len(padded_bits) % 4 != 0:
+                        padded_bits = np.append(padded_bits, 0)
+                    occurences = len(equal_ranges_per_participant[parti][rng][bits])
+                    index = sorted(equal_ranges_per_participant[parti][rng][bits])[0]
+                    if occurences >= 0:
+                        # For Bob the adress 1b60330 is found to be 0x8db0198000 which is correct,
+                        # as it starts with a leading 1 in all messages.
+                        # This is the last Bit of e0003 (Broadcast) or 78e289  (Other address)
+                        # Code to verify: hex(int("1000"+bin(int("1b6033",16))[2:]+"000",2))
+                        # Therefore we need to check for partial bits inside the address candidates to be sure we find the correct ones
+                        format_start = ""
+                        if address1 in bits_str and address2 not in bits_str:
+                            format_start = constants.color.BLUE
+                        if address2 in bits_str and address1 not in bits_str:
+                            format_start = constants.color.GREEN
+                        if address1 in bits_str and address2 in bits_str:
+                            format_start = constants.color.RED + constants.color.BOLD
+
+                        print(start, end,
+                              "({})".format(occurences),
+                              format_start + hex(int("".join(map(str, padded_bits)), 2)) + "\033[0m", len(bitvectors[index]),
+                              bits_str)
 
         raise NotImplementedError("Todo")

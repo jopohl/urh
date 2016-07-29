@@ -33,14 +33,14 @@ class TestAWRE(unittest.TestCase):
         self.participants = [alice, bob]
 
     def test_build_component_order(self):
-        expected_default = [Preamble(), Synchronization(), Length(), Address(), SequenceNumber(), Type(), Flags()]
+        expected_default = [Preamble(), Synchronization(), Length(None), Address(None, None), SequenceNumber(), Type(), Flags()]
 
-        format_finder = FormatFinder()
+        format_finder = FormatFinder(self.protocol)
 
         for expected, actual in zip(expected_default, format_finder.build_component_order()):
             assert type(expected) == type(actual)
 
-        expected_swapped = [Preamble(), Synchronization(), Address(), Length(), SequenceNumber(), Type(), Flags()]
+        expected_swapped = [Preamble(), Synchronization(), Address(None, None), Length(None), SequenceNumber(), Type(), Flags()]
         format_finder.length_component.priority = 3
         format_finder.address_component.priority = 2
 
@@ -84,11 +84,6 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(preamble_label, found_message_types[0])
         self.assertIn(sync_label, found_message_types[0])
         self.assertIn(length_label, found_message_types[0])
-
-    def test_length_clustering(self):
-        ff = FormatFinder(self.protocol, self.participants)
-        cluster = ff.cluster_lengths()
-        print(cluster)
 
 
 

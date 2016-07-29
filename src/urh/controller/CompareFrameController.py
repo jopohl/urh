@@ -306,6 +306,7 @@ class CompareFrameController(QFrame):
         self.ui.btnPrevSearch.clicked.connect(self.prev_search_result)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.set_protocol_label_visibility)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.label_value_model.update)
+        self.protocol_label_list_model.protolabel_name_changed.connect(self.on_label_name_edited)
         self.ui.btnSaveProto.clicked.connect(self.save_protocol)
         self.ui.tblViewProtocol.selection_changed.connect(self.handle_table_selection_changed)
         self.ui.listViewLabelNames.editActionTriggered.connect(self.show_protocol_labels)
@@ -1435,3 +1436,19 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.setRowHidden(i, hide)
 
         self.ui.tblViewProtocol.hide_row() # Update data structures and call triggers after hiding rows
+
+    def on_label_name_edited(self, protolabel: ProtocolLabel, labelset: LabelSet):
+        # Check if label with the same name is already in another labelset.
+        # If yes, copy the attributes of this label to the edited one
+        other_label = None
+        for lblset in self.proto_analyzer.labelsets:
+            if lblset == labelset:
+                continue
+            other_label = next((p for p in lblset if p.name == protolabel.name), None)
+            if other_label:
+                break
+        if other_label:
+            protolabel.color_index = other_label.color_index
+            protolabel.display_type_index = other_label.display_type_index
+            self.protocol_model.update()
+            self.label_value_model.update()

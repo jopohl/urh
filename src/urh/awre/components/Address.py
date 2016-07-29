@@ -41,14 +41,44 @@ class Address(Component):
                             start = end + 1
 
         print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
-        self.__output(equal_ranges_per_participant, bitvectors)
+        self.__print_ranges(equal_ranges_per_participant, bitvectors)
 
+        # Step 2: Now we want to find our address candidates.
+        # Step 2.a: Cluster the ranges based on their byte length
+        clustered_addresses = defaultdict(lambda: defaultdict(list))
+        for participant in equal_ranges_per_participant:
+            for start, end in equal_ranges_per_participant[participant]:
+                byte_len = (end - start) // 8
+                bits = list(equal_ranges_per_participant[participant][(start,end)].keys())
+                clustered_addresses[byte_len][(start, end)].extend(bits)
+
+        #self.__print_clustered(clustered_addresses)
+
+        # Now we search for ranges that are common in a cluster and contain different bit values. There are two possibilities:
+        #   1) If the protocol contains ACKs, these different values are the addresses or at least good candidates for them
+        #   2) If the protocol does not contain ACKs, these values contain both addresses and need to be splitted against each other
+        # We assume, that the protocol contains ACKs and if we do not find any use the strategy from 2).
+
+        # Step 2.b: Find common ranges with different values in the same cluster
+        for bl in sorted(clustered_addresses):
+            print(constants.color.BOLD + "Byte length " + str(bl) + constants.color.END)
+            for (start, end), bits in sorted(clustered_addresses[bl].items()):
+                print(start, end, bits)
+
+
+        #print(clustered_addresses)
         # Step 2: Align sequences together (correct bit shifts, align to byte)
 
 
+        raise NotImplementedError("Todo")
 
+    def __print_clustered(self, clustered_addresses):
+        for bl in sorted(clustered_addresses):
+            print(constants.color.BOLD + "Byte length " + str(bl) + constants.color.END)
+            for (start, end), bits in sorted(clustered_addresses[bl].items()):
+                print(start, end, bits)
 
-    def __output(self, equal_ranges_per_participant, bitvectors):
+    def __print_ranges(self, equal_ranges_per_participant, bitvectors):
 
         for parti in sorted(equal_ranges_per_participant):
             print("\n" + constants.color.UNDERLINE + str(parti.name) + " (" + parti.shortname+ ")" + constants.color.END)
@@ -100,5 +130,3 @@ class Address(Component):
                               "({})\t".format(occurences),
                               format_start + hex(int("".join(map(str, padded_bits)), 2)) + "\033[0m", len(bitvectors[index]),
                               bits_str, "(" + ",".join(map(str, sorted(equal_ranges_per_participant[parti][rng][bits])))+ ")")
-
-        raise NotImplementedError("Todo")

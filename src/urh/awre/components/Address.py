@@ -60,8 +60,17 @@ class Address(Component):
         # We assume, that the protocol contains ACKs and if we do not find any use the strategy from 2).
 
         # Step 2.b: Find common ranges with different values in the same cluster
+        # TODO: This is not error resistant
+        # TODO: This works only for two participants
+        candidates = []
         for bl in sorted(clustered_addresses):
-            print(constants.color.BOLD + "Byte length " + str(bl) + constants.color.END)
+            nvals = sum(len(bits) for bits in clustered_addresses[bl].values())
+            byte_str = ""
+            if nvals > 2:
+                byte_str = constants.color.BOLD
+            print(byte_str + "Byte length " + str(bl) + constants.color.END)
+
+
             for (start, end), bits in sorted(clustered_addresses[bl].items()):
                 print(start, end, bits)
 

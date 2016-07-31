@@ -60,7 +60,6 @@ class Address(Component):
         # We assume, that the protocol contains ACKs and if we do not find any use the strategy from 2).
 
         # Step 2.b: Find common ranges with different values in the same cluster
-        # TODO: This is not error resistant
         # TODO: This works only for two participants
         candidates = []
         for bl in sorted(clustered_addresses):

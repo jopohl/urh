@@ -46,14 +46,14 @@ class Address(Component):
         # Step 2: Now we want to find our address candidates.
         # Step 2.a: Cluster the ranges based on their byte length
         clustered_addresses = defaultdict(lambda: defaultdict(list))
+        range_occurrences = defaultdict(int)
         for participant in equal_ranges_per_participant:
             for start, end in equal_ranges_per_participant[participant]:
                 ranges = equal_ranges_per_participant[participant][(start,end)].values()
-                occurences = len((set(row for row_indices in ranges for row in row_indices)))
-                if occurences >= 0:
-                    byte_len = (end - start) // 8
-                    bits = list(equal_ranges_per_participant[participant][(start,end)].keys())
-                    clustered_addresses[byte_len][(start, end)].extend(bits)
+                range_occurrences[(start, end)] += len((set(row for row_indices in ranges for row in row_indices)))
+                byte_len = (end - start) // 8
+                bits = list(equal_ranges_per_participant[participant][(start,end)].keys())
+                clustered_addresses[byte_len][(start, end)].extend(bits)
 
         #self.__print_clustered(clustered_addresses)
 
@@ -74,7 +74,7 @@ class Address(Component):
 
 
             for (start, end), bits in sorted(clustered_addresses[bl].items()):
-                print(start, end, bits)
+                print(start, end, bits, "(" + str(range_occurrences[(start, end)]) + ")")
 
 
         #print(clustered_addresses)

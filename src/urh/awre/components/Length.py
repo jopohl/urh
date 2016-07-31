@@ -72,10 +72,13 @@ class Length(Component):
                 start, end = ci.start, ci.end
                 for byte_start in range(start, end, 8):
                     byte_end = byte_start + 8 if byte_start + 8 <= end else end
-                    byte = int("".join(["1" if bit else "0" for bit in bv[byte_start:byte_end]]), 2)
-                    diff = byte - byte_len
-                    if diff in weights:
-                        scores[(byte_start, byte_end)] += weights[diff]
+                    try:
+                        byte = int("".join(["1" if bit else "0" for bit in bv[byte_start:byte_end]]), 2)
+                        diff = byte - byte_len
+                        if diff in weights:
+                            scores[(byte_start, byte_end)] += weights[diff]
+                    except ValueError:
+                        pass # Byte_end or byte_start was out of bv --> too close on the end
 
         try:
             return max(scores, key=scores.__getitem__)

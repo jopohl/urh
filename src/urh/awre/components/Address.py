@@ -50,7 +50,7 @@ class Address(Component):
         for participant in equal_ranges_per_participant:
             for start, end in equal_ranges_per_participant[participant]:
                 ranges = equal_ranges_per_participant[participant][(start,end)].values()
-                range_occurrences[(start, end)] += len((set(row for row_indices in ranges for row in row_indices)))
+                range_occurrences[(start, end)] += sum(len(s) for s in ranges)
                 byte_len = (end - start) // 8
                 bits = list(equal_ranges_per_participant[participant][(start,end)].keys())
                 clustered_addresses[byte_len][(start, end)].extend(bits)
@@ -74,7 +74,7 @@ class Address(Component):
 
 
             for (start, end), bits in sorted(clustered_addresses[bl].items()):
-                print(start, end, bits, "(" + str(range_occurrences[(start, end)]) + ")")
+                print(start, end, "(" + str(range_occurrences[(start, end)]) + ")\t", bits)
 
 
         #print(clustered_addresses)

@@ -32,13 +32,13 @@ class Address(Component):
                         cmp_vector = np.append(xor_vec[rng_start:rng_end], 1)
                         for end in np.where(cmp_vector == 1)[0]:
                             if end - start >= self.MIN_ADDRESS_LENGTH:
-                                equal_range = (rng_start + start, rng_start + end)
+                                equal_range = (8 * ((rng_start + start) // 8), 8 * ((rng_start + end) // 8))
                                 d = equal_ranges_per_participant[participant].setdefault(equal_range, dict())
                                 bits = "".join(map(str, bitvectors[row][equal_range[0]:equal_range[1]]))
                                 s = d.setdefault(bits, set())
                                 s.add(row)
                                 s.add(other_row)
-                            start = end + 1
+                            start = end + 8
 
         print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
         self.__print_ranges(equal_ranges_per_participant, bitvectors)

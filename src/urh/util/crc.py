@@ -41,7 +41,9 @@ class crc_generic:
             return [True,
                     False, False, True, True, True, True, False, True,
                     False, True, True, False, False, True, False, True]  # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-
+        elif polynomial == "8_en" or polynomial == 3:
+            return [True,
+                    False, False, False, False, False, True, True, True] # x^8+x^2+x+1
         return polynomial
 
     def crc(self, inpt):
@@ -99,8 +101,6 @@ class crc_generic:
         for i in range(0, 2 ** 8):
             # Bit 0,1 = Polynomial
             val = (i >> 0) & 3
-            if val == 3:  # 3 isn't used
-                continue
             self.polynomial = self.choose_polynomial(val)
             self.poly_order = len(self.polynomial)
 

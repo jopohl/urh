@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -18,7 +18,6 @@ class Ui_DialogOptions(object):
         self.tabInterpretation = QtWidgets.QWidget()
         self.tabInterpretation.setObjectName("tabInterpretation")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tabInterpretation)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox = QtWidgets.QGroupBox(self.tabInterpretation)
         self.groupBox.setObjectName("groupBox")
@@ -78,7 +77,6 @@ class Ui_DialogOptions(object):
         self.tabView = QtWidgets.QWidget()
         self.tabView.setObjectName("tabView")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.tabView)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -120,7 +118,6 @@ class Ui_DialogOptions(object):
         self.tabDevices = QtWidgets.QWidget()
         self.tabDevices.setObjectName("tabDevices")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.tabDevices)
-        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.listWidgetDevices = QtWidgets.QListWidget(self.tabDevices)
         self.listWidgetDevices.setObjectName("listWidgetDevices")

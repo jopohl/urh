@@ -51,7 +51,7 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
     def draw_signal(self, signal, proto_analyzer):
         if signal is None:
             return
-
+        self.signal = signal
         self.horizontalScrollBar().blockSignals(True)
 
         self.scene_creator = SignalSceneManager(signal, self)
@@ -60,7 +60,7 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         self.scene_creator.show_full_scene()
         self.fitInView(self.sceneRect())
         self.signal_loaded.emit(proto_analyzer)
-        self.signal = signal
+
         self.proto_analyzer = proto_analyzer
 
         self.horizontalScrollBar().blockSignals(False)

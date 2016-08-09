@@ -22,7 +22,9 @@ class TextEditProtocolView(QTextEdit):
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
             self.deletion_wanted.emit()
-        super().keyPressEvent(event)
+            event.ignore()
+        else:
+            super().keyPressEvent(event)
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         QApplication.processEvents()

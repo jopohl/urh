@@ -586,7 +586,6 @@ class SignalFrameController(QFrame):
         self.protocol_selection_is_updateable = True
 
     def update_protocol(self):
-        self.ui.txtEdProto.setPlainText("Loading..")
         self.ui.txtEdProto.setEnabled(False)
         QApplication.processEvents()
 

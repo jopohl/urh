@@ -192,7 +192,7 @@ class SendRecvDialogController(QDialog):
         nrep = self.ui.spinBoxNRepeat.value()
         sts = self.device.samples_to_send
         self.device.free_data()
-        gc.collect()
+        # gc.collect() # Cant do GC here, because the SencRecvDialog itself would be deleted (see https://github.com/jopohl/urh/issues/83)
         self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
                                     self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()

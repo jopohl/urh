@@ -2,12 +2,14 @@ from PyQt5.QtCore import QAbstractListModel, pyqtSignal, Qt, QModelIndex, QMimeD
 from PyQt5.QtGui import QFont
 
 from urh import constants
+from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class ProtocolLabelListModel(QAbstractListModel):
     protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
+    protolabel_name_changed = pyqtSignal(ProtocolLabel, LabelSet)
     label_removed = pyqtSignal(ProtocolLabel)
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
@@ -46,6 +48,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             if len(value) > 0:
                 proto_label = self.proto_labels[index.row()]
                 proto_label.name = value
+                self.protolabel_name_changed.emit(proto_label, self.proto_labels)
         return True
 
     def showAll(self):

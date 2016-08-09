@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,6 @@ class Ui_MainWindow(object):
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.lnEdtTreeFilter = QtWidgets.QLineEdit(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -66,7 +65,6 @@ class Ui_MainWindow(object):
         self.tabParticipants = QtWidgets.QWidget()
         self.tabParticipants.setObjectName("tabParticipants")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tabParticipants)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.listViewParticipants = QtWidgets.QListView(self.tabParticipants)
         self.listViewParticipants.setObjectName("listViewParticipants")
@@ -75,7 +73,6 @@ class Ui_MainWindow(object):
         self.tabDescription = QtWidgets.QWidget()
         self.tabDescription.setObjectName("tabDescription")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tabDescription)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.textEditProjectDescription = QtWidgets.QTextEdit(self.tabDescription)
         self.textEditProjectDescription.setObjectName("textEditProjectDescription")
@@ -93,19 +90,16 @@ class Ui_MainWindow(object):
         self.tab_interpretation = QtWidgets.QWidget()
         self.tab_interpretation.setObjectName("tab_interpretation")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab_interpretation)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tabWidget.addTab(self.tab_interpretation, "")
         self.tab_protocol = QtWidgets.QWidget()
         self.tab_protocol.setObjectName("tab_protocol")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab_protocol)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget.addTab(self.tab_protocol, "")
         self.tab_generator = QtWidgets.QWidget()
         self.tab_generator.setObjectName("tab_generator")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.tab_generator)
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.tabWidget.addTab(self.tab_generator, "")
         self.verticalLayout_4.addWidget(self.splitter)

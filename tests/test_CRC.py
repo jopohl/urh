@@ -9,11 +9,18 @@ class TestCRC(unittest.TestCase):
         c = crc_generic(polynomial="8_en")
         e = encoding()
 
-        str = ["aad3d5ddddcc5d45ddbba", "aad4ddddddcc5d45ddbca", "aad3c5ddddcc5d45ddbaa", "aad4ddddddcc5d45ddbca"]
+        bitstr = ["010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
+                  "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",
+                  "010101010110100111010010111011101110111011100110001011101010001011101110110110100101"]
+        print()
+        for v in bitstr:
+            nv = ""
+            for i in range(0, len(v)):
+                if v[i] == "1":
+                    nv += "0"
+                else:
+                    nv += "1"
 
-        for v in str:
-            print(v, e.bit2hex(c.crc(e.hex2bit(v[1:-2]))))
-            print(c.guess_standard_parameters(e.hex2bit(v[1:-2]), e.hex2bit(v[-2:])))
-
-
+            print(e.bit2hex(e.str2bit(nv[1:])), len(v[:]))
+            print(e.bit2hex(c.crc(e.str2bit(v[4:-8]))))
 

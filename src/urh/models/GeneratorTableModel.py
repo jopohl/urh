@@ -69,16 +69,19 @@ class GeneratorTableModel(TableModel):
         group_nodes = []
         file_nodes = []
         for index in indexes:
-            row, column, parent = map(int, index.split(","))
-            if parent == -1:
-                parent = self.tree_root_item
-            else:
-                parent = self.tree_root_item.child(parent)
-            node = parent.child(row)
-            if node.is_group:
-                group_nodes.append(node)
-            else:
-                file_nodes.append(node)
+            try:
+                row, column, parent = map(int, index.split(","))
+                if parent == -1:
+                    parent = self.tree_root_item
+                else:
+                    parent = self.tree_root_item.child(parent)
+                node = parent.child(row)
+                if node.is_group:
+                    group_nodes.append(node)
+                else:
+                    file_nodes.append(node)
+            except ValueError:
+                continue
 
         # Which Nodes to add?
         nodes_to_add = []

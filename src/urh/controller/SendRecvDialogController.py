@@ -66,6 +66,7 @@ class SendRecvDialogController(QDialog):
             self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
             self.setWindowTitle("Send signal")
             self.ui.btnStart.setToolTip("Send data")
+            self.ui.btnStop.setToolTip("Stop sending")
             self.ui.progressBar.setMaximum(len(modulated_data))
 
         self.ui.btnStop.setEnabled(False)

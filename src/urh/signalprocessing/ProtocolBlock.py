@@ -352,22 +352,26 @@ class ProtocolBlock(object):
         factor = 4 if is_hex else 8
         pos = 0
         cur_index = 0
-        result = 0
         # TODO Consider Bit alignment for labels (if label align is enabled)
 
-        for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-            if from_index > cur_index + math.ceil((si - pos) / factor):
-                result += (si - pos) + 1
-                cur_index += math.ceil((si - pos) / factor) + 1
-                pos = si + 1
-            elif from_index == cur_index + math.ceil((si - pos) / factor):
-                result += (si - pos)
-                return result, result
-            else:
-                break
-
-        if from_index > cur_index:
-            result += factor * (from_index - cur_index)
+        result = factor * (from_index - 1)
+        # for ba in self.__bit_alignments:
+        #
+        #
+        #
+        # for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
+        #     if from_index > cur_index + math.ceil((si - pos) / factor):
+        #         result += (si - pos) + 1
+        #         cur_index += math.ceil((si - pos) / factor) + 1
+        #         pos = si + 1
+        #     elif from_index == cur_index + math.ceil((si - pos) / factor):
+        #         result += (si - pos)
+        #         return result, result
+        #     else:
+        #         break
+        #
+        # if from_index > cur_index:
+        #    result += factor * (from_index - cur_index)
 
         end = result + factor - 1
         #end = end if end < len(bits) else len(bits) - 1
@@ -377,42 +381,19 @@ class ProtocolBlock(object):
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if to_hex else 8
-        pos = 0
         result = 0
-        offset = 0
-
-        # TODO Consider Bit alignment for labels (if label align is enabled)
 
         last_alignment = 0
         for ba in self.__bit_alignments:
-            #ba += offset
             if ba <= bit_index:
-                nbits = ba - last_alignment
-                if nbits % factor == 0:
-                    result += nbits // factor
-                else:
-                    result += math.ceil(nbits / factor)
-                    offset += nbits % factor
+                result += math.ceil((ba - last_alignment) / factor)
                 last_alignment = ba
             else:
                 break
 
-        nbits = bit_index - last_alignment
-        result += math.ceil(nbits / factor)
-
-
-        # for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-        #     if bit_index > si:
-        #         result += math.ceil((si - pos) / factor) + 1
-        #         pos = si + 1
-        #     elif bit_index == si:
-        #         result += math.ceil((si - pos) / factor)
-        #         return result, result
-        #     else:
-        #         break
-
-        if pos < bit_index:
-            result += math.ceil((bit_index - pos) / factor)
+        result += math.ceil((bit_index - last_alignment) / factor)
+        nsymbols = len([b for b in bits[:bit_index] if type(b) == Symbol])
+        result += nsymbols
 
         return result, result
 

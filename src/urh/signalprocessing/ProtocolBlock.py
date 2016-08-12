@@ -20,7 +20,7 @@ class ProtocolBlock(object):
     A protocol block is a single line of a protocol.
     """
 
-    __slots__ = ["__plain_bits", "pause", "modulator_indx", "rssi", "participant", "labelset",
+    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "labelset",
                  "absolute_time", "relative_time", "__decoder", "align_labels",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
@@ -58,6 +58,7 @@ class ProtocolBlock(object):
 
         self.__decoded_bits = None
         self.__encoded_bits = None
+        self.__bit_alignments = []
         self.decoding_errors = 0
 
         self.bit_len = bit_len  # Für Übernahme in Modulator
@@ -378,18 +379,37 @@ class ProtocolBlock(object):
         factor = 4 if to_hex else 8
         pos = 0
         result = 0
+        offset = 0
 
         # TODO Consider Bit alignment for labels (if label align is enabled)
 
-        for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-            if bit_index > si:
-                result += math.ceil((si - pos) / factor) + 1
-                pos = si + 1
-            elif bit_index == si:
-                result += math.ceil((si - pos) / factor)
-                return result, result
+        last_alignment = 0
+        for ba in self.__bit_alignments:
+            #ba += offset
+            if ba <= bit_index:
+                nbits = ba - last_alignment
+                if nbits % factor == 0:
+                    result += nbits // factor
+                else:
+                    result += math.ceil(nbits / factor)
+                    offset += nbits % factor
+                last_alignment = ba
             else:
                 break
+
+        nbits = bit_index - last_alignment
+        result += math.ceil(nbits / factor)
+
+
+        # for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
+        #     if bit_index > si:
+        #         result += math.ceil((si - pos) / factor) + 1
+        #         pos = si + 1
+        #     elif bit_index == si:
+        #         result += math.ceil((si - pos) / factor)
+        #         return result, result
+        #     else:
+        #         break
 
         if pos < bit_index:
             result += math.ceil((bit_index - pos) / factor)
@@ -474,13 +494,15 @@ class ProtocolBlock(object):
         result = []
         block = self.decoded_bits_str if decode else str(self)
         symbol_indexes = [i for i, b in enumerate(block) if b not in ("0", "1")]
-        bit_alignment_positions = []
+        self.__bit_alignments = set()
         if self.align_labels:
             for l in self.labelset:
-                bit_alignment_positions.append(l.start)
-                bit_alignment_positions.append(l.end)
+                self.__bit_alignments.add(l.start)
+                self.__bit_alignments.add(l.end)
 
-        for pos in bit_alignment_positions:
+        self.__bit_alignments = sorted(self.__bit_alignments)
+
+        for pos in self.__bit_alignments:
             sym_indx = [i for i in symbol_indexes if i < pos]
             for si in sym_indx:
                 result.append(block[start:si])

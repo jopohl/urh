@@ -19,10 +19,9 @@ class BlockBreakAction(QUndoCommand):
     def redo(self):
         block = copy.deepcopy(self.proto_analyzer.blocks[self.block_nr])
         block1 = ProtocolBlock(plain_bits=block.plain_bits[:self.pos], pause=0,
-                               bit_alignment_positions=self.proto_analyzer.bit_alignment_positions, rssi=0, decoder=block.decoder, labelset=block.labelset,
+                                rssi=0, decoder=block.decoder, labelset=block.labelset,
                                bit_len=block.bit_len)
         block2 = ProtocolBlock(plain_bits=block.plain_bits[self.pos:], pause=block.pause,
-                               bit_alignment_positions=self.proto_analyzer.bit_alignment_positions,
                                rssi=0, decoder=block.decoder, labelset=block.labelset,
                                bit_len=block.bit_len)
         self.proto_analyzer.blocks[self.block_nr] = block1

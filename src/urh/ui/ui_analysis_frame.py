@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -372,6 +372,7 @@ class Ui_FAnalysis(object):
         self.pageButtonAnalyzer = QtWidgets.QWidget()
         self.pageButtonAnalyzer.setObjectName("pageButtonAnalyzer")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.pageButtonAnalyzer)
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.btnAnalyze = QtWidgets.QToolButton(self.pageButtonAnalyzer)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -383,12 +384,11 @@ class Ui_FAnalysis(object):
         self.btnAnalyze.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.btnAnalyze.setObjectName("btnAnalyze")
         self.verticalLayout_5.addWidget(self.btnAnalyze)
-        self.btnAnalyze.raise_()
-        self.btnAnalyze.raise_()
         self.stackedWidgetLogicAnalysis.addWidget(self.pageButtonAnalyzer)
         self.pageProgressBar = QtWidgets.QWidget()
         self.pageProgressBar.setObjectName("pageProgressBar")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.pageProgressBar)
+        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.progressBarLogicAnalyzer = QtWidgets.QProgressBar(self.pageProgressBar)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -510,7 +510,7 @@ class Ui_FAnalysis(object):
         self.lNumSelectedColumns.setText(_translate("FAnalysis", "0"))
         self.lColumnsSelectedText.setText(_translate("FAnalysis", "Column(s) selected"))
         self.label_4.setText(_translate("FAnalysis", "Participants:"))
-        self.cbProtoView.setToolTip(_translate("FAnalysis", "<html><head/><body><p>Set the desired view here.</p><p><br/></p><p>You can set the <span style=\" font-weight:600;\">alignment</span> where evaluation of Hex/ASCII starts using right-click menu in Bits-View. Use this, to correct <span style=\" font-style:italic;\">slided/missing Bits</span> or something like that.</p></body></html>"))
+        self.cbProtoView.setToolTip(_translate("FAnalysis", "<html><head/><body><p>Set the desired view here.</p></body></html>"))
         self.cbProtoView.setItemText(0, _translate("FAnalysis", "Bits"))
         self.cbProtoView.setItemText(1, _translate("FAnalysis", "Hex"))
         self.cbProtoView.setItemText(2, _translate("FAnalysis", "ASCII"))

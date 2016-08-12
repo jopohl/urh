@@ -367,6 +367,7 @@ class MainController(QMainWindow):
                 signal_frame.signal.destroy()
                 signal_frame.signal.deleteLater()
                 signal_frame.proto_analyzer.destroy()
+            signal_frame.proto_analyzer = None
             signal_frame.close()
             QApplication.processEvents()
             signal_frame.destroy()
@@ -643,6 +644,7 @@ class MainController(QMainWindow):
             for sf in self.signal_tab_controller.signal_frames:
                 sf.refresh_protocol()
 
+        self.compare_frame_controller.set_shown_protocols()
         self.apply_default_view()
 
     def refresh_main_menu(self):

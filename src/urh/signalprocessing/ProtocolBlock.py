@@ -20,11 +20,11 @@ class ProtocolBlock(object):
     A protocol block is a single line of a protocol.
     """
 
-    __slots__ = ["__plain_bits", "pause", "modulator_indx", "rssi", "participant", "labelset",
-                 "absolute_time", "relative_time", "__decoder", "bit_alignment_positions",
+    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "labelset",
+                 "absolute_time", "relative_time", "__decoder", "align_labels",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
-    def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
+    def __init__(self, plain_bits, pause: int, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
@@ -53,11 +53,12 @@ class ProtocolBlock(object):
         self.__decoder = decoder if decoder else encoding(["Non Return To Zero (NRZ)"])
         """:type: encoding """
 
-        self.bit_alignment_positions = bit_alignment_positions
+        self.align_labels = True
         self.fuzz_created = fuzz_created
 
         self.__decoded_bits = None
         self.__encoded_bits = None
+        self.__bit_alignments = []
         self.decoding_errors = 0
 
         self.bit_len = bit_len  # Für Übernahme in Modulator
@@ -326,94 +327,51 @@ class ProtocolBlock(object):
 
     @property
     def plain_hex_str(self) -> str:
-        splitted_blocks = self.split(decode=False)
-        padded_blocks = [self.pad_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(padded_blocks)
+        padded_bitchains = self.split(decode=False)
+        return self.__bitchains_to_hex(padded_bitchains)
 
 
     @property
     def plain_ascii_str(self) -> str:
-        splitted_blocks = self.split(decode=False)
-        padded_blocks = [self.pad_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(padded_blocks)
+        padded_bitchains = self.split(decode=False)
+        return self.__bitchains_to_ascii(padded_bitchains)
 
     @property
     def decoded_hex_str(self) -> str:
-        splitted_blocks = self.split()
-        padded_blocks = [self.pad_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(padded_blocks)
+        padded_bitchains = self.split()
+        return self.__bitchains_to_hex(padded_bitchains)
 
 
     @property
     def decoded_ascii_str(self) -> str:
-        splitted_blocks = self.split()
-        padded_blocks = [self.pad_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(padded_blocks)
-
-    @staticmethod
-    def pad_block(block: str, n=8):
-        """
-        :param block:
-        :param n: n=4: Auf Nibble padden, n=8 auf Bytes padden
-        :return:
-        """
-        block_cpy = block[:]
-        if len(block) == 0:
-            return ""
-
-        if len(block) == 1 and block not in ("0", "1"):
-            # Symbol
-            return block_cpy
-
-        if len(block) % n != 0:
-            nzeros = (n - (len(block) % n))
-            block_cpy += nzeros * '0'
-
-        return block_cpy
+        padded_bitchains = self.split()
+        return self.__bitchains_to_ascii(padded_bitchains)
 
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if is_hex else 8
-        pos = 0
-        cur_index = 0
-        result = 0
-        for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-            if from_index > cur_index + math.ceil((si - pos) / factor):
-                result += (si - pos) + 1
-                cur_index += math.ceil((si - pos) / factor) + 1
-                pos = si + 1
-            elif from_index == cur_index + math.ceil((si - pos) / factor):
-                result += (si - pos)
-                return result, result
-            else:
-                break
+        for i in range(len(bits)):
+            if self.__get_hex_ascii_index_from_bit_index(i, decoded, to_hex=is_hex)[0] == from_index:
+                return i, i + factor - 1
 
-        if from_index > cur_index:
-            result += factor * (from_index - cur_index)
-
-        end = result + factor - 1
-        #end = end if end < len(bits) else len(bits) - 1
-
-        return result, end
+        return None, None
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if to_hex else 8
-        pos = 0
         result = 0
 
-        for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-            if bit_index > si:
-                result += math.ceil((si - pos) / factor) + 1
-                pos = si + 1
-            elif bit_index == si:
-                result += math.ceil((si - pos) / factor)
-                return result, result
+        last_alignment = 0
+        for ba in self.__bit_alignments:
+            if ba <= bit_index:
+                result += math.ceil((ba - last_alignment) / factor)
+                last_alignment = ba
             else:
                 break
 
-        if pos < bit_index:
-            result += (bit_index - pos) / factor
+        result += math.floor((bit_index - last_alignment) / factor)
+        nsymbols = len([b for b in bits[:bit_index] if type(b) == Symbol])
+        result += nsymbols
 
         return result, result
 
@@ -451,33 +409,35 @@ class ProtocolBlock(object):
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
 
     @staticmethod
-    def __blocks_to_hex(blocks) -> str:
+    def __bitchains_to_hex(bitchains) -> str:
         """
 
-        :param blocks: Die Blocks müssen GEPADDET sein, da Blöcke der Länge 1 als Symbole angenommen werden
+        :type bitchains: list of str
+        :return:
         """
         result = []
-        for block in blocks:
-            if len(block) == 1:
+        for bitchain in bitchains:
+            if len(bitchain) == 1 and bitchain not in ("0", "1"):
                 # Symbol
-                result.append(block)
+                result.append(bitchain)
             else:
-                result.append("".join("{0:x}".format(int(block[i:i + 4], 2)) for i in range(0, len(block), 4)))
+                result.append("".join("{0:x}".format(int(bitchain[i:i + 4], 2)) for i in range(0, len(bitchain), 4)))
         return "".join(result)
 
     @staticmethod
-    def __blocks_to_ascii(blocks) -> str:
+    def __bitchains_to_ascii(bitchains) -> str:
         """
 
-        :param blocks: Die Blocks müssen GEPADDET sein, da Blöcke der Länge 1 als Symbole angenommen werden
+        :type bitchains: list of str
+        :return:
         """
         result = []
-        for block in blocks:
-            if len(block) == 1:
+        for bitchain in bitchains:
+            if len(bitchain) == 1 and bitchain not in ("0", "1"):
                 # Symbol
-                result.append(block)
+                result.append(bitchain)
             else:
-                byte_proto = "".join("{0:x}".format(int(block[i:i + 8], 2)) for i in range(0, len(block), 8))
+                byte_proto = "".join("{0:x}".format(int(bitchain[i:i + 8], 2)) for i in range(0, len(bitchain), 8))
                 result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
 
         return "".join(result)
@@ -487,15 +447,21 @@ class ProtocolBlock(object):
         """
         Für das Bit-Alignment (neu Ausrichten von Hex, ASCII-View)
 
-        :type bit_alignment_positions: list of int
         :rtype: list of str
         """
         start = 0
         result = []
         block = self.decoded_bits_str if decode else str(self)
         symbol_indexes = [i for i, b in enumerate(block) if b not in ("0", "1")]
+        self.__bit_alignments = set()
+        if self.align_labels:
+            for l in self.labelset:
+                self.__bit_alignments.add(l.start)
+                self.__bit_alignments.add(l.end)
 
-        for pos in self.bit_alignment_positions:
+        self.__bit_alignments = sorted(self.__bit_alignments)
+
+        for pos in self.__bit_alignments:
             sym_indx = [i for i in symbol_indexes if i < pos]
             for si in sym_indx:
                 result.append(block[start:si])
@@ -562,7 +528,7 @@ class ProtocolBlock(object):
                     print("[Warning] Did not find symbol name", file=sys.stderr)
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
-        return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=LabelSet("none"))
+        return ProtocolBlock(plain_bits=plain_bits, pause=0, labelset=LabelSet("none"))
 
     def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
         root = ET.Element("block")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -18,6 +18,7 @@ class Ui_DialogOptions(object):
         self.tabInterpretation = QtWidgets.QWidget()
         self.tabInterpretation.setObjectName("tabInterpretation")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tabInterpretation)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox = QtWidgets.QGroupBox(self.tabInterpretation)
         self.groupBox.setObjectName("groupBox")
@@ -77,6 +78,7 @@ class Ui_DialogOptions(object):
         self.tabView = QtWidgets.QWidget()
         self.tabView.setObjectName("tabView")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.tabView)
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -106,6 +108,9 @@ class Ui_DialogOptions(object):
         self.checkBoxPauseTime = QtWidgets.QCheckBox(self.tabView)
         self.checkBoxPauseTime.setObjectName("checkBoxPauseTime")
         self.verticalLayout_4.addWidget(self.checkBoxPauseTime)
+        self.checkBoxAlignLabels = QtWidgets.QCheckBox(self.tabView)
+        self.checkBoxAlignLabels.setObjectName("checkBoxAlignLabels")
+        self.verticalLayout_4.addWidget(self.checkBoxAlignLabels)
         self.checkBoxFallBackTheme = QtWidgets.QCheckBox(self.tabView)
         self.checkBoxFallBackTheme.setObjectName("checkBoxFallBackTheme")
         self.verticalLayout_4.addWidget(self.checkBoxFallBackTheme)
@@ -118,6 +123,7 @@ class Ui_DialogOptions(object):
         self.tabDevices = QtWidgets.QWidget()
         self.tabDevices.setObjectName("tabDevices")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.tabDevices)
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.listWidgetDevices = QtWidgets.QListWidget(self.tabDevices)
         self.listWidgetDevices.setObjectName("listWidgetDevices")
@@ -216,6 +222,7 @@ class Ui_DialogOptions(object):
         self.checkBoxShowConfirmCloseDialog.setText(_translate("DialogOptions", "Show \"confirm close\" dialog"))
         self.checkBoxHoldShiftToDrag.setText(_translate("DialogOptions", "Hold shift to drag"))
         self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
+        self.checkBoxAlignLabels.setText(_translate("DialogOptions", "Align on labels"))
         self.checkBoxFallBackTheme.setToolTip(_translate("DialogOptions", "Tick this option if you experience problems with you current Qt theme like no colors in table headers."))
         self.checkBoxFallBackTheme.setText(_translate("DialogOptions", "Use fallback application theme (fusion)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabView), _translate("DialogOptions", "View"))

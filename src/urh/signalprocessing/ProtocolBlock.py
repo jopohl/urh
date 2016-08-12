@@ -326,50 +326,25 @@ class ProtocolBlock(object):
 
     @property
     def plain_hex_str(self) -> str:
-        splitted_blocks = self.split(decode=False)
-        aligned_blocks = [self.__align_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(aligned_blocks)
+        padded_bitchains = self.split(decode=False)
+        return self.__bitchains_to_hex(padded_bitchains)
 
 
     @property
     def plain_ascii_str(self) -> str:
-        splitted_blocks = self.split(decode=False)
-        aligned_blocks = [self.__align_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(aligned_blocks)
+        padded_bitchains = self.split(decode=False)
+        return self.__bitchains_to_ascii(padded_bitchains)
 
     @property
     def decoded_hex_str(self) -> str:
-        splitted_blocks = self.split()
-        aligned_blocks = [self.__align_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(aligned_blocks)
+        padded_bitchains = self.split()
+        return self.__bitchains_to_hex(padded_bitchains)
 
 
     @property
     def decoded_ascii_str(self) -> str:
-        splitted_blocks = self.split()
-        aligned_blocks = [self.__align_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(aligned_blocks)
-
-    @staticmethod
-    def __align_block(block: str, n=8):
-        """
-        :param block:
-        :param n: n=4: Auf Nibble align, n=8 auf Bytes align
-        :return:
-        """
-        block_cpy = block[:]
-        if len(block) == 0:
-            return ""
-
-        if len(block) == 1 and block not in ("0", "1"):
-            # Symbol
-            return block_cpy
-
-        if len(block) % n != 0:
-            nzeros = (n - (len(block) % n))
-            block_cpy = nzeros * '0' + block_cpy
-
-        return block_cpy
+        padded_bitchains = self.split()
+        return self.__bitchains_to_ascii(padded_bitchains)
 
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
@@ -413,7 +388,7 @@ class ProtocolBlock(object):
                 break
 
         if pos < bit_index:
-            result += (bit_index - pos) / factor
+            result += math.ceil((bit_index - pos) / factor)
 
         return result, result
 
@@ -451,33 +426,35 @@ class ProtocolBlock(object):
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
 
     @staticmethod
-    def __blocks_to_hex(blocks) -> str:
+    def __bitchains_to_hex(bitchains) -> str:
         """
 
-        :param blocks: Die Blocks müssen GEPADDET sein, da Blöcke der Länge 1 als Symbole angenommen werden
+        :type bitchains: list of str
+        :return:
         """
         result = []
-        for block in blocks:
-            if len(block) == 1:
+        for bitchain in bitchains:
+            if len(bitchain) == 1 and bitchain not in ("0", "1"):
                 # Symbol
-                result.append(block)
+                result.append(bitchain)
             else:
-                result.append("".join("{0:x}".format(int(block[i:i + 4], 2)) for i in range(0, len(block), 4)))
+                result.append("".join("{0:x}".format(int(bitchain[i:i + 4], 2)) for i in range(0, len(bitchain), 4)))
         return "".join(result)
 
     @staticmethod
-    def __blocks_to_ascii(blocks) -> str:
+    def __bitchains_to_ascii(bitchains) -> str:
         """
 
-        :param blocks: Die Blocks müssen GEPADDET sein, da Blöcke der Länge 1 als Symbole angenommen werden
+        :type bitchains: list of str
+        :return:
         """
         result = []
-        for block in blocks:
-            if len(block) == 1:
+        for bitchain in bitchains:
+            if len(bitchain) == 1 and bitchain not in ("0", "1"):
                 # Symbol
-                result.append(block)
+                result.append(bitchain)
             else:
-                byte_proto = "".join("{0:x}".format(int(block[i:i + 8], 2)) for i in range(0, len(block), 8))
+                byte_proto = "".join("{0:x}".format(int(bitchain[i:i + 8], 2)) for i in range(0, len(bitchain), 8))
                 result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
 
         return "".join(result)

@@ -350,33 +350,11 @@ class ProtocolBlock(object):
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if is_hex else 8
-        pos = 0
-        cur_index = 0
-        # TODO Consider Bit alignment for labels (if label align is enabled)
+        for i in range(len(bits)):
+            if self.__get_hex_ascii_index_from_bit_index(i, decoded, to_hex=is_hex)[0] == from_index:
+                return i, i + factor - 1
 
-        result = factor * (from_index - 1)
-        # for ba in self.__bit_alignments:
-        #
-        #
-        #
-        # for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
-        #     if from_index > cur_index + math.ceil((si - pos) / factor):
-        #         result += (si - pos) + 1
-        #         cur_index += math.ceil((si - pos) / factor) + 1
-        #         pos = si + 1
-        #     elif from_index == cur_index + math.ceil((si - pos) / factor):
-        #         result += (si - pos)
-        #         return result, result
-        #     else:
-        #         break
-        #
-        # if from_index > cur_index:
-        #    result += factor * (from_index - cur_index)
-
-        end = result + factor - 1
-        #end = end if end < len(bits) else len(bits) - 1
-
-        return result, end
+        return None, None
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits

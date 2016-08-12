@@ -464,15 +464,17 @@ class ProtocolBlock(object):
         """
         Für das Bit-Alignment (neu Ausrichten von Hex, ASCII-View)
 
-        :type bit_alignment_positions: list of int
         :rtype: list of str
         """
         start = 0
         result = []
         block = self.decoded_bits_str if decode else str(self)
         symbol_indexes = [i for i, b in enumerate(block) if b not in ("0", "1")]
-        bit_alignment_positions  = [l.end for l in self.labelset] if self.align_labels else []
-
+        bit_alignment_positions = []
+        if self.align_labels:
+            for l in self.labelset:
+                bit_alignment_positions.append(l.start)
+                bit_alignment_positions.append(l.end)
 
         for pos in bit_alignment_positions:
             sym_indx = [i for i in symbol_indexes if i < pos]

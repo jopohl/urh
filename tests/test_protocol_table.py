@@ -46,7 +46,7 @@ class TestProtocolTable(unittest.TestCase):
             t = time.time()
             self.cframe.protocol_model.data(indx, role=role)
             microseconds = (time.time()-t)*10**6
-            self.assertLess(microseconds, 25)
+            self.assertLess(microseconds, 30)
 
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal=None)

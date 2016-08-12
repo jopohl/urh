@@ -369,7 +369,7 @@ class ProtocolBlock(object):
             else:
                 break
 
-        result += math.ceil((bit_index - last_alignment) / factor)
+        result += math.floor((bit_index - last_alignment) / factor)
         nsymbols = len([b for b in bits[:bit_index] if type(b) == Symbol])
         result += nsymbols
 

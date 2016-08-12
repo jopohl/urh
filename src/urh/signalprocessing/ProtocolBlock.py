@@ -53,7 +53,7 @@ class ProtocolBlock(object):
         self.__decoder = decoder if decoder else encoding(["Non Return To Zero (NRZ)"])
         """:type: encoding """
 
-        self.align_labels = True
+        self.align_labels = constants.SETTINGS.value("align_labels", True, bool)
         self.fuzz_created = fuzz_created
 
         self.__decoded_bits = None
@@ -352,6 +352,8 @@ class ProtocolBlock(object):
         pos = 0
         cur_index = 0
         result = 0
+        # TODO Consider Bit alignment for labels (if label align is enabled)
+
         for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
             if from_index > cur_index + math.ceil((si - pos) / factor):
                 result += (si - pos) + 1
@@ -376,6 +378,8 @@ class ProtocolBlock(object):
         factor = 4 if to_hex else 8
         pos = 0
         result = 0
+
+        # TODO Consider Bit alignment for labels (if label align is enabled)
 
         for si in (i for i, b in enumerate(bits) if type(b) == Symbol):
             if bit_index > si:

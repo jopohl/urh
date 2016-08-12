@@ -31,6 +31,7 @@ class OptionsController(QDialog):
         self.ui.tab_plugins.setLayout(layout)
 
 
+        self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
@@ -82,6 +83,7 @@ class OptionsController(QDialog):
         self.ui.checkBoxFallBackTheme.clicked.connect(self.on_checkbox_fallback_theme_clicked)
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
+        self.ui.checkBoxAlignLabels.clicked.connect(self.on_checkbox_align_labels_clicked)
 
 
     def set_device_enabled_suffix(self):
@@ -239,6 +241,9 @@ class OptionsController(QDialog):
             self.ui.spinBoxSymbolTreshold.setValue(10)
         else:
             self.ui.spinBoxSymbolTreshold.setValue(50)
+
+    def on_checkbox_align_labels_clicked(self):
+        constants.SETTINGS.setValue("align_labels", bool(self.ui.checkBoxAlignLabels.isChecked()))
 
     def refresh_device_tab(self):
         self.backend_handler.get_backends()

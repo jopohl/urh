@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -34,6 +34,7 @@ class Ui_GeneratorTab(object):
         self.tab_proto = QtWidgets.QWidget()
         self.tab_proto.setObjectName("tab_proto")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tab_proto)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.treeProtocols = GeneratorTreeView(self.tab_proto)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -48,6 +49,7 @@ class Ui_GeneratorTab(object):
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.tab_4)
+        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.lWPauses = GeneratorListWidget(self.tab_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -64,6 +66,7 @@ class Ui_GeneratorTab(object):
         self.tab_5 = QtWidgets.QWidget()
         self.tab_5.setObjectName("tab_5")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.tab_5)
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_8.setSpacing(6)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.listViewProtoLabels = GeneratorListView(self.tab_5)

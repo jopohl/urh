@@ -21,10 +21,10 @@ class ProtocolBlock(object):
     """
 
     __slots__ = ["__plain_bits", "pause", "modulator_indx", "rssi", "participant", "labelset",
-                 "absolute_time", "relative_time", "__decoder", "bit_alignment_positions",
+                 "absolute_time", "relative_time", "__decoder", "align_labels",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
-    def __init__(self, plain_bits, pause: int, bit_alignment_positions, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
+    def __init__(self, plain_bits, pause: int, labelset: LabelSet, rssi=0, modulator_indx=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
@@ -53,7 +53,7 @@ class ProtocolBlock(object):
         self.__decoder = decoder if decoder else encoding(["Non Return To Zero (NRZ)"])
         """:type: encoding """
 
-        self.bit_alignment_positions = bit_alignment_positions
+        self.align_labels = True
         self.fuzz_created = fuzz_created
 
         self.__decoded_bits = None
@@ -327,34 +327,34 @@ class ProtocolBlock(object):
     @property
     def plain_hex_str(self) -> str:
         splitted_blocks = self.split(decode=False)
-        padded_blocks = [self.pad_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(padded_blocks)
+        aligned_blocks = [self.__align_block(b, 4) for b in splitted_blocks]
+        return self.__blocks_to_hex(aligned_blocks)
 
 
     @property
     def plain_ascii_str(self) -> str:
         splitted_blocks = self.split(decode=False)
-        padded_blocks = [self.pad_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(padded_blocks)
+        aligned_blocks = [self.__align_block(b, 8) for b in splitted_blocks]
+        return self.__blocks_to_ascii(aligned_blocks)
 
     @property
     def decoded_hex_str(self) -> str:
         splitted_blocks = self.split()
-        padded_blocks = [self.pad_block(b, 4) for b in splitted_blocks]
-        return self.__blocks_to_hex(padded_blocks)
+        aligned_blocks = [self.__align_block(b, 4) for b in splitted_blocks]
+        return self.__blocks_to_hex(aligned_blocks)
 
 
     @property
     def decoded_ascii_str(self) -> str:
         splitted_blocks = self.split()
-        padded_blocks = [self.pad_block(b, 8) for b in splitted_blocks]
-        return self.__blocks_to_ascii(padded_blocks)
+        aligned_blocks = [self.__align_block(b, 8) for b in splitted_blocks]
+        return self.__blocks_to_ascii(aligned_blocks)
 
     @staticmethod
-    def pad_block(block: str, n=8):
+    def __align_block(block: str, n=8):
         """
         :param block:
-        :param n: n=4: Auf Nibble padden, n=8 auf Bytes padden
+        :param n: n=4: Auf Nibble align, n=8 auf Bytes align
         :return:
         """
         block_cpy = block[:]
@@ -367,7 +367,7 @@ class ProtocolBlock(object):
 
         if len(block) % n != 0:
             nzeros = (n - (len(block) % n))
-            block_cpy += nzeros * '0'
+            block_cpy = nzeros * '0' + block_cpy
 
         return block_cpy
 
@@ -494,8 +494,10 @@ class ProtocolBlock(object):
         result = []
         block = self.decoded_bits_str if decode else str(self)
         symbol_indexes = [i for i, b in enumerate(block) if b not in ("0", "1")]
+        bit_alignment_positions  = [l.end for l in self.labelset] if self.align_labels else []
 
-        for pos in self.bit_alignment_positions:
+
+        for pos in bit_alignment_positions:
             sym_indx = [i for i in symbol_indexes if i < pos]
             for si in sym_indx:
                 result.append(block[start:si])
@@ -562,7 +564,7 @@ class ProtocolBlock(object):
                     print("[Warning] Did not find symbol name", file=sys.stderr)
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
-        return ProtocolBlock(plain_bits=plain_bits, pause=0, bit_alignment_positions=[], labelset=LabelSet("none"))
+        return ProtocolBlock(plain_bits=plain_bits, pause=0, labelset=LabelSet("none"))
 
     def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
         root = ET.Element("block")

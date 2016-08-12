@@ -48,11 +48,6 @@ class ProtocolTableModel(TableModel):
                 self.bold_fonts[i, j] = True
                 self.text_colors[i, j] = constants.DIFFERENCE_CELL_COLOR
 
-        if self.proto_view == 0:
-            for j in self.protocol.bit_alignment_positions:
-                for i in range(self.row_count):
-                    self.bold_fonts[i, j] = True
-
         if self._refindex >= 0:
             for j in range(self.col_count):
                 self.text_colors[self._refindex, j] = constants.SELECTED_ROW_COLOR

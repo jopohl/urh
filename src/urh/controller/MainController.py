@@ -367,6 +367,7 @@ class MainController(QMainWindow):
                 signal_frame.signal.destroy()
                 signal_frame.signal.deleteLater()
                 signal_frame.proto_analyzer.destroy()
+            signal_frame.proto_analyzer = None
             signal_frame.close()
             QApplication.processEvents()
             signal_frame.destroy()

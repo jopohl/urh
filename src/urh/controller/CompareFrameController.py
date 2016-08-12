@@ -569,6 +569,8 @@ class CompareFrameController(QFrame):
         startCol = block.convert_index(startCol, old_view, new_view, True)[0]
         endCol = block.convert_index(endCol, old_view, new_view, True)[1]
 
+        endCol = endCol if endCol < len(self.protocol_model.display_data[endRow]) else len(self.protocol_model.display_data[endRow]) - 1
+
         startindex = self.protocol_model.index(startRow, startCol)
         endindex = self.protocol_model.index(endRow, endCol)
         mid_index = self.protocol_model.index(int((startRow + endRow) / 2), int((startCol + endCol) / 2))

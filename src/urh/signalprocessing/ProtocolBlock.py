@@ -53,7 +53,7 @@ class ProtocolBlock(object):
         self.__decoder = decoder if decoder else encoding(["Non Return To Zero (NRZ)"])
         """:type: encoding """
 
-        self.align_labels = constants.SETTINGS.value("align_labels", True, bool)
+        self.align_labels = True
         self.fuzz_created = fuzz_created
 
         self.__decoded_bits = None
@@ -94,10 +94,6 @@ class ProtocolBlock(object):
     @property
     def exclude_from_decoding_labels(self):
         return [lbl for lbl in self.labelset if not lbl.apply_decoding]
-
-
-    def read_align_labels(self):
-        self.align_labels = constants.SETTINGS.value("align_labels", True, bool)
 
     def __getitem__(self, index: int):
         return self.plain_bits[index]

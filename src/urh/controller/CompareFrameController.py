@@ -478,6 +478,8 @@ class CompareFrameController(QFrame):
                     if not block:
                         continue
 
+                    block.read_align_labels()
+
                     try:
                         if i > 0:
                             rel_time = proto.blocks[i-1].get_duration(proto.signal.sample_rate)

@@ -95,6 +95,10 @@ class ProtocolBlock(object):
     def exclude_from_decoding_labels(self):
         return [lbl for lbl in self.labelset if not lbl.apply_decoding]
 
+
+    def read_align_labels(self):
+        self.align_labels = constants.SETTINGS.value("align_labels", True, bool)
+
     def __getitem__(self, index: int):
         return self.plain_bits[index]
 

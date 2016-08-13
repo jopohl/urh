@@ -56,7 +56,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
         blocks = [ProtocolBlock(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
-                                bit_alignment_positions=self.bit_alignment_positions, labelset=copy.deepcopy(block.labelset),
+                                labelset=copy.deepcopy(block.labelset),
                                 rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len, participant=block.participant)
                   for block in proto_analyzer.blocks if block]
 
@@ -99,7 +99,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
 
                 fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
-                                          bit_alignment_positions=self.bit_alignment_positions,
                                           rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
                                           modulator_indx=block.modulator_indx,
                                           decoder=block.decoder, fuzz_created=True)

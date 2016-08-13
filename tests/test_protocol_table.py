@@ -46,12 +46,12 @@ class TestProtocolTable(unittest.TestCase):
             t = time.time()
             self.cframe.protocol_model.data(indx, role=role)
             microseconds = (time.time()-t)*10**6
-            self.assertLess(microseconds, 25)
+            self.assertLess(microseconds, 30)
 
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_BLOCKS):
-            b = ProtocolBlock([True] * self.BITS_PER_BLOCK, pause=1000, bit_alignment_positions=[], labelset=result.default_labelset)
+            b = ProtocolBlock([True] * self.BITS_PER_BLOCK, pause=1000,labelset=result.default_labelset)
             result.blocks.append(b)
         return result
 

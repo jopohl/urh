@@ -56,11 +56,32 @@ DECODING_SUBSTITUTION = "Substitution"
 DECODING_EXTERNAL = "External Program"
 DECODING_DISABLED_PREFIX = "[Disabled] "
 
-LABEL_COLORS = [QColor.fromRgb(255, 255, 0, 75), QColor.fromRgb(244, 164, 96, 75),
-                QColor.fromRgb(0, 255, 255, 75), QColor.fromRgb(255, 0, 255, 75),
-                QColor.fromRgb(255, 0, 0, 75), QColor.fromRgb(0, 255, 0, 75),
-                QColor.fromRgb(0, 0, 255, 75), QColor.fromRgb(205, 38, 38, 75),
-                QColor.fromRgb(105, 105, 105, 150)]
+LABEL_COLORS = [QColor.fromRgb(245,12,12,125),      # red
+                QColor.fromRgb(146,49,49,125),      # dark red
+                QColor.fromRgb(106,10,10,125),      # darker red
+                QColor.fromRgb(154,37,111,125),     # pink
+                QColor.fromRgb(231,136,242,125),    # light pink
+                QColor.fromRgb(155,170,224,125),    # lighter blue
+                QColor.fromRgb(12,142,242,125),     # light blue
+                QColor.fromRgb(12,12,242,125),      # blue
+                QColor.fromRgb(9,9,54,125),         # dark blue
+                QColor.fromRgb(58,60,100,125),      # halfdark blue
+                QColor.fromRgb(12,242,201,125),     # blue green
+                QColor.fromRgb(153,207,206,125),    # light blue green
+                QColor.fromRgb(17,49,27,125),       # dark green
+                QColor.fromRgb(41,172,81,125),      # green
+                QColor.fromRgb(7,237,78,125),       # light green
+                QColor.fromRgb(159,237,7,125),      # yellow green
+                QColor.fromRgb(244,246,36,125),     # strong yellow
+                QColor.fromRgb(217,240,27,125),     # yellow
+                QColor.fromRgb(213,212,134,125),    # light yellow
+                QColor.fromRgb(201,121,18,125),     # orange
+                QColor.fromRgb(67,44,14,125),       # brown
+                QColor.fromRgb(61,67,67,125),       # gray 3
+                QColor.fromRgb(139,148,148,125),    # gray 2
+                QColor.fromRgb(207,223,223,125),    # gray 1
+                QColor.fromRgb(240,238,244,125)     # gray 0
+                ]
 
 # full alpha for participant colors, since its used in text html view (signal frame)
 PARTICIPANT_COLORS = [QColor.fromRgb(lc.red(), lc.green(), lc.blue()) for lc in LABEL_COLORS]

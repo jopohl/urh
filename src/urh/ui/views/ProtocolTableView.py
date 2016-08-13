@@ -204,15 +204,6 @@ class ProtocolTableView(TableView):
         if len(hidden_rows) > 0:
             showRowAction = menu.addAction(self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows))))
 
-        alignmentAction = 42
-        removeAlignment = 1337
-        # Code für Alignment. Deaktiviert.
-        # if self.model().proto_view == 0:
-        # menu.addSeparator()
-        # alignmentAction = menu.addAction(self.tr("Align Hex from this column on"))
-        # if self.columnAt(event.pos().x()) in self.model().protocol.bit_alignment_positions:
-        #    removeAlignment = menu.addAction(self.tr("Remove this Alignment"))
-
         if self.model().refindex != -1:
             menu.addAction(self.ref_block_action)
 
@@ -252,16 +243,6 @@ class ProtocolTableView(TableView):
             self.model().hidden_rows.clear()
             self.model().update()
             self.row_visibilty_changed.emit()
-        elif action == alignmentAction:
-            col = self.columnAt(pos.x())
-            self.model().protocol.add_bit_alignment(col)
-            #self.model().protocol.bit_alignment_positions.append(col)
-            self.model().update()
-        elif action == removeAlignment:
-            col = self.columnAt(pos.x())
-            self.model().protocol.remove_bit_alignment(col)
-            #self.model().protocol.bit_alignment_positions.remove(col)
-            self.model().update()
         elif action == bitAction:
             self.protocol_view_change_clicked.emit(0)
         elif action == hexAction:

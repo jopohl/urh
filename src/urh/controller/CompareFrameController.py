@@ -466,6 +466,7 @@ class CompareFrameController(QFrame):
         self.proto_analyzer.blocks[:] = []
         self.proto_analyzer.used_symbols.clear()
         self.rows_for_protocols.clear()
+        align_labels = constants.SETTINGS.value("align_labels", True, bool)
         line = 0
         first_block_indices = []
         prev_line = 0
@@ -477,6 +478,8 @@ class CompareFrameController(QFrame):
                 for i, block in enumerate(proto.blocks):
                     if not block:
                         continue
+
+                    block.align_labels = align_labels
 
                     try:
                         if i > 0:
@@ -568,6 +571,8 @@ class CompareFrameController(QFrame):
         block = self.proto_analyzer.blocks[endRow]
         startCol = block.convert_index(startCol, old_view, new_view, True)[0]
         endCol = block.convert_index(endCol, old_view, new_view, True)[1]
+
+        endCol = endCol if endCol < len(self.protocol_model.display_data[endRow]) else len(self.protocol_model.display_data[endRow]) - 1
 
         startindex = self.protocol_model.index(startRow, startCol)
         endindex = self.protocol_model.index(endRow, endCol)

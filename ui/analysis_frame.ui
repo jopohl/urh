@@ -655,7 +655,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can set the &lt;span style=&quot; font-weight:600;&quot;&gt;alignment&lt;/span&gt; where evaluation of Hex/ASCII starts using right-click menu in Bits-View. Use this, to correct &lt;span style=&quot; font-style:italic;&quot;&gt;slided/missing Bits&lt;/span&gt; or something like that.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <item>
              <property name="text">
@@ -814,8 +814,6 @@
                </widget>
               </item>
              </layout>
-             <zorder>btnAnalyze</zorder>
-             <zorder>btnAnalyze</zorder>
             </widget>
             <widget class="QWidget" name="pageProgressBar">
              <layout class="QVBoxLayout" name="verticalLayout_6">

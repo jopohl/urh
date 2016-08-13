@@ -92,6 +92,10 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "11111100100110110110") # Serial Part 2
 
     def test_fuzz_label_hex(self):
+        for block in self.gframe.table_model.protocol.blocks:
+            block.align_labels = False
+
+
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
         QTest.qWait(10)
 

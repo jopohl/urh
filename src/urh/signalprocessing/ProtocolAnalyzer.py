@@ -55,10 +55,6 @@ class ProtocolAnalyzer(object):
     """
 
     def __init__(self, signal: Signal):
-        self.bit_alignment_positions = []
-        """:param bit_alignment_positions:
-        Um die Hex ASCII Darstellungen an beliebigen stellen auszurichten """
-
         self.blocks = []
         """:type: list of ProtocolBlock """
 
@@ -253,7 +249,7 @@ class ProtocolAnalyzer(object):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
-            block = ProtocolBlock(bits, pause, self.bit_alignment_positions, labelset=self.default_labelset,
+            block = ProtocolBlock(bits, pause, labelset=self.default_labelset,
                                   bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.blocks.append(block)
             i += 1
@@ -389,16 +385,6 @@ class ProtocolAnalyzer(object):
 
         self.used_symbols.add(symbol)
         return symbol
-
-    def add_bit_alignment(self, alignment):
-        self.bit_alignment_positions.append(alignment)
-        for block in self.blocks:
-            block.bit_alignment_positions.append(alignment)
-
-    def remove_bit_alignment(self, alignment):
-        self.bit_alignment_positions.remove(alignment)
-        for block in self.blocks:
-            block.bit_alignment_positions.remove(alignment)
 
     def get_samplepos_of_bitseq(self, startblock: int, startindex: int,
                                 endblock: int, endindex: int,
@@ -791,7 +777,6 @@ class ProtocolAnalyzer(object):
 
 
     def destroy(self):
-        self.bit_alignment_positions = None
         try:
             for labelset in self.labelsets:
                 labelset.clear()

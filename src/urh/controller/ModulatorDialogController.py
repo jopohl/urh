@@ -544,6 +544,8 @@ class ModulatorDialogController(QDialog):
         self.ui.chkBoxLockSIV.setEnabled(True)
         self.ui.btnAutoDetect.setEnabled(True)
         self.protocol = protocol
+        self.ui.spinBoxBitLength.setValue(self.ui.gVOriginalSignal.signal.bit_len)
+        self.ui.spinBoxBitLength.editingFinished.emit()
         self.unsetCursor()
 
     def keyPressEvent(self, event: QKeyEvent):

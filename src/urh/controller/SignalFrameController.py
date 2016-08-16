@@ -1120,6 +1120,11 @@ class SignalFrameController(QFrame):
 
             start = block.bit_sample_pos[-2] + 1
 
+        if subpath_ranges and subpath_ranges[-1][1] != end:
+            subpath_ranges.append((subpath_ranges[-1][1], end))
+            colors.append(None)
+
+
         subpath_ranges = subpath_ranges if subpath_ranges else None
         colors = colors if colors else None
         return subpath_ranges, colors

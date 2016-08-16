@@ -326,9 +326,14 @@ class ProjectManager(QObject):
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == os.path.relpath(signal.filename, self.project_path):
                 blocks_tag = sig_tag.find("blocks")
-                if blocks_tag:
-                    for i, block_tag in enumerate(blocks_tag.iter("block")):
-                        blocks[i].from_xml(block_tag, self.participants)
+
+                try:
+                    if blocks_tag:
+                        for i, block_tag in enumerate(blocks_tag.iter("block")):
+                            blocks[i].from_xml(block_tag, self.participants)
+                except IndexError:
+                    return False
+
                 return True
 
         return False

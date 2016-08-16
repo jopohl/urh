@@ -16,6 +16,9 @@ Universal Radio Hacker is a suite for investigating unknown wireless protocols. 
 ### Keep an overview even on complex protocols
  ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
 
+### Record and send signals
+ ![Record](/doc/screenshots/record_signal.png?raw=true)
+
 # Installation
 ## Requirements
 - Python 3.4+

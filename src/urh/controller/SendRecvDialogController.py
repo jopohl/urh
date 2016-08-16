@@ -171,6 +171,7 @@ class SendRecvDialogController(QDialog):
         if self.mode == Mode.spectrum:
             self.scene_creator.scene.center_freq = self.ui.spinBoxFreq.value()
             self.scene_creator.clear_path()
+            self.scene_creator.clear_peak()
 
     @pyqtSlot()
     def on_bw_changed(self):
@@ -356,6 +357,7 @@ class SendRecvDialogController(QDialog):
             self.ui.btnSave.setEnabled(False)
         else:
             self.scene_creator.clear_path()
+            self.scene_creator.clear_peak()
 
     def on_save_clicked(self):
         data = self.device.data[:self.device.current_index]

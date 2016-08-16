@@ -1090,7 +1090,7 @@ class SignalFrameController(QFrame):
     def __get_subpath_ranges_and_colors(self, start: float, end: float):
         subpath_ranges = []
         colors = []
-        start = int(start)
+        start = int(start) if start > 0 else 0
         end = int(end) if end == int(end) else int(end) + 1
 
         if not self.proto_analyzer.blocks:
@@ -1123,7 +1123,6 @@ class SignalFrameController(QFrame):
         if subpath_ranges and subpath_ranges[-1][1] != end:
             subpath_ranges.append((subpath_ranges[-1][1], end))
             colors.append(None)
-
 
         subpath_ranges = subpath_ranges if subpath_ranges else None
         colors = colors if colors else None

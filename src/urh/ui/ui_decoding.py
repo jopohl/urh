@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -169,7 +169,6 @@ class Ui_Decoder(object):
         self.page_substitution = QtWidgets.QWidget()
         self.page_substitution.setObjectName("page_substitution")
         self.gridLayout = QtWidgets.QGridLayout(self.page_substitution)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.substitution_rows = QtWidgets.QSpinBox(self.page_substitution)
         self.substitution_rows.setMinimum(1)
@@ -273,7 +272,7 @@ class Ui_Decoder(object):
         self.verticalLayout_4.addLayout(self.gridLayout_2)
 
         self.retranslateUi(Decoder)
-        self.optionWidget.setCurrentIndex(5)
+        self.optionWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(Decoder)
 
     def retranslateUi(self, Decoder):
@@ -291,7 +290,7 @@ class Ui_Decoder(object):
         self.gb_infoandoptions.setTitle(_translate("Decoder", "Information and Options"))
         self.info.setText(_translate("Decoder", "Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information."))
         self.label_5.setText(_translate("Decoder", "Number of redundant bits"))
-        self.label_6.setText(_translate("Decoder", "Carrier (\'1\' -> 1_1_1_1...)"))
+        self.label_6.setText(_translate("Decoder", "Carrier (\'1_\' -> 1_1_1_...)"))
         self.label_10.setText(_translate("Decoder", "Rows"))
         self.label_11.setText(_translate("Decoder", "Decoder"))
         self.label_12.setText(_translate("Decoder", "Encoder"))

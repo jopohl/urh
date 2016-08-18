@@ -288,7 +288,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="page_empty"/>
             <widget class="QWidget" name="page_redundancy">
@@ -340,7 +340,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Carrier ('1' -&gt; 1_1_1_1...)</string>
+               <string>Carrier ('1_' -&gt; 1_1_1_...)</string>
               </property>
              </widget>
             </widget>

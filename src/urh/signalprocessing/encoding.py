@@ -22,7 +22,7 @@ class encoding(object):
         self.multiple = 1
         self.src = []  # [[True, True], [True, False], [False, True], [False, False]]
         self.dst = []  # [[False, False], [False, True], [True, False], [True, True]]
-        self.carrier = []
+        self.carrier = "1_"
         self.__symbol_len = 1
 
         # Configure CC1101 Date Whitening
@@ -99,9 +99,9 @@ class encoding(object):
                 self.chain.append(self.code_carrier)
                 i += 1
                 if i < len(names):
-                    self.chain.append(self.str2bit(names[i]))
+                    self.chain.append(names[i])
                 else:
-                    self.chain.append(self.str2bit("1"))
+                    self.chain.append("1_")
             elif constants.DECODING_BITORDER in names[i]:
                 self.chain.append(self.code_lsb_first)
             elif constants.DECODING_EDGE in names[i]:
@@ -142,7 +142,7 @@ class encoding(object):
             elif self.code_carrier == self.chain[i]:
                 chainstr.append(constants.DECODING_CARRIER)
                 i += 1
-                chainstr.append(self.bit2str(self.chain[i]))
+                chainstr.append(self.chain[i])
             elif self.code_lsb_first == self.chain[i]:
                 chainstr.append(constants.DECODING_BITORDER)
             elif self.code_edge == self.chain[i]:
@@ -206,7 +206,7 @@ class encoding(object):
             if self.code_redundancy == operation:
                 self.multiple = int(self.chain[i + 1])
             elif self.code_carrier == operation:
-                self.carrier = self.str2bit(self.chain[i + 1])
+                self.carrier = self.chain[i + 1]
             elif self.code_substitution == operation:
                 self.src = self.chain[i + 1][0]
                 self.dst = self.chain[i + 1][1]
@@ -383,15 +383,36 @@ class encoding(object):
         if decoding:
             # Remove carrier if decoding
             if len(self.carrier) > 0:
-                for x in range(len(self.carrier), len(inpt), len(self.carrier) + 1):
-                    output.append(inpt[x])
+                ### Old algorithm
+                #for x in range(len(self.carrier), len(inpt), len(self.carrier) + 1):
+                #    output.append(inpt[x])
+                for x in range(0, len(inpt)):
+                    tmp = self.carrier[x % len(self.carrier)]
+                    if tmp not in ("0", "1", "*"):     # Data!
+                        output.append(inpt[x])
+                    else:                              # Carrier -> 0, 1, *
+                        if tmp in ("0", "1"):
+                            if (inpt[x] and tmp != "1") or (not inpt[x] and tmp != "0"):
+                                #print("Pos", x, self.carrier[x % cl], inpt[x])
+                                errors += 1
         else:
             # Add carrier if encoding
+            print(self.carrier)
             if len(self.carrier) > 0:
+                ### Old algorithm
+                #for i in inpt:
+                #    output.extend(self.carrier)
+                #    output.append(i)
+                #output.extend(self.carrier)
+                x = 0
                 for i in inpt:
-                    output.extend(self.carrier)
-                    output.append(i)
-                output.extend(self.carrier)
+                    tmp = self.carrier[x % len(self.carrier)]
+                    if not tmp in ("0", "1", "*"):
+                        output.append(i)
+                        x += 1
+                    while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
+                        output.append(False if self.carrier[x % len(self.carrier)] in ("0", "*") else True) # Add 0 when there is a wildcard (*) in carrier description
+                        x += 1
         return output, errors
 
     def code_data_whitening(self, decoding, inpt):

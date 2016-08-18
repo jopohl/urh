@@ -469,23 +469,23 @@ class DecoderWidgetController(QDialog):
 
         elif constants.DECODING_CARRIER in element:
             txt += "A carrier is a fixed pattern like 1_1_1_1 where the actual data lies in between, e.g. 1a1a1b1. This " \
-                   "function extracts the actual bit information (here: aab) from the signal.\n" \
+                   "function extracts the actual bit information (here: aab) from the signal at '_'/'.' positions.\n" \
                    "Examples:\n" \
-                   "- Carrier = '1' means 1_1_1_1...\n" \
-                   "- Carrier = '01' means 01_01_01_01..."
+                   "- Carrier = '1_' means 1_1_1_...\n" \
+                   "- Carrier = '01_' means 01_01_01_01..."
             self.ui.optionWidget.setCurrentIndex(2)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
-                self.ui.carrier.setText("1")
+                self.ui.carrier.setText("1_")
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
-                        self.ui.carrier.setText("1")
+                        self.ui.carrier.setText("1_")
                     else:
                         self.ui.carrier.setText(value)
                 else:
-                    self.ui.carrier.setText("1")
+                    self.ui.carrier.setText("1_")
             self.ui.carrier.setEnabled(decoderEdit)
 
         elif constants.DECODING_DATAWHITENING in element:
@@ -592,7 +592,7 @@ class DecoderWidgetController(QDialog):
     def handle_carrier_changed(self):
         # Only allow {0, 1}
         carrier_txt = self.ui.carrier.text()
-        if carrier_txt.count("0") + carrier_txt.count("1") < len(carrier_txt):
+        if carrier_txt.count("0") + carrier_txt.count("1") + carrier_txt.count("_") + carrier_txt.count(".") + carrier_txt.count("*") < len(carrier_txt):
             self.ui.carrier.setText(self.old_carrier_txt)
         else:
             self.old_carrier_txt = carrier_txt
@@ -605,14 +605,12 @@ class DecoderWidgetController(QDialog):
     def dragEnterEvent(self, event: QDragEnterEvent):
         event.accept()
 
-
     def dropEvent(self, event: QDropEvent):
         #if not self.ui.decoderchain.geometry().contains(self.mapToGlobal(event.pos())):
         if self.ui.decoderchain.active_element >= 0:
             self.chainoptions.pop(self.ui.decoderchain.item(self.ui.decoderchain.active_element).text(), None)
         self.ui.decoderchain.takeItem(self.ui.decoderchain.active_element)
         self.decoderchainUpdate()
-
 
     def set_signal(self):
         indx = self.ui.combobox_signals.currentIndex()

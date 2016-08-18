@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -372,6 +371,7 @@ class Ui_FAnalysis(object):
         self.pageButtonAnalyzer = QtWidgets.QWidget()
         self.pageButtonAnalyzer.setObjectName("pageButtonAnalyzer")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.pageButtonAnalyzer)
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.btnAnalyze = QtWidgets.QToolButton(self.pageButtonAnalyzer)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -387,6 +387,7 @@ class Ui_FAnalysis(object):
         self.pageProgressBar = QtWidgets.QWidget()
         self.pageProgressBar.setObjectName("pageProgressBar")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.pageProgressBar)
+        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.progressBarLogicAnalyzer = QtWidgets.QProgressBar(self.pageProgressBar)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)

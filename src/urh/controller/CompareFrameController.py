@@ -897,7 +897,10 @@ class CompareFrameController(QFrame):
     def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):
 
         labelset = self.get_labelset_for_label(proto_label)
-        self.show_protocol_labels(labelset.index(proto_label))
+        try:
+            self.show_protocol_labels(labelset.index(proto_label))
+        except AttributeError:
+            self.show_protocol_labels(0)
 
     @pyqtSlot(int)
     def show_protocol_labels(self, preselected_index: int):

@@ -212,7 +212,10 @@ class encoding(object):
                 self.dst = self.chain[i + 1][1]
             elif self.code_externalprogram == operation:
                 if self.chain[i + 1] != "":
-                    self.external_decoder, self.external_encoder = self.chain[i + 1].split(";")
+                    try:
+                        self.external_decoder, self.external_encoder = self.chain[i + 1].split(";")
+                    except ValueError:
+                        pass
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:

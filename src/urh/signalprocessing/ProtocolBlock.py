@@ -400,7 +400,10 @@ class ProtocolBlock(object):
         start = self.convert_index(index1, from_view, to_view, decoded)[0]
         end = self.convert_index(index2, from_view, to_view, decoded)[1]
 
-        return int(start), int(math.ceil(end))
+        try:
+            return int(start), int(math.ceil(end))
+        except TypeError:
+            return 0,0
 
     def get_duration(self, sample_rate: int) -> float:
         if len(self.bit_sample_pos) < 2:

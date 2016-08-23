@@ -168,6 +168,7 @@ class Ui_Decoder(object):
         self.page_substitution = QtWidgets.QWidget()
         self.page_substitution.setObjectName("page_substitution")
         self.gridLayout = QtWidgets.QGridLayout(self.page_substitution)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.substitution_rows = QtWidgets.QSpinBox(self.page_substitution)
         self.substitution_rows.setMinimum(1)

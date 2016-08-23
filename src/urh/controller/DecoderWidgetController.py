@@ -59,6 +59,7 @@ class DecoderWidgetController(QDialog):
         self.ui.additionalfunctions.addItem(constants.DECODING_REDUNDANCY)
         self.ui.additionalfunctions.addItem(constants.DECODING_CARRIER)
         self.ui.additionalfunctions.addItem(constants.DECODING_DATAWHITENING)
+        self.ui.additionalfunctions.addItem(constants.DECODING_ENOCEAN)
 
         # Presets
         self.setWindowTitle("Decoding")
@@ -177,7 +178,7 @@ class DecoderWidgetController(QDialog):
         self.chainoptions.clear()
         last_i = ""
         for i in chain:
-            if i in [constants.DECODING_INVERT, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
+            if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
                      constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE, constants.DECODING_DATAWHITENING,
                      constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
@@ -442,6 +443,8 @@ class DecoderWidgetController(QDialog):
 
         elif constants.DECODING_INVERT in element:
             txt += "All bits are inverted, i.e. 0->1 and 1->0."
+        elif constants.DECODING_ENOCEAN in element:
+            txt += "Remove Wireless Short-Packet (WSP) encoding that is used by EnOcean (Switch Telegram) standard. Special errors: 404 - no/wrong preamble, 403 - no/wrong start of frame (SoF), >1000 - wrong 4 bit hash."
         elif constants.DECODING_DIFFERENTIAL in element:
             txt += "Every transition between low and high (0->1 or 1->0) becomes 1, no transition (0->0 or 1->1) remains 0.\n" \
                    "The first signal bit is regarded as start value and directly copied.\n" \

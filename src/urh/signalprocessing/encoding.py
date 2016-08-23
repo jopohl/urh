@@ -79,6 +79,8 @@ class encoding(object):
         while i < len(names):
             if constants.DECODING_INVERT in names[i]:
                 self.chain.append(self.code_invert)
+            elif constants.DECODING_ENOCEAN in names[i]:
+                self.chain.append(self.code_enocean)
             elif constants.DECODING_DIFFERENTIAL in names[i]:
                 self.chain.append(self.code_differential)
             elif constants.DECODING_REDUNDANCY in names[i]:
@@ -129,6 +131,8 @@ class encoding(object):
         while i < len(self.chain):
             if self.code_invert == self.chain[i]:
                 chainstr.append(constants.DECODING_INVERT)
+            elif self.code_enocean == self.chain[i]:
+                chainstr.append(constants.DECODING_ENOCEAN)
             elif self.code_differential == self.chain[i]:
                 chainstr.append(constants.DECODING_DIFFERENTIAL)
             elif self.code_redundancy == self.chain[i]:
@@ -386,9 +390,6 @@ class encoding(object):
         if decoding:
             # Remove carrier if decoding
             if len(self.carrier) > 0:
-                ### Old algorithm
-                #for x in range(len(self.carrier), len(inpt), len(self.carrier) + 1):
-                #    output.append(inpt[x])
                 for x in range(0, len(inpt)):
                     tmp = self.carrier[x % len(self.carrier)]
                     if tmp not in ("0", "1", "*"):     # Data!
@@ -400,13 +401,7 @@ class encoding(object):
                                 errors += 1
         else:
             # Add carrier if encoding
-            print(self.carrier)
             if len(self.carrier) > 0:
-                ### Old algorithm
-                #for i in inpt:
-                #    output.extend(self.carrier)
-                #    output.append(i)
-                #output.extend(self.carrier)
                 x = 0
                 for i in inpt:
                     tmp = self.carrier[x % len(self.carrier)]
@@ -589,6 +584,102 @@ class encoding(object):
         else:
             print("Please set external de/encoder program!")
             return [[], 1]
+
+        return output, errors
+
+    def enocean_hash4(self, inpt):
+        hash = 0
+        val = inpt.copy()
+        val[-4:] = [False, False, False, False]
+        for i in range(0, len(val), 8):
+            hash += int("".join(map(str,map(int, val[i:i+8]))),2)
+        hash = (((hash & 0xf0)>>4) + (hash & 0x0f)) & 0x0f
+        return list(map(bool, map(int, "{0:04b}".format(hash))))
+
+    def code_enocean(self, decoding, inpt):
+        errors = 0
+        output = []
+        preamble = [True, False, True, False, True, False, True, False]
+        sof = [True, False, False, True]
+        eof = [True, False, True, True]
+
+        if decoding:
+            inpt, _ = self.code_invert(True, inpt) # Invert
+
+            # Search for begin
+            n = 0
+            while inpt[n]:
+                n += 1
+
+            # check preamble
+            if inpt[n-1:n+7] != preamble:
+                return inpt, 404
+
+            # check SoF
+            if inpt[n+7:n+11] != sof:
+                return inpt, 403
+
+            # Initialize output with raw input data
+            output.extend(inpt[:n+11])
+
+            # search for data limits
+            start = n+11
+            n = len(inpt)
+            while n > start and inpt[n-4:n] != eof:
+                n -= 1
+            end = n-3
+
+            for n in range (start, end, 12):
+                errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
+                errors += sum([inpt[n+10] != False, inpt[n+11] != True]) if n < end - 11 else 0
+                output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
+
+            if output[-4:] != self.enocean_hash4(output[start:]):
+                errors += 1000
+            #print("Hash:", self.bit2str(self.enocean_hash4(output[start:])), self.bit2str(output[-4:]))
+
+            # Finalize output
+            output.extend(inpt[end-1:])
+
+        else:
+            # Search for begin
+            n = 0
+            while inpt[n]:
+                n += 1
+
+            # check preamble
+            if inpt[n - 1:n + 7] != preamble:
+                return inpt, 404
+
+            # check SoF
+            if inpt[n + 7:n + 11] != sof:
+                return inpt, 403
+
+            # Initialize output with raw input data
+            output.extend(inpt[:n+11])
+
+            # search for data limits
+            start = n + 11
+            n = len(inpt)
+            while n > start and inpt[n - 4:n] != eof:
+                n -= 1
+            end = n - 4
+
+            # Calculate hash
+            inpt[end-4:end] = self.enocean_hash4(inpt[start:end])
+
+            for n in range(start, end, 8):
+                output.extend([inpt[n], inpt[n+1], inpt[n+2], not inpt[n+2], inpt[n+3], inpt[n+4], inpt[n+5], not inpt[n+5], inpt[n+6], inpt[n+7]])
+                if n < len(inpt) - 15:
+                    output.extend([False, True])
+                #print(n, self.bit2str(output[start:]), len(self.bit2str(output[start:])))
+
+            # Extend eof and trash
+            output.extend(eof)
+            output.append(True)
+
+            # Invert
+            output, _ = self.code_invert(True, output)  # Invert
 
         return output, errors
 

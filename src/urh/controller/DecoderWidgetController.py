@@ -93,8 +93,8 @@ class DecoderWidgetController(QDialog):
         self.ui.btnChooseDecoder.clicked.connect(self.choose_decoder)
         self.ui.btnChooseEncoder.clicked.connect(self.choose_encoder)
 
-        self.ui.external_decoder.editingFinished.connect(self.handle_external)
-        self.ui.external_encoder.editingFinished.connect(self.handle_external)
+        self.ui.external_decoder.textEdited.connect(self.handle_external)
+        self.ui.external_encoder.textEdited.connect(self.handle_external)
         self.ui.datawhitening_sync.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_polynomial.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_applycrc.clicked.connect(self.handle_datawhitening)

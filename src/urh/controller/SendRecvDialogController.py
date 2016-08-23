@@ -7,6 +7,8 @@ import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
+
+from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -361,7 +363,14 @@ class SendRecvDialogController(QDialog):
 
     def on_save_clicked(self):
         data = self.device.data[:self.device.current_index]
-        filename = FileOperator.save_data_dialog("recorded", data, parent=self)
+
+        dev = self.device
+        big_val = Formatter.big_value_with_suffix
+        inital_name = "{0} {1}Hz {2}Sps {3}Hz".format(dev.name, big_val(dev.frequency),
+                                                      big_val(dev.sample_rate),
+                                                      big_val(dev.bandwidth)).replace(Formatter.local_decimal_seperator(), "_").replace("_000","")
+
+        filename = FileOperator.save_data_dialog(inital_name, data, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)

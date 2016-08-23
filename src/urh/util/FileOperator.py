@@ -8,11 +8,6 @@ import zipfile
 from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from urh.cythonext.signalFunctions import Symbol
-
-from urh.signalprocessing.LabelSet import LabelSet
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
 from urh.util.Errors import Errors
 
 VIEW_TYPES = ["Bits", "Hex", "ASCII"]
@@ -62,12 +57,16 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
     global RECENT_PATH
     if caption == "Save signal":
         filter = "Complex files (*.complex);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
+        default_suffix = "complex"
         if wav_only:
             filter = "wav files (*.wav);;all files (*)"
+            default_suffix = "wav"
     elif caption == "Save fuzz profile":
         filter = "Fuzzfiles (*.fuzz);;All files (*)"
+        default_suffix = "fuzz"
     else:
         filter = "Protocols (*.proto);;All files (*)"
+        default_suffix = "proto"
 
     filename = None
     dialog = QFileDialog()
@@ -79,13 +78,10 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
     dialog.setWindowTitle(caption)
     dialog.setAcceptMode(QFileDialog.AcceptSave)
     dialog.selectFile(initial_name)
+    dialog.setDefaultSuffix(default_suffix)
 
     if (dialog.exec()):
         filename = dialog.selectedFiles()[0]
-        filter = dialog.selectedNameFilter()
-        ext = filter[filter.index('*'):filter.index(')')][1:]
-        if not os.path.exists(filename) and len(ext) > 0 and not filename.endswith(ext):
-            filename += ext
 
     if filename:
         RECENT_PATH = os.path.split(filename)[0]

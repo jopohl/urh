@@ -1,9 +1,11 @@
 import copy
 import os
 
+from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
+from PyQt5.QtWidgets import QFileDialog
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -87,8 +89,12 @@ class DecoderWidgetController(QDialog):
         self.ui.carrier.textChanged.connect(self.handle_carrier_changed)
         self.ui.substitution_rows.valueChanged.connect(self.handle_substitution_rows_changed)
         self.ui.substitution.itemChanged.connect(self.handle_substitution_changed)
-        self.ui.external_decoder.textEdited.connect(self.handle_external)
-        self.ui.external_encoder.textEdited.connect(self.handle_external)
+
+        self.ui.btnChooseDecoder.clicked.connect(self.choose_decoder)
+        self.ui.btnChooseEncoder.clicked.connect(self.choose_encoder)
+
+        self.ui.external_decoder.editingFinished.connect(self.handle_external)
+        self.ui.external_encoder.editingFinished.connect(self.handle_external)
         self.ui.datawhitening_sync.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_polynomial.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_applycrc.clicked.connect(self.handle_datawhitening)
@@ -106,6 +112,19 @@ class DecoderWidgetController(QDialog):
         self.ui.combobox_signals.currentIndexChanged.connect(self.set_signal)
         self.ui.saveas.clicked.connect(self.saveas)
         self.ui.delete_decoding.clicked.connect(self.delete_decoding)
+
+
+    def choose_decoder(self):
+        f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())
+        if f and ok:
+            self.ui.external_decoder.setText(f)
+            self.handle_external()
+
+    def choose_encoder(self):
+        f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose encoder program"), QDir.homePath())
+        if f and ok:
+            self.ui.external_encoder.setText(f)
+            self.handle_external()
 
 
     def save_to_file(self):

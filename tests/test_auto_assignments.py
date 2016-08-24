@@ -3,7 +3,7 @@ import unittest
 
 import time
 
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -18,7 +18,7 @@ class TestAutoAssignments(unittest.TestCase):
         with open("./data/decoded_bits.txt") as f:
             for line in f:
                 self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
-                self.protocol.messages[-1].labelset = self.protocol.default_labelset
+                self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
         # Assign participants
         alice = Participant("Alice", "A")
@@ -42,23 +42,23 @@ class TestAutoAssignments(unittest.TestCase):
         self.decodings.append(encoding(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
         self.decodings.append(encoding(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
 
-    def test_labelset_assign_by_value(self):
+    def test_message_type_assign_by_value(self):
         start = 8
         end = 15
         hex_value = "9a7d9a7d"
 
-        lblset = LabelSet("autotest")
-        lblset.ruleset = Ruleset(Mode.all_apply, [Rule(start, end, "=", hex_value, 1)])
-        lblset.assigned_automatically = True
+        msg_type = MessageType("autotest")
+        msg_type.ruleset = Ruleset(Mode.all_apply, [Rule(start, end, "=", hex_value, 1)])
+        msg_type.assigned_automatically = True
 
-        self.protocol.labelsets.append(lblset)
-        self.protocol.update_auto_labelsets()
+        self.protocol.message_types.append(msg_type)
+        self.protocol.update_auto_message_types()
         matching_indices = [0, 2, 3, 21, 23, 24]
         for i, message in enumerate(self.protocol.messages):
             if i in matching_indices:
-                self.assertEqual(message.labelset, lblset, msg=str(i))
+                self.assertEqual(message.message_type, msg_type, msg=str(i))
             else:
-                self.assertEqual(message.labelset, self.protocol.default_labelset, msg=str(i))
+                self.assertEqual(message.message_type, self.protocol.default_message_type, msg=str(i))
 
     def test_two_assign_participants_by_rssi(self):
         rssis = [[0.65389872, 0.13733707, 0.1226876, 0.73320961, 0.64940965, 0.12463234, 0.12296994,
@@ -132,19 +132,19 @@ class TestAutoAssignments(unittest.TestCase):
         with open("./data/decoded_with_trash.txt") as f:
             for line in f:
                 decoded_trash_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
-                decoded_trash_protocol.messages[-1].labelset = decoded_trash_protocol.default_labelset
+                decoded_trash_protocol.messages[-1].message_type = decoded_trash_protocol.default_message_type
 
         decoded_trash_protocol.auto_assign_labels()
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
         sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
 
-        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_labelset if lbl.name == "Preamble"]))
-        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_labelset if lbl.name == "Sync"]))
+        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_message_type if lbl.name == "Preamble"]))
+        self.assertEqual(1, len([lbl for lbl in decoded_trash_protocol.default_message_type if lbl.name == "Sync"]))
 
         for message in decoded_trash_protocol.messages:
-            self.assertIn(preamble_label, message.labelset)
-            self.assertIn(sync_label, message.labelset)
+            self.assertIn(preamble_label, message.message_type)
+            self.assertIn(sync_label, message.message_type)
 
     def test_assign_labels(self):
         preamble_start = 0
@@ -162,14 +162,14 @@ class TestAutoAssignments(unittest.TestCase):
         sync_label = ProtocolLabel(name="Sync", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
         length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, val_type_index=0, color_index=2)
 
-        self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Preamble"]))
-        self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Sync"]))
-        self.assertEqual(1, len([lbl for lbl in self.protocol.default_labelset if lbl.name == "Length"]))
+        self.assertEqual(1, len([lbl for lbl in self.protocol.default_message_type if lbl.name == "Preamble"]))
+        self.assertEqual(1, len([lbl for lbl in self.protocol.default_message_type if lbl.name == "Sync"]))
+        self.assertEqual(1, len([lbl for lbl in self.protocol.default_message_type if lbl.name == "Length"]))
 
         for message in self.protocol.messages:
-            self.assertIn(preamble_label, message.labelset)
-            self.assertIn(sync_label, message.labelset)
-            self.assertIn(length_label, message.labelset)
+            self.assertIn(preamble_label, message.message_type)
+            self.assertIn(sync_label, message.message_type)
+            self.assertIn(length_label, message.message_type)
 
 
     def test_assign_constants(self):
@@ -182,14 +182,14 @@ class TestAutoAssignments(unittest.TestCase):
             for line in f:
                 const_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.assertEqual(const_protocol.messages[-1].decoded_bits_str, line.replace("\n", ""))
-                const_protocol.messages[-1].labelset = const_protocol.default_labelset
+                const_protocol.messages[-1].message_type = const_protocol.default_message_type
 
         for message in const_protocol.messages:
             assert message.decoded_bits_str[const_start:const_end] == const
 
         const_protocol.auto_assign_labels()
         const_label = ProtocolLabel(name="Constant #1", start=const_start, end=const_end, val_type_index=0, color_index=0)
-        self.assertEqual(1, len([lbl for lbl in const_protocol.default_labelset if lbl.name == const_label.name]))
+        self.assertEqual(1, len([lbl for lbl in const_protocol.default_message_type if lbl.name == const_label.name]))
 
         for message in const_protocol.messages:
-            self.assertIn(const_label, message.labelset)
+            self.assertIn(const_label, message.message_type)

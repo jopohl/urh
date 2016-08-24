@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from urh import constants
 from urh.signalprocessing.Interval import Interval
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
@@ -195,18 +195,18 @@ class LabelAssigner(object):
         return ProtocolLabel(start=int(length_range[0]), end=int(length_range[1]) - 1,
                              name="Length", color_index=None, val_type_index=0)
 
-    def auto_assign_to_labelset(self, labelset: LabelSet):
+    def auto_assign_to_message_type(self, message_type: MessageType):
         preamble = self.find_preamble()
         if preamble is not None:
-            labelset.add_label(preamble, allow_overlapping=False)
+            message_type.add_label(preamble, allow_overlapping=False)
 
         sync = self.find_sync()
         if sync is not None:
-            labelset.add_label(sync, allow_overlapping=False)
+            message_type.add_label(sync, allow_overlapping=False)
 
         for constant_lbl in self.find_constants():
-            labelset.add_label(constant_lbl, allow_overlapping=False)
+            message_type.add_label(constant_lbl, allow_overlapping=False)
 
         length_label = self.find_byte_length()
         if length_label is not None:
-            labelset.add_label(length_label, allow_overlapping=False)
+            message_type.add_label(length_label, allow_overlapping=False)

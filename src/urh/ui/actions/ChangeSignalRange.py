@@ -98,7 +98,7 @@ class ChangeSignalRange(QUndoCommand):
             old_msg = self.orig_messages[old_index]
             new_msg = self.protocol.messages[new_index]
             new_msg.decoder = old_msg.decoder
-            new_msg.labelset = old_msg.labelset
+            new_msg.message_type = old_msg.message_type
             new_msg.participant = old_msg.participant
 
         self.protocol.qt_signals.protocol_updated.emit()

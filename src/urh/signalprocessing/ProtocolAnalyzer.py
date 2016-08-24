@@ -12,7 +12,7 @@ from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.LabelAssigner import LabelAssigner
 
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -71,25 +71,25 @@ class ProtocolAnalyzer(object):
 
         self.decoder = encoding(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
 
-        self.labelsets = [LabelSet("default")]
+        self.message_types = [MessageType("default")]
 
     @property
-    def default_labelset(self) -> LabelSet:
-        if len(self.labelsets) == 0:
-            self.labelsets.append(LabelSet("default"))
+    def default_message_type(self) -> MessageType:
+        if len(self.message_types) == 0:
+            self.message_types.append(MessageType("default"))
 
-        return self.labelsets[0]
+        return self.message_types[0]
 
-    @default_labelset.setter
-    def default_labelset(self, val: LabelSet):
-        if len(self.labelsets) > 0:
-            self.labelsets[0] = val
+    @default_message_type.setter
+    def default_message_type(self, val: MessageType):
+        if len(self.message_types) > 0:
+            self.message_types[0] = val
         else:
-            self.labelsets.append(val)
+            self.message_types.append(val)
 
     @property
     def protocol_labels(self):
-        return [lbl for labelset in self.labelsets for lbl in labelset]
+        return [lbl for message_type in self.message_types for lbl in message_type]
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -248,8 +248,8 @@ class ProtocolAnalyzer(object):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
-            message = Message(bits, pause, labelset=self.default_labelset,
-                            bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
+            message = Message(bits, pause, message_type=self.default_message_type,
+                              bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.messages.append(message)
             i += 1
 
@@ -607,17 +607,17 @@ class ProtocolAnalyzer(object):
     def set_labels(self, val):
         self._protocol_labels = val
 
-    def add_new_labelset(self, labels):
-        names = set(labelset.name for labelset in self.labelsets)
-        name = "Labelset #"
+    def add_new_message_type(self, labels):
+        names = set(message_type.name for message_type in self.message_types)
+        name = "Message type #"
         i = 0
         while True:
             i += 1
             if name + str(i) not in names:
-                self.labelsets.append(LabelSet(name=name+str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
+                self.message_types.append(MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
 
-    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_labelsets=False, write_bits=False) -> ET.Element:
+    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element(tag_name)
 
         # Save modulators
@@ -663,21 +663,21 @@ class ProtocolAnalyzer(object):
         # Save data
         data_tag = ET.SubElement(root, "messages")
         for i, message in enumerate(self.messages):
-            message_tag = message.to_xml(decoders=decodings, include_labelset=include_labelsets)
+            message_tag = message.to_xml(decoders=decodings, include_message_type=include_message_type)
             if write_bits:
                 message_tag.set("bits", message.plain_bits_str)
             data_tag.append(message_tag)
 
-        # Save labelsets separatively as not saved in messages already
-        if not include_labelsets:
-            labelsets_tag = ET.SubElement(root, "labelsets")
-            for labelset in self.labelsets:
-                labelsets_tag.append(labelset.to_xml())
+        # Save message types separatively as not saved in messages already
+        if not include_message_type:
+            message_types_tag = ET.SubElement(root, "message_types")
+            for message_type in self.message_types:
+                message_types_tag.append(message_type.to_xml())
 
         return root
 
-    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_labelset=False, write_bits=False):
-        tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name, include_labelsets=include_labelset, write_bits=write_bits)
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_message_types=False, write_bits=False):
+        tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name, include_message_type=include_message_types, write_bits=write_bits)
 
         xmlstr = minidom.parseString(ET.tostring(tag)).toprettyxml(indent="   ")
         with open(filename, "w") as f:
@@ -714,16 +714,16 @@ class ProtocolAnalyzer(object):
             self.messages[:] = []
 
         try:
-            labelsets = []
-            for lblset_tag in root.find("labelsets").findall("labelset"):
-                labelsets.append(LabelSet.from_xml(lblset_tag))
+            message_types = []
+            for message_type_tag in root.find("message_types").findall("message_type"):
+                message_types.append(MessageType.from_xml(message_type_tag))
         except AttributeError:
-            labelsets = []
+            message_types = []
 
 
-        for labelset in labelsets:
-            if labelset not in self.labelsets:
-                self.labelsets.append(labelset)
+        for message_type in message_types:
+            if message_type not in self.message_types:
+                self.message_types.append(message_type)
 
         try:
             message_tags = root.find("messages").findall("message")
@@ -731,10 +731,10 @@ class ProtocolAnalyzer(object):
                 if read_bits:
                     message = Message.from_plain_bits_str(bits=message_tag.get("bits"),
                                                         symbols={s.name: s for s in self.used_symbols})
-                    message.from_xml(tag=message_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+                    message.from_xml(tag=message_tag, participants=participants, decoders=decoders, message_types=self.message_types)
                     self.messages.append(message)
                 else:
-                    self.messages[i].from_xml(tag=message_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
+                    self.messages[i].from_xml(tag=message_tag, participants=participants, decoders=decoders, message_types=self.message_types)
 
         except AttributeError:
             pass
@@ -777,18 +777,18 @@ class ProtocolAnalyzer(object):
 
     def destroy(self):
         try:
-            for labelset in self.labelsets:
-                labelset.clear()
+            for message_type in self.message_types:
+                message_type.clear()
         except TypeError:
-            pass  # No labelsets defined
-        self.labelsets = []
+            pass  # No message types defined
+        self.message_types = []
         self.messages = None
 
-    def update_auto_labelsets(self):
+    def update_auto_message_types(self):
         for message in self.messages:
-            for labelset in (lblset for lblset in self.labelsets if lblset.assigned_automatically):
-                if labelset.ruleset.applies_for_message(message):
-                    message.labelset = labelset
+            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_automatically):
+                if message_type.ruleset.applies_for_message(message):
+                    message.message_type = message_type
                     break
 
     def auto_assign_participants(self, participants):
@@ -847,6 +847,6 @@ class ProtocolAnalyzer(object):
 
     def auto_assign_labels(self, debug=False):
         label_assigner = LabelAssigner(self.messages)
-        label_assigner.auto_assign_to_labelset(self.default_labelset)
+        label_assigner.auto_assign_to_message_type(self.default_message_type)
         if debug:
             label_assigner.print_common_intervals()

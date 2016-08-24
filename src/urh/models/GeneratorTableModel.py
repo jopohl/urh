@@ -31,7 +31,7 @@ class GeneratorTableModel(TableModel):
         assert isinstance(pac, ProtocolAnalyzerContainer)
         for i, message in enumerate(pac.messages):
             if message.fuzz_created:
-                for lbl in (lbl for lbl in message.labelset if lbl.fuzz_created):
+                for lbl in (lbl for lbl in message.message_type if lbl.fuzz_created):
                     for j in range(*message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
                         self.bold_fonts[i, j] = True
 
@@ -112,7 +112,7 @@ class GeneratorTableModel(TableModel):
             logger.warning("{} is out of range for generator protocol".format(row))
             return -1
 
-        for i, lbl in enumerate(msg.labelset):
+        for i, lbl in enumerate(msg.message_type):
             if column in range(*msg.get_label_range(lbl, self.proto_view, False)):
                 return i
 

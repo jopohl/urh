@@ -23,14 +23,14 @@ class ChangeSignalParameter(QUndoCommand):
         self.orig_messages = copy.deepcopy(self.protocol.messages)
 
     def redo(self):
-        msg_data = [(msg.decoder, msg.participant, msg.labelset) for msg in self.protocol.messages]
+        msg_data = [(msg.decoder, msg.participant, msg.message_type) for msg in self.protocol.messages]
         setattr(self.signal, self.parameter_name, self.parameter_value)
         # Restore msg parameters
         if len(msg_data) == self.protocol.num_messages:
             for msg, msg_params in zip(self.protocol.messages, msg_data):
                 msg.decoder = msg_params[0]
                 msg.participant = msg_params[1]
-                msg.labelset = msg_params[2]
+                msg.message_type = msg_params[2]
             self.protocol.qt_signals.protocol_updated.emit()
 
 

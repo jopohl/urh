@@ -18,7 +18,7 @@ class GeneratorListModel(QAbstractListModel):
     @property
     def labels(self):
         if self.message:
-            return self.message.labelset
+            return self.message.message_type
         else:
             return []
     

@@ -13,7 +13,7 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController, Mo
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Message import Message
@@ -219,9 +219,9 @@ class GeneratorTabController(QWidget):
                 message = self.table_model.protocol.messages[min_row]
                 preselected_index = message.modulator_indx
             except IndexError:
-                message = Message([True, False, True, False], 0, [], LabelSet("empty"))
+                message = Message([True, False, True, False], 0, [], MessageType("empty"))
         else:
-            message = Message([True, False, True, False], 0, [], LabelSet("empty"))
+            message = Message([True, False, True, False], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
                 message.bit_len = self.table_model.protocol.messages[0].bit_len
 
@@ -376,7 +376,7 @@ class GeneratorTabController(QWidget):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
         pac = self.table_model.protocol
         assert isinstance(pac, ProtocolAnalyzerContainer)
-        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.labelset)
+        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.message_type)
         self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()

@@ -53,23 +53,23 @@ class ProtocolLabelListView(QListView):
         editAction = menu.addAction("Edit Protocol Label...")
 
         assign_actions = []
-        labelset_names = []
+        message_type_names = []
 
 
         if min_row > -1:
             menu.addAction(self.del_rows_action)
-            labelset_names = [lset.name for lset in self.model().controller.proto_analyzer.labelsets]
+            message_type_names = [lset.name for lset in self.model().controller.proto_analyzer.message_types]
 
             try:
                 proto_label = self.model().get_label_at(index.row())
-                avail_labelsets = []
-                for lblset in self.model().controller.proto_analyzer.labelsets:
-                    if proto_label not in lblset:
-                        avail_labelsets.append(lblset)
+                avail_message_types = []
+                for message_type in self.model().controller.proto_analyzer.message_types:
+                    if proto_label not in message_type:
+                        avail_message_types.append(message_type)
 
-                if avail_labelsets:
-                    assign_menu = menu.addMenu("Copy label(s) to labelset")
-                    assign_actions = [assign_menu.addAction(labelset.name) for labelset in avail_labelsets]
+                if avail_message_types:
+                    assign_menu = menu.addMenu("Copy label(s) to message type")
+                    assign_actions = [assign_menu.addAction(message_type.name) for message_type in avail_message_types]
             except IndexError:
                 pass
 
@@ -86,8 +86,8 @@ class ProtocolLabelListView(QListView):
         elif action == hideAllAction:
             self.model().hideAll()
         elif action in assign_actions:
-            labelset_id = labelset_names.index(action.text())
-            self.model().add_labels_to_labelset(min_row, max_row, labelset_id)
+            message_type_id = message_type_names.index(action.text())
+            self.model().add_labels_to_message_type(min_row, max_row, message_type_id)
 
 
     def delete_rows(self):

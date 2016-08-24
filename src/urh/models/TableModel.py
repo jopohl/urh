@@ -138,7 +138,7 @@ class TableModel(QAbstractTableModel):
         label_colors = constants.LABEL_COLORS
 
         for i, message in enumerate(self.protocol.messages):
-            for lbl in message.labelset:
+            for lbl in message.message_type:
                 bg_color = label_colors[lbl.color_index]
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):

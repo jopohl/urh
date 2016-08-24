@@ -44,7 +44,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     @property
     def protocol_labels(self):
-        result = list(set(lbl for msg in self.messages for lbl in msg.labelset))
+        result = list(set(lbl for msg in self.messages for lbl in msg.message_type))
         result.sort()
         return result
 
@@ -55,8 +55,8 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
         messages = [Message(plain_bits=copy.copy(msg.decoded_bits), pause=msg.pause,
-                          labelset=copy.deepcopy(msg.labelset),
-                          rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant)
+                            message_type=copy.deepcopy(msg.message_type),
+                            rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant)
                   for msg in proto_analyzer.messages if msg]
 
         self.messages[index:0] = messages
@@ -98,9 +98,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
 
                 fuz_msg = Message(plain_bits=cpy_bits, pause=msg.pause,
-                                    rssi=msg.rssi, labelset=msg.labelset.copy_for_fuzzing(),
-                                    modulator_indx=msg.modulator_indx,
-                                    decoder=msg.decoder, fuzz_created=True)
+                                  rssi=msg.rssi, message_type=msg.message_type.copy_for_fuzzing(),
+                                  modulator_indx=msg.modulator_indx,
+                                  decoder=msg.decoder, fuzz_created=True)
                 appd_result(fuz_msg)
 
         self.messages = result
@@ -130,14 +130,14 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.fuzz(FuzzMode.exhaustive)
 
     def create_fuzzing_label(self, start, end, msg_index) -> ProtocolLabel:
-        fuz_lbl = self.messages[msg_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)
+        fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(start=start, end=end, type_index= 0)
         return fuz_lbl
 
     def set_decoder_for_messages(self, decoder, messages=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
 
-    def to_xml_file(self, filename: str, decoders=None, participants=None, tag_name="fuzz_profile", include_labelset=True, write_bits=True):
-        super().to_xml_file(filename=filename, decoders=None, participants=participants, tag_name=tag_name, include_labelset=include_labelset, write_bits=write_bits)
+    def to_xml_file(self, filename: str, decoders=None, participants=None, tag_name="fuzz_profile", include_message_types=True, write_bits=True):
+        super().to_xml_file(filename=filename, decoders=None, participants=participants, tag_name=tag_name, include_message_types=include_message_types, write_bits=write_bits)
 
     def from_xml_file(self, filename: str, read_bits=True):
         super().from_xml_file(filename=filename, read_bits=read_bits)

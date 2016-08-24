@@ -885,7 +885,7 @@
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QComboBox" name="cbLabelsets">
+          <widget class="QComboBox" name="cbMessagetypes">
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -895,9 +895,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="btnLabelsetSettings">
+          <widget class="QToolButton" name="btnMessagetypeSettings">
            <property name="toolTip">
-            <string>Settings for Labelset</string>
+            <string>Settings for message type</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -909,9 +909,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="btnAddLabelset">
+          <widget class="QToolButton" name="btnAddMessagetype">
            <property name="toolTip">
-            <string>Add a new labelset.</string>
+            <string>Add a new message type</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -923,9 +923,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="btnRemoveLabelset">
+          <widget class="QToolButton" name="btnRemoveMessagetype">
            <property name="toolTip">
-            <string>Delete current labelset.</string>
+            <string>Delete current message type</string>
            </property>
            <property name="text">
             <string>...</string>

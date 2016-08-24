@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogLabelsetOptions</class>
- <widget class="QDialog" name="DialogLabelsetOptions">
+ <class>DialogMessageType</class>
+ <widget class="QDialog" name="DialogMessageType">
   <property name="geometry">
    <rect>
     <x>0</x>

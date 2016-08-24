@@ -63,7 +63,7 @@ class TestGeneratorTable(unittest.TestCase):
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal = None)
         for _ in range(self.NUM_MESSAGES):
-            b = Message([True] * self.BITS_PER_MESSAGE, pause = 1000, labelset=result.default_labelset)
+            b = Message([True] * self.BITS_PER_MESSAGE, pause = 1000, message_type=result.default_message_type)
             result.messages.append(b)
         return result
 

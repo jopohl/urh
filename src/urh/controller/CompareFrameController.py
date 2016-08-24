@@ -8,7 +8,7 @@ from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
 
 from urh import constants
-from urh.controller.LabelsetOptionsDialogController import LabelsetOptionsDialogController
+from urh.controller.MessageTypeDialogController import MessageTypeDialogController
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
@@ -18,7 +18,7 @@ from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
@@ -59,8 +59,8 @@ class CompareFrameController(QFrame):
         clocale = QLocale()
         self.decimal_point = clocale.decimalPoint()
 
-        self.__selected_labelset = self.proto_analyzer.default_labelset
-        self.fill_labelset_combobox()
+        self.__selected_message_type = self.proto_analyzer.default_message_type
+        self.fill_message_type_combobox()
 
 
         self.participant_list_model = ParticipantListModel(project_manager.participants)
@@ -82,9 +82,9 @@ class CompareFrameController(QFrame):
         self.assign_decodings_action = self.analyze_menue.addAction("Assign decodings")
         self.assign_decodings_action.setCheckable(True)
         self.assign_decodings_action.setChecked(True)
-        self.assign_labelsets_action = self.analyze_menue.addAction("Assign labelsets")
-        self.assign_labelsets_action.setCheckable(True)
-        self.assign_labelsets_action.setChecked(True)
+        self.assign_message_type_action = self.analyze_menue.addAction("Assign message type")
+        self.assign_message_type_action.setCheckable(True)
+        self.assign_message_type_action.setChecked(True)
         self.assign_labels_action = self.analyze_menue.addAction("Assign labels")
         self.assign_labels_action.setCheckable(True)
         self.assign_labels_action.setChecked(True)
@@ -133,7 +133,7 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
-        self.__set_default_labelset_ui_status()
+        self.__set_default_message_type_ui_status()
 
     @property
     def active_group_ids(self):
@@ -168,22 +168,22 @@ class CompareFrameController(QFrame):
 
 
     @property
-    def active_labelset(self):
-        return self.__selected_labelset
+    def active_message_type(self):
+        return self.__selected_message_type
 
-    @active_labelset.setter
-    def active_labelset(self, val):
-        if val not in self.proto_analyzer.labelsets:
-            logger.error("Labelset {} not in labelsets".format(val.name))
+    @active_message_type.setter
+    def active_message_type(self, val):
+        if val not in self.proto_analyzer.message_types:
+            logger.error("Message type {} not in mesage types".format(val.name))
             return
 
-        self.__selected_labelset = val
+        self.__selected_message_type = val
 
-        self.ui.cbLabelsets.blockSignals(True)
-        self.ui.cbLabelsets.setCurrentIndex(self.proto_analyzer.labelsets.index(val))
-        self.__set_default_labelset_ui_status()
+        self.ui.cbMessagetypes.blockSignals(True)
+        self.ui.cbMessagetypes.setCurrentIndex(self.proto_analyzer.message_types.index(val))
+        self.__set_default_message_type_ui_status()
         self.protocol_label_list_model.update()
-        self.ui.cbLabelsets.blockSignals(False)
+        self.ui.cbMessagetypes.blockSignals(False)
 
 
     def handle_files_dropped(self, files: list):
@@ -323,21 +323,21 @@ class CompareFrameController(QFrame):
         self.project_manager.project_updated.connect(self.on_project_updated)
         self.participant_list_model.show_state_changed.connect(self.set_participant_visibility)
         self.ui.tblViewProtocol.participant_changed.connect(self.on_participant_edited)
-        self.ui.tblViewProtocol.labelset_selected.connect(self.on_labelset_selected)
-        self.ui.tblViewProtocol.new_labelset_clicked.connect(self.on_new_labelset_clicked)
-        self.ui.btnAddLabelset.clicked.connect(self.on_new_labelset_clicked)
-        self.ui.btnRemoveLabelset.clicked.connect(self.on_remove_labelset_clicked)
+        self.ui.tblViewProtocol.messagetype_selected.connect(self.on_message_type_selected)
+        self.ui.tblViewProtocol.new_messagetype_clicked.connect(self.on_new_message_type_clicked)
+        self.ui.btnAddMessagetype.clicked.connect(self.on_new_message_type_clicked)
+        self.ui.btnRemoveMessagetype.clicked.connect(self.on_remove_message_type_clicked)
 
         self.ui.lineEditSearch.returnPressed.connect(self.ui.btnSearchSelectFilter.click)
 
-        self.ui.cbLabelsets.currentIndexChanged.connect(self.on_cblabelset_index_changed)
-        self.ui.cbLabelsets.editTextChanged.connect(self.on_labelsetname_edited)
+        self.ui.cbMessagetypes.currentIndexChanged.connect(self.on_cbmessagetype_index_changed)
+        self.ui.cbMessagetypes.editTextChanged.connect(self.on_messagetype_name_edited)
 
         self.search_action.triggered.connect(self.__set_mode_to_search)
         self.select_action.triggered.connect(self.__set_mode_to_select_all)
         self.filter_action.triggered.connect(self.__set_mode_to_filter)
 
-        self.ui.btnLabelsetSettings.clicked.connect(self.on_btn_labelset_settings_clicked)
+        self.ui.btnMessagetypeSettings.clicked.connect(self.on_btn_messagetype_settings_clicked)
 
 
 
@@ -355,14 +355,14 @@ class CompareFrameController(QFrame):
         self.ui.cbDecoding.setCurrentIndex(prev_index)
         self.ui.cbDecoding.blockSignals(False)
 
-    def fill_labelset_combobox(self):
-        self.ui.cbLabelsets.blockSignals(True)
-        self.ui.cbLabelsets.clear()
-        for labelset in self.proto_analyzer.labelsets:
-            self.ui.cbLabelsets.addItem(labelset.name)
-        self.ui.cbLabelsets.blockSignals(False)
-        if self.ui.cbLabelsets.count() <= 1:
-            self.ui.cbLabelsets.setEditable(False)
+    def fill_message_type_combobox(self):
+        self.ui.cbMessagetypes.blockSignals(True)
+        self.ui.cbMessagetypes.clear()
+        for message_type in self.proto_analyzer.message_types:
+            self.ui.cbMessagetypes.addItem(message_type.name)
+        self.ui.cbMessagetypes.blockSignals(False)
+        if self.ui.cbMessagetypes.count() <= 1:
+            self.ui.cbMessagetypes.setEditable(False)
 
     def on_chkbox_show_differences_changed(self):
         chkd = self.ui.cbShowDiffs.isChecked()
@@ -411,11 +411,11 @@ class CompareFrameController(QFrame):
         pa.name = "Loaded Protocol"
         pa.filename = filename
         pa.from_xml_file(filename=filename, read_bits=True)
-        for labelset in pa.labelsets:
-            if labelset not in self.proto_analyzer.labelsets:
-                self.proto_analyzer.labelsets.append(labelset)
+        for messsagetype in pa.message_types:
+            if messsagetype not in self.proto_analyzer.message_types:
+                self.proto_analyzer.message_types.append(messsagetype)
 
-        self.fill_labelset_combobox()
+        self.fill_message_type_combobox()
         self.add_protocol(protocol=pa)
 
         self.set_shown_protocols()
@@ -481,8 +481,8 @@ class CompareFrameController(QFrame):
                     message.relative_time = rel_time
 
                     num_messages += 1
-                    if message.labelset not in self.proto_analyzer.labelsets:
-                        message.labelset = self.proto_analyzer.default_labelset
+                    if message.message_type not in self.proto_analyzer.message_types:
+                        message.message_type = self.proto_analyzer.default_message_type
                     self.proto_analyzer.messages.append(message)
 
                 self.proto_analyzer.used_symbols |= proto.used_symbols
@@ -673,7 +673,7 @@ class CompareFrameController(QFrame):
             self.ui.lNumSelectedColumns.setText("0")
             self.ui.lblLabelValues.setText(self.tr("Label values for message "))
             self.label_value_model.message_index = -1
-            self.active_labelset = self.proto_analyzer.default_labelset
+            self.active_message_type = self.proto_analyzer.default_message_type
             return -1, -1
 
         min_row = numpy.min([rng.top() for rng in selected])
@@ -686,7 +686,7 @@ class CompareFrameController(QFrame):
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
 
-        self.active_labelset = self.proto_analyzer.messages[max_row].labelset
+        self.active_message_type = self.proto_analyzer.messages[max_row].message_type
 
         if cur_view == 1:
             start *= 4
@@ -873,8 +873,8 @@ class CompareFrameController(QFrame):
     def reset(self):
         self.proto_tree_model.rootItem.clearChilds()
         self.proto_tree_model.rootItem.addGroup()
-        for labelset in self.proto_analyzer.labelsets:
-            labelset.clear()
+        for message_type in self.proto_analyzer.message_types:
+            message_type.clear()
         self.refresh()
 
     @pyqtSlot(int)
@@ -885,17 +885,17 @@ class CompareFrameController(QFrame):
     @pyqtSlot(ProtocolLabel)
     def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):
 
-        labelset = self.get_labelset_for_label(proto_label)
+        message_type = self.get_message_type_for_label(proto_label)
         try:
-            self.show_protocol_labels(labelset.index(proto_label))
+            self.show_protocol_labels(message_type.index(proto_label))
         except AttributeError:
             self.show_protocol_labels(0)
 
     @pyqtSlot(int)
     def show_protocol_labels(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        message = next(msg for msg in self.proto_analyzer.messages if self.active_labelset.id == msg.labelset.id)
-        label_controller = ProtocolLabelController(preselected_index=preselected_index, labelset=self.active_labelset,
+        message = next(msg for msg in self.proto_analyzer.messages if self.active_message_type.id == msg.message_type.id)
+        label_controller = ProtocolLabelController(preselected_index=preselected_index, message_type=self.active_message_type,
                                                    max_end=numpy.max([len(msg) for msg in self.proto_analyzer.messages]),
                                                    viewtype=view_type, message=message,
                                                    parent=self)
@@ -911,10 +911,10 @@ class CompareFrameController(QFrame):
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()
 
-    @pyqtSlot(ProtocolLabel, LabelSet)
-    def on_apply_decoding_changed(self, lbl: ProtocolLabel, labelset: LabelSet):
+    @pyqtSlot(ProtocolLabel, MessageType)
+    def on_apply_decoding_changed(self, lbl: ProtocolLabel, message_type: MessageType):
         for msg in self.proto_analyzer.messages:
-            if msg.labelset == labelset:
+            if msg.message_type == message_type:
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()
 
@@ -1038,7 +1038,7 @@ class CompareFrameController(QFrame):
 
     def set_protocol_label_visibility(self, lbl: ProtocolLabel, message: Message = None):
         try:
-            message = message if message else next(msg for msg in self.proto_analyzer.messages if lbl in msg.labelset)
+            message = message if message else next(msg for msg in self.proto_analyzer.messages if lbl in msg.message_type)
             start, end = message.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
 
             for i in range(start, end):
@@ -1046,10 +1046,10 @@ class CompareFrameController(QFrame):
         except Exception as e:
             pass
 
-    def get_labelset_for_label(self, lbl: ProtocolLabel) -> LabelSet:
-        for lblset in self.proto_analyzer.labelsets:
-            if lbl in lblset:
-                return lblset
+    def get_message_type_for_label(self, lbl: ProtocolLabel) -> MessageType:
+        for msg_type in self.proto_analyzer.message_types:
+            if lbl in msg_type:
+                return msg_type
         return None
 
     def show_all_cols(self):
@@ -1104,7 +1104,7 @@ class CompareFrameController(QFrame):
         if not label.show:
             return
 
-        message = next(msg for msg in self.proto_analyzer.messages if label if msg.labelset)
+        message = next(msg for msg in self.proto_analyzer.messages if label if msg.message_type)
         start, end = message.get_label_range(label, self.protocol_model.proto_view, True)
         indx = self.protocol_model.index(0, int((start + end) / 2))
 
@@ -1125,7 +1125,7 @@ class CompareFrameController(QFrame):
     def show_only_labels(self):
         visible_columns = set()
         for msg in self.proto_analyzer.messages:
-            for lbl in msg.labelset:
+            for lbl in msg.message_type:
                 if lbl.show:
                     start, end = msg.get_label_range(lbl=lbl, view=self.ui.cbProtoView.currentIndex(),
                                                        decode=True)
@@ -1190,7 +1190,7 @@ class CompareFrameController(QFrame):
     def add_protocol_label(self, start: int, end: int, messagenr: int,
                            proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
-        proto_label = self.active_labelset.add_protocol_label(start=start, end=end, type_index=proto_view)
+        proto_label = self.active_message_type.add_protocol_label(start=start, end=end, type_index=proto_view)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()
@@ -1232,15 +1232,15 @@ class CompareFrameController(QFrame):
             self.label_value_model.update()
             logger.debug("Time for auto assigning decodings: " + str(time.time() - t))
 
-        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign labelsets by rules)")
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
         self.ui.progressBarLogicAnalyzer.setValue(50)
 
-        if self.assign_labelsets_action.isChecked():
+        if self.assign_message_type_action.isChecked():
             t = time.time()
-            self.on_labelset_dialog_finished()
-            logger.debug("Time for auto assigning labelsets: " + str(time.time() - t))
+            self.on_message_type_dialog_finished()
+            logger.debug("Time for auto assigning message types: " + str(time.time() - t))
 
-        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Find new labels/labelsets)")
+        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Find new labels/message types)")
         self.ui.progressBarLogicAnalyzer.setValue(75)
 
         if self.assign_labels_action.isChecked():
@@ -1297,7 +1297,7 @@ class CompareFrameController(QFrame):
         result = []
         for i in range(row_start, row_end):
             message = self.proto_analyzer.messages[i]
-            for label in message.labelset:
+            for label in message.message_type:
                 lbl_start, lbl_end = message.get_label_range(lbl=label, view=view, decode=True)
                 if any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)) and not label in result:
                     result.append(label)
@@ -1309,7 +1309,7 @@ class CompareFrameController(QFrame):
         self.participant_list_model.update()
         self.protocol_model.participants = self.project_manager.participants
         self.protocol_model.refresh_vertical_header()
-        self.active_labelset = self.proto_analyzer.default_labelset
+        self.active_message_type = self.proto_analyzer.default_message_type
 
     def set_search_ui_visibility(self, visible: bool):
         self.ui.btnPrevSearch.setVisible(visible)
@@ -1346,58 +1346,58 @@ class CompareFrameController(QFrame):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
 
-    def on_cblabelset_index_changed(self):
-        self.active_labelset = self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]
+    def on_cbmessagetype_index_changed(self):
+        self.active_message_type = self.proto_analyzer.message_types[self.ui.cbMessagetypes.currentIndex()]
 
-    def __set_default_labelset_ui_status(self):
-        if self.active_labelset == self.proto_analyzer.default_labelset:
-            self.ui.cbLabelsets.setEditable(False)
-            self.ui.btnRemoveLabelset.hide()
-            self.ui.btnLabelsetSettings.hide()
+    def __set_default_message_type_ui_status(self):
+        if self.active_message_type == self.proto_analyzer.default_message_type:
+            self.ui.cbMessagetypes.setEditable(False)
+            self.ui.btnRemoveMessagetype.hide()
+            self.ui.btnMessagetypeSettings.hide()
         else:
-            self.ui.cbLabelsets.setEditable(True)
-            self.ui.btnRemoveLabelset.show()
-            self.ui.btnLabelsetSettings.show()
+            self.ui.cbMessagetypes.setEditable(True)
+            self.ui.btnRemoveMessagetype.show()
+            self.ui.btnMessagetypeSettings.show()
 
-    def on_labelsetname_edited(self, edited_str):
-        if self.active_labelset == self.proto_analyzer.labelsets[self.ui.cbLabelsets.currentIndex()]:
-            self.active_labelset.name = edited_str
-            self.ui.cbLabelsets.setItemText(self.ui.cbLabelsets.currentIndex(), edited_str)
+    def on_messagetype_name_edited(self, edited_str):
+        if self.active_message_type == self.proto_analyzer.message_types[self.ui.cbMessagetypes.currentIndex()]:
+            self.active_message_type.name = edited_str
+            self.ui.cbMessagetypes.setItemText(self.ui.cbMessagetypes.currentIndex(), edited_str)
 
-    def on_new_labelset_clicked(self, selected_messages: list = None):
+    def on_new_message_type_clicked(self, selected_messages: list = None):
         selected_messages = selected_messages if isinstance(selected_messages, list) else []
-        self.proto_analyzer.add_new_labelset(labels=self.proto_analyzer.default_labelset)
-        self.fill_labelset_combobox()
-        self.ui.cbLabelsets.setEditable(True)
-        self.active_labelset = self.proto_analyzer.labelsets[-1]
+        self.proto_analyzer.add_new_message_type(labels=self.proto_analyzer.default_message_type)
+        self.fill_message_type_combobox()
+        self.ui.cbMessagetypes.setEditable(True)
+        self.active_message_type = self.proto_analyzer.message_types[-1]
         for msg in selected_messages:
-            msg.labelset = self.active_labelset
-        self.ui.cbLabelsets.setFocus()
-        self.ui.btnRemoveLabelset.show()
+            msg.message_type = self.active_message_type
+        self.ui.cbMessagetypes.setFocus()
+        self.ui.btnRemoveMessagetype.show()
         self.protocol_model.update()
 
-    def on_labelset_selected(self, labelset: LabelSet, selected_messages):
+    def on_message_type_selected(self, message_type: MessageType, selected_messages):
         for msg in selected_messages:
-            msg.labelset = labelset
-        self.active_labelset  = labelset
+            msg.message_type = message_type
+        self.active_message_type  = message_type
         self.protocol_model.update()
 
-    def on_remove_labelset_clicked(self):
+    def on_remove_message_type_clicked(self):
         for msg in self.proto_analyzer.messages:
-            if msg.labelset == self.active_labelset:
-                msg.labelset = self.proto_analyzer.default_labelset
-        self.proto_analyzer.labelsets.remove(self.active_labelset)
-        self.fill_labelset_combobox()
+            if msg.message_type == self.active_message_type:
+                msg.message_type = self.proto_analyzer.default_message_type
+        self.proto_analyzer.message_types.remove(self.active_message_type)
+        self.fill_message_type_combobox()
         self.protocol_model.update()
-        self.active_labelset = self.proto_analyzer.default_labelset
+        self.active_message_type = self.proto_analyzer.default_message_type
 
-    def on_btn_labelset_settings_clicked(self):
-        dialog = LabelsetOptionsDialogController(self.active_labelset, parent=self)
+    def on_btn_messagetype_settings_clicked(self):
+        dialog = MessageTypeDialogController(self.active_message_type, parent=self)
         dialog.show()
-        dialog.finished.connect(self.on_labelset_dialog_finished)
+        dialog.finished.connect(self.on_message_type_dialog_finished)
 
-    def on_labelset_dialog_finished(self):
-        self.proto_analyzer.update_auto_labelsets()
+    def on_message_type_dialog_finished(self):
+        self.proto_analyzer.update_auto_message_types()
         self.protocol_model.update()
 
     def on_participant_edited(self):
@@ -1412,14 +1412,14 @@ class CompareFrameController(QFrame):
 
         self.ui.tblViewProtocol.hide_row() # Update data structures and call triggers after hiding rows
 
-    def on_label_name_edited(self, protolabel: ProtocolLabel, labelset: LabelSet):
-        # Check if label with the same name is already in another labelset.
+    def on_label_name_edited(self, protolabel: ProtocolLabel, message_type: MessageType):
+        # Check if label with the same name is already in another message type.
         # If yes, copy the attributes of this label to the edited one
         other_label = None
-        for lblset in self.proto_analyzer.labelsets:
-            if lblset == labelset:
+        for msg_type in self.proto_analyzer.message_types:
+            if msg_type == message_type:
                 continue
-            other_label = next((p for p in lblset if p.name == protolabel.name), None)
+            other_label = next((p for p in msg_type if p.name == protolabel.name), None)
             if other_label:
                 break
         if other_label:

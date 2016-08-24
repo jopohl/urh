@@ -22,7 +22,7 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzMessage.setMinimum(1)
         self.ui.spinBoxFuzzMessage.setMaximum(self.protocol.num_messages)
 
-        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.message.labelset])
+        self.ui.comboBoxFuzzingLabel.addItems([l.name for l in self.message.message_type])
         self.ui.comboBoxFuzzingLabel.setCurrentIndex(label_index)
 
         self.proto_view = proto_view
@@ -52,10 +52,10 @@ class FuzzingDialogController(QDialog):
 
     @property
     def current_label(self) -> ProtocolLabel:
-        if len(self.message.labelset) == 0:
+        if len(self.message.message_type) == 0:
             return None
 
-        cur_label = self.message.labelset[self.current_label_index]
+        cur_label = self.message.message_type[self.current_label_index]
         cur_label.fuzz_values = [fv for fv in cur_label.fuzz_values if fv] # Remove empty strings
 
         if len(cur_label.fuzz_values) == 0:
@@ -144,7 +144,7 @@ class FuzzingDialogController(QDialog):
         value = self.ui.spinBoxFuzzingStart.value()
         new_start = \
         self.message.convert_index(value - 1, self.proto_view, 0, False)[0]
-        self.message.labelset[self.current_label_index].start = new_start
+        self.message.message_type[self.current_label_index].start = new_start
         self.current_label.fuzz_values[:] = []
         self.update_message_data_string()
         self.fuzz_table_model.update()
@@ -155,7 +155,7 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzingStart.setMaximum(self.ui.spinBoxFuzzingEnd.value())
         value = self.ui.spinBoxFuzzingEnd.value()
         new_end = self.message.convert_index(value - 1, self.proto_view, 0, False)[1] + 1
-        self.message.labelset[self.current_label_index].end = new_end
+        self.message.message_type[self.current_label_index].end = new_end
         self.current_label.fuzz_values[:] = []
         self.update_message_data_string()
         self.fuzz_table_model.update()
@@ -299,7 +299,7 @@ class FuzzingDialogController(QDialog):
 
     def remove_duplicates(self):
         if self.ui.chkBRemoveDuplicates.isChecked():
-            for lbl in self.message.labelset:
+            for lbl in self.message.message_type:
                 seq = lbl.fuzz_values[:]
                 seen = set()
                 add_seen = seen.add
@@ -307,7 +307,7 @@ class FuzzingDialogController(QDialog):
 
     @pyqtSlot()
     def set_current_label_name(self):
-        lbl = self.message.labelset[self.ui.comboBoxFuzzingLabel.currentIndex()]
+        lbl = self.message.message_type[self.ui.comboBoxFuzzingLabel.currentIndex()]
         lbl.name = self.ui.comboBoxFuzzingLabel.currentText()
         self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), lbl.name)
 
@@ -319,11 +319,11 @@ class FuzzingDialogController(QDialog):
         self.ui.comboBoxFuzzingLabel.blockSignals(True)
         self.ui.comboBoxFuzzingLabel.clear()
 
-        if len(self.message.labelset) == 0:
+        if len(self.message.message_type) == 0:
             self.ui.comboBoxFuzzingLabel.setDisabled(True)
             return
 
-        self.ui.comboBoxFuzzingLabel.addItems([lbl.name for lbl in self.message.labelset])
+        self.ui.comboBoxFuzzingLabel.addItems([lbl.name for lbl in self.message.message_type])
         self.ui.comboBoxFuzzingLabel.blockSignals(False)
 
         if sel_label_ind < self.ui.comboBoxFuzzingLabel.count():

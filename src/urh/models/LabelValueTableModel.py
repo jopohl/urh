@@ -10,8 +10,8 @@ class LabelValueTableModel(QAbstractTableModel):
         self.proto_analyzer = proto_analyzer
         self.controller = controller
         self.__message_index = 0
-        self.display_labels = controller.active_labelset
-        """:type: LabelSet"""
+        self.display_labels = controller.active_message_type
+        """:type: MessageType"""
 
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
@@ -34,7 +34,7 @@ class LabelValueTableModel(QAbstractTableModel):
             return None
 
     def update(self):
-        self.display_labels = self.controller.active_labelset
+        self.display_labels = self.controller.active_message_type
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
         self.ascii_str = self.proto_analyzer.decoded_ascii_str

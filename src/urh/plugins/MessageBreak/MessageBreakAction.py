@@ -19,11 +19,11 @@ class MessageBreakAction(QUndoCommand):
     def redo(self):
         message = copy.deepcopy(self.proto_analyzer.messages[self.msg_nr])
         message1 = Message(plain_bits=message.plain_bits[:self.pos], pause=0,
-                         rssi=0, decoder=message.decoder, labelset=message.labelset,
-                         bit_len=message.bit_len)
+                           rssi=0, decoder=message.decoder, message_type=message.message_type,
+                           bit_len=message.bit_len)
         message2 = Message(plain_bits=message.plain_bits[self.pos:], pause=message.pause,
-                         rssi=0, decoder=message.decoder, labelset=message.labelset,
-                         bit_len=message.bit_len)
+                           rssi=0, decoder=message.decoder, message_type=message.message_type,
+                           bit_len=message.bit_len)
         self.proto_analyzer.messages[self.msg_nr] = message1
         self.proto_analyzer.messages.insert(self.msg_nr + 1, message2)
 

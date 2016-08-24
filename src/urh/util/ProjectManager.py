@@ -5,7 +5,7 @@ from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -72,14 +72,14 @@ class ProjectManager(QObject):
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
-    def read_labelsets(self):
+    def read_message_types(self):
         if self.project_file is None:
             return None
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         try:
-            return [LabelSet.from_xml(lblset_tag) for lblset_tag in root.find("protocol").find("labelsets").findall("labelset")]
+            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in root.find("protocol").find("message_types").findall("message_type")]
         except AttributeError:
             return []
 
@@ -120,8 +120,8 @@ class ProjectManager(QObject):
                 cfc.decodings = decodings
             cfc.fill_decoding_combobox()
 
-            cfc.proto_analyzer.labelsets = self.read_labelsets()
-            cfc.fill_labelset_combobox()
+            cfc.proto_analyzer.message_types = self.read_message_types()
+            cfc.fill_message_type_combobox()
             cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants, decodings=cfc.decodings)
 
             cfc.updateUI()

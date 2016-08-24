@@ -157,7 +157,7 @@
            <item row="0" column="13">
             <widget class="QLabel" name="label_3">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Block Start&lt;/span&gt; is the point in time when a protocol block begins. Additionally the relative time (+ ...) from the previous block is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Timestamp:</string>
@@ -177,7 +177,7 @@
            <item row="0" column="10">
             <widget class="QLabel" name="label_2">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current block.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>RSSI:</string>
@@ -251,7 +251,7 @@
            <item row="0" column="11">
             <widget class="QLabel" name="lblRSSI">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current block.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>1.04</string>
@@ -280,7 +280,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Block Start&lt;/span&gt; is the point in time when a protocol block begins. Additionally the relative time (+ ...) from the previous block is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>0 (+0)</string>
@@ -721,7 +721,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Decoding errors for block:</string>
+             <string>Decoding errors for message:</string>
             </property>
            </widget>
           </item>
@@ -875,7 +875,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Label values for block</string>
+          <string>Label values for message</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

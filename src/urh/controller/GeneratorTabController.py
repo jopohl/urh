@@ -52,7 +52,7 @@ class GeneratorTabController(QWidget):
         self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")])
         """:type: GeneratorTableModel """
         self.table_model.controller = self
-        self.ui.tableBlocks.setModel(self.table_model)
+        self.ui.tableMessages.setModel(self.table_model)
 
         self.label_list_model = GeneratorListModel(None)
         self.ui.listViewProtoLabels.setModel(self.label_list_model)
@@ -70,7 +70,7 @@ class GeneratorTabController(QWidget):
         compare_frame_controller.participant_changed.connect(self.table_model.refresh_vertical_header)
         self.ui.btnEditModulation.clicked.connect(self.show_modulation_dialog)
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
-        self.ui.tableBlocks.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
+        self.ui.tableMessages.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_table)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_pause_list)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_label_list)
@@ -94,15 +94,15 @@ class GeneratorTabController(QWidget):
         self.ui.listViewProtoLabels.editActionTriggered.connect(self.show_fuzzing_dialog)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.handle_plabel_fuzzing_state_changed)
         self.ui.btnFuzz.clicked.connect(self.on_btn_fuzzing_clicked)
-        self.ui.tableBlocks.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
-        self.ui.tableBlocks.edit_fuzzing_label_clicked.connect(self.show_fuzzing_dialog)
+        self.ui.tableMessages.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
+        self.ui.tableMessages.edit_fuzzing_label_clicked.connect(self.show_fuzzing_dialog)
         self.ui.listViewProtoLabels.selection_changed.connect(self.handle_label_selection_changed)
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 
 
     @property
     def selected_message_index(self) -> int:
-        min_row, _, _, _ = self.ui.tableBlocks.selection_range()
+        min_row, _, _, _ = self.ui.tableMessages.selection_range()
         return min_row#
 
 
@@ -137,7 +137,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def refresh_table(self):
         self.table_model.update()
-        self.ui.tableBlocks.resize_columns()
+        self.ui.tableMessages.resize_columns()
         is_data_there = self.table_model.display_data is not None and len(self.table_model.display_data) > 0
         self.ui.btnSend.setEnabled(is_data_there)
         self.ui.btnGenerate.setEnabled(is_data_there)
@@ -163,7 +163,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_selected_modulation_changed(self):
         cur_ind = self.ui.cBoxModulations.currentIndex()
-        min_row, max_row, _, _ = self.ui.tableBlocks.selection_range()
+        min_row, max_row, _, _ = self.ui.tableMessages.selection_range()
         if min_row > -1:
             # Modulation für Selektierte Blöcke setzen
             for row in range(min_row, max_row + 1):
@@ -213,7 +213,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def show_modulation_dialog(self):
         preselected_index = self.ui.cBoxModulations.currentIndex()
-        min_row, max_row, start, end = self.ui.tableBlocks.selection_range()
+        min_row, max_row, start, end = self.ui.tableMessages.selection_range()
         if min_row > -1:
             try:
                 message = self.table_model.protocol.messages[min_row]
@@ -249,7 +249,7 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_table_selection_changed(self):
-        min_row, max_row, start, end = self.ui.tableBlocks.selection_range()
+        min_row, max_row, start, end = self.ui.tableMessages.selection_range()
 
         if min_row == -1:
             self.ui.lEncodingValue.setText("-")  #
@@ -300,15 +300,15 @@ class GeneratorTabController(QWidget):
         rows = [index.row() for index in self.ui.lWPauses.selectedIndexes()]
         if len(rows) == 0:
             return
-        self.ui.tableBlocks.show_pause_active = True
-        self.ui.tableBlocks.pause_row = rows[0]
-        self.ui.tableBlocks.viewport().update()
-        self.ui.tableBlocks.scrollTo(self.table_model.index(rows[0], 0))
+        self.ui.tableMessages.show_pause_active = True
+        self.ui.tableMessages.pause_row = rows[0]
+        self.ui.tableMessages.viewport().update()
+        self.ui.tableMessages.scrollTo(self.table_model.index(rows[0], 0))
 
     @pyqtSlot()
     def on_lWPauses_lost_focus(self):
-        self.ui.tableBlocks.show_pause_active = False
-        self.ui.tableBlocks.viewport().update()
+        self.ui.tableMessages.show_pause_active = False
+        self.ui.tableMessages.viewport().update()
 
     @pyqtSlot()
     def generate_file(self):
@@ -427,13 +427,13 @@ class GeneratorTabController(QWidget):
         if label.show and self.selected_message:
             start, end = self.selected_message.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
             indx = self.table_model.index(0, int((start + end) / 2))
-            self.ui.tableBlocks.scrollTo(indx)
+            self.ui.tableMessages.scrollTo(indx)
 
     @pyqtSlot()
     def on_view_type_changed(self):
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.table_model.update()
-        self.ui.tableBlocks.resize_columns()
+        self.ui.tableMessages.resize_columns()
 
     def close_all(self):
         self.tree_model.rootItem.clearChilds()

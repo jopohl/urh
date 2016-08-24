@@ -7,7 +7,7 @@ from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
 from urh.signalprocessing.encoding import encoding
 
@@ -17,7 +17,7 @@ class TestAutoAssignments(unittest.TestCase):
         self.protocol = ProtocolAnalyzer(None)
         with open("./data/decoded_bits.txt") as f:
             for line in f:
-                self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.blocks.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.blocks[-1].labelset = self.protocol.default_labelset
 
         # Assign participants
@@ -111,7 +111,7 @@ class TestAutoAssignments(unittest.TestCase):
         self.undecoded_protocol = ProtocolAnalyzer(None)
         with open("./data/undecoded.txt") as f:
             for line in f:
-                self.undecoded_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.undecoded_protocol.blocks.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
 
         self.undecoded_protocol.auto_assign_decodings(self.decodings)
 
@@ -131,7 +131,7 @@ class TestAutoAssignments(unittest.TestCase):
         decoded_trash_protocol = ProtocolAnalyzer(None)
         with open("./data/decoded_with_trash.txt") as f:
             for line in f:
-                decoded_trash_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                decoded_trash_protocol.blocks.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 decoded_trash_protocol.blocks[-1].labelset = decoded_trash_protocol.default_labelset
 
         decoded_trash_protocol.auto_assign_labels()
@@ -180,7 +180,7 @@ class TestAutoAssignments(unittest.TestCase):
         const_protocol = ProtocolAnalyzer(None)
         with open("./data/constant_bits.txt") as f:
             for line in f:
-                const_protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
+                const_protocol.blocks.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.assertEqual(const_protocol.blocks[-1].decoded_bits_str, line.replace("\n", ""))
                 const_protocol.blocks[-1].labelset = const_protocol.default_labelset
 

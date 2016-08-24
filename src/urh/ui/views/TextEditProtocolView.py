@@ -17,7 +17,7 @@ class TextEditProtocolView(QTextEdit):
         """:type: list of Participant """
 
         self.blocks = None
-        """:type: list of ProtocolBlock """
+        """:type: list of Message """
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:

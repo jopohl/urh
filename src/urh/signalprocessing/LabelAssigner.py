@@ -11,7 +11,7 @@ class LabelAssigner(object):
     def __init__(self, blocks):
         """
 
-        :type blocks: list of ProtocolBlock
+        :type blocks: list of Message
         """
         self.__blocks = blocks
         self.sync_end = None

@@ -11,7 +11,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 
 from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
 from urh.util.Errors import Errors
 
@@ -141,7 +141,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
                 rssi = np.mean(np.abs(signal._fulldata[start:end]))
-                block = ProtocolBlock(bits, pause, bit_len=bit_len, rssi=rssi)
+                block = Message(bits, pause, bit_len=bit_len, rssi=rssi)
                 self.blocks.append(block)
                 first_block = False
             else:

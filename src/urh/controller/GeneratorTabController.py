@@ -16,7 +16,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.encoding import encoding
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
@@ -106,7 +106,7 @@ class GeneratorTabController(QWidget):
 
 
     @property
-    def selected_block(self) -> ProtocolBlock:
+    def selected_block(self) -> Message:
         selected_block_index = self.selected_block_index
         if selected_block_index == -1:
             return None
@@ -218,9 +218,9 @@ class GeneratorTabController(QWidget):
                 block = self.table_model.protocol.blocks[min_row]
                 preselected_index = block.modulator_indx
             except IndexError:
-                block = ProtocolBlock([True, False, True, False], 0, [], LabelSet("empty"))
+                block = Message([True, False, True, False], 0, [], LabelSet("empty"))
         else:
-            block = ProtocolBlock([True, False, True, False], 0, [], LabelSet("empty"))
+            block = Message([True, False, True, False], 0, [], LabelSet("empty"))
             if len(self.table_model.protocol.blocks) > 0:
                 block.bit_len = self.table_model.protocol.blocks[0].bit_len
 

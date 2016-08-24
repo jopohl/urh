@@ -3,7 +3,7 @@ import copy
 from PyQt5.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 
 
 class BlockBreakAction(QUndoCommand):
@@ -18,12 +18,12 @@ class BlockBreakAction(QUndoCommand):
 
     def redo(self):
         block = copy.deepcopy(self.proto_analyzer.blocks[self.block_nr])
-        block1 = ProtocolBlock(plain_bits=block.plain_bits[:self.pos], pause=0,
-                                rssi=0, decoder=block.decoder, labelset=block.labelset,
-                               bit_len=block.bit_len)
-        block2 = ProtocolBlock(plain_bits=block.plain_bits[self.pos:], pause=block.pause,
-                               rssi=0, decoder=block.decoder, labelset=block.labelset,
-                               bit_len=block.bit_len)
+        block1 = Message(plain_bits=block.plain_bits[:self.pos], pause=0,
+                         rssi=0, decoder=block.decoder, labelset=block.labelset,
+                         bit_len=block.bit_len)
+        block2 = Message(plain_bits=block.plain_bits[self.pos:], pause=block.pause,
+                         rssi=0, decoder=block.decoder, labelset=block.labelset,
+                         bit_len=block.bit_len)
         self.proto_analyzer.blocks[self.block_nr] = block1
         self.proto_analyzer.blocks.insert(self.block_nr + 1, block2)
 

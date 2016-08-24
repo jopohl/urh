@@ -1,6 +1,6 @@
 from urh.signalprocessing.encoding import encoding
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 
 
 class ProtocolGroup(object):
@@ -47,7 +47,7 @@ class ProtocolGroup(object):
     def blocks(self):
         """
 
-        :rtype: list of ProtocolBlock
+        :rtype: list of Message
         """
         result = []
         for proto in self.protocols:

@@ -3,7 +3,7 @@ from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 
@@ -13,7 +13,7 @@ class PLabelTableModel(QAbstractTableModel):
     label_removed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, labelset: LabelSet, block: ProtocolBlock, parent=None):
+    def __init__(self, labelset: LabelSet, block: Message, parent=None):
         super().__init__(parent)
         self.row_count = len(labelset)
         self.proto_view = 0

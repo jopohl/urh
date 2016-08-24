@@ -15,7 +15,7 @@ from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 
-class ProtocolBlock(object):
+class Message(object):
     """
     A protocol block is a single line of a protocol.
     """
@@ -531,7 +531,7 @@ class ProtocolBlock(object):
                     print("[Warning] Did not find symbol name", file=sys.stderr)
                     plain_bits.append(Symbol(b, 0, 0, 1))
 
-        return ProtocolBlock(plain_bits=plain_bits, pause=0, labelset=LabelSet("none"))
+        return Message(plain_bits=plain_bits, pause=0, labelset=LabelSet("none"))
 
     def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
         root = ET.Element("block")

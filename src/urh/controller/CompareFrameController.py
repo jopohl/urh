@@ -21,7 +21,7 @@ from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.encoding import encoding
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.ui_analysis_frame import Ui_FAnalysis
@@ -660,7 +660,7 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.resize_columns()
 
 
-    def __set_decoding_error_label(self, block: ProtocolBlock):
+    def __set_decoding_error_label(self, block: Message):
         if block:
             errors = block.decoding_errors
             percent = 100 * (errors / len(block))
@@ -1047,7 +1047,7 @@ class CompareFrameController(QFrame):
         self.protocol_model.search_results[:] = []
         self.protocol_model.search_value = ""
 
-    def set_protocol_label_visibility(self, lbl: ProtocolLabel, block: ProtocolBlock = None):
+    def set_protocol_label_visibility(self, lbl: ProtocolLabel, block: Message = None):
         try:
             block = block if block else next(block for block in self.proto_analyzer.blocks if lbl in block.labelset)
             start, end = block.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)

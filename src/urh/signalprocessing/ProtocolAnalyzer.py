@@ -16,7 +16,7 @@ from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
 from urh.cythonext import util
@@ -56,7 +56,7 @@ class ProtocolAnalyzer(object):
 
     def __init__(self, signal: Signal):
         self.blocks = []
-        """:type: list of ProtocolBlock """
+        """:type: list of Message """
 
         self.used_symbols = set()
         """:type: set of Symbol """
@@ -249,8 +249,8 @@ class ProtocolAnalyzer(object):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
             rssi = np.mean(np.abs(signal._fulldata[start:end]))
-            block = ProtocolBlock(bits, pause, labelset=self.default_labelset,
-                                  bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
+            block = Message(bits, pause, labelset=self.default_labelset,
+                            bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.blocks.append(block)
             i += 1
 
@@ -730,8 +730,8 @@ class ProtocolAnalyzer(object):
             block_tags = root.find("blocks").findall("block")
             for i, block_tag in enumerate(block_tags):
                 if read_bits:
-                    block = ProtocolBlock.from_plain_bits_str(bits=block_tag.get("bits"),
-                                                              symbols={s.name: s for s in self.used_symbols})
+                    block = Message.from_plain_bits_str(bits=block_tag.get("bits"),
+                                                        symbols={s.name: s for s in self.used_symbols})
                     block.from_xml(tag=block_tag, participants=participants, decoders=decoders, labelsets=self.labelsets)
                     self.blocks.append(block)
                 else:

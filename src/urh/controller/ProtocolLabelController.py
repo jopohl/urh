@@ -5,7 +5,7 @@ from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.DeleteButtonDelegate import DeleteButtonDelegate
@@ -17,7 +17,7 @@ class ProtocolLabelController(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, LabelSet)
 
 
-    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, block:ProtocolBlock, parent=None):
+    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, block:Message, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)

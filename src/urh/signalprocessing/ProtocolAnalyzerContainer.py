@@ -11,7 +11,7 @@ from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.signalprocessing.encoding import encoding
 from urh.util.Formatter import Formatter
@@ -55,9 +55,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
-        blocks = [ProtocolBlock(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
-                                labelset=copy.deepcopy(block.labelset),
-                                rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len, participant=block.participant)
+        blocks = [Message(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
+                          labelset=copy.deepcopy(block.labelset),
+                          rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len, participant=block.participant)
                   for block in proto_analyzer.blocks if block]
 
         self.blocks[index:0] = blocks
@@ -98,14 +98,14 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 for start, end, fuz_val in combination:
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
 
-                fuz_block = ProtocolBlock(plain_bits=cpy_bits, pause=block.pause,
-                                          rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
-                                          modulator_indx=block.modulator_indx,
-                                          decoder=block.decoder, fuzz_created=True)
+                fuz_block = Message(plain_bits=cpy_bits, pause=block.pause,
+                                    rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
+                                    modulator_indx=block.modulator_indx,
+                                    decoder=block.decoder, fuzz_created=True)
                 appd_result(fuz_block)
 
         self.blocks = result
-        """:type: list of ProtocolBlock """
+        """:type: list of Message """
 
     def fuzz_successive(self):
         """

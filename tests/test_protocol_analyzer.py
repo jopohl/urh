@@ -16,8 +16,8 @@ class TestProtocolAnalyzer(unittest.TestCase):
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
-        self.assertEqual(proto_analyzer.num_blocks, 1)
-        for i, pos in enumerate(proto_analyzer.blocks[0].bit_sample_pos):
+        self.assertEqual(proto_analyzer.num_messages, 1)
+        for i, pos in enumerate(proto_analyzer.messages[0].bit_sample_pos):
             self.assertLess(pos, signal.num_samples, msg = i)
 
     def test_fsk_freq_detection(self):
@@ -27,7 +27,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         s.bit_len = 100
         pa = ProtocolAnalyzer(s)
         pa.get_protocol_from_signal()
-        self.assertEqual(pa.blocks[0].plain_bits_str,
+        self.assertEqual(pa.messages[0].plain_bits_str,
                          "101010101010101010101010101010101001101001111101100110100111110111010010011000010110110101111"
                          "010111011011000011000101000010001001101100101111010110100110011100100110000101001110100001111"
                          "111101000111001110000101110100100111010110110100001101101101010100011011010001010110011100011"
@@ -49,13 +49,13 @@ class TestProtocolAnalyzer(unittest.TestCase):
         s.modulation_type = 0  # ASK
         pa = ProtocolAnalyzer(s)
         pa.get_protocol_from_signal()
-        block = pa.blocks[0]
+        message = pa.messages[0]
         for i in range(255):  # First 255 are bits
-            self.assertEqual(type(block[i]), bool)
+            self.assertEqual(type(message[i]), bool)
         for i in range(255, 261):
-            self.assertNotEqual(type(block[i]), bool)  # 6 Symbols
-            print("Symbol", block[i].name, "NSamples:", block[i].nsamples, "Pulsetype:", block[i].pulsetype)
-        symbols = block.plain_bits_str[255:261]
+            self.assertNotEqual(type(message[i]), bool)  # 6 Symbols
+            print("Symbol", message[i].name, "NSamples:", message[i].nsamples, "Pulsetype:", message[i].pulsetype)
+        symbols = message.plain_bits_str[255:261]
         self.assertEqual(symbols, "ABABAB")
 
         constants.SETTINGS.setValue('rel_symbol_length', old_sym_len)  # Restore Symbol Length

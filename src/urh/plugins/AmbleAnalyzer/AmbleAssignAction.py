@@ -30,8 +30,8 @@ class AmbleAssignAction(QUndoCommand):
 
         for group in self.groups:
             count = 0
-            for k, block in enumerate(group.blocks):
-                bit_str = block.decoded_bits_str
+            for k, message in enumerate(group.messages):
+                bit_str = message.decoded_bits_str
                 len_bit_str = len(bit_str)
                 indx = bit_str.find(amble_sequence)
                 labels.append([])

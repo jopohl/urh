@@ -13,12 +13,12 @@ class PLabelTableModel(QAbstractTableModel):
     label_removed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, labelset: LabelSet, block: Message, parent=None):
+    def __init__(self, labelset: LabelSet, message: Message, parent=None):
         super().__init__(parent)
         self.row_count = len(labelset)
         self.proto_view = 0
         self.labelset = labelset
-        self.block = block
+        self.message = message
         self.layoutChanged.emit()
 
     def update(self):
@@ -48,9 +48,9 @@ class PLabelTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return self.block.get_label_range(lbl, self.proto_view, True)[0] + 1
+                return self.message.get_label_range(lbl, self.proto_view, True)[0] + 1
             elif j == 2:
-                return self.block.get_label_range(lbl, self.proto_view, True)[1]
+                return self.message.get_label_range(lbl, self.proto_view, True)[1]
             elif j == 3:
                 return lbl.color_index
             elif j == 4:
@@ -74,10 +74,10 @@ class PLabelTableModel(QAbstractTableModel):
         if j == 0:
             lbl.name = value
         elif j == 1:
-            new_start = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True)[0])
+            new_start = int(self.message.convert_index(int(value) - 1, self.proto_view, 0, True)[0])
             lbl.start = new_start
         elif j == 2:
-            new_end = int(self.block.convert_index(int(value) - 1, self.proto_view, 0, True)[1]) + 1
+            new_end = int(self.message.convert_index(int(value) - 1, self.proto_view, 0, True)[1]) + 1
             lbl.end = new_end
         elif j == 3:
             lbl.color_index = value

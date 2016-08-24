@@ -55,7 +55,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Source Block:</string>
+      <string>Source Message:</string>
      </property>
     </widget>
    </item>
@@ -111,12 +111,12 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Block to fuzz:</string>
+      <string>Message to fuzz:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QSpinBox" name="spinBoxFuzzBlock">
+    <widget class="QSpinBox" name="spinBoxFuzzMessage">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>

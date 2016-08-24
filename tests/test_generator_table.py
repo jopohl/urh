@@ -13,8 +13,8 @@ app = tests.startApp.app
 
 
 class TestGeneratorTable(unittest.TestCase):
-    NUM_BLOCKS = 100
-    BITS_PER_BLOCK = 100
+    NUM_MESSAGES = 100
+    BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
     def setUp(self):
@@ -32,8 +32,8 @@ class TestGeneratorTable(unittest.TestCase):
         QTest.qWait(10)
 
 
-        self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_BLOCKS)
-        self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_BLOCK)
+        self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_MESSAGES)
+        self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
         self.__add_labels()
         QTest.qWait(10)
@@ -46,9 +46,9 @@ class TestGeneratorTable(unittest.TestCase):
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
         self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))
-        self.assertEqual(self.gframe.table_model.row_count, self.NUM_BLOCKS)
+        self.assertEqual(self.gframe.table_model.row_count, self.NUM_MESSAGES)
 
-        indx = self.gframe.table_model.createIndex(int(self.NUM_BLOCKS / 2), int(self.BITS_PER_BLOCK / 2))
+        indx = self.gframe.table_model.createIndex(int(self.NUM_MESSAGES / 2), int(self.BITS_PER_MESSAGE / 2))
         roles = (Qt.DisplayRole, Qt.BackgroundColorRole, Qt.TextAlignmentRole, Qt.TextColorRole, Qt.FontRole)
         time_for_display = 100
         for role in roles:
@@ -62,9 +62,9 @@ class TestGeneratorTable(unittest.TestCase):
 
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal = None)
-        for _ in range(self.NUM_BLOCKS):
-            b = Message([True] * self.BITS_PER_BLOCK, pause = 1000, labelset=result.default_labelset)
-            result.blocks.append(b)
+        for _ in range(self.NUM_MESSAGES):
+            b = Message([True] * self.BITS_PER_MESSAGE, pause = 1000, labelset=result.default_labelset)
+            result.messages.append(b)
         return result
 
     def __add_labels(self):

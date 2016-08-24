@@ -38,29 +38,28 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.modulators = modulators
 
         self.fuzz_pause = 10000
-        self.created_fuz_blocks = []
 
         self.__group = ProtocolGroup("GeneratorGroup")
         self.__group.add_protocol_item(ProtocolTreeItem(self, None)) # Warning: parent is None
 
     @property
     def protocol_labels(self):
-        result = list(set(lbl for block in self.blocks for lbl in block.labelset))
+        result = list(set(lbl for msg in self.messages for lbl in msg.labelset))
         result.sort()
-        return  result
+        return result
 
     @property
-    def multiple_fuzz_labels_per_block(self):
-        return any(len(block.active_fuzzing_labels) > 1 for block in self.blocks)
+    def multiple_fuzz_labels_per_message(self):
+        return any(len(msg.active_fuzzing_labels) > 1 for msg in self.messages)
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
-        blocks = [Message(plain_bits=copy.copy(block.decoded_bits), pause=block.pause,
-                          labelset=copy.deepcopy(block.labelset),
-                          rssi=block.rssi, modulator_indx=0, decoder=block.decoder, bit_len=block.bit_len, participant=block.participant)
-                  for block in proto_analyzer.blocks if block]
+        messages = [Message(plain_bits=copy.copy(msg.decoded_bits), pause=msg.pause,
+                          labelset=copy.deepcopy(msg.labelset),
+                          rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant)
+                  for msg in proto_analyzer.messages if msg]
 
-        self.blocks[index:0] = blocks
+        self.messages[index:0] = messages
         self.used_symbols |= proto_analyzer.used_symbols
 
         if len(self.pauses) > 0:
@@ -68,7 +67,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def duplicate_line(self, row: int):
         try:
-            self.blocks.insert(row + 1, copy.deepcopy(self.blocks[row]))
+            self.messages.insert(row + 1, copy.deepcopy(self.messages[row]))
             self.qt_signals.line_duplicated.emit()
         except Exception as e:
             logger.error("Duplicating line ", str(e))
@@ -77,9 +76,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         result = []
         appd_result = result.append
 
-        for i, block in enumerate(self.blocks):
-            labels = block.active_fuzzing_labels
-            appd_result(block)
+        for i, msg in enumerate(self.messages):
+            labels = msg.active_fuzzing_labels
+            appd_result(msg)
 
             if mode == FuzzMode.successive:
                 combinations = [[(l.start, l.end, fuzz_val)] for l in labels for fuzz_val in l.fuzz_values[1:]]
@@ -94,17 +93,17 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 raise ValueError("Unknown fuzz mode")
 
             for combination in combinations:
-                cpy_bits = block.plain_bits[:]
+                cpy_bits = msg.plain_bits[:]
                 for start, end, fuz_val in combination:
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
 
-                fuz_block = Message(plain_bits=cpy_bits, pause=block.pause,
-                                    rssi=block.rssi, labelset=block.labelset.copy_for_fuzzing(),
-                                    modulator_indx=block.modulator_indx,
-                                    decoder=block.decoder, fuzz_created=True)
-                appd_result(fuz_block)
+                fuz_msg = Message(plain_bits=cpy_bits, pause=msg.pause,
+                                    rssi=msg.rssi, labelset=msg.labelset.copy_for_fuzzing(),
+                                    modulator_indx=msg.modulator_indx,
+                                    decoder=msg.decoder, fuzz_created=True)
+                appd_result(fuz_msg)
 
-        self.blocks = result
+        self.messages = result
         """:type: list of Message """
 
     def fuzz_successive(self):
@@ -117,7 +116,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def fuzz_concurrent(self):
         """
-        Führt ein gleichzeitiges Fuzzing durch, das heißt bei mehreren Labels pro Block werden alle Labels
+        Führt ein gleichzeitiges Fuzzing durch, das heißt bei mehreren Labels pro Message werden alle Labels
         gleichzeitig iteriert. Wenn ein Label keine FuzzValues mehr übrig hat,
         wird der erste Fuzzing Value (per Definition der Standardwert) genommen.
         """
@@ -125,16 +124,16 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def fuzz_exhaustive(self):
         """
-        Führt ein vollständiges Fuzzing durch. D.h. wenn es mehrere Label pro Block gibt, werden alle
+        Führt ein vollständiges Fuzzing durch. D.h. wenn es mehrere Label pro Message gibt, werden alle
         möglichen Kombinationen erzeugt (Kreuzprodukt!)
         """
         self.fuzz(FuzzMode.exhaustive)
 
-    def create_fuzzing_label(self, start, end, block_index) -> ProtocolLabel:
-        fuz_lbl = self.blocks[block_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)
+    def create_fuzzing_label(self, start, end, msg_index) -> ProtocolLabel:
+        fuz_lbl = self.messages[msg_index].labelset.add_protocol_label(start=start, end=end, type_index= 0)
         return fuz_lbl
 
-    def set_decoder_for_blocks(self, decoder, blocks=None):
+    def set_decoder_for_messages(self, decoder, messages=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
 
     def to_xml_file(self, filename: str, decoders=None, participants=None, tag_name="fuzz_profile", include_labelset=True, write_bits=True):
@@ -144,4 +143,4 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         super().from_xml_file(filename=filename, read_bits=read_bits)
 
     def clear(self):
-        self.blocks[:] = []
+        self.messages[:] = []

@@ -42,7 +42,7 @@ class SignalFrameController(QFrame):
 
         self.ui.txtEdProto.setFont(FontHelper.getMonospaceFont())
         self.ui.txtEdProto.participants = project_manager.participants
-        self.ui.txtEdProto.blocks  = proto_analyzer.blocks
+        self.ui.txtEdProto.messages = proto_analyzer.messages
 
         self.ui.gvSignal.participants = project_manager.participants
 
@@ -330,9 +330,9 @@ class SignalFrameController(QFrame):
     def update_nselected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
         self.__set_duration()
-        sel_blocks = self.ui.gvSignal.selected_blocks
-        if len(sel_blocks) == 1:
-            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_blocks[0].rssi)))
+        sel_messages = self.ui.gvSignal.selected_messages
+        if len(sel_messages) == 1:
+            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
         else:
             self.ui.labelRSSI.setText("")
 
@@ -549,7 +549,7 @@ class SignalFrameController(QFrame):
             gvs.fitInView(QRectF(x, y, w, h))
             gvs.centerOn(x + w / 2, gvs.y_center)
 
-    def restore_protocol_selection(self, sel_start, sel_end, start_block, end_block, old_protoview):
+    def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
         if old_protoview == self.proto_view:
             return
 
@@ -561,21 +561,21 @@ class SignalFrameController(QFrame):
         c = self.ui.txtEdProto.textCursor()
 
         c.setPosition(0)
-        cur_block = 0
+        cur_message = 0
         i = 0
         text = self.ui.txtEdProto.toPlainText()
-        while cur_block < start_block:
+        while cur_message < start_message:
             if text[i] == "\n":
-                cur_block += 1
+                cur_message += 1
             i += 1
 
         c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, i)
         c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, sel_start)
         text = text[i:]
         i = 0
-        while cur_block < end_block:
+        while cur_message < end_message:
             if text[i] == "\n":
-                cur_block += 1
+                cur_message += 1
             i += 1
 
         c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, i)
@@ -609,7 +609,7 @@ class SignalFrameController(QFrame):
         if old_view == -1:
             old_view = self.ui.cbProtoView.currentIndex()
 
-        if self.proto_analyzer.blocks is None or refresh:
+        if self.proto_analyzer.messages is None or refresh:
             self.update_protocol()
         else:
             # Keep things synchronized and restore selection
@@ -618,7 +618,7 @@ class SignalFrameController(QFrame):
             self.ui.cbProtoView.setCurrentIndex(self.proto_view)
             self.ui.cbProtoView.blockSignals(False)
 
-            start_block = 0
+            start_message = 0
             sel_start = self.ui.txtEdProto.textCursor().selectionStart()
             text = self.ui.txtEdProto.toPlainText()[:sel_start]
             sel_start = 0
@@ -632,12 +632,12 @@ class SignalFrameController(QFrame):
 
                 if t == "\n":
                     sel_start = 0
-                    start_block += 1
+                    start_message += 1
                     read_pause = False
 
             sel_end = self.ui.txtEdProto.textCursor().selectionEnd()
             text = self.ui.txtEdProto.toPlainText()[self.ui.txtEdProto.textCursor().selectionStart():sel_end]
-            end_block = 0
+            end_message = 0
             sel_end = 0
             read_pause = False
             for t in text:
@@ -649,12 +649,12 @@ class SignalFrameController(QFrame):
 
                 if t == "\n":
                     sel_end = 0
-                    end_block += 1
+                    end_message += 1
                     read_pause = False
 
             self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
             #self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            self.restore_protocol_selection(sel_start, sel_end, start_block, end_block, old_view)
+            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
 
             self.ui.txtEdProto.blockSignals(False)
 
@@ -673,7 +673,7 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxCenterOffset.setValue(th)
         self.ui.spinBoxCenterOffset.editingFinished.emit()
 
-    def set_roi_from_protocol_analysis(self, start_block, start_pos, end_block, end_pos, view_type):
+    def set_roi_from_protocol_analysis(self, start_message, start_pos, end_message, end_pos, view_type):
         if not self.proto_analyzer:
             return
 
@@ -692,8 +692,8 @@ class SignalFrameController(QFrame):
             start_pos *= 8
             end_pos *= 8
 
-        samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_block, start_pos,
-                                                                          end_block, end_pos,
+        samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos,
+                                                                          end_message, end_pos,
                                                                           True)
         self.protocol_selection_is_updateable = False
         if samplepos != -1:
@@ -721,8 +721,8 @@ class SignalFrameController(QFrame):
         if start_pos > end_pos:
             start_pos, end_pos = end_pos, start_pos
 
-        start_block = txtEdit.toPlainText()[:start_pos].count("\n")
-        end_block = start_block + txtEdit.toPlainText()[start_pos:end_pos].count("\n")
+        start_message = txtEdit.toPlainText()[:start_pos].count("\n")
+        end_message = start_message + txtEdit.toPlainText()[start_pos:end_pos].count("\n")
         newline_pos = txtEdit.toPlainText()[:start_pos].rfind("\n")
 
         if newline_pos != -1:
@@ -762,7 +762,7 @@ class SignalFrameController(QFrame):
             if "[" in selected_text[last_newline:]:
                 include_last_pause = True
 
-            samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_block, start_pos, end_block,
+            samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos, end_message,
                                                                               end_pos, include_last_pause)
 
         except IndexError:
@@ -798,7 +798,7 @@ class SignalFrameController(QFrame):
     def update_protocol_selection_from_roi(self):
         protocol = self.proto_analyzer
 
-        if protocol.blocks is None or not self.ui.chkBoxShowProtocol.isChecked():
+        if protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
             return
 
         start = self.ui.gvSignal.selection_area.x
@@ -813,7 +813,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(True)
 
         try:
-            startblock, startindex, endblock, endindex = protocol.get_bitseq_from_selection(
+            startmessage, startindex, endmessage, endindex = protocol.get_bitseq_from_selection(
                 start, w,
                 self.signal.bit_len)
         except IndexError:
@@ -823,7 +823,7 @@ class SignalFrameController(QFrame):
             self.ui.txtEdProto.blockSignals(False)
             return
 
-        if startblock == -1 or endindex == -1 or startindex == -1 or endblock == -1:
+        if startmessage == -1 or endindex == -1 or startindex == -1 or endmessage == -1:
             c.clearSelection()
             self.ui.txtEdProto.setTextCursor(c)
             self.jump_sync = True
@@ -836,19 +836,19 @@ class SignalFrameController(QFrame):
             protocol.convert_index(endindex, 0, self.proto_view, True)[1]))
         text = self.ui.txtEdProto.toPlainText()
         n = 0
-        blockpos = 0
+        messagepos = 0
         c.setPosition(0)
 
         for i, t in enumerate(text):
-            blockpos += 1
+            messagepos += 1
             if t == "\n":
                 n += 1
-                blockpos = 0
+                messagepos = 0
 
-            if n == startblock and blockpos == startindex:
+            if n == startmessage and messagepos == startindex:
                 c.setPosition(i+1, QTextCursor.MoveAnchor)
 
-            if n == endblock and blockpos == endindex:
+            if n == endmessage and messagepos == endindex:
                 c.setPosition(i, QTextCursor.KeepAnchor)
                 break
 
@@ -1093,32 +1093,32 @@ class SignalFrameController(QFrame):
         start = int(start) if start > 0 else 0
         end = int(end) if end == int(end) else int(end) + 1
 
-        if not self.proto_analyzer.blocks:
+        if not self.proto_analyzer.messages:
             return None, None
 
-        for block in self.proto_analyzer.blocks:
-            if block.bit_sample_pos[-2] < start:
+        for message in self.proto_analyzer.messages:
+            if message.bit_sample_pos[-2] < start:
                 continue
 
-            color = None if block.participant is None else constants.PARTICIPANT_COLORS[block.participant.color_index]
+            color = None if message.participant is None else constants.PARTICIPANT_COLORS[message.participant.color_index]
 
-            # Append the pause until first bit of block
-            subpath_ranges.append((start, block.bit_sample_pos[0]))
-            if start < block.bit_sample_pos[0]:
+            # Append the pause until first bit of message
+            subpath_ranges.append((start, message.bit_sample_pos[0]))
+            if start < message.bit_sample_pos[0]:
                 colors.append(None)
             else:
-                colors.append(color) # Zoomed inside a block
+                colors.append(color) # Zoomed inside a message
 
-            if block.bit_sample_pos[-2] > end:
-                subpath_ranges.append((block.bit_sample_pos[0], end))
+            if message.bit_sample_pos[-2] > end:
+                subpath_ranges.append((message.bit_sample_pos[0], end))
                 colors.append(color)
                 break
 
-            # Data part of the block
-            subpath_ranges.append((block.bit_sample_pos[0], block.bit_sample_pos[-2]))
+            # Data part of the message
+            subpath_ranges.append((message.bit_sample_pos[0], message.bit_sample_pos[-2]))
             colors.append(color)
 
-            start = block.bit_sample_pos[-2] + 1
+            start = message.bit_sample_pos[-2] + 1
 
         if subpath_ranges and subpath_ranges[-1][1] != end:
             subpath_ranges.append((subpath_ranges[-1][1], end))

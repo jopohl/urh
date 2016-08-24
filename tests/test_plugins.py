@@ -3,7 +3,7 @@ from PyQt5.QtTest import QTest
 
 from urh import constants
 from urh.controller.MainController import MainController
-from urh.plugins.BlockBreak.BlockBreakPlugin import BlockBreakPlugin
+from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 
 __author__ = 'joe'
@@ -31,8 +31,8 @@ class TestPlugins(unittest.TestCase):
     def tearDown(self):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
 
-    def test_block_break_plugin(self):
-        bp = BlockBreakPlugin()
+    def test_message_break_plugin(self):
+        bp = MessageBreakPlugin()
         action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,
                                (1, 1, 4, 4), self.cframe.proto_analyzer, 0)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)

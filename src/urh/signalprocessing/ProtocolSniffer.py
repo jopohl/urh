@@ -53,7 +53,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.conseq_non_data = 0
         self.reading_data = False
 
-        self.store_blocks = True
+        self.store_messages = True
 
         self.__sniff_file = ""
         self.__store_data = True
@@ -63,8 +63,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
         """
-        return '\n'.join(block.view_to_string(view, False, show_pauses) for
-                         block in self.blocks[start:])
+        return '\n'.join(msg.view_to_string(view, False, show_pauses) for
+                         msg in self.messages[start:])
 
     @property
     def sniff_file(self):
@@ -133,27 +133,27 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
         i = 0
-        first_block = True
-        old_nblocks = len(self.blocks)
+        first_msg = True
+        old_nmsgs = len(self.messages)
         for bits, pause in zip(bit_data, pauses):
-            if first_block or self.blocks[-1].pause > 8 * bit_len:
-                # Create new Block
+            if first_msg or self.messages[-1].pause > 8 * bit_len:
+                # Create new Message
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
                 rssi = np.mean(np.abs(signal._fulldata[start:end]))
-                block = Message(bits, pause, bit_len=bit_len, rssi=rssi)
-                self.blocks.append(block)
-                first_block = False
+                message = Message(bits, pause, bit_len=bit_len, rssi=rssi)
+                self.messages.append(message)
+                first_msg = False
             else:
-                # Append to last block
-                block = self.blocks[-1]
-                nzeros = int(np.round(block.pause / bit_len))
-                block.plain_bits.extend([False] * nzeros)
-                block.plain_bits.extend(bits)
-                block.pause = pause
+                # Append to last message
+                message = self.messages[-1]
+                nzeros = int(np.round(message.pause / bit_len))
+                message.plain_bits.extend([False] * nzeros)
+                message.plain_bits.extend(bits)
+                message.pause = pause
             i += 1
 
-        self.qt_signals.data_sniffed.emit(old_nblocks)
+        self.qt_signals.data_sniffed.emit(old_nmsgs)
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
             # Write Header
@@ -168,7 +168,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 myfile.write("\n".join(self.plain_bits_str))
 
         if not self.__store_data:
-            self.blocks[:] = []
+            self.messages[:] = []
 
     def __are_bits_in_data(self, data):
         signal = self.signal
@@ -192,7 +192,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def clear(self):
         del self.data_cache[:]
-        del self.blocks[:]
+        del self.messages[:]
 
     def on_rcv_timer_timeout(self):
         new_errors = self.rcv_device.read_errors()

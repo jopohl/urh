@@ -61,8 +61,8 @@ class TestModulator(unittest.TestCase):
             self.assertEqual(signal.num_samples, self.total_samples, msg=modulation)
             pa = ProtocolAnalyzer(signal)
             pa.get_protocol_from_signal()
-            self.assertEqual(1, len(pa.blocks), msg=modulation)
-            self.assertEqual(self.modulation_data, pa.blocks[0].plain_bits, msg=modulation)
+            self.assertEqual(1, len(pa.messages), msg=modulation)
+            self.assertEqual(self.modulation_data, pa.messages[0].plain_bits, msg=modulation)
 
     def test_performance(self):
         t = time.time()

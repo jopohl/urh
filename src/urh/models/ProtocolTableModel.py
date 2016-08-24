@@ -37,8 +37,8 @@ class ProtocolTableModel(TableModel):
             self.update()
             self.ref_index_changed.emit(self._refindex)
 
-    def addProtoLabel(self, start, end, blocknr):
-        self.controller.add_protocol_label(start, end, blocknr, self.proto_view)
+    def addProtoLabel(self, start, end, messagenr):
+        self.controller.add_protocol_label(start, end, messagenr, self.proto_view)
 
     def refresh_fonts(self):
         self.bold_fonts.clear()
@@ -58,7 +58,7 @@ class ProtocolTableModel(TableModel):
 
         del_action = DeleteBitsAndPauses(self.protocol, min_row, max_row,
                                          start, end, self.proto_view, True,
-                                         self.controller.get_block_numbers_for_groups(),
+                                         self.controller.get_message_numbers_for_groups(),
                                          subprotos=self.controller.protocol_list)
         self.undo_stack.push(del_action)
 

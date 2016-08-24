@@ -55,7 +55,7 @@ class ProtocolPlugin(Plugin):
         """
         :type parent: QTableView
         :type undo_stack: QUndoStack
-        :type blocks: list of ProtocolGroups
+        :type groups: list of ProtocolGroups
         """
         raise NotImplementedError("Abstract Method.")
 

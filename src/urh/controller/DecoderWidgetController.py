@@ -33,7 +33,7 @@ class DecoderWidgetController(QDialog):
         self.old_inpt_txt = ""
         self.old_carrier_txt = ""
         self.old_decoderchain = []
-        self.active_block = ""
+        self.active_message = ""
 
         self.project_manager = project_manager
 
@@ -393,7 +393,7 @@ class DecoderWidgetController(QDialog):
             else:
                 elementname = element
             txt += elementname + ":\n"
-            self.active_block = element
+            self.active_message = element
 
         # Remove "[Disabled] " for further tasks
         if constants.DECODING_DISABLED_PREFIX in element:
@@ -579,13 +579,13 @@ class DecoderWidgetController(QDialog):
             opt = opt | 0x1
 
         datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + hex(opt)
-        self.chainoptions[self.active_block] = datawhiteningstr
+        self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
     def handle_external(self):
         externalstr = self.ui.external_decoder.text() + ";" + self.ui.external_encoder.text()
-        self.chainoptions[self.active_block] = externalstr
+        self.chainoptions[self.active_message] = externalstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -594,7 +594,7 @@ class DecoderWidgetController(QDialog):
         for i in range(0, self.ui.substitution_rows.value()):
             if self.ui.substitution.item(i, 0) and self.ui.substitution.item(i, 1):
                 subststr += self.ui.substitution.item(i, 0).text() + ":" + self.ui.substitution.item(i, 1).text() + ";"
-        self.chainoptions[self.active_block] = subststr
+        self.chainoptions[self.active_message] = subststr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -607,7 +607,7 @@ class DecoderWidgetController(QDialog):
     def handle_multiple_changed(self):
         # Multiple Spinbox
         val = self.ui.multiple.value()
-        self.chainoptions[self.active_block] = val
+        self.chainoptions[self.active_message] = val
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -620,7 +620,7 @@ class DecoderWidgetController(QDialog):
             self.old_carrier_txt = carrier_txt
         # Carrier Textbox
         #self.e.carrier = self.e.str2bit(self.ui.carrier.text())
-        self.chainoptions[self.active_block] = carrier_txt
+        self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
 
@@ -656,10 +656,10 @@ class DecoderWidgetController(QDialog):
         QApplication.processEvents()
 
         if signal is not None:
-            last_block = pa.blocks[-1]
-            lookup = {i: block.bit_sample_pos for i, block in enumerate(pa.blocks)}
+            last_message = pa.messages[-1]
+            lookup = {i: msg.bit_sample_pos for i, msg in enumerate(pa.messages)}
 
-            plot_data = signal.qad[lookup[0][0]:lookup[pa.num_blocks - 1][len(last_block) - 1]]
+            plot_data = signal.qad[lookup[0][0]:lookup[pa.num_messages - 1][len(last_message) - 1]]
             self.ui.graphicsView_signal.plot_data(plot_data)
 
         self.ui.graphicsView_signal.centerOn(0, 0)

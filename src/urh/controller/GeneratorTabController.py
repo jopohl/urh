@@ -17,6 +17,7 @@ from urh.signalprocessing.LabelSet import LabelSet
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.signalprocessing.encoding import encoding
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
@@ -100,18 +101,18 @@ class GeneratorTabController(QWidget):
 
 
     @property
-    def selected_block_index(self) -> int:
+    def selected_message_index(self) -> int:
         min_row, _, _, _ = self.ui.tableBlocks.selection_range()
         return min_row#
 
 
     @property
-    def selected_block(self) -> Message:
-        selected_block_index = self.selected_block_index
-        if selected_block_index == -1:
+    def selected_message(self) -> Message:
+        selected_msg_index = self.selected_message_index
+        if selected_msg_index == -1:
             return None
 
-        return self.table_model.protocol.blocks[selected_block_index]
+        return self.table_model.protocol.messages[selected_msg_index]
 
 
     @property
@@ -167,7 +168,7 @@ class GeneratorTabController(QWidget):
             # Modulation für Selektierte Blöcke setzen
             for row in range(min_row, max_row + 1):
                 try:
-                    self.table_model.protocol.blocks[row].modulator_indx = cur_ind
+                    self.table_model.protocol.messages[row].modulator_indx = cur_ind
                 except IndexError:
                     continue
 
@@ -215,14 +216,14 @@ class GeneratorTabController(QWidget):
         min_row, max_row, start, end = self.ui.tableBlocks.selection_range()
         if min_row > -1:
             try:
-                block = self.table_model.protocol.blocks[min_row]
-                preselected_index = block.modulator_indx
+                message = self.table_model.protocol.messages[min_row]
+                preselected_index = message.modulator_indx
             except IndexError:
-                block = Message([True, False, True, False], 0, [], LabelSet("empty"))
+                message = Message([True, False, True, False], 0, [], LabelSet("empty"))
         else:
-            block = Message([True, False, True, False], 0, [], LabelSet("empty"))
-            if len(self.table_model.protocol.blocks) > 0:
-                block.bit_len = self.table_model.protocol.blocks[0].bit_len
+            message = Message([True, False, True, False], 0, [], LabelSet("empty"))
+            if len(self.table_model.protocol.messages) > 0:
+                message.bit_len = self.table_model.protocol.messages[0].bit_len
 
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.sample_rate
@@ -231,12 +232,11 @@ class GeneratorTabController(QWidget):
         c.ui.treeViewSignals.setModel(self.tree_model)
         c.ui.treeViewSignals.expandAll()
         c.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
-        # c.ui.spinBoxBitLength.setValue(block.bit_len) Overrides Modulators value
 
         c.finished.connect(self.refresh_modulators)
         c.finished.connect(self.refresh_pause_list)
         c.show()
-        bits = block.encoded_bits_str[0:10]
+        bits = message.encoded_bits_str[0:10]
         c.original_bits = bits
         c.ui.linEdDataBits.setText(bits)
         c.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
@@ -254,30 +254,30 @@ class GeneratorTabController(QWidget):
         if min_row == -1:
             self.ui.lEncodingValue.setText("-")  #
             self.ui.lEncodingValue.setToolTip("")
-            self.label_list_model.block = None
+            self.label_list_model.message = None
             return
 
         container = self.table_model.protocol
-        block = container.blocks[min_row]
-        self.label_list_model.block = block
-        decoder_name = block.decoder.name
+        message = container.messages[min_row]
+        self.label_list_model.message = message
+        decoder_name = message.decoder.name
         metrics = QFontMetrics(self.ui.lEncodingValue.font())
         elidedName = metrics.elidedText(decoder_name, Qt.ElideRight, self.ui.lEncodingValue.width())
         self.ui.lEncodingValue.setText(elidedName)
         self.ui.lEncodingValue.setToolTip(decoder_name)
         self.ui.cBoxModulations.blockSignals(True)
-        self.ui.cBoxModulations.setCurrentIndex(block.modulator_indx)
+        self.ui.cBoxModulations.setCurrentIndex(message.modulator_indx)
         self.show_modulation_info()
         self.ui.cBoxModulations.blockSignals(False)
 
     @pyqtSlot(int)
     def edit_pause_item(self, index: int):
-        block = self.table_model.protocol.blocks[index]
-        cur_len = block.pause
+        message = self.table_model.protocol.messages[index]
+        cur_len = message.pause
         new_len, ok = QInputDialog.getInt(self, self.tr("Enter new Pause Length"),
                                           self.tr("Pause Length:"), cur_len, 0)
         if ok:
-            block.pause = new_len
+            message.pause = new_len
             self.refresh_pause_list()
 
     @pyqtSlot()
@@ -291,7 +291,7 @@ class GeneratorTabController(QWidget):
         self.ui.lWPauses.clear()
         fmt_str = "Pause ({1:d}-{2:d}) <{0:d} samples ({3})>"
         for i, pause in enumerate(self.table_model.protocol.pauses):
-            sr = self.modulators[self.table_model.protocol.blocks[i].modulator_indx].sample_rate
+            sr = self.modulators[self.table_model.protocol.messages[i].modulator_indx].sample_rate
             item = fmt_str.format(pause, i + 1, i + 2, Formatter.science_time(pause / sr))
             self.ui.lWPauses.addItem(item)
 
@@ -327,9 +327,9 @@ class GeneratorTabController(QWidget):
         self.ui.prBarGeneration.setValue(0)
         self.ui.prBarGeneration.setMaximum(self.table_model.row_count)
         for i in range(0, self.table_model.row_count):
-            block = container.blocks[i]
-            modulator = self.modulators[block.modulator_indx]
-            modulator.modulate(start=pos, data=block.encoded_bits, pause=block.pause)
+            message = container.messages[i]
+            modulator = self.modulators[message.modulator_indx]
+            modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
             modulated_samples.append(modulator.modulated_samples)
             pos += len(modulator.modulated_samples)
             self.ui.prBarGeneration.setValue(i + 1)
@@ -341,9 +341,9 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
-        if self.selected_block is not None:
+        if self.selected_message is not None:
             fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
-                                          block_index=self.selected_block_index, proto_view=view, parent=self)
+                                          msg_index=self.selected_message_index, proto_view=view, parent=self)
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)
@@ -375,7 +375,8 @@ class GeneratorTabController(QWidget):
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
         pac = self.table_model.protocol
-        fuzz_active = any(lbl.active_fuzzing for block in pac.blocks for lbl in block.labelset)
+        assert isinstance(pac, ProtocolAnalyzerContainer)
+        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.labelset)
         self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()
@@ -387,31 +388,31 @@ class GeneratorTabController(QWidget):
             self.ui.btnFuzz.setFont(font)
             self.ui.btnFuzz.setStyleSheet("")
 
-        has_same_block = pac.multiple_fuzz_labels_per_block
-        self.ui.rBSuccessive.setEnabled(has_same_block)
-        self.ui.rBExhaustive.setEnabled(has_same_block)
-        self.ui.rbConcurrent.setEnabled(has_same_block)
+        has_same_message = pac.multiple_fuzz_labels_per_message
+        self.ui.rBSuccessive.setEnabled(has_same_message)
+        self.ui.rBExhaustive.setEnabled(has_same_message)
+        self.ui.rbConcurrent.setEnabled(has_same_message)
 
     @pyqtSlot()
     def refresh_estimated_time(self):
         c = self.table_model.protocol
-        if c.num_blocks == 0:
+        if c.num_messages == 0:
             self.ui.lEstimatedTime.setText("Estimated Time: ")
             return
 
-        avg_block_len = numpy.mean([len(block.encoded_bits) for block in c.blocks])
+        avg_msg_len = numpy.mean([len(msg.encoded_bits) for msg in c.messages])
         avg_bit_len = numpy.mean([m.samples_per_bit for m in self.modulators])
         avg_sample_rate = numpy.mean([m.sample_rate for m in self.modulators])
         pause_samples = sum(c.pauses)
-        nsamples = c.num_blocks * avg_block_len * avg_bit_len + pause_samples
+        nsamples = c.num_messages * avg_msg_len * avg_bit_len + pause_samples
 
         self.ui.lEstimatedTime.setText(locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
 
     @pyqtSlot(int, int, int)
-    def create_fuzzing_label(self, block_index: int, start: int, end: int):
+    def create_fuzzing_label(self, msg_index: int, start: int, end: int):
         con = self.table_model.protocol
-        start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, block_index)
-        lbl = con.create_fuzzing_label(start, end, block_index)
+        start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
+        lbl = con.create_fuzzing_label(start, end, msg_index)
         self.show_fuzzing_dialog(con.protocol_labels.index(lbl))
 
     @pyqtSlot()
@@ -423,8 +424,8 @@ class GeneratorTabController(QWidget):
         maxrow = numpy.max(rows)
 
         label = self.table_model.protocol.protocol_labels[maxrow]
-        if label.show and self.selected_block:
-            start, end = self.selected_block.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
+        if label.show and self.selected_message:
+            start, end = self.selected_message.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
             indx = self.table_model.index(0, int((start + end) / 2))
             self.ui.tableBlocks.scrollTo(indx)
 

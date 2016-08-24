@@ -18,7 +18,7 @@ COMPILER_DIRECTIVES = {'language_level': 3,
                        }
 
 UI_SUBDIRS = ("actions", "delegates", "views")
-PLUGINS = ("AmbleAnalyzer", "BlockBreak", "ZeroHide")
+PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide")
 URH_DIR = "urh"
 
 

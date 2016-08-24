@@ -156,7 +156,7 @@ class ProjectManager(QObject):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         self.maincontroller.on_project_settings_clicked()
 
-    def write_signal_information_to_project_file(self, signal: Signal, blocks, tree=None):
+    def write_signal_information_to_project_file(self, signal: Signal, messages, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
             return
 
@@ -188,9 +188,9 @@ class ProjectManager(QObject):
         signal_tag.set("modulation_type", str(signal.modulation_type))
         signal_tag.set("sample_rate", str(signal.sample_rate))
 
-        blocks_tag = ET.SubElement(signal_tag, "blocks")
-        for block in blocks:
-            blocks_tag.append(block.to_xml())
+        messages = ET.SubElement(signal_tag, "messages")
+        for message in messages:
+            messages.append(message.to_xml())
 
         tree.write(self.project_file)
 
@@ -271,7 +271,7 @@ class ProjectManager(QObject):
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
-            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.blocks, tree=tree)
+            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.messages, tree=tree)
             try:
                 pf = self.maincontroller.signal_protocol_dict[sf]
                 filename = pf.filename
@@ -316,7 +316,7 @@ class ProjectManager(QObject):
                 if line.strip():
                     f.write(line+"\n")
 
-    def read_participants_for_signal(self, signal: Signal, blocks):
+    def read_participants_for_signal(self, signal: Signal, messages):
         if self.project_file is None or len(signal.filename) == 0:
             return False
 
@@ -325,12 +325,12 @@ class ProjectManager(QObject):
 
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == os.path.relpath(signal.filename, self.project_path):
-                blocks_tag = sig_tag.find("blocks")
+                messages_tag = sig_tag.find("messages")
 
                 try:
-                    if blocks_tag:
-                        for i, block_tag in enumerate(blocks_tag.iter("block")):
-                            blocks[i].from_xml(block_tag, self.participants)
+                    if messages_tag:
+                        for i, message_tag in enumerate(messages_tag.iter("message")):
+                            messages[i].from_xml(message_tag, self.participants)
                 except IndexError:
                     return False
 

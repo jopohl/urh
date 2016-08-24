@@ -24,8 +24,8 @@ class ProtocolGroup(object):
         return len(self.items)
 
     @property
-    def num_blocks(self):
-        return sum(p.num_blocks for p in self.protocols)
+    def num_messages(self):
+        return sum(p.num_messages for p in self.protocols)
 
     @property
     def all_protocols(self):
@@ -44,14 +44,14 @@ class ProtocolGroup(object):
         return [proto for proto in self.all_protocols if proto.show]
 
     @property
-    def blocks(self):
+    def messages(self):
         """
 
         :rtype: list of Message
         """
         result = []
         for proto in self.protocols:
-            result.extend(proto.blocks)
+            result.extend(proto.messages)
         return result
 
     @property
@@ -85,10 +85,6 @@ class ProtocolGroup(object):
 
     def __repr__(self):
         return "Group: {0}".format(self.name)
-
-    def set_labels(self, val):
-        self.__labels = val # For AmbleAssignPlugin
-
 
     def add_protocol_item(self, protocol_item):
         """

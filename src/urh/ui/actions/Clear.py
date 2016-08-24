@@ -9,7 +9,7 @@ class Clear(QUndoCommand):
     def __init__(self, proto_analyzer_container: ProtocolAnalyzerContainer):
         super().__init__()
         self.proto_analyzer_container = proto_analyzer_container
-        self.orig_blocks = copy.deepcopy(self.proto_analyzer_container.blocks)
+        self.orig_messages = copy.deepcopy(self.proto_analyzer_container.messages)
 
         self.setText("Clear Generator Table")
 
@@ -17,4 +17,4 @@ class Clear(QUndoCommand):
         self.proto_analyzer_container.clear()
 
     def undo(self):
-        self.proto_analyzer_container.blocks = self.orig_blocks
+        self.proto_analyzer_container.messages = self.orig_messages

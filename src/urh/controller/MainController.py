@@ -197,13 +197,6 @@ class MainController(QMainWindow):
     def open(self):
         fip = FileIconProvider()
         self.dialog = QFileDialog(self)
-        #tree = self.dialog.findChild(QTreeView)
-        #""":type: QTreeView """
-        #tree.setRootIsDecorated(True)
-        #tree.setItemsExpandable(True)
-
-        # Damit SignalClick Behavior auch geht. Nachteil: Man muss immer den Open Button drücken
-        #tree.blockSignals(True)
         self.dialog.setIconProvider(fip)
         self.dialog.setDirectory(FileOperator.RECENT_PATH)
         self.dialog.setWindowTitle("Open Folder")
@@ -321,7 +314,7 @@ class MainController(QMainWindow):
         QApplication.processEvents()
 
         sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
-        if self.project_manager.read_participants_for_signal(signal, pa.blocks):
+        if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sframe.redraw_signal()
 
         sframe.ui.gvSignal.autofit_view()
@@ -344,7 +337,7 @@ class MainController(QMainWindow):
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
-            self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.blocks)
+            self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.messages)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
             except KeyError:
@@ -438,26 +431,26 @@ class MainController(QMainWindow):
         QMessageBox.about(self, self.tr("About"), self.tr("<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />Contributors:<i><ul><li>Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li><li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li></ul></i>").format(version.VERSION))
 
     @pyqtSlot(int, int, int, int)
-    def show_protocol_selection_in_interpretation(self, startblock, start, endblock, end):
+    def show_protocol_selection_in_interpretation(self, startmessage, start, endmessage, end):
         cfc = self.compare_frame_controller
-        total_block = 0
+        msg_total = 0
         last_sig_frame = None
         for protocol in cfc.protocol_list:
             if not protocol.show:
                 continue
-            n = protocol.num_blocks
+            n = protocol.num_messages
             view_type = cfc.ui.cbProtoView.currentIndex()
-            blocks = [i - total_block for i in range(total_block, total_block + n) if startblock <= i <= endblock]
-            if len(blocks) > 0:
+            messages = [i - msg_total for i in range(msg_total, msg_total + n) if startmessage <= i <= endmessage]
+            if len(messages) > 0:
                 try:
                     signal_frame = next((sf for sf, pf in self.signal_protocol_dict.items() if pf == protocol))
                 except StopIteration:
                     QMessageBox.critical(self, self.tr("Error"),
                                          self.tr("Could not find corresponding signal frame."))
                     return
-                signal_frame.set_roi_from_protocol_analysis(min(blocks), start, max(blocks), end + 1, view_type)
+                signal_frame.set_roi_from_protocol_analysis(min(messages), start, max(messages), end + 1, view_type)
                 last_sig_frame = signal_frame
-            total_block += n
+            msg_total += n
         focus_frame = last_sig_frame
         if last_sig_frame is not None:
             self.signal_tab_controller.ui.scrollArea.ensureWidgetVisible(last_sig_frame, 0, 0)

@@ -20,17 +20,17 @@ class ChangeSignalParameter(QUndoCommand):
         self.setText("Change {0} of {1} from {2} to {3}".format(parameter_name, signal.name, self.orig_value, parameter_value))
 
         self.protocol = protocol
-        self.orig_blocks= copy.deepcopy(self.protocol.blocks)
+        self.orig_messages = copy.deepcopy(self.protocol.messages)
 
     def redo(self):
-        block_data = [(block.decoder, block.participant, block.labelset) for block in self.protocol.blocks]
+        msg_data = [(msg.decoder, msg.participant, msg.labelset) for msg in self.protocol.messages]
         setattr(self.signal, self.parameter_name, self.parameter_value)
-        # Restore block parameters
-        if len(block_data) == self.protocol.num_blocks:
-            for block, block_params in zip(self.protocol.blocks, block_data):
-                block.decoder = block_params[0]
-                block.participant = block_params[1]
-                block.labelset = block_params[2]
+        # Restore msg parameters
+        if len(msg_data) == self.protocol.num_messages:
+            for msg, msg_params in zip(self.protocol.messages, msg_data):
+                msg.decoder = msg_params[0]
+                msg.participant = msg_params[1]
+                msg.labelset = msg_params[2]
             self.protocol.qt_signals.protocol_updated.emit()
 
 
@@ -40,5 +40,5 @@ class ChangeSignalParameter(QUndoCommand):
         setattr(self.signal, self.parameter_name, self.orig_value)
         self.signal.block_protocol_update = block_proto_update
 
-        self.protocol.blocks = self.orig_blocks
+        self.protocol.messages = self.orig_messages
         self.protocol.qt_signals.protocol_updated.emit()

@@ -17,7 +17,7 @@ from urh.util.Logger import logger
 
 class Message(object):
     """
-    A protocol block is a single line of a protocol.
+    A protocol message is a single line of a protocol.
     """
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "labelset",
@@ -28,13 +28,13 @@ class Message(object):
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
-        :param pause: Pause NACH dem Block in Samples
+        :param pause: pause AFTER the message in samples
         :type plain_bits: list[bool|Symbol]
         :type decoder: encoding
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
         :param bit_len: Für Übernahme der Bitlänge in Modulator Dialog
-        :param fuzz_created: Block was created thrugh fuzzing
+        :param fuzz_created: message was created through fuzzing
         :return:
         """
         self.__plain_bits = plain_bits
@@ -158,7 +158,7 @@ class Message(object):
 
     def get_byte_length(self, decoded=True) -> int:
         """
-        Return the length of this block in byte.
+        Return the length of this message in byte.
 
         """
         end = len(self.decoded_bits) if decoded else len(self.__plain_bits)
@@ -454,8 +454,8 @@ class Message(object):
         """
         start = 0
         result = []
-        block = self.decoded_bits_str if decode else str(self)
-        symbol_indexes = [i for i, b in enumerate(block) if b not in ("0", "1")]
+        message = self.decoded_bits_str if decode else str(self)
+        symbol_indexes = [i for i, b in enumerate(message) if b not in ("0", "1")]
         self.__bit_alignments = set()
         if self.align_labels:
             for l in self.labelset:
@@ -467,19 +467,19 @@ class Message(object):
         for pos in self.__bit_alignments:
             sym_indx = [i for i in symbol_indexes if i < pos]
             for si in sym_indx:
-                result.append(block[start:si])
-                result.append(block[si])
+                result.append(message[start:si])
+                result.append(message[si])
                 start = si +1
-            result.append(block[start:pos])
+            result.append(message[start:pos])
             start = pos
 
         sym_indx = [i for i in symbol_indexes if i >= start]
         for si in sym_indx:
-            result.append(block[start:si])
-            result.append(block[si])
+            result.append(message[start:si])
+            result.append(message[si])
             start = si+1
 
-        result.append(block[start:])
+        result.append(message[start:])
         return result
 
     def view_to_string(self, view: int, decoded: bool, show_pauses=True,
@@ -534,7 +534,7 @@ class Message(object):
         return Message(plain_bits=plain_bits, pause=0, labelset=LabelSet("none"))
 
     def to_xml(self, decoders=None, include_labelset=False) -> ET.Element:
-        root = ET.Element("block")
+        root = ET.Element("message")
         root.set("labelset_id", self.labelset.id)
         root.set("modulator_index", str(self.modulator_indx))
         root.set("pause", str(self.pause))

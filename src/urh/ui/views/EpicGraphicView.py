@@ -61,11 +61,11 @@ class EpicGraphicView(SelectableGraphicView):
             return -self.signal.qad_center
 
     @property
-    def selected_blocks(self):
+    def selected_messages(self):
         if not self.selection_area.is_empty:
             pa = self.parent_frame.proto_analyzer
             sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width), self.signal.bit_len)
-            return pa.blocks[sb:eb+1]
+            return pa.messages[sb:eb + 1]
         else:
             return []
 
@@ -108,30 +108,30 @@ class EpicGraphicView(SelectableGraphicView):
             zoomAction = menu.addAction(self.tr("Zoom Selection"))
             createAction = menu.addAction(self.tr("Create Signal from Selection"))
 
-        selected_blocks = self.selected_blocks
+        selected_messages = self.selected_messages
 
-        if len(selected_blocks) == 1:
-            selected_block = selected_blocks[0]
+        if len(selected_messages) == 1:
+            selected_msg = selected_messages[0]
         else:
-            selected_block = None
+            selected_msg = None
 
         particpnt_actions = {}
 
-        if len(selected_blocks) > 0:
+        if len(selected_messages) > 0:
             partigroup = QActionGroup(self)
             participant_menu = menu.addMenu("Participant")
             none_partipnt_action = participant_menu.addAction("None")
             none_partipnt_action.setCheckable(True)
             none_partipnt_action.setActionGroup(partigroup)
 
-            if selected_block and selected_block.participant is None:
+            if selected_msg and selected_msg.participant is None:
                 none_partipnt_action.setChecked(True)
 
             for particpnt in self.participants:
                 pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
                 pa.setCheckable(True)
                 pa.setActionGroup(partigroup)
-                if selected_block and selected_block.participant == particpnt:
+                if selected_msg and selected_msg.participant == particpnt:
                     pa.setChecked(True)
 
                 particpnt_actions[pa] = particpnt
@@ -168,13 +168,13 @@ class EpicGraphicView(SelectableGraphicView):
             self.mute_wanted.emit(self.selection_area.start, self.selection_area.end)
 
         elif action == none_partipnt_action:
-            for block in selected_blocks:
-                block.participant = None
+            for msg in selected_messages:
+                msg.participant = None
             self.participant_changed.emit()
 
         elif action in particpnt_actions:
-            for block in selected_blocks:
-                block.participant = particpnt_actions[action]
+            for msg in selected_messages:
+                msg.participant = particpnt_actions[action]
             self.participant_changed.emit()
 
     def zoom_all_signals(self, factor, event:QWheelEvent=None):

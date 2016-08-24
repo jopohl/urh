@@ -11,25 +11,25 @@ class GeneratorListModel(QAbstractListModel):
     protolabel_fuzzing_status_changed = pyqtSignal(ProtocolLabel)
     protolabel_removed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, block: Message, parent=None):
+    def __init__(self, message: Message, parent=None):
         super().__init__(parent)
-        self.__block = block
+        self.__message = message
     
     @property
     def labels(self):
-        if self.block:
-            return self.block.labelset
+        if self.message:
+            return self.message.labelset
         else:
             return []
     
     @property
-    def block(self):
-        return self.__block
+    def message(self):
+        return self.__message
 
-    @block.setter
-    def block(self, value: Message):
-        if value != self.block:
-            self.__block = value
+    @message.setter
+    def message(self, value: Message):
+        if value != self.message:
+            self.__message = value
             self.update()
 
     def last_index(self):

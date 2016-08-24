@@ -18,10 +18,10 @@ class TestPCAP(unittest.TestCase):
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.decoded_hex_str[0], "b25b6db6c80")
 
-        proto_analyzer.blocks.append(copy.deepcopy(proto_analyzer.blocks[0]))
-        proto_analyzer.blocks.append(copy.deepcopy(proto_analyzer.blocks[0]))
-        proto_analyzer.blocks.append(copy.deepcopy(proto_analyzer.blocks[0]))
+        proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
+        proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
+        proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
 
 
         pcap = PCAP()
-        pcap.write_packets(proto_analyzer.blocks, "/tmp/test.pcap", 1e6)
+        pcap.write_packets(proto_analyzer.messages, "/tmp/test.pcap", 1e6)

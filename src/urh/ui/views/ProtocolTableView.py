@@ -20,7 +20,7 @@ class ProtocolTableView(TableView):
     edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
-    new_labelset_clicked  = pyqtSignal(list) # list of protocol blocks
+    new_labelset_clicked  = pyqtSignal(list) # list of protocol messages
     labelset_selected = pyqtSignal(LabelSet, list)
 
     def __init__(self, parent=None):
@@ -29,27 +29,27 @@ class ProtocolTableView(TableView):
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
-        self.ref_block_action = QAction("Mark as reference block", self)
-        self.ref_block_action.setShortcut(QKeySequence("R"))
-        self.ref_block_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
-        self.ref_block_action.triggered.connect(self.set_ref_block)
+        self.ref_message_action = QAction(self.tr("Mark as reference message"), self)
+        self.ref_message_action.setShortcut(QKeySequence("R"))
+        self.ref_message_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.ref_message_action.triggered.connect(self.set_ref_message)
 
         self.hide_row_action = QAction("Hide selected Rows", self)
         self.hide_row_action.setShortcut(QKeySequence("H"))
         self.hide_row_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.hide_row_action.triggered.connect(self.hide_row)
 
-        self.addAction(self.ref_block_action)
+        self.addAction(self.ref_message_action)
         self.addAction(self.hide_row_action)
 
     def model(self) -> ProtocolTableModel:
         return super().model()
 
     @property
-    def selected_blocks(self):
-        blocks = self.model().protocol.blocks
+    def selected_messages(self):
+        messages = self.model().protocol.messages
         rows = set(i.row() for i in self.selectionModel().selectedIndexes())
-        return [blocks[i] for i in rows]
+        return [messages[i] for i in rows]
 
     def selectionChanged(self, QItemSelection, QItemSelection_1):
         self.selection_changed.emit()
@@ -65,7 +65,7 @@ class ProtocolTableView(TableView):
         if len(event.mimeData().urls()) > 0:
             self.files_dropped.emit(event.mimeData().urls())
 
-    def set_ref_block(self, *args, y=None):
+    def set_ref_message(self, *args, y=None):
         if self.model().refindex == -1:
             return
 
@@ -122,19 +122,19 @@ class ProtocolTableView(TableView):
         pos = event.pos()
         row = self.rowAt(pos.y())
         min_row, max_row, start, end = self.selection_range()
-        selected_blocks = self.selected_blocks
+        selected_messages = self.selected_messages
         particpnt_actions = {}
 
-        if len(selected_blocks) == 0:
+        if len(selected_messages) == 0:
             selected_participant = -1
             selected_labelset = -1
         else:
-            selected_participant = selected_blocks[0].participant
-            selected_labelset  = selected_blocks[0].labelset
-            for block in selected_blocks:
-                if selected_participant != block.participant:
+            selected_participant = selected_messages[0].participant
+            selected_labelset  = selected_messages[0].labelset
+            for message in selected_messages:
+                if selected_participant != message.participant:
                     selected_participant = -1
-                if selected_labelset != block.labelset:
+                if selected_labelset != message.labelset:
                     selected_labelset  = -1
                 if selected_labelset == -1 and selected_participant == -1:
                     break
@@ -205,7 +205,7 @@ class ProtocolTableView(TableView):
             showRowAction = menu.addAction(self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows))))
 
         if self.model().refindex != -1:
-            menu.addAction(self.ref_block_action)
+            menu.addAction(self.ref_message_action)
 
         menu.addSeparator()
         if self.model().is_writeable:
@@ -229,8 +229,8 @@ class ProtocolTableView(TableView):
                     menu.addAction(act)
 
         action = menu.exec_(self.mapToGlobal(pos))
-        if action == self.ref_block_action:
-            self.set_ref_block(y=pos.y())
+        if action == self.ref_message_action:
+            self.set_ref_message(y=pos.y())
         elif action == editLabelAction:
             self.edit_label_clicked.emit(selected_label)
         elif action == createLabelAction:
@@ -252,15 +252,15 @@ class ProtocolTableView(TableView):
         elif action == writeAbleAction:
             self.writeable_changed.emit(writeAbleAction.isChecked())
         elif action == none_partipnt_action:
-            for block in selected_blocks:
-                block.participant = None
+            for message in selected_messages:
+                message.participant = None
             self.participant_changed.emit()
         elif action in particpnt_actions:
-            for block in selected_blocks:
-                block.participant = particpnt_actions[action]
+            for message in selected_messages:
+                message.participant = particpnt_actions[action]
             self.participant_changed.emit()
         elif action == new_labelset_action:
-            self.new_labelset_clicked.emit(selected_blocks)
+            self.new_labelset_clicked.emit(selected_messages)
         elif action in labelset_actions:
-            self.labelset_selected.emit(labelset_actions[action], selected_blocks)
+            self.labelset_selected.emit(labelset_actions[action], selected_messages)
 

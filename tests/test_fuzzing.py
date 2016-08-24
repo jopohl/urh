@@ -80,20 +80,20 @@ class TestFuzzing(unittest.TestCase):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
         QTest.qWait(10)
 
-        fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, block_index=0, proto_view=0, parent=self.gframe)
+        fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0, proto_view=0, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
         fdc.finished.connect(self.gframe.refresh_table)
         fdc.finished.connect(self.gframe.set_fuzzing_ui_status)
 
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "00010110010100010100") # Serial Part 1
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "00010110010100010100") # Serial Part 1
         fdc.ui.comboBoxFuzzingLabel.setCurrentIndex(1)
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "000000000000000000") # Zeros
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "000000000000000000") # Zeros
         fdc.ui.comboBoxFuzzingLabel.setCurrentIndex(2)
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "11111100100110110110") # Serial Part 2
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "11111100100110110110") # Serial Part 2
 
     def test_fuzz_label_hex(self):
-        for block in self.gframe.table_model.protocol.blocks:
-            block.align_labels = False
+        for message in self.gframe.table_model.protocol.messages:
+            message.align_labels = False
 
 
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
@@ -104,8 +104,8 @@ class TestFuzzing(unittest.TestCase):
         fdc.finished.connect(self.gframe.refresh_table)
         fdc.finished.connect(self.gframe.set_fuzzing_ui_status)
 
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "c5945") # Serial Part 1
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "c5945") # Serial Part 1
         fdc.ui.comboBoxFuzzingLabel.setCurrentIndex(1)
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "00000") # Zeros
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "00000") # Zeros
         fdc.ui.comboBoxFuzzingLabel.setCurrentIndex(2)
-        self.assertEqual(fdc.block_data[fdc.current_label_start:fdc.current_label_end], "fc9b6") # Serial Part 2
+        self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "fc9b6") # Serial Part 2

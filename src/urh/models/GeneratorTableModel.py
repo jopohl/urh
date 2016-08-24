@@ -28,24 +28,25 @@ class GeneratorTableModel(TableModel):
         self.bold_fonts.clear()
         self.text_colors.clear()
         pac = self.protocol
-        for i, block in enumerate(pac.blocks):
-            if block.fuzz_created:
-                for lbl in (lbl for lbl in block.labelset if lbl.fuzz_created):
-                    for j in range(*block.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
+        assert isinstance(pac, ProtocolAnalyzerContainer)
+        for i, message in enumerate(pac.messages):
+            if message.fuzz_created:
+                for lbl in (lbl for lbl in message.labelset if lbl.fuzz_created):
+                    for j in range(*message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
                         self.bold_fonts[i, j] = True
 
-            for lbl in block.active_fuzzing_labels:
-                for j in range(*block.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
+            for lbl in message.active_fuzzing_labels:
+                for j in range(*message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
                     self.bold_fonts[i, j] = True
                     self.text_colors[i, j] = QColor("orange")
 
-    def delete_range(self, block_start: int, block_end: int, index_start: int, index_end: int):
-        if block_start > block_end:
-            block_start, block_end = block_end, block_start
+    def delete_range(self, msg_start: int, msg_end: int, index_start: int, index_end: int):
+        if msg_start > msg_end:
+            msg_start, msg_end = msg_end, msg_start
         if index_start > index_end:
             index_start, index_end = index_end, index_start
 
-        remove_action = DeleteBitsAndPauses(self.protocol, block_start, block_end, index_start,
+        remove_action = DeleteBitsAndPauses(self.protocol, msg_start, msg_end, index_start,
                                             index_end, self.proto_view, False)
         ########## Zugehörige Pausen löschen
         self.undo_stack.push(remove_action)
@@ -106,13 +107,13 @@ class GeneratorTableModel(TableModel):
 
     def get_selected_label_index(self, row: int, column: int):
         try:
-            block = self.protocol.blocks[row]
+            msg = self.protocol.messages[row]
         except IndexError:
             logger.warning("{} is out of range for generator protocol".format(row))
             return -1
 
-        for i, lbl in enumerate(block.labelset):
-            if column in range(*block.get_label_range(lbl, self.proto_view, False)):
+        for i, lbl in enumerate(msg.labelset):
+            if column in range(*msg.get_label_range(lbl, self.proto_view, False)):
                 return i
 
         return -1

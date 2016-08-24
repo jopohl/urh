@@ -856,7 +856,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Show protocol labels:</string>
+          <string>Message type:</string>
          </property>
         </widget>
        </item>

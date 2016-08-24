@@ -524,7 +524,7 @@ class Ui_FAnalysis(object):
         self.chkBoxShowOnlyDiffs.setText(_translate("FAnalysis", "Show only diffs in protocol"))
         self.chkBoxOnlyShowLabelsInProtocol.setText(_translate("FAnalysis", "Show only labels in protocol"))
         self.btnAnalyze.setText(_translate("FAnalysis", "Analyze"))
-        self.label.setText(_translate("FAnalysis", "Show protocol labels:"))
+        self.label.setText(_translate("FAnalysis", "Message type:"))
         self.lblLabelValues.setText(_translate("FAnalysis", "Label values for message"))
         self.btnMessagetypeSettings.setToolTip(_translate("FAnalysis", "Settings for message type"))
         self.btnMessagetypeSettings.setText(_translate("FAnalysis", "..."))

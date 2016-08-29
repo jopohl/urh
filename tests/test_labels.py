@@ -32,7 +32,7 @@ class TestLabels(unittest.TestCase):
         self.cframe.add_protocol_label(0, 40, 1, 0, edit_label_name = False)  # Sync
         self.cframe.add_protocol_label(43, 43, 2, 0, edit_label_name = False)  # FuzzBit
 
-        self.assertEqual(len(self.cframe.active_labelset), 2)
+        self.assertEqual(len(self.cframe.active_message_type), 2)
 
     def tearDown(self):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
@@ -76,7 +76,7 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(len(labels), 2)
 
         # Fuzz Label
-        lbl = self.gframe.table_model.protocol.blocks[0].labelset[1]
+        lbl = self.gframe.table_model.protocol.messages[0].message_type[1]
         lbl.fuzz_values.append("1")
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
@@ -89,7 +89,7 @@ class TestLabels(unittest.TestCase):
         self.gframe.ui.btnFuzz.setEnabled(True)
         self.gframe.ui.btnFuzz.click()
         self.assertTrue(lbl.active_fuzzing)
-        self.assertIn(lbl, self.gframe.table_model.protocol.blocks[0].labelset)
+        self.assertIn(lbl, self.gframe.table_model.protocol.messages[0].message_type)
         self.assertEqual(self.gframe.table_model.row_count, 4 + 3)
 
         # Check if Background for fuzzed labels is drawn correctly
@@ -97,24 +97,24 @@ class TestLabels(unittest.TestCase):
 
         # Delete a line
         old_row_count = self.gframe.table_model.row_count
-        self.gframe.ui.tableBlocks.selectRow(2)
-        QTest.keyClick(self.gframe.ui.tableBlocks, Qt.Key_Delete)
+        self.gframe.ui.tableMessages.selectRow(2)
+        QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key_Delete)
         self.assertEqual(self.gframe.table_model.row_count, old_row_count - 1)
 
         self.__check_background_is_drawn(lbl, 43, 43)
 
         # Remove everything
         for i in range(old_row_count):
-            self.gframe.ui.tableBlocks.selectRow(0)
-            QTest.keyClick(self.gframe.ui.tableBlocks, Qt.Key_Delete)
+            self.gframe.ui.tableMessages.selectRow(0)
+            QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key_Delete)
 
         self.assertEqual(self.gframe.table_model.row_count, 0)
 
     def __check_background_is_drawn(self, lbl, lbl_start, lbl_end):
         pac = self.gframe.table_model.protocol
         for i in range(self.gframe.table_model.row_count):
-            labels_for_block = pac.blocks[i].labelset
-            self.assertIn(lbl, labels_for_block)
-            start, end = pac.blocks[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
+            labels_for_message = pac.messages[i].message_type
+            self.assertIn(lbl, labels_for_message)
+            start, end = pac.messages[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
             self.assertEqual(start, lbl_start)
             self.assertEqual(end, lbl_end + 1)

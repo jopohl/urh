@@ -63,8 +63,8 @@ class Rule(object):
         except ValueError:
             logger.warning("{} could not be cast to integer".format(value))
 
-    def applies_for_block(self, block):
-        data = block.decoded_bits_str if self.value_type == 0 else block.decoded_hex_str if self.value_type == 1 else block.decoded_ascii_str
+    def applies_for_message(self, message):
+        data = message.decoded_bits_str if self.value_type == 0 else message.decoded_hex_str if self.value_type == 1 else message.decoded_ascii_str
         return OPERATIONS[self.operator](data[self.start:self.end], self.target_value)
 
     @property
@@ -101,8 +101,8 @@ class Ruleset(list):
         self.mode = mode
         super().__init__(rules)
 
-    def applies_for_block(self, block):
-        napplied_rules = sum(rule.applies_for_block(block) for rule in self)
+    def applies_for_message(self, message):
+        napplied_rules = sum(rule.applies_for_message(message) for rule in self)
 
         if self.mode == Mode.all_apply:
             return napplied_rules == len(self)

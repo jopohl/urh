@@ -7,6 +7,11 @@ from urh.util.Logger import logger
 
 class Formatter():
     @staticmethod
+    def local_decimal_seperator():
+        return locale.localeconv()["decimal_point"]
+
+
+    @staticmethod
     def science_time(time_in_seconds: float) -> str:
         if time_in_seconds < 1e-6:
             suffix = "n"

@@ -1,9 +1,11 @@
 import copy
 import os
 
+from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
+from PyQt5.QtWidgets import QFileDialog
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -31,7 +33,7 @@ class DecoderWidgetController(QDialog):
         self.old_inpt_txt = ""
         self.old_carrier_txt = ""
         self.old_decoderchain = []
-        self.active_block = ""
+        self.active_message = ""
 
         self.project_manager = project_manager
 
@@ -59,6 +61,7 @@ class DecoderWidgetController(QDialog):
         self.ui.additionalfunctions.addItem(constants.DECODING_REDUNDANCY)
         self.ui.additionalfunctions.addItem(constants.DECODING_CARRIER)
         self.ui.additionalfunctions.addItem(constants.DECODING_DATAWHITENING)
+        self.ui.additionalfunctions.addItem(constants.DECODING_ENOCEAN)
 
         # Presets
         self.setWindowTitle("Decoding")
@@ -86,6 +89,10 @@ class DecoderWidgetController(QDialog):
         self.ui.carrier.textChanged.connect(self.handle_carrier_changed)
         self.ui.substitution_rows.valueChanged.connect(self.handle_substitution_rows_changed)
         self.ui.substitution.itemChanged.connect(self.handle_substitution_changed)
+
+        self.ui.btnChooseDecoder.clicked.connect(self.choose_decoder)
+        self.ui.btnChooseEncoder.clicked.connect(self.choose_encoder)
+
         self.ui.external_decoder.textEdited.connect(self.handle_external)
         self.ui.external_encoder.textEdited.connect(self.handle_external)
         self.ui.datawhitening_sync.textEdited.connect(self.handle_datawhitening)
@@ -105,6 +112,19 @@ class DecoderWidgetController(QDialog):
         self.ui.combobox_signals.currentIndexChanged.connect(self.set_signal)
         self.ui.saveas.clicked.connect(self.saveas)
         self.ui.delete_decoding.clicked.connect(self.delete_decoding)
+
+
+    def choose_decoder(self):
+        f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())
+        if f and ok:
+            self.ui.external_decoder.setText(f)
+            self.handle_external()
+
+    def choose_encoder(self):
+        f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose encoder program"), QDir.homePath())
+        if f and ok:
+            self.ui.external_encoder.setText(f)
+            self.handle_external()
 
 
     def save_to_file(self):
@@ -177,7 +197,7 @@ class DecoderWidgetController(QDialog):
         self.chainoptions.clear()
         last_i = ""
         for i in chain:
-            if i in [constants.DECODING_INVERT, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
+            if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
                      constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE, constants.DECODING_DATAWHITENING,
                      constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
@@ -373,7 +393,7 @@ class DecoderWidgetController(QDialog):
             else:
                 elementname = element
             txt += elementname + ":\n"
-            self.active_block = element
+            self.active_message = element
 
         # Remove "[Disabled] " for further tasks
         if constants.DECODING_DISABLED_PREFIX in element:
@@ -442,6 +462,8 @@ class DecoderWidgetController(QDialog):
 
         elif constants.DECODING_INVERT in element:
             txt += "All bits are inverted, i.e. 0->1 and 1->0."
+        elif constants.DECODING_ENOCEAN in element:
+            txt += "Remove Wireless Short-Packet (WSP) encoding that is used by EnOcean (Switch Telegram) standard. Special errors: 404 - no/wrong preamble, 403 - no/wrong start of frame (SoF), >1000 - wrong 4 bit hash."
         elif constants.DECODING_DIFFERENTIAL in element:
             txt += "Every transition between low and high (0->1 or 1->0) becomes 1, no transition (0->0 or 1->1) remains 0.\n" \
                    "The first signal bit is regarded as start value and directly copied.\n" \
@@ -469,23 +491,23 @@ class DecoderWidgetController(QDialog):
 
         elif constants.DECODING_CARRIER in element:
             txt += "A carrier is a fixed pattern like 1_1_1_1 where the actual data lies in between, e.g. 1a1a1b1. This " \
-                   "function extracts the actual bit information (here: aab) from the signal.\n" \
+                   "function extracts the actual bit information (here: aab) from the signal at '_'/'.' positions.\n" \
                    "Examples:\n" \
-                   "- Carrier = '1' means 1_1_1_1...\n" \
-                   "- Carrier = '01' means 01_01_01_01..."
+                   "- Carrier = '1_' means 1_1_1_...\n" \
+                   "- Carrier = '01_' means 01_01_01_01..."
             self.ui.optionWidget.setCurrentIndex(2)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
-                self.ui.carrier.setText("1")
+                self.ui.carrier.setText("1_")
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
-                        self.ui.carrier.setText("1")
+                        self.ui.carrier.setText("1_")
                     else:
                         self.ui.carrier.setText(value)
                 else:
-                    self.ui.carrier.setText("1")
+                    self.ui.carrier.setText("1_")
             self.ui.carrier.setEnabled(decoderEdit)
 
         elif constants.DECODING_DATAWHITENING in element:
@@ -557,13 +579,13 @@ class DecoderWidgetController(QDialog):
             opt = opt | 0x1
 
         datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + hex(opt)
-        self.chainoptions[self.active_block] = datawhiteningstr
+        self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
     def handle_external(self):
         externalstr = self.ui.external_decoder.text() + ";" + self.ui.external_encoder.text()
-        self.chainoptions[self.active_block] = externalstr
+        self.chainoptions[self.active_message] = externalstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -572,7 +594,7 @@ class DecoderWidgetController(QDialog):
         for i in range(0, self.ui.substitution_rows.value()):
             if self.ui.substitution.item(i, 0) and self.ui.substitution.item(i, 1):
                 subststr += self.ui.substitution.item(i, 0).text() + ":" + self.ui.substitution.item(i, 1).text() + ";"
-        self.chainoptions[self.active_block] = subststr
+        self.chainoptions[self.active_message] = subststr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -585,26 +607,25 @@ class DecoderWidgetController(QDialog):
     def handle_multiple_changed(self):
         # Multiple Spinbox
         val = self.ui.multiple.value()
-        self.chainoptions[self.active_block] = val
+        self.chainoptions[self.active_message] = val
         self.decoderchainUpdate()
 
     @pyqtSlot()
     def handle_carrier_changed(self):
         # Only allow {0, 1}
         carrier_txt = self.ui.carrier.text()
-        if carrier_txt.count("0") + carrier_txt.count("1") < len(carrier_txt):
+        if carrier_txt.count("0") + carrier_txt.count("1") + carrier_txt.count("_") + carrier_txt.count(".") + carrier_txt.count("*") < len(carrier_txt):
             self.ui.carrier.setText(self.old_carrier_txt)
         else:
             self.old_carrier_txt = carrier_txt
         # Carrier Textbox
         #self.e.carrier = self.e.str2bit(self.ui.carrier.text())
-        self.chainoptions[self.active_block] = carrier_txt
+        self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         event.accept()
-
 
     def dropEvent(self, event: QDropEvent):
         #if not self.ui.decoderchain.geometry().contains(self.mapToGlobal(event.pos())):
@@ -612,7 +633,6 @@ class DecoderWidgetController(QDialog):
             self.chainoptions.pop(self.ui.decoderchain.item(self.ui.decoderchain.active_element).text(), None)
         self.ui.decoderchain.takeItem(self.ui.decoderchain.active_element)
         self.decoderchainUpdate()
-
 
     def set_signal(self):
         indx = self.ui.combobox_signals.currentIndex()
@@ -636,10 +656,10 @@ class DecoderWidgetController(QDialog):
         QApplication.processEvents()
 
         if signal is not None:
-            last_block = pa.blocks[-1]
-            lookup = {i: block.bit_sample_pos for i, block in enumerate(pa.blocks)}
+            last_message = pa.messages[-1]
+            lookup = {i: msg.bit_sample_pos for i, msg in enumerate(pa.messages)}
 
-            plot_data = signal.qad[lookup[0][0]:lookup[pa.num_blocks - 1][len(last_block) - 1]]
+            plot_data = signal.qad[lookup[0][0]:lookup[pa.num_messages - 1][len(last_message) - 1]]
             self.ui.graphicsView_signal.plot_data(plot_data)
 
         self.ui.graphicsView_signal.centerOn(0, 0)

@@ -45,27 +45,27 @@ class ChangeSignalRange(QUndoCommand):
         self.orig_parameter_cache = copy.deepcopy(self.signal.parameter_cache)
         self.signal_was_changed = self.signal.changed
         self.protocol = protocol
-        self.orig_blocks = copy.deepcopy(self.protocol.blocks)
+        self.orig_messages = copy.deepcopy(self.protocol.messages)
 
     def redo(self):
         keep_bock_indices = {}
         if self.mode in (RangeAction.delete, RangeAction.mute):
-            removed_block_indices = self.__find_block_indices_in_sample_range(self.start, self.end)
-            if removed_block_indices:
-                for i in range(self.protocol.num_blocks):
-                    if i < removed_block_indices[0]:
+            removed_msg_indices = self.__find_message_indices_in_sample_range(self.start, self.end)
+            if removed_msg_indices:
+                for i in range(self.protocol.num_messages):
+                    if i < removed_msg_indices[0]:
                         keep_bock_indices[i] = i
-                    elif i > removed_block_indices[-1]:
-                        keep_bock_indices[i] = i-len(removed_block_indices)
+                    elif i > removed_msg_indices[-1]:
+                        keep_bock_indices[i] = i-len(removed_msg_indices)
             else:
-                keep_bock_indices = {i: i for i in range(self.protocol.num_blocks)}
+                keep_bock_indices = {i: i for i in range(self.protocol.num_messages)}
         elif self.mode == RangeAction.crop:
-            removed_left = self.__find_block_indices_in_sample_range(0, self.start)
-            removed_right = self.__find_block_indices_in_sample_range(self.end, self.signal.num_samples)
+            removed_left = self.__find_message_indices_in_sample_range(0, self.start)
+            removed_right = self.__find_message_indices_in_sample_range(self.end, self.signal.num_samples)
             last_removed_left = removed_left[-1] if removed_left else -1
-            first_removed_right = removed_right[0] if removed_right else self.protocol.num_blocks + 1
+            first_removed_right = removed_right[0] if removed_right else self.protocol.num_messages + 1
 
-            for i in range(self.protocol.num_blocks):
+            for i in range(self.protocol.num_messages):
                 if i > last_removed_left and i < first_removed_right:
                     keep_bock_indices[i] = i - len(removed_left)
 
@@ -93,13 +93,13 @@ class ChangeSignalRange(QUndoCommand):
         self.signal.data_edited.emit()
         self.signal.protocol_needs_update.emit()
 
-        # Restore old block data
+        # Restore old msg data
         for old_index, new_index in keep_bock_indices.items():
-            old_block = self.orig_blocks[old_index]
-            new_block = self.protocol.blocks[new_index]
-            new_block.decoder = old_block.decoder
-            new_block.labelset = old_block.labelset
-            new_block.participant = old_block.participant
+            old_msg = self.orig_messages[old_index]
+            new_msg = self.protocol.messages[new_index]
+            new_msg.decoder = old_msg.decoder
+            new_msg.message_type = old_msg.message_type
+            new_msg.participant = old_msg.participant
 
         self.protocol.qt_signals.protocol_updated.emit()
 
@@ -117,17 +117,17 @@ class ChangeSignalRange(QUndoCommand):
         self.signal._num_samples = self.orig_num_samples
         self.signal.parameter_cache = self.orig_parameter_cache
 
-        self.protocol.blocks = self.orig_blocks
+        self.protocol.messages = self.orig_messages
         self.protocol.qt_signals.protocol_updated.emit()
 
         self.signal.changed = self.signal_was_changed
         self.signal.data_edited.emit()
 
-    def __find_block_indices_in_sample_range(self, start: int, end: int):
+    def __find_message_indices_in_sample_range(self, start: int, end: int):
         result = []
-        for i, block in enumerate(self.protocol.blocks):
-            if block.bit_sample_pos[0] >= start and block.bit_sample_pos[-2] <= end:
+        for i, message in enumerate(self.protocol.messages):
+            if message.bit_sample_pos[0] >= start and message.bit_sample_pos[-2] <= end:
                 result.append(i)
-            elif block.bit_sample_pos[-2] > end:
+            elif message.bit_sample_pos[-2] > end:
                 break
         return result

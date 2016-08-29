@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSlot, QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from ..Plugin import LabelAssignPlugin
 from ..AmbleAnalyzer.AmbleAssignAction import AmbleAssignAction
@@ -42,6 +42,6 @@ class AmbleAnalyzerPlugin(LabelAssignPlugin):
         self.settings_frame.lPreview.setText(self.amble_pattern * self.min_occurences + "..")
         self.qsettings.setValue('amble_pattern', self.amble_pattern)
 
-    def get_action(self, groups, labelset: LabelSet):
-        action = AmbleAssignAction(self.amble_pattern, self.min_occurences, groups, labelset)
+    def get_action(self, groups, message_type: MessageType):
+        action = AmbleAssignAction(self.amble_pattern, self.min_occurences, groups, message_type)
         return action

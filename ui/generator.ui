@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1083</width>
-    <height>562</height>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,7 +81,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause blocks will be added automatically when you drag a protocol from the tree above to the table on the right.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can see the &lt;span style=&quot; font-weight:600;&quot;&gt;position&lt;/span&gt; of each pause by &lt;span style=&quot; font-weight:600;&quot;&gt;selecting it&lt;/span&gt;. There will be drawn a line in the table indiciating the position of the pause.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Use context menu or double click to &lt;span style=&quot; font-weight:600;&quot;&gt;edit a pauses' length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pauses will be added automatically when you drag a protocol from the tree above to the table on the right.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can see the &lt;span style=&quot; font-weight:600;&quot;&gt;position&lt;/span&gt; of each pause by &lt;span style=&quot; font-weight:600;&quot;&gt;selecting it&lt;/span&gt;. There will be drawn a line in the table indiciating the position of the pause.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Use context menu or double click to &lt;span style=&quot; font-weight:600;&quot;&gt;edit a pauses' length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
@@ -133,7 +133,7 @@
               <item>
                <widget class="QRadioButton" name="rBSuccessive">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per block the fuzzed values are inserted &lt;span style=&quot; font-weight:600;&quot;&gt;one-by-one&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted &lt;span style=&quot; font-weight:600;&quot;&gt;one-by-one&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>S&amp;uccessive</string>
@@ -143,7 +143,7 @@
               <item>
                <widget class="QRadioButton" name="rbConcurrent">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per block the labels are fuzzed &lt;span style=&quot; font-weight:600;&quot;&gt;at the same time&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the labels are fuzzed &lt;span style=&quot; font-weight:600;&quot;&gt;at the same time&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>&amp;Concurrent</string>
@@ -153,7 +153,7 @@
               <item>
                <widget class="QRadioButton" name="rBExhaustive">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per block the fuzzed values are inserted in &lt;span style=&quot; font-weight:600;&quot;&gt;all possible combinations&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted in &lt;span style=&quot; font-weight:600;&quot;&gt;all possible combinations&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>E&amp;xhaustive</string>
@@ -392,7 +392,7 @@
        <item row="2" column="1">
         <widget class="QLabel" name="lEstimatedTime">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per block and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Estimated Time: </string>
@@ -445,7 +445,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="5">
-        <widget class="GeneratorTableView" name="tableBlocks">
+        <widget class="GeneratorTableView" name="tableMessages">
          <property name="acceptDrops">
           <bool>true</bool>
          </property>
@@ -501,12 +501,11 @@
         </widget>
        </item>
       </layout>
-      <zorder>layoutWidget</zorder>
       <zorder>cbViewType</zorder>
       <zorder>lViewType</zorder>
       <zorder>lEstimatedTime</zorder>
       <zorder>label_3</zorder>
-      <zorder>tableBlocks</zorder>
+      <zorder>tableMessages</zorder>
       <zorder>btnSave</zorder>
       <zorder>horizontalSpacer_3</zorder>
      </widget>

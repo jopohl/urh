@@ -27,7 +27,7 @@ class TableModel(QAbstractTableModel):
         self._proto_view = 0
         self._refindex = -1
 
-        self.first_blocks = []
+        self.first_messages = []
         self.hidden_rows = set()
 
         self.is_writeable = False
@@ -82,7 +82,7 @@ class TableModel(QAbstractTableModel):
         self.symbols.clear()
         self.symbols = {symbol.name: symbol for symbol in self.protocol.used_symbols}
 
-        if self.protocol.num_blocks > 0:
+        if self.protocol.num_messages > 0:
             if self.decode:
                 if self.proto_view == 0:
                     self.display_data = self.protocol.decoded_proto_bits_str
@@ -100,18 +100,18 @@ class TableModel(QAbstractTableModel):
                 else:
                     self.display_data = self.protocol.plain_ascii_str
 
-            visible_blocks = [block for i, block in enumerate(self.display_data) if i not in self.hidden_rows]
-            if len(visible_blocks) == 0:
+            visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
+            if len(visible_messages) == 0:
                 self.col_count = 0
             else:
-                self.col_count = numpy.max([len(block) for block in visible_blocks])
+                self.col_count = numpy.max([len(msg) for msg in visible_messages])
 
             if self._refindex >= 0:
                 self._diffs = self.protocol.find_differences(self._refindex, self.proto_view)
             else:
                 self._diffs.clear()
 
-            self.row_count = self.protocol.num_blocks
+            self.row_count = self.protocol.num_messages
             self.find_protocol_value(self.search_value)
         else:
             self.col_count = 0
@@ -137,10 +137,10 @@ class TableModel(QAbstractTableModel):
         self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
-        for i, block in enumerate(self.protocol.blocks):
-            for lbl in block.labelset:
+        for i, message in enumerate(self.protocol.messages):
+            for lbl in message.message_type:
                 bg_color = label_colors[lbl.color_index]
-                start, end = block.get_label_range(lbl, self.proto_view, self.decode)
+                start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):
                     self.background_colors[i, j] = bg_color
                     self.tooltips[i, j] = lbl.name
@@ -158,7 +158,7 @@ class TableModel(QAbstractTableModel):
         self.vertical_header_text.clear()
         for i in range(self.row_count):
             try:
-                participant = self.protocol.blocks[i].participant
+                participant = self.protocol.messages[i].participant
             except IndexError:
                 participant = None
             if participant:
@@ -181,7 +181,7 @@ class TableModel(QAbstractTableModel):
                 return None
 
         elif role == Qt.TextAlignmentRole:
-            if i in self.first_blocks:
+            if i in self.first_messages:
                 return Qt.AlignHCenter + Qt.AlignBottom
             else:
                 return Qt.AlignCenter
@@ -211,19 +211,19 @@ class TableModel(QAbstractTableModel):
 
             if self.proto_view == 0:
                 if value in ("0", "1"):
-                    self.protocol.blocks[i][j] = bool(int(value))
+                    self.protocol.messages[i][j] = bool(int(value))
                     self.update()
                 elif value in self.symbols.keys():
-                    self.protocol.blocks[i][j] = self.symbols[value]
+                    self.protocol.messages[i][j] = self.symbols[value]
                     self.update()
             elif self.proto_view == 1:
                 if value in hex_chars:
-                    index = self.protocol.convert_index(j, 1, 0, True, block_indx=i)[0]
+                    index = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
                     bits = "{0:04b}".format(int(value, 16))
                     for k in range(4):
                         try:
-                            if type(self.protocol.blocks[i][index + k]) != Symbol:
-                                self.protocol.blocks[i][index + k] = bool(int(bits[k]))
+                            if type(self.protocol.messages[i][index + k]) != Symbol:
+                                self.protocol.messages[i][index + k] = bool(int(bits[k]))
                             else:
                                 break
                         except IndexError:
@@ -235,12 +235,12 @@ class TableModel(QAbstractTableModel):
                 if value in self.symbols.keys():
                     QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
 
-                index = self.protocol.convert_index(j, 2, 0, True, block_indx=i)[0]
+                index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
                 for k in range(8):
                     try:
-                        if type(self.protocol.blocks[i][index + k]) != Symbol:
-                            self.protocol.blocks[i][index + k] = bool(int(bits[k]))
+                        if type(self.protocol.messages[i][index + k]) != Symbol:
+                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
                         else:
                             break
                     except IndexError:
@@ -255,13 +255,13 @@ class TableModel(QAbstractTableModel):
         if len(value) == 0:
             return 0
 
-        for i, block in enumerate(self.display_data):
+        for i, message in enumerate(self.display_data):
             if i in self.hidden_rows:
                 continue
 
-            j = block.find(value)
+            j = message.find(value)
             while j != -1:
                 self.search_results.append((i, j))
-                j = block.find(value, j + 1)
+                j = message.find(value, j + 1)
 
         return len(self.search_results)

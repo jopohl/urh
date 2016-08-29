@@ -12,14 +12,14 @@ class InsertBitsAndPauses(QUndoCommand):
         self.proto_analyzer_container = proto_analyzer_container
         self.proto_analyzer = pa
         self.index = index
-        if self.index == -1 or self.index > len(self.proto_analyzer_container.blocks):
-            self.index = len(self.proto_analyzer_container.blocks)
+        if self.index == -1 or self.index > len(self.proto_analyzer_container.messages):
+            self.index = len(self.proto_analyzer_container.messages)
 
         self.setText("Insert Bits at index {0:d}".format(self.index))
-        self.orig_blocks = copy.deepcopy(self.proto_analyzer_container.blocks)
+        self.orig_messages = copy.deepcopy(self.proto_analyzer_container.messages)
 
     def redo(self):
         self.proto_analyzer_container.insert_protocol_analyzer(self.index, self.proto_analyzer)
 
     def undo(self):
-        self.proto_analyzer_container.blocks = self.orig_blocks
+        self.proto_analyzer_container.messages = self.orig_messages

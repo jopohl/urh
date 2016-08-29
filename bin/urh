@@ -17,6 +17,7 @@ GENERATE_UI = True
 
 
 def main(argv):
+
     urh_exe = sys.executable if hasattr(sys, 'frozen') else argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
 
@@ -47,6 +48,8 @@ def main(argv):
     from urh.controller.MainController import MainController
     from urh import constants
 
+    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+        os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(argv)
 
@@ -58,6 +61,7 @@ def main(argv):
 
     if constants.SETTINGS.value("use_fallback_theme", False, bool):
         QApplication.setStyle(QStyleFactory.create("Fusion"))
+
 
     mainwindow = MainController()
     mainwindow.showMaximized()

@@ -8,7 +8,11 @@ from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
 import xml.etree.ElementTree as ET
 
-class LabelSet(list):
+class MessageType(list):
+    """
+    A message type is a list of protocol fields.
+
+    """
 
     __slots__ = ["name", "__id", "assigned_automatically", "ruleset"]
 
@@ -69,7 +73,7 @@ class LabelSet(list):
         return super().__getitem__(index)
 
     def to_xml(self) -> ET.Element:
-        result = ET.Element("labelset", attrib={"name": self.name, "id": self.id, "assigned_automatically": "1" if self.assigned_automatically else "0"})
+        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id, "assigned_automatically": "1" if self.assigned_automatically else "0"})
         for lbl in self:
             result.append(lbl.to_xml(-1))
 
@@ -87,7 +91,7 @@ class LabelSet(list):
         return self.name + " " + super().__repr__()
 
     def __eq__(self, other):
-        if isinstance(other, LabelSet):
+        if isinstance(other, MessageType):
             return self.id == other.id
         else:
             return super().__eq__(other)
@@ -100,6 +104,6 @@ class LabelSet(list):
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag))
-        result =  LabelSet(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
+        result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_automatically = assigned_auto
         return result

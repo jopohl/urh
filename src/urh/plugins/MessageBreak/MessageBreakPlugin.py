@@ -3,12 +3,12 @@ from PyQt5.QtWidgets import QAction, QUndoStack, QMessageBox
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from ..Plugin import ProtocolPlugin
-from ..BlockBreak.BlockBreakAction import BlockBreakAction
+from ..MessageBreak.MessageBreakAction import MessageBreakAction
 
 
-class BlockBreakPlugin(ProtocolPlugin):
+class MessageBreakPlugin(ProtocolPlugin):
     def __init__(self):
-        super().__init__(name="BlockBreak")
+        super().__init__(name="MessageBreak")
         self.undo_stack = None
         self.command = None
         """:type: QUndoAction """
@@ -24,14 +24,14 @@ class BlockBreakPlugin(ProtocolPlugin):
             return None
 
         if max_row != min_row:
-            QMessageBox.critical(parent, self.tr("Error in BlockBreak"),
+            QMessageBox.critical(parent, self.tr("Error in MessageBreak"),
                                  self.tr("You can only break one line per action."))
             return None
 
-        end = protocol.convert_index(end, view, 0, True, block_indx=min_row)[0]
+        end = protocol.convert_index(end, view, 0, True, message_indx=min_row)[0]
         # factor = 1 if view == 0 else 4 if view == 1 else 8
 
-        self.command = BlockBreakAction(protocol, max_row, end)
+        self.command = MessageBreakAction(protocol, max_row, end)
         action = QAction(self.command.text(), parent)
         action.triggered.connect(self.action_triggered)
         self.undo_stack = undo_stack

@@ -288,7 +288,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="page_empty"/>
             <widget class="QWidget" name="page_redundancy">
@@ -340,7 +340,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Carrier ('1' -&gt; 1_1_1_1...)</string>
+               <string>Carrier ('1_' -&gt; 1_1_1_...)</string>
               </property>
              </widget>
             </widget>
@@ -379,52 +379,63 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_external">
-             <widget class="QLineEdit" name="external_decoder">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>291</width>
-                <height>23</height>
-               </rect>
-              </property>
-             </widget>
-             <widget class="QLineEdit" name="external_encoder">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>30</y>
-                <width>291</width>
-                <height>23</height>
-               </rect>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_11">
-              <property name="geometry">
-               <rect>
-                <x>300</x>
-                <y>0</y>
-                <width>71</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Decoder</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_12">
-              <property name="geometry">
-               <rect>
-                <x>300</x>
-                <y>30</y>
-                <width>71</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Encoder</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLabel" name="label_11">
+                  <property name="text">
+                   <string>Decoder</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="external_decoder"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="btnChooseDecoder">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="label_12">
+                  <property name="text">
+                   <string>Encoder</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="external_encoder"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="btnChooseEncoder">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>158</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="page_data_whitening">
              <widget class="QLineEdit" name="datawhitening_sync">

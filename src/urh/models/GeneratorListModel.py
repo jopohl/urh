@@ -4,32 +4,32 @@ from PyQt5.QtGui import QColor
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 
 
 class GeneratorListModel(QAbstractListModel):
     protolabel_fuzzing_status_changed = pyqtSignal(ProtocolLabel)
     protolabel_removed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, block: ProtocolBlock, parent=None):
+    def __init__(self, message: Message, parent=None):
         super().__init__(parent)
-        self.__block = block
+        self.__message = message
     
     @property
     def labels(self):
-        if self.block:
-            return self.block.labelset
+        if self.message:
+            return self.message.message_type
         else:
             return []
     
     @property
-    def block(self):
-        return self.__block
+    def message(self):
+        return self.__message
 
-    @block.setter
-    def block(self, value: ProtocolBlock):
-        if value != self.block:
-            self.__block = value
+    @message.setter
+    def message(self, value: Message):
+        if value != self.message:
+            self.__message = value
             self.update()
 
     def last_index(self):

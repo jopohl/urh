@@ -2,6 +2,7 @@ import numpy as np
 import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainterPath, QFont, QPen
+from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.SceneManager import SceneManager
@@ -26,7 +27,7 @@ class FFTSceneManager(SceneManager):
         font.setStyleHint(QFont.SansSerif, QFont.OpenGLCompatible)
         self.text_item = self.scene.addText("", font)
 
-    def show_scene_section(self, x1: float, x2: float):
+    def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         start = int(x1) if x1 > 0 else 0
         end = int(x2) if x2 < self.num_samples else self.num_samples
         paths = path_creator.create_path(np.log10(self.plot_data), start, end)
@@ -49,7 +50,14 @@ class FFTSceneManager(SceneManager):
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
 
     def clear_path(self):
-        super().clear_path()
+        for item in self.scene.items():
+            if isinstance(item, QGraphicsPathItem) and item != self.peak_item:
+                self.scene.removeItem(item)
+                item.setParentItem(None)
+                del item
+
+
+    def clear_peak(self):
         self.peak = []
         self.peak_item.setPath(QPainterPath())
 

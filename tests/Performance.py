@@ -38,7 +38,7 @@ class TestPerformance(unittest.TestCase):
         print(self.prefix + "Get Protocol: {0:.2f}s".format(dur))
         self.assertLess(dur, 2.85)
 
-    def test_fabema_many_blocks(self):
+    def test_fabema_many_messages(self):
         signal = Signal("../../noack/USRP/Fabema/Testdata/trafficlight_fhside_full.complex", "PerfTest",
                         modulation="ASK")
         signal.noise_treshold = 0.1
@@ -59,4 +59,4 @@ class TestPerformance(unittest.TestCase):
         total = time.time() - t
         print("With cached", total)
 
-        print("Num Blocks", proto_analyzer.num_blocks)
+        print("Num Messages", proto_analyzer.num_messages)

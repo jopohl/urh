@@ -255,7 +255,7 @@ class ProtocolSniffDialogController(QDialog):
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):
-        self.protocol_accepted.emit(self.sniffer.blocks)
+        self.protocol_accepted.emit(self.sniffer.messages)
         self.close()
 
     @pyqtSlot(str)

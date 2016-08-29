@@ -5,7 +5,7 @@ from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -72,14 +72,14 @@ class ProjectManager(QObject):
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
 
-    def read_labelsets(self):
+    def read_message_types(self):
         if self.project_file is None:
             return None
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         try:
-            return [LabelSet.from_xml(lblset_tag) for lblset_tag in root.find("protocol").find("labelsets").findall("labelset")]
+            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in root.find("protocol").find("message_types").findall("message_type")]
         except AttributeError:
             return []
 
@@ -120,8 +120,8 @@ class ProjectManager(QObject):
                 cfc.decodings = decodings
             cfc.fill_decoding_combobox()
 
-            cfc.proto_analyzer.labelsets = self.read_labelsets()
-            cfc.fill_labelset_combobox()
+            cfc.proto_analyzer.message_types = self.read_message_types()
+            cfc.fill_message_type_combobox()
             cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants, decodings=cfc.decodings)
 
             cfc.updateUI()
@@ -156,7 +156,7 @@ class ProjectManager(QObject):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         self.maincontroller.on_project_settings_clicked()
 
-    def write_signal_information_to_project_file(self, signal: Signal, blocks, tree=None):
+    def write_signal_information_to_project_file(self, signal: Signal, messages, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
             return
 
@@ -188,9 +188,9 @@ class ProjectManager(QObject):
         signal_tag.set("modulation_type", str(signal.modulation_type))
         signal_tag.set("sample_rate", str(signal.sample_rate))
 
-        blocks_tag = ET.SubElement(signal_tag, "blocks")
-        for block in blocks:
-            blocks_tag.append(block.to_xml())
+        messages = ET.SubElement(signal_tag, "messages")
+        for message in messages:
+            messages.append(message.to_xml())
 
         tree.write(self.project_file)
 
@@ -271,7 +271,7 @@ class ProjectManager(QObject):
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
-            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.blocks, tree=tree)
+            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.messages, tree=tree)
             try:
                 pf = self.maincontroller.signal_protocol_dict[sf]
                 filename = pf.filename
@@ -316,7 +316,7 @@ class ProjectManager(QObject):
                 if line.strip():
                     f.write(line+"\n")
 
-    def read_participants_for_signal(self, signal: Signal, blocks):
+    def read_participants_for_signal(self, signal: Signal, messages):
         if self.project_file is None or len(signal.filename) == 0:
             return False
 
@@ -325,10 +325,15 @@ class ProjectManager(QObject):
 
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == os.path.relpath(signal.filename, self.project_path):
-                blocks_tag = sig_tag.find("blocks")
-                if blocks_tag:
-                    for i, block_tag in enumerate(blocks_tag.iter("block")):
-                        blocks[i].from_xml(block_tag, self.participants)
+                messages_tag = sig_tag.find("messages")
+
+                try:
+                    if messages_tag:
+                        for i, message_tag in enumerate(messages_tag.iter("message")):
+                            messages[i].from_xml(message_tag, self.participants)
+                except IndexError:
+                    return False
+
                 return True
 
         return False

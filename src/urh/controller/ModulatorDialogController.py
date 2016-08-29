@@ -396,11 +396,11 @@ class ModulatorDialogController(QDialog):
         proto_bits = self.protocol.plain_bits_str
         len_seq = len(search_seq)
 
-        for i, block in enumerate(proto_bits):
-            j = block.find(search_seq)
+        for i, message in enumerate(proto_bits):
+            j = message.find(search_seq)
             while j != -1:
                 self.search_results.append((i, j, j + len_seq))
-                j = block.find(search_seq, j + 1)
+                j = message.find(search_seq, j + 1)
 
         self.ui.lTotalSearchresults.setText(str(len(self.search_results)))
         self.show_search_result(0)
@@ -412,9 +412,9 @@ class ModulatorDialogController(QDialog):
             self.ui.gVOriginalSignal.scene_creator.clear_path()
             return
 
-        block, start_index, end_index = self.search_results[i]
+        message, start_index, end_index = self.search_results[i]
 
-        start, nsamples = self.protocol.get_samplepos_of_bitseq(block, start_index, block, end_index, False)
+        start, nsamples = self.protocol.get_samplepos_of_bitseq(message, start_index, message, end_index, False)
         self.draw_original_signal(start=start, end=start + nsamples)
 
         self.ui.lCurrentSearchResult.setText(str(i + 1))
@@ -474,23 +474,23 @@ class ModulatorDialogController(QDialog):
     def on_btnautodetect_clicked(self):
         proto_bits = self.protocol.plain_bits_str
 
-        block_index = -1
+        message_index = -1
         pos = -1
 
         # Lets find a one
-        for i, block in enumerate(proto_bits):
-            j = block.find("1")
+        for i, message in enumerate(proto_bits):
+            j = message.find("1")
             if j != -1:
-                block_index = i
+                message_index = i
                 pos = j
                 break
 
-        if block_index == -1 or pos == -1:
+        if message_index == -1 or pos == -1:
             QMessageBox.information(self, self.tr("No results"),
                                     self.tr("Unable to detect parameters from current signal"))
             return
 
-        start, nsamples = self.protocol.get_samplepos_of_bitseq(block_index, pos, block_index, pos + 1, False)
+        start, nsamples = self.protocol.get_samplepos_of_bitseq(message_index, pos, message_index, pos + 1, False)
         signal = self.ui.gVOriginalSignal.scene_creator.signal
         freq = signal.estimate_frequency(start, start + nsamples, self.current_modulator.sample_rate)
         self.ui.doubleSpinBoxCarrierFreq.setValue(freq)

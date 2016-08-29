@@ -96,8 +96,8 @@ class SceneManager(QObject):
         zeros = np.ones(pulse_len, dtype=np.float32) * -1
         n = 0
         y = []
-        for block in proto_bits:
-            for bit in block:
+        for msg in proto_bits:
+            for bit in msg:
                 n += pulse_len
                 if bit == "0":
                     y.extend(zeros)

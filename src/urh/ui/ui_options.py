@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -224,7 +223,7 @@ class Ui_DialogOptions(object):
         self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
         self.checkBoxAlignLabels.setText(_translate("DialogOptions", "Align on labels"))
         self.checkBoxFallBackTheme.setToolTip(_translate("DialogOptions", "Tick this option if you experience problems with you current Qt theme like no colors in table headers."))
-        self.checkBoxFallBackTheme.setText(_translate("DialogOptions", "Use fallback application theme (fusion)"))
+        self.checkBoxFallBackTheme.setText(_translate("DialogOptions", "Use fallback application theme [RESTART REQUIRED]"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabView), _translate("DialogOptions", "View"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_plugins), _translate("DialogOptions", "Plugins"))
         self.chkBoxDeviceEnabled.setText(_translate("DialogOptions", "Enabled"))

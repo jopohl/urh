@@ -16,8 +16,8 @@ class TextEditProtocolView(QTextEdit):
         self.participants = None
         """:type: list of Participant """
 
-        self.blocks = None
-        """:type: list of ProtocolBlock """
+        self.messages = None
+        """:type: list of Message """
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
@@ -41,19 +41,19 @@ class TextEditProtocolView(QTextEdit):
         menu.addSeparator()
 
         particpnt_actions = {}
-        selected_blocks = []
+        selected_messages = []
         cursor = self.textCursor()
-        if self.participants and self.blocks and not cursor.selection().isEmpty():
-            selected_blocks = []
-            start_block = self.toPlainText()[0:cursor.selectionStart()].count("\n")
-            end_block = self.toPlainText()[0:cursor.selectionEnd()].count("\n") + 1
-            for i in range(start_block, end_block):
-                selected_blocks.append(self.blocks[i])
+        if self.participants and self.messages and not cursor.selection().isEmpty():
+            selected_messages = []
+            start_msg = self.toPlainText()[0:cursor.selectionStart()].count("\n")
+            end_msg = self.toPlainText()[0:cursor.selectionEnd()].count("\n") + 1
+            for i in range(start_msg, end_msg):
+                selected_messages.append(self.messages[i])
 
-            if len(selected_blocks) == 1:
-                selected_block = selected_blocks[0]
+            if len(selected_messages) == 1:
+                selected_msg = selected_messages[0]
             else:
-                selected_block = None
+                selected_msg = None
 
             partigroup = QActionGroup(self)
             participant_menu = menu.addMenu("Participant")
@@ -61,14 +61,14 @@ class TextEditProtocolView(QTextEdit):
             none_partipnt_action.setCheckable(True)
             none_partipnt_action.setActionGroup(partigroup)
 
-            if selected_block and selected_block.participant is None:
+            if selected_msg and selected_msg.participant is None:
                 none_partipnt_action.setChecked(True)
 
             for particpnt in self.participants:
                 pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
                 pa.setCheckable(True)
                 pa.setActionGroup(partigroup)
-                if selected_block and selected_block.participant == particpnt:
+                if selected_msg and selected_msg.participant == particpnt:
                     pa.setChecked(True)
 
                 particpnt_actions[pa] = particpnt
@@ -120,13 +120,13 @@ class TextEditProtocolView(QTextEdit):
         elif action == show_proto_action:
             self.show_proto_clicked.emit()
         elif action == none_partipnt_action:
-            for block in selected_blocks:
-                block.participant = None
+            for msg in selected_messages:
+                msg.participant = None
             self.participant_changed.emit()
 
         elif action in particpnt_actions:
-            for block in selected_blocks:
-                block.participant = particpnt_actions[action]
+            for msg in selected_messages:
+                msg.participant = particpnt_actions[action]
             self.participant_changed.emit()
 
     def textCursor(self) -> QTextCursor:

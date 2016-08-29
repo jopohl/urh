@@ -34,7 +34,7 @@ def gen():
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
         # to avoid useless git updates when working on another computer
         for line in fileinput.input(out_file_path, inplace=True):
-            if line.startswith("# Form implementation generated from reading ui file"):
+            if line.startswith("# Form implementation generated from reading ui file") or line.startswith("# Created by: "):
                 continue
             print(line, end='')
 

@@ -4,7 +4,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
 from PyQt5.QtWidgets import QUndoCommand, QUndoStack
 
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
@@ -55,7 +55,7 @@ class ProtocolPlugin(Plugin):
         """
         :type parent: QTableView
         :type undo_stack: QUndoStack
-        :type blocks: list of ProtocolGroups
+        :type groups: list of ProtocolGroups
         """
         raise NotImplementedError("Abstract Method.")
 
@@ -63,5 +63,5 @@ class LabelAssignPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
 
-    def get_action(self, protocol_analyzer: ProtocolAnalyzer, labelset: LabelSet):
+    def get_action(self, protocol_analyzer: ProtocolAnalyzer, message_type: MessageType):
         raise NotImplementedError("Abstract Method.")

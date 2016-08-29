@@ -1,0 +1,2 @@
+This plugin enables you to break a protocol message on an arbitrary position.
+This is helpful when you have redundancy in your messages.

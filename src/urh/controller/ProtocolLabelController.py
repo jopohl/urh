@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import QDialog
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.DeleteButtonDelegate import DeleteButtonDelegate
@@ -14,14 +14,14 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 
 
 class ProtocolLabelController(QDialog):
-    apply_decoding_changed = pyqtSignal(ProtocolLabel, LabelSet)
+    apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
 
 
-    def __init__(self, preselected_index, labelset: LabelSet, viewtype: int, max_end: int, block:ProtocolBlock, parent=None):
+    def __init__(self, preselected_index, message_type: MessageType, viewtype: int, max_end: int, message:Message, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
-        self.model = PLabelTableModel(labelset, block=block)
+        self.model = PLabelTableModel(message_type, message=message)
         self.preselected_index = preselected_index
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))
@@ -40,7 +40,7 @@ class ProtocolLabelController(QDialog):
             self.openEditors(i)
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
-        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % labelset.name)
+        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message_type.name)
 
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)
@@ -59,7 +59,7 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 1))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 2))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
-
+        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 5))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 6))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 7))
@@ -71,4 +71,4 @@ class ProtocolLabelController(QDialog):
 
     @pyqtSlot(ProtocolLabel)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel):
-        self.apply_decoding_changed.emit(lbl, self.model.labelset)
+        self.apply_decoding_changed.emit(lbl, self.model.message_type)

@@ -2,27 +2,27 @@ from PyQt5.QtCore import QAbstractListModel, pyqtSignal, Qt, QModelIndex, QMimeD
 from PyQt5.QtGui import QFont
 
 from urh import constants
-from urh.signalprocessing.LabelSet import LabelSet
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class ProtocolLabelListModel(QAbstractListModel):
     protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
-    protolabel_name_changed = pyqtSignal(ProtocolLabel, LabelSet)
+    protolabel_name_changed = pyqtSignal(ProtocolLabel, MessageType)
     label_removed = pyqtSignal(ProtocolLabel)
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
         self.proto_analyzer = proto_analyzer
-        self.proto_labels = controller.active_labelset
+        self.proto_labels = controller.active_message_type
         self.controller = controller
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.proto_labels)
 
     def update(self):
-        self.proto_labels = self.controller.active_labelset
+        self.proto_labels = self.controller.active_message_type
         self.layoutChanged.emit()
 
 
@@ -78,9 +78,9 @@ class ProtocolLabelListModel(QAbstractListModel):
         for row in range(end, start-1, -1):
             self.delete_label_at(row)
 
-    def add_labels_to_labelset(self, start: int, end: int, labelset_id: int):
+    def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
         for lbl in self.proto_labels[start:end+1]:
-            self.controller.proto_analyzer.labelsets[labelset_id].add_label(lbl)
+            self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
         self.controller.updateUI(resize_table=False)
 
     def flags(self, index):

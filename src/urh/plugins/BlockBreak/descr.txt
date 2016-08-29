@@ -1,2 +1,0 @@
-This plugin enables you to break a protocol block on an arbitrary position.
-This is helpful when you have redundancy in your blocks.

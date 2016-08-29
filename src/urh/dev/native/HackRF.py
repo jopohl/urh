@@ -1,5 +1,4 @@
 import numpy as np
-import time
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
@@ -67,6 +66,12 @@ class HackRF(Device):
         if self.is_open:
             ret = hackrf.close()
             self.is_open = ret != self.success
+
+            if self.is_open:
+                logger.error("Failed to close HackRF")
+            else:
+                logger.info("Successfully closed HackRF")
+
             self.log_retcode(ret, "close")
             if exit:
                 self.exit()

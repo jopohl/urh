@@ -22,7 +22,7 @@ class encoding(object):
         self.multiple = 1
         self.src = []  # [[True, True], [True, False], [False, True], [False, False]]
         self.dst = []  # [[False, False], [False, True], [True, False], [True, True]]
-        self.carrier = []
+        self.carrier = "1_"
         self.__symbol_len = 1
 
         # Configure CC1101 Date Whitening
@@ -79,6 +79,8 @@ class encoding(object):
         while i < len(names):
             if constants.DECODING_INVERT in names[i]:
                 self.chain.append(self.code_invert)
+            elif constants.DECODING_ENOCEAN in names[i]:
+                self.chain.append(self.code_enocean)
             elif constants.DECODING_DIFFERENTIAL in names[i]:
                 self.chain.append(self.code_differential)
             elif constants.DECODING_REDUNDANCY in names[i]:
@@ -99,9 +101,9 @@ class encoding(object):
                 self.chain.append(self.code_carrier)
                 i += 1
                 if i < len(names):
-                    self.chain.append(self.str2bit(names[i]))
+                    self.chain.append(names[i])
                 else:
-                    self.chain.append(self.str2bit("1"))
+                    self.chain.append("1_")
             elif constants.DECODING_BITORDER in names[i]:
                 self.chain.append(self.code_lsb_first)
             elif constants.DECODING_EDGE in names[i]:
@@ -129,6 +131,8 @@ class encoding(object):
         while i < len(self.chain):
             if self.code_invert == self.chain[i]:
                 chainstr.append(constants.DECODING_INVERT)
+            elif self.code_enocean == self.chain[i]:
+                chainstr.append(constants.DECODING_ENOCEAN)
             elif self.code_differential == self.chain[i]:
                 chainstr.append(constants.DECODING_DIFFERENTIAL)
             elif self.code_redundancy == self.chain[i]:
@@ -142,7 +146,7 @@ class encoding(object):
             elif self.code_carrier == self.chain[i]:
                 chainstr.append(constants.DECODING_CARRIER)
                 i += 1
-                chainstr.append(self.bit2str(self.chain[i]))
+                chainstr.append(self.chain[i])
             elif self.code_lsb_first == self.chain[i]:
                 chainstr.append(constants.DECODING_BITORDER)
             elif self.code_edge == self.chain[i]:
@@ -206,13 +210,16 @@ class encoding(object):
             if self.code_redundancy == operation:
                 self.multiple = int(self.chain[i + 1])
             elif self.code_carrier == operation:
-                self.carrier = self.str2bit(self.chain[i + 1])
+                self.carrier = self.chain[i + 1]
             elif self.code_substitution == operation:
                 self.src = self.chain[i + 1][0]
                 self.dst = self.chain[i + 1][1]
             elif self.code_externalprogram == operation:
                 if self.chain[i + 1] != "":
-                    self.external_decoder, self.external_encoder = self.chain[i + 1].split(";")
+                    try:
+                        self.external_decoder, self.external_encoder = self.chain[i + 1].split(";")
+                    except ValueError:
+                        pass
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:
@@ -383,15 +390,27 @@ class encoding(object):
         if decoding:
             # Remove carrier if decoding
             if len(self.carrier) > 0:
-                for x in range(len(self.carrier), len(inpt), len(self.carrier) + 1):
-                    output.append(inpt[x])
+                for x in range(0, len(inpt)):
+                    tmp = self.carrier[x % len(self.carrier)]
+                    if tmp not in ("0", "1", "*"):     # Data!
+                        output.append(inpt[x])
+                    else:                              # Carrier -> 0, 1, *
+                        if tmp in ("0", "1"):
+                            if (inpt[x] and tmp != "1") or (not inpt[x] and tmp != "0"):
+                                #print("Pos", x, self.carrier[x % cl], inpt[x])
+                                errors += 1
         else:
             # Add carrier if encoding
             if len(self.carrier) > 0:
+                x = 0
                 for i in inpt:
-                    output.extend(self.carrier)
-                    output.append(i)
-                output.extend(self.carrier)
+                    tmp = self.carrier[x % len(self.carrier)]
+                    if not tmp in ("0", "1", "*"):
+                        output.append(i)
+                        x += 1
+                    while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
+                        output.append(False if self.carrier[x % len(self.carrier)] in ("0", "*") else True) # Add 0 when there is a wildcard (*) in carrier description
+                        x += 1
         return output, errors
 
     def code_data_whitening(self, decoding, inpt):
@@ -565,6 +584,102 @@ class encoding(object):
         else:
             print("Please set external de/encoder program!")
             return [[], 1]
+
+        return output, errors
+
+    def enocean_hash4(self, inpt):
+        hash = 0
+        val = inpt.copy()
+        val[-4:] = [False, False, False, False]
+        for i in range(0, len(val), 8):
+            hash += int("".join(map(str,map(int, val[i:i+8]))),2)
+        hash = (((hash & 0xf0)>>4) + (hash & 0x0f)) & 0x0f
+        return list(map(bool, map(int, "{0:04b}".format(hash))))
+
+    def code_enocean(self, decoding, inpt):
+        errors = 0
+        output = []
+        preamble = [True, False, True, False, True, False, True, False]
+        sof = [True, False, False, True]
+        eof = [True, False, True, True]
+
+        if decoding:
+            inpt, _ = self.code_invert(True, inpt) # Invert
+
+            # Search for begin
+            n = 0
+            while inpt[n]:
+                n += 1
+
+            # check preamble
+            if inpt[n-1:n+7] != preamble:
+                return inpt, 404
+
+            # check SoF
+            if inpt[n+7:n+11] != sof:
+                return inpt, 403
+
+            # Initialize output with raw input data
+            output.extend(inpt[:n+11])
+
+            # search for data limits
+            start = n+11
+            n = len(inpt)
+            while n > start and inpt[n-4:n] != eof:
+                n -= 1
+            end = n-3
+
+            for n in range (start, end, 12):
+                errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
+                errors += sum([inpt[n+10] != False, inpt[n+11] != True]) if n < end - 11 else 0
+                output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
+
+            if output[-4:] != self.enocean_hash4(output[start:]):
+                errors += 1000
+            #print("Hash:", self.bit2str(self.enocean_hash4(output[start:])), self.bit2str(output[-4:]))
+
+            # Finalize output
+            output.extend(inpt[end-1:])
+
+        else:
+            # Search for begin
+            n = 0
+            while inpt[n]:
+                n += 1
+
+            # check preamble
+            if inpt[n - 1:n + 7] != preamble:
+                return inpt, 404
+
+            # check SoF
+            if inpt[n + 7:n + 11] != sof:
+                return inpt, 403
+
+            # Initialize output with raw input data
+            output.extend(inpt[:n+11])
+
+            # search for data limits
+            start = n + 11
+            n = len(inpt)
+            while n > start and inpt[n - 4:n] != eof:
+                n -= 1
+            end = n - 4
+
+            # Calculate hash
+            inpt[end-4:end] = self.enocean_hash4(inpt[start:end])
+
+            for n in range(start, end, 8):
+                output.extend([inpt[n], inpt[n+1], inpt[n+2], not inpt[n+2], inpt[n+3], inpt[n+4], inpt[n+5], not inpt[n+5], inpt[n+6], inpt[n+7]])
+                if n < len(inpt) - 15:
+                    output.extend([False, True])
+                #print(n, self.bit2str(output[start:]), len(self.bit2str(output[start:])))
+
+            # Extend eof and trash
+            output.extend(eof)
+            output.append(True)
+
+            # Invert
+            output, _ = self.code_invert(True, output)  # Invert
 
         return output, errors
 

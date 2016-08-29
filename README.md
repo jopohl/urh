@@ -9,12 +9,17 @@ Universal Radio Hacker is a suite for investigating unknown wireless protocols. 
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 
+Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
+
 ## Screenshots
 ### Get the data out of raw signals
  ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
 
 ### Keep an overview even on complex protocols
  ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
+
+### Record and send signals
+ ![Record](/doc/screenshots/record_signal.png?raw=true)
 
 # Installation
 ## Requirements

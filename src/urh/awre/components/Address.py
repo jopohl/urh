@@ -53,19 +53,16 @@ class Address(Component):
         print(equal_ranges_per_participant)
 
         print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
-        self.__print_ranges(equal_ranges_per_participant, bitvectors)
+        self.__print_ranges(equal_ranges_per_participant)
 
         # Step 2: Now we want to find our address candidates.
         # Step 2.a: Cluster the ranges based on their byte length
-        clustered_addresses = defaultdict(lambda: defaultdict(list))
-        range_occurrences = defaultdict(int)
-        for participant in equal_ranges_per_participant:
-            for start, end in equal_ranges_per_participant[participant]:
-                ranges = equal_ranges_per_participant[participant][(start, end)].values()
-                range_occurrences[(start, end)] += sum(len(s) for s in ranges)
-                byte_len = (end - start) // 8
-                bits = list(equal_ranges_per_participant[participant][(start,end)].keys())
-                clustered_addresses[byte_len][(start, end)].extend(bits)
+        for parti, ranges in equal_ranges_per_participant.items():
+            hex_values = [common_range.hex_value for common_range in ranges]
+            hex_values.sort(key=len)
+            print(hex_values)
+
+
 
         #self.__print_clustered(clustered_addresses)
 
@@ -74,19 +71,6 @@ class Address(Component):
         #   2) If the protocol does not contain ACKs, these values contain both addresses and need to be splitted against each other
         # We assume, that the protocol contains ACKs and if we do not find any use the strategy from 2).
 
-        # Step 2.b: Find common ranges with different values in the same cluster
-        # TODO: This works only for two participants
-        candidates = []
-        for bl in sorted(clustered_addresses):
-            nvals = sum(len(bits) for bits in clustered_addresses[bl].values())
-            byte_str = ""
-            if nvals > 2:
-                byte_str = constants.color.BOLD
-            print(byte_str + "Byte length " + str(bl) + constants.color.END)
-
-
-            for (start, end), bits in sorted(clustered_addresses[bl].items()):
-                print(start, end, "(" + str(range_occurrences[(start, end)]) + ")\t", bits)
 
 
         #print(clustered_addresses)
@@ -101,18 +85,9 @@ class Address(Component):
             for (start, end), bits in sorted(clustered_addresses[bl].items()):
                 print(start, end, bits)
 
-    def __print_ranges(self, equal_ranges_per_participant, bitvectors):
-
+    def __print_ranges(self, equal_ranges_per_participant):
         for parti in sorted(equal_ranges_per_participant):
             print("\n" + constants.color.UNDERLINE + str(parti.name) + " (" + parti.shortname+ ")" + constants.color.END)
-            for row, p in enumerate(self.participant_lut):
-                if p == parti:
-                    b = "".join(map(str, map(int, bitvectors[row])))[72:]
-                    #  print(b)
-                    hex_str = "".join([hex(int(b[i:i + 4], 2))[2:] for i in range(0, len(b), 4)])
-                    #  print(hex_str)
-                    #  print()
-
             address1 = "000110110110000000110011"
             address2 = "011110001110001010001001"
 
@@ -126,6 +101,7 @@ class Address(Component):
             print()
 
             for common_range in sorted(equal_ranges_per_participant[parti]):
+                assert isinstance(common_range, CommonRange)
                 bits_str = common_range.bits
                 format_start = ""
                 if address1 in bits_str and address2 not in bits_str:
@@ -143,7 +119,7 @@ class Address(Component):
                 occurences = len(common_range.messages)
                 print(common_range.start, common_range.end,
                       "({})\t".format(occurences),
-                      format_start + common_range.hex_value + "\033[0m", len(common_range.hex_value),
+                      format_start + common_range.hex_value + "\033[0m", common_range.byte_len,
                       bits_str, "(" + ",".join(map(str, common_range.messages)) + ")")
 
 

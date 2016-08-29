@@ -1,13 +1,10 @@
-import numpy as np
-
-
 class CommonRange(object):
     def __init__(self, start: int, end: int, bits: str):
         """
 
         :param start: Start of the common range
         :param end: End of the common range
-        :param value: Value of the common range e.g. 0xcafe
+        :param bits: Value of the common range
         """
         self.start = start
         self.end = end
@@ -16,12 +13,16 @@ class CommonRange(object):
         """:type: set of int """
 
     @property
-    def hex_value(self):
+    def hex_value(self) -> str:
         padded_bits = self.bits
         while len(padded_bits) % 4 != 0:
             padded_bits += "0"
 
-        return "{0:x}".format(int(padded_bits, 2))
+        return ("{0:0"+str(len(padded_bits)//4)+"x}").format(int(padded_bits, 2))
+
+    @property
+    def byte_len(self) -> int:
+        return (self.end - self.start) // 8
 
     def __eq__(self, other):
         if isinstance(other, CommonRange):

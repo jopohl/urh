@@ -12,7 +12,7 @@ from urh.awre.components.Type import Type
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.ProtocolBlock import ProtocolBlock
+from urh.signalprocessing.Message import Message
 
 
 class TestAWRE(unittest.TestCase):
@@ -20,14 +20,14 @@ class TestAWRE(unittest.TestCase):
         self.protocol = ProtocolAnalyzer(None)
         with open("./data/awre_consistent_addresses.txt") as f:
             for line in f:
-                self.protocol.blocks.append(ProtocolBlock.from_plain_bits_str(line.replace("\n", ""), {}))
-                self.protocol.blocks[-1].labelset = self.protocol.default_labelset
+                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
         # Assign participants
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
         alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
-        for i, block in enumerate(self.protocol.blocks):
+        for i, block in enumerate(self.protocol.messages):
             block.participant = alice if i in alice_indices else bob
 
         self.participants = [alice, bob]

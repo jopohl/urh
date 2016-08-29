@@ -24,7 +24,7 @@ class FormatFinder(object):
             protocol.auto_assign_participants(participants)
 
         self.protocol = protocol
-        self.bitvectors = [np.array(block.decoded_bits, dtype=np.int8) for block in self.protocol.blocks]
+        self.bitvectors = [np.array(block.decoded_bits, dtype=np.int8) for block in self.protocol.messages]
         self.len_cluster = self.cluster_lengths()
         self.xor_matrix = self.build_xor_matrix()
 
@@ -32,7 +32,7 @@ class FormatFinder(object):
         self.sync_component = Synchronization(priority=1, predecessors=[self.preamble_component])
         self.length_component = Length(length_cluster=self.len_cluster, priority=2,
                                        predecessors=[self.preamble_component, self.sync_component])
-        self.address_component = Address(participant_lut=[block.participant for block in self.protocol.blocks],
+        self.address_component = Address(participant_lut=[block.participant for block in self.protocol.messages],
                                          xor_matrix=self.xor_matrix, priority=3,
                                          predecessors=[self.preamble_component, self.sync_component])
         self.sequence_number_component = SequenceNumber(priority=4, predecessors=[self.preamble_component, self.sync_component])

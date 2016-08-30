@@ -14,7 +14,7 @@ class Synchronization(Component):
 
     def _py_find_field(self, bitvectors, column_ranges, rows):
         possible_sync_pos = defaultdict(int)
-
+        print(column_ranges)
 
         for i in range(0, len(rows)):
             bitvector_i = bitvectors[rows[i]]

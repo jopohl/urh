@@ -86,4 +86,23 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(length_label, found_message_types[0])
 
 
+    def test_format_finding_enocean(self):
+        enocean_protocol = ProtocolAnalyzer(None)
+        with open("./data/enocean_bits.txt") as f:
+            for line in f:
+                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type
+
+
+        preamble_start = 3
+        preamble_end = 10
+
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+
+        ff = FormatFinder(enocean_protocol, self.participants)
+        found_message_types = ff.perform_iteration()
+
+        print(found_message_types)
+        self.assertIn(preamble_label, found_message_types[0])
+
 

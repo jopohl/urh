@@ -26,7 +26,9 @@ class Length(Component):
 
         self.length_cluster = length_cluster
 
-    def _py_find_field(self, bitvectors, column_ranges, rows):
+    def _py_find_field(self, messages):
+        raise NotImplementedError("")
+
         equal_ranges = defaultdict(list)
         for vec_len in set(len(bitvectors[row]) for row in rows):
             try:

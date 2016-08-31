@@ -7,7 +7,6 @@ from urh.awre.components.Flags import Flags
 from urh.awre.components.Length import Length
 from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
-from urh.awre.components.Synchronization import Synchronization
 from urh.awre.components.Type import Type
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -33,14 +32,14 @@ class TestAWRE(unittest.TestCase):
         self.participants = [alice, bob]
 
     def test_build_component_order(self):
-        expected_default = [Preamble(), Synchronization(), Length(None), Address(None, None), SequenceNumber(), Type(), Flags()]
+        expected_default = [Preamble(), Length(None), Address(None, None), SequenceNumber(), Type(), Flags()]
 
         format_finder = FormatFinder(self.protocol)
 
         for expected, actual in zip(expected_default, format_finder.build_component_order()):
             assert type(expected) == type(actual)
 
-        expected_swapped = [Preamble(), Synchronization(), Address(None, None), Length(None), SequenceNumber(), Type(), Flags()]
+        expected_swapped = [Preamble(), Address(None, None), Length(None), SequenceNumber(), Type(), Flags()]
         format_finder.length_component.priority = 3
         format_finder.address_component.priority = 2
 
@@ -53,16 +52,6 @@ class TestAWRE(unittest.TestCase):
             format_finder.build_component_order()
             self.assertTrue('Duplicate priority' in context.exception)
         format_finder.sequence_number_component.priority = 4
-        self.assertTrue(format_finder.build_component_order())
-
-        # Test invalid predecessor order
-        format_finder.sync_component.priority = 0
-        format_finder.preamble_component.priority = 1
-        with self.assertRaises(ValueError) as context:
-            format_finder.build_component_order()
-            self.assertTrue('comes before at least one of its predecessors' in context.exception)
-        format_finder.sync_component.priority = 1
-        format_finder.preamble_component.priority = 0
         self.assertTrue(format_finder.build_component_order())
 
     def test_format_finding_rwe(self):
@@ -79,11 +68,11 @@ class TestAWRE(unittest.TestCase):
 
 
         ff = FormatFinder(self.protocol, self.participants)
-        found_message_types = ff.perform_iteration()
+        ff.perform_iteration()
 
-        self.assertIn(preamble_label, found_message_types[0])
-        self.assertIn(sync_label, found_message_types[0])
-        self.assertIn(length_label, found_message_types[0])
+        self.assertIn(preamble_label, self.protocol.default_message_type)
+        self.assertIn(sync_label, self.protocol.default_message_type)
+        self.assertIn(length_label, self.protocol.default_message_type)
 
 
     def test_format_finding_enocean(self):
@@ -100,9 +89,8 @@ class TestAWRE(unittest.TestCase):
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
 
         ff = FormatFinder(enocean_protocol, self.participants)
-        found_message_types = ff.perform_iteration()
+        ff.perform_iteration()
 
-        print(found_message_types)
-        self.assertIn(preamble_label, found_message_types[0])
+        self.assertIn(preamble_label, enocean_protocol.default_message_type)
 
 

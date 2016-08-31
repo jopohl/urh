@@ -4,15 +4,23 @@ from urh.awre.components.Component import Component
 
 class Synchronization(Component):
     """
-    Finding the synchronzation works by finding the first difference between two blocks.
-    This is performed for all blocks and the most frequent first difference is chosen
+    Finding the synchronization works by finding the first difference between two messages.
+    This is performed for all messages and the most frequent first difference is chosen
     """
 
 
     def __init__(self, priority=1, predecessors=None, enabled=True, backend=None):
         super().__init__(priority, predecessors, enabled, backend)
 
-    def _py_find_field(self, bitvectors, column_ranges, rows):
+    def _py_find_field(self, messages):
+        raise NotImplementedError("d")
+
+        # 1. If preamble there: Start behind it
+        # 1a. Do not search behind other labels
+        # 2. Search for first difference
+        #
+
+
         possible_sync_pos = defaultdict(int)
         print(column_ranges)
 

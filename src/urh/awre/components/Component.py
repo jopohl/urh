@@ -1,9 +1,6 @@
 from abc import ABCMeta
-from collections import defaultdict
 
-import numpy as np
-
-from urh.signalprocessing.Interval import Interval
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from enum import Enum
 
@@ -40,42 +37,34 @@ class Component(metaclass=ABCMeta):
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
 
-    def find_field(self, bitvectors, column_ranges, rows) -> ProtocolLabel:
+    def find_field(self, messages):
         """
-        Wrapper method selecting the backend to find the protocol field.
+        Wrapper method selecting the backend to assign the protocol field.
         Various strategies are possible e.g.:
         1) Heuristics e.g. for Preamble
         2) Scoring based e.g. for Length
         3) Fulltext search for addresses based on participant subgroups
 
-        :param column_ranges: list of tuples of columns to search
-        :type column_ranges: dict[int, list of tuple]
-        :param bitvectors: The data to be searched by this component
-        :return: Highest probable label for this field
+        :param messages: messages a field shall be searched for
+        :type messages: list of Message
         """
         try:
             if self.backend == self.Backend.python:
-                start, end = self._py_find_field(bitvectors, column_ranges, rows)
+                self._py_find_field(messages)
             elif self.backend == self.Backend.cython:
-                start, end = self._cy_find_field(bitvectors, column_ranges, rows)
+                self._cy_find_field(messages)
             elif self.backend == self.Backend.plainc:
-                start, end = self._c_find_field(bitvectors, column_ranges, rows)
+                self._c_find_field(messages)
             else:
                 raise ValueError("Unsupported backend {}".format(self.backend))
         except NotImplementedError:
             logger.info("Skipped {} because not implemented yet".format(self.__class__.__name__))
-            return None
 
-        if start == end == 0:
-            return None
-
-        return ProtocolLabel(name=self.__class__.__name__, start=start, end=end - 1, val_type_index=0, color_index=None)
-
-    def _py_find_field(self, bitvectors, column_ranges, rows):
+    def _py_find_field(self, messages):
         raise NotImplementedError()
 
-    def _cy_find_field(self, bitvectors, column_ranges, rows):
+    def _cy_find_field(self, messages):
         raise NotImplementedError()
 
-    def _c_find_field(self, bitvectors, column_ranges, rows):
+    def _c_find_field(self, messages):
         raise NotImplementedError()

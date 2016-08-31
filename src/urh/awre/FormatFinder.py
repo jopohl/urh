@@ -11,7 +11,6 @@ from urh.awre.components.Flags import Flags
 from urh.awre.components.Length import Length
 from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
-from urh.awre.components.Synchronization import Synchronization
 from urh.awre.components.Type import Type
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.cythonext import util
@@ -29,15 +28,14 @@ class FormatFinder(object):
         self.xor_matrix = self.build_xor_matrix()
 
         self.preamble_component = Preamble(priority=0)
-        self.sync_component = Synchronization(priority=1, predecessors=[self.preamble_component])
-        self.length_component = Length(length_cluster=self.len_cluster, priority=2,
-                                       predecessors=[self.preamble_component, self.sync_component])
+        self.length_component = Length(length_cluster=self.len_cluster, priority=1,
+                                       predecessors=[self.preamble_component])
         self.address_component = Address(participant_lut=[block.participant for block in self.protocol.messages],
-                                         xor_matrix=self.xor_matrix, priority=3,
-                                         predecessors=[self.preamble_component, self.sync_component])
-        self.sequence_number_component = SequenceNumber(priority=4, predecessors=[self.preamble_component, self.sync_component])
-        self.type_component = Type(priority=5, predecessors=[self.preamble_component, self.sync_component])
-        self.flags_component = Flags(priority=6, predecessors=[self.preamble_component, self.sync_component])
+                                         xor_matrix=self.xor_matrix, priority=2,
+                                         predecessors=[self.preamble_component])
+        self.sequence_number_component = SequenceNumber(priority=3, predecessors=[self.preamble_component])
+        self.type_component = Type(priority=4, predecessors=[self.preamble_component])
+        self.flags_component = Flags(priority=5, predecessors=[self.preamble_component])
 
     def build_component_order(self):
         """
@@ -64,34 +62,9 @@ class FormatFinder(object):
         return result
 
     def perform_iteration(self):
-        message_types = {0: [i for i in range(len(self.bitvectors))]}
-        max_bitvector = max([len(bitvector) for bitvector in self.bitvectors])
-        include_ranges_per_message_type = {0: [(0, max_bitvector)]}
-        result = {0: []} # Key = message type, value = list of labels
-
         for component in self.build_component_order():
             # TODO: Creating new message types e.g. for addresses
-            for message_type in message_types:
-                include_range = include_ranges_per_message_type[message_type]
-                lbl = component.find_field(self.bitvectors, include_range, message_types[message_type])
-                if lbl:
-                    result[message_type].append(lbl)
-
-                    # Update the include ranges for this block
-                    # Exclude the new label from consecutive component operations
-                    overlapping = next((rng for rng in include_range if any(j in range(*rng) for j in range(lbl.start, lbl.end))))
-                    include_range.remove(overlapping)
-
-                    if overlapping[0] != lbl.start:
-                        include_range.append((overlapping[0], lbl.start))
-
-                    if overlapping[1] != lbl.end:
-                        include_range.append((lbl.end, overlapping[1]))
-
-                    if isinstance(component, Preamble) or isinstance(component, Synchronization):
-                        self.length_component.sync_end = lbl.end
-
-        return result
+            component.find_field(self.protocol.messages)
 
     def cluster_lengths(self):
         """

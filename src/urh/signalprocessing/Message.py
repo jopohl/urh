@@ -581,16 +581,3 @@ class Message(object):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
         end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]
         return int(start), int(end)
-
-    def find_preamble_end(self):
-        try:
-            start = 0 if self.decoded_bits[0] else 1
-            for i in range(start, len(self.decoded_bits), constants.SHORTEST_PREAMBLE_IN_BITS):
-                for j in range(0, constants.SHORTEST_PREAMBLE_IN_BITS, 2):
-                    if not(self.decoded_bits[i+j] and not self.decoded_bits[i+j+1]):
-                        return i - 1 if i - 1 >= 0 else None
-
-            return len(self.decoded_bits) - 1 if len(self.decoded_bits) - 1 >= 0 else None
-
-        except IndexError:
-            return None

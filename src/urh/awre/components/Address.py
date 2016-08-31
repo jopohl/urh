@@ -15,7 +15,9 @@ class Address(Component):
         self.xor_matrix = xor_matrix
         self.participant_lut = participant_lut
 
-    def _py_find_field(self, bitvectors, column_ranges, rows):
+    def _py_find_field(self, messages):
+
+        raise NotImplementedError("")
 
         # Cluster participants
         equal_ranges_per_participant = defaultdict(list)

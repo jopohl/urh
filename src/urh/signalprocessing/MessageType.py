@@ -26,6 +26,9 @@ class MessageType(list):
         self.assigned_automatically = False
         self.ruleset = Ruleset() if ruleset is None else ruleset
 
+    def __hash__(self):
+        return hash(super)
+
     @property
     def assign_manually(self):
         return not self.assigned_automatically

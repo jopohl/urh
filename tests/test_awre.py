@@ -85,12 +85,17 @@ class TestAWRE(unittest.TestCase):
 
         preamble_start = 3
         preamble_end = 10
+        sof_start = 11
+        sof_end = 14
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
+        sync_label = ProtocolLabel(name="Synchronization", start=sof_start, end=sof_end, val_type_index=0, color_index=1)
+
 
         ff = FormatFinder(enocean_protocol, self.participants)
         ff.perform_iteration()
 
         self.assertIn(preamble_label, enocean_protocol.default_message_type)
+        self.assertIn(sync_label, enocean_protocol.default_message_type)
 
 

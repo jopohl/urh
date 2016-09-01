@@ -25,6 +25,18 @@ class Length(Component):
         """
 
         self.length_cluster = length_cluster
+        """
+        An example length cluster is
+
+        2: [0.5, 1]
+        4: [1, 0.75, 1, 1]
+
+        Meaning there were two message lengths: 2 and 4 bit.
+        (0.5, 1) means, the first bit was equal in 50% of cases (meaning maximum difference) and bit 2 was equal in all messages
+
+        A simple XOR would not work as it would be very error prone.
+        """
+
 
     def _py_find_field(self, messages):
         raise NotImplementedError("")

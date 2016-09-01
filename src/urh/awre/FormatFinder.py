@@ -10,18 +10,22 @@ from urh.awre.components.Length import Length
 from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
 from urh.awre.components.Type import Type
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.cythonext import util
 
 class FormatFinder(object):
-    MIN_BLOCKS_PER_CLUSTER = 2 # If there is only one block per cluster it is not very significant
+    MIN_MESSAGES_PER_CLUSTER = 2 # If there is only one message per cluster it is not very significant
 
-    def __init__(self, protocol: ProtocolAnalyzer, participants=None):
+    def __init__(self, protocol, participants=None):
+        """
+
+        :type protocol: ProtocolAnalyzer
+        :param participants:
+        """
         if participants is not None:
             protocol.auto_assign_participants(participants)
 
         self.protocol = protocol
-        self.bitvectors = [np.array(block.decoded_bits, dtype=np.int8) for block in self.protocol.messages]
+        self.bitvectors = [np.array(msg.decoded_bits, dtype=np.int8) for msg in self.protocol.messages]
         self.len_cluster = self.cluster_lengths()
         self.xor_matrix = self.build_xor_matrix()
 
@@ -71,10 +75,10 @@ class FormatFinder(object):
         2: [0.5, 1]
         4: [1, 0.75, 1, 1]
 
-        Meaning there were two block lengths: 2 and 4 bit.
-        (0.5, 1) means, the first bit was equal in 50% of cases (meaning maximum difference) and bit 2 was equal in all blocks
+        Meaning there were two message lengths: 2 and 4 bit.
+        (0.5, 1) means, the first bit was equal in 50% of cases (meaning maximum difference) and bit 2 was equal in all messages
 
-        A simple XOR would not work as it would be very error prone.
+        A simple XOR would not work as it would be error prone.
 
         :param bitvectors:
         :rtype: dict[int, tuple[np.ndarray, int]]
@@ -89,7 +93,7 @@ class FormatFinder(object):
 
         # Calculate the relative numbers and normalize the equalness so e.g. 0.3 becomes 0.7
         return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl][0] / number_ones[vl][1]))
-                for vl in number_ones if number_ones[vl][1] >= self.MIN_BLOCKS_PER_CLUSTER}
+                for vl in number_ones if number_ones[vl][1] >= self.MIN_MESSAGES_PER_CLUSTER}
 
     def build_xor_matrix(self):
         t = time.time()

@@ -8,6 +8,7 @@ import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
+from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.LabelAssigner import LabelAssigner
@@ -845,8 +846,8 @@ class ProtocolAnalyzer(object):
             if not decoder_found and fallback:
                 message.decoder = fallback
 
-    def auto_assign_labels(self, debug=False):
-        label_assigner = LabelAssigner(self.messages)
-        label_assigner.auto_assign_to_message_type(self.default_message_type)
-        if debug:
-            label_assigner.print_common_intervals()
+    def auto_assign_labels(self):
+        format_finder = FormatFinder(self)
+
+        # TODO Perform multiple iterations with varying priorities
+        format_finder.perform_iteration()

@@ -39,7 +39,18 @@ class Length(Component):
 
 
     def _py_find_field(self, messages):
-        raise NotImplementedError("")
+        """
+
+        :type messages: list of urh.signalprocessing.Message.Message
+        :return:
+        """
+        message_type_messages = defaultdict(list)
+        """:type : dict[urh.signalprocessing.MessageType.MessageType, list[urh.signalprocessing.Message.Message]] """
+
+        for msg in messages:
+            message_type_messages[msg.message_type].append(msg)
+
+
 
         equal_ranges = defaultdict(list)
         for vec_len in set(len(bitvectors[row]) for row in rows):

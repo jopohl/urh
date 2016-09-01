@@ -18,7 +18,7 @@ class FormatFinder(object):
     def __init__(self, protocol, participants=None):
         """
 
-        :type protocol: ProtocolAnalyzer
+        :type protocol: urh.signalprocessing.ProtocolAnalyzer.ProtocolAnalyzer
         :param participants:
         """
         if participants is not None:

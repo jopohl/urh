@@ -86,10 +86,11 @@ class FormatFinder(object):
 
         number_ones = dict()  # dict of tuple. 0 = number ones vector, 1 = number of blocks for this vector
         for vector in self.bitvectors:
-            if len(vector) not in number_ones:
-                number_ones[len(vector)] = [np.zeros(len(vector), dtype=int), 0]
-            number_ones[len(vector)][0] += vector
-            number_ones[len(vector)][1] += 1
+            vec_len = 4 * (len(vector) // 4)
+            if vec_len not in number_ones:
+                number_ones[vec_len] = [np.zeros(vec_len, dtype=int), 0]
+            number_ones[vec_len][0] += vector
+            number_ones[vec_len][1] += 1
 
         # Calculate the relative numbers and normalize the equalness so e.g. 0.3 becomes 0.7
         return {vl: (np.vectorize(lambda x: x if x >= 0.5 else 1 - x)(number_ones[vl][0] / number_ones[vl][1]))

@@ -97,5 +97,5 @@ class TestAWRE(unittest.TestCase):
 
         self.assertIn(preamble_label, enocean_protocol.default_message_type)
         self.assertIn(sync_label, enocean_protocol.default_message_type)
-
+        self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
 

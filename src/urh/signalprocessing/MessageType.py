@@ -37,6 +37,25 @@ class MessageType(list):
     def id(self) -> str:
         return self.__id
 
+
+    @property
+    def unlabeled_ranges(self):
+        """
+
+        :rtype: list[(int,int)]
+        """
+        start = 0
+        result = []
+        for lbl in self:
+            if lbl.start != start:
+                result.append((start, lbl.start))
+            start = lbl.end
+        result.append((start, None))
+        return result
+
+
+
+
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)
         self.sort()

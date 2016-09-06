@@ -48,7 +48,7 @@ class Preamble(Component):
         if len(message.message_type) == 0:
             search_end = len(message.decoded_bits)
         else:
-            search_end = message.message_type[0]
+            search_end = message.message_type[0].start
 
         bits = message.decoded_bits
 

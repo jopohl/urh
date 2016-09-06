@@ -20,6 +20,10 @@ class ProtocolLabel(object):
     def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int, fuzz_created=False):
         self.__name = name
         val_type = self.VALUE_TYPES[val_type_index]
+
+
+        # TODO: Does not work with aligned protocols or protocols with symbols --> Use method from ProtoAnalyzer instead
+
         if val_type == "Bits":
             self.start = start
             self.end = end + 1

@@ -29,8 +29,8 @@ class TestLabels(unittest.TestCase):
 
         # Create two labels on Compare Frame
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.cframe.add_protocol_label(0, 40, 1, 0, edit_label_name = False)  # Sync
-        self.cframe.add_protocol_label(43, 43, 2, 0, edit_label_name = False)  # FuzzBit
+        self.cframe.add_protocol_label(start=0, end=40, messagenr=1, proto_view=0, edit_label_name = False)  # Sync
+        self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name = False)  # FuzzBit
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
 

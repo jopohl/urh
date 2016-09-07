@@ -1187,10 +1187,10 @@ class CompareFrameController(QFrame):
             start = numpy.min([rng.left() for rng in selected])
             self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(min_row, start))
 
-    def add_protocol_label(self, start: int, end: int, messagenr: int,
-                           proto_view: int, edit_label_name=True):
+    def add_protocol_label(self, start: int, end: int, messagenr: int, proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
-        proto_label = self.active_message_type.add_protocol_label(start=start, end=end, type_index=proto_view)
+        start, end = self.proto_analyzer.convert_range(start, end, proto_view, 0, decoded=True, message_indx=messagenr)
+        proto_label = self.proto_analyzer.messages[messagenr].message_type.add_protocol_label(start=start, end=end)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()

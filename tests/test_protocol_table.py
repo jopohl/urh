@@ -59,7 +59,7 @@ class TestProtocolTable(unittest.TestCase):
         start = 0
         label_len = 3
         for i in range(self.NUM_LABELS):
-            self.cframe.add_protocol_label(start, start+label_len, 0, 0, edit_label_name=False)
+            self.cframe.add_protocol_label(start=start, end=start+label_len, proto_view=0, messagenr=0, edit_label_name=False)
             start += label_len +1
 
     def __role_to_str(self, role):

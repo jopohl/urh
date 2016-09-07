@@ -101,7 +101,7 @@ class LabelAssigner(object):
             return None
 
         self.preamble_end = max(preamble_ends, key=preamble_ends.count)
-        return ProtocolLabel(name="Preamble", start=0, end=self.preamble_end-1, val_type_index=0, color_index=None)
+        return ProtocolLabel(name="Preamble", start=0, end=self.preamble_end-1, color_index=None)
 
 
     def find_sync(self) -> ProtocolLabel:
@@ -123,8 +123,7 @@ class LabelAssigner(object):
         sync_interval = max(possible_sync_pos, key=possible_sync_pos.__getitem__)
 
         self.sync_end = sync_interval.end
-        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1, name="Sync",
-                             color_index=None, val_type_index=0)
+        return ProtocolLabel(start=sync_interval.start + 1, end=sync_interval.end - 1, name="Sync", color_index=None)
 
     def find_constants(self):
         """
@@ -165,7 +164,7 @@ class LabelAssigner(object):
                 common_constant_intervals.add(candidate.find_common_interval(overlapping_candidate))
 
         return [ProtocolLabel(start=interval.start, end=interval.end, name="Constant #{0}".format(i+1),
-                              val_type_index=0, color_index=None) for i, interval in enumerate(common_constant_intervals)]
+                              color_index=None) for i, interval in enumerate(common_constant_intervals)]
 
     def find_byte_length(self):
         """
@@ -192,8 +191,7 @@ class LabelAssigner(object):
         except ValueError:
             return None
 
-        return ProtocolLabel(start=int(length_range[0]), end=int(length_range[1]) - 1,
-                             name="Length", color_index=None, val_type_index=0)
+        return ProtocolLabel(start=int(length_range[0]), end=int(length_range[1]) - 1, name="Length", color_index=None)
 
     def auto_assign_to_message_type(self, message_type: MessageType):
         preamble = self.find_preamble()

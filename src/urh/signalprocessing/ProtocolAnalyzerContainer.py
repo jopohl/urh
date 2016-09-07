@@ -130,7 +130,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.fuzz(FuzzMode.exhaustive)
 
     def create_fuzzing_label(self, start, end, msg_index) -> ProtocolLabel:
-        fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(start=start, end=end, type_index= 0)
+        fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(start=start, end=end)
         return fuz_lbl
 
     def set_decoder_for_messages(self, decoder, messages=None):

@@ -1,11 +1,9 @@
 from collections import defaultdict
 
 from PyQt5.QtCore import pyqtSignal, QModelIndex, Qt
-from PyQt5.QtGui import QColor
 
 from urh import constants
 from urh.models.TableModel import TableModel
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 
@@ -17,6 +15,8 @@ class ProtocolTableModel(TableModel):
         super().__init__(parent)
 
         self.controller = controller
+        """:type: urh.controller.CompareFrameController.CompareFrameController"""
+
         self.protocol = proto_analyzer
         self.participants = participants
 
@@ -38,7 +38,7 @@ class ProtocolTableModel(TableModel):
             self.ref_index_changed.emit(self._refindex)
 
     def addProtoLabel(self, start, end, messagenr):
-        self.controller.add_protocol_label(start, end, messagenr, self.proto_view)
+        self.controller.add_protocol_label(start=start, end=end, messagenr=messagenr, proto_view=self.proto_view)
 
     def refresh_fonts(self):
         self.bold_fonts.clear()
@@ -56,9 +56,8 @@ class ProtocolTableModel(TableModel):
         if not self.is_writeable:
             return
 
-        del_action = DeleteBitsAndPauses(self.protocol, min_row, max_row,
-                                         start, end, self.proto_view, True,
-                                         self.controller.get_message_numbers_for_groups(),
+        del_action = DeleteBitsAndPauses(proto_analyzer=self.protocol, start_message=min_row, end_message=max_row,
+                                         start=start, end=end, view=self.proto_view, decoded=True,
                                          subprotos=self.controller.protocol_list)
         self.undo_stack.push(del_action)
 

@@ -12,27 +12,14 @@ class ProtocolLabel(object):
     From und To beziehen sich immer auf die Bitdarstellung des Protokolls!
     """
 
-    VALUE_TYPES = ["Bits", "Hex", "ASCII"]
     DISPLAY_TYPES = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
 
-    def __init__(self, name: str, start: int, end: int, val_type_index: int, color_index: int, fuzz_created=False):
+    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False):
         self.__name = name
-        val_type = self.VALUE_TYPES[val_type_index]
-
-
-        # TODO: Does not work with aligned protocols or protocols with symbols --> Use method from ProtoAnalyzer instead
-
-        if val_type == "Bits":
-            self.start = start
-            self.end = end + 1
-        elif val_type == "Hex":
-            self.start = 4 * start
-            self.end = 4 * (end + 1)
-        elif val_type == "ASCII":
-            self.start = 8 * start
-            self.end = 8 * (end + 1)
+        self.start = start
+        self.end = end + 1
 
         self.apply_decoding = True
         self.color_index = color_index
@@ -118,7 +105,7 @@ class ProtocolLabel(object):
         start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
         color_index = int(tag.get("color_index", 0))
 
-        result = ProtocolLabel(name=name, start=start, end=end, val_type_index=0, color_index=color_index)
+        result = ProtocolLabel(name=name, start=start, end=end, color_index=color_index)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
         result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked

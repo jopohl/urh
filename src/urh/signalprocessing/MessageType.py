@@ -38,8 +38,7 @@ class MessageType(list):
         super().append(lbl)
         self.sort()
 
-    def add_protocol_label(self, start: int, end: int, type_index: int, name=None, color_ind=None) -> \
-            ProtocolLabel:
+    def add_protocol_label(self, start: int, end: int, name=None, color_ind=None) -> ProtocolLabel:
 
         name = "Label {0:d}".format(len(self) + 1) if not name else name
         used_colors = [p.color_index for p in self]
@@ -51,7 +50,7 @@ class MessageType(list):
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name=name, start=start, end=end, val_type_index=type_index, color_index=color_ind)
+        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind)
 
         if proto_label not in self:
             self.append(proto_label)
@@ -61,7 +60,7 @@ class MessageType(list):
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
-            self.add_protocol_label(lbl.start, lbl.end, type_index=0, name=lbl.name, color_ind=lbl.color_index)
+            self.add_protocol_label(lbl.start, lbl.end, name=lbl.name, color_ind=lbl.color_index)
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:

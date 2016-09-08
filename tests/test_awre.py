@@ -62,9 +62,9 @@ class TestAWRE(unittest.TestCase):
         length_start = 64
         length_end = 71
 
-        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
-        sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, val_type_index=0, color_index=1)
-        length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, val_type_index=0, color_index=2)
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
+        sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, color_index=1)
+        length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, color_index=2)
 
 
         ff = FormatFinder(self.protocol, self.participants)
@@ -88,8 +88,8 @@ class TestAWRE(unittest.TestCase):
         sof_start = 11
         sof_end = 14
 
-        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, val_type_index=0, color_index=0)
-        sync_label = ProtocolLabel(name="Synchronization", start=sof_start, end=sof_end, val_type_index=0, color_index=1)
+        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
+        sync_label = ProtocolLabel(name="Synchronization", start=sof_start, end=sof_end, color_index=1)
 
 
         ff = FormatFinder(enocean_protocol, self.participants)

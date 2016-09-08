@@ -32,9 +32,7 @@ class FormatFinder(object):
         self.preamble_component = Preamble(priority=0)
         self.length_component = Length(length_cluster=self.len_cluster, priority=1,
                                        predecessors=[self.preamble_component])
-        self.address_component = Address(participant_lut=[block.participant for block in self.protocol.messages],
-                                         xor_matrix=self.xor_matrix, priority=2,
-                                         predecessors=[self.preamble_component])
+        self.address_component = Address(xor_matrix=self.xor_matrix, priority=2, predecessors=[self.preamble_component])
         self.sequence_number_component = SequenceNumber(priority=3, predecessors=[self.preamble_component])
         self.type_component = Type(priority=4, predecessors=[self.preamble_component])
         self.flags_component = Flags(priority=5, predecessors=[self.preamble_component])

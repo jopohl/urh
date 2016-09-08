@@ -10,14 +10,22 @@ from urh.awre.components.Component import Component
 class Address(Component):
     MIN_ADDRESS_LENGTH = 8  # Address should be at least one byte
 
-    def __init__(self, participant_lut, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None):
+    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None):
         super().__init__(priority, predecessors, enabled, backend)
         self.xor_matrix = xor_matrix
-        self.participant_lut = participant_lut
 
     def _py_find_field(self, messages):
+        """
 
-        raise NotImplementedError("")
+        :type messages: list of urh.signalprocessing.Message.Message
+        :return:
+        """
+        msg_indices_per_participant = defaultdict(list)
+        """:type : dict[urh.signalprocessing.Participant.Participant, list[int]] """
+
+        for i, msg in enumerate(messages):
+            msg_indices_per_participant[msg.participant].append(i)
+
 
         # Cluster participants
         equal_ranges_per_participant = defaultdict(list)
@@ -25,34 +33,42 @@ class Address(Component):
         alignment = 8
 
         # Step 1: Find equal ranges for participants by evaluating the XOR matrix participant wise
-        for i, row in enumerate(rows):
-            participant = self.participant_lut[row]
-            for j in range(i, len(rows)):
-                other_row = rows[j]
-                if self.participant_lut[other_row] == participant:
-                    xor_vec = self.xor_matrix[row, other_row][self.xor_matrix[row, other_row] != -1]
-                    for rng_start, rng_end in column_ranges:
+        for participant, participant_msg_indices in msg_indices_per_participant.items():
+            for i, msg_index in enumerate(participant_msg_indices):
+                msg = messages[msg_index]
+                bitvector_str = msg.decoded_bits_str
+
+                for other_index in participant_msg_indices[i+1:]:
+                    other_msg = messages[other_index]
+                    xor_vec = self.xor_matrix[msg_index, other_index][self.xor_matrix[msg_index, other_index] != -1] # -1 = End of Vector
+
+                    # addresses are searched across message types, as we assume them to be in almost every message
+                    # therefore we need to consider message types of both messages we compare and ignore already labeled areas
+                    unlabeled_ranges = msg.message_type.unlabeled_ranges_with_other_mt(other_msg.message_type)
+                    for rng_start, rng_end in unlabeled_ranges:
                         start = 0
-                        # The last 1 marks end of seqzence, and prevents swalloing long zero sequences at the end
+                        # The last 1 marks end of sequence, and prevents swallowing long zero sequences at the end
                         cmp_vector = np.append(xor_vec[rng_start:rng_end], 1)
                         for end in np.where(cmp_vector == 1)[0]:
                             if end - start >= self.MIN_ADDRESS_LENGTH:
                                 equal_range_start = alignment * ((rng_start + start) // alignment)
                                 equal_range_end = alignment * ((rng_start + end) // alignment)
-                                bits = "".join(map(str, bitvectors[row][equal_range_start:equal_range_end]))
+                                bits = bitvector_str[equal_range_start:equal_range_end]
 
+                                # Did we already found this range?
                                 cr = next((cr for cr in equal_ranges_per_participant[participant] if
                                           cr.start == equal_range_start and cr.end == equal_range_end
                                           and cr.bits == bits), None)
+
+                                # If not: Create it
                                 if cr is None:
                                     cr = CommonRange(equal_range_start, equal_range_end, bits)
                                     equal_ranges_per_participant[participant].append(cr)
-                                cr.messages.add(row)
-                                cr.messages.add(other_row)
+
+                                cr.messages.add(msg_index)
+                                cr.messages.add(other_index)
 
                             start = end + alignment
-
-        print(equal_ranges_per_participant)
 
         print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
         self.__print_ranges(equal_ranges_per_participant)

@@ -117,7 +117,7 @@ class Length(Component):
 
             try:
                 start, end = max(scores, key=scores.__getitem__)
-                message_type.add_protocol_label(start, end - 1, 0, name="Length")
+                message_type.add_protocol_label(start=start, end=end - 1, name="Length")
             except ValueError:
                 continue
 

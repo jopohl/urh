@@ -44,14 +44,35 @@ class MessageType(list):
 
         :rtype: list[(int,int)]
         """
+        return self.__get_unlabeled_ranges_from_labels(self)
+
+    @staticmethod
+    def __get_unlabeled_ranges_from_labels(labels):
+        """
+
+        :type labels: list of ProtocolLabel
+        :rtype: list[(int,int)]
+        """
         start = 0
         result = []
-        for lbl in self:
-            if lbl.start != start:
+        for lbl in labels:
+            if lbl.start > start:
                 result.append((start, lbl.start))
             start = lbl.end
         result.append((start, None))
         return result
+
+    def unlabeled_ranges_with_other_mt(self, other_message_type):
+        """
+
+        :type other_message_type: MessageType
+        :rtype: list[(int,int)]
+        """
+        labels = self + other_message_type
+        labels.sort()
+        return self.__get_unlabeled_ranges_from_labels(labels)
+
+
 
 
 

@@ -99,3 +99,10 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(sync_label, enocean_protocol.default_message_type)
         self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
 
+    def test_address_candidate_finding(self):
+        candidates_participant_1 = ['1b6033', '1b6033fd57', '701b603378e289', '20701b603378e289000c62']
+        candidates_participant_2 = ['1b603300', '78e289757e', '7078e2891b6033000000', '207078e2891b6033000000']
+
+        expected_address1 = '1b6033'
+        expected_address2 = '78e289'
+

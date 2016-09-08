@@ -29,6 +29,7 @@ class Address(Component):
 
         # Cluster participants
         equal_ranges_per_participant = defaultdict(list)
+        """:type : dict[urh.signalprocessing.Participant.Participant, list[CommonRange]] """
 
         alignment = 8
 
@@ -74,13 +75,26 @@ class Address(Component):
         self.__print_ranges(equal_ranges_per_participant)
 
         # Step 2: Now we want to find our address candidates.
-        # Step 2.a: Cluster the ranges based on their byte length
+        # Step 2.a:
+        #           - Cluster the ranges based on their byte length
+        #           - perform a scoring based on how often a candidate appears in a longer candidate
+        scored_candidates = defaultdict(list)
+        """:type : dict[urh.signalprocessing.Participant.Participant, list[(int, CommonRange)]] """
+
         for parti, ranges in equal_ranges_per_participant.items():
             hex_values = [common_range.hex_value for common_range in ranges]
             hex_values.sort(key=len)
-            print(hex_values)
+            scored_candidates[parti].extend((len([x for x in hex_values if cr.hex_value in x])-1, cr) for cr in ranges)
 
+            #print(parti.shortname, hex_values)
+        for parti, hex_candiates in scored_candidates.items():
+            print(parti.shortname, hex_candiates)
 
+       # print(scored_candidates)
+
+        # Now we perform a scoring of the address candidates. There are two ways to score:
+            # 1) Address appears as substring in other candidates
+            # 2) Opposite Address appears in same range for other participant
 
         #self.__print_clustered(clustered_addresses)
 

@@ -54,6 +54,8 @@ class OptionsController(QDialog):
 
         self.read_options()
 
+        self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
+
     @property
     def selected_device(self) -> BackendContainer:
         try:
@@ -139,6 +141,8 @@ class OptionsController(QDialog):
             changed_values["rel_symbol_length"] = 100 - 2 * self.ui.spinBoxSymbolTreshold.value()
         if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
             changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
+        if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
+            changed_values['default_view'] = self.ui.comboBoxDefaultView.currentIndex()
 
         settings = constants.SETTINGS
         settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())

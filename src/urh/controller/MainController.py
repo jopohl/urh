@@ -643,7 +643,9 @@ class MainController(QMainWindow):
                 sf.refresh_protocol()
 
         self.compare_frame_controller.set_shown_protocols()
-        self.apply_default_view()
+
+        if "default_view" in changed_options.keys():
+            self.apply_default_view()
 
     def refresh_main_menu(self):
         enable = len(self.signal_protocol_dict) > 0
@@ -673,9 +675,11 @@ class MainController(QMainWindow):
             self.project_manager.from_dialog(self.sender())
 
     def apply_default_view(self):
-        view_index = constants.SETTINGS.value('default_view', type = int)
+        view_index = constants.SETTINGS.value('default_view', type=int)
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
         self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
+        for sig_frame in self.signal_tab_controller.signal_frames:
+            sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
 
     def on_project_updated(self):
         self.participant_legend_model.participants = self.project_manager.participants

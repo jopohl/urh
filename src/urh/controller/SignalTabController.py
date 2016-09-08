@@ -166,6 +166,9 @@ class SignalTabController(QWidget):
         sig_frame.ui.gvSignal.horizontalScrollBar().blockSignals(False)
         sig_frame.blockSignals(False)
 
+        default_view = constants.SETTINGS.value('default_view', 0, int)
+        sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
+
         return sig_frame
 
     def add_empty_frame(self, filename: str, proto):

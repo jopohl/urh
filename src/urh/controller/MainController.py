@@ -549,7 +549,12 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def update_decodings(self):
+        self.compare_frame_controller.load_decodings()
         self.compare_frame_controller.fill_decoding_combobox()
+        self.compare_frame_controller.refresh_existing_encodings()
+
+        self.generator_tab_controller.refresh_existing_encodings(self.compare_frame_controller.decodings)
+
 
     @pyqtSlot()
     def on_selected_tab_changed(self):

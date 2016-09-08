@@ -393,6 +393,27 @@ class GeneratorTabController(QWidget):
         self.ui.rBExhaustive.setEnabled(has_same_message)
         self.ui.rbConcurrent.setEnabled(has_same_message)
 
+    def refresh_existing_encodings(self, encodings_from_file):
+        """
+        Refresh existing encodings for messages, when encoding was changed by user in dialog
+
+        :return:
+        """
+        update = False
+
+        for msg in self.table_model.protocol.messages:
+            i = next((i for i, d in enumerate(encodings_from_file) if d.name == msg.decoder.name), 0)
+            if msg.decoder != encodings_from_file[i]:
+                update = True
+                print("Generator", msg.decoder.name)
+                msg.decoder = encodings_from_file[i]
+                msg.clear_decoded_bits()
+                msg.clear_encoded_bits()
+
+        if update:
+            self.refresh_table()
+            self.refresh_estimated_time()
+
     @pyqtSlot()
     def refresh_estimated_time(self):
         c = self.table_model.protocol

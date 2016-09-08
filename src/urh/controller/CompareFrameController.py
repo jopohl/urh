@@ -340,6 +340,25 @@ class CompareFrameController(QFrame):
         self.ui.btnMessagetypeSettings.clicked.connect(self.on_btn_messagetype_settings_clicked)
 
 
+    def refresh_existing_encodings(self):
+        """
+        Refresh existing encodings for messages, when encoding was changed by user in dialog
+
+        :return:
+        """
+        update = False
+
+        for msg in self.proto_analyzer.messages:
+            i = next((i for i, d in enumerate(self.decodings) if d.name == msg.decoder.name), 0)
+            if msg.decoder != self.decodings[i]:
+                update = True
+                msg.decoder = self.decodings[i]
+                msg.clear_decoded_bits()
+                msg.clear_encoded_bits()
+
+        if update:
+            self.protocol_model.update()
+            self.label_value_model.update()
 
     def fill_decoding_combobox(self):
         cur_item = self.ui.cbDecoding.currentText() if self.ui.cbDecoding.count() > 0 else None
@@ -647,7 +666,6 @@ class CompareFrameController(QFrame):
                 self.set_protocol_label_visibility(lbl)
 
             self.ui.tblViewProtocol.resize_columns()
-
 
     def __set_decoding_error_label(self, message: Message):
         if message:

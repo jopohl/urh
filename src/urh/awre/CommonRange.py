@@ -41,3 +41,4 @@ class CommonRange(object):
 
     def __repr__(self):
         return "{}-{} {} ({})".format(self.start,  self.end, self.hex_value, len(self.messages))
+        

@@ -4,4 +4,4 @@ MODULES = ["path_creator", "signalFunctions", "util"]
 
 for module in MODULES:
     call(["cython", "-a", "--cplus", "-3", module + ".pyx"])
-    Popen(["firefox", module + ".html"])
+    Popen(["google-chrome-stable", module + ".html"])

@@ -42,3 +42,23 @@ cpdef np.ndarray[np.int8_t, ndim=3] build_xor_matrix(list bitvectors):
                 result[i,j,k] = bitvector_i[k] ^ bitvector_j[k]
 
     return result
+
+
+cpdef str longest_common_substring(str s1, str s2):
+    cdef int len_s1 = len(s1)
+    cdef int len_s2 = len(s2)
+    cdef np.int_t[:, ::1] m = np.zeros((len_s1+1, len_s2+1), dtype=np.int, order="C")
+    cdef int longest = 0
+    cdef int x_longest = 0
+    cdef int x, y
+
+    for x in range(1, 1 + len_s1):
+        for y in range(1, 1 + len_s2):
+            if s1[x - 1] == s2[y - 1]:
+                m[x, y] = m[x - 1, y - 1] + 1
+                if m[x, y] > longest:
+                    longest = m[x, y]
+                    x_longest = x
+            else:
+                m[x, y] = 0
+    return s1[x_longest - longest: x_longest]

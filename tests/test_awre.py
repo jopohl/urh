@@ -14,6 +14,9 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 
 
+
+
+from urh.cythonext import util
 class TestAWRE(unittest.TestCase):
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
@@ -99,10 +102,15 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(sync_label, enocean_protocol.default_message_type)
         self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
 
+
     def test_address_candidate_finding(self):
         candidates_participant_1 = ['1b6033', '1b6033fd57', '701b603378e289', '20701b603378e289000c62']
         candidates_participant_2 = ['1b603300', '78e289757e', '7078e2891b6033000000', '207078e2891b6033000000']
 
         expected_address1 = '1b6033'
         expected_address2 = '78e289'
+        import time
+        t = time.time()
+        assert util.longest_common_substring("'78e289757e'", "'7078e2891b6033000000'") == "78e289"
+        print((time.time()-t)*10**6)
 

@@ -119,6 +119,9 @@ class TestAWRE(unittest.TestCase):
         score = Address.score_candidates(combined)
         print(score)
         print(sorted(score, key=score.get, reverse=True))
-        # for i in range(len(candidates_participant_2)):
-        #     for j in range(i+1, len(candidates_participant_2)):
-        #         print(util.longest_common_substring(candidates_participant_2[i], candidates_participant_2[j]))
+
+        # Next Steps:
+        #    - find the most probable canidates (x)
+        #    - see where these canidates are (ranges) and look for matches
+        #    - if there are enough matches consider this range as address range
+        #    - if there are different address ranges create a message type for each

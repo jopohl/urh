@@ -3,7 +3,7 @@ from collections import defaultdict
 import numpy as np
 from urh import constants
 from urh.awre.CommonRange import CommonRange
-
+from urh.cythonext import util
 from urh.awre.components.Component import Component
 
 
@@ -113,6 +113,22 @@ class Address(Component):
 
 
         raise NotImplementedError("Todo")
+
+
+    @staticmethod
+    def score_candidates(candidates):
+        """
+        Score candidates using LCS algorithm
+        :type candidates: list of str
+        :return:
+        """
+
+        result = defaultdict(int)
+        for i, c_i in enumerate(candidates):
+            for j in range(i, len(candidates)):
+                lcs = util.longest_common_substring(c_i, candidates[j])
+                result[lcs] += 1
+        return result
 
     def __print_clustered(self, clustered_addresses):
         for bl in sorted(clustered_addresses):

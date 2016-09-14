@@ -1,5 +1,6 @@
 import unittest
-
+from audioop import reverse
+from collections import defaultdict
 
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address
@@ -109,8 +110,15 @@ class TestAWRE(unittest.TestCase):
 
         expected_address1 = '1b6033'
         expected_address2 = '78e289'
-        import time
-        t = time.time()
-        assert util.longest_common_substring("'78e289757e'", "'7078e2891b6033000000'") == "78e289"
-        print((time.time()-t)*10**6)
 
+
+        print(Address.score_candidates(candidates_participant_1))
+        print(Address.score_candidates(candidates_participant_2))
+        combined = candidates_participant_1+candidates_participant_2
+        combined.sort(key=len)
+        score = Address.score_candidates(combined)
+        print(score)
+        print(sorted(score, key=score.get, reverse=True))
+        # for i in range(len(candidates_participant_2)):
+        #     for j in range(i+1, len(candidates_participant_2)):
+        #         print(util.longest_common_substring(candidates_participant_2[i], candidates_participant_2[j]))

@@ -260,7 +260,7 @@ class OptionsController(QDialog):
         settings = constants.SETTINGS
         keys = settings.allKeys()
         if not 'rel_symbol_length' in keys:
-            settings.setValue('rel_symbol_length', 10)
+            settings.setValue('rel_symbol_length', 0)
 
         if not 'default_view' in keys:
             settings.setValue('default_view', 0)

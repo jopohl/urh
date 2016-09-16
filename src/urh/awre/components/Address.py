@@ -75,23 +75,39 @@ class Address(Component):
         self.__print_ranges(equal_ranges_per_participant)
 
         # Step 2: Now we want to find our address candidates.
-        # Step 2.a: perform a scoring based on how often a candidate appears in a longer candidate
-        # ---------
-        # Get something like:
-        #   A['1b6033', '1b6033fd57', '701b603378e289', '20701b603378e289000c62']
-        #   B['1b603300', '78e289757e', '7078e2891b6033000000', '207078e2891b6033000000']
-        scored_candidates = defaultdict(list)
-        """:type : dict[urh.signalprocessing.Participant.Participant, list[(int, CommonRange)]] """
+        # We do this by weighting them in order of LCS they share with each other
+        scored_candidates = self.find_candidates([cr for crl in equal_ranges_per_participant.values() for cr in crl])
+        """:type : dict[str, int] """
 
-        for parti, ranges in equal_ranges_per_participant.items():
-            hex_values = [common_range.hex_value for common_range in ranges]
-            hex_values.sort(key=len)
-            print(parti.shortname, hex_values)
-            scored_candidates[parti].extend((len([x for x in hex_values if cr.hex_value in x])-1, cr) for cr in ranges)
+        highscored = sorted(scored_candidates, key=scored_candidates.get, reverse=True)[:2]
 
-            #print(parti.shortname, hex_values)
-        for parti, hex_candiates in scored_candidates.items():
-            print(parti.shortname, hex_candiates)
+        assert len(highscored[0]) == len(highscored[1]) # TODO: Perform aligning/take next highscored value if lengths do not match
+
+        # Now get the common_ranges we need
+        scored_candidates_per_participant = defaultdict(list)
+        """:type : dict[urh.signalprocessing.Participant.Participant, list[CommonRange]] """
+
+        for participant, ranges in equal_ranges_per_participant.items():
+            for equal_range in ranges:
+                for h in highscored:
+                    rng = equal_range.pos_of_hex(h)
+                    if rng is not None:
+                        start, end = rng
+                        bits = equal_range.bits[start:end]
+                        rel_start = equal_range.start + start
+                        rel_end = rel_start + (end - start)
+                        cr = next((cr for cr in scored_candidates_per_participant[participant] if cr.start == rel_start
+                                                                                               and cr.end == rel_end and
+                                                                                               cr.bits == bits), None)
+                        if cr is None:
+                            cr = CommonRange(rel_start, rel_end, bits)
+                            scored_candidates_per_participant[participant].append(cr)
+
+                        cr.messages.update(equal_range.messages)
+
+
+
+        print(scored_candidates_per_participant)
 
        # print(scored_candidates)
 
@@ -116,18 +132,33 @@ class Address(Component):
 
 
     @staticmethod
-    def score_candidates(candidates):
+    def find_candidates(candidates):
         """
-        Score candidates using LCS algorithm
-        :type candidates: list of str
+        Find candidate addresses using LCS algorithm
+        perform a scoring based on how often a candidate appears in a longer candidate
+
+        Input is something like
+        ------------------------
+        ['1b6033', '1b6033fd57', '701b603378e289', '20701b603378e289000c62',
+        '1b603300', '78e289757e', '7078e2891b6033000000', '207078e2891b6033000000']
+
+        Output like
+        -----------
+        {'1b6033': 18, '1b6033fd57': 1, '701b603378e289': 2, '207078e2891b6033000000': 1,
+        '57': 1, '7078e2891b6033000000': 2, '78e289757e': 1, '20701b603378e289000c62': 1,
+        '78e289': 4, '1b603300': 3}
+
+        :type candidates: list of CommonRange
         :return:
         """
 
         result = defaultdict(int)
         for i, c_i in enumerate(candidates):
             for j in range(i, len(candidates)):
-                lcs = util.longest_common_substring(c_i, candidates[j])
-                result[lcs] += 1
+                lcs = util.longest_common_substring(c_i.hex_value, candidates[j].hex_value)
+                if lcs:
+                    result[lcs] += 1
+
         return result
 
     def __print_clustered(self, clustered_addresses):

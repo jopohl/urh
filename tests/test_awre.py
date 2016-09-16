@@ -2,6 +2,7 @@ import unittest
 from audioop import reverse
 from collections import defaultdict
 
+from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address
 from urh.awre.components.Flags import Flags
@@ -105,20 +106,29 @@ class TestAWRE(unittest.TestCase):
 
 
     def test_address_candidate_finding(self):
-        candidates_participant_1 = ['1b6033', '1b6033fd57', '701b603378e289', '20701b603378e289000c62']
-        candidates_participant_2 = ['1b603300', '78e289757e', '7078e2891b6033000000', '207078e2891b6033000000']
+        fh = CommonRange.from_hex
+
+
+        candidates_participant_1 = [fh('1b6033'), fh('1b6033fd57'), fh('701b603378e289'), fh('20701b603378e289000c62')]
+        candidates_participant_2 = [fh('1b603300'), fh('78e289757e'), fh('7078e2891b6033000000'), fh('207078e2891b6033000000')]
 
         expected_address1 = '1b6033'
         expected_address2 = '78e289'
 
 
-        print(Address.score_candidates(candidates_participant_1))
-        print(Address.score_candidates(candidates_participant_2))
+        print(Address.find_candidates(candidates_participant_1))
+        print(Address.find_candidates(candidates_participant_2))
         combined = candidates_participant_1+candidates_participant_2
         combined.sort(key=len)
-        score = Address.score_candidates(combined)
+        score = Address.find_candidates(combined)
         print(score)
-        print(sorted(score, key=score.get, reverse=True))
+        print("=================")
+        print(sorted(score, key=lambda k: score[k], reverse=True))
+        print()
+
+        highscored = sorted(score, key=lambda k: score[k], reverse=True)[:2]
+        self.assertIn(expected_address1, highscored)
+        self.assertIn(expected_address2, highscored)
 
         # Next Steps:
         #    - find the most probable canidates (x)

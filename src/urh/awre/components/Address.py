@@ -5,6 +5,7 @@ from urh import constants
 from urh.awre.CommonRange import CommonRange
 from urh.cythonext import util
 from urh.awre.components.Component import Component
+from urh.signalprocessing.MessageType import MessageType
 
 
 class Address(Component):
@@ -80,7 +81,7 @@ class Address(Component):
         """:type : dict[str, int] """
 
         highscored = sorted(scored_candidates, key=scored_candidates.get, reverse=True)[:2]
-
+        print(sorted(scored_candidates, key=scored_candidates.get, reverse=True))
         assert len(highscored[0]) == len(highscored[1]) # TODO: Perform aligning/take next highscored value if lengths do not match
 
         # Now get the common_ranges we need
@@ -105,8 +106,45 @@ class Address(Component):
 
                         cr.messages.update(equal_range.messages)
 
+        # Now we have the highscored ranges per participant
+        # If there is a crossmatch of the ranges we are good and found the addresses!
+        # We have something like:
+        #
+        # Participant: Alice (A):                               Participant: Bob (B):
+        # =======================                               =====================
+        #
+        # Range	   Value     Messages                           Range	   Value     Messages
+        # -----    -----     --------                           -----      -----     --------
+        # 72-96    1b6033    {1, 5, 9, 13, 17, 20}              72-96      78e289    {11, 3, 15, 7}
+        # 88-112   1b6033    {2, 6, 10, 14, 18}                 88-112     78e289    {4, 8, 12, 16, 19}
+        # 112-136  78e289    {2, 6, 10, 14, 18}                 112-136    1b6033    {0, 4, 8, 12, 16, 19}
+        #
 
+        # If the value doubles for the same participant in other range, then we need to create a new message type
+        # We consider the default case (=default message type) to have addresses followed by each other
+        # Furthermore, we assume if there is only one address per message type, it is the destination address
+        clusters = {"together": defaultdict(set), "isolated": defaultdict(set)}
+        """:type: dict[str, dict[tuple[int.int],set[int]]]"""
 
+        all_candidates = [cr for crl in scored_candidates_per_participant.values() for cr in crl]
+        # Check for crossmatch and cluster in together and splitted addresses
+        # Perform a merge by only saving the ranges and applying messages
+        for candidate in sorted(all_candidates):
+            if any(c.start == candidate.start and c.end == candidate.end and c.bits != candidate.bits for c in all_candidates):
+                # Crossmatch! This is a address
+                if any(c.start == candidate.end or c.end == candidate.start for c in all_candidates):
+                     clusters["together"][(candidate.start, candidate.end)].update(candidate.messages)
+                else:
+                    clusters["isolated"][(candidate.start, candidate.end)].update(candidate.messages)
+
+        # Merge clusters and create labels
+
+        for participant, ranges in scored_candidates_per_participant.items():
+            for rng in ranges:
+                for msg in rng.messages:
+                    messages[msg].message_type.add_protocol_label(rng.start, rng.end, name="Address", auto_created=True)
+
+        print(clusters)
         print(scored_candidates_per_participant)
 
        # print(scored_candidates)
@@ -126,10 +164,6 @@ class Address(Component):
 
         #print(clustered_addresses)
         # Step 2: Align sequences together (correct bit shifts, align to byte)
-
-
-        raise NotImplementedError("Todo")
-
 
     @staticmethod
     def find_candidates(candidates):

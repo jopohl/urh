@@ -41,7 +41,6 @@ class CommonRange(object):
         except ValueError:
             return None
 
-
     @staticmethod
     def from_hex(hex_str):
         return CommonRange(start=0, end=0, bits="{0:b}".format(int(hex_str, 16)))
@@ -62,5 +61,5 @@ class CommonRange(object):
             return -1
 
     def __repr__(self):
-        return "{}-{} {} ({})".format(self.start,  self.end, self.hex_value, len(self.messages))
+        return "{}-{} {} ({})".format(self.start,  self.end, self.hex_value, self.messages)
         

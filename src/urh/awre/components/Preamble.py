@@ -28,7 +28,7 @@ class Preamble(Component):
         preamble_ends = defaultdict(int)
         for message_type, ranges in preamble_ranges.items():
             start, end = max(ranges, key=ranges.count)
-            message_type.add_protocol_label(start=start, end=end, name="Preamble")
+            message_type.add_protocol_label(start=start, end=end, name="Preamble", auto_created=True)
 
             preamble_ends[message_type] = end + 1
 
@@ -39,7 +39,7 @@ class Preamble(Component):
             sync_range = self.__find_sync_range(messages, preamble_ends[message_type], search_end)
 
             if sync_range:
-                message_type.add_protocol_label(start=sync_range[0], end=sync_range[1]-1, name="Synchronization")
+                message_type.add_protocol_label(start=sync_range[0], end=sync_range[1]-1, name="Synchronization", auto_created=True)
 
 
     def __find_preamble_range(self, message: Message):

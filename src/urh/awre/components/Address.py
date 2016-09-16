@@ -11,8 +11,8 @@ from urh.signalprocessing.MessageType import MessageType
 class Address(Component):
     MIN_ADDRESS_LENGTH = 8  # Address should be at least one byte
 
-    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None):
-        super().__init__(priority, predecessors, enabled, backend)
+    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None, default_messagetype=None):
+        super().__init__(priority, predecessors, enabled, backend, default_messagetype)
         self.xor_matrix = xor_matrix
 
     def _py_find_field(self, messages):
@@ -138,6 +138,7 @@ class Address(Component):
                     clusters["isolated"][(candidate.start, candidate.end)].update(candidate.messages)
 
         # Merge clusters and create labels
+        print(clusters)
 
         for participant, ranges in scored_candidates_per_participant.items():
             for rng in ranges:

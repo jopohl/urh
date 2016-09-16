@@ -8,8 +8,8 @@ class Preamble(Component):
     Assign Preamble and SoF.
 
     """
-    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None):
-        super().__init__(priority, predecessors, enabled, backend)
+    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None, default_messagetype=None):
+        super().__init__(priority, predecessors, enabled, backend, default_messagetype)
 
     def _py_find_field(self, messages):
         """

@@ -23,19 +23,24 @@ class Component(metaclass=ABCMeta):
         cython = 2
         plainc = 3
 
-    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None):
+    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None, default_messagetype=None):
         """
 
         :param priority: Priority for this Component. 0 is highest priority
         :type priority: int
         :param predecessors: List of preceding components, that need to be run before this one
         :type predecessors: list of Component or None
+        :param default_messagetype: Default message type of the examined protocol.
+                                    This is important when assigning new message types,
+                                    to prevent overwriting already customized message types
         """
         self.enabled = enabled
         self.backend = backend if backend is not None else self.Backend.python
         self.priority = abs(priority)
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
+
+        self.default_messagetype = default_messagetype
 
     def find_field(self, messages):
         """
@@ -68,3 +73,22 @@ class Component(metaclass=ABCMeta):
 
     def _c_find_field(self, messages):
         raise NotImplementedError()
+
+
+    def assign_messagetypes(self, messages, clusters):
+        """
+        Assign message types based on the clusters. Following rules:
+        1) Messages from different clusters will get different message types
+        2) Messages from same clusters will get same message type
+        3) The new message type will copy over the existing labels
+        4) No new message type will be set for messages, that already have a custom message type assigned
+
+        For messages with clustername "default" no new message type will be created
+
+        :param messages: Messages, that messagetype needs to be clustered
+        :param clusters: clusters for the messages
+        :type messages: list[Message]
+        :type clusters: dict[str, set[int]]
+        :return:
+        """
+        pass

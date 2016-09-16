@@ -5,6 +5,7 @@ from collections import defaultdict
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address
+from urh.awre.components.Component import Component
 from urh.awre.components.Flags import Flags
 from urh.awre.components.Length import Length
 from urh.awre.components.Preamble import Preamble
@@ -31,8 +32,8 @@ class TestAWRE(unittest.TestCase):
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
         alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
-        for i, block in enumerate(self.protocol.messages):
-            block.participant = alice if i in alice_indices else bob
+        for i, message in enumerate(self.protocol.messages):
+            message.participant = alice if i in alice_indices else bob
 
         self.participants = [alice, bob]
 
@@ -130,8 +131,13 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(expected_address1, highscored)
         self.assertIn(expected_address2, highscored)
 
-        # Next Steps:
-        #    - find the most probable canidates (x)
-        #    - see where these canidates are (ranges) and look for matches
-        #    - if there are enough matches consider this range as address range
-        #    - if there are different address ranges create a message type for each
+    def test_message_type_assign(self):
+        clusters = {"ack": {1, 17, 3, 20, 5, 7, 9, 11, 13, 15}, "default": {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19}}
+        com = Component()
+        com.assign_messagetypes(self.protocol.messages, clusters)
+
+        for clustername, msg_indices in clusters.items():
+            for msg in msg_indices:
+                self.assertEqual(self.protocol.messages[msg].message_type.name, clustername, msg=str(msg))
+
+

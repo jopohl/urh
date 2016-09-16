@@ -29,10 +29,14 @@ class FormatFinder(object):
         self.len_cluster = self.cluster_lengths()
         self.xor_matrix = self.build_xor_matrix()
 
-        self.preamble_component = Preamble(priority=0)
+
+        dm = self.protocol.default_message_type
+
+        self.preamble_component = Preamble(priority=0, default_messagetype=dm)
         self.length_component = Length(length_cluster=self.len_cluster, priority=1,
-                                       predecessors=[self.preamble_component])
-        self.address_component = Address(xor_matrix=self.xor_matrix, priority=2, predecessors=[self.preamble_component])
+                                       predecessors=[self.preamble_component], default_messagetype=dm)
+        self.address_component = Address(xor_matrix=self.xor_matrix, priority=2, predecessors=[self.preamble_component],
+                                         default_messagetype=dm)
         self.sequence_number_component = SequenceNumber(priority=3, predecessors=[self.preamble_component])
         self.type_component = Type(priority=4, predecessors=[self.preamble_component])
         self.flags_component = Flags(priority=5, predecessors=[self.preamble_component])

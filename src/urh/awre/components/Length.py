@@ -14,8 +14,8 @@ class Length(Component):
     """
 
 
-    def __init__(self, length_cluster, priority=2, predecessors=None, enabled=True, backend=None):
-        super().__init__(priority, predecessors, enabled, backend )
+    def __init__(self, length_cluster, priority=2, predecessors=None, enabled=True, backend=None, default_messagetype=None):
+        super().__init__(priority, predecessors, enabled, backend, default_messagetype)
 
         self.length_cluster = length_cluster
         """

@@ -84,7 +84,7 @@ class MessageType(list):
 
         if color_ind is None:
             if len(avail_colors) > 0:
-                color_ind = avail_colors[random.randint(0, len(avail_colors) - 1)]
+                color_ind = avail_colors[0]
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 

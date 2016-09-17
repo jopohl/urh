@@ -444,7 +444,10 @@ class GeneratorTabController(QWidget):
 
         maxrow = numpy.max(rows)
 
-        label = self.table_model.protocol.protocol_labels[maxrow]
+        try:
+            label = self.table_model.protocol.protocol_labels[maxrow]
+        except IndexError:
+            return
         if label.show and self.selected_message:
             start, end = self.selected_message.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
             indx = self.table_model.index(0, int((start + end) / 2))

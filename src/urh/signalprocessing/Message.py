@@ -354,7 +354,7 @@ class Message(object):
             if self.__get_hex_ascii_index_from_bit_index(i, decoded, to_hex=is_hex)[0] == from_index:
                 return i, i + factor - 1
 
-        return None, None
+        return len(bits), len(bits)
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits

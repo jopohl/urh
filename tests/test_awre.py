@@ -28,8 +28,6 @@ class TestAWRE(unittest.TestCase):
                 self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
-
-
         # Assign participants
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
@@ -38,6 +36,15 @@ class TestAWRE(unittest.TestCase):
             message.participant = alice if i in alice_indices else bob
 
         self.participants = [alice, bob]
+
+        self.zero_crc_protocol = ProtocolAnalyzer(None)
+        with open("./data/awre_zeroed_crc.txt") as f:
+            for line in f:
+                self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.zero_crc_protocol.messages[-1].message_type = self.protocol.default_message_type
+
+        for i, message in enumerate(self.zero_crc_protocol.messages):
+            message.participant = alice if i in alice_indices else bob
 
     def test_build_component_order(self):
         expected_default = [Preamble(), Length(None), Address(None, None), SequenceNumber(), Type(), Flags()]
@@ -97,6 +104,10 @@ class TestAWRE(unittest.TestCase):
             else:
                 self.assertEqual(msg.message_type.name, "default", msg=i)
 
+
+    def test_format_finding_rwe_zeroed_crc(self):
+        ff = FormatFinder(self.zero_crc_protocol, self.participants)
+        ff.perform_iteration()
 
 
 

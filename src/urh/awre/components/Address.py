@@ -141,6 +141,7 @@ class Address(Component):
         msg_clusters =  {cname: set(i for s in ranges.values() for i in s) for cname, ranges in clusters.items()}
         self.assign_messagetypes(messages, msg_clusters)
 
+        # TODO: Consider also SRC and DST Addresses, if there is an ACK (in ACK it is always DST Address)
         for participant, ranges in scored_candidates_per_participant.items():
             for rng in ranges:
                 for msg in rng.messages:

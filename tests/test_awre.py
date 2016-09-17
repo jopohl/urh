@@ -178,3 +178,10 @@ class TestAWRE(unittest.TestCase):
 
         self.assertEqual(next(Address.choose_candidate_pair(candidates1)), ("1b6033", "78e289"))
         self.assertEqual(next(Address.choose_candidate_pair(candidates2)), ("1b6033", "78e289"))
+
+    def test_format_finding_without_participants(self):
+        for msg in self.zero_crc_protocol.messages:
+            msg.participant = None
+
+        ff = FormatFinder(self.zero_crc_protocol, [])
+        ff.perform_iteration()

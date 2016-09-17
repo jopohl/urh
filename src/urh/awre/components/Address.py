@@ -206,6 +206,9 @@ class Address(Component):
 
     def __print_ranges(self, equal_ranges_per_participant):
         for parti in sorted(equal_ranges_per_participant):
+            if parti is None:
+                continue
+
             print("\n" + constants.color.UNDERLINE + str(parti.name) + " (" + parti.shortname+ ")" + constants.color.END)
             address1 = "000110110110000000110011"
             address2 = "011110001110001010001001"

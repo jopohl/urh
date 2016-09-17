@@ -1267,6 +1267,7 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
             self.label_value_model.update()
             self.protocol_label_list_model.update()
+            self.ui.listViewLabelNames.clearSelection()
             logger.debug("Time for auto assigning labels: " + str(time.time() - t))
 
         self.ui.progressBarLogicAnalyzer.setValue(100)

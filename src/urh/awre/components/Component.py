@@ -24,16 +24,15 @@ class Component(metaclass=ABCMeta):
         cython = 2
         plainc = 3
 
-    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None, default_messagetype=None):
+    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None, messagetypes=None):
         """
 
         :param priority: Priority for this Component. 0 is highest priority
         :type priority: int
         :param predecessors: List of preceding components, that need to be run before this one
         :type predecessors: list of Component or None
-        :param default_messagetype: Default message type of the examined protocol.
-                                    This is important when assigning new message types,
-                                    to prevent overwriting already customized message types
+        :param messagetypes: Message types of the examined protocol
+        :type messagetypes: list[MessageType]
         """
         self.enabled = enabled
         self.backend = backend if backend is not None else self.Backend.python
@@ -41,7 +40,7 @@ class Component(metaclass=ABCMeta):
         self.predecessors = predecessors if isinstance(predecessors, list) else []
         """:type: list of Component """
 
-        self.default_messagetype = default_messagetype
+        self.messagetypes = messagetypes
 
     def find_field(self, messages):
         """
@@ -100,15 +99,15 @@ class Component(metaclass=ABCMeta):
 
             for msg_i in clustercontent:
                 msg = messages[msg_i]
-                if msg.message_type == self.default_messagetype:
+                if msg.message_type == self.messagetypes[0]:
                     # Message has default message type
                     # Copy the existing labels and create a new message type
                     # if it was not already done
                     try:
-                        msg_type = new_message_types[clustername]
-                    except KeyError:
+                        msg_type = next(mtype for mtype in self.messagetypes if mtype.name == clustername)
+                    except StopIteration:
                         msg_type = MessageType(name=clustername, iterable=msg.message_type)
                         msg_type.assigned_automatically = True
-                        new_message_types[clustername] = msg_type
+                        self.messagetypes.append(msg_type)
                     msg.message_type = msg_type
 

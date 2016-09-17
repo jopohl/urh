@@ -1273,6 +1273,8 @@ class CompareFrameController(QFrame):
         self.unsetCursor()
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(0)
 
+        self.fill_message_type_combobox() # in case message types were added by logic analyzer
+
     def show_proto_sniff_dialog(self):
         pm = self.project_manager
         signal = None

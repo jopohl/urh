@@ -11,8 +11,8 @@ from urh.signalprocessing.MessageType import MessageType
 class Address(Component):
     MIN_ADDRESS_LENGTH = 8  # Address should be at least one byte
 
-    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None, default_messagetype=None):
-        super().__init__(priority, predecessors, enabled, backend, default_messagetype)
+    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None, messagetypes=None):
+        super().__init__(priority, predecessors, enabled, backend, messagetypes)
         self.xor_matrix = xor_matrix
 
     def _py_find_field(self, messages):

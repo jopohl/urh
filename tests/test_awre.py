@@ -88,7 +88,7 @@ class TestAWRE(unittest.TestCase):
 
         self.assertEqual(len(self.protocol.message_types), 2)
         self.assertEqual(self.protocol.message_types[1].name, "ack")
-        self.assertIn(ack_address_label, self.protocol.message_types)
+        self.assertIn(ack_address_label, self.protocol.message_types[1])
 
         ack_messages = (1, 3, 5, 7, 9, 11, 13, 15, 17, 20)
         for i, msg in enumerate(self.protocol.messages):
@@ -152,7 +152,7 @@ class TestAWRE(unittest.TestCase):
 
     def test_message_type_assign(self):
         clusters = {"ack": {1, 17, 3, 20, 5, 7, 9, 11, 13, 15}, "default": {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19}}
-        com = Component(default_messagetype=self.protocol.default_message_type)
+        com = Component(messagetypes=self.protocol.message_types)
         com.assign_messagetypes(self.protocol.messages, clusters)
 
         for clustername, msg_indices in clusters.items():

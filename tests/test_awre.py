@@ -47,26 +47,26 @@ class TestAWRE(unittest.TestCase):
             message.participant = alice if i in alice_indices else bob
 
     def test_build_component_order(self):
-        expected_default = [Preamble(), Length(None), Address(None, None), SequenceNumber(), Type(), Flags()]
+        expected_default = [Preamble(), Length(None), Address(None), SequenceNumber(), Type(), Flags()]
 
         format_finder = FormatFinder(self.protocol)
 
         for expected, actual in zip(expected_default, format_finder.build_component_order()):
             assert type(expected) == type(actual)
 
-        expected_swapped = [Preamble(), Address(None, None), Length(None), SequenceNumber(), Type(), Flags()]
-        format_finder.length_component.priority = 3
-        format_finder.address_component.priority = 2
+        expected_swapped = [Preamble(), Address(None), Length(None), SequenceNumber(), Type(), Flags()]
+        format_finder.length_component.priority = 2
+        format_finder.address_component.priority = 1
 
         for expected, actual in zip(expected_swapped, format_finder.build_component_order()):
             assert type(expected) == type(actual)
 
         # Test duplicate Priority
-        format_finder.sequence_number_component.priority = 5
+        format_finder.sequence_number_component.priority = 4
         with self.assertRaises(ValueError) as context:
             format_finder.build_component_order()
             self.assertTrue('Duplicate priority' in context.exception)
-        format_finder.sequence_number_component.priority = 4
+        format_finder.sequence_number_component.priority = 3
         self.assertTrue(format_finder.build_component_order())
 
     def test_format_finding_rwe(self):
@@ -134,7 +134,7 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(preamble_label, enocean_protocol.default_message_type)
         self.assertIn(sync_label, enocean_protocol.default_message_type)
         self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
-
+        self.assertTrue(not any(lbl.name == "Address" for lbl in enocean_protocol.default_message_type))
 
     def test_address_candidate_finding(self):
         fh = CommonRange.from_hex
@@ -171,3 +171,10 @@ class TestAWRE(unittest.TestCase):
                 self.assertEqual(self.protocol.messages[msg].message_type.name, clustername, msg=str(msg))
 
 
+    def test_choose_candidate(self):
+
+        candidates1 = {'78e289': 8, '207078e2891b6033000000': 1, '57': 1, '20701b603378e289000c62': 1, '1b6033fd57': 1, '1b603300': 3, '7078e2891b6033000000': 2, '78e289757e': 1, '1b6033': 14, '701b603378e289': 2}
+        candidates2 = {'1b603300': 4, '701b603378e289': 2, '20701b603378e289000c62': 1, '000': 3, '0000': 19, '1b6033': 11, '78e2890000': 1, '00': 4, '7078e2891b6033000000': 2, '207078e2891b6033000000': 1, '78e289000': 1, '78e289': 7, '0': 7, '1b60330000': 3}
+
+        self.assertEqual(next(Address.choose_candidate_pair(candidates1)), ("1b6033", "78e289"))
+        self.assertEqual(next(Address.choose_candidate_pair(candidates2)), ("1b6033", "78e289"))

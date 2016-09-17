@@ -80,9 +80,11 @@ class Address(Component):
         scored_candidates = self.find_candidates([cr for crl in equal_ranges_per_participant.values() for cr in crl])
         """:type : dict[str, int] """
 
-        highscored = sorted(scored_candidates, key=scored_candidates.get, reverse=True)[:2]
+        highscored = next(self.choose_candidate_pair(scored_candidates))
+        assert len(highscored[0]) == len(highscored[1])
+
+        print(scored_candidates)
         print(sorted(scored_candidates, key=scored_candidates.get, reverse=True))
-        assert len(highscored[0]) == len(highscored[1]) # TODO: Perform aligning/take next highscored value if lengths do not match
 
         # Now get the common_ranges we need
         scored_candidates_per_participant = defaultdict(list)
@@ -177,6 +179,24 @@ class Address(Component):
                     result[lcs] += 1
 
         return result
+
+    @staticmethod
+    def choose_candidate_pair(candidates):
+        """
+        Choose a pair of address candidates ensuring they have the same length and starting with the highest scored ones
+
+        :type candidates: dict[str, int]
+        :param candidates: Count how often the longest common substrings appeared in the messages
+        :param n: How many candidates shall be chosen? This is the number of addresses = number of participants
+        :return:
+        """
+        highscored = sorted(candidates, key=candidates.get, reverse=True)
+        for i, h_i in enumerate(highscored):
+            for h_j in highscored[i+1:]:
+                if len(h_i) == len(h_j):
+                    yield (h_i, h_j)
+
+        raise StopIteration
 
     def __print_clustered(self, clustered_addresses):
         for bl in sorted(clustered_addresses):

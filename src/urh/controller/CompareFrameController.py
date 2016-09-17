@@ -1430,7 +1430,7 @@ class CompareFrameController(QFrame):
             hide = not msg.participant.show if msg.participant is not None else not self.participant_list_model.show_unassigned
             self.ui.tblViewProtocol.setRowHidden(i, hide)
 
-        self.ui.tblViewProtocol.hide_row() # Update data structures and call triggers after hiding rows
+        self.set_shown_protocols()
 
     def on_label_name_edited(self, protolabel: ProtocolLabel, message_type: MessageType):
         # Check if label with the same name is already in another message type.

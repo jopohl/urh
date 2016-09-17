@@ -1,6 +1,7 @@
 from abc import ABCMeta
 
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from enum import Enum
 
@@ -91,4 +92,23 @@ class Component(metaclass=ABCMeta):
         :type clusters: dict[str, set[int]]
         :return:
         """
-        pass
+        new_message_types = {}
+        for clustername, clustercontent in clusters.items():
+            if clustername == "default":
+                # Do not force the default message type
+                continue
+
+            for msg_i in clustercontent:
+                msg = messages[msg_i]
+                if msg.message_type == self.default_messagetype:
+                    # Message has default message type
+                    # Copy the existing labels and create a new message type
+                    # if it was not already done
+                    try:
+                        msg_type = new_message_types[clustername]
+                    except KeyError:
+                        msg_type = MessageType(name=clustername, iterable=msg.message_type)
+                        msg_type.assigned_automatically = True
+                        new_message_types[clustername] = msg_type
+                    msg.message_type = msg_type
+

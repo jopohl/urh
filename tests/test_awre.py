@@ -28,6 +28,8 @@ class TestAWRE(unittest.TestCase):
                 self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
+
+
         # Assign participants
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
@@ -61,17 +63,19 @@ class TestAWRE(unittest.TestCase):
         self.assertTrue(format_finder.build_component_order())
 
     def test_format_finding_rwe(self):
-        preamble_start = 0
-        preamble_end = 31
-        sync_start = 32
-        sync_end = 63
-        length_start = 64
-        length_end = 71
+        preamble_start, preamble_end = 0, 31
+        sync_start, sync_end = 32, 63
+        length_start, length_end = 64, 71
+        ack_address_start, ack_address_end = 72, 95
+        dst_address_start, dst_address_end = 88, 111
+        src_address_start, src_address_end = 112, 135
 
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
         sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, color_index=1)
         length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, color_index=2)
-
+        ack_address_label = ProtocolLabel(name="Address", start=ack_address_start, end=ack_address_end, color_index=3)
+        dst_address_label = ProtocolLabel(name="Address", start=dst_address_start, end=dst_address_end, color_index=4)
+        src_address_label = ProtocolLabel(name="Address", start=src_address_start, end=src_address_end, color_index=5)
 
         ff = FormatFinder(self.protocol, self.participants)
         ff.perform_iteration()
@@ -79,6 +83,21 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(preamble_label, self.protocol.default_message_type)
         self.assertIn(sync_label, self.protocol.default_message_type)
         self.assertIn(length_label, self.protocol.default_message_type)
+        self.assertIn(dst_address_label, self.protocol.default_message_type)
+        self.assertIn(src_address_label, self.protocol.default_message_type)
+
+        self.assertEqual(len(self.protocol.message_types), 2)
+        self.assertEqual(self.protocol.message_types[1].name, "ack")
+        self.assertIn(ack_address_label, self.protocol.message_types)
+
+        ack_messages = (1, 3, 5, 7, 9, 11, 13, 15, 17, 20)
+        for i, msg in enumerate(self.protocol.messages):
+            if i in ack_messages:
+                self.assertEqual(msg.message_type.name, "ack", msg=i)
+            else:
+                self.assertEqual(msg.message_type.name, "default", msg=i)
+
+
 
 
     def test_format_finding_enocean(self):
@@ -133,7 +152,7 @@ class TestAWRE(unittest.TestCase):
 
     def test_message_type_assign(self):
         clusters = {"ack": {1, 17, 3, 20, 5, 7, 9, 11, 13, 15}, "default": {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19}}
-        com = Component()
+        com = Component(default_messagetype=self.protocol.default_message_type)
         com.assign_messagetypes(self.protocol.messages, clusters)
 
         for clustername, msg_indices in clusters.items():

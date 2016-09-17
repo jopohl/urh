@@ -123,7 +123,7 @@ class Address(Component):
         # If the value doubles for the same participant in other range, then we need to create a new message type
         # We consider the default case (=default message type) to have addresses followed by each other
         # Furthermore, we assume if there is only one address per message type, it is the destination address
-        clusters = {"together": defaultdict(set), "isolated": defaultdict(set)}
+        clusters = {"default": defaultdict(set), "ack": defaultdict(set)}
         """:type: dict[str, dict[tuple[int.int],set[int]]]"""
 
         all_candidates = [cr for crl in scored_candidates_per_participant.values() for cr in crl]
@@ -133,38 +133,19 @@ class Address(Component):
             if any(c.start == candidate.start and c.end == candidate.end and c.bits != candidate.bits for c in all_candidates):
                 # Crossmatch! This is a address
                 if any(c.start == candidate.end or c.end == candidate.start for c in all_candidates):
-                     clusters["together"][(candidate.start, candidate.end)].update(candidate.messages)
+                     clusters["default"][(candidate.start, candidate.end)].update(candidate.messages)
                 else:
-                    clusters["isolated"][(candidate.start, candidate.end)].update(candidate.messages)
+                    clusters["ack"][(candidate.start, candidate.end)].update(candidate.messages)
 
-        # Merge clusters and create labels
-        print(clusters)
+
+        msg_clusters =  {cname: set(i for s in ranges.values() for i in s) for cname, ranges in clusters.items()}
+        self.assign_messagetypes(messages, msg_clusters)
 
         for participant, ranges in scored_candidates_per_participant.items():
             for rng in ranges:
                 for msg in rng.messages:
-                    messages[msg].message_type.add_protocol_label(rng.start, rng.end, name="Address", auto_created=True)
+                    messages[msg].message_type.add_protocol_label(rng.start, rng.end-1, name="Address", auto_created=True)
 
-        print(clusters)
-        print(scored_candidates_per_participant)
-
-       # print(scored_candidates)
-
-        # Now we perform a scoring of the address candidates. There are two ways to score:
-            # 1) Address appears as substring in other candidates
-            # 2) Opposite Address appears in same range for other participant
-
-        #self.__print_clustered(clustered_addresses)
-
-        # Now we search for ranges that are common in a cluster and contain different bit values. There are two possibilities:
-        #   1) If the protocol contains ACKs, these different values are the addresses or at least good candidates for them
-        #   2) If the protocol does not contain ACKs, these values contain both addresses and need to be splitted against each other
-        # We assume, that the protocol contains ACKs and if we do not find any use the strategy from 2).
-
-
-
-        #print(clustered_addresses)
-        # Step 2: Align sequences together (correct bit shifts, align to byte)
 
     @staticmethod
     def find_candidates(candidates):

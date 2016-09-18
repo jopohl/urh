@@ -49,7 +49,7 @@ class TestAutoAssignments(unittest.TestCase):
 
         msg_type = MessageType("autotest")
         msg_type.ruleset = Ruleset(Mode.all_apply, [Rule(start, end, "=", hex_value, 1)])
-        msg_type.assigned_automatically = True
+        msg_type.assigned_by_ruleset = True
 
         self.protocol.message_types.append(msg_type)
         self.protocol.update_auto_message_types()

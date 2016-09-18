@@ -14,7 +14,7 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "__id", "assigned_automatically", "ruleset"]
+    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
@@ -23,7 +23,7 @@ class MessageType(list):
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
-        self.assigned_automatically = False
+        self.assigned_by_ruleset = False
         self.ruleset = Ruleset() if ruleset is None else ruleset
 
     def __hash__(self):
@@ -31,7 +31,7 @@ class MessageType(list):
 
     @property
     def assign_manually(self):
-        return not self.assigned_automatically
+        return not self.assigned_by_ruleset
 
     @property
     def id(self) -> str:
@@ -110,7 +110,7 @@ class MessageType(list):
         return super().__getitem__(index)
 
     def to_xml(self) -> ET.Element:
-        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id, "assigned_automatically": "1" if self.assigned_automatically else "0"})
+        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id, "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0"})
         for lbl in self:
             result.append(lbl.to_xml(-1))
 
@@ -137,10 +137,10 @@ class MessageType(list):
     def from_xml(tag:  ET.Element):
         name = tag.get("name", "blank")
         id = tag.get("id", None)
-        assigned_auto = bool(int(tag.get("assigned_automatically", 0)))
+        assigned_auto = bool(int(tag.get("assigned_by_ruleset", 0)))
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag))
         result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
-        result.assigned_automatically = assigned_auto
+        result.assigned_by_ruleset = assigned_auto
         return result

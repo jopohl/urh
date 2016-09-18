@@ -787,7 +787,7 @@ class ProtocolAnalyzer(object):
 
     def update_auto_message_types(self):
         for message in self.messages:
-            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_automatically):
+            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_by_ruleset):
                 if message_type.ruleset.applies_for_message(message):
                     message.message_type = message_type
                     break

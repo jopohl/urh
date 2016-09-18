@@ -91,7 +91,6 @@ class Component(metaclass=ABCMeta):
         :type clusters: dict[str, set[int]]
         :return:
         """
-        new_message_types = {}
         for clustername, clustercontent in clusters.items():
             if clustername == "default":
                 # Do not force the default message type

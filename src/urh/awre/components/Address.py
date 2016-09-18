@@ -143,11 +143,27 @@ class Address(Component):
         msg_clusters =  {cname: set(i for s in ranges.values() for i in s) for cname, ranges in clusters.items()}
         self.assign_messagetypes(messages, msg_clusters)
 
-        # TODO: Consider also SRC and DST Addresses, if there is an ACK (in ACK it is always DST Address)
+        # Now try to find the addresses of the participants to separate SRC and DST address later
+        self.assign_participant_addresses(messages, list(scored_candidates_per_participant.keys()), highscored)
+
+
         for participant, ranges in scored_candidates_per_participant.items():
             for rng in ranges:
-                for msg in rng.messages:
-                    messages[msg].message_type.add_protocol_label(rng.start, rng.end-1, name="Address", auto_created=True)
+                for msg_index in rng.messages:
+                    msg = messages[msg_index]
+
+                    if msg.message_type.name == "ack":
+                       name = "DST address"
+                    elif msg.participant:
+                        if rng.hex_value == msg.participant.address_hex:
+                            name = "SRC address"
+                        else:
+                            name = "DST address"
+                    else:
+                        name = "Address"
+
+                    if not any(lbl.name == name and lbl.auto_created for lbl in msg.message_type):
+                        msg.message_type.add_protocol_label(rng.start, rng.end - 1, name=name, auto_created=True)
 
 
     @staticmethod
@@ -197,6 +213,41 @@ class Address(Component):
                     yield (h_i, h_j)
 
         raise StopIteration
+
+    @staticmethod
+    def assign_participant_addresses(messages, participants, hex_addresses):
+        """
+
+        :type participants: list[urh.signalprocessing.Participant.Participant]
+        :type hex_addresses: tuple[str]
+        :type messages: list[urh.signalprocessing.Message.Message]
+        :return:
+        """
+        try:
+            participants.remove(None)
+        except ValueError:
+            pass
+
+        if len(participants) != len(hex_addresses):
+            return
+
+        if len(participants) == 0:
+            return #  No chance
+
+
+        score = {p: {addr: 0 for addr in hex_addresses} for p in participants}
+
+        for i in range(1, len(messages)):
+            msg = messages[i]
+            prev_msg = messages[i-1]
+
+            if msg.message_type.name == "ack":
+                addr = next(addr for addr in hex_addresses if addr in msg.decoded_hex_str)
+                if addr in prev_msg.decoded_hex_str:
+                    score[prev_msg.participant][addr] += 1
+
+        for p in participants:
+            p.address_hex = max(score[p], key=score[p].get)
 
     def __print_clustered(self, clustered_addresses):
         for bl in sorted(clustered_addresses):

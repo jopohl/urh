@@ -80,9 +80,9 @@ class TestAWRE(unittest.TestCase):
         preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
         sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, color_index=1)
         length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, color_index=2)
-        ack_address_label = ProtocolLabel(name="Address", start=ack_address_start, end=ack_address_end, color_index=3)
-        dst_address_label = ProtocolLabel(name="Address", start=dst_address_start, end=dst_address_end, color_index=4)
-        src_address_label = ProtocolLabel(name="Address", start=src_address_start, end=src_address_end, color_index=5)
+        ack_address_label = ProtocolLabel(name="DST address", start=ack_address_start, end=ack_address_end, color_index=3)
+        dst_address_label = ProtocolLabel(name="DST address", start=dst_address_start, end=dst_address_end, color_index=4)
+        src_address_label = ProtocolLabel(name="SRC address", start=src_address_start, end=src_address_end, color_index=5)
 
         ff = FormatFinder(self.protocol, self.participants)
         ff.perform_iteration()
@@ -134,7 +134,7 @@ class TestAWRE(unittest.TestCase):
         self.assertIn(preamble_label, enocean_protocol.default_message_type)
         self.assertIn(sync_label, enocean_protocol.default_message_type)
         self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
-        self.assertTrue(not any(lbl.name == "Address" for lbl in enocean_protocol.default_message_type))
+        self.assertTrue(not any("address" in lbl.name.lower() for lbl in enocean_protocol.default_message_type))
 
     def test_address_candidate_finding(self):
         fh = CommonRange.from_hex
@@ -170,6 +170,12 @@ class TestAWRE(unittest.TestCase):
             for msg in msg_indices:
                 self.assertEqual(self.protocol.messages[msg].message_type.name, clustername, msg=str(msg))
 
+        # do it again and ensure nothing changes
+        com.assign_messagetypes(self.protocol.messages, clusters)
+        for clustername, msg_indices in clusters.items():
+            for msg in msg_indices:
+                self.assertEqual(self.protocol.messages[msg].message_type.name, clustername, msg=str(msg))
+
 
     def test_choose_candidate(self):
 
@@ -185,3 +191,13 @@ class TestAWRE(unittest.TestCase):
 
         ff = FormatFinder(self.zero_crc_protocol, [])
         ff.perform_iteration()
+
+    def test_assign_participant_addresses(self):
+        clusters = {"ack": {1, 17, 3, 20, 5, 7, 9, 11, 13, 15}, "default": {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19}}
+        com = Component(messagetypes=self.protocol.message_types)
+        com.assign_messagetypes(self.protocol.messages, clusters)
+
+        Address.assign_participant_addresses(self.protocol.messages, self.participants, ("78e289", "1b6033"))
+
+        self.assertEqual(self.participants[0].address_hex, "78e289")
+        self.assertEqual(self.participants[1].address_hex, "1b6033")

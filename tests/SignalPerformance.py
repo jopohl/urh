@@ -5,7 +5,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestPerformance(unittest.TestCase):
+class TestSignalPerformance(unittest.TestCase):
     def setUp(self):
         self.prefix = "[PERF] "
 

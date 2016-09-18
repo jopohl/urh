@@ -37,8 +37,7 @@ class TestProtocolTable(unittest.TestCase):
         QTest.qWait(10)
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
 
-
-    def test_performance(self):
+    def test_model_data_performance(self):
         indx = self.cframe.protocol_model.createIndex(int(self.NUM_MESSAGES / 2), int(self.BITS_PER_MESSAGE / 2))
         roles = (Qt.DisplayRole, Qt.BackgroundColorRole, Qt.TextAlignmentRole, Qt.TextColorRole, Qt.FontRole)
 
@@ -47,6 +46,23 @@ class TestProtocolTable(unittest.TestCase):
             self.cframe.protocol_model.data(indx, role=role)
             microseconds = (time.time()-t)*10**6
             self.assertLess(microseconds, 30)
+
+    def test_set_shown_protocols_performance(self):
+        t = time.time()
+        self.cframe.set_shown_protocols()
+        print("{} lines/{} columns: \t\t {:.2f}s".format(self.cframe.protocol_model.row_count,
+                                                       self.cframe.protocol_model.col_count,
+                                                       time.time()-t))
+
+        for _ in range(9):
+            self.cframe.add_protocol(self.__build_protocol())
+
+        t = time.time()
+        self.cframe.set_shown_protocols()
+        print("{} lines/{} columns: \t {:.2f}s".format(self.cframe.protocol_model.row_count,
+                                                       self.cframe.protocol_model.col_count,
+                                                       time.time()-t))
+
 
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal=None)

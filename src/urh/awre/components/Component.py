@@ -106,6 +106,7 @@ class Component(metaclass=ABCMeta):
                         msg_type = next(mtype for mtype in self.messagetypes if mtype.name == clustername)
                     except StopIteration:
                         msg_type = MessageType(name=clustername, iterable=msg.message_type)
+                        msg_type.assigned_by_logic_analyzer = True
                         self.messagetypes.append(msg_type)
                     msg.message_type = msg_type
 

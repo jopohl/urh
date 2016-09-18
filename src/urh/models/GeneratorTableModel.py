@@ -14,7 +14,7 @@ from urh.util.Logger import logger
 
 class GeneratorTableModel(TableModel):
     def __init__(self, tree_root_item: ProtocolTreeItem, modulators, parent = None):
-        super().__init__(parent)
+        super().__init__(participants=[], parent=parent)
         self.protocol = ProtocolAnalyzerContainer(modulators)
         self.tree_root_item = tree_root_item
         self.dropped_row = -1

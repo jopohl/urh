@@ -10,7 +10,7 @@ from urh.cythonext.signalFunctions import Symbol
 
 
 class TableModel(QAbstractTableModel):
-    def __init__(self, parent=None):
+    def __init__(self, participants, parent=None):
         super().__init__(parent)
         self.controller = None
         """:type: CompareFrameController or GeneratorTabController """
@@ -48,6 +48,20 @@ class TableModel(QAbstractTableModel):
         """:type: dict[int, set[int]] """
 
         self.undo_stack = QUndoStack()
+
+        self.__participants = participants
+
+    @property
+    def participants(self):
+        return self.__participants
+
+    @participants.setter
+    def participants(self, value):
+        self.__participants = value
+        for msg in self.protocol.messages:
+            if msg.participant not in self.__participants:
+                msg.participant = None
+
 
     @property
     def proto_view(self):

@@ -143,26 +143,26 @@ class GeneratorTableView(TableView):
 
         selected_label_indx = self.model().get_selected_label_index(row=self.rowAt(event.pos().y()),column=self.columnAt(event.pos().x()))
 
-        if selected_label_indx == -1:
-            fuzzingAction = menu.addAction("Create Fuzzing Label...")
+        if self.model().row_count > 0:
+            if selected_label_indx == -1:
+                fuzzingAction = menu.addAction("Create Fuzzing Label...")
+            else:
+                fuzzingAction = menu.addAction("Edit Fuzzing Label...")
+
+            menu.addSeparator()
+
+            column_menu = menu.addMenu("Add column")
+
+            insertColLeft = column_menu.addAction("on the left")
+            insertColRight = column_menu.addAction("on the right")
+
+            duplicateAction = menu.addAction("Duplicate Line")
+
+            menu.addSeparator()
+            clearAction = menu.addAction("Clear Table")
+
         else:
-            fuzzingAction = menu.addAction("Edit Fuzzing Label...")
-
-        menu.addSeparator()
-        column_menu = menu.addMenu("Add column")
-
-        insertColLeft = column_menu.addAction("on the left")
-        insertColRight = column_menu.addAction("on the right")
-
-        duplicateAction = menu.addAction("Duplicate Line")
-        menu.addSeparator()
-        clearAction = menu.addAction("Clear Table")
-
-        if min_row == -1:
-            fuzzingAction.setEnabled(False)
-
-        if self.model().col_count == 0:
-            clearAction.setEnabled(False)
+            insertColLeft, insertColRight, duplicateAction, clearAction, fuzzingAction = 1, 1, 1, 1, 1
 
         selected_rows = list(range(min_row, max_row + 1))
 

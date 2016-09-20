@@ -106,6 +106,9 @@ class GeneratorTableModel(TableModel):
         self.update()
 
     def get_selected_label_index(self, row: int, column: int):
+        if self.row_count == 0:
+            return -1
+
         try:
             msg = self.protocol.messages[row]
         except IndexError:

@@ -1,0 +1,4 @@
+FROM kalilinux/kali-linux-docker
+
+RUN apt-get -y update && apt-get -y dist-upgrade && apt-get clean
+RUN apt-get -y install python3-numpy python3-pyqt5 git g++ libpython3-dev libhackrf-dev

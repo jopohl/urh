@@ -6,3 +6,6 @@ sudo docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix ubuntu1
 
 # On Ubuntu Host:
 xhost local:root # For enabling GUI
+
+# With USB Support (for HackRF)
+docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --privileged -v /dev/bus/usb:/dev/bus/usb  kali bash

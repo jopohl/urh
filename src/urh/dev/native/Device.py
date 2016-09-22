@@ -70,11 +70,11 @@ class Device(QObject):
     def init_recv_buffer(self):
         if self.receive_buffer is None:
             if self.is_ringbuffer:
-                nsamples = 2 ** 16
+                nsamples = self.sample_rate
             else:
                 # Take 60% of avail memory
-                nsamples = int(0.6*(psutil.virtual_memory().available / 8))
-            self.receive_buffer = np.zeros(nsamples, dtype=np.complex64, order='C')
+                nsamples = 0.6*(psutil.virtual_memory().available / 8)
+            self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
             logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
@@ -247,7 +247,7 @@ class Device(QObject):
                             if self.is_ringbuffer:
                                 self.current_recv_index = 0
                                 if nsamples >= len(self.receive_buffer):
-                                   # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
+                                    logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
                                     nsamples = len(self.receive_buffer) - 1
 
                             else:

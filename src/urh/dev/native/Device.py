@@ -69,7 +69,11 @@ class Device(QObject):
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            nsamples = int(0.6*(psutil.virtual_memory().available / 8))
+            if self.is_ringbuffer:
+                nsamples = 2 ** 16
+            else:
+                # Take 60% of avail memory
+                nsamples = int(0.6*(psutil.virtual_memory().available / 8))
             self.receive_buffer = np.zeros(nsamples, dtype=np.complex64, order='C')
             logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 

@@ -98,6 +98,8 @@ class HackRF(Device):
     def stop_rx_mode(self, msg):
         self.is_receiving = False
 
+        logger.info("HackRF: Stopping RX Mode: "+msg)
+
         if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
             try:
                 self.read_queue_thread.join(0.001)

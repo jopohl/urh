@@ -1,6 +1,7 @@
 import socket
 
 import numpy as np
+import psutil
 from PyQt5.QtCore import pyqtSignal
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
@@ -11,20 +12,15 @@ class ReceiverThread(AbstractBaseThread):
 
 
     def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1',
-                 parent=None, initial_bufsize=8e9, is_ringbuffer=False):
+                 parent=None,  is_ringbuffer=False):
         super().__init__(sample_rate, freq, gain, bandwidth, True, ip, parent)
 
-        self.initial_bufsize = initial_bufsize
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         self.data = None
 
     def init_recv_buffer(self):
-        while True:
-            try:
-                self.data = np.zeros(int(self.initial_bufsize), dtype=np.complex64)
-                break
-            except (OSError, MemoryError, ValueError):
-                self.initial_bufsize /= 2
+        nsamples = int(0.6 * (psutil.virtual_memory().available / 8))
+        self.data = np.zeros(nsamples, dtype=np.complex64)
 
     def run(self):
         if self.data is None:

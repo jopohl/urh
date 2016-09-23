@@ -8,8 +8,8 @@ from urh.util.Logger import logger
 class HackRF(Device):
     BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
 
-    def __init__(self, bw, freq, gain, srate, bufsize=2e9, is_ringbuffer=False):
-        super().__init__(bw, freq, gain, srate, bufsize, is_ringbuffer)
+    def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
+        super().__init__(bw, freq, gain, srate, is_ringbuffer)
         self.success = 0
         self.error_not_open = -4242
 
@@ -97,6 +97,8 @@ class HackRF(Device):
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
+
+        logger.info("HackRF: Stopping RX Mode: "+msg)
 
         if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
             try:

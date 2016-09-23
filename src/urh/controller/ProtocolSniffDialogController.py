@@ -7,6 +7,7 @@ from urh import constants
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_proto_sniff import Ui_SniffProtocol
 from urh.util.Errors import Errors
+from urh.util.Logger import logger
 
 
 class ProtocolSniffDialogController(QDialog):
@@ -170,6 +171,7 @@ class ProtocolSniffDialogController(QDialog):
         self.sniffer.device_name = dev
         self.ui.lineEditIP.setVisible(dev == "USRP")
         self.ui.labelIP.setVisible(dev == "USRP")
+
 
     @pyqtSlot()
     def on_start_clicked(self):

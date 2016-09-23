@@ -7,6 +7,7 @@ from abc import abstractmethod
 
 import time
 
+import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh.util.Formatter import Formatter
@@ -16,7 +17,7 @@ class Device(QObject):
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
 
-    def __init__(self, bw, freq, gain, srate, bufsize=8e9, is_ringbuffer=False):
+    def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
         super().__init__()
 
         self.__bandwidth = bw
@@ -52,8 +53,6 @@ class Device(QObject):
         self.device_ip = "192.168.10.2" # For USRP
 
         self.receive_buffer = None
-        self.receive_buffer_size = bufsize
-
 
         self.spectrum_x = None
         self.spectrum_y = None
@@ -70,13 +69,13 @@ class Device(QObject):
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            while True:
-                try:
-                    self.receive_buffer = np.zeros(int(self.receive_buffer_size), dtype=np.complex64, order='C')
-                    break
-                except (OSError, MemoryError, ValueError):
-                    self.receive_buffer_size //= 2
-        logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer_size/(1024*1024)))
+            if self.is_ringbuffer:
+                nsamples = self.sample_rate
+            else:
+                # Take 60% of avail memory
+                nsamples = 0.6*(psutil.virtual_memory().available / 8)
+            self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
+            logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -248,7 +247,7 @@ class Device(QObject):
                             if self.is_ringbuffer:
                                 self.current_recv_index = 0
                                 if nsamples >= len(self.receive_buffer):
-                                   # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
+                                    logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
                                     nsamples = len(self.receive_buffer) - 1
 
                             else:

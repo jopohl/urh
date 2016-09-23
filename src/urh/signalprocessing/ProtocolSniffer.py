@@ -84,7 +84,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            gc.collect()
             self.rcv_device = VirtualDevice(self.backend_handler, value, self.rcv_device.mode, self.rcv_device.bandwidth, self.rcv_device.frequency, self.rcv_device.gain,
                                         self.rcv_device.sample_rate, device_ip=self.rcv_device.ip, is_ringbuffer=True)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
@@ -141,7 +140,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
                 rssi = np.mean(np.abs(signal._fulldata[start:end]))
-                message = Message(bits, pause, bit_len=bit_len, rssi=rssi)
+                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type)
                 self.messages.append(message)
                 first_msg = False
             else:
@@ -179,7 +178,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
                                 signal.tolerance, signal.modulation_type)
 
-        bit_data, pauses = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+
 
         return bool(bit_data)
 

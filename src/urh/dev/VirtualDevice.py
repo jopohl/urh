@@ -64,11 +64,10 @@ class VirtualDevice(QObject):
             name = self.name.lower()
             if name in map(str.lower, BackendHandler.DEVICE_NAMES):
                 is_ringbuffer = self.mode == Mode.spectrum or is_ringbuffer
-                recv_bufsize = 0.25 * 1024 * 1024 if self.mode == Mode.spectrum else 2 * (1024 ** 3)
 
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
-                    self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer, bufsize=recv_bufsize)
+                    self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:

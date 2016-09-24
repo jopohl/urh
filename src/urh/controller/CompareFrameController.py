@@ -1174,8 +1174,7 @@ class CompareFrameController(QFrame):
         visible_label_columns = set()
         for lbl in self.proto_analyzer.protocol_labels:
             if lbl.show:
-                start, end = self.proto_analyzer.get_label_range(lbl, self.ui.cbProtoView.currentIndex(),
-                                                   True)
+                start, end = self.proto_analyzer.messages[0].get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
                 visible_label_columns |= (set(range(start, end)))
 
         visible_rows = [i for i in range(self.protocol_model.row_count) if not self.ui.tblViewProtocol.isRowHidden(i)

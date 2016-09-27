@@ -35,6 +35,10 @@ class OptionsController(QDialog):
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
+        self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
+
+        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
+        self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
@@ -76,6 +80,7 @@ class OptionsController(QDialog):
 
     def create_connects(self):
         self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.handle_spinbox_symbol_treshold_value_changed)
+        self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
         self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
         self.ui.listWidgetDevices.currentRowChanged.connect(self.show_selected_device_params)
@@ -86,7 +91,7 @@ class OptionsController(QDialog):
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
         self.ui.checkBoxAlignLabels.clicked.connect(self.on_checkbox_align_labels_clicked)
-
+        self.ui.checkBoxDefaultFuzzingPause.clicked.connect(self.on_checkbox_default_fuzzing_pause_clicked)
 
     def set_device_enabled_suffix(self):
         for i in range(self.ui.listWidgetDevices.count()):
@@ -210,6 +215,13 @@ class OptionsController(QDialog):
 
     def on_checkbox_hold_shift_to_drag_clicked(self):
         constants.SETTINGS.setValue("hold_shift_to_drag", bool(self.ui.checkBoxHoldShiftToDrag.isChecked()))
+
+    def on_checkbox_default_fuzzing_pause_clicked(self):
+        constants.SETTINGS.setValue('use_default_fuzzing_pause', bool(self.ui.checkBoxDefaultFuzzingPause.isChecked()))
+        self.ui.doubleSpinBoxFuzzingPause.setEnabled(bool(self.ui.checkBoxDefaultFuzzingPause.isChecked()))
+
+    def on_spinbox_fuzzing_pause_value_changed(self):
+        constants.SETTINGS.setValue("default_fuzzing_pause", int(self.ui.doubleSpinBoxFuzzingPause.value()))
 
     @pyqtSlot()
     def on_python2_exe_path_edited(self):

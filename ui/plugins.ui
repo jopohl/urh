@@ -56,7 +56,7 @@
          <property name="readOnly">
           <bool>true</bool>
          </property>
-         <property name="placeholderText" stdset="0">
+         <property name="placeholderText">
           <string/>
          </property>
         </widget>
@@ -72,12 +72,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>250</height>
-      </size>
      </property>
      <property name="maximumSize">
       <size>

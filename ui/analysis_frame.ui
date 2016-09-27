@@ -16,12 +16,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>0</width>
-    <height>0</height>
-   </size>
-  </property>
   <property name="focusPolicy">
    <enum>Qt::ClickFocus</enum>
   </property>
@@ -66,12 +60,6 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
            </property>
            <property name="maximumSize">
             <size>
@@ -136,12 +124,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
              </property>
              <property name="styleSheet">
               <string notr="true">QLabel
@@ -231,12 +213,6 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>0</height>
-              </size>
-             </property>
              <property name="acceptDrops">
               <bool>false</bool>
              </property>
@@ -272,12 +248,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>150</width>
-               <height>0</height>
-              </size>
              </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -342,12 +312,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
              </property>
              <property name="styleSheet">
               <string notr="true">QLabel
@@ -569,12 +533,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>40</width>
-               <height>0</height>
-              </size>
              </property>
              <property name="text">
               <string>0</string>

@@ -611,24 +611,10 @@
       </spacer>
      </item>
      <item row="2" column="0" colspan="2">
-      <widget class="ZoomableGraphicView" name="graphicsView_signal">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
+      <widget class="ZoomableGraphicView" name="graphicsView_signal"/>
      </item>
      <item row="3" column="0" colspan="2">
-      <widget class="ZoomableGraphicView" name="graphicsView_decoded">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
+      <widget class="ZoomableGraphicView" name="graphicsView_decoded"/>
      </item>
     </layout>
    </item>

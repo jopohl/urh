@@ -15,7 +15,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(FAnalysis.sizePolicy().hasHeightForWidth())
         FAnalysis.setSizePolicy(sizePolicy)
-        FAnalysis.setMinimumSize(QtCore.QSize(0, 0))
         FAnalysis.setFocusPolicy(QtCore.Qt.ClickFocus)
         FAnalysis.setAcceptDrops(True)
         FAnalysis.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -41,7 +40,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSignalName.sizePolicy().hasHeightForWidth())
         self.lSignalName.setSizePolicy(sizePolicy)
-        self.lSignalName.setMinimumSize(QtCore.QSize(0, 0))
         self.lSignalName.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lSignalName.setAcceptDrops(False)
         self.lSignalName.setObjectName("lSignalName")
@@ -72,7 +70,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSearchTotal.sizePolicy().hasHeightForWidth())
         self.lSearchTotal.setSizePolicy(sizePolicy)
-        self.lSearchTotal.setMinimumSize(QtCore.QSize(20, 0))
         self.lSearchTotal.setStyleSheet("QLabel\n"
 "{\n"
 "    qproperty-alignment: AlignCenter;\n"
@@ -114,7 +111,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEditSearch.sizePolicy().hasHeightForWidth())
         self.lineEditSearch.setSizePolicy(sizePolicy)
-        self.lineEditSearch.setMinimumSize(QtCore.QSize(70, 0))
         self.lineEditSearch.setAcceptDrops(False)
         self.lineEditSearch.setClearButtonEnabled(True)
         self.lineEditSearch.setObjectName("lineEditSearch")
@@ -133,7 +129,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lTime.sizePolicy().hasHeightForWidth())
         self.lTime.setSizePolicy(sizePolicy)
-        self.lTime.setMinimumSize(QtCore.QSize(150, 0))
         self.lTime.setTextFormat(QtCore.Qt.PlainText)
         self.lTime.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.lTime.setObjectName("lTime")
@@ -165,7 +160,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSearchCurrent.sizePolicy().hasHeightForWidth())
         self.lSearchCurrent.setSizePolicy(sizePolicy)
-        self.lSearchCurrent.setMinimumSize(QtCore.QSize(20, 0))
         self.lSearchCurrent.setStyleSheet("QLabel\n"
 "{\n"
 "    qproperty-alignment: AlignCenter;\n"
@@ -256,7 +250,6 @@ class Ui_FAnalysis(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lNumSelectedColumns.sizePolicy().hasHeightForWidth())
         self.lNumSelectedColumns.setSizePolicy(sizePolicy)
-        self.lNumSelectedColumns.setMinimumSize(QtCore.QSize(40, 0))
         self.lNumSelectedColumns.setObjectName("lNumSelectedColumns")
         self.horizontalLayout_3.addWidget(self.lNumSelectedColumns)
         self.lColumnsSelectedText = QtWidgets.QLabel(self.frame_2)

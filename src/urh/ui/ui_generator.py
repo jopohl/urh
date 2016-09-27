@@ -113,7 +113,6 @@ class Ui_GeneratorTab(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lEncodingValue.sizePolicy().hasHeightForWidth())
         self.lEncodingValue.setSizePolicy(sizePolicy)
-        self.lEncodingValue.setMinimumSize(QtCore.QSize(0, 0))
         self.lEncodingValue.setObjectName("lEncodingValue")
         self.modulationLayout.addWidget(self.lEncodingValue, 0, 1, 1, 1)
         self.lSampleRate = QtWidgets.QLabel(self.frame_2)

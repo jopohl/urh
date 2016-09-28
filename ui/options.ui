@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabInterpretation">
       <attribute name="title">
@@ -146,7 +146,7 @@
       <attribute name="title">
        <string>Generation</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -158,6 +158,9 @@
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBoxDefaultFuzzingPause">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you disable the default pause, the pause of the fuzzed message will be used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Use a default pause for fuzzed messages</string>
           </property>

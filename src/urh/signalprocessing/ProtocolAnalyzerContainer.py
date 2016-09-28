@@ -72,7 +72,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         except Exception as e:
             logger.error("Duplicating line ", str(e))
 
-    def fuzz(self, mode: FuzzMode):
+    def fuzz(self, mode: FuzzMode, default_pause=None):
         result = []
         appd_result = result.append
 
@@ -97,7 +97,8 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 for start, end, fuz_val in combination:
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
 
-                fuz_msg = Message(plain_bits=cpy_bits, pause=msg.pause,
+                pause = default_pause if default_pause is not None else msg.pause
+                fuz_msg = Message(plain_bits=cpy_bits, pause=pause,
                                   rssi=msg.rssi, message_type=msg.message_type.copy_for_fuzzing(),
                                   modulator_indx=msg.modulator_indx,
                                   decoder=msg.decoder, fuzz_created=True)
@@ -106,28 +107,28 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.messages = result
         """:type: list of Message """
 
-    def fuzz_successive(self):
+    def fuzz_successive(self, default_pause=None):
         """
         Führt ein sukzessives Fuzzing über alle aktiven Fuzzing Label durch.
         Sequentiell heißt, ein Label wird durchgefuzzt und alle anderen Labels bleiben auf Standardwert.
         Das entspricht dem Vorgang nacheinander immer nur ein Label aktiv zu setzen.
         """
-        self.fuzz(FuzzMode.successive)
+        self.fuzz(FuzzMode.successive, default_pause=default_pause)
 
-    def fuzz_concurrent(self):
+    def fuzz_concurrent(self, default_pause=None):
         """
         Führt ein gleichzeitiges Fuzzing durch, das heißt bei mehreren Labels pro Message werden alle Labels
         gleichzeitig iteriert. Wenn ein Label keine FuzzValues mehr übrig hat,
         wird der erste Fuzzing Value (per Definition der Standardwert) genommen.
         """
-        self.fuzz(FuzzMode.concurrent)
+        self.fuzz(FuzzMode.concurrent, default_pause=default_pause)
 
-    def fuzz_exhaustive(self):
+    def fuzz_exhaustive(self, default_pause=None):
         """
         Führt ein vollständiges Fuzzing durch. D.h. wenn es mehrere Label pro Message gibt, werden alle
         möglichen Kombinationen erzeugt (Kreuzprodukt!)
         """
-        self.fuzz(FuzzMode.exhaustive)
+        self.fuzz(FuzzMode.exhaustive, default_pause=default_pause)
 
     def create_fuzzing_label(self, start, end, msg_index) -> ProtocolLabel:
         fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(start=start, end=end)

@@ -84,7 +84,7 @@ def get_device_modules():
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
-install_requires = ["numpy"]
+install_requires = ["numpy", "psutil"]
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
 

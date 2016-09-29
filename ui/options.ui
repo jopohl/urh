@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabInterpretation">
       <attribute name="title">
@@ -141,6 +141,50 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tabGeneration">
+      <attribute name="title">
+       <string>Generation</string>
+      </attribute>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>299</width>
+         <height>53</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxDefaultFuzzingPause">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you disable the default pause, the pause of the fuzzed message will be used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Use a default pause for fuzzed messages</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="KillerDoubleSpinBox" name="doubleSpinBoxFuzzingPause">
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelFuzzingSamples">
+          <property name="text">
+           <string>Samples</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabView">
       <attribute name="title">
@@ -406,6 +450,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KillerDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>urh.ui.KillerDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

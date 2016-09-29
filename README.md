@@ -24,7 +24,7 @@ Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 # Installation
 ## Requirements
 - Python 3.4+
-- numpy
+- numpy / psutil
 - PyQt5
 - C++ Compiler
 

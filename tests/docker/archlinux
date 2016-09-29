@@ -3,8 +3,6 @@ RUN mkdir -p /root/.gnupg
 RUN pacman -Sy --noconfirm archlinux-keyring
 RUN pacman -Syu --noconfirm && pacman-db-upgrade
 RUN pacman -S --noconfirm ca-certificates ca-certificates-mozilla
-RUN pacman -S --noconfirm ttf-dejavu
-# RUN pacman -S --noconfirm git curl base-devel python-numpy python-pyqt5 gcc xorg-server xorg-xinit xorg-utils xorg-server-utils ttf-dejavu
 RUN pacman -S --noconfirm curl base-devel
 
 RUN useradd -m -G wheel -s /bin/bash dockeruser

@@ -70,7 +70,7 @@ class Device(QObject):
     def init_recv_buffer(self):
         if self.receive_buffer is None:
             if self.is_ringbuffer:
-                nsamples = self.sample_rate
+                nsamples = 10**5
             else:
                 # Take 60% of avail memory
                 nsamples = 0.6*(psutil.virtual_memory().free / 8)

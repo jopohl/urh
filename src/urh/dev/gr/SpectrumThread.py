@@ -1,9 +1,6 @@
 import socket
-
 import numpy as np
-
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
-
 
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1', parent=None):

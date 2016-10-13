@@ -61,6 +61,7 @@ class Signal(QObject):
             if not self.wav_mode:
                 if not filename.endswith(".coco"):
                     if filename.endswith(".complex16"):
+                        # two 8 bit unsigned integers
                         raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
                         self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
                         self._fulldata.real = (raw['r'] - 128).astype(np.int8) / 128.0

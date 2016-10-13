@@ -5,6 +5,7 @@ import tempfile
 import wave
 import zipfile
 
+import numpy as np
 from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
@@ -56,7 +57,7 @@ def uncompress_archives(filenames, temp_dir):
 def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="Save signal"):
     global RECENT_PATH
     if caption == "Save signal":
-        filter = "Complex files (*.complex);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
+        filter = "Complex files (*.complex);;Complex16 files (*.complex16);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         default_suffix = "complex"
         if wav_only:
             filter = "wav files (*.wav);;all files (*)"
@@ -133,7 +134,13 @@ def save_data(data, filename: str):
 
 def save_signal(signal):
     filename = signal.filename
-    data = signal.data if not filename.endswith(".wav") else signal.wave_data
+    if filename.endswith(".wav"):
+        data = signal.wave_data
+    elif filename.endswith(".complex16"):
+        data = ((128 * signal.data.view(np.float32)) + 128).astype(np.uint8)
+    else:
+        data = signal.data
+
     save_data(data, filename)
 
 def rewrite_zip(zipfname):

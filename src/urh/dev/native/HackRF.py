@@ -35,17 +35,17 @@ class HackRF(Device):
             -9999: "HACKRF_ERROR_OTHER"
         }
 
-        self.__lut = np.zeros(0xffff + 1, dtype=np.complex64)
-        self.little_endian = False
-        for i in range(0, 0xffff + 1):
-            if self.little_endian:
-                real = (float(np.int8(i & 0xff))) * (1.0 / 128.0)
-                imag = (float(np.int8(i >> 8))) * (1.0 / 128.0)
-            else:
-                real = (float(np.int8(i >> 8))) * (1.0 / 128.0)
-                imag = (float(np.int8(i & 0xff))) * (1.0 / 128.0)
-
-            self.__lut[i] = complex(real, imag)
+        # self.__lut = np.zeros(0xffff + 1, dtype=np.complex64)
+        # self.little_endian = False
+        # for i in range(0, 0xffff + 1):
+        #     if self.little_endian:
+        #         real = (float(np.int8(i & 0xff))) * (1.0 / 128.0)
+        #         imag = (float(np.int8(i >> 8))) * (1.0 / 128.0)
+        #     else:
+        #         real = (float(np.int8(i >> 8))) * (1.0 / 128.0)
+        #         imag = (float(np.int8(i & 0xff))) * (1.0 / 128.0)
+        #
+        #     self.__lut[i] = complex(real, imag)
 
     def reopen(self):
         if self.is_open:
@@ -187,4 +187,4 @@ class HackRF(Device):
 
     def pack_complex(self, complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
-        return (128 * complex_samples.view(np.float32)).astype(np.uint8).tobytes()
+        return (128 * complex_samples.view(np.float32)).astype(np.int8).tobytes()

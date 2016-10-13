@@ -60,7 +60,13 @@ class Signal(QObject):
             # Daten auslesen
             if not self.wav_mode:
                 if not filename.endswith(".coco"):
-                    self._fulldata = np.fromfile(filename, dtype=np.complex64)  # Uncompressed
+                    if filename.endswith(".complex16"):
+                        raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
+                        self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
+                        self._fulldata.real = (raw['r'] - 128).astype(np.int8) / 128.0
+                        self._fulldata.imag = (raw['i'] - 128).astype(np.int8) / 128.0
+                    else:
+                        self._fulldata = np.fromfile(filename, dtype=np.complex64)  # Uncompressed
                 else:
                     obj = tarfile.open(filename, "r")
                     members = obj.getmembers()

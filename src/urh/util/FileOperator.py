@@ -57,17 +57,13 @@ def uncompress_archives(filenames, temp_dir):
 def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="Save signal"):
     global RECENT_PATH
     if caption == "Save signal":
-        filter = "Complex files (*.complex);;Complex16 files (*.complex16);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
-        default_suffix = "complex"
+        filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) (*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         if wav_only:
             filter = "wav files (*.wav);;all files (*)"
-            default_suffix = "wav"
     elif caption == "Save fuzz profile":
         filter = "Fuzzfiles (*.fuzz);;All files (*)"
-        default_suffix = "fuzz"
     else:
         filter = "Protocols (*.proto);;All files (*)"
-        default_suffix = "proto"
 
     filename = None
     dialog = QFileDialog()
@@ -79,7 +75,6 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
     dialog.setWindowTitle(caption)
     dialog.setAcceptMode(QFileDialog.AcceptSave)
     dialog.selectFile(initial_name)
-    dialog.setDefaultSuffix(default_suffix)
 
     if (dialog.exec()):
         filename = dialog.selectedFiles()[0]
@@ -136,8 +131,10 @@ def save_signal(signal):
     filename = signal.filename
     if filename.endswith(".wav"):
         data = signal.wave_data
-    elif filename.endswith(".complex16"):
+    elif filename.endswith(".complex16u"):
         data = ((128 * signal.data.view(np.float32)) + 128).astype(np.uint8)
+    elif filename.endswith(".complex16s"):
+        data = (128 * signal.data.view(np.float32)).astype(np.int8)
     else:
         data = signal.data
 

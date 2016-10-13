@@ -204,8 +204,8 @@ class MainController(QMainWindow):
         self.dialog.setOptions(QFileDialog.DontUseNativeDialog | QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)
         self.dialog.setNameFilter(
-            "All files (*);;Complex Files *.complex (*.complex);;Complex16 Files *.complex16 (*.complex16);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
-            "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+            "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
+            "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
         self.dialog.currentChanged.connect(self.handle_dialog_selection_changed)
 

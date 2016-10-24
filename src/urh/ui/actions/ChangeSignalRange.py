@@ -95,11 +95,14 @@ class ChangeSignalRange(QUndoCommand):
 
         # Restore old msg data
         for old_index, new_index in keep_bock_indices.items():
-            old_msg = self.orig_messages[old_index]
-            new_msg = self.protocol.messages[new_index]
-            new_msg.decoder = old_msg.decoder
-            new_msg.message_type = old_msg.message_type
-            new_msg.participant = old_msg.participant
+            try:
+                old_msg = self.orig_messages[old_index]
+                new_msg = self.protocol.messages[new_index]
+                new_msg.decoder = old_msg.decoder
+                new_msg.message_type = old_msg.message_type
+                new_msg.participant = old_msg.participant
+            except IndexError:
+                continue
 
         self.protocol.qt_signals.protocol_updated.emit()
 

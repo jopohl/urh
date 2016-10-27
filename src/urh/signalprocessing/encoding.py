@@ -23,6 +23,8 @@ class encoding(object):
         self.src = []  # [[True, True], [True, False], [False, True], [False, False]]
         self.dst = []  # [[False, False], [False, True], [True, False], [True, True]]
         self.carrier = "1_"
+        self.cutmark = [True,False]
+        self.cutmode = 0    # 0 = before, 1 = after, 2 = before_pos, 3 = after_pos
         self.__symbol_len = 1
 
         # Configure CC1101 Date Whitening
@@ -122,6 +124,13 @@ class encoding(object):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("./;./")
+            elif constants.DECODING_CUT in names[i]:
+                self.chain.append(self.code_cut)
+                i += 1
+                if i < len(names):
+                    self.chain.append(names[i])
+                else:
+                    self.chain.append("0;1010")
             i += 1
 
     def get_chain(self):
@@ -157,6 +166,10 @@ class encoding(object):
                 chainstr.append(self.get_subst_string(self.chain[i]))
             elif self.code_externalprogram == self.chain[i]:
                 chainstr.append(constants.DECODING_EXTERNAL)
+                i += 1
+                chainstr.append(self.chain[i])
+            elif self.code_cut == self.chain[i]:
+                chainstr.append(constants.DECODING_CUT)
                 i += 1
                 chainstr.append(self.chain[i])
             i += 1
@@ -234,6 +247,16 @@ class encoding(object):
                             self.data_whitening_preamble_rm = opt[1]
                             self.data_whitening_sync_rm = opt[2]
                             self.data_whitening_crc_rm = opt[3]
+            elif self.code_cut == operation:
+                if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
+                    self.cutmode, tmp = self.chain[i + 1].split(";")
+                    if self.cutmode < 0 or self.cutmode > 3:
+                        self.cutmode = 0
+                    if self.cutmode == 0 or self.cutmode == 1:
+                        self.cutmark = self.str2bit(tmp)
+                        if len(self.cutmark) == 0: self.cutmark = [True, False, True, False]
+                    else:
+                        self.cutmark = int(tmp)
 
             # Execute Ops
             if callable(operation) and len(temp) > 0:
@@ -585,6 +608,53 @@ class encoding(object):
             print("Please set external de/encoder program!")
             return [[], 1]
 
+        return output, errors
+
+    def code_cut(self, decoding, inpt):
+        errors = 0
+        output = []
+
+        # cutmark -> [True, False]
+        # cutmode -> 0 = before, 1 = after, 2 = before_pos, 3 = after_pos
+
+        pos = -1
+        if decoding:
+            # Search for cutmark and save to pos
+            if self.cutmode == 0 or self.cutmode == 1:
+                len_cutmark = len(self.cutmark)
+                if len_cutmark < 1:
+                    # Cutmark is not valid
+                    return inpt, 403
+
+                for i in range(0, len(inpt)-len_cutmark):
+                    j = 0
+                    while i < len(inpt) and j < len_cutmark and inpt[i] == self.cutmark[j]:
+                        i += 1
+                        j += 1
+                    if j == len_cutmark:
+                        pos = j
+                        break
+            else:
+                pos = int(self.cutmark)
+
+            if pos >= 0 and pos < len(inpt):
+                # Delete before
+                if self.cutmode == 0 or self.cutmode == 2:
+                    output.extend(inpt[pos:])
+                else:
+                # Delete after
+                    if self.cutmode == 1:
+                        pos += len(self.cutmark)
+                    else:
+                        pos += 1
+                    output.extend(inpt[:pos])
+            else:
+                # Position not found or not in range, do nothing!
+                errors = 404
+                output.extend(inpt)
+        else:
+            # Can't undo removing information :-(
+            output.extend(inpt)
         return output, errors
 
     def enocean_hash4(self, inpt):

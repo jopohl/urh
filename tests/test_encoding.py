@@ -53,8 +53,37 @@ class TestDecoding(unittest.TestCase):
         self.assertEqual(decoded2, e.str2bit(expected_result2.replace(" ", "")))
         self.assertEqual(reencoded2, e.str2bit(received2))
 
+        received = e.str2bit("00001010010101111111000")
+        expected_result = e.str2bit("1010010101111111000")
+        e.cutmode = 0
+        e.cutmark = [True, False, True, False]
+        decoded, err = e.code_cut(True, received)
+        self.assertEqual(decoded, expected_result)
 
+        received = e.str2bit("00001010010101111111000")
+        expected_result = e.str2bit("00001010")
+        e.cutmode = 1
+        e.cutmark = [True, False, True, False]
+        decoded, err = e.code_cut(True, received)
+        self.assertEqual(decoded, expected_result)
 
+        received = e.str2bit("00001010010101111111000")
+        expected_result = e.str2bit("001010010101111111000")
+        e.cutmode = 2
+        e.cutmark = 2
+        decoded, err = e.code_cut(True, received)
+        self.assertEqual(decoded, expected_result)
 
+        received = e.str2bit("00001010010101111111000")
+        expected_result = e.str2bit("000")
+        e.cutmode = 3
+        e.cutmark = 2
+        decoded, err = e.code_cut(True, received)
+        self.assertEqual(decoded, expected_result)
 
-
+        received = e.str2bit("00001010010101111111000")
+        expected_result = e.str2bit("00001010010101111111000")
+        e.cutmode = 0
+        e.cutmark = [True, False, True, False, True, False]
+        decoded, err = e.code_cut(True, received)
+        self.assertEqual(decoded, expected_result)

@@ -55,6 +55,7 @@ DECODING_EDGE = "Edge Trigger"
 DECODING_SUBSTITUTION = "Substitution"
 DECODING_EXTERNAL = "External Program"
 DECODING_ENOCEAN = "Wireless Short Packet (WSP)"
+DECODING_CUT = "Cut before/after"
 DECODING_DISABLED_PREFIX = "[Disabled] "
 
 LABEL_COLORS = [QColor.fromRgb(245,12,12,125),      # red

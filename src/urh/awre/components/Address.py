@@ -15,7 +15,7 @@ class Address(Component):
         super().__init__(priority, predecessors, enabled, backend, messagetypes)
         self.xor_matrix = xor_matrix
 
-    def _py_find_field(self, messages):
+    def _py_find_field(self, messages, verbose=False):
         """
 
         :type messages: list of urh.signalprocessing.Message.Message
@@ -72,19 +72,24 @@ class Address(Component):
 
                             start = end + alignment
 
-        print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
-        self.__print_ranges(equal_ranges_per_participant)
+        if verbose:
+            print(constants.color.BOLD + "Result after Step 1" +constants.color.END)
+            self.__print_ranges(equal_ranges_per_participant)
 
         # Step 2: Now we want to find our address candidates.
         # We do this by weighting them in order of LCS they share with each other
         scored_candidates = self.find_candidates([cr for crl in equal_ranges_per_participant.values() for cr in crl])
         """:type : dict[str, int] """
 
-        highscored = next(self.choose_candidate_pair(scored_candidates))
-        assert len(highscored[0]) == len(highscored[1])
+        try:
+            highscored = next(self.choose_candidate_pair(scored_candidates))
+            assert len(highscored[0]) == len(highscored[1])
+        except (StopIteration, AssertionError):
+            return
 
-        print(scored_candidates)
-        print(sorted(scored_candidates, key=scored_candidates.get, reverse=True))
+        if verbose:
+            print(scored_candidates)
+            print(sorted(scored_candidates, key=scored_candidates.get, reverse=True))
 
         # Now get the common_ranges we need
         scored_candidates_per_participant = defaultdict(list)
@@ -211,8 +216,6 @@ class Address(Component):
             for h_j in highscored[i+1:]:
                 if len(h_i) == len(h_j):
                     yield (h_i, h_j)
-
-        raise StopIteration
 
     @staticmethod
     def assign_participant_addresses(messages, participants, hex_addresses):

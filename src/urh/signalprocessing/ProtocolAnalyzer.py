@@ -11,12 +11,10 @@ from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
-from urh.signalprocessing.LabelAssigner import LabelAssigner
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding

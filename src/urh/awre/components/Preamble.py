@@ -57,8 +57,11 @@ class Preamble(Component):
         if first_difference is None:
             return None
 
-        preamble_end = next((i-1 for i in range(first_difference, search_end, 4)
-            if bits[i] == bits[i+1] or bits[i] != bits[i+2] or bits[i] == bits[i+3]), search_end)
+        try:
+            preamble_end = next((i-1 for i in range(first_difference, search_end, 4)
+                if bits[i] == bits[i+1] or bits[i] != bits[i+2] or bits[i] == bits[i+3]), search_end)
+        except IndexError:
+            return None
 
         if preamble_end - first_difference > 4:
             return first_difference, preamble_end

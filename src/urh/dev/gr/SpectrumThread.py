@@ -1,14 +1,11 @@
 import socket
-
 import numpy as np
-
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
-
 
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1', parent=None):
         super().__init__(sample_rate, freq, gain, bandwidth, True, ip, parent)
-        buf_size = int(sample_rate)
+        buf_size = 10**5
         self.data = np.zeros(buf_size, dtype=np.complex64)
         self.x = None
         self.y = None

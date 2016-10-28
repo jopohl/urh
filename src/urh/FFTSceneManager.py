@@ -1,5 +1,4 @@
 import numpy as np
-import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainterPath, QFont, QPen
 from PyQt5.QtWidgets import QGraphicsPathItem

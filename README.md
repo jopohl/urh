@@ -24,7 +24,7 @@ Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 # Installation
 ## Requirements
 - Python 3.4+
-- numpy
+- numpy / psutil
 - PyQt5
 - C++ Compiler
 
@@ -36,7 +36,7 @@ yaourt -S urh
 ## Ubuntu/Debian
 ```bash
 sudo apt-get update
-sudo apt-get install python3-numpy python3-pyqt5 g++ libpython3-dev python3-pip
+sudo apt-get install python3-numpy python3-psutil python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
 ```
 

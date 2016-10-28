@@ -1266,11 +1266,14 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
             self.label_value_model.update()
             self.protocol_label_list_model.update()
+            self.ui.listViewLabelNames.clearSelection()
             logger.debug("Time for auto assigning labels: " + str(time.time() - t))
 
         self.ui.progressBarLogicAnalyzer.setValue(100)
         self.unsetCursor()
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(0)
+
+        self.fill_message_type_combobox() # in case message types were added by logic analyzer
 
     def show_proto_sniff_dialog(self):
         pm = self.project_manager

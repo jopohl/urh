@@ -31,7 +31,7 @@ class MessageTypeDialogController(QDialog):
         self.ui.btnRemoveRule.setEnabled(len(message_type.ruleset) > 0)
         self.set_ruleset_ui_status()
 
-        self.ui.rbAssignAutomatically.setChecked(self.message_type.assigned_automatically)
+        self.ui.rbAssignAutomatically.setChecked(self.message_type.assigned_by_ruleset)
         self.ui.rbAssignManually.setChecked(self.message_type.assign_manually)
 
         self.ui.tblViewRuleset.setItemDelegateForColumn(2, ComboBoxDelegate(["Bit", "Hex", "ASCII"], parent=self))
@@ -75,18 +75,18 @@ class MessageTypeDialogController(QDialog):
         self.ui.btnRemoveRule.setEnabled(len(self.message_type.ruleset) > 0)
 
     def on_rb_assign_automatically_clicked(self):
-        self.message_type.assigned_automatically = True
+        self.message_type.assigned_by_ruleset = True
         self.set_ruleset_ui_status()
 
     def on_rb_assign_manually_clicked(self):
-        self.message_type.assigned_automatically = False
+        self.message_type.assigned_by_ruleset = False
         self.set_ruleset_ui_status()
 
     def set_ruleset_ui_status(self):
-        self.ui.tblViewRuleset.setEnabled(self.message_type.assigned_automatically)
-        self.ui.btnRemoveRule.setEnabled(self.message_type.assigned_automatically and len(self.message_type.ruleset) > 0)
-        self.ui.btnAddRule.setEnabled(self.message_type.assigned_automatically)
-        self.ui.cbRulesetMode.setEnabled(self.message_type.assigned_automatically)
+        self.ui.tblViewRuleset.setEnabled(self.message_type.assigned_by_ruleset)
+        self.ui.btnRemoveRule.setEnabled(self.message_type.assigned_by_ruleset and len(self.message_type.ruleset) > 0)
+        self.ui.btnAddRule.setEnabled(self.message_type.assigned_by_ruleset)
+        self.ui.cbRulesetMode.setEnabled(self.message_type.assigned_by_ruleset)
 
     def open_editors(self, row):
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 2))

@@ -14,7 +14,7 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "__id", "assigned_automatically", "ruleset"]
+    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
@@ -23,22 +23,61 @@ class MessageType(list):
         self.name = name
         self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
-        self.assigned_automatically = False
+        self.assigned_by_logic_analyzer = False
+        self.assigned_by_ruleset = False
         self.ruleset = Ruleset() if ruleset is None else ruleset
+
+    def __hash__(self):
+        return hash(super)
 
     @property
     def assign_manually(self):
-        return not self.assigned_automatically
+        return not self.assigned_by_ruleset
 
     @property
     def id(self) -> str:
         return self.__id
 
+
+    @property
+    def unlabeled_ranges(self):
+        """
+
+        :rtype: list[(int,int)]
+        """
+        return self.__get_unlabeled_ranges_from_labels(self)
+
+    @staticmethod
+    def __get_unlabeled_ranges_from_labels(labels):
+        """
+
+        :type labels: list of ProtocolLabel
+        :rtype: list[(int,int)]
+        """
+        start = 0
+        result = []
+        for lbl in labels:
+            if lbl.start > start:
+                result.append((start, lbl.start))
+            start = lbl.end
+        result.append((start, None))
+        return result
+
+    def unlabeled_ranges_with_other_mt(self, other_message_type):
+        """
+
+        :type other_message_type: MessageType
+        :rtype: list[(int,int)]
+        """
+        labels = self + other_message_type
+        labels.sort()
+        return self.__get_unlabeled_ranges_from_labels(labels)
+
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)
         self.sort()
 
-    def add_protocol_label(self, start: int, end: int, name=None, color_ind=None) -> ProtocolLabel:
+    def add_protocol_label(self, start: int, end: int, name=None, color_ind=None, auto_created=False) -> ProtocolLabel:
 
         name = "Label {0:d}".format(len(self) + 1) if not name else name
         used_colors = [p.color_index for p in self]
@@ -46,11 +85,11 @@ class MessageType(list):
 
         if color_ind is None:
             if len(avail_colors) > 0:
-                color_ind = avail_colors[random.randint(0, len(avail_colors) - 1)]
+                color_ind = avail_colors[0]
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind)
+        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind, auto_created=auto_created)
 
         if proto_label not in self:
             self.append(proto_label)
@@ -72,7 +111,9 @@ class MessageType(list):
         return super().__getitem__(index)
 
     def to_xml(self) -> ET.Element:
-        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id, "assigned_automatically": "1" if self.assigned_automatically else "0"})
+        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id,
+                                                    "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0",
+                                                    "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
         for lbl in self:
             result.append(lbl.to_xml(-1))
 
@@ -99,10 +140,12 @@ class MessageType(list):
     def from_xml(tag:  ET.Element):
         name = tag.get("name", "blank")
         id = tag.get("id", None)
-        assigned_auto = bool(int(tag.get("assigned_automatically", 0)))
+        assigned_by_ruleset = bool(int(tag.get("assigned_by_ruleset", 0)))
+        assigned_by_logic_analyzer = bool(int(tag.get("assigned_by_logic_analyzer", 0)))
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag))
         result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
-        result.assigned_automatically = assigned_auto
+        result.assigned_by_ruleset = assigned_by_ruleset
+        result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
         return result

@@ -255,6 +255,7 @@ class encoding(object):
                         self.cutmode = 0
                     if self.cutmode == 0 or self.cutmode == 1:
                         self.cutmark = self.str2bit(tmp)
+
                         if len(self.cutmark) == 0: self.cutmark = [True, False, True, False]
                     else:
                         try:

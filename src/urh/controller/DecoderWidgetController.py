@@ -574,7 +574,7 @@ class DecoderWidgetController(QDialog):
             self.ui.datawhitening_crc_rm.setEnabled(decoderEdit)
         elif constants.DECODING_CUT in element:
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
-                   "better view. \n" \
+                   "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
                    "Example:\n" \
                    "- Cut before '1010' would delete everything before first '1010' bits.\n" \
 

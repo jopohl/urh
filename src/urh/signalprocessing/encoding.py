@@ -250,13 +250,17 @@ class encoding(object):
             elif self.code_cut == operation:
                 if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
                     self.cutmode, tmp = self.chain[i + 1].split(";")
+                    self.cutmode = int(self.cutmode)
                     if self.cutmode < 0 or self.cutmode > 3:
                         self.cutmode = 0
                     if self.cutmode == 0 or self.cutmode == 1:
                         self.cutmark = self.str2bit(tmp)
                         if len(self.cutmark) == 0: self.cutmark = [True, False, True, False]
                     else:
-                        self.cutmark = int(tmp)
+                        try:
+                            self.cutmark = int(tmp)
+                        except ValueError:
+                            self.cutmark = 1
 
             # Execute Ops
             if callable(operation) and len(temp) > 0:

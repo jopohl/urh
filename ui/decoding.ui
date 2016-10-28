@@ -288,7 +288,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="page_empty"/>
             <widget class="QWidget" name="page_redundancy">
@@ -534,6 +534,112 @@
               </property>
               <property name="text">
                <string>Remove CRC-16</string>
+              </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="page_cut">
+             <widget class="QLineEdit" name="cutmark">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>30</y>
+                <width>181</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>1010</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_15">
+              <property name="geometry">
+               <rect>
+                <x>190</x>
+                <y>30</y>
+                <width>121</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Sequence</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="rB_delbefore">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>131</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>&amp;Cut before</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="rB_delafter">
+              <property name="geometry">
+               <rect>
+                <x>150</x>
+                <y>0</y>
+                <width>111</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Cut afte&amp;r</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="rB_delbeforepos">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>70</y>
+                <width>111</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Cut before</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="rB_delafterpos">
+              <property name="geometry">
+               <rect>
+                <x>150</x>
+                <y>70</y>
+                <width>111</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Cut after</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="cutmark2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>100</y>
+                <width>181</width>
+                <height>33</height>
+               </rect>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_16">
+              <property name="geometry">
+               <rect>
+                <x>190</x>
+                <y>100</y>
+                <width>121</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Position (in bit)</string>
               </property>
              </widget>
             </widget>

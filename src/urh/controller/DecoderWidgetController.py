@@ -34,6 +34,7 @@ class DecoderWidgetController(QDialog):
         self.old_carrier_txt = ""
         self.old_decoderchain = []
         self.active_message = ""
+        self.old_cutmark = ""
 
         self.project_manager = project_manager
 
@@ -62,6 +63,7 @@ class DecoderWidgetController(QDialog):
         self.ui.additionalfunctions.addItem(constants.DECODING_CARRIER)
         self.ui.additionalfunctions.addItem(constants.DECODING_DATAWHITENING)
         self.ui.additionalfunctions.addItem(constants.DECODING_ENOCEAN)
+        self.ui.additionalfunctions.addItem(constants.DECODING_CUT)
 
         # Presets
         self.setWindowTitle("Decoding")
@@ -113,6 +115,12 @@ class DecoderWidgetController(QDialog):
         self.ui.saveas.clicked.connect(self.saveas)
         self.ui.delete_decoding.clicked.connect(self.delete_decoding)
 
+        self.ui.rB_delbefore.clicked.connect(self.handle_cut)
+        self.ui.rB_delafter.clicked.connect(self.handle_cut)
+        self.ui.rB_delbeforepos.clicked.connect(self.handle_cut)
+        self.ui.rB_delafterpos.clicked.connect(self.handle_cut)
+        self.ui.cutmark.textEdited.connect(self.handle_cut)
+        self.ui.cutmark2.valueChanged.connect(self.handle_cut)
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())
@@ -125,7 +133,6 @@ class DecoderWidgetController(QDialog):
         if f and ok:
             self.ui.external_encoder.setText(f)
             self.handle_external()
-
 
     def save_to_file(self):
         if self.project_manager.project_file:
@@ -199,14 +206,14 @@ class DecoderWidgetController(QDialog):
         for i in chain:
             if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
                      constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE, constants.DECODING_DATAWHITENING,
-                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_DISABLED_PREFIX]:
+                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT, constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
                 self.decoderchainUpdate()
                 last_i = self.ui.decoderchain.item(self.ui.decoderchain.count()-1).text()
             else:
                 if any(x in last_i for x in [constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER,
                                              constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL,
-                                             constants.DECODING_DATAWHITENING]):
+                                             constants.DECODING_DATAWHITENING, constants.DECODING_CUT]):
                     self.chainoptions[last_i] = i
 
         self.decoderchainUpdate()
@@ -266,6 +273,13 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.chainoptions[op] = ""
                     self.chainstr.append("0xe9cae9ca;0x21;0x8") # Default
+            elif constants.DECODING_CUT in op:
+                # Add cut parameters
+                if op in self.chainoptions:
+                    self.chainstr.append(self.chainoptions[op])
+                else:
+                    self.chainoptions[op] = ""
+                    self.chainstr.append("0;1010")  # Default
 
         self.e.set_chain(self.chainstr)
         self.decoder_update()
@@ -488,7 +502,6 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.ui.multiple.setValue(2)
             self.ui.multiple.setEnabled(decoderEdit)
-
         elif constants.DECODING_CARRIER in element:
             txt += "A carrier is a fixed pattern like 1_1_1_1 where the actual data lies in between, e.g. 1a1a1b1. This " \
                    "function extracts the actual bit information (here: aab) from the signal at '_'/'.' positions.\n" \
@@ -509,7 +522,6 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.ui.carrier.setText("1_")
             self.ui.carrier.setEnabled(decoderEdit)
-
         elif constants.DECODING_DATAWHITENING in element:
             txt += "Texas Instruments CC110x chips allow a data whitening that is applied before sending the signals to HF. " \
                    "After a preamble (1010...) there is a fixed 16/32 bit sync word. The following data (incl. 16 bit CRC) " \
@@ -560,6 +572,82 @@ class DecoderWidgetController(QDialog):
             self.ui.datawhitening_preamble_rm.setEnabled(decoderEdit)
             self.ui.datawhitening_sync_rm.setEnabled(decoderEdit)
             self.ui.datawhitening_crc_rm.setEnabled(decoderEdit)
+        elif constants.DECODING_CUT in element:
+            txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
+                   "better view. \n" \
+                   "Example:\n" \
+                   "- Cut before '1010' would delete everything before first '1010' bits.\n" \
+
+            self.ui.optionWidget.setCurrentIndex(6)
+            # Values can only be changed when editing decoder, otherwise default value
+            if not decoderEdit:
+                self.ui.cutmark.setText("1010")
+                self.old_cutmark = self.ui.cutmark.text()
+                self.ui.cutmark2.setValue(1)
+                self.ui.rB_delbefore.setChecked(False)
+                self.ui.rB_delafter.setChecked(False)
+                self.ui.rB_delbeforepos.setChecked(False)
+                self.ui.rB_delafterpos.setChecked(False)
+            else:
+                if element in self.chainoptions:
+                    value = self.chainoptions[element]
+                    if value == "":
+                        self.ui.cutmark.setText("1010")
+                        self.old_cutmark = self.ui.cutmark.text()
+                        self.ui.cutmark2.setValue(1)
+                        self.ui.rB_delbefore.setChecked(True)
+                        self.ui.rB_delafter.setChecked(False)
+                        self.ui.rB_delbeforepos.setChecked(False)
+                        self.ui.rB_delafterpos.setChecked(False)
+                    else:
+                        try:
+                            cmode, cmark = value.split(";")
+                            cmode = int(cmode)
+                            if cmode == 0:
+                                self.ui.rB_delbefore.setChecked(True)
+                                self.ui.cutmark.setEnabled(True)
+                                self.ui.cutmark2.setEnabled(False)
+                                self.ui.cutmark.setText(cmark)
+                            elif cmode == 1:
+                                self.ui.rB_delafter.setChecked(True)
+                                self.ui.cutmark.setEnabled(True)
+                                self.ui.cutmark2.setEnabled(False)
+                                self.ui.cutmark.setText(cmark)
+                            elif cmode == 2:
+                                self.ui.rB_delbeforepos.setChecked(True)
+                                self.ui.cutmark.setEnabled(False)
+                                self.ui.cutmark2.setEnabled(True)
+                                self.ui.cutmark2.setvalue(int(cmark))
+                            elif cmode == 3:
+                                self.ui.rB_delbeforepos.setChecked(True)
+                                self.ui.cutmark.setEnabled(False)
+                                self.ui.cutmark2.setEnabled(True)
+                                self.ui.cutmark2.setvalue(int(cmark))
+
+                        except ValueError:
+                            self.ui.cutmark.setText("1010")
+                            self.old_cutmark = self.ui.cutmark.text()
+                            self.ui.cutmark2.setValue(1)
+                            self.ui.rB_delbefore.setChecked(True)
+                            self.ui.rB_delafter.setChecked(False)
+                            self.ui.rB_delbeforepos.setChecked(False)
+                            self.ui.rB_delafterpos.setChecked(False)
+                            self.ui.cutmark.setEnabled(True)
+                            self.ui.cutmark2.setEnabled(False)
+                else:
+                    self.ui.cutmark.setText("1010")
+                    self.old_cutmark = self.ui.cutmark.text()
+                    self.ui.cutmark2.setValue(1)
+                    self.ui.rB_delbefore.setChecked(True)
+                    self.ui.rB_delafter.setChecked(False)
+                    self.ui.rB_delbeforepos.setChecked(False)
+                    self.ui.rB_delafterpos.setChecked(False)
+                    self.ui.cutmark.setEnabled(True)
+                    self.ui.cutmark2.setEnabled(False)
+            self.ui.rB_delbefore.setEnabled(decoderEdit)
+            self.ui.rB_delafter.setEnabled(decoderEdit)
+            self.ui.rB_delbeforepos.setEnabled(decoderEdit)
+            self.ui.rB_delafterpos.setEnabled(decoderEdit)
 
         self.ui.info.setText(txt)
 
@@ -623,6 +711,38 @@ class DecoderWidgetController(QDialog):
         self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
+    @pyqtSlot()
+    def handle_cut(self):
+        cmode = 0
+        cmark = ""
+        if self.ui.rB_delbefore.isChecked() or self.ui.rB_delafter.isChecked():
+            # Activate right cutmark field
+            self.ui.cutmark.setEnabled(True)
+            self.ui.cutmark2.setEnabled(False)
+            # set cmode
+            if self.ui.rB_delafter.isChecked():
+                cmode = 1
+            # check values in cutmark
+            cmark = self.ui.cutmark.text()
+            if cmark.count("0") + cmark.count("1") < len(cmark):
+                self.ui.cutmark.setText(self.old_cutmark)
+            else:
+                self.old_cutmark = cmark
+        else:
+            # Activate right cutmark field
+            self.ui.cutmark.setEnabled(False)
+            self.ui.cutmark2.setEnabled(True)
+            # set cmode
+            if self.ui.rB_delbeforepos.isChecked():
+                cmode = 2
+            else:
+                cmode = 3
+            cmark = str(self.ui.cutmark2.value())
+
+        cut_text = str(cmode)+";"+cmark
+
+        self.chainoptions[self.active_message] = cut_text
+        self.decoderchainUpdate()
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         event.accept()

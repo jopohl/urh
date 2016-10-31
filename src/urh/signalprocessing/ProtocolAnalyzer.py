@@ -8,14 +8,13 @@ import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
+from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions
 from urh.cythonext.signalFunctions import Symbol
-from urh.signalprocessing.LabelAssigner import LabelAssigner
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoding import encoding
@@ -786,7 +785,7 @@ class ProtocolAnalyzer(object):
 
     def update_auto_message_types(self):
         for message in self.messages:
-            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_automatically):
+            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_by_ruleset):
                 if message_type.ruleset.applies_for_message(message):
                     message.message_type = message_type
                     break
@@ -845,8 +844,8 @@ class ProtocolAnalyzer(object):
             if not decoder_found and fallback:
                 message.decoder = fallback
 
-    def auto_assign_labels(self, debug=False):
-        label_assigner = LabelAssigner(self.messages)
-        label_assigner.auto_assign_to_message_type(self.default_message_type)
-        if debug:
-            label_assigner.print_common_intervals()
+    def auto_assign_labels(self):
+        format_finder = FormatFinder(self)
+
+        # TODO Perform multiple iterations with varying priorities
+        format_finder.perform_iteration()

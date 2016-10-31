@@ -16,7 +16,7 @@ class ProtocolLabel(object):
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
 
-    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False):
+    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -31,6 +31,8 @@ class ProtocolLabel(object):
         self.fuzz_created = fuzz_created
 
         self.display_type_index = 0
+
+        self.auto_created = auto_created
 
     @property
     def name(self):
@@ -97,7 +99,8 @@ class ProtocolLabel(object):
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_type_index": str(self.display_type_index),
-                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values)})
+                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
+                                            "auto_created": str(self.auto_created)})
 
     @staticmethod
     def from_xml(tag: ET.Element):
@@ -111,5 +114,6 @@ class ProtocolLabel(object):
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_type_index = int(tag.get("display_type_index", 0))
+        result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
 
         return result

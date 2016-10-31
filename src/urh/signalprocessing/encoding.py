@@ -69,6 +69,10 @@ class encoding(object):
     def is_nrzi(self) -> bool:
         return len(self.chain) == 2 and self.chain[1] == self.code_invert
 
+    @property
+    def contains_cut(self) -> bool:
+        return self.code_cut in self.chain
+
     def __str__(self):
         return self.name
 

@@ -252,7 +252,7 @@ class Ui_SignalFrame(object):
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.verticalLayout.setContentsMargins(-1, -1, -1, 0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")

@@ -830,12 +830,13 @@ class ProtocolAnalyzer(object):
         """
         nrz_decodings = [decoding for decoding in decodings if decoding.is_nrz or decoding.is_nrzi]
         fallback = nrz_decodings[0] if nrz_decodings else None
-        non_nrz_decodings = [decoding for decoding in decodings if not decoding in nrz_decodings]
+        candidate_decodings = [decoding for decoding in decodings
+                               if decoding not in nrz_decodings and not decoding.contains_cut]
 
         for message in self.messages:
             decoder_found = False
 
-            for decoder in non_nrz_decodings:
+            for decoder in candidate_decodings:
                 if decoder.analyze(message.plain_bits) == 0:
                     message.decoder = decoder
                     decoder_found = True

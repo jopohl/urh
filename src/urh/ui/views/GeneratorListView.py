@@ -20,8 +20,11 @@ class GeneratorListView(QListView):
         menu = QMenu()
         pos = event.pos()
         index = self.indexAt(pos)
-        if len(self.model().message.message_type) == 0:
-            return
+        try:
+            if len(self.model().message.message_type) == 0:
+                return
+        except AttributeError:
+            return # model().message may be None
 
         editAction = menu.addAction("Edit Fuzzing Label...")
         delAction = 42

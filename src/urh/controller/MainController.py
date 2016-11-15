@@ -345,6 +345,9 @@ class MainController(QMainWindow):
 
             if proto is not None:
                 self.compare_frame_controller.remove_protocol(proto)
+                # Needs to be removed in generator also, otherwise program crashes,
+                # if item from tree in generator is selected and corresponding signal is closed
+                self.generator_tab_controller.tree_model.remove_protocol(proto)
 
                 proto.destroy()
                 del self.signal_protocol_dict[signal_frame]

@@ -108,7 +108,7 @@ class ProtocolTreeModel(QAbstractItemModel):
         except AttributeError:
             return QModelIndex()
 
-        if parentItem == self.rootItem:
+        if parentItem == self.rootItem or parentItem is None:
             return QModelIndex()
 
         return self.createIndex(parentItem.indexInParent(), 0, parentItem)

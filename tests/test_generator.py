@@ -85,6 +85,38 @@ class TestGenerator(unittest.TestCase):
         gen_proto = gen_proto[:gen_proto.index(" ")]
         self.assertTrue(proto.startswith(gen_proto))
 
+    def test_close_signal(self):
+        self.form.add_signalfile("./data/ask.complex")
+        sframe = self.form.signal_tab_controller.signal_frames[0]
+        sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
+        sframe.ui.spinBoxInfoLen.setValue(295)
+        sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
+        sframe.refresh()
+
+        # Move with encoding to generator
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(0)
+        item = gframe.tree_model.rootItem.children[0].children[0]
+        index = gframe.tree_model.createIndex(0, 0, item)
+        rect = gframe.ui.treeProtocols.visualRect(index)
+        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
+        self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
+        mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.assertEqual(gframe.table_model.row_count, self.form.compare_frame_controller.protocol_model.row_count)
+        self.form.ui.tabWidget.setCurrentIndex(0)
+        self.form.on_selected_tab_changed()
+        sframe.ui.btnCloseSignal.click()
+        QTest.qWait(1000)
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        self.form.on_selected_tab_changed()
+        QTest.qWait(1000)
+        self.form.ui.tabWidget.setCurrentIndex(2)
+        self.form.on_selected_tab_changed()
+        QTest.qWait(1000)
+        self.assertEqual(1, 1)
+
+
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):
             return False

@@ -37,7 +37,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
+            <width>598</width>
             <height>526</height>
            </rect>
           </property>
@@ -152,6 +152,9 @@
                     </property>
                     <property name="text">
                      <string>S&amp;uccessive</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>

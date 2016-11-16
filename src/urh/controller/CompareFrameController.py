@@ -1122,7 +1122,11 @@ class CompareFrameController(QFrame):
         if not label.show:
             return
 
-        message = next(msg for msg in self.proto_analyzer.messages if label if msg.message_type)
+        try:
+            message = next(msg for msg in self.proto_analyzer.messages if label if msg.message_type)
+        except StopIteration:
+            # No messages present
+            return
         start, end = message.get_label_range(label, self.protocol_model.proto_view, True)
         indx = self.protocol_model.index(0, int((start + end) / 2))
 

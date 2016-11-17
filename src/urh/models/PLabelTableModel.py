@@ -18,7 +18,7 @@ class PLabelTableModel(QAbstractTableModel):
         self.row_count = len(message_type)
         self.proto_view = 0
         self.message_type = message_type
-        self.message = message
+        self.message = message if message is not None else Message([False]*10000, 0, message_type)
         self.layoutChanged.emit()
 
     def update(self):

@@ -619,6 +619,12 @@ class ProtocolAnalyzer(object):
     def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element(tag_name)
 
+        # Save modulators
+        if hasattr(self, "modulators"): # For protocol analyzer container
+            modulators_tag = ET.SubElement(root, "modulators")
+            for i, modulator in enumerate(self.modulators):
+                modulators_tag.append(modulator.to_xml(i))
+
         # Save symbols
         if len(self.used_symbols) > 0:
             symbols_tag = ET.SubElement(root, "symbols")
@@ -682,6 +688,11 @@ class ProtocolAnalyzer(object):
     def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None, decodings=None):
         if not root:
             return None
+
+        if root.find("modulators") and hasattr(self, "modulators"):
+            self.modulators[:] = []
+            for mod_tag in root.find("modulators").findall("modulator"):
+                self.modulators.append(Modulator.from_xml(mod_tag))
 
         decoders = self.read_decoders_from_xml_tag(root) if decodings is None else decodings
 

@@ -235,3 +235,34 @@ class Modulator(object):
         else:
             return locale.format_string("%f", value)
 
+
+    def to_xml(self, index: int) -> ET.Element:
+        root = ET.Element("modulator")
+
+        for attr, val in vars(self).items():
+            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate", "default_sample_rate"):
+                root.set(attr, str(val))
+
+        root.set("sample_rate", str(self.__sample_rate))
+        root.set("index", str(index))
+
+        return root
+
+
+    @staticmethod
+    def from_xml(tag: ET.Element):
+        result = Modulator("")
+        for attrib, value in tag.attrib.items():
+            if attrib == "index":
+                continue
+            elif attrib == "name":
+                setattr(result, attrib, str(value))
+            elif attrib == "modulation_type":
+                setattr(result, attrib, Formatter.str2val(value, int, 0))
+            elif attrib == "samples_per_bit":
+                setattr(result, attrib, Formatter.str2val(value, int, 100))
+            elif attrib == "sample_rate":
+                result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
+            else:
+                setattr(result, attrib, Formatter.str2val(value, float, 1))
+        return result

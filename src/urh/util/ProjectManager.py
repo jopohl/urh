@@ -210,17 +210,8 @@ class ProjectManager(QObject):
         for mod_tag in root.findall("modulator"):
             root.remove(mod_tag)
 
-        for mod in modulators:
-            mod_tag = ET.SubElement(root, "modulator")
-            mod_tag.set("name", mod.name)
-            mod_tag.set("carrier_freq_hz", str(mod.carrier_freq_hz))
-            mod_tag.set("carrier_phase_deg", str(mod.carrier_phase_deg))
-            mod_tag.set("carrier_amplitude", str(mod.carrier_amplitude))
-            mod_tag.set("modulation_type", str(mod.modulation_type))
-            mod_tag.set("sample_rate", str(mod.sample_rate))
-            mod_tag.set("param_for_one", str(mod.param_for_one))
-            mod_tag.set("param_for_zero", str(mod.param_for_zero))
-            mod_tag.set("samples_per_bit", str(mod.samples_per_bit))
+        for i, mod in enumerate(modulators):
+            root.append(mod.to_xml(i))
 
         tree.write(self.project_file)
 
@@ -236,20 +227,7 @@ class ProjectManager(QObject):
 
         result = []
         for mod_tag in root.iter("modulator"):
-            mod = Modulator(mod_tag.attrib["name"])
-            mod.carrier_freq_hz = float(mod_tag.attrib["carrier_freq_hz"])
-            mod.carrier_amplitude = float(mod_tag.attrib["carrier_amplitude"])
-            mod.carrier_phase_deg = float(mod_tag.attrib["carrier_phase_deg"])
-            mod.modulation_type = int(mod_tag.attrib["modulation_type"])
-            mod.sample_rate = float(mod_tag.attrib["sample_rate"])
-            mod.param_for_one = float(mod_tag.attrib["param_for_one"])
-            mod.param_for_zero = float(mod_tag.attrib["param_for_zero"])
-            try:
-                mod.samples_per_bit = int(mod_tag.attrib["samples_per_bit"])
-            except KeyError:
-                pass  # Legacy support for old project files
-
-            result.append(mod)
+            result.append(Modulator.from_xml(mod_tag))
 
         return result
 

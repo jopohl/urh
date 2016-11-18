@@ -76,7 +76,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnSave.setEnabled(False)
         self.start = 0
         self.already_saved = True
-        self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
+        self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
 
         self.ui.spinBoxFreq.setValue(freq)
         self.ui.spinBoxSampleRate.setValue(samp_rate)
@@ -123,6 +123,9 @@ class SendRecvDialogController(QDialog):
                           + "\\." + ipRange + "$")
         self.ui.lineEditIP.setValidator(QRegExpValidator(ipRegex))
         self.create_connects()
+
+        self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
+        self.on_btn_lock_bw_sr_clicked()
 
     def create_connects(self):
         self.ui.btnStart.clicked.connect(self.on_start_clicked)
@@ -408,6 +411,7 @@ class SendRecvDialogController(QDialog):
 
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
+        constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
         else:

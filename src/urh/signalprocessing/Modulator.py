@@ -73,15 +73,15 @@ class Modulator(object):
 
     @property
     def carrier_frequency_str(self):
-        return self.get_value_with_suffix(self.carrier_freq_hz) + "Hz"
+        return self.get_value_with_suffix(self.carrier_freq_hz, unit="Hz")
 
     @property
     def carrier_phase_str(self):
-        return str(self.carrier_phase_deg) + "°"
+        return self.get_value_with_suffix(self.carrier_phase_deg, unit="°")
 
     @property
     def bit_len_str(self):
-        return str(self.samples_per_bit)
+        return self.get_value_with_suffix(self.samples_per_bit, unit="")
 
     @property
     def sample_rate_str(self):
@@ -100,22 +100,14 @@ class Modulator(object):
     @property
     def param_for_zero_str(self):
         mod = self.MODULATION_TYPES[self.modulation_type]
-        if mod == "ASK":
-            return str(self.param_for_zero) + "%"
-        elif mod == "FSK" or mod == "GFSK":
-            return self.get_value_with_suffix(self.param_for_zero) + "Hz"
-        elif mod == "PSK":
-            return str(self.param_for_zero) + "°"
+        units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
+        return self.get_value_with_suffix(self.param_for_zero, units[mod])
 
     @property
     def param_for_one_str(self):
         mod = self.MODULATION_TYPES[self.modulation_type]
-        if mod == "ASK":
-            return str(self.param_for_one) + "%"
-        elif mod == "FSK" or mod == "GFSK":
-            return self.get_value_with_suffix(self.param_for_one) + "Hz"
-        elif mod == "PSK":
-            return str(self.param_for_one) + "°"
+        units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
+        return self.get_value_with_suffix(self.param_for_one, units[mod])
 
     @property
     def carrier_data(self):
@@ -225,15 +217,19 @@ class Modulator(object):
         return h / h.sum()
 
     @staticmethod
-    def get_value_with_suffix(value):
+    def get_value_with_suffix(value, unit=""):
+        decimal_point = locale.localeconv()["decimal_point"]
+
         if abs(value) >= 10 ** 9:
-            return locale.format_string("%.4fG", value / 10 ** 9)
+            target_val, suffix = value / 10 ** 9, "G"
         elif abs(value) >= 10 ** 6:
-            return locale.format_string("%.4fM", value / 10 ** 6)
+            target_val, suffix = value / 10 ** 6, "M"
         elif abs(value) >= 10 ** 3:
-            return locale.format_string("%.4fk",value / 10 ** 3)
+            target_val, suffix = value / 10 ** 3, "k"
         else:
-            return locale.format_string("%f", value)
+            target_val, suffix = value, ""
+
+        return locale.format_string("%.3f", target_val).rstrip("0").rstrip(decimal_point) + suffix + unit
 
 
     def to_xml(self, index: int) -> ET.Element:

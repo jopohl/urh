@@ -17,11 +17,11 @@ class ProtocolLabelController(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
 
 
-    def __init__(self, preselected_index, message_type: MessageType, viewtype: int, max_end: int, message:Message, parent=None):
+    def __init__(self, preselected_index, message_type: MessageType, viewtype: int, max_end: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
-        self.model = PLabelTableModel(message_type, message=message)
+        self.model = PLabelTableModel(message_type)
         self.preselected_index = preselected_index
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))

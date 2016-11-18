@@ -1,3 +1,5 @@
+import multiprocessing
+
 cimport chackrf
 from libc.stdlib cimport malloc
 from libc.string cimport memcpy
@@ -33,8 +35,22 @@ cpdef reopen():
 cpdef open():
     return chackrf.hackrf_open(&_c_device)
 
+def timeout(func, args=(), kwds={}, timeout=1, default=None):
+    pool = multiprocessing.Pool(processes=1)
+    result = pool.apply_async(func, args=args, kwds=kwds)
+    try:
+        val = result.get(timeout=timeout)
+    except multiprocessing.TimeoutError:
+        pool.terminate()
+        return default
+    else:
+        pool.close()
+        pool.join()
+        return val
+
+
 cpdef close():
-    return chackrf.hackrf_close(_c_device)
+    return timeout(chackrf.hackrf_close, args=(_c_device), default=1337)
 
 cpdef start_rx_mode(callback):
     global f

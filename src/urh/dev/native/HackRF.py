@@ -22,6 +22,7 @@ class HackRF(Device):
         self.error_codes = {
             0: "HACKRF_SUCCESS",
             1: "HACKRF_TRUE",
+            1337: "TIMEOUT ERROR",
             -2: "HACKRF_ERROR_INVALID_PARAM",
             -5: "HACKRF_ERROR_NOT_FOUND",
             -6: "HACKRF_ERROR_BUSY",

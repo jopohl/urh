@@ -684,25 +684,29 @@ class encoding(object):
 
         if decoding:
             inpt, _ = self.code_invert(True, inpt) # Invert
+            # Insert a leading 1, to ensure protocol starts with 1
+            # The first 1 (inverted) of EnOcean is so weak, that it often drowns in Noise
+            inpt.insert(0, True)
 
             # Search for begin
-            n = 0
-            while inpt[n]:
-                n += 1
+            try:
+                n = inpt.index(False) - 1
+            except ValueError:
+                return inpt, 404
 
             # check preamble
-            if inpt[n-1:n+7] != preamble:
+            if inpt[n:n+8] != preamble:
                 return inpt, 404
 
             # check SoF
-            if inpt[n+7:n+11] != sof:
+            if inpt[n+8:n+12] != sof:
                 return inpt, 403
 
             # Initialize output with raw input data
-            output.extend(inpt[:n+11])
+            output.extend(inpt[n:n+12])
 
             # search for data limits
-            start = n+11
+            start = n+12
             n = len(inpt)
             while n > start and inpt[n-4:n] != eof:
                 n -= 1
@@ -713,32 +717,33 @@ class encoding(object):
                 errors += sum([inpt[n+10] != False, inpt[n+11] != True]) if n < end - 11 else 0
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
 
-            if output[-4:] != self.enocean_hash4(output[start:]):
+            if output[-4:] != self.enocean_hash4(output[12:]):
                 errors += 1000
             #print("Hash:", self.bit2str(self.enocean_hash4(output[start:])), self.bit2str(output[-4:]))
 
             # Finalize output
-            output.extend(inpt[end-1:])
+            output.extend(inpt[end-1:end+3])
 
         else:
             # Search for begin
-            n = 0
-            while inpt[n]:
-                n += 1
+            try:
+                n = inpt.index(False) - 1
+            except ValueError:
+                return inpt, 404
 
             # check preamble
-            if inpt[n - 1:n + 7] != preamble:
+            if inpt[n:n + 8] != preamble:
                 return inpt, 404
 
             # check SoF
-            if inpt[n + 7:n + 11] != sof:
+            if inpt[n + 8:n + 12] != sof:
                 return inpt, 403
 
             # Initialize output with raw input data
-            output.extend(inpt[:n+11])
+            output.extend(inpt[:n+12])
 
             # search for data limits
-            start = n + 11
+            start = n + 12
             n = len(inpt)
             while n > start and inpt[n - 4:n] != eof:
                 n -= 1

@@ -220,6 +220,7 @@ class ProjectManager(QObject):
             mod_tag.set("sample_rate", str(mod.sample_rate))
             mod_tag.set("param_for_one", str(mod.param_for_one))
             mod_tag.set("param_for_zero", str(mod.param_for_zero))
+            mod_tag.set("samples_per_bit", str(mod.samples_per_bit))
 
         tree.write(self.project_file)
 
@@ -243,6 +244,11 @@ class ProjectManager(QObject):
             mod.sample_rate = float(mod_tag.attrib["sample_rate"])
             mod.param_for_one = float(mod_tag.attrib["param_for_one"])
             mod.param_for_zero = float(mod_tag.attrib["param_for_zero"])
+            try:
+                mod.samples_per_bit = int(mod_tag.attrib["samples_per_bit"])
+            except KeyError:
+                pass  # Legacy support for old project files
+
             result.append(mod)
 
         return result

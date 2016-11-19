@@ -3,7 +3,7 @@ from subprocess import check_output, call
 import os, sys
 
 USE_SUDO = True
-SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404", "ubuntu1604")
+SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404", "ubuntu1604", "kali")
 
 def is_image_there(imagename: str) -> bool:
     cmd = ["sudo"] if USE_SUDO else []

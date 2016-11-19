@@ -201,7 +201,7 @@ class FuzzingDialogController(QDialog):
         nbits = self.current_label.end - self.current_label.start  # Use Bit Start/End for maximum calc.
         if nbits >= 32:
             nbits = 31
-        max_val = 2 ** (nbits) - 1
+        max_val = 2 ** nbits - 1
         self.ui.sBAddRangeStart.setMaximum(max_val - 1)
         self.ui.sBAddRangeEnd.setMaximum(max_val)
         self.ui.sBAddRangeEnd.setValue(max_val)

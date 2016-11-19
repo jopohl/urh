@@ -487,7 +487,7 @@ class ProtocolAnalyzer(object):
         :return:
         """
         if len(self.messages) == 0:
-            return (0, 0)
+            return 0, 0
 
         if message_indx == -1:
             message_indx = self.messages.index(max(self.messages, key=len)) # Longest message
@@ -500,7 +500,7 @@ class ProtocolAnalyzer(object):
     def convert_range(self, index1: int, index2: int, from_view: int,
                       to_view: int, decoded: bool, message_indx=-1):
         if len(self.messages) == 0:
-            return (0, 0)
+            return 0, 0
 
         if message_indx == -1:
             message_indx = self.messages.index(max(self.messages, key=len)) # Longest message

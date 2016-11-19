@@ -90,7 +90,7 @@ cpdef set_freq(freq_hz):
 
 cpdef is_streaming():
     ret = chackrf.hackrf_is_streaming(_c_device)
-    if(ret == 1):
+    if ret == 1:
         return True
     else:
         return False

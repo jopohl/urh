@@ -128,13 +128,13 @@ class Message(object):
                     self.message_type.remove(l)
                     self.message_type.append(l_cpy)
 
-                elif index.start <= l.start and index.stop >= l.start:
+                elif index.start <= l.start <= index.stop:
                     self.message_type.remove(l)
 
                 elif index.start >= l.start and index.stop <= l.end:
                     self.message_type.remove(l)
 
-                elif index.start >= l.start and index.start < l.end:
+                elif l.start <= index.start < l.end:
                     self.message_type.remove(l)
         else:
             for l in self.message_type:

@@ -630,7 +630,7 @@ class CompareFrameController(QFrame):
             if messages is None:
                 messages = self.proto_analyzer.messages
                 if len(messages) > 10:
-                    reply = QMessageBox.question(self, "Set decoding", "Do you want to apply the selected decoding to {} messages?".format(len(messages)), QMessageBox.Yes | QMessageBox.No);
+                    reply = QMessageBox.question(self, "Set decoding", "Do you want to apply the selected decoding to {} messages?".format(len(messages)), QMessageBox.Yes | QMessageBox.No)
                     if reply != QMessageBox.Yes:
                         self.ui.cbDecoding.blockSignals(True)
                         self.ui.cbDecoding.setCurrentText("...")
@@ -675,7 +675,7 @@ class CompareFrameController(QFrame):
                 self.ui.lDecodingErrorsValue.setText(
                     locale.format_string("%d (%.02f%%)", (errors, 100 * (errors / len(message)))))
             else:
-                self.ui.lDecodingErrorsValue.setText(locale.format_string("%d", (errors)))
+                self.ui.lDecodingErrorsValue.setText(locale.format_string("%d", errors))
         else:
             self.ui.lDecodingErrorsValue.setText("")
 

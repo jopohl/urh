@@ -484,7 +484,7 @@ class encoding(object):
                             count = 0
                         what = True
                         count += 1
-                        if (count >= self.multiple):
+                        if count >= self.multiple:
                             output.append(True)
                             count = 0
                     else:
@@ -494,7 +494,7 @@ class encoding(object):
                             count = 0
                         what = False
                         count += 1
-                        if (count >= self.multiple):
+                        if count >= self.multiple:
                             output.append(False)
                             count = 0
             else:
@@ -646,7 +646,7 @@ class encoding(object):
             else:
                 pos = int(self.cutmark)
 
-            if pos >= 0 and pos < len(inpt):
+            if 0 <= pos < len(inpt):
                 # Delete before
                 if self.cutmode == 0 or self.cutmode == 2:
                     output.extend(inpt[pos:])

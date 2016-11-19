@@ -5,7 +5,7 @@ import locale
 from urh.util.Logger import logger
 
 
-class Formatter():
+class Formatter:
     @staticmethod
     def local_decimal_seperator():
         return locale.localeconv()["decimal_point"]

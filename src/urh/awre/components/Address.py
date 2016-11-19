@@ -208,7 +208,6 @@ class Address(Component):
 
         :type candidates: dict[str, int]
         :param candidates: Count how often the longest common substrings appeared in the messages
-        :param n: How many candidates shall be chosen? This is the number of addresses = number of participants
         :return:
         """
         highscored = sorted(candidates, key=candidates.get, reverse=True)

@@ -66,7 +66,7 @@ class ChangeSignalRange(QUndoCommand):
             first_removed_right = removed_right[0] if removed_right else self.protocol.num_messages + 1
 
             for i in range(self.protocol.num_messages):
-                if i > last_removed_left and i < first_removed_right:
+                if last_removed_left < i < first_removed_right:
                     keep_bock_indices[i] = i - len(removed_left)
 
         if self.mode == RangeAction.delete:

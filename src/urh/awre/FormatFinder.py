@@ -82,7 +82,6 @@ class FormatFinder(object):
 
         A simple XOR would not work as it would be error prone.
 
-        :param bitvectors:
         :rtype: dict[int, tuple[np.ndarray, int]]
         """
 

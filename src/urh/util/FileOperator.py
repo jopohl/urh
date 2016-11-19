@@ -76,7 +76,7 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
     dialog.setAcceptMode(QFileDialog.AcceptSave)
     dialog.selectFile(initial_name)
 
-    if (dialog.exec()):
+    if dialog.exec():
         filename = dialog.selectedFiles()[0]
 
     if filename:

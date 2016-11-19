@@ -501,10 +501,6 @@ class encoding(object):
                 # Add multiple
                 for i in inpt:
                     output.extend([i] * self.multiple)
-                    #if i:
-                    #    output.extend([True] * self.multiple)
-                    #else:
-                    #    output.extend([False] * self.multiple)
         return output, errors
 
     def code_invert(self, decoding, inpt):
@@ -636,12 +632,8 @@ class encoding(object):
                     return inpt, 403
 
                 for i in range(0, len(inpt)-len_cutmark):
-                    j = 0
-                    while i < len(inpt) and j < len_cutmark and inpt[i] == self.cutmark[j]:
-                        i += 1
-                        j += 1
-                    if j == len_cutmark:
-                        pos = j
+                    if all(inpt[i+j] == self.cutmark[j] for j in range(len_cutmark)):
+                        pos = i
                         break
             else:
                 pos = int(self.cutmark)

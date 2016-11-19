@@ -144,8 +144,13 @@ class Address(Component):
                 else:
                     clusters["ack"][(candidate.start, candidate.end)].update(candidate.messages)
 
-
         msg_clusters =  {cname: set(i for s in ranges.values() for i in s) for cname, ranges in clusters.items()}
+
+        # If there are no addresses in default message type prevent evaluating everything as ACK
+        if not msg_clusters["default"]:
+            msg_clusters["ack"] = set()
+            scored_candidates_per_participant.clear()
+
         self.assign_messagetypes(messages, msg_clusters)
 
         # Now try to find the addresses of the participants to separate SRC and DST address later

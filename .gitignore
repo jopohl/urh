@@ -1,0 +1,7 @@
+# C extensions
+*.so
+
+# Pycharm
+.idea/
+
+tests/data/URHProject.xml

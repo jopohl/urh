@@ -35,6 +35,8 @@ class PluginManager(object):
         settings  = constants.SETTINGS
 
         for d in plugin_dirs:
+            if d == "__pycache__":
+                continue
             try:
                 class_module = self.load_plugin(d)
                 plugin = class_module()

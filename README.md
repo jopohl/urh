@@ -57,12 +57,12 @@ cd urh/bin
 
 Note, before first usage the C++ extensions will be built.
 
-## Screenshots
-### Get the data out of raw signals
+# Screenshots
+## Get the data out of raw signals
  ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
 
-### Keep an overview even on complex protocols
+## Keep an overview even on complex protocols
  ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
 
-### Record and send signals
+## Record and send signals
  ![Record](/doc/screenshots/record_signal.png?raw=true)

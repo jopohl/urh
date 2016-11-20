@@ -9,7 +9,7 @@ class TestInstallation(unittest.TestCase):
         self.assertTrue(docker_util.run_image("archlinux"))
 
     def test_debian8(self):
-        self.assertTrue(docker_util.run_image("debian8", True))
+        self.assertTrue(docker_util.run_image("debian8"))
 
     def test_ubuntu1404(self):
         self.assertTrue(docker_util.run_image("ubuntu1404"))

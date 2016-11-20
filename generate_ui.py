@@ -2,7 +2,6 @@ import sys
 import os
 from subprocess import call
 import fileinput
-sys.dont_write_bytecode = True
 
 def gen():
     if sys.platform == "win32":

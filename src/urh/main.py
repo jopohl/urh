@@ -16,7 +16,6 @@ GENERATE_UI = True
 
 
 def main():
-    sys.dont_write_bytecode = True
     t = time.time()
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:

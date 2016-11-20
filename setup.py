@@ -123,6 +123,7 @@ setup(
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     cmdclass={'build_ext':build_ext},
+    zip_safe=False,
     entry_points={
         'console_scripts': [
             'urh = urh.main:main',

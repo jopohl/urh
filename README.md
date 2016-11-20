@@ -11,16 +11,6 @@ Universal Radio Hacker is a suite for investigating unknown wireless protocols. 
 
 Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 
-## Screenshots
-### Get the data out of raw signals
- ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
-
-### Keep an overview even on complex protocols
- ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
-
-### Record and send signals
- ![Record](/doc/screenshots/record_signal.png?raw=true)
-
 # Installation
 ## Requirements
 - Python 3.4+
@@ -41,7 +31,7 @@ sudo pip3 install urh
 ```
 
 ## Windows
-1. Install [Visual Studio 2015 Community](https://www.visualstudio.com/de-de/downloads/download-visual-studio-vs.aspx) - ensure you tick C++ language
+1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 2. Install [Python 3.5 for Windows](https://www.python.org/downloads/windows/)
 3. Install [PyQt5 for Windows](https://www.riverbankcomputing.com/software/pyqt/download5)
 4. Open a terminal (__cmd__) and type: ```pip install numpy```
@@ -66,3 +56,13 @@ cd urh/bin
 ```
 
 Note, before first usage the C++ extensions will be built.
+
+## Screenshots
+### Get the data out of raw signals
+ ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
+
+### Keep an overview even on complex protocols
+ ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
+
+### Record and send signals
+ ![Record](/doc/screenshots/record_signal.png?raw=true)

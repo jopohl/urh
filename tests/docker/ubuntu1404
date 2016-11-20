@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 
 RUN apt-get update && apt-get -y dist-upgrade
-RUN apt-get -y install python3-numpy python3-psutil python3-pyqt5 git g++ libpython3-dev
+RUN apt-get -y install git g++ libpython3-dev python3-pip python3-pyqt5 python3-numpy python3-setuptools
 
 ADD run.sh /bin/run.sh
 RUN chmod +x /bin/run.sh

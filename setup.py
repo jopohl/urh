@@ -1,7 +1,17 @@
 import os
 import sys
-from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext as _build_ext
+
+try:
+    from setuptools import setup, Extension
+    from setuptools.command.build_ext import build_ext as _build_ext
+except ImportError:
+    print("Could not find setuptools")
+    print("Try installing them with pip install setuptools")
+    sys.exit(1)
+
+import distutils.log
+distutils.log.set_verbosity(distutils.log.DEBUG) # Set DEBUG level
+
 from distutils import ccompiler
 import src.urh.version as version
 
@@ -90,7 +100,12 @@ def get_device_modules():
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
-install_requires = ["numpy", "psutil", "pyqt5"]
+install_requires = ["numpy", "psutil"]
+try:
+    import PyQt5
+except ImportError:
+    install_requires.append("pyqt5")
+
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
 

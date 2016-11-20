@@ -26,9 +26,8 @@ def build_image(imagename: str):
 
     call(cmd)
 
-def run_image(imagename: str):
-    if not is_image_there(imagename):
-        logger.info("Could not find {} image. I will build it now.".format(imagename))
+def run_image(imagename: str, rebuild=False):
+    if not is_image_there(imagename) or rebuild:
         build_image(imagename)
 
     cmd = ["sudo"] if USE_SUDO else []

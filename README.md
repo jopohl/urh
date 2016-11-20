@@ -33,13 +33,13 @@ sudo pip3 install urh
 ### Windows
 1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 2. Install [Python 3.5 for Windows](https://www.python.org/downloads/windows/)
-3. Install [PyQt5 for Windows](https://www.riverbankcomputing.com/software/pyqt/download5)
-4. Open a terminal (__cmd__) and type: ```pip install numpy```
-5. After that, type ```pip install urh```
-6. Navigate to ```C:\Users\<Your-Username>\AppData\Local\Programs\Python\Python35\Scripts```
-7. In a terminal (__cmd__) type ```python urh```
+3. Open a terminal (__cmd__) and type: ```pip install urh```
+4. Navigate to ```C:\Users\<Your-Username>\AppData\Local\Programs\Python\Python35\Scripts```
+6. In a terminal (__cmd__) type ```python urh```
 
 ### From cloned repository
+If you want to URH from a cloned repository you need to install __python-setuptools__ first.
+
 ```bash
 git clone https://github.com/jopohl/urh/
 cd urh

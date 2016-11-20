@@ -7,8 +7,9 @@ RUN apt-get -y install python3-numpy python3-psutil python3-pyqt5 git g++ libpyt
 
 RUN echo "#!/bin/bash" > /bin/run.sh
 RUN echo "git clone https://github.com/jopohl/urh" >> /bin/run.sh
-RUN echo "cd urh/src/urh" >> /bin/run.sh
-RUN echo "./main.py autoclose" >> /bin/run.sh
+RUN echo "cd urh" >> /bin/run.sh
+RUN echo "python3 setup.py install" >> /bin/run.sh
+RUN echo "urh autoclose" >> /bin/run.sh
 
 RUN chmod +x /bin/run.sh
 CMD /bin/run.sh

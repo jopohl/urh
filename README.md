@@ -38,6 +38,9 @@ sudo pip3 install urh
 5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
 
 ### Running from source
+If you like to live on bleeding edge, you can run URH from source.
+
+#### Without Installation
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
@@ -46,6 +49,19 @@ cd urh/src/urh
 ```
 
 Note, before first usage the C++ extensions will be built.
+
+#### Installing from source
+To install from source you need to have ``` python-setuptools ``` installed. You can get it e.g. with ``` pip install setuptools ```. 
+Once the setuptools are installed use: 
+```bash
+git clone https://github.com/jopohl/urh/
+cd urh
+python setup.py install
+```
+
+And start the application by typing ``` urh ``` in a terminal.
+
+
 
 ## Screenshots
 ### Get the data out of raw signals

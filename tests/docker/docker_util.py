@@ -41,7 +41,7 @@ def run_image(imagename: str, rebuild=False):
 def remove_containers():
     logger.info("removing containers")
     cmd = ["sudo"] if USE_SUDO else []
-    cmd.extend(["docker", "rm", "$({}docker ps -aq)".format("sudo " if USE_SUDO else "")])
+    cmd.extend(["docker", "rm", "-f", "$({}docker ps -aq)".format("sudo " if USE_SUDO else "")])
     call(" ".join(cmd), shell=True)
 
 if __name__ == "__main__":

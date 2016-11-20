@@ -33,17 +33,16 @@ sudo pip3 install urh
 ### Windows
 1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 2. Install [Python 3.5 for Windows](https://www.python.org/downloads/windows/)
-3. ( Open a terminal (__cmd__) and type: ``` pip install numpy ``` ) _This speeds the installation up a bit_
+3. (Optional) Open a terminal (__cmd__) and type: ``` pip install numpy ``` ) - _This speeds the installation up a bit._
 4. In a terminal, type: ``` pip install urh ```
-5. Navigate to ```C:\Users\<Your-Username>\AppData\Local\Programs\Python\Python35\Scripts```
-6. In a terminal (__cmd__) type ```python urh```
+5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
 
 ### Running from source
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
-cd urh/bin
-./urh
+cd urh/src/urh
+./main.py
 ```
 
 Note, before first usage the C++ extensions will be built.

@@ -9,16 +9,16 @@ class TestInstallation(unittest.TestCase):
         self.assertTrue(docker_util.run_image("archlinux"))
 
     def test_debian8(self):
-        self.assertTrue(docker_util.run_image("debian8"))
+        self.assertTrue(docker_util.run_image("debian8", True))
 
     def test_ubuntu1404(self):
-        self.assertTrue(docker_util.run_image("ubuntu1404"))
+        self.assertTrue(docker_util.run_image("ubuntu1404", True))
 
     def test_ubuntu1604(self):
         self.assertTrue(docker_util.run_image("ubuntu1604"))
 
     def test_kali(self):
-        self.assertTrue(docker_util.run_image("kali"))
+        self.assertTrue(docker_util.run_image("kali", True))
 
     def tearDown(self):
         docker_util.remove_containers()

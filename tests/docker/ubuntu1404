@@ -21,4 +21,8 @@ RUN ldconfig
 # Install Gnuradio - Doesnt work fails with package uhd-host
 # RUN apt-get -y install gnuradio gnuradio-dev gr-iqbal
 
+RUN echo "#!/bin/bash" > /bin/run.sh
+RUN echo "pip3 install urh" >> /bin/run.sh
+RUN echo "urh autoclose" >> /bin/run.sh
+
 CMD /bin/run.sh

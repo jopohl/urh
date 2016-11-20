@@ -123,7 +123,10 @@ setup(
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
     cmdclass={'build_ext':build_ext},
-    scripts=["bin/urh"]
+    entry_points={
+        'console_scripts': [
+            'urh = urh.main:main',
+        ]}
 )
 
 # python setup.py sdist --> Source distribution

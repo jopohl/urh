@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+
+import locale
+import os
+import re
+import sys
+import time
+
+from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QPalette, QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
+
+locale.setlocale(locale.LC_ALL, '')
+
+GENERATE_UI = True
+
+
+def main():
+    sys.dont_write_bytecode = True
+    t = time.time()
+    if GENERATE_UI and not hasattr(sys, 'frozen'):
+        try:
+            autohacker_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+            sys.path.append(autohacker_dir)
+            sys.path.append(os.path.join(autohacker_dir, "src"))
+
+            import generate_ui
+
+            generate_ui.gen()  # Im Release rausnehmen
+
+            print("Time for generating UI: %.2f seconds" % (time.time() - t), file=sys.stderr)
+        except (ImportError, FileNotFoundError):
+            print("Will not regenerate UI, because script cant be found. This is okay in "
+                  "release.", file=sys.stderr)
+
+
+
+    urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
+    urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
+
+    urh_dir = os.path.join(os.path.dirname(urh_exe), "..", "..")
+    prefix = os.path.abspath(os.path.normpath(urh_dir))
+
+    src_dir = os.path.join(prefix, "src")
+    if os.path.exists(src_dir) and not prefix.startswith("/usr") \
+            and not re.match(r"(?i)c:\\program", prefix):
+        # Started locally, not installed
+        print("Using modules from {0}".format(src_dir), file=sys.stderr)
+        sys.path.insert(0, src_dir)
+
+    try:
+        import urh.cythonext.signalFunctions
+        import urh.cythonext.path_creator
+        import urh.cythonext.util
+    except ImportError:
+        print("Could not find C++ extensions, trying to build them.", file=sys.stderr)
+        old_dir = os.curdir
+        os.chdir(os.path.join(src_dir, "urh", "cythonext"))
+
+        from urh.cythonext import build
+        build.main()
+
+        os.chdir(old_dir)
+
+    from urh.controller.MainController import MainController
+    from urh import constants
+
+    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+        os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
+
+    app = QApplication(sys.argv)
+
+    # noinspection PyUnresolvedReferences
+    import urh.ui.xtra_icons_rc  # Use oxy theme always
+    QIcon.setThemeName("oxy")
+
+    constants.SETTINGS.setValue("default_theme", QApplication.style().objectName())
+
+    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
+
+    mainwindow = MainController()
+    mainwindow.showMaximized()
+
+    # Systemfarben als Zeichenfarbe setzen
+    widget = QWidget()
+    bgcolor = widget.palette().color(QPalette.Background)
+    fgcolor = widget.palette().color(QPalette.Foreground)
+    selection_color = widget.palette().color(QPalette.Highlight)
+    constants.BGCOLOR = bgcolor
+    constants.LINECOLOR = fgcolor
+    constants.SELECTION_COLOR = selection_color
+
+    if "autoclose" in sys.argv[1:]:
+        # Autoclose after 1 second, this is useful for automated testing
+        timer = QTimer()
+        timer.timeout.connect(app.quit)
+        timer.start(1000)
+
+    os._exit(app.exec_())  # sys.exit() is not enough on Windows and will result in crash on exit
+
+

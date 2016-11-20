@@ -38,15 +38,6 @@ sudo pip3 install urh
 5. Navigate to ```C:\Users\<Your-Username>\AppData\Local\Programs\Python\Python35\Scripts```
 6. In a terminal (__cmd__) type ```python urh```
 
-### From cloned repository
-If you want to URH from a cloned repository you need to install __python-setuptools__ first.
-
-```bash
-git clone https://github.com/jopohl/urh/
-cd urh
-sudo python setup.py install
-```
-
 ### Running from source
 To execute the Universal Radio Hacker without installation, just run:
 ```bash

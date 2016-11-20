@@ -3,7 +3,7 @@ RUN mkdir -p /root/.gnupg
 RUN pacman -Sy --noconfirm archlinux-keyring
 RUN pacman -Syu --noconfirm && pacman-db-upgrade
 RUN pacman -S --noconfirm ca-certificates ca-certificates-mozilla
-RUN pacman -S --noconfirm curl base-devel
+RUN pacman -S --noconfirm curl base-devel nano vim
 
 RUN useradd -m -G wheel -s /bin/bash dockeruser
 RUN echo "dockeruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

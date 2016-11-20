@@ -22,4 +22,3 @@ class TestInstallation(unittest.TestCase):
 
     def tearDown(self):
         docker_util.remove_containers()
-

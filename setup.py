@@ -1,6 +1,7 @@
 import os
 import sys
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext as _build_ext
 from distutils import ccompiler
 import src.urh.version as version
 
@@ -9,7 +10,6 @@ if sys.platform == "win32":
 else:
     OPEN_MP_FLAG = "-fopenmp"
 
-DEBUG = True
 COMPILER_DIRECTIVES = {'language_level': 3,
                        'cdivision': True,
                        'wraparound': False,
@@ -20,6 +20,14 @@ COMPILER_DIRECTIVES = {'language_level': 3,
 UI_SUBDIRS = ("actions", "delegates", "views")
 PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide")
 URH_DIR = "urh"
+
+class build_ext(_build_ext):
+    def finalize_options(self):
+        _build_ext.finalize_options(self)
+        # Prevent numpy from thinking it is still in its setup process:
+        __builtins__.__NUMPY_SETUP__ = False
+        import numpy
+        self.include_dirs.append(numpy.get_include())
 
 
 def get_packages():
@@ -42,13 +50,11 @@ def get_package_data():
 
 
 def get_ext_modules():
-    import numpy
     ext = ".cpp"
 
     filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(ext)]
 
     extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + ext],
-                            include_dirs=[numpy.get_include()],
                             extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]
@@ -84,7 +90,7 @@ def get_device_modules():
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
-install_requires = ["numpy", "psutil"]
+install_requires = ["numpy", "psutil", "pyqt5"]
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
 
@@ -103,7 +109,7 @@ setup(
     setup_requires=['numpy'],
     packages=get_packages(),
     ext_modules=get_ext_modules() + get_device_modules(),
-    # data_files=[("data", "")],
+    cmdclass={'build_ext':build_ext},
     scripts=["bin/urh"]
 )
 

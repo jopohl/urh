@@ -9,9 +9,6 @@ except ImportError:
     print("Try installing them with pip install setuptools")
     sys.exit(1)
 
-import distutils.log
-distutils.log.set_verbosity(distutils.log.DEBUG) # Set DEBUG level
-
 from distutils import ccompiler
 import src.urh.version as version
 
@@ -33,6 +30,7 @@ URH_DIR = "urh"
 
 class build_ext(_build_ext):
     def finalize_options(self):
+        print("Finalizing optonms")
         _build_ext.finalize_options(self)
         # Prevent numpy from thinking it is still in its setup process:
         __builtins__.__NUMPY_SETUP__ = False

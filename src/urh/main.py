@@ -99,4 +99,5 @@ def main():
 
     os._exit(app.exec_())  # sys.exit() is not enough on Windows and will result in crash on exit
 
-
+if __name__ == "__main__":
+    main()

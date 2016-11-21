@@ -467,7 +467,7 @@ class MainController(QMainWindow):
         """
         :type files: list of QtCore.QUrl
         """
-        localfiles = [fileurl.path() for fileurl in files if fileurl.isLocalFile()]
+        localfiles = [fileurl.toLocalFile() for fileurl in files if fileurl.isLocalFile()]
 
         if len(localfiles) > 0:
             self.add_files(FileOperator.uncompress_archives(localfiles, QDir.tempPath()), group_id)

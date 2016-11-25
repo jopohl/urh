@@ -21,6 +21,7 @@ cdef chackrf.hackrf_device* _c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
 
+
 cpdef setup():
     chackrf.hackrf_init()
     return open()
@@ -35,22 +36,8 @@ cpdef reopen():
 cpdef open():
     return chackrf.hackrf_open(&_c_device)
 
-def timeout(func, args=(), kwds={}, timeout=1, default=None):
-    pool = multiprocessing.Pool(processes=1)
-    result = pool.apply_async(func, args=args, kwds=kwds)
-    try:
-        val = result.get(timeout=timeout)
-    except multiprocessing.TimeoutError:
-        pool.terminate()
-        return default
-    else:
-        pool.close()
-        pool.join()
-        return val
-
-
 cpdef close():
-    return timeout(chackrf.hackrf_close, args=(_c_device), default=1337)
+    return chackrf.hackrf_close(_c_device)
 
 cpdef start_rx_mode(callback):
     global f

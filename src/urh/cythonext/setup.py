@@ -34,31 +34,6 @@ else:
 build_dir = os.path.join(tempfile.gettempdir(), "build")
 
 
-def get_device_modules():
-    compiler = ccompiler.new_compiler()
-
-    extensions = []
-    devices = {
-                "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
-              }
-
-    for dev_name, params in devices.items():
-        if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
-            print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
-            e = Extension(dev_name, ["{0}.cpp".format(dev_name)],
-                          extra_compile_args= ["-static", "-static-libgcc", OPEN_MP_FLAG],
-                          extra_link_args=[OPEN_MP_FLAG], language="c++",
-                          libraries=[params["lib"]])
-            extensions.append(e)
-        else:
-             print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
-        try:
-            os.remove("a.out") # Temp file for checking
-        except OSError:
-            pass
-    return extensions
-
-
 def main():
     try:
         from Cython.Distutils import build_ext
@@ -94,7 +69,10 @@ def main():
     # Part 2: Build devices
     DEV_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "dev", "native", "lib"))
     os.chdir(DEV_DIR)
-    extensions = get_device_modules()
+    extensions = [Extension("hackrf", ["hackrf"+ext],
+                            extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
+                            extra_link_args=[OPEN_MP_FLAG], libraries=["hackrf"],
+                            language=LANGUAGE)]
 
     if use_cython:
         from Cython.Build import cythonize

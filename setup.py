@@ -54,6 +54,10 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
 
+    if sys.platform == "win32":
+        # we use precompiled device backends on windows
+        package_data["urh.dev.native.lib"] = ["hackrf.cp35-win_amd64.pyd"]
+
     return package_data
 
 
@@ -71,6 +75,10 @@ def get_ext_modules():
 
 
 def get_device_modules():
+    if sys.platform == "win32":
+        # we use precompiled device backends on windows
+        return []
+
     compiler = ccompiler.new_compiler()
 
     extensions = []

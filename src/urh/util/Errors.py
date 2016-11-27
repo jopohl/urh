@@ -44,7 +44,7 @@ class Errors:
         if sys.platform == "win32":
             msg = "Could not connect to HackRF. Try these solutions:" \
                                            "<br/><br/> 1. Ensure HackRF is plugged in." \
-                                           "<br/> 2. <b>Install HackRF USB driver</b> with <a href='http://zadig.akeo.ie/'>Zadig</a>"
+                                           "<br/> 2. <b>Install HackRF USB driver</b> with <a href='http://zadig.akeo.ie/'>Zadig</a>."
         else:
             msg = "Could not connect to HackRF. Try these solutions:" \
                                            "<br/><br/> 1. Ensure HackRF is plugged in." \

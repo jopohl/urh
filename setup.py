@@ -54,7 +54,9 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
 
-    if sys.platform == "win32" or True:
+    is_release = os.path.isfile("/tmp/urh_releasing") # make sure precompiled binding are uploaded to PyPi
+
+    if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
         package_data["urh.dev.native.lib"] = ["hackrf.cp35-win_amd64.pyd"]
 

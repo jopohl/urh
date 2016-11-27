@@ -1,11 +1,12 @@
 from subprocess import call, check_output
 import os, sys
 
+open("/tmp/urh_releasing", "w").close()
+
 script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
 sys.path.append(script_dir)
 
 from src.urh import version
-
 version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))
 
 cur_version = version.VERSION
@@ -59,3 +60,5 @@ for line in fileinput.input("PKGBUILD", inplace=True):
 call("makepkg --printsrcinfo > .SRCINFO", shell=True)
 call(["git", "commit", "-am", "version "+cur_version])
 call(["git", "push"])
+
+os.remove("/tmp/urh_releasing")

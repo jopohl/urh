@@ -19,7 +19,7 @@ def main():
     t = time.time()
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
-            autohacker_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+            autohacker_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))
             sys.path.append(autohacker_dir)
             sys.path.append(os.path.join(autohacker_dir, "src"))
 

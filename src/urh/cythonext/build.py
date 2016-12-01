@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import tempfile
 from subprocess import call
@@ -6,10 +7,9 @@ from subprocess import call
 build_dir = os.path.join(tempfile.gettempdir(), "build")
 
 def main():
-    call([sys.executable, "setup.py", "build_ext",
-          "--build-lib",
-          os.path.join(build_dir, "result"),
-          "--build-temp", build_dir])
+    cur_dir = os.path.realpath(__file__)
+    os.chdir(os.path.realpath(os.path.join(cur_dir, "..", "..", "..", "..")))
+    call([sys.executable, "setup.py", "build_ext", "--inplace"])
 
 
 if __name__ == "__main__":

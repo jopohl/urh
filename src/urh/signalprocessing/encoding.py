@@ -667,6 +667,14 @@ class encoding(object):
         hash = (((hash & 0xf0)>>4) + (hash & 0x0f)) & 0x0f
         return list(map(bool, map(int, "{0:04b}".format(hash))))
 
+    def enocean_hash8(self, inpt):
+        hash = 0
+        print(inpt[-8:], inpt)
+        for i in range(0, len(inpt)-8, 8):
+            hash += int("".join(map(str,map(int, inpt[i:i+8]))),2)
+            #hash += int("".join(map(str, map(int, val[i+8:i:-1]))), 2)
+        return hash % 256
+
     def code_enocean(self, decoding, inpt):
         errors = 0
         output = []

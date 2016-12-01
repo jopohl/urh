@@ -1,6 +1,8 @@
 import unittest
 
 from urh.signalprocessing.encoding import encoding
+from urh.util.crc import crc_generic
+
 
 class TestDecoding(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
@@ -81,3 +83,29 @@ class TestDecoding(unittest.TestCase):
         e.cutmark = [True, False, True, False, True, False]
         decoded, err = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
+
+    def test_enocean_crc(self):
+        e = encoding()
+
+        msg1 = "aa9a6d201006401009802019e411e8035b"
+        msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"
+
+        c = crc_generic(polynomial = "8_en")
+
+
+        msg1 = e.hex2bit("a6d201006401009802019e411e8035")
+        crc1 = int("35", 16)
+        msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e8071")
+        crc2 = int("71", 16)
+
+        print(e.enocean_hash8(msg1))
+        print(crc1)
+
+        print(e.enocean_hash8(msg2))
+        print(crc2)
+
+        #calc_crc1 = e.enocean_hash8(msg1)
+        calc_crc1 = c.crc(msg1)
+        print(calc_crc1, crc1)
+        self.assertTrue(calc_crc1 == crc1)
+        self.assertTrue(e.enocean_hash8(msg2) == crc2)

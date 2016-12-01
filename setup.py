@@ -30,7 +30,7 @@ PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide")
 URH_DIR = "urh"
 
 try:
-    from Cython.Distutils import build_ext
+    import Cython.Build
 except ImportError:
     USE_CYTHON = False
 else:

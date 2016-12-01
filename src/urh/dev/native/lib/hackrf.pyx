@@ -1,5 +1,3 @@
-import multiprocessing
-
 cimport chackrf
 from libc.stdlib cimport malloc
 from libc.string cimport memcpy
@@ -19,7 +17,6 @@ cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
 
 cdef chackrf.hackrf_device* _c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
-
 
 
 cpdef setup():

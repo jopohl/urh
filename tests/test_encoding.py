@@ -84,7 +84,7 @@ class TestDecoding(unittest.TestCase):
         decoded, err = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
-    def test_enocean_crc(self):
+    def test_enocean_crc_polynomial(self):
         e = encoding()
 
         msg1 = "aa9a6d201006401009802019e411e8035b"
@@ -92,20 +92,13 @@ class TestDecoding(unittest.TestCase):
 
         c = crc_generic(polynomial = "8_en")
 
+        # Remove Preamble + SOF + EOF for CRC calculation
+        msg1 = e.hex2bit("a6d201006401009802019e411e80")
+        crc1 = c.hex2bit("35")
+        msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e80")
+        crc2 = c.hex2bit("71")
 
-        msg1 = e.hex2bit("a6d201006401009802019e411e8035")
-        crc1 = int("35", 16)
-        msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e8071")
-        crc2 = int("71", 16)
-
-        print(e.enocean_hash8(msg1))
-        print(crc1)
-
-        print(e.enocean_hash8(msg2))
-        print(crc2)
-
-        #calc_crc1 = e.enocean_hash8(msg1)
         calc_crc1 = c.crc(msg1)
-        print(calc_crc1, crc1)
+        calc_crc2 = c.crc(msg2)
         self.assertTrue(calc_crc1 == crc1)
-        self.assertTrue(e.enocean_hash8(msg2) == crc2)
+        self.assertTrue(calc_crc2 == crc2)

@@ -21,7 +21,7 @@ class Message(object):
     """
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "message_type",
-                 "absolute_time", "relative_time", "__decoder", "align_labels",
+                 "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_indx=0, decoder=None,
@@ -60,6 +60,7 @@ class Message(object):
         self.__encoded_bits = None
         self.__bit_alignments = []
         self.decoding_errors = 0
+        self.decoding_state = Encoder.ErrorState.SUCCESS
 
         self.bit_len = bit_len  # Für Übernahme in Modulator
 
@@ -205,7 +206,7 @@ class Message(object):
         self.__decoder = val
         self.clear_decoded_bits()
         self.clear_encoded_bits()
-        self.decoding_errors = self.decoder.analyze(self.plain_bits)
+        self.decoding_errors, self.decoding_state = self.decoder.analyze(self.plain_bits)
 
 
     @property
@@ -258,29 +259,28 @@ class Message(object):
             # analyze = self.decoder.analyze
             bits = self.plain_bits
             self.decoding_errors = 0
+            states = set()
+            self.decoding_state = self.decoder.ErrorState.SUCCESS
             symbol_indexes = [i for i, b in enumerate(self.plain_bits) if type(b) == Symbol]
             for plabel in self.exclude_from_decoding_labels:
                 symindxs = [i for i in symbol_indexes if i in range(start, plabel.start)]
                 tmp = start
                 for si in symindxs:
-                    decoded, errors = code(True, bits[tmp:si])
+                    decoded, errors, state = code(True, bits[tmp:si])
+                    states.add(state)
                     self.__decoded_bits.extend(decoded + [bits[si]])
                     self.decoding_errors += errors
-                    # self.__decoded_bits.extend(decode(bits[tmp:si]) + [bits[si]])
-                    #self.decoding_errors += analyze(bits[tmp:si])
                     tmp = si + 1
 
 
-                # self.__decoded_bits.extend(decode(bits[tmp:plabel.start]))
-                decoded, errors = code(True, bits[tmp:plabel.start])
+                decoded, errors, state = code(True, bits[tmp:plabel.start])
+                states.add(state)
                 self.__decoded_bits.extend(decoded)
                 self.decoding_errors += errors
 
                 if plabel.start == -1 or plabel.end == -1:
                     plabel.start = len(self.__decoded_bits)
                     plabel.end = plabel.start + (plabel.end - plabel.start)
-
-                    #self.decoding_errors += analyze(bits[tmp:plabel.start])
 
                 start = plabel.start if plabel.start > start else start  # Überlappende Labels -.-
                 self.__decoded_bits.extend(bits[start:plabel.end])
@@ -289,19 +289,21 @@ class Message(object):
             symindxs = [i for i in symbol_indexes if i >= start]
             tmp = start
             for si in symindxs:
-                decoded, errors = code(True, bits[tmp:si])
+                decoded, errors, state = code(True, bits[tmp:si])
+                states.add(state)
                 self.__decoded_bits.extend(decoded + [bits[si]])
                 self.decoding_errors += errors
-
-                # self.__decoded_bits.extend(decode(bits[tmp:si]) + [bits[si]])
-                #self.decoding_errors += analyze(bits[tmp:si])
                 tmp = si + 1
 
-            decoded, errors = code(True, bits[tmp:])
+            decoded, errors, state = code(True, bits[tmp:])
+            states.add(state)
             self.__decoded_bits.extend(decoded)
             self.decoding_errors += errors
-            # self.__decoded_bits.extend(decode(bits[tmp:]))
-            # self.decoding_errors += analyze(bits[tmp:])
+
+            states.discard(self.decoder.ErrorState.SUCCESS)
+            if len(states) > 0:
+                self.decoding_state = sorted(states)[0]
+
 
         return self.__decoded_bits
 

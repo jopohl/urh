@@ -133,6 +133,8 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.proto_to_group_added.connect(self.expand_group_node)
         self.proto_tree_model.group_added.connect(self.handle_group_added)
 
+        self.__set_decoding_error_label(None)
+
         self.__set_default_message_type_ui_status()
 
     @property
@@ -671,14 +673,18 @@ class CompareFrameController(QFrame):
         if message:
             errors = message.decoding_errors
             percent = 100 * (errors / len(message))
-            if percent <= 100:
-                self.ui.lDecodingErrorsValue.setText(
-                    locale.format_string("%d (%.02f%%)", (errors, 100 * (errors / len(message)))))
-            else:
-                self.ui.lDecodingErrorsValue.setText(locale.format_string("%d", errors))
+            color = "green" if errors == 0 else "red"
+            self.ui.lDecodingErrorsValue.setStyleSheet("color: "+color)
+            self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%)", (errors, percent)))
+
+            state = message.decoding_state if message.decoding_state != message.decoder.ErrorState.SUCCESS else ""
+            self.ui.labelDecodingState.setText(state)
+            self.ui.labelDecodingState.setStyleSheet("color: red")
         else:
             self.ui.lDecodingErrorsValue.setText("")
+            self.ui.labelDecodingState.setText("")
 
+# self.ui.lSupport.setStyleSheet("color: green")
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):
         selected = self.ui.tblViewProtocol.selectionModel().selection()

@@ -12,9 +12,9 @@ class TestWhitening(unittest.TestCase):
         original_inpt = e.hex2bit("aaaaaaaa67686768f9ca03909567ba76a8") + [False] # Korrektes Signal, bitgenau
         inpt = original_inpt.copy()
         #print (e.bit2hex(inpt))
-        output, err = e.apply_data_whitening(True, inpt)
+        output, err, _ = e.apply_data_whitening(True, inpt)
         #print (e.bit2hex(output), err)
-        newinpt, err = e.apply_data_whitening(False, output)
+        newinpt, err, _ = e.apply_data_whitening(False, output)
         #print (e.bit2hex(newinpt), newinpt, err)
         self.assertEqual(original_inpt, newinpt)
 

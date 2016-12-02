@@ -370,7 +370,7 @@ class DecoderWidgetController(QDialog):
         # Write decoded bits
         bit = self.e.str2bit(self.ui.inpt.text())
         decoded = self.e.bit2str(self.e.decode(bit))
-        errors = "[Decoding Errors = " + str(self.e.analyze(bit)) + "]"
+        errors = "[Decoding Errors = " + str(self.e.analyze(bit)[0]) + "]"
         self.ui.decoding_errors_label.setText(errors)
         self.ui.output.setText(decoded)
 

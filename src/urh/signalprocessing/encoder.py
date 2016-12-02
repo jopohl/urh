@@ -8,6 +8,16 @@ class Encoder(object):
     """
     Full featured encoding/decoding of protocols.
     """
+    class ErrorState:
+        SUCCESS = "success"
+        WRONG_CRC = "wrong crc"
+        PREAMBLE_NOT_FOUND = "preamble not found"
+        SYNC_NOT_FOUND = "sync not found"
+        EOF_NOT_FOUND = "eof not found"
+        WRONG_INPUT = "wrong input"
+        MISSING_EXTERNAL_PROGRAM = "Please set external de/encoder program!"
+        INVALID_CUTMARK = "cutmark is not valid"
+        MISC = "general error"
 
     def __init__(self, chain=None):
         if chain is None:
@@ -202,6 +212,7 @@ class Encoder(object):
         temp = inputbits.copy()
         output = temp
         errors = 0
+        error_states = []
 
         # operation order
         if decoding:
@@ -266,8 +277,10 @@ class Encoder(object):
 
             # Execute Ops
             if callable(operation) and len(temp) > 0:
-                output, temp_errors = operation(decoding, temp)
+                output, temp_errors, state = operation(decoding, temp)
                 errors += temp_errors
+                if state != self.ErrorState.SUCCESS and state not in error_states:
+                    error_states.append(state)
 
             # Loop Footer
             i += step
@@ -275,7 +288,13 @@ class Encoder(object):
 
         if len(inputbits):
             self.__symbol_len = len(output) / len(inputbits)
-        return output, errors
+
+        if error_states:
+            error_state = error_states[0]
+        else:
+            error_state = self.ErrorState.SUCCESS
+
+        return output, errors, error_state
 
     def lfsr(self, clock):
         poly = [False]
@@ -314,7 +333,7 @@ class Encoder(object):
 
         # inpt empty, polynomial or syncbytes are zero! (Shouldn't happen)
         if inpt_to < 1 or len_polynomial < 1 or len_sync < 1:
-            return inpt[inpt_from:inpt_to], 31337   # Error 31337
+            return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC   # Misc Error
 
         # Force inpt to contain bool values; overwrite everything else with True
         for i in range(0, inpt_to):
@@ -338,7 +357,7 @@ class Encoder(object):
                 i += 1
         # Sync not found
         if decoding and whitening_start_pos == inpt_from:
-            return inpt[inpt_from:inpt_to], 404     # Error 404
+            return inpt[inpt_from:inpt_to], 0, self.ErrorState.SYNC_NOT_FOUND
 
         # If encoding and crc_rm is active, extend inpt with 0s
         if not decoding and self.data_whitening_crc_rm:
@@ -353,7 +372,7 @@ class Encoder(object):
 
         # If data whitening polynomial is wrong, keystream can be less than needed. Check and exit.
         if len(keystream) < inpt_to-whitening_start_pos:
-            return inpt[inpt_from:inpt_to], 31338   # Error 31338
+            return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC   # Error 31338
 
         # Apply keystream (xor) - Decoding
         if decoding:
@@ -395,7 +414,7 @@ class Encoder(object):
             inpt += [inpt[-1]]
             inpt_to += 1
 
-        return inpt[inpt_from:inpt_to], 0
+        return inpt[inpt_from:inpt_to], 0, self.ErrorState.SUCCESS
 
     def run_command(self, command, param):
         # add shlex.quote(param) later for security reasons
@@ -440,15 +459,12 @@ class Encoder(object):
                     while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
                         output.append(False if self.carrier[x % len(self.carrier)] in ("0", "*") else True) # Add 0 when there is a wildcard (*) in carrier description
                         x += 1
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_data_whitening(self, decoding, inpt):
-        output = []
-        errors = 0
-
         # XOR Data Whitening
-        output, errors = self.apply_data_whitening(decoding, inpt)
-        return output, errors
+        return self.apply_data_whitening(decoding, inpt)
+
 
     def code_lsb_first(self, decoding, inpt):
         output = inpt.copy()
@@ -462,7 +478,7 @@ class Encoder(object):
                 output[i + 7], output[i + 6], output[i + 5], output[i + 4], output[i + 3], output[i + 2], output[i + 1], \
                 output[i + 0]
             i += 8
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_redundancy(self, decoding, inpt):
         output = []
@@ -498,11 +514,11 @@ class Encoder(object):
                 # Add multiple
                 for i in inpt:
                     output.extend([i] * self.multiple)
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_invert(self, decoding, inpt):
         errors = 0
-        return [True if not x else False for x in inpt], errors
+        return [True if not x else False for x in inpt], errors, self.ErrorState.SUCCESS
 
     def code_differential(self, decoding, inpt):
         output = [inpt[0]]
@@ -529,7 +545,7 @@ class Encoder(object):
                     else:
                         output.append(False)
                 i += 1
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_edge(self, decoding, inpt):
         errors = 0
@@ -550,7 +566,7 @@ class Encoder(object):
                     output.extend([True, False])
                 else:
                     output.extend([False, True])
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_substitution(self, decoding, inpt):
         errors = 0
@@ -561,7 +577,7 @@ class Encoder(object):
         dst = self.dst
 
         if len(src) < 1 or len(dst) < 1:
-            return [[], 1]
+            return [], 1, self.ErrorState.WRONG_INPUT
 
         if not decoding:
             src, dst = dst, src
@@ -578,24 +594,23 @@ class Encoder(object):
                 continue
             i += minimum_item_size
 
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_externalprogram(self, decoding, inpt):
         errors = 0
-        output = []
 
         if decoding and self.external_decoder != "":
             output = self.str2bit(self.run_command(self.external_decoder, self.bit2str(inpt)))
         elif not decoding and self.external_encoder != "":
             output = self.str2bit(self.run_command(self.external_encoder, self.bit2str(inpt)))
         else:
-            print("Please set external de/encoder program!")
-            return [[], 1]
+            return [], 1, self.ErrorState.MISSING_EXTERNAL_PROGRAM
 
-        return output, errors
+        return output, errors, self.ErrorState.SUCCESS
 
     def code_cut(self, decoding, inpt):
         errors = 0
+        state = self.ErrorState.SUCCESS
         output = []
 
         # cutmark -> [True, False]
@@ -608,7 +623,7 @@ class Encoder(object):
                 len_cutmark = len(self.cutmark)
                 if len_cutmark < 1:
                     # Cutmark is not valid
-                    return inpt, 403
+                    return inpt, 0, self.ErrorState.INVALID_CUTMARK
 
                 for i in range(0, len(inpt)-len_cutmark):
                     if all(inpt[i+j] == self.cutmark[j] for j in range(len_cutmark)):
@@ -630,12 +645,12 @@ class Encoder(object):
                     output.extend(inpt[:pos])
             else:
                 # Position not found or not in range, do nothing!
-                errors = 404
+                state = self.ErrorState.PREAMBLE_NOT_FOUND
                 output.extend(inpt)
         else:
             # Can't undo removing information :-(
             output.extend(inpt)
-        return output, errors
+        return output, errors, state
 
     def enocean_hash4(self, inpt):
         hash = 0
@@ -662,7 +677,7 @@ class Encoder(object):
         eof = [True, False, True, True]
 
         if decoding:
-            inpt, _ = self.code_invert(True, inpt) # Invert
+            inpt, _, _ = self.code_invert(True, inpt) # Invert
             # Insert a leading 1, to ensure protocol starts with 1
             # The first 1 (inverted) of EnOcean is so weak, that it often drowns in Noise
             inpt.insert(0, True)
@@ -671,15 +686,15 @@ class Encoder(object):
             try:
                 n = inpt.index(False) - 1
             except ValueError:
-                return inpt, 404
+                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
             # check preamble
             if inpt[n:n+8] != preamble:
-                return inpt, 404
+                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
             # check SoF
             if inpt[n+8:n+12] != sof:
-                return inpt, 403
+                return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
 
             # Initialize output with raw input data
             output.extend(inpt[n:n+12])
@@ -696,9 +711,9 @@ class Encoder(object):
                 errors += sum([inpt[n+10] != False, inpt[n+11] != True]) if n < end - 11 else 0
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
 
+            state = self.ErrorState.SUCCESS
             if output[-4:] != self.enocean_hash4(output[12:]):
-                errors += 1000
-            #print("Hash:", self.bit2str(self.enocean_hash4(output[start:])), self.bit2str(output[-4:]))
+                state = self.ErrorState.WRONG_CRC
 
             # Finalize output
             output.extend(inpt[end-1:end+3])
@@ -708,15 +723,15 @@ class Encoder(object):
             try:
                 n = inpt.index(False) - 1
             except ValueError:
-                return inpt, 404
+                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
             # check preamble
             if inpt[n:n + 8] != preamble:
-                return inpt, 404
+                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
             # check SoF
             if inpt[n + 8:n + 12] != sof:
-                return inpt, 403
+                return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
 
             # Initialize output with raw input data
             output.extend(inpt[:n+12])
@@ -742,9 +757,10 @@ class Encoder(object):
             output.append(True)
 
             # Invert
-            output, _ = self.code_invert(True, output)  # Invert
+            output, _, _ = self.code_invert(True, output)  # Invert
+            state = self.ErrorState.SUCCESS
 
-        return output, errors
+        return output, errors, state
 
     def encode(self, inpt):
         return self.code(False, inpt)[0]
@@ -752,8 +768,18 @@ class Encoder(object):
     def decode(self, inpt):
         return self.code(True, inpt)[0]
 
+    def applies_for_message(self, msg) -> bool:
+        bit_errors, state = self.analyze(msg)
+        return bit_errors == 0 and state == self.ErrorState.SUCCESS
+
+
     def analyze(self, inpt):
-        return self.code(True, inpt)[1]
+        """
+        return number of bit errors and state
+        :param inpt: list of bool
+        :rtype: tuple[int, str]
+        """
+        return self.code(True, inpt)[1:3]
 
     @staticmethod
     def bit2str(inpt, points=False):

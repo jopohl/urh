@@ -14,9 +14,9 @@ class TestDecoding(unittest.TestCase):
         original_inpt = e.str2bit("000010000100111111111100")
         inpt = original_inpt.copy()
         #print("\nOriginal:", inpt)
-        output, err = e.code_carrier(True, inpt)
+        output, err, _ = e.code_carrier(True, inpt)
         #print("Decoded: ", output, err)
-        newinpt, err = e.code_carrier(False, output)
+        newinpt, err, _ = e.code_carrier(False, output)
         #print("Encoded: ", newinpt, err)
         self.assertEqual(original_inpt, newinpt)
 
@@ -39,9 +39,9 @@ class TestDecoding(unittest.TestCase):
         expected_result = preamble + sof + "01100001 00000000 00000010 11000001 11000000 00100100" + eof
         expected_result2 = preamble + sof + "01010000 00000000 00000010 11000001 11000000 00100010" + eof
 
-        decoded, err = e.code_enocean(True, e.str2bit(received.replace(" ","")))
+        decoded, err, _ = e.code_enocean(True, e.str2bit(received.replace(" ","")))
         self.assertEqual(err, 0)
-        reencoded, err = e.code_enocean(False, decoded)
+        reencoded, err, _ = e.code_enocean(False, decoded)
         self.assertEqual(err, 0)
 
 
@@ -53,35 +53,35 @@ class TestDecoding(unittest.TestCase):
         expected_result = e.str2bit("1010010101111111000")
         e.cutmode = 0
         e.cutmark = [True, False, True, False]
-        decoded, err = e.code_cut(True, received)
+        decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
         received = e.str2bit("00001010010101111111000")
         expected_result = e.str2bit("00001010")
         e.cutmode = 1
         e.cutmark = [True, False, True, False]
-        decoded, err = e.code_cut(True, received)
+        decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
         received = e.str2bit("00001010010101111111000")
         expected_result = e.str2bit("001010010101111111000")
         e.cutmode = 2
         e.cutmark = 2
-        decoded, err = e.code_cut(True, received)
+        decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
         received = e.str2bit("00001010010101111111000")
         expected_result = e.str2bit("000")
         e.cutmode = 3
         e.cutmark = 2
-        decoded, err = e.code_cut(True, received)
+        decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
         received = e.str2bit("00001010010101111111000")
         expected_result = e.str2bit("00001010010101111111000")
         e.cutmode = 0
         e.cutmark = [True, False, True, False, True, False]
-        decoded, err = e.code_cut(True, received)
+        decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
     def test_enocean_crc_polynomial(self):

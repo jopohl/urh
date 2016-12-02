@@ -81,7 +81,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>320</width>
-                <height>493</height>
+                <height>514</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
@@ -262,6 +262,13 @@
                  </property>
                  <property name="text">
                   <string>0 (0.00%)     </string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelDecodingState">
+                 <property name="text">
+                  <string>SUCCESS</string>
                  </property>
                 </widget>
                </item>

@@ -837,7 +837,7 @@ class ProtocolAnalyzer(object):
             decoder_found = False
 
             for decoder in candidate_decodings:
-                if decoder.analyze(message.plain_bits) == 0:
+                if decoder.applies_for_message(message.plain_bits):
                     message.decoder = decoder
                     decoder_found = True
                     break

@@ -22,7 +22,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
@@ -197,21 +197,21 @@ class CompareFrameController(QFrame):
         else:
             prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
 
-        fallback = [encoding(["Non Return To Zero (NRZ)"]),
+        fallback = [Encoder(["Non Return To Zero (NRZ)"]),
 
-                    encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              constants.DECODING_INVERT]),
+                    Encoder(["Non Return To Zero Inverted (NRZ-I)",
+                             constants.DECODING_INVERT]),
 
-                    encoding(["Manchester I",
-                              constants.DECODING_EDGE]),
+                    Encoder(["Manchester I",
+                             constants.DECODING_EDGE]),
 
-                    encoding(["Manchester II",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_INVERT]),
+                    Encoder(["Manchester II",
+                             constants.DECODING_EDGE,
+                             constants.DECODING_INVERT]),
 
-                    encoding(["Differential Manchester",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_DIFFERENTIAL])
+                    Encoder(["Differential Manchester",
+                             constants.DECODING_EDGE,
+                             constants.DECODING_DIFFERENTIAL])
                     ]
 
 
@@ -235,7 +235,7 @@ class CompareFrameController(QFrame):
                 tmp = tmp.replace("'", "")
                 if not "\n" in tmp and tmp != "":
                     tmp_conf.append(tmp)
-            self.decodings.append(encoding(tmp_conf))
+            self.decodings.append(Encoder(tmp_conf))
         f.close()
 
         if len(self.decodings) == 0:
@@ -617,7 +617,7 @@ class CompareFrameController(QFrame):
         else:
             self.set_decoding(self.decodings[new_index], messages=self.selected_messages if self.selected_messages else None)
 
-    def set_decoding(self, decoding: encoding, messages=None):
+    def set_decoding(self, decoding: Encoder, messages=None):
         """
 
         :param decoding:

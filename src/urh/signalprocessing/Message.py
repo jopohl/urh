@@ -10,7 +10,7 @@ from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
@@ -30,7 +30,7 @@ class Message(object):
 
         :param pause: pause AFTER the message in samples
         :type plain_bits: list[bool|Symbol]
-        :type decoder: encoding
+        :type decoder: Encoder
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
         :param bit_len: Für Übernahme der Bitlänge in Modulator Dialog
@@ -50,7 +50,7 @@ class Message(object):
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 
-        self.__decoder = decoder if decoder else encoding(["Non Return To Zero (NRZ)"])
+        self.__decoder = decoder if decoder else Encoder(["Non Return To Zero (NRZ)"])
         """:type: encoding """
 
         self.align_labels = True
@@ -196,12 +196,12 @@ class Message(object):
         self.__decoded_bits = None
 
     @property
-    def decoder(self) -> encoding:
+    def decoder(self) -> Encoder:
         return self.__decoder
 
 
     @decoder.setter
-    def decoder(self, val: encoding):
+    def decoder(self, val: Encoder):
         self.__decoder = val
         self.clear_decoded_bits()
         self.clear_encoded_bits()

@@ -7,7 +7,7 @@ import tests.startApp
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.MainController import MainController
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 
 app = tests.startApp.app
 
@@ -39,7 +39,7 @@ class TestFuzzing(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cframe.ui.cbProtoView.setCurrentIndex(1) # Hex
         QTest.qWait(10)
-        decoding = encoding(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x8"])
+        decoding = Encoder(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x8"])
         self.cframe.decodings.append(decoding)
         self.cframe.ui.cbDecoding.addItem(decoding.name)
         self.cframe.set_decoding(decoding)

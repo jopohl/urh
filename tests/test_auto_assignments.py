@@ -9,7 +9,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 
 
 class TestAutoAssignments(unittest.TestCase):
@@ -34,13 +34,13 @@ class TestAutoAssignments(unittest.TestCase):
         self.assertEqual(self.protocol.plain_hex_str[0][16:18], "2d")
 
         self.decodings = []
-        self.decodings.append(encoding(['Non Return To Zero (NRZ)']))
-        self.decodings.append(encoding(['Non Return To Zero Inverted (NRZ-I)', 'Invert']))
-        self.decodings.append(encoding(['Manchester I', 'Edge Trigger']))
-        self.decodings.append(encoding(['Manchester II', 'Edge Trigger', 'Invert']))
-        self.decodings.append(encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding',]))
-        self.decodings.append(encoding(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
-        self.decodings.append(encoding(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
+        self.decodings.append(Encoder(['Non Return To Zero (NRZ)']))
+        self.decodings.append(Encoder(['Non Return To Zero Inverted (NRZ-I)', 'Invert']))
+        self.decodings.append(Encoder(['Manchester I', 'Edge Trigger']))
+        self.decodings.append(Encoder(['Manchester II', 'Edge Trigger', 'Invert']))
+        self.decodings.append(Encoder(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
+        self.decodings.append(Encoder(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
+        self.decodings.append(Encoder(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
 
     def test_message_type_assign_by_value(self):
         start = 8

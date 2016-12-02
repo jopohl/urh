@@ -18,7 +18,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
@@ -32,7 +32,7 @@ class GeneratorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
                  project_manager: ProjectManager, parent=None):
         """
-        :type encoders: list of encoding
+        :type encoders: list of Encoder
         :return:
         """
         super().__init__(parent)

@@ -11,7 +11,7 @@ from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.ui_decoding import Ui_Decoder
 from urh.util.ProjectManager import ProjectManager
@@ -21,7 +21,7 @@ class DecoderWidgetController(QDialog):
     def __init__(self, decodings, signals, project_manager: ProjectManager,
                  parent=None):
         """
-        :type decodings: list of encoding
+        :type decodings: list of Encoder
         :type signals: list of Signal
         """
         # Init
@@ -167,13 +167,13 @@ class DecoderWidgetController(QDialog):
             for i in range (0, len(self.decodings)):
                 if name == self.decodings[i].name:
                     self.ui.combobox_decodings.setCurrentIndex(i)
-                    self.decodings[i] = encoding(self.chainstr)
+                    self.decodings[i] = Encoder(self.chainstr)
                     self.set_e()
                     self.ui.saveas.setVisible(False)
                     self.save_to_file()
                     return
 
-            self.decodings.append(encoding(self.chainstr))
+            self.decodings.append(Encoder(self.chainstr))
             self.ui.combobox_decodings.addItem(self.chainstr[0])
             self.ui.combobox_decodings.setCurrentIndex(self.ui.combobox_decodings.count()-1)
             self.set_e()

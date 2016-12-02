@@ -17,7 +17,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.cythonext import util
 from urh.util.Logger import logger
 
@@ -68,7 +68,7 @@ class ProtocolAnalyzer(object):
         self.show = Qt.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()
 
-        self.decoder = encoding(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
+        self.decoder = Encoder(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
 
         self.message_types = [MessageType("default")]
 
@@ -212,7 +212,7 @@ class ProtocolAnalyzer(object):
 
         return "<br>".join(result)
 
-    def set_decoder_for_messages(self, decoder: encoding, messages=None):
+    def set_decoder_for_messages(self, decoder: Encoder, messages=None):
         messages = messages if messages is not None else self.messages
         self.decoder = decoder
         for message in messages:
@@ -753,7 +753,7 @@ class ProtocolAnalyzer(object):
             decoders = []
             for decoding_tag in root.find("decodings").findall("decoding"):
                 conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-                decoders.append(encoding(conf))
+                decoders.append(Encoder(conf))
             return decoders
         except AttributeError:
             logger.error("no decodings found in xml")
@@ -826,7 +826,7 @@ class ProtocolAnalyzer(object):
 
     def auto_assign_decodings(self, decodings):
         """
-        :type decodings: list of encoding
+        :type decodings: list of Encoder
         """
         nrz_decodings = [decoding for decoding in decodings if decoding.is_nrz or decoding.is_nrzi]
         fallback = nrz_decodings[0] if nrz_decodings else None

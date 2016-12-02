@@ -1,13 +1,13 @@
 import unittest
 
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.util.crc import crc_generic
 
 class TestCRC(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
     def test_crc(self):
         c = crc_generic(polynomial="8_en")
-        e = encoding()
+        e = Encoder()
 
         bitstr = ["010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
                   "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",

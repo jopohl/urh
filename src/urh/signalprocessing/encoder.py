@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-__author__ = 'andreas.noack@fh-stralsund.de'
-
 import subprocess
 
 from urh import constants
 from urh.util.crc import crc_generic
 
 
-class encoding(object):
+class Encoder(object):
     """
     Full featured encoding/decoding of protocols.
     """
@@ -570,13 +567,6 @@ class encoding(object):
             src, dst = dst, src
 
         minimum_item_size = len(src[0])
-        # maximum_item_size = 0
-        # for x in range(0, len(src)):
-        #    if len(src[x]) < minimum_item_size:
-        #        minimum_item_size = len(src[x])
-        #    if len(src[x]) > maximum_item_size:
-        #        maximum_item_size = len(src[x])
-
         i = 0
         while i < len(inpt):
             cnt = src.count(inpt[i:i + minimum_item_size])
@@ -586,17 +576,6 @@ class encoding(object):
                 i += 1
                 errors += 1
                 continue
-            # elif cnt > 1:
-            #    for j in range(minimum_item_size, maximum_item_size):
-            #        cnt = src.count(inpt[i:i+j])
-            #        if cnt == 1:
-            #            output.extend(dst[src.index(inpt[i:i+j])])
-            #            i += j
-            #            break
-            #        elif cnt < 1:
-            #            i += 1
-            #            errors += 1
-            #            break
             i += minimum_item_size
 
         return output, errors
@@ -828,6 +807,3 @@ class encoding(object):
 
     def __eq__(self, other):
         return self.get_chain() == other.get_chain()
-
-if __name__ == "__main__":
-    e = encoding()

@@ -1,11 +1,11 @@
 import unittest
 
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 
 class TestWhitening(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
     def test_whitening(self):
-        e = encoding()
+        e = Encoder()
 
         # Test 1
         e.data_whitening_sync = e.hex2bit("67686768")

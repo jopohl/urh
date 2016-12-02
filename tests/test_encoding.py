@@ -1,13 +1,13 @@
 import unittest
 
-from urh.signalprocessing.encoding import encoding
+from urh.signalprocessing.encoder import Encoder
 from urh.util.crc import crc_generic
 
 
 class TestDecoding(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
     def test_carrier(self):
-        e = encoding()
+        e = Encoder()
 
         # Test 1
         e.carrier = "----1....1**"  # or "....1....101", ...
@@ -21,7 +21,7 @@ class TestDecoding(unittest.TestCase):
         self.assertEqual(original_inpt, newinpt)
 
     def test_enocean(self):
-        e = encoding()
+        e = Encoder()
 
 
         received = "010101010110100111101010111011101110111011100110001011101010001011101110110111011101000"
@@ -85,7 +85,7 @@ class TestDecoding(unittest.TestCase):
         self.assertEqual(decoded, expected_result)
 
     def test_enocean_crc_polynomial(self):
-        e = encoding()
+        e = Encoder()
 
         msg1 = "aa9a6d201006401009802019e411e8035b"
         msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"

@@ -666,11 +666,9 @@ class Encoder(object):
     @staticmethod
     def enocean_checksum8(inpt):
         hash = 0
-        print(inpt[-8:], inpt)
         for i in range(0, len(inpt) - 8, 8):
             hash += int("".join(map(str, map(int, inpt[i:i + 8]))), 2)
-            # hash += int("".join(map(str, map(int, val[i+8:i:-1]))), 2)
-        return hash % 256
+        return list(map(bool, map(int, "{0:08b}".format(hash % 256))))
 
     @staticmethod
     def enocean_crc8(inpt):

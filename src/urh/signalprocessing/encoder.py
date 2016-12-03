@@ -676,7 +676,7 @@ class Encoder(object):
         c = crc_generic(polynomial="8_en")
         return c.crc(inpt)
 
-    def code_enocean(self, decoding, inpt):
+    def code_enocean(self, decoding: bool, inpt):
         errors = 0
         output = []
         preamble = [True, False, True, False, True, False, True, False]
@@ -686,70 +686,47 @@ class Encoder(object):
         if decoding:
             inpt, _, _ = self.code_invert(True, inpt) # Invert
             # Insert a leading 1, to ensure protocol starts with 1
-            # The first 1 (inverted) of EnOcean is so weak, that it often drowns in Noise
+            # The first 1 (inverted) of EnOcean is so weak, that it often drowns in noise
             inpt.insert(0, True)
 
-            # Search for begin
-            try:
-                n = inpt.index(False) - 1
-            except ValueError:
-                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
+        # Search for begin
+        try:
+            n = inpt.index(False) - 1
+        except ValueError:
+            return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
-            # check preamble
-            if inpt[n:n+8] != preamble:
-                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
+        # check preamble
+        if inpt[n:n + 8] != preamble:
+            return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
-            # check SoF
-            if inpt[n+8:n+12] != sof:
-                return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
+        # check SoF
+        if inpt[n + 8:n + 12] != sof:
+            return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
 
-            # Initialize output with raw input data
-            output.extend(inpt[n:n+12])
+        output.extend(inpt[n:n + 12])
 
-            # search for data limits
-            start = n+12
-            n = len(inpt)
-            while n > start and inpt[n-4:n] != eof:
-                n -= 1
-            end = n-3
+        # search for data limits
+        start = n + 12
+        n = len(inpt)
+        while n > start and inpt[n - 4:n] != eof:
+            n -= 1
+        end = n - 4
 
+        state = self.ErrorState.SUCCESS
+
+        if decoding:
             for n in range (start, end, 12):
                 errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
                 errors += sum([inpt[n+10] != False, inpt[n+11] != True]) if n < end - 11 else 0
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
 
-            state = self.ErrorState.SUCCESS
             if output[-4:] != self.enocean_checksum4(output[12:]):
                 state = self.ErrorState.WRONG_CRC
 
             # Finalize output
-            output.extend(inpt[end-1:end+3])
+            output.extend(inpt[end:end+4])
 
         else:
-            # Search for begin
-            try:
-                n = inpt.index(False) - 1
-            except ValueError:
-                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
-
-            # check preamble
-            if inpt[n:n + 8] != preamble:
-                return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
-
-            # check SoF
-            if inpt[n + 8:n + 12] != sof:
-                return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
-
-            # Initialize output with raw input data
-            output.extend(inpt[:n+12])
-
-            # search for data limits
-            start = n + 12
-            n = len(inpt)
-            while n > start and inpt[n - 4:n] != eof:
-                n -= 1
-            end = n - 4
-
             # Calculate hash
             inpt[end-4:end] = self.enocean_checksum4(inpt[start:end])
 
@@ -757,7 +734,6 @@ class Encoder(object):
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], not inpt[n+2], inpt[n+3], inpt[n+4], inpt[n+5], not inpt[n+5], inpt[n+6], inpt[n+7]])
                 if n < len(inpt) - 15:
                     output.extend([False, True])
-                #print(n, self.bit2str(output[start:]), len(self.bit2str(output[start:])))
 
             # Extend eof and trash
             output.extend(eof)
@@ -765,7 +741,6 @@ class Encoder(object):
 
             # Invert
             output, _, _ = self.code_invert(True, output)  # Invert
-            state = self.ErrorState.SUCCESS
 
         return output, errors, state
 

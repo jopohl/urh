@@ -90,15 +90,13 @@ class TestDecoding(unittest.TestCase):
         msg1 = "aa9a6d201006401009802019e411e8035b"
         msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"
 
-        c = crc_generic(polynomial = "8_en")
-
         # Remove Preamble + SOF + EOF for CRC calculation
         msg1 = e.hex2bit("a6d201006401009802019e411e80")
-        crc1 = c.hex2bit("35")
+        crc1 = e.hex2bit("35")
         msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e80")
-        crc2 = c.hex2bit("71")
+        crc2 = e.hex2bit("71")
 
-        calc_crc1 = c.crc(msg1)
-        calc_crc2 = c.crc(msg2)
+        calc_crc1 = e.enocean_crc8(msg1)
+        calc_crc2 = e.enocean_crc8(msg2)
         self.assertTrue(calc_crc1 == crc1)
         self.assertTrue(calc_crc2 == crc2)

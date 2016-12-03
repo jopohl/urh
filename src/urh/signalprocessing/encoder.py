@@ -652,7 +652,8 @@ class Encoder(object):
             output.extend(inpt)
         return output, errors, state
 
-    def enocean_hash4(self, inpt):
+    @staticmethod
+    def enocean_checksum4(inpt):
         hash = 0
         val = inpt.copy()
         val[-4:] = [False, False, False, False]
@@ -661,13 +662,19 @@ class Encoder(object):
         hash = (((hash & 0xf0)>>4) + (hash & 0x0f)) & 0x0f
         return list(map(bool, map(int, "{0:04b}".format(hash))))
 
-    def enocean_hash8(self, inpt):
+    @staticmethod
+    def enocean_checksum8(inpt):
         hash = 0
         print(inpt[-8:], inpt)
         for i in range(0, len(inpt)-8, 8):
             hash += int("".join(map(str,map(int, inpt[i:i+8]))),2)
             #hash += int("".join(map(str, map(int, val[i+8:i:-1]))), 2)
         return hash % 256
+
+    @staticmethod
+    def enocean_crc8(inpt):
+        c = crc_generic(polynomial="8_en")
+        return c.crc(inpt)
 
     def code_enocean(self, decoding, inpt):
         errors = 0
@@ -712,7 +719,7 @@ class Encoder(object):
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], inpt[n+4], inpt[n+5], inpt[n+6], inpt[n+8], inpt[n+9]])
 
             state = self.ErrorState.SUCCESS
-            if output[-4:] != self.enocean_hash4(output[12:]):
+            if output[-4:] != self.enocean_checksum4(output[12:]):
                 state = self.ErrorState.WRONG_CRC
 
             # Finalize output
@@ -744,7 +751,7 @@ class Encoder(object):
             end = n - 4
 
             # Calculate hash
-            inpt[end-4:end] = self.enocean_hash4(inpt[start:end])
+            inpt[end-4:end] = self.enocean_checksum4(inpt[start:end])
 
             for n in range(start, end, 8):
                 output.extend([inpt[n], inpt[n+1], inpt[n+2], not inpt[n+2], inpt[n+3], inpt[n+4], inpt[n+5], not inpt[n+5], inpt[n+6], inpt[n+7]])

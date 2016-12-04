@@ -653,6 +653,32 @@ class Encoder(object):
             output.extend(inpt)
         return output, errors, state
 
+    def enocean_hash(self, msg):
+        """
+        Get the hash for an enocean message. There are three hashes possible:
+        1) 4 Bit Hash - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)
+        2) 8 Bit Checksum: STATUS bit 2^7 = 0
+        3) 8 Bit CRC: STATUS bit 2^7 = 1
+
+        :param msg: the message without Preamble/SOF and EOF. Message starts with RORG and ends with CRC
+        :type msg: list of bool
+        :rtype: list of bool
+        """
+        try:
+            if msg[0:4] == self.hex2bit("5") or msg[0:4] == self.hex2bit("6"):
+                # Switch telegram
+                return self.enocean_checksum4(msg)
+
+            status = msg[-16:-8]
+            if status[0]:
+                return self.enocean_crc8(msg[:-8])  # ignore trailing hash
+            else:
+                return self.enocean_checksum8(msg[:-8])  # ignore trailing hash
+
+        except IndexError:
+            return None
+
+
     @staticmethod
     def enocean_checksum4(inpt):
         hash = 0
@@ -720,7 +746,8 @@ class Encoder(object):
                 output.extend([inpt[n], inpt[n + 1], inpt[n + 2], inpt[n + 4], inpt[n + 5], inpt[n + 6], inpt[n + 8],
                                inpt[n + 9]])
 
-            if output[-4:] != self.enocean_checksum4(output[12:]):
+            enocean_hash = self.enocean_hash(output[12:])
+            if enocean_hash is None or output[-len(enocean_hash):] != enocean_hash:
                 state = self.ErrorState.WRONG_CRC
 
             # Finalize output
@@ -728,7 +755,11 @@ class Encoder(object):
 
         else:
             # Calculate hash
-            inpt[end - 4:end] = self.enocean_checksum4(inpt[start:end])
+            enocean_hash = self.enocean_hash(inpt[start:end])
+            if enocean_hash is not None:
+                inpt[end - len(enocean_hash):end] = enocean_hash
+            else:
+                state = self.ErrorState.WRONG_CRC
 
             for n in range(start, end, 8):
                 output.extend(
@@ -796,7 +827,7 @@ class Encoder(object):
         return ""
 
     @staticmethod
-    def hex2bit(inpt):
+    def hex2bit(inpt: str):
         if not isinstance(inpt, str):
             return []
         try:

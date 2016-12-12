@@ -97,7 +97,7 @@ class EpicGraphicView(SelectableGraphicView):
         noiseAction = None
 
         menu.addSeparator()
-        autorangeAction = menu.addAction(self.tr("Show Autocrop Range"))
+        #autorangeAction = menu.addAction(self.tr("Show Autocrop Range"))
         cropAction = None
 
         if not self.selection_area.is_empty:
@@ -156,8 +156,8 @@ class EpicGraphicView(SelectableGraphicView):
             self.zoom_to_selection(self.selection_area.x, self.selection_area.end)
         elif action == createAction:
             self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
-        elif action == autorangeAction:
-            self.show_crop_range_clicked.emit()
+        #elif action == autorangeAction:
+        #    self.show_crop_range_clicked.emit()
         elif action == cropAction:
             self.crop_clicked.emit()
         elif action == noiseAction:

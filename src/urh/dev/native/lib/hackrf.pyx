@@ -1,6 +1,7 @@
 cimport chackrf
 from libc.stdlib cimport malloc
 from libc.string cimport memcpy
+import time
 cdef object f
 from cpython cimport PyBytes_GET_SIZE
 
@@ -34,6 +35,7 @@ cpdef open():
     return chackrf.hackrf_open(&_c_device)
 
 cpdef close():
+    time.sleep(0.1)
     return chackrf.hackrf_close(_c_device)
 
 cpdef start_rx_mode(callback):

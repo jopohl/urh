@@ -617,12 +617,12 @@ class DecoderWidgetController(QDialog):
                                 self.ui.rB_delbeforepos.setChecked(True)
                                 self.ui.cutmark.setEnabled(False)
                                 self.ui.cutmark2.setEnabled(True)
-                                self.ui.cutmark2.setvalue(int(cmark))
+                                self.ui.cutmark2.setValue(int(cmark))
                             elif cmode == 3:
                                 self.ui.rB_delbeforepos.setChecked(True)
                                 self.ui.cutmark.setEnabled(False)
                                 self.ui.cutmark2.setEnabled(True)
-                                self.ui.cutmark2.setvalue(int(cmark))
+                                self.ui.cutmark2.setValue(int(cmark))
 
                         except ValueError:
                             self.ui.cutmark.setText("1010")

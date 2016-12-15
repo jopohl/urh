@@ -15,6 +15,13 @@ class ProtocolLabel(object):
     DISPLAY_TYPES = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
+    class Type:
+        SRC_ADDRESS = "src"
+        DST_ADDRESS = "dst"
+
+
+        SEQUENCE_NUMBER = "seq"
+        CRC = "crc"
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
         self.__name = name

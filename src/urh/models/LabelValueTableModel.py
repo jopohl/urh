@@ -49,6 +49,9 @@ class LabelValueTableModel(QAbstractTableModel):
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
             return self.header_labels[section]
+        elif role == Qt.TextAlignmentRole:
+            return Qt.AlignLeft
+
         return super().headerData(section, orientation, role)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):

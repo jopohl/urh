@@ -1452,6 +1452,6 @@ class CompareFrameController(QFrame):
                 break
         if other_label:
             protolabel.color_index = other_label.color_index
-            protolabel.display_type_index = other_label.display_type_index
+            protolabel.display_format_index = other_label.display_format_index
             self.protocol_model.update()
             self.label_value_model.update()

@@ -3,7 +3,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    header_labels = ["Name", 'Value Type', 'Value']
+    header_labels = ["Name", 'Display format', 'Value']
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
@@ -11,7 +11,7 @@ class LabelValueTableModel(QAbstractTableModel):
         self.controller = controller
         self.__message_index = 0
         self.display_labels = controller.active_message_type
-        """:type: MessageType"""
+        """:type: urh.signalprocessing.MessageType.MessageType"""
 
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
@@ -65,27 +65,27 @@ class LabelValueTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return lbl.DISPLAY_TYPES[lbl.display_type_index]
+                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
                 if not self.message:
                     return None
-                start, end = self.message.get_label_range(lbl, lbl.display_type_index % 3, True)
-                if lbl.display_type_index == 0:
+                start, end = self.message.get_label_range(lbl, lbl.display_format_index % 3, True)
+                if lbl.display_format_index == 0:
                     try:
                         return self.bit_str[self.message_index][start:end]
                     except IndexError:
                         return None
-                elif lbl.display_type_index == 1:
+                elif lbl.display_format_index == 1:
                     try:
                         return self.hex_str[self.message_index][start:end]
                     except IndexError:
                         return None
-                elif lbl.display_type_index == 2:
+                elif lbl.display_format_index == 2:
                     try:
                         return self.ascii_str[self.message_index][start:end]
                     except IndexError:
                         return None
-                elif lbl.display_type_index == 3:
+                elif lbl.display_format_index == 3:
                     try:
                         try:
                             decimal = int(self.bit_str[self.message_index][start:end], 2)
@@ -99,7 +99,7 @@ class LabelValueTableModel(QAbstractTableModel):
         if role == Qt.EditRole:
             lbl = self.display_labels[index.row()]
             if index.column() == 1:
-                lbl.display_type_index = value
+                lbl.display_format_index = value
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)

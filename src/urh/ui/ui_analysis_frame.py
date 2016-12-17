@@ -427,6 +427,7 @@ class Ui_FAnalysis(object):
         self.tblLabelValues.setObjectName("tblLabelValues")
         self.tblLabelValues.horizontalHeader().setVisible(True)
         self.tblLabelValues.horizontalHeader().setCascadingSectionResizes(False)
+        self.tblLabelValues.horizontalHeader().setDefaultSectionSize(150)
         self.tblLabelValues.horizontalHeader().setStretchLastSection(True)
         self.tblLabelValues.verticalHeader().setVisible(False)
         self.gridLayout.addWidget(self.tblLabelValues, 1, 1, 2, 1)

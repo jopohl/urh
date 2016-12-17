@@ -1,3 +1,5 @@
+from enum import Enum
+
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
@@ -15,13 +17,15 @@ class ProtocolLabel(object):
     DISPLAY_TYPES = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    class Type:
-        SRC_ADDRESS = "src"
-        DST_ADDRESS = "dst"
+    class Type(Enum):
+        PREAMBLE = "preamble"
+        SYNC = "synchronization"
+        SRC_ADDRESS = "source address"
+        DST_ADDRESS = "destination address"
 
-
-        SEQUENCE_NUMBER = "seq"
+        SEQUENCE_NUMBER = "sequence number"
         CRC = "crc"
+        CUSTOM = ""
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
         self.__name = name
@@ -36,6 +40,8 @@ class ProtocolLabel(object):
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
+
+        self.type = ProtocolLabel.Type.CUSTOM
 
         self.display_type_index = 0
 
@@ -107,7 +113,7 @@ class ProtocolLabel(object):
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_type_index": str(self.display_type_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created)})
+                                            "auto_created": str(self.auto_created), "type": self.type.name})
 
     @staticmethod
     def from_xml(tag: ET.Element):
@@ -122,5 +128,6 @@ class ProtocolLabel(object):
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_type_index = int(tag.get("display_type_index", 0))
         result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
+        result.type = ProtocolLabel.Type[tag.get("type", '')]
 
         return result

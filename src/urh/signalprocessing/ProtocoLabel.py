@@ -60,6 +60,13 @@ class ProtocolLabel(object):
             self.__name = val
 
     @property
+    def title(self):
+        if self.type != ProtocolLabel.Type.CUSTOM:
+            return self.type.value
+        else:
+            return self.name
+
+    @property
     def fuzz_maximum(self):
         return 2 ** (self.end - self.start)
 

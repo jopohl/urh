@@ -1,7 +1,9 @@
+from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QDialog
 
 from urh import constants
+from urh.models.CustomFieldListModel import CustomFieldListModel
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -42,6 +44,9 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
         self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message_type.name)
 
+        self.custom_field_list_model = CustomFieldListModel(message_type)
+        self.ui.listViewCustomFieldTypes.setModel(self.custom_field_list_model)
+
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -50,6 +55,10 @@ class ProtocolLabelController(QDialog):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
         self.model.apply_decoding_changed.connect(self.on_apply_decoding_changed)
+
+        self.ui.btnAddFieldType.clicked.connect(self.on_btn_add_fieldtype_clicked)
+        self.ui.btnRemoveFieldType.clicked.connect(self.on_btn_remove_fieldtype_clicked)
+
 
     @pyqtSlot()
     def confirm(self):
@@ -72,3 +81,16 @@ class ProtocolLabelController(QDialog):
     @pyqtSlot(ProtocolLabel)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel):
         self.apply_decoding_changed.emit(lbl, self.model.message_type)
+
+    def on_btn_remove_fieldtype_clicked(self):
+        for index in self.ui.listViewCustomFieldTypes.selectedIndexes():
+            self.custom_field_list_model.remove_field_type_at(index.row())
+
+    def on_btn_add_fieldtype_clicked(self):
+        number = 1
+        name = "Custom field #"
+        while name + str(number) in self.model.message_type.custom_field_types:
+            number += 1
+
+        self.custom_field_list_model.add_field_type(name + str(number))
+        self.ui.btnRemoveFieldType.setEnabled(True)

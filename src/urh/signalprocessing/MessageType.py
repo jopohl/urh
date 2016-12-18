@@ -81,7 +81,7 @@ class MessageType(list):
 
     def add_protocol_label(self, start: int, end: int, name=None, color_ind=None, auto_created=False) -> ProtocolLabel:
 
-        name = "Label {0:d}".format(len(self) + 1) if not name else name
+        name = "" if not name else name
         used_colors = [p.color_index for p in self]
         avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
 

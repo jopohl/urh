@@ -526,6 +526,7 @@ class Ui_FAnalysis(object):
         self.lNumSelectedColumns.setText(_translate("FAnalysis", "0"))
         self.lColumnsSelectedText.setText(_translate("FAnalysis", "Column(s) selected"))
         self.label.setText(_translate("FAnalysis", "Message type:"))
+        self.listViewLabelNames.setToolTip(_translate("FAnalysis", "Manage your estimations for protocol fields here. To add custom field types use Rightclick -> Edit."))
         self.lblLabelValues.setText(_translate("FAnalysis", "Label values for message"))
         self.btnMessagetypeSettings.setToolTip(_translate("FAnalysis", "Settings for message type"))
         self.btnMessagetypeSettings.setText(_translate("FAnalysis", "..."))

@@ -24,6 +24,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.encoder import Encoder
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -170,11 +171,11 @@ class CompareFrameController(QFrame):
 
 
     @property
-    def active_message_type(self):
+    def active_message_type(self) -> MessageType:
         return self.__selected_message_type
 
     @active_message_type.setter
-    def active_message_type(self, val):
+    def active_message_type(self, val: MessageType):
         if val not in self.proto_analyzer.message_types:
             logger.error("Message type {} not in mesage types".format(val.name))
             return
@@ -186,6 +187,9 @@ class CompareFrameController(QFrame):
         self.__set_default_message_type_ui_status()
         self.protocol_label_list_model.update()
         self.ui.cbMessagetypes.blockSignals(False)
+
+        field_types = [t.value for t in ProtocolLabel.Type if t.value] + self.active_message_type.custom_field_types
+        self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True))
 
 
     def handle_files_dropped(self, files: list):
@@ -308,8 +312,8 @@ class CompareFrameController(QFrame):
         self.ui.btnPrevSearch.clicked.connect(self.prev_search_result)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.set_protocol_label_visibility)
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.label_value_model.update)
-        self.protocol_label_list_model.protolabel_name_changed.connect(self.on_label_name_edited)
         self.ui.btnSaveProto.clicked.connect(self.save_protocol)
+        self.protocol_label_list_model.protolabel_type_edited.connect(self.label_value_model.update)
         self.ui.tblViewProtocol.selection_changed.connect(self.handle_table_selection_changed)
         self.ui.listViewLabelNames.editActionTriggered.connect(self.show_protocol_labels)
         self.ui.tblViewProtocol.writeable_changed.connect(self.handle_writeable_changed)
@@ -1122,7 +1126,7 @@ class CompareFrameController(QFrame):
 
         maxrow = numpy.max(rows)
 
-        label = self.protocol_label_list_model.proto_labels[maxrow]
+        label = self.protocol_label_list_model.message_type[maxrow]
         if not label.show:
             return
 
@@ -1222,7 +1226,7 @@ class CompareFrameController(QFrame):
 
         if edit_label_name:
             try:
-                index = self.protocol_label_list_model.proto_labels.index(proto_label)
+                index = self.protocol_label_list_model.message_type.index(proto_label)
                 self.ui.listViewLabelNames.edit(self.protocol_label_list_model.createIndex(index, 0))
             except ValueError:
                 pass
@@ -1439,19 +1443,3 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.setRowHidden(i, hide)
 
         self.set_shown_protocols()
-
-    def on_label_name_edited(self, protolabel: ProtocolLabel, message_type: MessageType):
-        # Check if label with the same name is already in another message type.
-        # If yes, copy the attributes of this label to the edited one
-        other_label = None
-        for msg_type in self.proto_analyzer.message_types:
-            if msg_type == message_type:
-                continue
-            other_label = next((p for p in msg_type if p.name == protolabel.name), None)
-            if other_label:
-                break
-        if other_label:
-            protolabel.color_index = other_label.color_index
-            protolabel.display_format_index = other_label.display_format_index
-            self.protocol_model.update()
-            self.label_value_model.update()

@@ -874,6 +874,9 @@
          <property name="acceptDrops">
           <bool>false</bool>
          </property>
+         <property name="toolTip">
+          <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
+         </property>
         </widget>
        </item>
        <item row="0" column="1">

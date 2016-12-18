@@ -14,7 +14,7 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
+    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer", "custom_field_types"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
@@ -26,6 +26,8 @@ class MessageType(list):
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False
         self.ruleset = Ruleset() if ruleset is None else ruleset
+
+        self.custom_field_types = ["Unidentified", "Constant"]
 
     def __hash__(self):
         return hash(super)
@@ -79,7 +81,7 @@ class MessageType(list):
 
     def add_protocol_label(self, start: int, end: int, name=None, color_ind=None, auto_created=False) -> ProtocolLabel:
 
-        name = "Label {0:d}".format(len(self) + 1) if not name else name
+        name = "" if not name else name
         used_colors = [p.color_index for p in self]
         avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
 
@@ -118,6 +120,35 @@ class MessageType(list):
             result.append(lbl.to_xml(-1))
 
         result.append(self.ruleset.to_xml())
+
+        if self.custom_field_types:
+            root = ET.Element("custom_field_types")
+            for custom_field_type in self.custom_field_types:
+                e = ET.Element("field_type")
+                e.text = custom_field_type
+                root.append(e)
+            result.append(root)
+
+        return result
+
+
+    @staticmethod
+    def from_xml(tag:  ET.Element):
+        name = tag.get("name", "blank")
+        id = tag.get("id", None)
+        assigned_by_ruleset = bool(int(tag.get("assigned_by_ruleset", 0)))
+        assigned_by_logic_analyzer = bool(int(tag.get("assigned_by_logic_analyzer", 0)))
+        labels = []
+        for lbl_tag in tag.findall("label"):
+            labels.append(ProtocolLabel.from_xml(lbl_tag))
+        result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
+        result.assigned_by_ruleset = assigned_by_ruleset
+        result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
+
+        custom_fields_tag = tag.find("custom_field_types")
+        if custom_fields_tag:
+            result.custom_field_types = [e.text for e in custom_fields_tag.findall("field_type")]
+
         return result
 
     def copy_for_fuzzing(self):
@@ -135,17 +166,3 @@ class MessageType(list):
             return self.id == other.id
         else:
             return super().__eq__(other)
-
-    @staticmethod
-    def from_xml(tag:  ET.Element):
-        name = tag.get("name", "blank")
-        id = tag.get("id", None)
-        assigned_by_ruleset = bool(int(tag.get("assigned_by_ruleset", 0)))
-        assigned_by_logic_analyzer = bool(int(tag.get("assigned_by_logic_analyzer", 0)))
-        labels = []
-        for lbl_tag in tag.findall("label"):
-            labels.append(ProtocolLabel.from_xml(lbl_tag))
-        result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
-        result.assigned_by_ruleset = assigned_by_ruleset
-        result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
-        return result

@@ -94,7 +94,7 @@
      <item>
       <widget class="CustomFieldListView" name="listViewCustomFieldTypes">
        <property name="selectionMode">
-        <enum>QAbstractItemView::MultiSelection</enum>
+        <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
       </widget>
      </item>
@@ -106,7 +106,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset theme="list-add"/>
+          <iconset theme="list-add">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -119,7 +120,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset theme="list-remove"/>
+          <iconset theme="list-remove">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>

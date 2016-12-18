@@ -47,7 +47,7 @@ class Ui_DialogLabels(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.listViewCustomFieldTypes = CustomFieldListView(DialogLabels)
-        self.listViewCustomFieldTypes.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.listViewCustomFieldTypes.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.listViewCustomFieldTypes.setObjectName("listViewCustomFieldTypes")
         self.horizontalLayout_3.addWidget(self.listViewCustomFieldTypes)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()

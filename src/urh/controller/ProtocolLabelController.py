@@ -83,8 +83,13 @@ class ProtocolLabelController(QDialog):
         self.apply_decoding_changed.emit(lbl, self.model.message_type)
 
     def on_btn_remove_fieldtype_clicked(self):
-        for index in self.ui.listViewCustomFieldTypes.selectedIndexes():
-            self.custom_field_list_model.remove_field_type_at(index.row())
+        selected_indices = [indx.row() for indx in self.ui.listViewCustomFieldTypes.selectedIndexes()]
+
+        if len(selected_indices) == 0 and len(self.custom_field_list_model.custom_field_types) > 0:
+            selected_indices.append(len(self.custom_field_list_model.custom_field_types) - 1)
+
+        for index in selected_indices:
+            self.custom_field_list_model.remove_field_type_at(index)
 
     def on_btn_add_fieldtype_clicked(self):
         number = 1

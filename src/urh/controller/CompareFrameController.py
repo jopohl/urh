@@ -188,6 +188,9 @@ class CompareFrameController(QFrame):
         self.protocol_label_list_model.update()
         self.ui.cbMessagetypes.blockSignals(False)
 
+        self.update_field_type_combobox()
+
+    def update_field_type_combobox(self):
         field_types = [t.value for t in ProtocolLabel.Type if t.value] + self.active_message_type.custom_field_types
         self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True))
 
@@ -929,6 +932,7 @@ class CompareFrameController(QFrame):
         label_controller.exec_()
 
         self.protocol_label_list_model.update()
+        self.update_field_type_combobox()
         self.label_value_model.update()
         self.show_all_cols()
         for lbl in self.proto_analyzer.protocol_labels:

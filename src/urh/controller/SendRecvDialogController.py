@@ -369,7 +369,7 @@ class SendRecvDialogController(QDialog):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        inital_name = "{0} {1}Hz {2}Sps {3}Hz".format(dev.name, big_val(dev.frequency),
+        inital_name = "{0} {1}Hz {2}Sps {3}Hz.complex".format(dev.name, big_val(dev.frequency),
                                                       big_val(dev.sample_rate),
                                                       big_val(dev.bandwidth)).replace(Formatter.local_decimal_seperator(), "_").replace("_000","")
 

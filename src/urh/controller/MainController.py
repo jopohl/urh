@@ -143,6 +143,10 @@ class MainController(QMainWindow):
         self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.show_about)
         self.ui.actionRecord.triggered.connect(self.show_record_dialog)
+
+        self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
+        self.ui.actionFullscreen_mode.triggered.connect(self.toggle_fullscreen)
+
         self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
         self.signal_tab_controller.signal_created.connect(self.add_signal)
         self.compare_frame_controller.show_interpretation_clicked.connect(
@@ -707,3 +711,9 @@ class MainController(QMainWindow):
         self.ui.tabDescription.show()
         self.ui.tabParticipants.show()
         self.ui.tabWidget_Project.setMaximumHeight(9000)
+
+    def toggle_fullscreen(self):
+        if self.ui.actionFullscreen_mode.isChecked():
+            self.showFullScreen()
+        else:
+            self.showMaximized()

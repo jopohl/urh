@@ -114,7 +114,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -250,6 +250,9 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon.fromTheme("document-save")
         self.actionSave_project.setIcon(icon)
         self.actionSave_project.setObjectName("actionSave_project")
+        self.actionFullscreen_mode = QtWidgets.QAction(MainWindow)
+        self.actionFullscreen_mode.setCheckable(True)
+        self.actionFullscreen_mode.setObjectName("actionFullscreen_mode")
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionSave_project)
@@ -268,6 +271,8 @@ class Ui_MainWindow(object):
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionDecoding)
         self.menuEdit.addAction(self.actionOptions)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionFullscreen_mode)
         self.menuHelp.addAction(self.actionAbout_AutomaticHacker)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
@@ -327,6 +332,7 @@ class Ui_MainWindow(object):
         self.actionSniff_protocol.setText(_translate("MainWindow", "Sn&iff protocol..."))
         self.actionProject_settings.setText(_translate("MainWindow", "&Project settings..."))
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
+        self.actionFullscreen_mode.setText(_translate("MainWindow", "Fullscreen mode"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

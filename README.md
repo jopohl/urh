@@ -11,6 +11,10 @@ Universal Radio Hacker is a suite for investigating unknown wireless protocols. 
 
 Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 
+Like to see things in action? Watch URH on YouTube!
+
+[![Youtube Image](/doc/screenshots/youtube.png?raw=true)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+
 ## Installation
 ### Requirements
 - Python 3.4+

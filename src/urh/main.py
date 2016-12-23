@@ -80,6 +80,7 @@ def main():
 
     mainwindow = MainController()
     mainwindow.showMaximized()
+    #mainwindow.setFixedSize(1920, 1080 - 30)  # Youtube
 
     # Systemfarben als Zeichenfarbe setzen
     widget = QWidget()

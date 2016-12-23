@@ -71,6 +71,8 @@ class SendRecvDialogController(QDialog):
             self.ui.btnStop.setToolTip("Stop sending")
             self.ui.progressBar.setMaximum(len(modulated_data))
 
+        self.device_is_sending = False
+
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
         self.ui.btnSave.setEnabled(False)
@@ -212,9 +214,9 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_start_clicked(self):
-        if self.mode == Mode.send and self.ui.progressBar.value() >= self.ui.progressBar.maximum() - 1:
-            self.on_clear_clicked()
-
+        if self.mode == Mode.send:
+            if self.ui.progressBar.value() >= self.ui.progressBar.maximum() - 1:
+                self.on_clear_clicked()
 
         self.ui.spinBoxFreq.editingFinished.emit()
         self.ui.lineEditIP.editingFinished.emit()
@@ -222,7 +224,10 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxSampleRate.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
 
-        self.device.start()
+        if self.mode == Mode.send and self.device_is_sending:
+            self.device.stop("Sending paused by user")
+        else:
+            self.device.start()
 
     @pyqtSlot()
     def on_nrepeat_changed(self):
@@ -234,11 +239,18 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_stop_clicked(self):
         self.device.stop("Stopped receiving: Stop button clicked")
+        if self.mode == Mode.send:
+            self.on_clear_clicked()
 
     @pyqtSlot()
     def on_device_stopped(self):
         self.ui.graphicsView.capturing_data = False
-        self.ui.btnStart.setEnabled(True)
+        if self.mode == Mode.send:
+            self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
+            self.ui.btnStart.setToolTip("Start sending")
+            self.device_is_sending = False
+        else:
+            self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(True)
         self.ui.btnSave.setEnabled(self.device.current_index > 0)
@@ -262,7 +274,14 @@ class SendRecvDialogController(QDialog):
         self.scene_creator.set_text("Waiting for device..")
         self.ui.graphicsView.capturing_data = True
         self.ui.btnSave.setEnabled(False)
-        self.ui.btnStart.setEnabled(False)
+
+        if self.mode == Mode.send:
+            self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-pause"))
+            self.ui.btnStart.setToolTip("Pause sending")
+            self.device_is_sending = True
+        else:
+            self.ui.btnStart.setEnabled(False)
+
         self.ui.btnClear.setEnabled(self.mode == Mode.spectrum)
         self.ui.spinBoxNRepeat.setEnabled(False)
         self.ui.btnStop.setEnabled(True)

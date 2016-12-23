@@ -300,7 +300,7 @@ class VirtualDevice(QObject):
                 self.__dev.open()
 
             if self.mode == Mode.send:
-                self.__dev.start_tx_mode()
+                self.__dev.start_tx_mode(resume=True)
             else:
                 self.__dev.start_rx_mode()
 

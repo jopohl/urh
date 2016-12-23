@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
@@ -65,6 +66,8 @@ class HackRF(Device):
 
     def close(self, exit=True):
         if self.is_open:
+            logger.info("HackRF: Attempting to close...")
+            time.sleep(0.01)
             ret = hackrf.close()
             self.is_open = ret != self.success
 
@@ -120,9 +123,9 @@ class HackRF(Device):
         # https://github.com/mossmann/hackrf/pull/246/commits/4f9665fb3b43462e39a1592fc34f3dfb50de4a07
         self.reopen()
 
-    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None):
+    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         if self.is_open:
-            self.init_send_parameters(samples_to_send, repeats)
+            self.init_send_parameters(samples_to_send, repeats, resume=resume)
             retcode = hackrf.start_tx_mode(self.callback_send)
 
             if retcode == self.success:
@@ -136,9 +139,6 @@ class HackRF(Device):
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        if hasattr(self, "sendbuffer_thread") and self.sendbuffer_thread.is_alive():
-            self.sendbuffer_thread.join(0.1)
-
         try:
             self.send_buffer_reader.close()
             self.send_buffer.close()

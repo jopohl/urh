@@ -18,6 +18,7 @@ from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.controller.SendRecvDialogController import SendRecvDialogController, Mode
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
+from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.models.FileIconProvider import FileIconProvider
@@ -55,6 +56,12 @@ class MainController(QMainWindow):
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
                                                                self.project_manager,
                                                                parent=self.ui.tab_generator)
+
+        self.simulator_tab_controller = SimulatorTabController(parent=self.ui.tab_simulator,
+                                                               plugin_manager=self.plugin_manager,
+                                                               project_manager=self.project_manager)
+
+        self.ui.tab_simulator.layout().addWidget(self.simulator_tab_controller)
 
         self.undo_group = QUndoGroup()
         self.undo_group.addStack(self.signal_tab_controller.signal_undo_stack)

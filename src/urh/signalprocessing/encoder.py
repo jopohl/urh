@@ -714,7 +714,7 @@ class Encoder(object):
             # The first 1 (inverted) of EnOcean is so weak, that it often drowns in noise
             inpt.insert(0, True)
 
-        # Search for begin
+        # search for begin
         try:
             n = inpt.index(False) - 1
         except ValueError:
@@ -740,6 +740,10 @@ class Encoder(object):
         state = self.ErrorState.SUCCESS
 
         if decoding:
+            # check length
+            if len(inpt) < end+11:
+                return inpt, 0, self.ErrorState.MISC
+
             for n in range(start, end, 12):
                 errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
                 errors += sum([inpt[n + 10] != False, inpt[n + 11] != True]) if n < end - 11 else 0

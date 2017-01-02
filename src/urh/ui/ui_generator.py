@@ -25,7 +25,7 @@ class Ui_GeneratorTab(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 598, 526))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 575, 526))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -261,7 +261,7 @@ class Ui_GeneratorTab(object):
         self.verticalLayout_2.addWidget(self.splitter)
 
         self.retranslateUi(GeneratorTab)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(GeneratorTab)
 
     def retranslateUi(self, GeneratorTab):

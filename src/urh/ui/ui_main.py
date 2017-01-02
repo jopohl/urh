@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

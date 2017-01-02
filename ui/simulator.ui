@@ -50,7 +50,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>527</width>
+                <width>509</width>
                 <height>410</height>
                </rect>
               </property>
@@ -70,7 +70,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QListView" name="listView"/>
+                <widget class="QListView" name="listViewSimulate"/>
                </item>
                <item>
                 <widget class="QLabel" name="label_4">
@@ -153,7 +153,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -166,59 +166,78 @@
              </property>
             </spacer>
            </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Viewtype:</string>
+           <item row="0" column="0" colspan="2">
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Flow Graph</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <widget class="QGraphicsView" name="graphicsView"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_2">
+              <attribute name="title">
+               <string>Messages</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="1" column="2">
+                <widget class="QComboBox" name="comboBox">
+                 <item>
+                  <property name="text">
+                   <string>Bit</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Hex</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ASCII</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="3">
+                <widget class="QTableView" name="tableView_2"/>
+               </item>
+               <item row="1" column="0">
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Viewtype:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QComboBox" name="comboBox">
-             <item>
-              <property name="text">
-               <string>Bit</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ASCII</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Label</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="2">
+           <item row="1" column="1">
             <widget class="QPushButton" name="pushButton">
              <property name="text">
               <string>Add message ...</string>
              </property>
             </widget>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="0" colspan="3">
-            <widget class="QGraphicsView" name="graphicsView"/>
            </item>
           </layout>
          </widget>
@@ -234,25 +253,15 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="0">
+        <widget class="QTableView" name="tableView"/>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>Labels:</string>
          </property>
         </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTableView" name="tableView"/>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Message:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QTableView" name="tableView_2"/>
        </item>
       </layout>
      </widget>

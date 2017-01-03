@@ -4,4 +4,7 @@
 # Pycharm
 .idea/
 
+src/__pycache__/
+src/urh/__pycache__/
+
 tests/data/URHProject.xml

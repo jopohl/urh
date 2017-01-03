@@ -22,5 +22,8 @@ class TestInstallation(unittest.TestCase):
     def test_kali(self):
         self.assertTrue(docker_util.run_image("kali", rebuild=self.REBUILD_IMAGES))
 
+    def test_gentoo(self):
+        self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
+
     def tearDown(self):
         docker_util.remove_containers()

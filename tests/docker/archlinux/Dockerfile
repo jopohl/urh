@@ -23,5 +23,6 @@ RUN sudo -u dockeruser makepkg -si --noconfirm
 RUN echo "#!/bin/bash" > /bin/run.sh
 RUN echo "sudo -u dockeruser yaourt -S --noconfirm urh" >> /bin/run.sh
 RUN echo "urh autoclose" >> /bin/run.sh
+
 RUN chmod +x /bin/run.sh
 CMD /bin/run.sh

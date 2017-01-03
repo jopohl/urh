@@ -3,7 +3,7 @@ from subprocess import check_output, call
 import os, sys
 
 USE_SUDO = True
-SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404", "ubuntu1604", "kali")
+SUPPORTED_IMAGES = ("archlinux", "centos7", "debian8", "ubuntu1404", "ubuntu1604", "kali", "gentoo")
 
 def is_image_there(imagename: str) -> bool:
     cmd = ["sudo"] if USE_SUDO else []
@@ -16,13 +16,12 @@ def build_image(imagename: str):
         sys.exit(1)
 
     cmd = ["sudo"] if USE_SUDO else []
-    cmd.extend(["docker", "build", "--force-rm", "--no-cache",
-                "--tag", "urh/"+imagename, "-f", imagename, "."])
+    cmd.extend(["docker", "build", "--force-rm", "--no-cache", "--tag", "urh/"+imagename, "."])
 
     print(" ".join(cmd))
 
     script = __file__ if not os.path.islink(__file__) else os.readlink(__file__)
-    os.chdir(os.path.realpath(os.path.join(script, "..")))
+    os.chdir(os.path.realpath(os.path.join(script, "..", imagename)))
 
     call(cmd)
 

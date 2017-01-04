@@ -20,12 +20,12 @@ class Message(object):
     A protocol message is a single line of a protocol.
     """
 
-    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "message_type",
+    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "target", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_indx=0, decoder=None,
-                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
+                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None, target=None):
         """
 
         :param pause: pause AFTER the message in samples
@@ -42,6 +42,9 @@ class Message(object):
         self.modulator_indx = modulator_indx
         self.rssi = rssi
         self.participant = participant
+        """:type: Participant """
+
+        self.target = target
         """:type: Participant """
 
         self.message_type = message_type

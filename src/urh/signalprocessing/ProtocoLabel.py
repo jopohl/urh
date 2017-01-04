@@ -1,5 +1,8 @@
 from enum import Enum
 
+import random
+import string
+
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
@@ -27,7 +30,13 @@ class ProtocolLabel(object):
         CRC = "crc"
         CUSTOM = ""
 
-    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
+    class SimType(Enum):
+        LABEL = "protocol label"
+        FORMULA = "formula"
+        PROGRAM = "external program"
+        RND = "random"
+
+    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False, id: str = None):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -43,9 +52,20 @@ class ProtocolLabel(object):
 
         self.__type = ProtocolLabel.Type.CUSTOM
 
+        self.__sim_type = ProtocolLabel.SimType.RND
+        self.__sim_value = None
+
         self.display_format_index = 0
 
         self.auto_created = auto_created
+
+        if id is None:
+            self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
+        else:
+            self.__id = id
+
+    def id_match(self, id):
+        return self.__id == id
 
     @property
     def name(self):
@@ -75,6 +95,22 @@ class ProtocolLabel(object):
             elif self.type == self.Type.SEQUENCE_NUMBER:
                 self.display_format_index = 3
 
+    @property
+    def sim_type(self) -> SimType:
+        return self.__sim_type
+
+    @sim_type.setter
+    def sim_type(self, value: SimType):
+        if value != self.type:
+            self.__sim_type = value
+
+    @property
+    def sim_value(self) -> str:
+        return self.__sim_value
+
+    @sim_value.setter
+    def sim_value(self, value: str):
+        self.__sim_value = value
 
     @property
     def title(self):

@@ -1,8 +1,8 @@
 FROM gentoo/stage3-amd64
 
 RUN emerge --sync\
- && MAKEOPTS="-j8" emerge dev-vcs/git app-portage/cfg-update\
- && MAKEOPTS="-j8" emerge psutil numpy # PYTHON_TARGETS="python3_4"
+ && emerge dev-vcs/git app-portage/cfg-update\
+ && PYTHON_TARGETS="python3_4" emerge psutil numpy
 
 # PYTHON_TARGETS="python3_4"
 RUN USE="gui widgets" emerge --autounmask-write PyQt5 || /bin/true

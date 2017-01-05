@@ -59,7 +59,7 @@ class MainController(QMainWindow):
 
         self.simulator_tab_controller = SimulatorTabController(parent=self.ui.tab_simulator,
                                                                plugin_manager=self.plugin_manager,
-                                                               project_manager=self.project_manager)
+                                                               project_manager=self.project_manager, cf_controller=self.compare_frame_controller)
 
         self.ui.tab_simulator.layout().addWidget(self.simulator_tab_controller)
 

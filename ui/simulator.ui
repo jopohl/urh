@@ -206,7 +206,11 @@
                 </widget>
                </item>
                <item row="0" column="0" colspan="3">
-                <widget class="QTableView" name="tableView_2"/>
+                <widget class="SimulatorTableView" name="tblViewSimulator">
+                 <property name="showGrid">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0">
                 <spacer name="horizontalSpacer_2">
@@ -233,7 +237,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btnAddMessage">
              <property name="text">
               <string>Add message ...</string>
              </property>
@@ -269,6 +273,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SimulatorTableView</class>
+   <extends>QTableView</extends>
+   <header>urh.ui.views.SimulatorTableView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../urh.qrc"/>
  </resources>

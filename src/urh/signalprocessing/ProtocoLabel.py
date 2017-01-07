@@ -60,30 +60,6 @@ class ProtocolLabel(object):
             self.__name = val
 
     @property
-    def type(self) -> Type:
-        return self.__type
-
-    @type.setter
-    def type(self, value: Type):
-        if value != self.type:
-            self.__type = value
-            # set viewtype for type
-            if self.type in (self.Type.PREAMBLE, self.Type.SYNC):
-                self.display_format_index = 0
-            elif self.type in (self.Type.DST_ADDRESS, self.Type.SRC_ADDRESS, self.Type.CRC):
-                self.display_format_index = 1
-            elif self.type == self.Type.SEQUENCE_NUMBER:
-                self.display_format_index = 3
-
-
-    @property
-    def title(self):
-        if self.type != ProtocolLabel.Type.CUSTOM:
-            return self.type.value
-        else:
-            return self.name
-
-    @property
     def fuzz_maximum(self):
         return 2 ** (self.end - self.start)
 

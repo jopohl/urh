@@ -36,7 +36,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             return
 
         if role == Qt.DisplayRole:
-            return self.message_type[row].title
+            return self.message_type[row].name
         elif role == Qt.CheckStateRole:
             return self.message_type[row].show
         elif role == Qt.BackgroundColorRole:

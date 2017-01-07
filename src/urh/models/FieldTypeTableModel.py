@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.FieldType import FieldType
 
@@ -43,7 +44,7 @@ class FieldTypeTableModel(QAbstractTableModel):
             elif j == 1:
                 return fieldtype.function.name
             elif j == 2:
-                return fieldtype.display_format_index
+                return ProtocolLabel.DISPLAY_FORMATS[fieldtype.display_format_index]
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
@@ -53,7 +54,10 @@ class FieldTypeTableModel(QAbstractTableModel):
                 if j == 0:
                     fieldtype.caption = value
                 elif j == 1:
-                    fieldtype.function = FieldType.Function(value)
+                    try:
+                        fieldtype.function = FieldType.Function[value]
+                    except KeyError:
+                        return False
                 if j == 2:
                     fieldtype.display_format_index = int(value)
             except ValueError:

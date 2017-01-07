@@ -8,12 +8,14 @@ from subprocess import call, DEVNULL
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh import constants
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
+from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
 
 
@@ -62,6 +64,9 @@ class OptionsController(QDialog):
         self.field_type_table_model = FieldTypeTableModel([], parent=self)
         self.ui.tblLabeltypes.setModel(self.field_type_table_model)
         self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function], return_index=False, parent=self))
+        self.ui.tblLabeltypes.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
         self.read_options()
 

@@ -6,5 +6,29 @@
 
 src/__pycache__/
 src/urh/__pycache__/
+__pycache__/
+build/
+src/urh/awre/__pycache__/
+src/urh/awre/components/__pycache__/
+src/urh/controller/__pycache__/
+src/urh/cythonext/__pycache__/
+src/urh/dev/__pycache__/
+src/urh/dev/gr/__pycache__/
+src/urh/dev/gr/scripts/InputHandlerThread.pyc
+src/urh/dev/native/__pycache__/
+src/urh/dev/native/lib/__pycache__/
+src/urh/models/__pycache__/
+src/urh/plugins/AmbleAnalyzer/__pycache__/
+src/urh/plugins/MessageBreak/__pycache__/
+src/urh/plugins/ZeroHide/__pycache__/
+src/urh/plugins/__pycache__/
+src/urh/signalprocessing/__pycache__/
+src/urh/ui/__pycache__/
+src/urh/ui/actions/__pycache__/
+src/urh/ui/delegates/__pycache__/
+src/urh/ui/views/__pycache__/
+src/urh/util/__pycache__/
+tmp/
+
 
 tests/data/URHProject.xml

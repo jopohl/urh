@@ -99,6 +99,30 @@ class OptionsController(QDialog):
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
         self.ui.checkBoxAlignLabels.clicked.connect(self.on_checkbox_align_labels_clicked)
         self.ui.checkBoxDefaultFuzzingPause.clicked.connect(self.on_checkbox_default_fuzzing_pause_clicked)
+        self.ui.btnAddLabelType.clicked.connect(self.on_btn_add_label_type_clicked)
+        self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
+
+    def on_btn_add_label_type_clicked(self):
+        suffix = 1
+        field_type_names = {ft.caption for ft in self.field_type_table_model.field_types}
+        while "New Fieldtype #" + str(suffix) in field_type_names:
+            suffix += 1
+
+        caption = "New Fieldtype #" + str(suffix)
+        self.field_type_table_model.field_types.append(FieldType(caption, FieldType.Function.CUSTOM))
+        self.field_type_table_model.update()
+
+    def on_btn_remove_label_type_clicked(self):
+        if self.field_type_table_model.field_types:
+            selected_indices = {i.row() for i in self.ui.tblLabeltypes.selectedIndexes()}
+
+            if selected_indices:
+                for i in reversed(sorted(selected_indices)):
+                    self.field_type_table_model.field_types.pop(i)
+            else:
+                self.field_type_table_model.field_types.pop()
+
+            self.field_type_table_model.update()
 
     def set_device_enabled_suffix(self):
         for i in range(self.ui.listWidgetDevices.count()):
@@ -161,9 +185,12 @@ class OptionsController(QDialog):
         settings.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
         settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
 
+        FieldType.save_to_xml(self.field_type_table_model.field_types)
+
         self.values_changed.emit(changed_values)
 
         self.plugin_controller.save_enabled_states()
+
         event.accept()
 
     def read_options(self):
@@ -180,7 +207,7 @@ class OptionsController(QDialog):
         self.old_symbol_tresh = symbol_thresh
         self.old_show_pause_as_time = bool(self.ui.checkBoxPauseTime.isChecked())
 
-        self.field_type_table_model.field_types = FieldType.read_from_settings(settings)
+        self.field_type_table_model.field_types = FieldType.load_from_xml()
         self.field_type_table_model.update()
 
     @pyqtSlot()
@@ -281,6 +308,7 @@ class OptionsController(QDialog):
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
+
         if not 'rel_symbol_length' in keys:
             settings.setValue('rel_symbol_length', 0)
 
@@ -293,17 +321,9 @@ class OptionsController(QDialog):
         if not 'show_pause_as_time' in keys:
             settings.setValue('show_pause_as_time', False)
 
+        if not os.path.isfile(constants.FIELD_TYPE_SETTINGS):
+            FieldType.save_to_xml(FieldType.default_field_types())
+
         bh = BackendHandler()
         for be in bh.device_backends.values():
             be.write_settings()
-
-        if not 'field_types' in settings.childGroups():
-            settings.beginWriteArray('field_types')
-            for i, function in enumerate(FieldType.Function):
-                settings.setArrayIndex(i)
-                ft = FieldType(function.value, function)
-
-                settings.setValue("caption", ft.caption)
-                settings.setValue("function", ft.function.name)
-                settings.setValue("display_format_index", ft.display_format_index)
-            settings.endArray()

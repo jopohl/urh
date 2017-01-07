@@ -1,6 +1,8 @@
 from enum import Enum
+import xml.etree.cElementTree as ET
+from xml.dom import minidom
 
-from PyQt5.QtCore import QSettings
+from urh import constants
 
 
 class FieldType(object):
@@ -37,24 +39,50 @@ class FieldType(object):
         return "FieldType: {0} - {1} ({2})".format(self.function.name, self.caption, self.display_format_index)
 
     @staticmethod
-    def read_from_settings(settings: QSettings):
+    def default_field_types():
         """
 
         :rtype: list of FieldType
         """
-        size = settings.beginReadArray("field_types")
-        result = []
-        for i in range(0, size):
-            settings.setArrayIndex(i)
-            caption = settings.value("caption", defaultValue="", type=str)
-            function = settings.value("function", defaultValue="CUSTOM", type=str)
-            display_format_index = settings.value("display_format_index", defaultValue=None, type=int)
+        return [FieldType(function.value, function) for function in FieldType.Function]
 
-            result.append(FieldType(caption, FieldType.Function[function], display_format_index))
+    @staticmethod
+    def load_from_xml():
+        """
+
+        :rtype: list of FieldType
+        """
+
+        e = ET.parse(constants.FIELD_TYPE_SETTINGS).getroot()
+
+        result = []
+
+        for tag in e.findall("field_type"):
+            caption = tag.get("caption", "")
+            function = FieldType.Function[tag.get("function", "CUSTOM")]
+            display_format_index = int(tag.get("display_format_index", -1))
+            display_format_index = None if display_format_index == -1 else display_format_index
+
+            result.append(FieldType(caption, function, display_format_index))
 
         return result
 
-if __name__ == "__main__":
-    import urh.constants as constants
-    print(FieldType.read_from_settings(constants.SETTINGS))
+    @staticmethod
+    def save_to_xml(field_types):
+        """
 
+        :type field_types: list of FieldType
+        :return:
+        """
+        root = ET.Element("field_types")
+        for field_type in field_types:
+            root.append(ET.Element("field_type", attrib={
+                                                    "caption": field_type.caption,
+                                                    "function": field_type.function.name,
+                                                    "display_format_index": str(field_type.display_format_index)}))
+
+        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
+        with open(constants.FIELD_TYPE_SETTINGS, "w") as f:
+            for line in xmlstr.split("\n"):
+                if line.strip():
+                    f.write(line + "\n")

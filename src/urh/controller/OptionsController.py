@@ -6,11 +6,14 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 from subprocess import call, DEVNULL
 
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
 
 from urh import constants
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
+from urh.models.FieldTypeTableModel import FieldTypeTableModel
+from urh.signalprocessing.FieldType import FieldType
 from urh.ui.ui_options import Ui_DialogOptions
 
 
@@ -55,6 +58,10 @@ class OptionsController(QDialog):
         self.create_connects()
         self.old_symbol_tresh = 10
         self.old_show_pause_as_time = False
+
+        self.field_type_table_model = FieldTypeTableModel([], parent=self)
+        self.ui.tblLabeltypes.setModel(self.field_type_table_model)
+        self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.read_options()
 
@@ -173,6 +180,9 @@ class OptionsController(QDialog):
         self.old_symbol_tresh = symbol_thresh
         self.old_show_pause_as_time = bool(self.ui.checkBoxPauseTime.isChecked())
 
+        self.field_type_table_model.field_types = FieldType.read_from_settings(settings)
+        self.field_type_table_model.update()
+
     @pyqtSlot()
     def handle_spinbox_symbol_treshold_value_changed(self):
         val = self.ui.spinBoxSymbolTreshold.value()
@@ -286,3 +296,14 @@ class OptionsController(QDialog):
         bh = BackendHandler()
         for be in bh.device_backends.values():
             be.write_settings()
+
+        if not 'field_types' in settings.childGroups():
+            settings.beginWriteArray('field_types')
+            for i, function in enumerate(FieldType.Function):
+                settings.setArrayIndex(i)
+                ft = FieldType(function.value, function)
+
+                settings.setValue("caption", ft.caption)
+                settings.setValue("function", ft.function.name)
+                settings.setValue("display_format_index", ft.display_format_index)
+            settings.endArray()

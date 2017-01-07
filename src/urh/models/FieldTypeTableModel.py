@@ -12,7 +12,7 @@ class FieldTypeTableModel(QAbstractTableModel):
         :type fieldtypes: list of FieldType
         :param parent:
         """
-        self.fieldtypes = fieldtypes
+        self.field_types = fieldtypes
         super().__init__(parent)
 
     def update(self):
@@ -22,7 +22,7 @@ class FieldTypeTableModel(QAbstractTableModel):
         return len(self.header_labels)
 
     def rowCount(self, parent=None, *args, **kwargs):
-        return len(self.fieldtypes)
+        return len(self.field_types)
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
@@ -36,19 +36,19 @@ class FieldTypeTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             i = index.row()
             j = index.column()
-            fieldtype = self.fieldtypes[i]
+            fieldtype = self.field_types[i]
 
             if j == 0:
                 return fieldtype.caption
             elif j == 1:
-                return fieldtype.function.value
+                return fieldtype.function.name
             elif j == 2:
                 return fieldtype.display_format_index
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
             i, j = index.row(), index.column()
-            fieldtype = self.fieldtypes[i]
+            fieldtype = self.field_types[i]
             try:
                 if j == 0:
                     fieldtype.caption = value

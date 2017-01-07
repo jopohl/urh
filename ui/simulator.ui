@@ -51,16 +51,19 @@
                 <x>0</x>
                 <y>0</y>
                 <width>509</width>
-                <height>410</height>
+                <height>464</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>Protocols:</string>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <widget class="GeneratorTreeView" name="treeProtocols"/>
                </item>
                <item>
                 <widget class="QLabel" name="label_3">
@@ -86,13 +89,6 @@
                  </property>
                  <property name="maximum">
                   <number>999999999</number>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Exceptions (Global)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                 </widget>
                </item>
@@ -153,7 +149,38 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="1" column="0">
+           <item row="1" column="2">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Viewtype:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QComboBox" name="comboBox">
+             <item>
+              <property name="text">
+               <string>Bit</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ASCII</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Label</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="1">
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -166,82 +193,18 @@
              </property>
             </spacer>
            </item>
-           <item row="0" column="0" colspan="2">
-            <widget class="QTabWidget" name="tabWidget">
-             <property name="currentIndex">
-              <number>0</number>
+           <item row="1" column="0">
+            <widget class="QToolButton" name="toolButton">
+             <property name="text">
+              <string>...</string>
              </property>
-             <widget class="QWidget" name="tab">
-              <attribute name="title">
-               <string>Flow Graph</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <item>
-                <widget class="QGraphicsView" name="graphicsView"/>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="tab_2">
-              <attribute name="title">
-               <string>Messages</string>
-              </attribute>
-              <layout class="QGridLayout" name="gridLayout_4">
-               <item row="1" column="2">
-                <widget class="QComboBox" name="comboBox">
-                 <item>
-                  <property name="text">
-                   <string>Bit</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Hex</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ASCII</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="0" column="0" colspan="3">
-                <widget class="SimulatorTableView" name="tblViewSimulator">
-                 <property name="showGrid">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>Viewtype:</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+             <property name="icon">
+              <iconset theme="document-save"/>
+             </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QPushButton" name="btnAddMessage">
-             <property name="text">
-              <string>Add message ...</string>
-             </property>
-            </widget>
+           <item row="0" column="0" colspan="4">
+            <widget class="QGraphicsView" name="graphicsView"/>
            </item>
           </layout>
          </widget>
@@ -275,9 +238,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SimulatorTableView</class>
-   <extends>QTableView</extends>
-   <header>urh.ui.views.SimulatorTableView.h</header>
+   <class>GeneratorTreeView</class>
+   <extends>QTreeView</extends>
+   <header>urh.ui.views.GeneratorTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

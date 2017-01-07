@@ -2,9 +2,8 @@ from PyQt5.QtWidgets import QWidget
 
 from PyQt5.QtCore import pyqtSlot
 
-from urh.models.SimulatorTableModel import SimulatorTableModel
 from urh.models.SimulateListModel import SimulateListModel
-from urh.plugins.PluginManager import PluginManager
+from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -14,15 +13,13 @@ from urh.signalprocessing.Message import Message
 import copy
 
 class SimulatorTabController(QWidget):
-    def __init__(self, plugin_manager: PluginManager,
-                 project_manager: ProjectManager, parent, cf_controller: CompareFrameController):
+    def __init__(self, compare_frame_controller: CompareFrameController,
+                 project_manager: ProjectManager, parent):
 
         super().__init__(parent)
 
         self.proto_analyzer = ProtocolAnalyzer(None)
         self.project_manager = project_manager
-        self.plugin_manager = plugin_manager
-        self.cf_controller = cf_controller
 
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)
@@ -32,39 +29,28 @@ class SimulatorTabController(QWidget):
         self.simulate_list_model = SimulateListModel(self.project_manager.participants)
         self.ui.listViewSimulate.setModel(self.simulate_list_model)
 
-        self.simulator_model = SimulatorTableModel(self.proto_analyzer, self.project_manager.participants, self)
-        self.ui.tblViewSimulator.setModel(self.simulator_model)
+        self.ui.treeProtocols.setHeaderHidden(True)
+        self.tree_model = GeneratorTreeModel(compare_frame_controller)
+        self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
+        self.tree_model.controller = self
+        self.ui.treeProtocols.setModel(self.tree_model)
 
-        self.create_connects()
+        self.create_connects(compare_frame_controller)
 
-    def create_connects(self):
+    def create_connects(self, compare_frame_controller):
         self.project_manager.project_updated.connect(self.on_project_updated)
-        self.ui.tblViewSimulator.participant_changed.connect(self.on_participant_edited)
-        self.ui.btnAddMessage.clicked.connect(self.on_btn_add_message_clicked)
-
-    def updateUI(self, ignore_table_model=False, resize_table=True):
-        if not ignore_table_model:
-            self.simulator_model.update()
-
-        if resize_table:
-            self.ui.tblViewSimulator.resize_columns()
+        compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
 
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
         self.simulate_list_model.update()
-        self.simulator_model.participants = self.project_manager.participants
-        self.simulator_model.refresh_vertical_header()
-
-    def on_participant_edited(self):
-        self.simulator_model.refresh_vertical_header()
-        self.ui.tblViewSimulator.resize_vertical_header()
 
     @pyqtSlot()
-    def on_btn_add_message_clicked(self):
-        msg = self.cf_controller.protocol_list[0].messages[0]
+    def refresh_tree(self):
+        self.tree_model.layoutChanged.emit()
+        self.ui.treeProtocols.expandAll()
 
-        self.proto_analyzer.messages.append(Message(plain_bits=copy.copy(msg.decoded_bits), pause=msg.pause,
-                            message_type=copy.deepcopy(msg.message_type),
-                            rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant))
-
-        self.updateUI()
+    def close_all(self):
+        self.tree_model.rootItem.clearChilds()
+        self.tree_model.rootItem.addGroup()
+        self.refresh_tree()

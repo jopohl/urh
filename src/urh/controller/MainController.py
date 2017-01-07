@@ -58,8 +58,8 @@ class MainController(QMainWindow):
                                                                parent=self.ui.tab_generator)
 
         self.simulator_tab_controller = SimulatorTabController(parent=self.ui.tab_simulator,
-                                                               plugin_manager=self.plugin_manager,
-                                                               project_manager=self.project_manager, cf_controller=self.compare_frame_controller)
+                                                               compare_frame_controller=self.compare_frame_controller,
+                                                               project_manager=self.project_manager)
 
         self.ui.tab_simulator.layout().addWidget(self.simulator_tab_controller)
 
@@ -591,6 +591,7 @@ class MainController(QMainWindow):
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
         self.generator_tab_controller.close_all()
+        self.simulator_tab_controller.close_all()
 
         self.project_manager.project_path = ""
         self.project_manager.project_file = None

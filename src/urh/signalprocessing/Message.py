@@ -2,8 +2,6 @@ import copy
 import math
 import xml.etree.ElementTree as ET
 import sys
-import random
-import string
 
 import numpy as np
 from urh.cythonext.signalFunctions import Symbol
@@ -22,12 +20,12 @@ class Message(object):
     A protocol message is a single line of a protocol.
     """
 
-    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "target", "message_type",
+    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state",
-                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos", "__id"]
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_indx=0, decoder=None,
-                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None, target=None, id: str = None):
+                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
         :param pause: pause AFTER the message in samples
@@ -44,9 +42,6 @@ class Message(object):
         self.modulator_indx = modulator_indx
         self.rssi = rssi
         self.participant = participant
-        """:type: Participant """
-
-        self.target = target
         """:type: Participant """
 
         self.message_type = message_type
@@ -77,14 +72,6 @@ class Message(object):
             :param bit_sample_pos: Position of samples for each bit. Last position is pause so last bit is on pos -2.
             :type  bit_sample_pos: list of int
             """
-
-        if id is None:
-            self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
-        else:
-            self.__id = id
-
-    def id_match(self, id):
-        return self.__id == id
 
     @property
     def plain_bits(self):

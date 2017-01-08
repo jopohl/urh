@@ -10,7 +10,7 @@ class ComboBoxDelegate(QItemDelegate):
         :param items:
         :param colors:
         :param is_editable:
-        :param return_index: True for returning current index, false for returning current text
+        :param return_index: True for returning current index, false for returning current text of editor
         :param parent:
         """
         super().__init__(parent)

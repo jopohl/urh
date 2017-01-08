@@ -34,7 +34,7 @@ class FieldTypeTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
+        if role == Qt.DisplayRole or role == Qt.EditRole:
             i = index.row()
             j = index.column()
             fieldtype = self.field_types[i]
@@ -52,7 +52,9 @@ class FieldTypeTableModel(QAbstractTableModel):
             fieldtype = self.field_types[i]
             try:
                 if j == 0:
-                    fieldtype.caption = value
+                    present_captions = {ft.caption for ft in self.field_types}
+                    if value not in present_captions:
+                        fieldtype.caption = value
                 elif j == 1:
                     try:
                         fieldtype.function = FieldType.Function[value]

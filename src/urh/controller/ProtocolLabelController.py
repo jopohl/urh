@@ -1,8 +1,11 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QHeaderView
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
@@ -20,9 +23,11 @@ class ProtocolLabelController(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
-        self.model = PLabelTableModel(message_type)
+        field_types = FieldType.load_from_xml()
+        self.model = PLabelTableModel(message_type, field_types)
         self.preselected_index = preselected_index
 
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types], is_editable=True, return_index=False, parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, max_end, self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(3,
@@ -30,10 +35,11 @@ class ProtocolLabelController(QDialog):
                                                                              colors=constants.LABEL_COLORS,
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(5, DeleteButtonDelegate(self))
 
         self.ui.tblViewProtoLabels.setModel(self.model)
         self.ui.tblViewProtoLabels.selectRow(preselected_index)
+
+        self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         for i in range(self.model.row_count):
             self.openEditors(i)
@@ -56,13 +62,18 @@ class ProtocolLabelController(QDialog):
         self.close()
 
     def openEditors(self, row):
+       # self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 0))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 1))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 2))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 5))
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 6))
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 7))
+
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Enter:
+            event.ignore()
+        else:
+            event.accept()
 
     @pyqtSlot(int)
     def set_view_index(self, ind):

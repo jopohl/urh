@@ -14,7 +14,7 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer", "custom_field_types"]
+    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
@@ -26,8 +26,6 @@ class MessageType(list):
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False
         self.ruleset = Ruleset() if ruleset is None else ruleset
-
-        self.custom_field_types = ["Unidentified", "Constant"]
 
     def __hash__(self):
         return hash(super)
@@ -121,14 +119,6 @@ class MessageType(list):
 
         result.append(self.ruleset.to_xml())
 
-        if self.custom_field_types:
-            root = ET.Element("custom_field_types")
-            for custom_field_type in self.custom_field_types:
-                e = ET.Element("field_type")
-                e.text = custom_field_type
-                root.append(e)
-            result.append(root)
-
         return result
 
 
@@ -144,10 +134,6 @@ class MessageType(list):
         result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
-
-        custom_fields_tag = tag.find("custom_field_types")
-        if custom_fields_tag:
-            result.custom_field_types = [e.text for e in custom_fields_tag.findall("field_type")]
 
         return result
 

@@ -38,6 +38,7 @@ class CompareFrameController(QFrame):
     show_decoding_clicked = pyqtSignal()
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
+    show_config_field_types_triggered = pyqtSignal()
 
     def __init__(self, plugin_manager: PluginManager,
                  project_manager: ProjectManager, parent):
@@ -336,7 +337,7 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.new_messagetype_clicked.connect(self.on_new_message_type_clicked)
         self.ui.btnAddMessagetype.clicked.connect(self.on_new_message_type_clicked)
         self.ui.btnRemoveMessagetype.clicked.connect(self.on_remove_message_type_clicked)
-
+        self.ui.listViewLabelNames.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
         self.ui.lineEditSearch.returnPressed.connect(self.ui.btnSearchSelectFilter.click)
 
         self.ui.cbMessagetypes.currentIndexChanged.connect(self.on_cbmessagetype_index_changed)

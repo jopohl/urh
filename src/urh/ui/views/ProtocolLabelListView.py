@@ -3,12 +3,14 @@ from PyQt5.QtGui import QContextMenuEvent, QKeySequence
 from PyQt5.QtWidgets import QListView, QAbstractItemView, QMenu, QAction
 import numpy
 
+from urh.controller.OptionsController import OptionsController
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 
 
 class ProtocolLabelListView(QListView):
     editActionTriggered = pyqtSignal(int)
     selection_changed = pyqtSignal()
+    configureActionTriggered = pyqtSignal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -77,6 +79,10 @@ class ProtocolLabelListView(QListView):
         showAllAction = menu.addAction("Show all")
         hideAllAction = menu.addAction("Hide all")
 
+
+        menu.addSeparator()
+        configureAction = menu.addAction("Configure field types...")
+
         action = menu.exec_(self.mapToGlobal(pos))
 
         if action == editAction:
@@ -85,10 +91,11 @@ class ProtocolLabelListView(QListView):
             self.model().showAll()
         elif action == hideAllAction:
             self.model().hideAll()
+        elif action == configureAction:
+            self.configureActionTriggered.emit()
         elif action in assign_actions:
             message_type_id = message_type_names.index(action.text())
             self.model().add_labels_to_message_type(min_row, max_row, message_type_id)
-
 
     def delete_rows(self):
         min_row, max_row = self.selection_range()

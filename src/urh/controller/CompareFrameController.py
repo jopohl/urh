@@ -18,6 +18,7 @@ from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -139,6 +140,10 @@ class CompareFrameController(QFrame):
 
         self.__set_default_message_type_ui_status()
 
+        self.field_types = FieldType.load_from_xml()
+        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
+        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
+
     @property
     def active_group_ids(self):
         """
@@ -192,8 +197,8 @@ class CompareFrameController(QFrame):
         self.update_field_type_combobox()
 
     def update_field_type_combobox(self):
-        field_types = [t.value for t in ProtocolLabel.Type if t.value] + self.active_message_type.custom_field_types
-        self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True))
+        field_types = [ft.caption for ft in self.field_types]
+        self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True, return_index=False))
 
 
     def handle_files_dropped(self, files: list):
@@ -1448,3 +1453,19 @@ class CompareFrameController(QFrame):
             self.ui.tblViewProtocol.setRowHidden(i, hide)
 
         self.set_shown_protocols()
+
+    def reload_field_types(self):
+        self.field_types = FieldType.load_from_xml()
+        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
+        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
+
+    def refresh_field_types_for_labels(self):
+        self.reload_field_types()
+        for mt in self.proto_analyzer.message_types:
+            for lbl in (lbl for lbl in mt if lbl.type is not None): # type: ProtocolLabel
+                if lbl.type.id not in self.field_types_by_id:
+                    lbl.type = None
+                else:
+                    lbl.type = self.field_types_by_id[lbl.type.id]
+
+        self.update_field_type_combobox()

@@ -656,6 +656,7 @@ class MainController(QMainWindow):
             for sf in self.signal_tab_controller.signal_frames:
                 sf.refresh_protocol()
 
+        self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
 
         if "default_view" in changed_options.keys():

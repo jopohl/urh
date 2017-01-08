@@ -3,6 +3,7 @@ from enum import Enum
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
 from urh.util.Formatter import Formatter
 
@@ -16,16 +17,6 @@ class ProtocolLabel(object):
 
     DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
-
-    class Type(Enum):
-        PREAMBLE = "preamble"
-        SYNC = "synchronization"
-        SRC_ADDRESS = "source address"
-        DST_ADDRESS = "destination address"
-
-        SEQUENCE_NUMBER = "sequence number"
-        CRC = "crc"
-        CUSTOM = ""
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
         self.__name = name
@@ -41,11 +32,23 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__type = ProtocolLabel.Type.CUSTOM
+        self.__type = None # type: FieldType
 
         self.display_format_index = 0
 
         self.auto_created = auto_created
+
+    @property
+    def type(self) -> FieldType:
+        return self.__type
+
+    @type.setter
+    def type(self, value: FieldType):
+        if value != self.type:
+            self.__type = value
+            # set viewtype for type
+            if hasattr(value, "display_format_index"):
+                self.display_format_index = value.display_format_index
 
     @property
     def name(self):
@@ -113,7 +116,7 @@ class ProtocolLabel(object):
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_format_index": str(self.display_format_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created), "type": self.type.name})
+                                            "auto_created": str(self.auto_created), "type_id": self.type.id})
 
     @staticmethod
     def from_xml(tag: ET.Element):
@@ -128,6 +131,7 @@ class ProtocolLabel(object):
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_format_index = int(tag.get("display_format_index", 0))
         result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
-        result.type = ProtocolLabel.Type[tag.get("type", '')]
+        type_id = tag.get("type_id", None)
+        result.type = ProtocolLabel.Type[tag.get("type", None)] # TODO: Need dict with type ids, to assign type
 
         return result

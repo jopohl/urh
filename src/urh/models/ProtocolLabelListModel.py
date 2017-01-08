@@ -44,7 +44,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             return constants.LABEL_COLORS[label.color_index]
         elif role == Qt.FontRole:
             font = QFont()
-            font.setItalic(label.type is None or label.type.function == FieldType.Function.CUSTOM)
+            font.setItalic(label.type is None)
             return font
 
 

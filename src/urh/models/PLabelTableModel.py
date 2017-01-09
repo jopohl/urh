@@ -117,9 +117,16 @@ class PLabelTableModel(QAbstractTableModel):
         except IndexError:
             return Qt.NoItemFlags
 
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def remove_label(self, label):
         self.message_type.remove(label)
         self.update()
         self.label_removed.emit(label)
+
+    def remove_label_at(self, index: int):
+        try:
+            label = self.message_type[index]
+            self.remove_label(label)
+        except IndexError:
+            pass

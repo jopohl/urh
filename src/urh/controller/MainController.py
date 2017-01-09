@@ -40,6 +40,8 @@ class MainController(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        OptionsController.write_default_options()
+
         self.project_save_timer = QTimer()
         self.project_manager = ProjectManager(self)
         self.plugin_manager = PluginManager()
@@ -89,8 +91,6 @@ class MainController(QMainWindow):
         self.recentFileActionList = []
         self.create_connects()
         self.updateRecentActionList()
-
-        OptionsController.write_default_options()
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()

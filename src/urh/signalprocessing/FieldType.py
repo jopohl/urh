@@ -14,9 +14,9 @@ class FieldType(object):
     class Function(Enum):
         PREAMBLE = "preamble"
         SYNC = "synchronization"
+        LENGTH = "length"
         SRC_ADDRESS = "source address"
         DST_ADDRESS = "destination address"
-
         SEQUENCE_NUMBER = "sequence number"
         CRC = "crc"
         CUSTOM = "custom"
@@ -30,7 +30,7 @@ class FieldType(object):
                 self.display_format_index = 0
             elif self.function in (self.Function.DST_ADDRESS, self.Function.SRC_ADDRESS, self.Function.CRC):
                 self.display_format_index = 1
-            elif self.function in (self.Function.SEQUENCE_NUMBER, ):
+            elif self.function in (self.Function.SEQUENCE_NUMBER, self.Function.LENGTH):
                 self.display_format_index = 3
             else:
                 self.display_format_index = 0

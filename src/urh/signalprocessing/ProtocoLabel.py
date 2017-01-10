@@ -110,16 +110,23 @@ class ProtocolLabel(object):
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
 
-
     def to_xml(self, index:int) -> ET.Element:
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_format_index": str(self.display_format_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created), "type_id": self.type.id})
+                                            "auto_created": str(self.auto_created), "type_id": self.type.id if self.type is not None else ""})
 
     @staticmethod
-    def from_xml(tag: ET.Element):
+    def from_xml(tag: ET.Element, field_types_by_type_id=None):
+        """
+
+        :param tag:
+        :type field_types_by_type_id: dict[str, FieldType]
+        :return:
+        """
+        field_types_by_type_id = dict() if field_types_by_type_id is None else field_types_by_type_id
+
         name = tag.get("name")
         start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
         color_index = int(tag.get("color_index", 0))
@@ -132,6 +139,9 @@ class ProtocolLabel(object):
         result.display_format_index = int(tag.get("display_format_index", 0))
         result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
         type_id = tag.get("type_id", None)
-        result.type = ProtocolLabel.Type[tag.get("type", None)] # TODO: Need dict with type ids, to assign type
+        if type_id and type_id in field_types_by_type_id:
+            result.type = field_types_by_type_id[type_id]
+        else:
+            result.type = None
 
         return result

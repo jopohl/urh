@@ -66,7 +66,7 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 1))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 2))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
+        #self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
 
     def keyPressEvent(self, event: QKeyEvent):

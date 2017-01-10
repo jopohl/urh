@@ -3,6 +3,7 @@ import string
 from copy import deepcopy
 
 from urh import constants
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
@@ -121,16 +122,17 @@ class MessageType(list):
 
         return result
 
-
     @staticmethod
     def from_xml(tag:  ET.Element):
+        field_types_by_type_id = {ft.id: ft for ft in FieldType.load_from_xml()}
+
         name = tag.get("name", "blank")
         id = tag.get("id", None)
         assigned_by_ruleset = bool(int(tag.get("assigned_by_ruleset", 0)))
         assigned_by_logic_analyzer = bool(int(tag.get("assigned_by_logic_analyzer", 0)))
         labels = []
         for lbl_tag in tag.findall("label"):
-            labels.append(ProtocolLabel.from_xml(lbl_tag))
+            labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
         result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer

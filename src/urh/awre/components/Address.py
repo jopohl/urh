@@ -16,7 +16,7 @@ class Address(Component):
         self.xor_matrix = xor_matrix
 
         self.dst_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.DST_ADDRESS), None)
-        self.src_field_type = next((ft for ft in fieldtypes if ft.Function == ft.Function.SRC_ADDRESS), None)
+        self.src_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.SRC_ADDRESS), None)
 
         self.dst_field_name = self.dst_field_type.caption if self.dst_field_type else "DST address"
         self.src_field_name = self.src_field_type.caption if self.src_field_type else "SRC address"
@@ -161,7 +161,6 @@ class Address(Component):
 
         # Now try to find the addresses of the participants to separate SRC and DST address later
         self.assign_participant_addresses(messages, list(scored_candidates_per_participant.keys()), highscored)
-
 
         for participant, ranges in scored_candidates_per_participant.items():
             for rng in ranges:

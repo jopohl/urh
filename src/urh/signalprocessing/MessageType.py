@@ -31,6 +31,18 @@ class MessageType(list):
     def __hash__(self):
         return hash(super)
 
+    def __getitem__(self, index) -> ProtocolLabel:
+        return super().__getitem__(index)
+
+    def __repr__(self):
+        return self.name + " " + super().__repr__()
+
+    def __eq__(self, other):
+        if isinstance(other, MessageType):
+            return self.id == other.id
+        else:
+            return super().__eq__(other)
+
     @property
     def assign_manually(self):
         return not self.assigned_by_ruleset
@@ -110,8 +122,7 @@ class MessageType(list):
         else:
             logger.warning(lbl.name + " is not in set, so cant be removed")
 
-    def __getitem__(self, index) -> ProtocolLabel:
-        return super().__getitem__(index)
+
 
     def to_xml(self) -> ET.Element:
         result = ET.Element("message_type", attrib={"name": self.name, "id": self.id,
@@ -147,12 +158,3 @@ class MessageType(list):
             lbl.fuzz_values = []
             lbl.fuzz_created = True
         return result
-
-    def __repr__(self):
-        return self.name + " " + super().__repr__()
-
-    def __eq__(self, other):
-        if isinstance(other, MessageType):
-            return self.id == other.id
-        else:
-            return super().__eq__(other)

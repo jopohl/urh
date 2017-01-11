@@ -152,7 +152,7 @@ class TestAWRE(unittest.TestCase):
                                    start=sof_start, end=sof_end, color_index=1)
 
 
-        ff = FormatFinder(enocean_protocol, self.participants)
+        ff = FormatFinder(enocean_protocol, self.participants, field_types=self.field_types)
         ff.perform_iteration()
 
         self.assertEqual(len(enocean_protocol.message_types), 1)

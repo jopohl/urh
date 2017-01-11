@@ -1,5 +1,6 @@
 import math
 from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
+from PyQt5.QtGui import QFont
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -9,16 +10,23 @@ from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 
 class PLabelTableModel(QAbstractTableModel):
-    header_labels = ["Name", "Start", "End", 'Color', 'Apply decoding', 'Delete']
+    header_labels = ["Name", "Start", "End", 'Color', 'Apply decoding']
 
     label_removed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, message_type: MessageType, parent=None):
+    def __init__(self, message_type: MessageType, field_types, parent=None):
+        """
+
+        :param message_type:
+        :type field_types: list of FieldType
+        :param parent:
+        """
         super().__init__(parent)
         self.row_count = len(message_type)
         self.proto_view = 0
         self.message_type = message_type
+        self.field_types_by_caption = {ft.caption: ft for ft in field_types}
         self.layoutChanged.emit()
 
 
@@ -48,9 +56,8 @@ class PLabelTableModel(QAbstractTableModel):
         return super().headerData(section, orientation, role)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
+        i, j = index.row(), index.column()
         if role == Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
             lbl = self.message_type[i]
             if j == 0:
                 return lbl.name
@@ -64,6 +71,10 @@ class PLabelTableModel(QAbstractTableModel):
                 return lbl.apply_decoding
         elif role == Qt.TextAlignmentRole:
             return Qt.AlignCenter
+        elif role == Qt.FontRole and j == 0:
+            font = QFont()
+            font.setItalic(self.message_type[i].type is None)
+            return font
         else:
             return None
 
@@ -80,6 +91,10 @@ class PLabelTableModel(QAbstractTableModel):
 
         if j == 0:
             lbl.name = value
+            if value in self.field_types_by_caption:
+                lbl.type = self.field_types_by_caption[value]
+            else:
+                lbl.type = None
         elif j == 1:
             lbl.start = self.__index2bit(int(value) - 1, self.proto_view)
         elif j == 2:
@@ -90,8 +105,6 @@ class PLabelTableModel(QAbstractTableModel):
             if bool(value) != lbl.apply_decoding:
                 lbl.apply_decoding = bool(value)
                 self.apply_decoding_changed.emit(lbl)
-        elif j == 5:
-            self.remove_label(self.message_type[i])
 
         return True
 
@@ -104,9 +117,16 @@ class PLabelTableModel(QAbstractTableModel):
         except IndexError:
             return Qt.NoItemFlags
 
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def remove_label(self, label):
         self.message_type.remove(label)
         self.update()
         self.label_removed.emit(label)
+
+    def remove_label_at(self, index: int):
+        try:
+            label = self.message_type[index]
+            self.remove_label(label)
+        except IndexError:
+            pass

@@ -157,7 +157,7 @@ class TableModel(QAbstractTableModel):
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):
                     self.background_colors[i, j] = bg_color
-                    self.tooltips[i, j] = lbl.title
+                    self.tooltips[i, j] = lbl.name
 
     def refresh_fonts(self):
         """

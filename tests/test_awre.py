@@ -11,6 +11,7 @@ from urh.awre.components.Length import Length
 from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
 from urh.awre.components.Type import Type
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -22,6 +23,15 @@ from urh.signalprocessing.Message import Message
 from urh.cythonext import util
 class TestAWRE(unittest.TestCase):
     def setUp(self):
+        self.field_types = FieldType.default_field_types()
+
+        self.preamble_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.PREAMBLE)
+        self.sync_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.SYNC)
+        self.length_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.LENGTH)
+        self.sequence_number_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.SEQUENCE_NUMBER)
+        self.dst_address_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.DST_ADDRESS)
+        self.src_address_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.SRC_ADDRESS)
+
         self.protocol = ProtocolAnalyzer(None)
         with open("./data/awre_consistent_addresses.txt") as f:
             for line in f:
@@ -46,15 +56,21 @@ class TestAWRE(unittest.TestCase):
         for i, message in enumerate(self.zero_crc_protocol.messages):
             message.participant = alice if i in alice_indices else bob
 
+    @staticmethod
+    def __field_type_with_function(field_types, function) -> FieldType:
+        return next(ft for ft in field_types if ft.function == function)
+
     def test_build_component_order(self):
-        expected_default = [Preamble(), Length(None), Address(None), SequenceNumber(), Type(), Flags()]
+        expected_default = [Preamble(fieldtypes=[]), Length(fieldtypes=[], length_cluster=None),
+                            Address(fieldtypes=[], xor_matrix=None), SequenceNumber(fieldtypes=[]), Type(), Flags()]
 
         format_finder = FormatFinder(self.protocol)
 
         for expected, actual in zip(expected_default, format_finder.build_component_order()):
             assert type(expected) == type(actual)
 
-        expected_swapped = [Preamble(), Address(None), Length(None), SequenceNumber(), Type(), Flags()]
+        expected_swapped = [Preamble(fieldtypes=[]), Address(fieldtypes=[],xor_matrix=None),
+                            Length(fieldtypes=[], length_cluster=None), SequenceNumber(fieldtypes=[]), Type(), Flags()]
         format_finder.length_component.priority = 2
         format_finder.address_component.priority = 1
 
@@ -77,14 +93,20 @@ class TestAWRE(unittest.TestCase):
         dst_address_start, dst_address_end = 88, 111
         src_address_start, src_address_end = 112, 135
 
-        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
-        sync_label = ProtocolLabel(name="Synchronization", start=sync_start, end=sync_end, color_index=1)
-        length_label = ProtocolLabel(name="Length", start=length_start, end=length_end, color_index=2)
-        ack_address_label = ProtocolLabel(name="DST address", start=ack_address_start, end=ack_address_end, color_index=3)
-        dst_address_label = ProtocolLabel(name="DST address", start=dst_address_start, end=dst_address_end, color_index=4)
-        src_address_label = ProtocolLabel(name="SRC address", start=src_address_start, end=src_address_end, color_index=5)
+        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, type=self.preamble_field_type,
+                                       start=preamble_start, end=preamble_end, color_index=0)
+        sync_label = ProtocolLabel(name=self.sync_field_type.caption, type=self.sync_field_type,
+                                   start=sync_start, end=sync_end, color_index=1)
+        length_label = ProtocolLabel(name=self.length_field_type.caption, type=self.length_field_type,
+                                     start=length_start, end=length_end, color_index=2)
+        ack_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, type=self.dst_address_field_type,
+                                          start=ack_address_start, end=ack_address_end, color_index=3)
+        dst_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, type=self.dst_address_field_type,
+                                          start=dst_address_start, end=dst_address_end, color_index=4)
+        src_address_label = ProtocolLabel(name=self.src_address_field_type.caption, type=self.src_address_field_type,
+                                          start=src_address_start, end=src_address_end, color_index=5)
 
-        ff = FormatFinder(self.protocol, self.participants)
+        ff = FormatFinder(protocol=self.protocol, participants=self.participants, field_types=self.field_types)
         ff.perform_iteration()
 
         self.assertIn(preamble_label, self.protocol.default_message_type)
@@ -124,8 +146,10 @@ class TestAWRE(unittest.TestCase):
         sof_start = 11
         sof_end = 14
 
-        preamble_label = ProtocolLabel(name="Preamble", start=preamble_start, end=preamble_end, color_index=0)
-        sync_label = ProtocolLabel(name="Synchronization", start=sof_start, end=sof_end, color_index=1)
+        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, type=self.preamble_field_type,
+                                       start=preamble_start, end=preamble_end, color_index=0)
+        sync_label = ProtocolLabel(name=self.sync_field_type.caption, type=self.sync_field_type,
+                                   start=sof_start, end=sof_end, color_index=1)
 
 
         ff = FormatFinder(enocean_protocol, self.participants)
@@ -135,7 +159,7 @@ class TestAWRE(unittest.TestCase):
 
         self.assertIn(preamble_label, enocean_protocol.default_message_type)
         self.assertIn(sync_label, enocean_protocol.default_message_type)
-        self.assertTrue(not any(lbl.name == "Length" for lbl in enocean_protocol.default_message_type))
+        self.assertTrue(not any(lbl.name == self.length_field_type.caption for lbl in enocean_protocol.default_message_type))
         self.assertTrue(not any("address" in lbl.name.lower() for lbl in enocean_protocol.default_message_type))
 
     def test_address_candidate_finding(self):

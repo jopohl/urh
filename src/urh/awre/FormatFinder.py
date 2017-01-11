@@ -1,6 +1,7 @@
 import numpy as np
 import time
 
+from urh.signalprocessing.FieldType import FieldType
 from urh.util.Logger import logger
 
 from urh.awre.components.Address import Address
@@ -15,7 +16,7 @@ from urh.cythonext import util
 class FormatFinder(object):
     MIN_MESSAGES_PER_CLUSTER = 2 # If there is only one message per cluster it is not very significant
 
-    def __init__(self, protocol, participants=None):
+    def __init__(self, protocol, participants=None, field_types=None):
         """
 
         :type protocol: urh.signalprocessing.ProtocolAnalyzer.ProtocolAnalyzer
@@ -32,12 +33,15 @@ class FormatFinder(object):
 
         mt = self.protocol.message_types
 
-        self.preamble_component = Preamble(priority=0, messagetypes=mt)
-        self.length_component = Length(length_cluster=self.len_cluster, priority=1,
+        field_types = FieldType.load_from_xml() if field_types is None else field_types
+
+        self.preamble_component = Preamble(fieldtypes=field_types, priority=0, messagetypes=mt)
+        self.length_component = Length(fieldtypes=field_types, length_cluster=self.len_cluster, priority=1,
                                        predecessors=[self.preamble_component], messagetypes=mt)
-        self.address_component = Address(xor_matrix=self.xor_matrix, priority=2, predecessors=[self.preamble_component],
-                                         messagetypes=mt)
-        self.sequence_number_component = SequenceNumber(priority=3, predecessors=[self.preamble_component])
+        self.address_component = Address(fieldtypes=field_types, xor_matrix=self.xor_matrix, priority=2,
+                                         predecessors=[self.preamble_component], messagetypes=mt)
+        self.sequence_number_component = SequenceNumber(fieldtypes=field_types, priority=3,
+                                                        predecessors=[self.preamble_component])
         self.type_component = Type(priority=4, predecessors=[self.preamble_component])
         self.flags_component = Flags(priority=5, predecessors=[self.preamble_component])
 

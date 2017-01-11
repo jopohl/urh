@@ -18,7 +18,8 @@ class ProtocolLabel(object):
     DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
+    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
+                 auto_created=False, type:FieldType=None):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -32,9 +33,9 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__type = None # type: FieldType
+        self.__type = type # type: FieldType
 
-        self.display_format_index = 0
+        self.display_format_index = 0 if type is None else type.display_format_index
 
         self.auto_created = auto_created
 
@@ -86,7 +87,7 @@ class ProtocolLabel(object):
             return False
 
     def __eq__(self, other):
-        return self.start == other.start and self.end == other.end and self.name == other.name
+        return self.start == other.start and self.end == other.end and self.name == other.name and self.type == other.type
 
     def __hash__(self):
         return hash("{}/{}/{}".format(self.start, self.end, self.name))

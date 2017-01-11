@@ -11,9 +11,15 @@ from urh.signalprocessing.MessageType import MessageType
 class Address(Component):
     MIN_ADDRESS_LENGTH = 8  # Address should be at least one byte
 
-    def __init__(self, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None, messagetypes=None):
+    def __init__(self, fieldtypes, xor_matrix, priority=2, predecessors=None, enabled=True, backend=None, messagetypes=None):
         super().__init__(priority, predecessors, enabled, backend, messagetypes)
         self.xor_matrix = xor_matrix
+
+        self.dst_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.DST_ADDRESS), None)
+        self.src_field_type = next((ft for ft in fieldtypes if ft.Function == ft.Function.SRC_ADDRESS), None)
+
+        self.dst_field_name = self.dst_field_type.caption if self.dst_field_type else "DST address"
+        self.src_field_name = self.src_field_type.caption if self.src_field_type else "SRC address"
 
     def _py_find_field(self, messages, verbose=False):
         """
@@ -163,17 +169,22 @@ class Address(Component):
                     msg = messages[msg_index]
 
                     if msg.message_type.name == "ack":
-                       name = "DST address"
+                       field_type = self.dst_field_type
+                       name = self.dst_field_name
                     elif msg.participant:
                         if rng.hex_value == msg.participant.address_hex:
-                            name = "SRC address"
+                            name = self.src_field_name
+                            field_type = self.src_field_type
                         else:
-                            name = "DST address"
+                            name = self.dst_field_name
+                            field_type = self.dst_field_type
                     else:
                         name = "Address"
+                        field_type = None
 
                     if not any(lbl.name == name and lbl.auto_created for lbl in msg.message_type):
-                        msg.message_type.add_protocol_label(rng.start, rng.end - 1, name=name, auto_created=True)
+                        msg.message_type.add_protocol_label(rng.start, rng.end - 1, name=name,
+                                                            auto_created=True, type=field_type)
 
 
     @staticmethod

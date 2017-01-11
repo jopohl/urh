@@ -45,18 +45,18 @@ class FieldType(object):
     def __eq__(self, other):
         return isinstance(other, FieldType) and self.id_match(other.id)
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __repr__(self):
+        return "FieldType: {0} - {1} ({2})".format(self.function.name, self.caption, self.display_format_index)
+
     @property
     def id(self):
         return self.__id
 
     def id_match(self, id):
         return self.__id == id
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __repr__(self):
-        return "FieldType: {0} - {1} ({2})".format(self.function.name, self.caption, self.display_format_index)
 
     @staticmethod
     def default_field_types():

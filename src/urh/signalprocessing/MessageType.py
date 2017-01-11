@@ -78,7 +78,8 @@ class MessageType(list):
         super().append(lbl)
         self.sort()
 
-    def add_protocol_label(self, start: int, end: int, name=None, color_ind=None, auto_created=False) -> ProtocolLabel:
+    def add_protocol_label(self, start: int, end: int, name=None, color_ind=None,
+                           auto_created=False, type:FieldType=None) -> ProtocolLabel:
 
         name = "" if not name else name
         used_colors = [p.color_index for p in self]
@@ -90,7 +91,8 @@ class MessageType(list):
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind, auto_created=auto_created)
+        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind,
+                                    auto_created=auto_created, type=type)
 
         if proto_label not in self:
             self.append(proto_label)

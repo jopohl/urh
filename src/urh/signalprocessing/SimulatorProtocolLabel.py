@@ -1,8 +1,8 @@
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.FieldType import FieldType
 
 class SimulatorProtocolLabel(object):
 
-    def __init__(self, name: str, value: str, length: int, color_index: int, type=ProtocolLabel.Type.CUSTOM):
+    def __init__(self, name: str, value: str, length: int, color_index: int, type=None):
         self.__name = name
         self.value = value
         self.length = length
@@ -22,10 +22,10 @@ class SimulatorProtocolLabel(object):
             self.__name = val
 
     @property
-    def type(self) -> ProtocolLabel.Type:
+    def type(self) -> FieldType:
         return self.__type
 
     @type.setter
-    def type(self, value: ProtocolLabel.Type):
+    def type(self, value: FieldType):
         if value != self.type:
             self.__type = value

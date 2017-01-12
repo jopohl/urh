@@ -61,7 +61,7 @@ def get_packages():
 
 
 def get_package_data():
-    package_data = {}
+    package_data = {"urh.cythonext": ["*.cpp"]}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
 
@@ -148,7 +148,7 @@ setup(
     install_requires=install_requires,
     setup_requires=['numpy'],
     packages=get_packages(),
-    ext_modules=get_ext_modules() + get_device_modules(),
+    ext_modules=extensions,
     cmdclass={'build_ext':build_ext},
     zip_safe=False,
     entry_points={

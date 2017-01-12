@@ -1,3 +1,5 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QTableView, QMenu
 
 from urh.models.PLabelTableModel import PLabelTableModel
@@ -21,4 +23,11 @@ class ProtocolLabelTableView(QTableView):
                 lbl = self.model().proto_analyzer.protocol_labels[row]
                 self.model().remove_label(lbl)
 
-
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Delete:
+            # Delete selected rows
+            rows = [i.row() for i in self.selectedIndexes()]
+            for row in sorted(rows, reverse=True):
+                self.model().remove_label_at(row)
+        else:
+            event.accept()

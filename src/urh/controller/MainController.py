@@ -41,6 +41,8 @@ class MainController(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        OptionsController.write_default_options()
+
         self.project_save_timer = QTimer()
         self.project_manager = ProjectManager(self)
         self.plugin_manager = PluginManager()
@@ -96,8 +98,6 @@ class MainController(QMainWindow):
         self.recentFileActionList = []
         self.create_connects()
         self.updateRecentActionList()
-
-        OptionsController.write_default_options()
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()
@@ -194,6 +194,7 @@ class MainController(QMainWindow):
 
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
         self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
+        self.compare_frame_controller.show_config_field_types_triggered.connect(self.show_field_types_config)
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
 
         self.ui.menuFile.addSeparator()
@@ -638,9 +639,15 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def show_options_dialog(self):
+        self.show_options_dialog_specific_tab(tab_index=0)
 
+    def show_field_types_config(self):
+        self.show_options_dialog_specific_tab(tab_index=3)
+
+    def show_options_dialog_specific_tab(self, tab_index: int):
         op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
         op.values_changed.connect(self.on_options_changed)
+        op.ui.tabWidget.setCurrentIndex(tab_index)
         op.exec_()
 
     def on_options_changed(self, changed_options: dict):
@@ -657,6 +664,7 @@ class MainController(QMainWindow):
             for sf in self.signal_tab_controller.signal_frames:
                 sf.refresh_protocol()
 
+        self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
 
         if "default_view" in changed_options.keys():

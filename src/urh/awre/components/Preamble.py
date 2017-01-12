@@ -1,5 +1,6 @@
 from collections import defaultdict
 from urh.awre.components.Component import Component
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 
 
@@ -8,8 +9,23 @@ class Preamble(Component):
     Assign Preamble and SoF.
 
     """
-    def __init__(self, priority=0, predecessors=None, enabled=True, backend=None, messagetypes=None):
+    def __init__(self, fieldtypes, priority=0, predecessors=None, enabled=True, backend=None, messagetypes=None):
+        """
+
+        :type fieldtypes: list of FieldType
+        :param priority:
+        :param predecessors:
+        :param enabled:
+        :param backend:
+        :param messagetypes:
+        """
         super().__init__(priority, predecessors, enabled, backend, messagetypes)
+
+        self.preamble_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.PREAMBLE), None)
+        self.sync_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.SYNC), None)
+
+        self.preamble_name = self.preamble_field_type.caption if self.preamble_field_type else "Preamble"
+        self.sync_name = self.sync_field_type.caption if self.sync_field_type else "Synchronization"
 
     def _py_find_field(self, messages):
         """
@@ -28,7 +44,8 @@ class Preamble(Component):
         preamble_ends = defaultdict(int)
         for message_type, ranges in preamble_ranges.items():
             start, end = max(ranges, key=ranges.count)
-            message_type.add_protocol_label(start=start, end=end, name="Preamble", auto_created=True)
+            message_type.add_protocol_label(start=start, end=end, name=self.preamble_name,
+                                            auto_created=True, type=self.preamble_field_type)
 
             preamble_ends[message_type] = end + 1
 
@@ -39,7 +56,8 @@ class Preamble(Component):
             sync_range = self.__find_sync_range(messages, preamble_ends[message_type], search_end)
 
             if sync_range:
-                message_type.add_protocol_label(start=sync_range[0], end=sync_range[1]-1, name="Synchronization", auto_created=True)
+                message_type.add_protocol_label(start=sync_range[0], end=sync_range[1]-1, name=self.sync_name,
+                                                auto_created=True, type=self.sync_field_type)
 
 
     def __find_preamble_range(self, message: Message):

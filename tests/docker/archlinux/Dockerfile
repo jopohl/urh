@@ -2,7 +2,7 @@ FROM  base/archlinux
 
 RUN mkdir -p /root/.gnupg\
  && pacman -Sy --noconfirm archlinux-keyring\
- && pacman -Syu --noconfirm\
+ && pacman -Syyuu --noconfirm\
  && pacman-db-upgrade\
  && pacman -S --noconfirm ca-certificates ca-certificates-mozilla\
  && pacman -S --noconfirm curl base-devel nano vim\

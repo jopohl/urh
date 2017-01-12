@@ -4,7 +4,9 @@ from collections import defaultdict
 import numpy as np
 
 from urh.awre.components.Component import Component
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
+from urh.signalprocessing.MessageType import MessageType
 
 
 class Length(Component):
@@ -14,8 +16,11 @@ class Length(Component):
     """
 
 
-    def __init__(self, length_cluster, priority=2, predecessors=None, enabled=True, backend=None, messagetypes=None):
+    def __init__(self, fieldtypes, length_cluster, priority=2, predecessors=None, enabled=True, backend=None, messagetypes=None):
         super().__init__(priority, predecessors, enabled, backend, messagetypes)
+
+        self.length_field_type = next((ft for ft in fieldtypes if ft.function == ft.Function.LENGTH), None)
+        self.length_field_name = self.length_field_type.caption if self.length_field_type else "Length"
 
         self.length_cluster = length_cluster
         """
@@ -89,12 +94,13 @@ class Length(Component):
 
         # Now we have the common intervals and need to check which one is the length
         for message_type, intervals in common_intervals_by_type.items():
+            assert isinstance(message_type, MessageType)
             # Exclude Synchronization (or preamble if not present) from length calculation
-            sync_lbl = next((lbl for lbl in message_type if lbl.name == "Synchronization"), None)
+            sync_lbl = next((lbl for lbl in message_type if lbl.type.function == FieldType.Function.SYNC), None)
             if sync_lbl:
                 sync_len = self.__nbits2bytes(sync_lbl.end)
             else:
-                preamble_lbl = next((lbl for lbl in message_type if lbl.name == "Preamble"), None)
+                preamble_lbl = next((lbl for lbl in message_type if lbl.type.function == FieldType.Function.PREAMBLE), None)
                 sync_len = self.__nbits2bytes(preamble_lbl.end) if preamble_lbl is not None else 0
 
             scores = defaultdict(int)
@@ -117,8 +123,9 @@ class Length(Component):
 
             try:
                 start, end = max(scores, key=scores.__getitem__)
-                if not any(lbl.name == "Length" and lbl.auto_created for lbl in message_type):
-                    message_type.add_protocol_label(start=start, end=end - 1, name="Length", auto_created=True)
+                if not any((lbl.type.function == FieldType.Function.LENGTH or lbl.name == "Length") and lbl.auto_created for lbl in message_type):
+                    message_type.add_protocol_label(start=start, end=end - 1, name=self.length_field_name,
+                                                    auto_created=True, type=self.length_field_type)
             except ValueError:
                 continue
 

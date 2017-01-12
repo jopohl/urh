@@ -4,10 +4,19 @@ from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QCombo
 
 
 class ComboBoxDelegate(QItemDelegate):
-    def __init__(self, items, colors=None, is_editable=False, parent=None):
+    def __init__(self, items, colors=None, is_editable=False, return_index=True, parent=None):
+        """
+
+        :param items:
+        :param colors:
+        :param is_editable:
+        :param return_index: True for returning current index, false for returning current text of editor
+        :param parent:
+        """
         super().__init__(parent)
         self.items = items
         self.colors = colors
+        self.return_index = return_index
         self.is_editable = is_editable
         if colors:
             assert len(items) == len(colors)
@@ -46,7 +55,10 @@ class ComboBoxDelegate(QItemDelegate):
         editor.blockSignals(False)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        model.setData(index, editor.currentIndex(), Qt.EditRole)
+        if self.return_index:
+            model.setData(index, editor.currentIndex(), Qt.EditRole)
+        else:
+            model.setData(index, editor.currentText(), Qt.EditRole)
 
     @pyqtSlot()
     def currentIndexChanged(self):

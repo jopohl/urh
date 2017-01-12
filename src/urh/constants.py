@@ -1,4 +1,5 @@
 #QT5 = True
+import os
 
 from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtGui import QColor
@@ -43,6 +44,8 @@ SEPARATION_ROW_HEIGHT = 30
 SETTINGS = QSettings(QSettings.UserScope, 'urh', 'urh')
 PROJECT_FILE = "URHProject.xml"
 DECODINGS_FILE = "decodings.txt"
+FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(SETTINGS.fileName(), "..", "fieldtypes.xml"))
+
 
 # DECODING NAMES
 DECODING_INVERT = "Invert"

@@ -740,15 +740,14 @@ class Encoder(object):
         state = self.ErrorState.SUCCESS
 
         if decoding:
-            # check length
-            if len(inpt) < end+11:
+            try:
+                for n in range(start, end, 12):
+                    errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
+                    errors += sum([inpt[n + 10] != False, inpt[n + 11] != True]) if n < end - 11 else 0
+                    output.extend([inpt[n], inpt[n + 1], inpt[n + 2], inpt[n + 4], inpt[n + 5], inpt[n + 6], inpt[n + 8],
+                                   inpt[n + 9]])
+            except IndexError: # compatibility for old project files
                 return inpt, 0, self.ErrorState.MISC
-
-            for n in range(start, end, 12):
-                errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
-                errors += sum([inpt[n + 10] != False, inpt[n + 11] != True]) if n < end - 11 else 0
-                output.extend([inpt[n], inpt[n + 1], inpt[n + 2], inpt[n + 4], inpt[n + 5], inpt[n + 6], inpt[n + 8],
-                               inpt[n + 9]])
 
             enocean_hash = self.enocean_hash(output[12:])
             if enocean_hash is None or output[-len(enocean_hash):] != enocean_hash:

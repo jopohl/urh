@@ -3,6 +3,7 @@ from enum import Enum
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
 from urh.util.Formatter import Formatter
 
@@ -17,17 +18,8 @@ class ProtocolLabel(object):
     DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    class Type(Enum):
-        PREAMBLE = "preamble"
-        SYNC = "synchronization"
-        SRC_ADDRESS = "source address"
-        DST_ADDRESS = "destination address"
-
-        SEQUENCE_NUMBER = "sequence number"
-        CRC = "crc"
-        CUSTOM = ""
-
-    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False, auto_created=False):
+    def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
+                 auto_created=False, type:FieldType=None):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -41,11 +33,23 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__type = ProtocolLabel.Type.CUSTOM
+        self.__type = type # type: FieldType
 
-        self.display_format_index = 0
+        self.display_format_index = 0 if type is None else type.display_format_index
 
         self.auto_created = auto_created
+
+    @property
+    def type(self) -> FieldType:
+        return self.__type
+
+    @type.setter
+    def type(self, value: FieldType):
+        if value != self.type:
+            self.__type = value
+            # set viewtype for type
+            if hasattr(value, "display_format_index"):
+                self.display_format_index = value.display_format_index
 
     @property
     def name(self):
@@ -58,30 +62,6 @@ class ProtocolLabel(object):
     def name(self, val):
         if val:
             self.__name = val
-
-    @property
-    def type(self) -> Type:
-        return self.__type
-
-    @type.setter
-    def type(self, value: Type):
-        if value != self.type:
-            self.__type = value
-            # set viewtype for type
-            if self.type in (self.Type.PREAMBLE, self.Type.SYNC):
-                self.display_format_index = 0
-            elif self.type in (self.Type.DST_ADDRESS, self.Type.SRC_ADDRESS, self.Type.CRC):
-                self.display_format_index = 1
-            elif self.type == self.Type.SEQUENCE_NUMBER:
-                self.display_format_index = 3
-
-
-    @property
-    def title(self):
-        if self.type != ProtocolLabel.Type.CUSTOM:
-            return self.type.value
-        else:
-            return self.name
 
     @property
     def fuzz_maximum(self):
@@ -107,7 +87,7 @@ class ProtocolLabel(object):
             return False
 
     def __eq__(self, other):
-        return self.start == other.start and self.end == other.end and self.name == other.name
+        return self.start == other.start and self.end == other.end and self.name == other.name and self.type == other.type
 
     def __hash__(self):
         return hash("{}/{}/{}".format(self.start, self.end, self.name))
@@ -131,16 +111,23 @@ class ProtocolLabel(object):
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
 
-
     def to_xml(self, index:int) -> ET.Element:
         return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_format_index": str(self.display_format_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created), "type": self.type.name})
+                                            "auto_created": str(self.auto_created), "type_id": self.type.id if self.type is not None else ""})
 
     @staticmethod
-    def from_xml(tag: ET.Element):
+    def from_xml(tag: ET.Element, field_types_by_type_id=None):
+        """
+
+        :param tag:
+        :type field_types_by_type_id: dict[str, FieldType]
+        :return:
+        """
+        field_types_by_type_id = dict() if field_types_by_type_id is None else field_types_by_type_id
+
         name = tag.get("name")
         start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
         color_index = int(tag.get("color_index", 0))
@@ -152,6 +139,10 @@ class ProtocolLabel(object):
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_format_index = int(tag.get("display_format_index", 0))
         result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
-        result.type = ProtocolLabel.Type[tag.get("type", '')]
+        type_id = tag.get("type_id", None)
+        if type_id and type_id in field_types_by_type_id:
+            result.type = field_types_by_type_id[type_id]
+        else:
+            result.type = None
 
         return result

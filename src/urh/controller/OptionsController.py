@@ -326,6 +326,8 @@ class OptionsController(QDialog):
         if not 'show_pause_as_time' in keys:
             settings.setValue('show_pause_as_time', False)
 
+        settings.sync() # Ensure conf dir is created to have field types in place
+
         if not os.path.isfile(constants.FIELD_TYPE_SETTINGS):
             FieldType.save_to_xml(FieldType.default_field_types())
 

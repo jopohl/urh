@@ -1,16 +1,17 @@
 from PyQt5.QtWidgets import QWidget
-
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 
 from urh.models.SimulateListModel import SimulateListModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
+from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.signalprocessing.Message import Message
-import copy
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -35,7 +36,16 @@ class SimulatorTabController(QWidget):
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
 
+        self.simulator_scene = SimulatorScene(controller=self, participants=self.project_manager.participants)
+        #self.simulator_scene.setSceneRect(0, 0, 500, 500)
+        self.ui.gvSimulator.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
+        self.ui.gvSimulator.controller = self
+        self.ui.gvSimulator.setScene(self.simulator_scene)
+        self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
         self.create_connects(compare_frame_controller)
+
+        self.messages = []
 
     def create_connects(self, compare_frame_controller):
         self.project_manager.project_updated.connect(self.on_project_updated)
@@ -44,6 +54,7 @@ class SimulatorTabController(QWidget):
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
         self.simulate_list_model.update()
+        self.simulator_scene.draw_participants(self.project_manager.participants)
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -54,3 +65,35 @@ class SimulatorTabController(QWidget):
         self.tree_model.rootItem.clearChilds()
         self.tree_model.rootItem.addGroup()
         self.refresh_tree()
+
+    def __detect_source_destination(self, message: Message):
+        # TODO: use SRC_ADDRESS and DST_ADDRESS labels
+        participants = self.project_manager.participants
+        source = None
+        destination = None
+
+        if len(participants) < 2:
+            return (None, None)
+
+        if len(participants) == 2:
+            if message.participant:
+                source = message.participant
+                destination = participants[0] if source == participants[1] else participants[0]
+            else:
+                source = participants[0]
+                destination = participants[1]
+        else:
+            source = participants[0]
+            destination = participants[1]
+
+        return (source, destination)
+
+    def add_protocol(self, protocol: ProtocolAnalyzer):
+        for message in protocol.messages:
+            source, destination = self.__detect_source_destination(message)
+            simulator_message = SimulatorMessage(message.message_type.name, source=source, destination=destination)
+            for label in message.message_type:
+                simulator_message.labels.append(SimulatorProtocolLabel(label.name, None, label.end - label.start,
+                                                                     label.color_index, label.type))
+
+            self.messages.append(simulator_message)

@@ -34,7 +34,7 @@ class Ui_SimulatorTab(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 464))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 527, 464))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -101,9 +101,9 @@ class Ui_SimulatorTab(object):
         self.toolButton.setIcon(icon)
         self.toolButton.setObjectName("toolButton")
         self.gridLayout_3.addWidget(self.toolButton, 1, 0, 1, 1)
-        self.graphicsView = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout_3.addWidget(self.graphicsView, 0, 0, 1, 4)
+        self.gvSimulator = SimulatorGraphicsView(self.frame_4)
+        self.gvSimulator.setObjectName("gvSimulator")
+        self.gridLayout_3.addWidget(self.gvSimulator, 0, 0, 1, 4)
         self.verticalLayout.addWidget(self.splitter_2)
         self.frame = QtWidgets.QFrame(self.splitter)
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -144,4 +144,5 @@ class Ui_SimulatorTab(object):
         self.label_8.setText(_translate("SimulatorTab", "Labels:"))
 
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
+from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 from . import urh_rc

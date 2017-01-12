@@ -50,7 +50,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>509</width>
+                <width>527</width>
                 <height>464</height>
                </rect>
               </property>
@@ -199,12 +199,13 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset theme="document-save"/>
+              <iconset theme="document-save">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
            <item row="0" column="0" colspan="4">
-            <widget class="QGraphicsView" name="graphicsView"/>
+            <widget class="SimulatorGraphicsView" name="gvSimulator"/>
            </item>
           </layout>
          </widget>
@@ -241,6 +242,11 @@
    <class>GeneratorTreeView</class>
    <extends>QTreeView</extends>
    <header>urh.ui.views.GeneratorTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SimulatorGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.SimulatorGraphicsView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

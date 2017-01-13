@@ -225,11 +225,17 @@ class TableModel(QAbstractTableModel):
 
             if self.proto_view == 0:
                 if value in ("0", "1"):
-                    self.protocol.messages[i][j] = bool(int(value))
-                    self.update()
+                    try:
+                        self.protocol.messages[i][j] = bool(int(value))
+                        self.update()
+                    except IndexError:
+                        return False
                 elif value in self.symbols.keys():
-                    self.protocol.messages[i][j] = self.symbols[value]
-                    self.update()
+                    try:
+                        self.protocol.messages[i][j] = self.symbols[value]
+                        self.update()
+                    except IndexError:
+                        return False
             elif self.proto_view == 1:
                 if value in hex_chars:
                     index = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]

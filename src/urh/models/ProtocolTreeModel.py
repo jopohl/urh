@@ -349,12 +349,12 @@ class ProtocolTreeModel(QAbstractItemModel):
         group = self.rootItem.child(new_group_id)
         for item in items:
             group.appendChild(item)
-        self.controller.refresh_protocol()
+        self.controller.refresh()
 
     def sort_group(self, sortgroup_id):
         self.blockSignals(True)
         self.rootItem.child(sortgroup_id).sortChilds()
-        self.controller.refresh_protocol()
+        self.controller.refresh()
         self.blockSignals(False)
 
     def set_copy_mode(self, use_copy: bool):

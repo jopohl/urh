@@ -109,7 +109,7 @@ class GeneratorTabController(QWidget):
     @property
     def selected_message(self) -> Message:
         selected_msg_index = self.selected_message_index
-        if selected_msg_index == -1:
+        if selected_msg_index == -1 or selected_msg_index >= len(self.table_model.protocol.messages):
             return None
 
         return self.table_model.protocol.messages[selected_msg_index]
@@ -144,7 +144,8 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_label_list(self):
-        self.label_list_model.layoutChanged.emit()
+        self.label_list_model.message = self.selected_message
+        self.label_list_model.update()
 
     @property
     def generator_undo_stack(self) -> QUndoStack:

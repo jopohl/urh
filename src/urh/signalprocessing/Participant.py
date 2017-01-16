@@ -4,14 +4,17 @@ import random
 
 class Participant(object):
 
-    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "relative_rssi", "__id"]
+    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "relative_rssi", "__is_broadcast", "__id"]
 
-    def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
+    def __init__(self, name: str, shortname: str = None, address_hex: str = None,
+                 color_index = 0, id: str = None, relative_rssi = 0, is_broadcast=False):
         self.name = name if name else "unknown"
         self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
         self.address_hex = address_hex if address_hex else ""
         self.color_index = color_index
         self.show = True
+
+        self.__is_broadcast = is_broadcast
 
         self.relative_rssi = relative_rssi
 
@@ -26,6 +29,10 @@ class Participant(object):
     @property
     def id(self):
         return self.__id
+
+    @property
+    def is_broadcast(self) -> bool:
+        return self.__is_broadcast
 
     def __repr__(self):
         return "Participant: {0} ({1})".format(self.name, self.shortname)
@@ -50,6 +57,7 @@ class Participant(object):
         root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
         root.set("relative_rssi", str(self.relative_rssi))
+        root.set("is_broadcast", "1" if self.is_broadcast else "0")
 
         return root
 
@@ -61,4 +69,8 @@ class Participant(object):
         color_index = int(tag.get("color_index", 0))
         color_index = 0 if color_index < 0 else color_index
         relative_rssi = int(tag.get("relative_rssi", 0))
-        return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index, id = tag.attrib["id"], relative_rssi=relative_rssi)
+        is_broadcast = bool(int(tag.get("is_broadcast", 0)))
+
+        return Participant(name, shortname=shortname, address_hex=address_hex,
+                           color_index=color_index, id = tag.attrib["id"],
+                           relative_rssi=relative_rssi, is_broadcast=is_broadcast)

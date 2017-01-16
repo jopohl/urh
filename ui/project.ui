@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>641</width>
+    <width>774</width>
     <height>734</height>
    </rect>
   </property>
@@ -40,16 +40,32 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>17</width>
-       <height>37</height>
+       <height>10</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="14" column="3">
+      <widget class="QLineEdit" name="lineEditBroadcastAddress">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the broadcast address of your protocol in &lt;span style=&quot; font-weight:600;&quot;&gt;hex&lt;/span&gt;. If you do not know what to enter here, just leave the default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string>ffff</string>
+       </property>
+      </widget>
+     </item>
      <item row="10" column="0" colspan="2">
       <widget class="QLabel" name="label_8">
        <property name="text">
@@ -230,6 +246,9 @@
        </property>
       </widget>
      </item>
+     <item row="10" column="3">
+      <widget class="QPlainTextEdit" name="txtEdDescription"/>
+     </item>
      <item row="5" column="0" colspan="2">
       <widget class="QLabel" name="label_10">
        <property name="text">
@@ -249,9 +268,6 @@
         <double>999999999999.000000000000000</double>
        </property>
       </widget>
-     </item>
-     <item row="10" column="3">
-      <widget class="QPlainTextEdit" name="txtEdDescription"/>
      </item>
      <item row="6" column="3">
       <widget class="QSpinBox" name="spinBoxGain">
@@ -300,6 +316,13 @@
        <attribute name="verticalHeaderStretchLastSection">
         <bool>false</bool>
        </attribute>
+      </widget>
+     </item>
+     <item row="14" column="0" colspan="2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Broadcast address (hex):</string>
+       </property>
       </widget>
      </item>
     </layout>

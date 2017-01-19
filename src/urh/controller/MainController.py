@@ -699,6 +699,7 @@ class MainController(QMainWindow):
     def on_project_updated(self):
         self.participant_legend_model.participants = self.project_manager.participants
         self.participant_legend_model.update()
+        self.compare_frame_controller.refresh()
         self.ui.textEditProjectDescription.setText(self.project_manager.description)
 
     def on_textEditProjectDescription_edited(self):

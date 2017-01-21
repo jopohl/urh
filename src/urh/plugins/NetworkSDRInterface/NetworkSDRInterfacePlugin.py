@@ -55,7 +55,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.server.shutdown()
         if hasattr(self, "server_thread"):
             self.server_thread.join()
-            print("thread down")
 
 
     def send_data(self, data:bytearray):

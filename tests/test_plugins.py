@@ -94,7 +94,9 @@ class TestPlugins(unittest.TestCase):
 
             recalculated = si.bytearray_to_bit_str(byte_vals)
 
-            if bits.endswith("1"):
+            if len(bits) % 8 == 0:
+                self.assertEqual(bits, recalculated)
+            elif bits.endswith("1"):
                 self.assertEqual(bits, recalculated.rstrip("0"))
             else:
                 self.assertTrue(recalculated.startswith(bits))

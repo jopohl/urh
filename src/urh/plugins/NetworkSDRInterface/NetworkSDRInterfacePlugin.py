@@ -34,13 +34,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         return "".join("{:08b}".format(a) for a in arr)
 
     def bit_str_to_bytearray(self, bits:str) -> bytearray:
-        byte_arr = [int(bits[i:i+8], 2) for i in range(0, 8*(len(bits) // 8), 8)]
-
-        if len(bits) % 8 != 0:
-            last_bits = bits[-(len(bits) % 8):] + "0" * (8 - len(bits) % 8)
-            byte_arr.append(int(last_bits, 2))
-
-        return bytearray(byte_arr)
+        bits = bits + "0" * ((8 - len(bits) % 8) % 8)
+        return bytearray((int(bits[i:i+8], 2) for i in range(0, len(bits), 8)))
 
     @staticmethod
     def ip_is_valid(ip: str):

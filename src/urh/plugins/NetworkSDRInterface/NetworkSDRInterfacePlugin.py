@@ -30,6 +30,18 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.spinBoxClientPort.editingFinished.connect(self.on_spinbox_client_port_editing_finished)
         self.settings_frame.spinBoxServerPort.editingFinished.connect(self.on_spinbox_server_port_editing_finished)
 
+    def bytearray_to_bit_str(self, arr:bytearray) -> str:
+        return "".join("{:08b}".format(a) for a in arr)
+
+    def bit_str_to_bytearray(self, bits:str) -> bytearray:
+        byte_arr = [int(bits[i:i+8], 2) for i in range(0, 8*(len(bits) // 8), 8)]
+
+        if len(bits) % 8 != 0:
+            last_bits = bits[-(len(bits) % 8):] + "0" * (8 - len(bits) % 8)
+            byte_arr.append(int(last_bits, 2))
+
+        return bytearray(byte_arr)
+
     @staticmethod
     def ip_is_valid(ip: str):
         try:

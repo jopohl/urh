@@ -96,11 +96,11 @@ class Length(Component):
         for message_type, intervals in common_intervals_by_type.items():
             assert isinstance(message_type, MessageType)
             # Exclude Synchronization (or preamble if not present) from length calculation
-            sync_lbl = next((lbl for lbl in message_type if lbl.type.function == FieldType.Function.SYNC), None)
+            sync_lbl = next((lbl for lbl in message_type if lbl.type and lbl.type.function == FieldType.Function.SYNC), None)
             if sync_lbl:
                 sync_len = self.__nbits2bytes(sync_lbl.end)
             else:
-                preamble_lbl = next((lbl for lbl in message_type if lbl.type.function == FieldType.Function.PREAMBLE), None)
+                preamble_lbl = next((lbl for lbl in message_type if lbl.type and lbl.type.function == FieldType.Function.PREAMBLE), None)
                 sync_len = self.__nbits2bytes(preamble_lbl.end) if preamble_lbl is not None else 0
 
             scores = defaultdict(int)

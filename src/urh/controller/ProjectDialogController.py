@@ -2,7 +2,9 @@ import os
 import random
 
 import numpy
+from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
 from urh import constants
 
@@ -109,6 +111,7 @@ class ProjectDialogController(QDialog):
             self.ui.spinBoxGain.setValue(project_manager.gain)
             self.ui.txtEdDescription.setPlainText(project_manager.description)
             self.ui.lineEdit_Path.setText(project_manager.project_path)
+            self.ui.lineEditBroadcastAddress.setText(project_manager.broadcast_address_hex)
 
             self.ui.btnSelectPath.hide()
             self.ui.lineEdit_Path.setDisabled(True)
@@ -122,13 +125,15 @@ class ProjectDialogController(QDialog):
                                                                             parent=self))
 
         self.__set_relative_rssi_delegate()
-
+        "(([a-fA-F]|[0-9]){2}){3}"
+        self.ui.lineEditBroadcastAddress.setValidator(QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}")))
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
         self.freq = self.ui.spinBoxFreq.value()
         self.bandwidth = self.ui.spinBoxBandwidth.value()
         self.gain = self.ui.spinBoxGain.value()
         self.description = self.ui.txtEdDescription.toPlainText()
+        self.broadcast_address_hex = self.ui.lineEditBroadcastAddress.text()
 
         self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)
 
@@ -184,6 +189,7 @@ class ProjectDialogController(QDialog):
         self.ui.spinBoxBandwidth.valueChanged.connect(self.on_bandwidth_changed)
         self.ui.spinBoxGain.valueChanged.connect(self.on_gain_changed)
         self.ui.txtEdDescription.textChanged.connect(self.on_description_changed)
+        self.ui.lineEditBroadcastAddress.textEdited.connect(self.on_broadcast_address_edited)
 
         self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
         self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
@@ -228,6 +234,9 @@ class ProjectDialogController(QDialog):
 
         self.commited = True
         self.close()
+
+    def on_broadcast_address_edited(self):
+        self.broadcast_address_hex = self.ui.lineEditBroadcastAddress.text()
 
     def set_path(self, path):
         self.path = path

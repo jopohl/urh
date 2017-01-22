@@ -32,6 +32,7 @@ class ProjectManager(QObject):
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
+        self.broadcast_address_hex = "ffff"
         self.__project_file = None
         self.participants = []
 
@@ -71,6 +72,7 @@ class ProjectManager(QObject):
         self.bandwidth = float(root.get("bandwidth", 1e6))
         self.gain = int(root.get("gain", 20))
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
+        self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
 
     def read_message_types(self):
         if self.project_file is None:
@@ -252,6 +254,7 @@ class ProjectManager(QObject):
         root.set("gain", str(self.gain))
         root.set("description", str(self.description).replace("\n",self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.maincontroller.ui.tabParticipants.isVisible())))
+        root.set("broadcast_address_hex", str(self.broadcast_address_hex))
 
         open_files = []
         for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
@@ -410,6 +413,7 @@ class ProjectManager(QObject):
             self.gain = dialog.gain
             self.bandwidth = dialog.bandwidth
             self.description = dialog.description
+            self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(" ", "")
             if dialog.new_project:
                 self.participants = dialog.participants
             self.project_updated.emit()

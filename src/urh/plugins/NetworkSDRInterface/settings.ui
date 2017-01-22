@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>666</width>
-    <height>337</height>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,34 +24,16 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QGroupBox" name="groupBoxClient">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Client</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>IP address:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditClientIP">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the IP address for the TCP client of URH so the IP address of your TCP server. This is used, when &lt;span style=&quot; font-weight:600;&quot;&gt;sending&lt;/span&gt; data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>127.0.0.1</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Port:</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QSpinBox" name="spinBoxClientPort">
           <property name="toolTip">
@@ -65,11 +47,54 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>IP address:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Port:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditClientIP">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the IP address for the TCP client of URH so the IP address of your TCP server. This is used, when &lt;span style=&quot; font-weight:600;&quot;&gt;sending&lt;/span&gt; data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>127.0.0.1</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
      <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QGroupBox" name="groupBoxServer">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Server</string>
        </property>
@@ -81,7 +106,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="2">
          <widget class="QLineEdit" name="lineEditServerIP">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the IP address for TCP server of URH. Your TCP client can connect to this address, after starting &lt;span style=&quot; font-weight:600;&quot;&gt;receiving&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -98,7 +123,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="1" column="2">
          <widget class="QSpinBox" name="spinBoxServerPort">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the IP port for TCP server of URH. Your TCP client can connect to this address, after starting &lt;span style=&quot; font-weight:600;&quot;&gt;receiving&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -108,6 +133,16 @@
           </property>
           <property name="value">
            <number>1337</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="3">
+         <widget class="QLabel" name="lOpenProtoSniffer">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open &lt;span style=&quot; font-weight:600;&quot;&gt;protocol sniffer&lt;/span&gt; (&lt;span style=&quot; font-style:italic;&quot;&gt;File -&amp;gt; Sniff protocol...&lt;/span&gt;) to use it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

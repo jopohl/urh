@@ -1,11 +1,13 @@
 import socketserver
 import threading
 
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, pyqtSlot
 from PyQt5.QtGui import QRegExpValidator
 import socket
 
+from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.plugins.Plugin import SDRPlugin
+from urh.util.Errors import Errors
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 from urh.dev.BackendHandler import BackendHandler
 
 from urh import constants
+from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_proto_sniff import Ui_SniffProtocol
 from urh.util.Errors import Errors
@@ -12,6 +13,7 @@ from urh.util.Logger import logger
 
 class ProtocolSniffDialogController(QDialog):
     protocol_accepted = pyqtSignal(list)
+    NETWORK_SDR_NAME = "Network SDR"
 
     def __init__(self, freq, samp_rate, bw, gain, device, noise,
                  center, bit_length, tolerance, modulation_type_index,
@@ -42,6 +44,10 @@ class ProtocolSniffDialogController(QDialog):
             if dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
 
+        pm = PluginManager()
+        if pm.is_plugin_enabled("NetworkSDRInterface"):
+            items.append(self.NETWORK_SDR_NAME)
+
         self.ui.cbDevice.addItems(items)
         del bh
         if device in items:
@@ -57,8 +63,7 @@ class ProtocolSniffDialogController(QDialog):
                                modulation_type_index, samp_rate, freq,
                                gain, bw, device)
 
-        self.ui.lineEditIP.setVisible(device == "USRP")
-        self.ui.labelIP.setVisible(device == "USRP")
+        self.set_object_visibility()
 
 
         self.sniffer.usrp_ip = self.ui.lineEditIP.text()
@@ -105,12 +110,9 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.spinboxNoise.editingFinished.connect(self.on_noise_edited)
         self.ui.spinboxCenter.editingFinished.connect(self.on_center_edited)
         self.ui.spinboxBitLen.editingFinished.connect(self.on_bit_len_edited)
-        self.ui.spinboxErrorTolerance.editingFinished.connect(
-            self.on_tolerance_edited)
-        self.ui.comboxModulation.currentIndexChanged.connect(
-            self.on_modulation_changed)
-        self.ui.comboBoxViewType.currentIndexChanged.connect(
-            self.on_view_type_changed)
+        self.ui.spinboxErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
+        self.ui.comboxModulation.currentIndexChanged.connect(self.on_modulation_changed)
+        self.ui.comboBoxViewType.currentIndexChanged.connect(self.on_view_type_changed)
     @property
     def view_type(self):
         return self.ui.comboBoxViewType.currentIndex()
@@ -169,8 +171,17 @@ class ProtocolSniffDialogController(QDialog):
     def on_device_edited(self):
         dev = self.ui.cbDevice.currentText()
         self.sniffer.device_name = dev
-        self.ui.lineEditIP.setVisible(dev == "USRP")
-        self.ui.labelIP.setVisible(dev == "USRP")
+        self.set_object_visibility()
+
+    def set_object_visibility(self):
+        self.ui.lineEditIP.setVisible(self.sniffer.device_name == "USRP")
+        self.ui.labelIP.setVisible(self.sniffer.device_name == "USRP")
+        for object in ("spinBoxFreq", "spinBoxSampleRate", "spinBoxBandwidth", "spinBoxGain", "spinboxNoise",
+                       "spinboxCenter", "spinboxBitLen", "spinboxErrorTolerance", "comboxModulation",
+                       "btnLockBWSR", "labelFreq", "labelSampleRate", "labelBandWidth", "labelGain",
+                       "labelNoise", "labelCenter", "labelBitLength", "labelTolerance", "labelModulation"):
+            getattr(self.ui, object).setHidden(self.sniffer.device_name == self.NETWORK_SDR_NAME)
+
 
 
     @pyqtSlot()

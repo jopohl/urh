@@ -36,10 +36,9 @@ class SimulatorTabController(QWidget):
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
 
-        self.simulator_scene = SimulatorScene(controller=self, participants=self.project_manager.participants)
+        self.simulator_scene = SimulatorScene(controller=self)
+        self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
         #self.simulator_scene.setSceneRect(0, 0, 500, 500)
-        self.ui.gvSimulator.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
-        self.ui.gvSimulator.controller = self
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
@@ -50,11 +49,18 @@ class SimulatorTabController(QWidget):
     def create_connects(self, compare_frame_controller):
         self.project_manager.project_updated.connect(self.on_project_updated)
         compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
+        self.simulate_list_model.simulate_state_changed.connect(self.on_project_updated)
 
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
         self.simulate_list_model.update()
-        self.simulator_scene.draw_participants(self.project_manager.participants)
+
+        self.messages[:] = [msg for msg in self.messages if msg.source in self.project_manager.participants
+                                and msg.destination in self.project_manager.participants]
+
+        self.simulator_scene.update_participants(self.project_manager.participants)
+        self.simulator_scene.update_messages(self.messages)
+        self.simulator_scene.arrange_items()
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -75,25 +81,23 @@ class SimulatorTabController(QWidget):
         if len(participants) < 2:
             return (None, None)
 
-        if len(participants) == 2:
-            if message.participant:
-                source = message.participant
-                destination = participants[0] if source == participants[1] else participants[0]
-            else:
-                source = participants[0]
-                destination = participants[1]
+        if message.participant:
+            source = message.participant
+            destination = participants[0] if source == participants[1] else participants[1]
         else:
             source = participants[0]
             destination = participants[1]
 
         return (source, destination)
 
-    def add_protocol(self, protocol: ProtocolAnalyzer):
-        for message in protocol.messages:
-            source, destination = self.__detect_source_destination(message)
-            simulator_message = SimulatorMessage(message.message_type.name, source=source, destination=destination)
-            for label in message.message_type:
-                simulator_message.labels.append(SimulatorProtocolLabel(label.name, None, label.end - label.start,
-                                                                     label.color_index, label.type))
+    def add_protocols(self, protocols):
+        for protocol in protocols:
+            for message in protocol.messages:
+                source, destination = self.__detect_source_destination(message)
+                simulator_message = SimulatorMessage(message.message_type.name, source=source, destination=destination)
+                for label in message.message_type:
+                    simulator_message.labels.append(SimulatorProtocolLabel(label.name, label.type, label.end - label.start,
+                                                                         label.color_index, label.type))
+                self.messages.append(simulator_message)
 
-            self.messages.append(simulator_message)
+        self.on_project_updated()

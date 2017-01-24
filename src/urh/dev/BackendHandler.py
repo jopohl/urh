@@ -9,6 +9,7 @@ class Backends(Enum):
     none = 0
     native = 1
     grc = 2
+    network = 3  # provided by network sdr plugin
 
 
 class BackendContainer(object):

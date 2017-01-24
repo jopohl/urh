@@ -2,6 +2,8 @@ import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
+
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
 from urh.dev.BackendHandler import Backends, BackendHandler
@@ -16,6 +18,7 @@ class Mode(Enum):
     receive = 1
     send = 2
     spectrum = 3
+
 
 class VirtualDevice(QObject):
     """
@@ -34,14 +37,17 @@ class VirtualDevice(QObject):
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
-        try:
-            self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
-        except KeyError:
-            logger.warning("Invalid device name: {0}".format(name))
-            self.backend = Backends.none
-            self.__dev = None
-            return
 
+        if self.name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
+            self.backend = Backends.network
+        else:
+            try:
+                self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
+            except KeyError:
+                logger.warning("Invalid device name: {0}".format(name))
+                self.backend = Backends.none
+                self.__dev = None
+                return
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
@@ -76,6 +82,8 @@ class VirtualDevice(QObject):
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
+        elif self.backend == Backends.network:
+            print("Selected network plugin")  # TODO Initialize Plugin here
         elif self.backend == Backends.none:
             self.__dev = None
         else:
@@ -198,6 +206,9 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.native:
             del self.__dev.samples_to_send
             del self.__dev.receive_buffer
+        elif self.backend == Backends.network:
+            logger.critical("Clear Data in Plugin not cleared yet (IMPLEMENT THE CALL HERE)")
+            pass # TODO: Clear Data in plugin
         elif self.backend == Backends.none:
             pass
         else:

@@ -14,8 +14,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             self.data = self.request.recv(1024)
-            print("{} wrote:".format(self.client_address[0]))
-            print(self.data)
+            #print("{} wrote:".format(self.client_address[0]))
+            #print(self.data)
+            self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
+            print(self.server.received_bits)
 
     def __init__(self):
         super().__init__(name="NetworkSDRInterface")
@@ -24,6 +26,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.client_port = self.qsettings.value("client_port", defaultValue=1338, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=1337, type=int)
+
+        self.received_bits = []
 
     def create_connects(self):
         ip_regex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
@@ -43,6 +47,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def start_tcp_server_for_receiving(self):
         self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler,
                                              bind_and_activate=False)
+        self.server.received_bits = self.received_bits
 
         self.server.allow_reuse_address = True  # allow reusing addresses if the server is stopped and started again
         self.server.server_bind()      # only necessary, because we disabled bind_and_activate above

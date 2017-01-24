@@ -350,8 +350,6 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
-
-
     def emit_stopped_signal(self):
         self.stopped.emit()
 

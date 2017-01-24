@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 from urh.dev.BackendHandler import BackendHandler
 
 from urh import constants
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_proto_sniff import Ui_SniffProtocol
@@ -13,7 +14,6 @@ from urh.util.Logger import logger
 
 class ProtocolSniffDialogController(QDialog):
     protocol_accepted = pyqtSignal(list)
-    NETWORK_SDR_NAME = "Network SDR"
 
     def __init__(self, freq, samp_rate, bw, gain, device, noise,
                  center, bit_length, tolerance, modulation_type_index,
@@ -46,7 +46,7 @@ class ProtocolSniffDialogController(QDialog):
 
         pm = PluginManager()
         if pm.is_plugin_enabled("NetworkSDRInterface"):
-            items.append(self.NETWORK_SDR_NAME)
+            items.append(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.ui.cbDevice.addItems(items)
         del bh
@@ -180,7 +180,7 @@ class ProtocolSniffDialogController(QDialog):
                        "spinboxCenter", "spinboxBitLen", "spinboxErrorTolerance", "comboxModulation",
                        "btnLockBWSR", "labelFreq", "labelSampleRate", "labelBandWidth", "labelGain",
                        "labelNoise", "labelCenter", "labelBitLength", "labelTolerance", "labelModulation"):
-            getattr(self.ui, object).setHidden(self.sniffer.device_name == self.NETWORK_SDR_NAME)
+            getattr(self.ui, object).setHidden(self.sniffer.device_name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
 
 

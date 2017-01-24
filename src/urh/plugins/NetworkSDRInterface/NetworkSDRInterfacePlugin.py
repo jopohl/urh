@@ -11,6 +11,8 @@ from urh.util.Errors import Errors
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
+    NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
+
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             self.data = self.request.recv(1024)

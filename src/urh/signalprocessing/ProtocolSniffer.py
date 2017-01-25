@@ -111,6 +111,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
             for bit_str in self.rcv_device.data:
+                # todo: consider selected encoding and encode message before
                 self.messages.append(Message.from_plain_bits_str(bit_str, {}))
 
             self.rcv_device.free_data()  # do not store received bits twice

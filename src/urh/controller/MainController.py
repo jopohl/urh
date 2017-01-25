@@ -15,6 +15,7 @@ from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProjectDialogController import ProjectDialogController
+from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.SendRecvDialogController import SendRecvDialogController, Mode
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
@@ -171,8 +172,7 @@ class MainController(QMainWindow):
         self.ui.actionSpectrum_Analyzer.triggered.connect(self.show_spectrum_dialog)
         self.ui.actionOptions.triggered.connect(self.show_options_dialog)
         self.project_save_timer.timeout.connect(self.project_manager.saveProject)
-        self.ui.actionSniff_protocol.triggered.connect(
-            self.compare_frame_controller.show_proto_sniff_dialog)
+        self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
 
         self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(
             self.handle_files_dropped)
@@ -607,6 +607,36 @@ class MainController(QMainWindow):
         r.recording_parameters.connect(pm.set_recording_parameters)
         r.files_recorded.connect(self.load_recorded_signals)
         r.show()
+
+    @pyqtSlot()
+    def show_proto_sniff_dialog(self):
+        pm = self.project_manager
+        signal = None
+        for proto in self.compare_frame_controller.protocol_list:
+            signal = proto.signal
+            if signal:
+                break
+
+        if signal:
+            bit_len = signal.bit_len
+            mod_type = signal.modulation_type
+            tolerance = signal.tolerance
+            noise = signal.noise_treshold
+            center = signal.qad_center
+        else:
+            bit_len = 100
+            mod_type = 1
+            tolerance = 5
+            noise = 0.001
+            center = 0.02
+
+        psd = ProtocolSniffDialogController(pm.frequency, pm.sample_rate,
+                                            pm.bandwidth, pm.gain,
+                                            pm.device, noise, center,
+                                            bit_len, tolerance, mod_type,
+                                            parent=self)
+        psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
+        psd.show()
 
     @pyqtSlot()
     def show_spectrum_dialog(self):

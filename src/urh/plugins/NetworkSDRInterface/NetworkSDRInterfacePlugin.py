@@ -1,7 +1,7 @@
 import socketserver
 import threading
 
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QRegExpValidator
@@ -13,6 +13,7 @@ from urh.plugins.Plugin import SDRPlugin
 class NetworkSDRInterfacePlugin(SDRPlugin):
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
     rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
+    show_proto_sniff_dialog_clicked = pyqtSignal()
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -50,6 +51,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.lineEditServerIP.editingFinished.connect(self.on_linedit_server_ip_editing_finished)
         self.settings_frame.spinBoxClientPort.editingFinished.connect(self.on_spinbox_client_port_editing_finished)
         self.settings_frame.spinBoxServerPort.editingFinished.connect(self.on_spinbox_server_port_editing_finished)
+
+        self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     def start_tcp_server_for_receiving(self):
         self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler,
@@ -120,3 +123,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def __emit_rcv_index_changed(self):
         if self.received_bits:
             self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
+
+    @pyqtSlot(str)
+    def on_lopenprotosniffer_link_activated(self, link: str):
+        if link == "open_proto_sniffer":
+            self.show_proto_sniff_dialog_clicked.emit()

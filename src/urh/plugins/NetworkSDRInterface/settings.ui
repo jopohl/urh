@@ -139,7 +139,7 @@
         <item row="2" column="0" colspan="3">
          <widget class="QLabel" name="lOpenProtoSniffer">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open &lt;span style=&quot; font-weight:600;&quot;&gt;protocol sniffer&lt;/span&gt; (&lt;span style=&quot; font-style:italic;&quot;&gt;File -&amp;gt; Sniff protocol...&lt;/span&gt;) to use it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open &lt;a href=&quot;open_proto_sniffer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;protocol sniffer&lt;/span&gt;&lt;/a&gt; (&lt;span style=&quot; font-style:italic;&quot;&gt;File -&amp;gt; Sniff protocol...&lt;/span&gt;) to use it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>

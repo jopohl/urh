@@ -66,7 +66,7 @@ class GeneratorTabController(QWidget):
 
 
     def create_connects(self, compare_frame_controller):
-        compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
+        compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
         compare_frame_controller.participant_changed.connect(self.table_model.refresh_vertical_header)
         self.ui.btnEditModulation.clicked.connect(self.show_modulation_dialog)
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
@@ -130,8 +130,8 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_tree(self):
-        #self.tree_model.reset()
-        self.tree_model.layoutChanged.emit()
+        self.tree_model.beginResetModel()
+        self.tree_model.endResetModel()
         self.ui.treeProtocols.expandAll()
 
     @pyqtSlot()
@@ -353,7 +353,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def handle_plabel_fuzzing_state_changed(self):
         self.refresh_table()
-        self.label_list_model.layoutChanged.emit()
+        self.label_list_model.update()
 
     @pyqtSlot(ProtocolLabel)
     def handle_proto_label_removed(self, plabel: ProtocolLabel):

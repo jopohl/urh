@@ -17,7 +17,8 @@ class FieldTypeTableModel(QAbstractTableModel):
         super().__init__(parent)
 
     def update(self):
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def columnCount(self, parent=None, *args, **kwargs):
         return len(self.header_labels)

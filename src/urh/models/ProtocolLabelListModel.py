@@ -25,7 +25,8 @@ class ProtocolLabelListModel(QAbstractListModel):
 
     def update(self):
         self.message_type = self.controller.active_message_type # type: MessageType
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
 
     def data(self, index, role=Qt.DisplayRole):

@@ -31,7 +31,8 @@ class ProjectDialogController(QDialog):
             self.header_labels = ["Name", "Shortname", "Color", "Relative RSSI", "Address (hex)"]
 
         def update(self):
-            self.layoutChanged.emit()
+            self.beginResetModel()
+            self.endResetModel()
 
         def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
             return len(self.header_labels)

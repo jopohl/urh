@@ -12,7 +12,8 @@ class RulesetTableModel(QAbstractTableModel):
         super().__init__(parent)
 
     def update(self):
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.header_labels)

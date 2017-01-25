@@ -18,7 +18,7 @@ class Plugin(QObject):
         self.plugin_path = ""
         self.description = ""
         self.settings_frame = None
-        self.qsettings = QSettings(QSettings.UserScope, "urh", self.name + "-plugin")
+        self.qsettings = QSettings(QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin")
 
     @property
     def enabled(self) -> bool:

@@ -301,7 +301,11 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QTableView" name="tblLabeltypes"/>
+          <widget class="QTableView" name="tblLabeltypes">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -311,7 +315,8 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset theme="list-add"/>
+              <iconset theme="list-add">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -321,7 +326,8 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset theme="list-remove"/>
+              <iconset theme="list-remove">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>

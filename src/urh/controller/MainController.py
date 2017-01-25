@@ -670,7 +670,7 @@ class MainController(QMainWindow):
         op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
         op.values_changed.connect(self.on_options_changed)
         op.ui.tabWidget.setCurrentIndex(tab_index)
-        op.exec_()
+        op.show()
 
     def on_options_changed(self, changed_options: dict):
         refresh_protocol_needed = False

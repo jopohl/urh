@@ -83,7 +83,7 @@ class VirtualDevice(QObject):
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
         elif self.backend == Backends.network:
             self.__dev = NetworkSDRInterfacePlugin()
-            # TODO: Add signal for rcv_index_changed like above
+            self.__dev.rcv_index_changed.connect(self.emit_index_changed)
         elif self.backend == Backends.none:
             self.__dev = None
         else:
@@ -185,6 +185,11 @@ class VirtualDevice(QObject):
                 return self.__dev.samples_to_send
             else:
                 return self.__dev.receive_buffer
+        elif self.backend == Backends.network:
+            if self.mode == Mode.send:
+                raise NotImplementedError("Todo")
+            else:
+                return self.__dev.received_bits
         else:
             raise ValueError("Unsupported Backend")
 
@@ -207,8 +212,7 @@ class VirtualDevice(QObject):
             del self.__dev.samples_to_send
             del self.__dev.receive_buffer
         elif self.backend == Backends.network:
-            logger.critical("Clear Data in Plugin not cleared yet (IMPLEMENT THE CALL HERE)")
-            pass  # TODO: Clear Data in plugin
+            self.__dev.received_bits[:] = []
         elif self.backend == Backends.none:
             pass
         else:

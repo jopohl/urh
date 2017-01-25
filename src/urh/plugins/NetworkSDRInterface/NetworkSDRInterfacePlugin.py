@@ -2,6 +2,8 @@ import socketserver
 import threading
 
 from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QRegExpValidator
 import socket
 
@@ -10,6 +12,7 @@ from urh.plugins.Plugin import SDRPlugin
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
+    rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -17,7 +20,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             #print("{} wrote:".format(self.client_address[0]))
             #print(self.data)
             self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
-            print(self.server.received_bits)
 
     def __init__(self):
         super().__init__(name="NetworkSDRInterface")
@@ -26,6 +28,11 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.client_port = self.qsettings.value("client_port", defaultValue=1338, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=1337, type=int)
+
+        self.receive_check_timer = QTimer()
+        self.receive_check_timer.setInterval(250)
+        # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
+        self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
 
         self.received_bits = []
 
@@ -53,6 +60,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server.server_bind()      # only necessary, because we disabled bind_and_activate above
         self.server.server_activate()  # only necessary, because we disabled bind_and_activate above
 
+        self.receive_check_timer.start()
+
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
@@ -62,7 +71,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.server.shutdown()
         if hasattr(self, "server_thread"):
             self.server_thread.join()
-
+        self.receive_check_timer.stop()
 
     def send_data(self, data:bytearray):
         # Create a socket (SOCK_STREAM means a TCP socket)
@@ -107,3 +116,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def on_spinbox_server_port_editing_finished(self):
         self.server_port = self.settings_frame.spinBoxServerPort.value()
         self.qsettings.setValue('server_port', str(self.server_port))
+
+    def __emit_rcv_index_changed(self):
+        if self.received_bits:
+            self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend

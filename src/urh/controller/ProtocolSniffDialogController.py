@@ -257,14 +257,14 @@ class ProtocolSniffDialogController(QDialog):
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
         self.ui.txtEdPreview.appendPlainText(self.sniffer.plain_to_string(
-            self.view_type, start=from_index))
+            self.view_type, start=from_index, show_pauses=False))
         self.ui.txtEdPreview.verticalScrollBar().setValue(
             self.ui.txtEdPreview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)
     def on_view_type_changed(self, new_index: int):
         self.ui.txtEdPreview.setPlainText(
-            self.sniffer.plain_to_string(new_index))
+            self.sniffer.plain_to_string(new_index, show_pauses=False))
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):

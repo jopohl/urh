@@ -6,7 +6,7 @@ import numpy as np
 from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtWidgets import QApplication
 from urh.cythonext.signalFunctions import grab_pulse_lens
-from urh.dev.BackendHandler import BackendHandler
+from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 
 from urh.dev.gr.ReceiverThread import ReceiverThread
@@ -105,9 +105,41 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
+        old_nmsgs = len(self.messages)
+        if self.rcv_device.backend in (Backends.native, Backends.grc):
+            self.__demodulate_data(self.rcv_device.data[old_index:new_index])
+        elif self.rcv_device.backend == Backends.network:
+            # We receive the bits here
+            for bit_str in self.rcv_device.data:
+                self.messages.append(Message.from_plain_bits_str(bit_str, {}))
+
+            self.rcv_device.free_data()  # do not store received bits twice
+
+        self.qt_signals.data_sniffed.emit(old_nmsgs)
+
+        if self.sniff_file and not os.path.isdir(self.sniff_file):
+            # Write Header
+            if not os.path.isfile(self.sniff_file):
+                with open(self.sniff_file, "w") as f:
+                    f.write("PROTOCOL:\n\n")
+
+            with open(self.sniff_file, "a") as myfile:
+                if self.plain_bits_str:
+                    myfile.write("\n")
+
+                myfile.write("\n".join(self.plain_bits_str))
+
+        if not self.__store_data:
+            self.messages[:] = []
+
+    def __demodulate_data(self, data):
+        """
+        Demodulates received IQ data and adds demodulated bits to messages
+        :param data:
+        :return:
+        """
         signal = self.signal
 
-        data = self.rcv_device.data[old_index:new_index]
         if self.__are_bits_in_data(data):
             self.reading_data = True
         elif self.conseq_non_data == 5:
@@ -134,7 +166,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         i = 0
         first_msg = True
-        old_nmsgs = len(self.messages)
+
         for bits, pause in zip(bit_data, pauses):
             if first_msg or self.messages[-1].pause > 8 * bit_len:
                 # Create new Message
@@ -152,23 +184,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 message.plain_bits.extend(bits)
                 message.pause = pause
             i += 1
-
-        self.qt_signals.data_sniffed.emit(old_nmsgs)
-
-        if self.sniff_file and not os.path.isdir(self.sniff_file):
-            # Write Header
-            if not os.path.isfile(self.sniff_file):
-                with open(self.sniff_file, "w") as f:
-                    f.write("PROTOCOL:\n\n")
-
-            with open(self.sniff_file, "a") as myfile:
-                if self.plain_bits_str:
-                    myfile.write("\n")
-
-                myfile.write("\n".join(self.plain_bits_str))
-
-        if not self.__store_data:
-            self.messages[:] = []
 
     def __are_bits_in_data(self, data):
         signal = self.signal

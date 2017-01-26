@@ -14,6 +14,8 @@ import src.urh.version as version
 
 if sys.platform == "win32":
     OPEN_MP_FLAG = "-openmp"
+elif sys.platform == "darwin":
+    OPEN_MP_FLAG = ""  # no OpenMP support in default Mac OSX compiler
 else:
     OPEN_MP_FLAG = "-fopenmp"
 

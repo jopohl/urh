@@ -14,6 +14,8 @@ import src.urh.version as version
 
 if sys.platform == "win32":
     OPEN_MP_FLAG = "-openmp"
+elif sys.platform == "darwin":
+    OPEN_MP_FLAG = ""  # no OpenMP support in default Mac OSX compiler
 else:
     OPEN_MP_FLAG = "-fopenmp"
 
@@ -78,7 +80,7 @@ def get_ext_modules():
     filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(EXT)]
 
     extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
-                            extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
+                            extra_compile_args=[OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]
 
@@ -103,7 +105,7 @@ def get_device_modules():
         if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
             print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
             e = Extension("urh.dev.native.lib." + dev_name, ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
-                          extra_compile_args=["-static", "-static-libgcc", OPEN_MP_FLAG],
+                          extra_compile_args=[OPEN_MP_FLAG],
                           extra_link_args=[OPEN_MP_FLAG], language="c++",
                           libraries=[params["lib"]])
             extensions.append(e)

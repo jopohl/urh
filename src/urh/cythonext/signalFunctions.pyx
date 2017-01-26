@@ -10,7 +10,8 @@ from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI, sin, cos
 
 cdef:
-    double complex imag_unit = 1j
+    float complex imag_unit = 1j
+
 
 cdef float NOISE_FSK_PSK = -4.0
 cdef float NOISE_ASK = 0.0
@@ -26,7 +27,6 @@ cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
     # BW in range((2pi/200), (2pi/100))
     cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
     return beta
-
 
 
 cpdef float get_noise_for_mod_type(int mod_type):
@@ -63,9 +63,9 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, long long s
 
         # # NCO Output
         #nco_out = np.exp(-costa_phase * 1j)
-        #nco_out.real = cos(-costa_phase)
-        #nco_out.imag = sin(-costa_phase)
-        nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
+        nco_out.real = cos(-costa_phase)
+        nco_out.imag = sin(-costa_phase)
+        #nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
 
         nco_times_sample = nco_out * c
         phase_error = nco_times_sample.imag * nco_times_sample.real
@@ -366,7 +366,7 @@ cpdef float estimate_qad_center(float[::1] samples, int num_centers):
 
     for i in range(0, num_centers):
         clusters[i].nitems = 0
-        clusters[i].sum = 0.0
+        clusters[i].sum = 0
 
     cdef:
         tuple tmp = util.minmax(samples)
@@ -378,23 +378,29 @@ cpdef float estimate_qad_center(float[::1] samples, int num_centers):
         float sample
         int center_index = 0
 
+
+
     for i in range(0, nsamples):
         sample = samples[i]
         center_index = find_nearest_center(sample, centers, num_centers)
         clusters[center_index].sum += sample
         clusters[center_index].nitems += 1
 
-
     cdef unsigned long long[::1] cluster_lens = np.array([clusters[i].nitems for i in range(num_centers)], dtype=np.uint64)
-    cdef long long[::1] sorted_indexes = np.argsort(cluster_lens)
+    cdef np.ndarray[np.int64_t, ndim=1] sorted_indexes = np.argsort(cluster_lens)
     cdef float center1, center2
-    cdef long long index1 = sorted_indexes[-1]
-    cdef long long index2 = sorted_indexes[-2]
+    cdef int index1 = sorted_indexes[len(sorted_indexes)-1]
+    cdef int index2 = sorted_indexes[len(sorted_indexes)-2]
 
+    if clusters[index1].nitems > 0:
+        center1 = clusters[index1].sum / clusters[index1].nitems # Cluster mit den meisten Einträgen
+    else:
+        center1 = 0
 
-    center1 = clusters[index1].sum / clusters[index1].nitems # Cluster mit den meisten Einträgen
-    center2 = clusters[index2].sum / clusters[index2].nitems # Cluster mit zweitmeisten Einträgen
+    if clusters[index2].nitems > 0:
+        center2 = clusters[index2].sum / clusters[index2].nitems # Cluster mit zweitmeisten Einträgen
+    else:
+        center2 = 0
 
     free(clusters)
-
     return (center1 + center2)/2

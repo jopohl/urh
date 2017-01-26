@@ -63,9 +63,7 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, long long s
 
         # # NCO Output
         #nco_out = np.exp(-costa_phase * 1j)
-        nco_out.real = cos(-costa_phase)
-        nco_out.imag = sin(-costa_phase)
-        #nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
+        nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
 
         nco_times_sample = nco_out * c
         phase_error = nco_times_sample.imag * nco_times_sample.real

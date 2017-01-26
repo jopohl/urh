@@ -2620,8 +2620,9 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
   float __pyx_t_5;
   int __pyx_t_6;
   PY_LONG_LONG __pyx_t_7;
-  PY_LONG_LONG __pyx_t_8;
+  __pyx_t_double_complex __pyx_t_8;
   PY_LONG_LONG __pyx_t_9;
+  PY_LONG_LONG __pyx_t_10;
 
   /* "src/urh/cythonext/signalFunctions.pyx":49
  *     cdef float phase_error
@@ -2721,26 +2722,18 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":66
- *         # # NCO Output
- *         #nco_out = np.exp(-costa_phase * 1j)
- *         nco_out.real = cos(-costa_phase)             # <<<<<<<<<<<<<<
- *         nco_out.imag = sin(-costa_phase)
- *         #nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
- */
-    __Pyx_SET_CREAL(__pyx_v_nco_out, cos((-__pyx_v_costa_phase)));
-
-    /* "src/urh/cythonext/signalFunctions.pyx":67
- *         #nco_out = np.exp(-costa_phase * 1j)
- *         nco_out.real = cos(-costa_phase)
- *         nco_out.imag = sin(-costa_phase)             # <<<<<<<<<<<<<<
- *         #nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
+    /* "src/urh/cythonext/signalFunctions.pyx":68
+ *         #nco_out.real = cos(-costa_phase)
+ *         #nco_out.imag = sin(-costa_phase)
+ *         nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)             # <<<<<<<<<<<<<<
  * 
+ *         nco_times_sample = nco_out * c
  */
-    __Pyx_SET_CIMAG(__pyx_v_nco_out, sin((-__pyx_v_costa_phase)));
+    __pyx_t_8 = __Pyx_c_sum_double(__pyx_t_double_complex_from_parts(cos((-__pyx_v_costa_phase)), 0), __Pyx_c_prod_double(__pyx_t_double_complex_from_parts(__Pyx_CREAL(__pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit), __Pyx_CIMAG(__pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit)), __pyx_t_double_complex_from_parts(sin((-__pyx_v_costa_phase)), 0)));
+    __pyx_v_nco_out = __pyx_t_float_complex_from_parts(__Pyx_CREAL(__pyx_t_8), __Pyx_CIMAG(__pyx_t_8));
 
     /* "src/urh/cythonext/signalFunctions.pyx":70
- *         #nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
+ *         nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
  * 
  *         nco_times_sample = nco_out * c             # <<<<<<<<<<<<<<
  *         phase_error = nco_times_sample.imag * nco_times_sample.real
@@ -2792,8 +2785,8 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  *         else:
  *             result[i] = nco_times_sample.real
  */
-      __pyx_t_8 = __pyx_v_i;
-      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_8)) )) = (__pyx_v_magnitude * __Pyx_CREAL(__pyx_v_nco_times_sample));
+      __pyx_t_9 = __pyx_v_i;
+      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_9)) )) = (__pyx_v_magnitude * __Pyx_CREAL(__pyx_v_nco_times_sample));
 
       /* "src/urh/cythonext/signalFunctions.pyx":74
  *         costa_freq += costa_beta * phase_error
@@ -2814,8 +2807,8 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     /*else*/ {
       __pyx_t_5 = __Pyx_CREAL(__pyx_v_nco_times_sample);
-      __pyx_t_9 = __pyx_v_i;
-      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_9)) )) = __pyx_t_5;
+      __pyx_t_10 = __pyx_v_i;
+      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_10)) )) = __pyx_t_5;
     }
     __pyx_L6:;
     __pyx_L3_continue:;

@@ -42,8 +42,8 @@ cpdef float get_noise_for_mod_type(int mod_type):
         return 0
 
 
-cdef void costa_demod(float complex[::1] samples, float[::1] result, long long start, long long end, float noise_sqrd,
-                          float costa_alpha, float costa_beta, bool qam) nogil:
+cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
+                          float costa_alpha, float costa_beta, bool qam, long long num_samples):
     cdef float phase_error
     cdef long long i
     cdef float costa_freq = 0
@@ -53,7 +53,7 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, long long s
     cdef float real, imag
     cdef float magnitude
 
-    for i in range(start, end):
+    for i in range(0, num_samples):
         c = samples[i]
         real, imag = c.real, c.imag
         magnitude = real * real + imag * imag
@@ -99,10 +99,6 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     NOISE = get_noise_for_mod_type(mod_type)
     result[0] = NOISE
 
-
-    cdef long long CHUNKSIZE = 100000 # For PSK
-    cdef long long num_threads = int(np.ceil(ns/CHUNKSIZE)) # For PSK
-    cdef long long end
     cdef bool qam = False
 
     if mod_type == 2 or mod_type == 3: # PSK or QAM
@@ -111,13 +107,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
 
         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
         costa_beta = calc_costa_beta(2 * M_PI / 100)
-        for i in prange(0, num_threads, nogil=True, chunksize=1, schedule='static'):
-            end = (i+1)*CHUNKSIZE
-
-            if end >= ns:
-                end = ns - 1
-
-            costa_demod(samples, result, i*CHUNKSIZE, end, noise_sqrd, costa_alpha, costa_beta, qam)
+        costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
 
     else:
         for i in prange(1, ns, nogil=True, schedule='static'):

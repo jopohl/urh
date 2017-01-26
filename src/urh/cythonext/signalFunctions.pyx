@@ -9,6 +9,8 @@ from urh.cythonext import util
 from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI, sin, cos
 
+cdef:
+    double complex imag_unit = 1j
 
 cdef float NOISE_FSK_PSK = -4.0
 cdef float NOISE_ASK = 0.0
@@ -61,8 +63,9 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, long long s
 
         # # NCO Output
         #nco_out = np.exp(-costa_phase * 1j)
-        nco_out.real = cos(-costa_phase)
-        nco_out.imag = sin(-costa_phase)
+        #nco_out.real = cos(-costa_phase)
+        #nco_out.imag = sin(-costa_phase)
+        nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
 
         nco_times_sample = nco_out * c
         phase_error = nco_times_sample.imag * nco_times_sample.real
@@ -198,9 +201,6 @@ cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type)
             return i + 3
 
     return ns
-
-cdef:
-    double complex imag_unit = 1j
 
 cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
                                                  float treshold, int tolerance, int mod_type):

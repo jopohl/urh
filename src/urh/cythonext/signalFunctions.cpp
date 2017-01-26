@@ -978,18 +978,6 @@ typedef npy_longdouble __pyx_t_5numpy_longdouble_t;
 /* Declarations.proto */
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
-    typedef ::std::complex< float > __pyx_t_float_complex;
-  #else
-    typedef float _Complex __pyx_t_float_complex;
-  #endif
-#else
-    typedef struct { float real, imag; } __pyx_t_float_complex;
-#endif
-static CYTHON_INLINE __pyx_t_float_complex __pyx_t_float_complex_from_parts(float, float);
-
-/* Declarations.proto */
-#if CYTHON_CCOMPLEX
-  #ifdef __cplusplus
     typedef ::std::complex< double > __pyx_t_double_complex;
   #else
     typedef double _Complex __pyx_t_double_complex;
@@ -998,6 +986,18 @@ static CYTHON_INLINE __pyx_t_float_complex __pyx_t_float_complex_from_parts(floa
     typedef struct { double real, imag; } __pyx_t_double_complex;
 #endif
 static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double, double);
+
+/* Declarations.proto */
+#if CYTHON_CCOMPLEX
+  #ifdef __cplusplus
+    typedef ::std::complex< float > __pyx_t_float_complex;
+  #else
+    typedef float _Complex __pyx_t_float_complex;
+  #endif
+#else
+    typedef struct { float real, imag; } __pyx_t_float_complex;
+#endif
+static CYTHON_INLINE __pyx_t_float_complex __pyx_t_float_complex_from_parts(float, float);
 
 
 /*--- Type declarations ---*/
@@ -1046,7 +1046,7 @@ struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha;
 struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta;
 struct __pyx_t_3src_3urh_9cythonext_15signalFunctions_Cluster;
 
-/* "src/urh/cythonext/signalFunctions.pyx":17
+/* "src/urh/cythonext/signalFunctions.pyx":19
  * 
  * 
  * cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -1058,7 +1058,7 @@ struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha {
   float damp;
 };
 
-/* "src/urh/cythonext/signalFunctions.pyx":23
+/* "src/urh/cythonext/signalFunctions.pyx":25
  *     return alpha
  * 
  * cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -1662,6 +1662,44 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 
 /* Arithmetic.proto */
 #if CYTHON_CCOMPLEX
+    #define __Pyx_c_eq_double(a, b)   ((a)==(b))
+    #define __Pyx_c_sum_double(a, b)  ((a)+(b))
+    #define __Pyx_c_diff_double(a, b) ((a)-(b))
+    #define __Pyx_c_prod_double(a, b) ((a)*(b))
+    #define __Pyx_c_quot_double(a, b) ((a)/(b))
+    #define __Pyx_c_neg_double(a)     (-(a))
+  #ifdef __cplusplus
+    #define __Pyx_c_is_zero_double(z) ((z)==(double)0)
+    #define __Pyx_c_conj_double(z)    (::std::conj(z))
+    #if 1
+        #define __Pyx_c_abs_double(z)     (::std::abs(z))
+        #define __Pyx_c_pow_double(a, b)  (::std::pow(a, b))
+    #endif
+  #else
+    #define __Pyx_c_is_zero_double(z) ((z)==0)
+    #define __Pyx_c_conj_double(z)    (conj(z))
+    #if 1
+        #define __Pyx_c_abs_double(z)     (cabs(z))
+        #define __Pyx_c_pow_double(a, b)  (cpow(a, b))
+    #endif
+ #endif
+#else
+    static CYTHON_INLINE int __Pyx_c_eq_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_sum_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_diff_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_prod_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_neg_double(__pyx_t_double_complex);
+    static CYTHON_INLINE int __Pyx_c_is_zero_double(__pyx_t_double_complex);
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_conj_double(__pyx_t_double_complex);
+    #if 1
+        static CYTHON_INLINE double __Pyx_c_abs_double(__pyx_t_double_complex);
+        static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_pow_double(__pyx_t_double_complex, __pyx_t_double_complex);
+    #endif
+#endif
+
+/* Arithmetic.proto */
+#if CYTHON_CCOMPLEX
     #define __Pyx_c_eq_float(a, b)   ((a)==(b))
     #define __Pyx_c_sum_float(a, b)  ((a)+(b))
     #define __Pyx_c_diff_float(a, b) ((a)-(b))
@@ -1736,44 +1774,6 @@ static int __pyx_slices_overlap(__Pyx_memviewslice *slice1,
 
 /* Capsule.proto */
 static CYTHON_INLINE PyObject *__pyx_capsule_create(void *p, const char *sig);
-
-/* Arithmetic.proto */
-#if CYTHON_CCOMPLEX
-    #define __Pyx_c_eq_double(a, b)   ((a)==(b))
-    #define __Pyx_c_sum_double(a, b)  ((a)+(b))
-    #define __Pyx_c_diff_double(a, b) ((a)-(b))
-    #define __Pyx_c_prod_double(a, b) ((a)*(b))
-    #define __Pyx_c_quot_double(a, b) ((a)/(b))
-    #define __Pyx_c_neg_double(a)     (-(a))
-  #ifdef __cplusplus
-    #define __Pyx_c_is_zero_double(z) ((z)==(double)0)
-    #define __Pyx_c_conj_double(z)    (::std::conj(z))
-    #if 1
-        #define __Pyx_c_abs_double(z)     (::std::abs(z))
-        #define __Pyx_c_pow_double(a, b)  (::std::pow(a, b))
-    #endif
-  #else
-    #define __Pyx_c_is_zero_double(z) ((z)==0)
-    #define __Pyx_c_conj_double(z)    (conj(z))
-    #if 1
-        #define __Pyx_c_abs_double(z)     (cabs(z))
-        #define __Pyx_c_pow_double(a, b)  (cpow(a, b))
-    #endif
- #endif
-#else
-    static CYTHON_INLINE int __Pyx_c_eq_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_sum_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_diff_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_prod_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_neg_double(__pyx_t_double_complex);
-    static CYTHON_INLINE int __Pyx_c_is_zero_double(__pyx_t_double_complex);
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_conj_double(__pyx_t_double_complex);
-    #if 1
-        static CYTHON_INLINE double __Pyx_c_abs_double(__pyx_t_double_complex);
-        static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_pow_double(__pyx_t_double_complex, __pyx_t_double_complex);
-    #endif
-#endif
 
 /* TypeInfoCompare.proto */
 static int __pyx_typeinfo_cmp(__Pyx_TypeInfo *a, __Pyx_TypeInfo *b);
@@ -1932,9 +1932,9 @@ static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
 static PyTypeObject *__pyx_memoryview_type = 0;
 static PyTypeObject *__pyx_memoryviewslice_type = 0;
+static __pyx_t_double_complex __pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit;
 static float __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK;
 static float __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_ASK;
-static __pyx_t_double_complex __pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit;
 static PyObject *generic = 0;
 static PyObject *strided = 0;
 static PyObject *indirect = 0;
@@ -2298,7 +2298,7 @@ static PyObject *__pyx_tuple__27;
 static PyObject *__pyx_tuple__28;
 static PyObject *__pyx_tuple__29;
 
-/* "src/urh/cythonext/signalFunctions.pyx":17
+/* "src/urh/cythonext/signalFunctions.pyx":19
  * 
  * 
  * cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -2316,7 +2316,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(flo
     }
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":19
+  /* "src/urh/cythonext/signalFunctions.pyx":21
  * cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
  *     # BW in range((2pi/200), (2pi/100))
  *     cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)             # <<<<<<<<<<<<<<
@@ -2325,7 +2325,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(flo
  */
   __pyx_v_alpha = (((4.0 * __pyx_v_damp) * __pyx_v_bw) / ((1.0 + ((2.0 * __pyx_v_damp) * __pyx_v_bw)) + (__pyx_v_bw * __pyx_v_bw)));
 
-  /* "src/urh/cythonext/signalFunctions.pyx":21
+  /* "src/urh/cythonext/signalFunctions.pyx":23
  *     cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)
  * 
  *     return alpha             # <<<<<<<<<<<<<<
@@ -2335,7 +2335,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(flo
   __pyx_r = __pyx_v_alpha;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":17
+  /* "src/urh/cythonext/signalFunctions.pyx":19
  * 
  * 
  * cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -2348,7 +2348,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(flo
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":23
+/* "src/urh/cythonext/signalFunctions.pyx":25
  *     return alpha
  * 
  * cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -2366,7 +2366,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(floa
     }
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":25
+  /* "src/urh/cythonext/signalFunctions.pyx":27
  * cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
  *     # BW in range((2pi/200), (2pi/100))
  *     cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)             # <<<<<<<<<<<<<<
@@ -2375,7 +2375,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(floa
  */
   __pyx_v_beta = (((4.0 * __pyx_v_bw) * __pyx_v_bw) / ((1.0 + ((2.0 * __pyx_v_damp) * __pyx_v_bw)) + (__pyx_v_bw * __pyx_v_bw)));
 
-  /* "src/urh/cythonext/signalFunctions.pyx":26
+  /* "src/urh/cythonext/signalFunctions.pyx":28
  *     # BW in range((2pi/200), (2pi/100))
  *     cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
  *     return beta             # <<<<<<<<<<<<<<
@@ -2385,7 +2385,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(floa
   __pyx_r = __pyx_v_beta;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":23
+  /* "src/urh/cythonext/signalFunctions.pyx":25
  *     return alpha
  * 
  * cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -2398,7 +2398,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(floa
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":30
+/* "src/urh/cythonext/signalFunctions.pyx":32
  * 
  * 
  * cpdef float get_noise_for_mod_type(int mod_type):             # <<<<<<<<<<<<<<
@@ -2412,7 +2412,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_noise_for_mod_type", 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":31
+  /* "src/urh/cythonext/signalFunctions.pyx":33
  * 
  * cpdef float get_noise_for_mod_type(int mod_type):
  *     if mod_type == 0:             # <<<<<<<<<<<<<<
@@ -2422,7 +2422,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
   switch (__pyx_v_mod_type) {
     case 0:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":32
+    /* "src/urh/cythonext/signalFunctions.pyx":34
  * cpdef float get_noise_for_mod_type(int mod_type):
  *     if mod_type == 0:
  *         return NOISE_ASK             # <<<<<<<<<<<<<<
@@ -2432,7 +2432,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     __pyx_r = __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_ASK;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":31
+    /* "src/urh/cythonext/signalFunctions.pyx":33
  * 
  * cpdef float get_noise_for_mod_type(int mod_type):
  *     if mod_type == 0:             # <<<<<<<<<<<<<<
@@ -2441,7 +2441,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     break;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":33
+    /* "src/urh/cythonext/signalFunctions.pyx":35
  *     if mod_type == 0:
  *         return NOISE_ASK
  *     elif mod_type == 1:             # <<<<<<<<<<<<<<
@@ -2450,7 +2450,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     case 1:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":34
+    /* "src/urh/cythonext/signalFunctions.pyx":36
  *         return NOISE_ASK
  *     elif mod_type == 1:
  *         return NOISE_FSK_PSK             # <<<<<<<<<<<<<<
@@ -2460,7 +2460,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     __pyx_r = __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":33
+    /* "src/urh/cythonext/signalFunctions.pyx":35
  *     if mod_type == 0:
  *         return NOISE_ASK
  *     elif mod_type == 1:             # <<<<<<<<<<<<<<
@@ -2469,7 +2469,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     break;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":35
+    /* "src/urh/cythonext/signalFunctions.pyx":37
  *     elif mod_type == 1:
  *         return NOISE_FSK_PSK
  *     elif mod_type == 2:             # <<<<<<<<<<<<<<
@@ -2478,7 +2478,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     case 2:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":36
+    /* "src/urh/cythonext/signalFunctions.pyx":38
  *         return NOISE_FSK_PSK
  *     elif mod_type == 2:
  *         return NOISE_FSK_PSK             # <<<<<<<<<<<<<<
@@ -2488,7 +2488,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     __pyx_r = __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":35
+    /* "src/urh/cythonext/signalFunctions.pyx":37
  *     elif mod_type == 1:
  *         return NOISE_FSK_PSK
  *     elif mod_type == 2:             # <<<<<<<<<<<<<<
@@ -2497,7 +2497,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     break;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":37
+    /* "src/urh/cythonext/signalFunctions.pyx":39
  *     elif mod_type == 2:
  *         return NOISE_FSK_PSK
  *     elif mod_type == 3:  # ASK + PSK (QAM)             # <<<<<<<<<<<<<<
@@ -2506,7 +2506,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
  */
     case 3:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":38
+    /* "src/urh/cythonext/signalFunctions.pyx":40
  *         return NOISE_FSK_PSK
  *     elif mod_type == 3:  # ASK + PSK (QAM)
  *         return NOISE_ASK * NOISE_FSK_PSK             # <<<<<<<<<<<<<<
@@ -2516,7 +2516,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     __pyx_r = (__pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_ASK * __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK);
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":37
+    /* "src/urh/cythonext/signalFunctions.pyx":39
  *     elif mod_type == 2:
  *         return NOISE_FSK_PSK
  *     elif mod_type == 3:  # ASK + PSK (QAM)             # <<<<<<<<<<<<<<
@@ -2526,7 +2526,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     break;
     default:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":40
+    /* "src/urh/cythonext/signalFunctions.pyx":42
  *         return NOISE_ASK * NOISE_FSK_PSK
  *     else:
  *         return 0             # <<<<<<<<<<<<<<
@@ -2538,7 +2538,7 @@ static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_ty
     break;
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":30
+  /* "src/urh/cythonext/signalFunctions.pyx":32
  * 
  * 
  * cpdef float get_noise_for_mod_type(int mod_type):             # <<<<<<<<<<<<<<
@@ -2560,7 +2560,7 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_1get_noise_for_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_noise_for_mod_type (wrapper)", 0);
   assert(__pyx_arg_mod_type); {
-    __pyx_v_mod_type = __Pyx_PyInt_As_int(__pyx_arg_mod_type); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 30, __pyx_L3_error)
+    __pyx_v_mod_type = __Pyx_PyInt_As_int(__pyx_arg_mod_type); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 32, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2581,7 +2581,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_get_noise_for_m
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_noise_for_mod_type", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(__pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(__pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2598,7 +2598,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_get_noise_for_m
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":43
+/* "src/urh/cythonext/signalFunctions.pyx":45
  * 
  * 
  * cdef void costa_demod(float complex[::1] samples, float[::1] result, long long start, long long end, float noise_sqrd,             # <<<<<<<<<<<<<<
@@ -2624,10 +2624,11 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
   float __pyx_t_5;
   int __pyx_t_6;
   PY_LONG_LONG __pyx_t_7;
-  PY_LONG_LONG __pyx_t_8;
+  __pyx_t_double_complex __pyx_t_8;
   PY_LONG_LONG __pyx_t_9;
+  PY_LONG_LONG __pyx_t_10;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":47
+  /* "src/urh/cythonext/signalFunctions.pyx":49
  *     cdef float phase_error
  *     cdef long long i
  *     cdef float costa_freq = 0             # <<<<<<<<<<<<<<
@@ -2636,7 +2637,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
   __pyx_v_costa_freq = 0.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":48
+  /* "src/urh/cythonext/signalFunctions.pyx":50
  *     cdef long long i
  *     cdef float costa_freq = 0
  *     cdef float costa_phase = 0             # <<<<<<<<<<<<<<
@@ -2645,7 +2646,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
   __pyx_v_costa_phase = 0.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":54
+  /* "src/urh/cythonext/signalFunctions.pyx":56
  *     cdef float magnitude
  * 
  *     for i in range(start, end):             # <<<<<<<<<<<<<<
@@ -2656,7 +2657,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
   for (__pyx_t_2 = __pyx_v_start; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":55
+    /* "src/urh/cythonext/signalFunctions.pyx":57
  * 
  *     for i in range(start, end):
  *         c = samples[i]             # <<<<<<<<<<<<<<
@@ -2666,7 +2667,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
     __pyx_t_3 = __pyx_v_i;
     __pyx_v_c = (*((__pyx_t_float_complex *) ( /* dim=0 */ ((char *) (((__pyx_t_float_complex *) __pyx_v_samples.data) + __pyx_t_3)) )));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":56
+    /* "src/urh/cythonext/signalFunctions.pyx":58
  *     for i in range(start, end):
  *         c = samples[i]
  *         real, imag = c.real, c.imag             # <<<<<<<<<<<<<<
@@ -2678,7 +2679,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
     __pyx_v_real = __pyx_t_4;
     __pyx_v_imag = __pyx_t_5;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":57
+    /* "src/urh/cythonext/signalFunctions.pyx":59
  *         c = samples[i]
  *         real, imag = c.real, c.imag
  *         magnitude = real * real + imag * imag             # <<<<<<<<<<<<<<
@@ -2687,7 +2688,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     __pyx_v_magnitude = ((__pyx_v_real * __pyx_v_real) + (__pyx_v_imag * __pyx_v_imag));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":58
+    /* "src/urh/cythonext/signalFunctions.pyx":60
  *         real, imag = c.real, c.imag
  *         magnitude = real * real + imag * imag
  *         if magnitude <= noise_sqrd:  # |c| <= mag_treshold             # <<<<<<<<<<<<<<
@@ -2697,7 +2698,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
     __pyx_t_6 = ((__pyx_v_magnitude <= __pyx_v_noise_sqrd) != 0);
     if (__pyx_t_6) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":59
+      /* "src/urh/cythonext/signalFunctions.pyx":61
  *         magnitude = real * real + imag * imag
  *         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
  *             result[i] = NOISE_FSK_PSK             # <<<<<<<<<<<<<<
@@ -2707,7 +2708,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
       __pyx_t_7 = __pyx_v_i;
       *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_7)) )) = __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":60
+      /* "src/urh/cythonext/signalFunctions.pyx":62
  *         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
  *             result[i] = NOISE_FSK_PSK
  *             continue             # <<<<<<<<<<<<<<
@@ -2716,7 +2717,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
       goto __pyx_L3_continue;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":58
+      /* "src/urh/cythonext/signalFunctions.pyx":60
  *         real, imag = c.real, c.imag
  *         magnitude = real * real + imag * imag
  *         if magnitude <= noise_sqrd:  # |c| <= mag_treshold             # <<<<<<<<<<<<<<
@@ -2725,26 +2726,18 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":64
- *         # # NCO Output
- *         #nco_out = np.exp(-costa_phase * 1j)
- *         nco_out.real = cos(-costa_phase)             # <<<<<<<<<<<<<<
- *         nco_out.imag = sin(-costa_phase)
- * 
- */
-    __Pyx_SET_CREAL(__pyx_v_nco_out, cos((-__pyx_v_costa_phase)));
-
-    /* "src/urh/cythonext/signalFunctions.pyx":65
- *         #nco_out = np.exp(-costa_phase * 1j)
- *         nco_out.real = cos(-costa_phase)
- *         nco_out.imag = sin(-costa_phase)             # <<<<<<<<<<<<<<
+    /* "src/urh/cythonext/signalFunctions.pyx":68
+ *         #nco_out.real = cos(-costa_phase)
+ *         #nco_out.imag = sin(-costa_phase)
+ *         nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)             # <<<<<<<<<<<<<<
  * 
  *         nco_times_sample = nco_out * c
  */
-    __Pyx_SET_CIMAG(__pyx_v_nco_out, sin((-__pyx_v_costa_phase)));
+    __pyx_t_8 = __Pyx_c_sum_double(__pyx_t_double_complex_from_parts(cos((-__pyx_v_costa_phase)), 0), __Pyx_c_prod_double(__pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit, __pyx_t_double_complex_from_parts(sin((-__pyx_v_costa_phase)), 0)));
+    __pyx_v_nco_out = __pyx_t_float_complex_from_parts(__Pyx_CREAL(__pyx_t_8), __Pyx_CIMAG(__pyx_t_8));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":67
- *         nco_out.imag = sin(-costa_phase)
+    /* "src/urh/cythonext/signalFunctions.pyx":70
+ *         nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
  * 
  *         nco_times_sample = nco_out * c             # <<<<<<<<<<<<<<
  *         phase_error = nco_times_sample.imag * nco_times_sample.real
@@ -2752,7 +2745,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     __pyx_v_nco_times_sample = __Pyx_c_prod_float(__pyx_v_nco_out, __pyx_v_c);
 
-    /* "src/urh/cythonext/signalFunctions.pyx":68
+    /* "src/urh/cythonext/signalFunctions.pyx":71
  * 
  *         nco_times_sample = nco_out * c
  *         phase_error = nco_times_sample.imag * nco_times_sample.real             # <<<<<<<<<<<<<<
@@ -2761,7 +2754,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     __pyx_v_phase_error = (__Pyx_CIMAG(__pyx_v_nco_times_sample) * __Pyx_CREAL(__pyx_v_nco_times_sample));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":69
+    /* "src/urh/cythonext/signalFunctions.pyx":72
  *         nco_times_sample = nco_out * c
  *         phase_error = nco_times_sample.imag * nco_times_sample.real
  *         costa_freq += costa_beta * phase_error             # <<<<<<<<<<<<<<
@@ -2770,7 +2763,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     __pyx_v_costa_freq = (__pyx_v_costa_freq + (__pyx_v_costa_beta * __pyx_v_phase_error));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":70
+    /* "src/urh/cythonext/signalFunctions.pyx":73
  *         phase_error = nco_times_sample.imag * nco_times_sample.real
  *         costa_freq += costa_beta * phase_error
  *         costa_phase += costa_freq + costa_alpha * phase_error             # <<<<<<<<<<<<<<
@@ -2779,7 +2772,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     __pyx_v_costa_phase = (__pyx_v_costa_phase + (__pyx_v_costa_freq + (__pyx_v_costa_alpha * __pyx_v_phase_error)));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":71
+    /* "src/urh/cythonext/signalFunctions.pyx":74
  *         costa_freq += costa_beta * phase_error
  *         costa_phase += costa_freq + costa_alpha * phase_error
  *         if qam:             # <<<<<<<<<<<<<<
@@ -2789,17 +2782,17 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
     __pyx_t_6 = (__pyx_v_qam != 0);
     if (__pyx_t_6) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":72
+      /* "src/urh/cythonext/signalFunctions.pyx":75
  *         costa_phase += costa_freq + costa_alpha * phase_error
  *         if qam:
  *             result[i] = magnitude * nco_times_sample.real             # <<<<<<<<<<<<<<
  *         else:
  *             result[i] = nco_times_sample.real
  */
-      __pyx_t_8 = __pyx_v_i;
-      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_8)) )) = (__pyx_v_magnitude * __Pyx_CREAL(__pyx_v_nco_times_sample));
+      __pyx_t_9 = __pyx_v_i;
+      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_9)) )) = (__pyx_v_magnitude * __Pyx_CREAL(__pyx_v_nco_times_sample));
 
-      /* "src/urh/cythonext/signalFunctions.pyx":71
+      /* "src/urh/cythonext/signalFunctions.pyx":74
  *         costa_freq += costa_beta * phase_error
  *         costa_phase += costa_freq + costa_alpha * phase_error
  *         if qam:             # <<<<<<<<<<<<<<
@@ -2809,7 +2802,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
       goto __pyx_L6;
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":74
+    /* "src/urh/cythonext/signalFunctions.pyx":77
  *             result[i] = magnitude * nco_times_sample.real
  *         else:
  *             result[i] = nco_times_sample.real             # <<<<<<<<<<<<<<
@@ -2818,14 +2811,14 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
  */
     /*else*/ {
       __pyx_t_5 = __Pyx_CREAL(__pyx_v_nco_times_sample);
-      __pyx_t_9 = __pyx_v_i;
-      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_9)) )) = __pyx_t_5;
+      __pyx_t_10 = __pyx_v_i;
+      *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_10)) )) = __pyx_t_5;
     }
     __pyx_L6:;
     __pyx_L3_continue:;
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":43
+  /* "src/urh/cythonext/signalFunctions.pyx":45
  * 
  * 
  * cdef void costa_demod(float complex[::1] samples, float[::1] result, long long start, long long end, float noise_sqrd,             # <<<<<<<<<<<<<<
@@ -2836,7 +2829,7 @@ static void __pyx_f_3src_3urh_9cythonext_15signalFunctions_costa_demod(__Pyx_mem
   /* function exit code */
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":76
+/* "src/urh/cythonext/signalFunctions.pyx":79
  *             result[i] = nco_times_sample.real
  * 
  * cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):             # <<<<<<<<<<<<<<
@@ -2889,21 +2882,21 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
   PY_LONG_LONG __pyx_t_20;
   __Pyx_RefNannySetupContext("afp_demod", 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":77
+  /* "src/urh/cythonext/signalFunctions.pyx":80
  * 
  * cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
  *     if len(samples) <= 2:             # <<<<<<<<<<<<<<
  *         return np.empty(len(samples), dtype=np.float32)
  * 
  */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_3 = ((__pyx_t_2 <= 2) != 0);
   if (__pyx_t_3) {
 
-    /* "src/urh/cythonext/signalFunctions.pyx":78
+    /* "src/urh/cythonext/signalFunctions.pyx":81
  * cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
  *     if len(samples) <= 2:
  *         return np.empty(len(samples), dtype=np.float32)             # <<<<<<<<<<<<<<
@@ -2911,42 +2904,42 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  *     cdef long long i, ns
  */
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float32); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float32); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 78, __pyx_L1_error)
+    if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 81, __pyx_L1_error)
     __pyx_r = ((PyArrayObject *)__pyx_t_7);
     __pyx_t_7 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":77
+    /* "src/urh/cythonext/signalFunctions.pyx":80
  * 
  * cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
  *     if len(samples) <= 2:             # <<<<<<<<<<<<<<
@@ -2955,61 +2948,61 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":84
+  /* "src/urh/cythonext/signalFunctions.pyx":87
  *     cdef float arg, noise_sqrd, real, imag, complex_phase, prev_phase
  *     cdef float NOISE
  *     ns = len(samples)             # <<<<<<<<<<<<<<
  * 
  *     cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
  */
-  __pyx_t_7 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_7 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get___pyx_t_float_complex, (int (*)(char *, PyObject *)) __pyx_memview_set___pyx_t_float_complex, 0);; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_2 = PyObject_Length(__pyx_t_7); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_7); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 87, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_ns = __pyx_t_2;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":86
+  /* "src/urh/cythonext/signalFunctions.pyx":89
  *     ns = len(samples)
  * 
  *     cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")             # <<<<<<<<<<<<<<
  *     cdef float costa_freq = 0
  *     cdef float costa_phase = 0
  */
-  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyInt_From_PY_LONG_LONG(__pyx_v_ns); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_From_PY_LONG_LONG(__pyx_v_ns); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_7);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_7);
   __pyx_t_7 = 0;
-  __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float32); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float32); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 86, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_order, __pyx_n_u_C) < 0) __PYX_ERR(0, 86, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_order, __pyx_n_u_C) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_dc_float(__pyx_t_6);
-  if (unlikely(!__pyx_t_8.memview)) __PYX_ERR(0, 86, __pyx_L1_error)
+  if (unlikely(!__pyx_t_8.memview)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_v_result = __pyx_t_8;
   __pyx_t_8.memview = NULL;
   __pyx_t_8.data = NULL;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":87
+  /* "src/urh/cythonext/signalFunctions.pyx":90
  * 
  *     cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
  *     cdef float costa_freq = 0             # <<<<<<<<<<<<<<
@@ -3018,7 +3011,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_costa_freq = 0.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":88
+  /* "src/urh/cythonext/signalFunctions.pyx":91
  *     cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
  *     cdef float costa_freq = 0
  *     cdef float costa_phase = 0             # <<<<<<<<<<<<<<
@@ -3027,7 +3020,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_costa_phase = 0.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":89
+  /* "src/urh/cythonext/signalFunctions.pyx":92
  *     cdef float costa_freq = 0
  *     cdef float costa_phase = 0
  *     cdef complex nco_out = 0             # <<<<<<<<<<<<<<
@@ -3036,7 +3029,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_nco_out = __pyx_t_double_complex_from_parts(0, 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":97
+  /* "src/urh/cythonext/signalFunctions.pyx":100
  *     # Atan2 liefert Werte im Bereich von -Pi bis Pi
  *     # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
  *     noise_sqrd = noise_mag * noise_mag             # <<<<<<<<<<<<<<
@@ -3045,7 +3038,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_noise_sqrd = (__pyx_v_noise_mag * __pyx_v_noise_mag);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":98
+  /* "src/urh/cythonext/signalFunctions.pyx":101
  *     # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
  *     noise_sqrd = noise_mag * noise_mag
  *     NOISE = get_noise_for_mod_type(mod_type)             # <<<<<<<<<<<<<<
@@ -3054,7 +3047,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_NOISE = __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(__pyx_v_mod_type, 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":99
+  /* "src/urh/cythonext/signalFunctions.pyx":102
  *     noise_sqrd = noise_mag * noise_mag
  *     NOISE = get_noise_for_mod_type(mod_type)
  *     result[0] = NOISE             # <<<<<<<<<<<<<<
@@ -3064,7 +3057,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
   __pyx_t_9 = 0;
   *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_9)) )) = __pyx_v_NOISE;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":102
+  /* "src/urh/cythonext/signalFunctions.pyx":105
  * 
  * 
  *     cdef long long CHUNKSIZE = 100000 # For PSK             # <<<<<<<<<<<<<<
@@ -3073,19 +3066,19 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_CHUNKSIZE = 0x186A0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":103
+  /* "src/urh/cythonext/signalFunctions.pyx":106
  * 
  *     cdef long long CHUNKSIZE = 100000 # For PSK
  *     cdef long long num_threads = int(np.ceil(ns/CHUNKSIZE)) # For PSK             # <<<<<<<<<<<<<<
  *     cdef long long end
  *     cdef bool qam = False
  */
-  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ceil); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ceil); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyInt_From_PY_LONG_LONG((__pyx_v_ns / __pyx_v_CHUNKSIZE)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_From_PY_LONG_LONG((__pyx_v_ns / __pyx_v_CHUNKSIZE)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -3098,14 +3091,14 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     }
   }
   if (!__pyx_t_1) {
-    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_5)) {
       PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_7};
-      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -3114,33 +3107,33 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
       PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_7};
-      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1); __pyx_t_1 = NULL;
       __Pyx_GIVEREF(__pyx_t_7);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_7);
       __pyx_t_7 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyNumber_Int(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyNumber_Int(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_10 = __Pyx_PyInt_As_PY_LONG_LONG(__pyx_t_5); if (unlikely((__pyx_t_10 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyInt_As_PY_LONG_LONG(__pyx_t_5); if (unlikely((__pyx_t_10 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_num_threads = __pyx_t_10;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":105
+  /* "src/urh/cythonext/signalFunctions.pyx":108
  *     cdef long long num_threads = int(np.ceil(ns/CHUNKSIZE)) # For PSK
  *     cdef long long end
  *     cdef bool qam = False             # <<<<<<<<<<<<<<
@@ -3149,7 +3142,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
   __pyx_v_qam = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":107
+  /* "src/urh/cythonext/signalFunctions.pyx":110
  *     cdef bool qam = False
  * 
  *     if mod_type == 2 or mod_type == 3: # PSK or QAM             # <<<<<<<<<<<<<<
@@ -3160,7 +3153,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     case 2:
     case 3:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":108
+    /* "src/urh/cythonext/signalFunctions.pyx":111
  * 
  *     if mod_type == 2 or mod_type == 3: # PSK or QAM
  *         if mod_type == 3:             # <<<<<<<<<<<<<<
@@ -3170,7 +3163,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     __pyx_t_3 = ((__pyx_v_mod_type == 3) != 0);
     if (__pyx_t_3) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":109
+      /* "src/urh/cythonext/signalFunctions.pyx":112
  *     if mod_type == 2 or mod_type == 3: # PSK or QAM
  *         if mod_type == 3:
  *             qam = True             # <<<<<<<<<<<<<<
@@ -3179,7 +3172,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
       __pyx_v_qam = 1;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":108
+      /* "src/urh/cythonext/signalFunctions.pyx":111
  * 
  *     if mod_type == 2 or mod_type == 3: # PSK or QAM
  *         if mod_type == 3:             # <<<<<<<<<<<<<<
@@ -3188,7 +3181,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":111
+    /* "src/urh/cythonext/signalFunctions.pyx":114
  *             qam = True
  * 
  *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)             # <<<<<<<<<<<<<<
@@ -3197,7 +3190,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
     __pyx_v_costa_alpha = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(((2.0 * M_PI) / 100.0), NULL);
 
-    /* "src/urh/cythonext/signalFunctions.pyx":112
+    /* "src/urh/cythonext/signalFunctions.pyx":115
  * 
  *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
  *         costa_beta = calc_costa_beta(2 * M_PI / 100)             # <<<<<<<<<<<<<<
@@ -3206,7 +3199,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
     __pyx_v_costa_beta = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(((2.0 * M_PI) / 100.0), NULL);
 
-    /* "src/urh/cythonext/signalFunctions.pyx":113
+    /* "src/urh/cythonext/signalFunctions.pyx":116
  *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
  *         costa_beta = calc_costa_beta(2 * M_PI / 100)
  *         for i in prange(0, num_threads, nogil=True, chunksize=1, schedule='static'):             # <<<<<<<<<<<<<<
@@ -3245,7 +3238,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               /* Initialize private variables to invalid values */
                               __pyx_v_end = ((PY_LONG_LONG)0xbad0bad0);
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":114
+                              /* "src/urh/cythonext/signalFunctions.pyx":117
  *         costa_beta = calc_costa_beta(2 * M_PI / 100)
  *         for i in prange(0, num_threads, nogil=True, chunksize=1, schedule='static'):
  *             end = (i+1)*CHUNKSIZE             # <<<<<<<<<<<<<<
@@ -3254,7 +3247,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                               __pyx_v_end = ((__pyx_v_i + 1) * __pyx_v_CHUNKSIZE);
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":116
+                              /* "src/urh/cythonext/signalFunctions.pyx":119
  *             end = (i+1)*CHUNKSIZE
  * 
  *             if end >= ns:             # <<<<<<<<<<<<<<
@@ -3264,7 +3257,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_t_3 = ((__pyx_v_end >= __pyx_v_ns) != 0);
                               if (__pyx_t_3) {
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":117
+                                /* "src/urh/cythonext/signalFunctions.pyx":120
  * 
  *             if end >= ns:
  *                 end = ns - 1             # <<<<<<<<<<<<<<
@@ -3273,7 +3266,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                                 __pyx_v_end = (__pyx_v_ns - 1);
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":116
+                                /* "src/urh/cythonext/signalFunctions.pyx":119
  *             end = (i+1)*CHUNKSIZE
  * 
  *             if end >= ns:             # <<<<<<<<<<<<<<
@@ -3282,7 +3275,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                               }
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":119
+                              /* "src/urh/cythonext/signalFunctions.pyx":122
  *                 end = ns - 1
  * 
  *             costa_demod(samples, result, i*CHUNKSIZE, end, noise_sqrd, costa_alpha, costa_beta, qam)             # <<<<<<<<<<<<<<
@@ -3303,7 +3296,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
           #endif
         }
 
-        /* "src/urh/cythonext/signalFunctions.pyx":113
+        /* "src/urh/cythonext/signalFunctions.pyx":116
  *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
  *         costa_beta = calc_costa_beta(2 * M_PI / 100)
  *         for i in prange(0, num_threads, nogil=True, chunksize=1, schedule='static'):             # <<<<<<<<<<<<<<
@@ -3321,7 +3314,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
         }
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":107
+    /* "src/urh/cythonext/signalFunctions.pyx":110
  *     cdef bool qam = False
  * 
  *     if mod_type == 2 or mod_type == 3: # PSK or QAM             # <<<<<<<<<<<<<<
@@ -3331,7 +3324,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     break;
     default:
 
-    /* "src/urh/cythonext/signalFunctions.pyx":122
+    /* "src/urh/cythonext/signalFunctions.pyx":125
  * 
  *     else:
  *         for i in prange(1, ns, nogil=True, schedule='static'):             # <<<<<<<<<<<<<<
@@ -3371,7 +3364,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_v_magnitude = ((float)__PYX_NAN());
                               __pyx_v_real = ((float)__PYX_NAN());
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":123
+                              /* "src/urh/cythonext/signalFunctions.pyx":126
  *     else:
  *         for i in prange(1, ns, nogil=True, schedule='static'):
  *             c = samples[i]             # <<<<<<<<<<<<<<
@@ -3381,7 +3374,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_t_14 = __pyx_v_i;
                               __pyx_v_c = (*((__pyx_t_float_complex *) ( /* dim=0 */ ((char *) (((__pyx_t_float_complex *) __pyx_v_samples.data) + __pyx_t_14)) )));
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":124
+                              /* "src/urh/cythonext/signalFunctions.pyx":127
  *         for i in prange(1, ns, nogil=True, schedule='static'):
  *             c = samples[i]
  *             real, imag = c.real, c.imag             # <<<<<<<<<<<<<<
@@ -3393,7 +3386,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_v_real = __pyx_t_15;
                               __pyx_v_imag = __pyx_t_16;
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":125
+                              /* "src/urh/cythonext/signalFunctions.pyx":128
  *             c = samples[i]
  *             real, imag = c.real, c.imag
  *             magnitude = real * real + imag * imag             # <<<<<<<<<<<<<<
@@ -3402,7 +3395,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                               __pyx_v_magnitude = ((__pyx_v_real * __pyx_v_real) + (__pyx_v_imag * __pyx_v_imag));
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":126
+                              /* "src/urh/cythonext/signalFunctions.pyx":129
  *             real, imag = c.real, c.imag
  *             magnitude = real * real + imag * imag
  *             if magnitude <= noise_sqrd:  # |c| <= mag_treshold             # <<<<<<<<<<<<<<
@@ -3412,7 +3405,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_t_3 = ((__pyx_v_magnitude <= __pyx_v_noise_sqrd) != 0);
                               if (__pyx_t_3) {
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":127
+                                /* "src/urh/cythonext/signalFunctions.pyx":130
  *             magnitude = real * real + imag * imag
  *             if magnitude <= noise_sqrd:  # |c| <= mag_treshold
  *                 result[i] = NOISE             # <<<<<<<<<<<<<<
@@ -3422,7 +3415,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                                 __pyx_t_17 = __pyx_v_i;
                                 *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_17)) )) = __pyx_v_NOISE;
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":128
+                                /* "src/urh/cythonext/signalFunctions.pyx":131
  *             if magnitude <= noise_sqrd:  # |c| <= mag_treshold
  *                 result[i] = NOISE
  *                 continue             # <<<<<<<<<<<<<<
@@ -3431,7 +3424,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                                 goto __pyx_L18_continue;
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":126
+                                /* "src/urh/cythonext/signalFunctions.pyx":129
  *             real, imag = c.real, c.imag
  *             magnitude = real * real + imag * imag
  *             if magnitude <= noise_sqrd:  # |c| <= mag_treshold             # <<<<<<<<<<<<<<
@@ -3440,7 +3433,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  */
                               }
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":130
+                              /* "src/urh/cythonext/signalFunctions.pyx":133
  *                 continue
  * 
  *             if mod_type == 0:  # ASK             # <<<<<<<<<<<<<<
@@ -3450,7 +3443,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_t_3 = ((__pyx_v_mod_type == 0) != 0);
                               if (__pyx_t_3) {
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":131
+                                /* "src/urh/cythonext/signalFunctions.pyx":134
  * 
  *             if mod_type == 0:  # ASK
  *                 result[i] = magnitude             # <<<<<<<<<<<<<<
@@ -3460,7 +3453,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                                 __pyx_t_18 = __pyx_v_i;
                                 *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_18)) )) = __pyx_v_magnitude;
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":130
+                                /* "src/urh/cythonext/signalFunctions.pyx":133
  *                 continue
  * 
  *             if mod_type == 0:  # ASK             # <<<<<<<<<<<<<<
@@ -3470,7 +3463,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                                 goto __pyx_L23;
                               }
 
-                              /* "src/urh/cythonext/signalFunctions.pyx":132
+                              /* "src/urh/cythonext/signalFunctions.pyx":135
  *             if mod_type == 0:  # ASK
  *                 result[i] = magnitude
  *             elif mod_type == 1:  # FSK             # <<<<<<<<<<<<<<
@@ -3480,7 +3473,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                               __pyx_t_3 = ((__pyx_v_mod_type == 1) != 0);
                               if (__pyx_t_3) {
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":133
+                                /* "src/urh/cythonext/signalFunctions.pyx":136
  *                 result[i] = magnitude
  *             elif mod_type == 1:  # FSK
  *                 tmp = samples[i - 1].conjugate() * c             # <<<<<<<<<<<<<<
@@ -3490,7 +3483,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                                 __pyx_t_19 = (__pyx_v_i - 1);
                                 __pyx_v_tmp = __Pyx_c_prod_float(__Pyx_c_conj_float((*((__pyx_t_float_complex *) ( /* dim=0 */ ((char *) (((__pyx_t_float_complex *) __pyx_v_samples.data) + __pyx_t_19)) )))), __pyx_v_c);
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":134
+                                /* "src/urh/cythonext/signalFunctions.pyx":137
  *             elif mod_type == 1:  # FSK
  *                 tmp = samples[i - 1].conjugate() * c
  *                 result[i] = atan2(tmp.imag, tmp.real)  # Freq             # <<<<<<<<<<<<<<
@@ -3500,7 +3493,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
                                 __pyx_t_20 = __pyx_v_i;
                                 *((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_result.data) + __pyx_t_20)) )) = atan2(__Pyx_CIMAG(__pyx_v_tmp), __Pyx_CREAL(__pyx_v_tmp));
 
-                                /* "src/urh/cythonext/signalFunctions.pyx":132
+                                /* "src/urh/cythonext/signalFunctions.pyx":135
  *             if mod_type == 0:  # ASK
  *                 result[i] = magnitude
  *             elif mod_type == 1:  # FSK             # <<<<<<<<<<<<<<
@@ -3526,7 +3519,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
           #endif
         }
 
-        /* "src/urh/cythonext/signalFunctions.pyx":122
+        /* "src/urh/cythonext/signalFunctions.pyx":125
  * 
  *     else:
  *         for i in prange(1, ns, nogil=True, schedule='static'):             # <<<<<<<<<<<<<<
@@ -3546,7 +3539,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     break;
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":136
+  /* "src/urh/cythonext/signalFunctions.pyx":139
  *                 result[i] = atan2(tmp.imag, tmp.real)  # Freq
  * 
  *     return np.asarray(result)             # <<<<<<<<<<<<<<
@@ -3554,12 +3547,12 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  * cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):
  */
   __Pyx_XDECREF(((PyObject *)__pyx_r));
-  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_result, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_result, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_7 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -3572,14 +3565,14 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     }
   }
   if (!__pyx_t_7) {
-    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 139, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_5);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_t_6};
-      __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -3588,31 +3581,31 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_t_6};
-      __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else
     #endif
     {
-      __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7); __pyx_t_7 = NULL;
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_t_6);
       __pyx_t_6 = 0;
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 136, __pyx_L1_error)
+  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 139, __pyx_L1_error)
   __pyx_r = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":76
+  /* "src/urh/cythonext/signalFunctions.pyx":79
  *             result[i] = nco_times_sample.real
  * 
  * cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):             # <<<<<<<<<<<<<<
@@ -3667,16 +3660,16 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3afp_demod(PyOb
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_noise_mag)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, 1); __PYX_ERR(0, 76, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, 1); __PYX_ERR(0, 79, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mod_type)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, 2); __PYX_ERR(0, 76, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, 2); __PYX_ERR(0, 79, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "afp_demod") < 0)) __PYX_ERR(0, 76, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "afp_demod") < 0)) __PYX_ERR(0, 79, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -3685,13 +3678,13 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3afp_demod(PyOb
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_samples = __Pyx_PyObject_to_MemoryviewSlice_dc___pyx_t_float_complex(values[0]); if (unlikely(!__pyx_v_samples.memview)) __PYX_ERR(0, 76, __pyx_L3_error)
-    __pyx_v_noise_mag = __pyx_PyFloat_AsFloat(values[1]); if (unlikely((__pyx_v_noise_mag == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
-    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
+    __pyx_v_samples = __Pyx_PyObject_to_MemoryviewSlice_dc___pyx_t_float_complex(values[0]); if (unlikely(!__pyx_v_samples.memview)) __PYX_ERR(0, 79, __pyx_L3_error)
+    __pyx_v_noise_mag = __pyx_PyFloat_AsFloat(values[1]); if (unlikely((__pyx_v_noise_mag == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
+    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 76, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("afp_demod", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 79, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.urh.cythonext.signalFunctions.afp_demod", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3710,7 +3703,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2afp_demod(CYTH
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("afp_demod", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(__pyx_v_samples, __pyx_v_noise_mag, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(__pyx_v_samples, __pyx_v_noise_mag, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3728,7 +3721,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2afp_demod(CYTH
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":138
+/* "src/urh/cythonext/signalFunctions.pyx":141
  *     return np.asarray(result)
  * 
  * cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):             # <<<<<<<<<<<<<<
@@ -3760,7 +3753,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   int __pyx_t_9;
   __Pyx_RefNannySetupContext("find_signal_start", 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":143
+  /* "src/urh/cythonext/signalFunctions.pyx":146
  *     cdef float dsample
  *     cdef int has_oversteuern, l, conseq_noise, conseq_not_noise, behind_oversteuern
  *     cdef float NOISE = get_noise_for_mod_type(mod_type)             # <<<<<<<<<<<<<<
@@ -3769,7 +3762,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_NOISE = __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(__pyx_v_mod_type, 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":145
+  /* "src/urh/cythonext/signalFunctions.pyx":148
  *     cdef float NOISE = get_noise_for_mod_type(mod_type)
  * 
  *     has_oversteuern = 0             # <<<<<<<<<<<<<<
@@ -3778,7 +3771,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_has_oversteuern = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":146
+  /* "src/urh/cythonext/signalFunctions.pyx":149
  * 
  *     has_oversteuern = 0
  *     behind_oversteuern = 0             # <<<<<<<<<<<<<<
@@ -3787,7 +3780,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_behind_oversteuern = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":147
+  /* "src/urh/cythonext/signalFunctions.pyx":150
  *     has_oversteuern = 0
  *     behind_oversteuern = 0
  *     conseq_noise = 0             # <<<<<<<<<<<<<<
@@ -3796,7 +3789,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_conseq_noise = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":148
+  /* "src/urh/cythonext/signalFunctions.pyx":151
  *     behind_oversteuern = 0
  *     conseq_noise = 0
  *     conseq_not_noise = 0             # <<<<<<<<<<<<<<
@@ -3805,20 +3798,20 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_conseq_not_noise = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":150
+  /* "src/urh/cythonext/signalFunctions.pyx":153
  *     conseq_not_noise = 0
  * 
  *     ns = len(demod_samples)             # <<<<<<<<<<<<<<
  *     l = 100
  *     if ns < 100:
  */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_demod_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_demod_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 153, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_ns = __pyx_t_2;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":151
+  /* "src/urh/cythonext/signalFunctions.pyx":154
  * 
  *     ns = len(demod_samples)
  *     l = 100             # <<<<<<<<<<<<<<
@@ -3827,7 +3820,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_l = 0x64;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":152
+  /* "src/urh/cythonext/signalFunctions.pyx":155
  *     ns = len(demod_samples)
  *     l = 100
  *     if ns < 100:             # <<<<<<<<<<<<<<
@@ -3837,7 +3830,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   __pyx_t_3 = ((__pyx_v_ns < 0x64) != 0);
   if (__pyx_t_3) {
 
-    /* "src/urh/cythonext/signalFunctions.pyx":153
+    /* "src/urh/cythonext/signalFunctions.pyx":156
  *     l = 100
  *     if ns < 100:
  *         l = ns             # <<<<<<<<<<<<<<
@@ -3846,7 +3839,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
     __pyx_v_l = __pyx_v_ns;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":152
+    /* "src/urh/cythonext/signalFunctions.pyx":155
  *     ns = len(demod_samples)
  *     l = 100
  *     if ns < 100:             # <<<<<<<<<<<<<<
@@ -3855,7 +3848,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":155
+  /* "src/urh/cythonext/signalFunctions.pyx":158
  *         l = ns
  * 
  *     for i in range(0, l):             # <<<<<<<<<<<<<<
@@ -3866,7 +3859,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
     __pyx_v_i = __pyx_t_5;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":156
+    /* "src/urh/cythonext/signalFunctions.pyx":159
  * 
  *     for i in range(0, l):
  *         dsample = demod_samples[i]             # <<<<<<<<<<<<<<
@@ -3876,7 +3869,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_6 = __pyx_v_i;
     __pyx_v_dsample = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_demod_samples.data) + __pyx_t_6)) )));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":157
+    /* "src/urh/cythonext/signalFunctions.pyx":160
  *     for i in range(0, l):
  *         dsample = demod_samples[i]
  *         if dsample > NOISE:             # <<<<<<<<<<<<<<
@@ -3886,7 +3879,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_3 = ((__pyx_v_dsample > __pyx_v_NOISE) != 0);
     if (__pyx_t_3) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":158
+      /* "src/urh/cythonext/signalFunctions.pyx":161
  *         dsample = demod_samples[i]
  *         if dsample > NOISE:
  *             has_oversteuern = 1             # <<<<<<<<<<<<<<
@@ -3895,7 +3888,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       __pyx_v_has_oversteuern = 1;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":159
+      /* "src/urh/cythonext/signalFunctions.pyx":162
  *         if dsample > NOISE:
  *             has_oversteuern = 1
  *             break             # <<<<<<<<<<<<<<
@@ -3904,7 +3897,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       goto __pyx_L5_break;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":157
+      /* "src/urh/cythonext/signalFunctions.pyx":160
  *     for i in range(0, l):
  *         dsample = demod_samples[i]
  *         if dsample > NOISE:             # <<<<<<<<<<<<<<
@@ -3915,7 +3908,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   }
   __pyx_L5_break:;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":161
+  /* "src/urh/cythonext/signalFunctions.pyx":164
  *             break
  * 
  *     for i in range(0, ns):             # <<<<<<<<<<<<<<
@@ -3926,7 +3919,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_5; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":162
+    /* "src/urh/cythonext/signalFunctions.pyx":165
  * 
  *     for i in range(0, ns):
  *         dsample = demod_samples[i]             # <<<<<<<<<<<<<<
@@ -3936,7 +3929,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_8 = __pyx_v_i;
     __pyx_v_dsample = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_demod_samples.data) + __pyx_t_8)) )));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":164
+    /* "src/urh/cythonext/signalFunctions.pyx":167
  *         dsample = demod_samples[i]
  * 
  *         if dsample == NOISE:             # <<<<<<<<<<<<<<
@@ -3946,7 +3939,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_3 = ((__pyx_v_dsample == __pyx_v_NOISE) != 0);
     if (__pyx_t_3) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":165
+      /* "src/urh/cythonext/signalFunctions.pyx":168
  * 
  *         if dsample == NOISE:
  *             conseq_noise += 1             # <<<<<<<<<<<<<<
@@ -3955,7 +3948,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       __pyx_v_conseq_noise = (__pyx_v_conseq_noise + 1);
 
-      /* "src/urh/cythonext/signalFunctions.pyx":166
+      /* "src/urh/cythonext/signalFunctions.pyx":169
  *         if dsample == NOISE:
  *             conseq_noise += 1
  *             conseq_not_noise = 0             # <<<<<<<<<<<<<<
@@ -3964,7 +3957,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       __pyx_v_conseq_not_noise = 0;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":164
+      /* "src/urh/cythonext/signalFunctions.pyx":167
  *         dsample = demod_samples[i]
  * 
  *         if dsample == NOISE:             # <<<<<<<<<<<<<<
@@ -3974,7 +3967,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       goto __pyx_L9;
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":168
+    /* "src/urh/cythonext/signalFunctions.pyx":171
  *             conseq_not_noise = 0
  *         else:
  *             conseq_noise = 0             # <<<<<<<<<<<<<<
@@ -3984,7 +3977,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     /*else*/ {
       __pyx_v_conseq_noise = 0;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":169
+      /* "src/urh/cythonext/signalFunctions.pyx":172
  *         else:
  *             conseq_noise = 0
  *             conseq_not_noise += 1             # <<<<<<<<<<<<<<
@@ -3995,7 +3988,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     }
     __pyx_L9:;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":171
+    /* "src/urh/cythonext/signalFunctions.pyx":174
  *             conseq_not_noise += 1
  * 
  *         if has_oversteuern == 1:             # <<<<<<<<<<<<<<
@@ -4005,7 +3998,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_3 = ((__pyx_v_has_oversteuern == 1) != 0);
     if (__pyx_t_3) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":172
+      /* "src/urh/cythonext/signalFunctions.pyx":175
  * 
  *         if has_oversteuern == 1:
  *             if has_oversteuern and conseq_noise > 100:             # <<<<<<<<<<<<<<
@@ -4023,7 +4016,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       __pyx_L12_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "src/urh/cythonext/signalFunctions.pyx":173
+        /* "src/urh/cythonext/signalFunctions.pyx":176
  *         if has_oversteuern == 1:
  *             if has_oversteuern and conseq_noise > 100:
  *                 behind_oversteuern = 1             # <<<<<<<<<<<<<<
@@ -4032,7 +4025,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
         __pyx_v_behind_oversteuern = 1;
 
-        /* "src/urh/cythonext/signalFunctions.pyx":172
+        /* "src/urh/cythonext/signalFunctions.pyx":175
  * 
  *         if has_oversteuern == 1:
  *             if has_oversteuern and conseq_noise > 100:             # <<<<<<<<<<<<<<
@@ -4041,7 +4034,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       }
 
-      /* "src/urh/cythonext/signalFunctions.pyx":175
+      /* "src/urh/cythonext/signalFunctions.pyx":178
  *                 behind_oversteuern = 1
  * 
  *             if behind_oversteuern and conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4059,7 +4052,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       __pyx_L15_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "src/urh/cythonext/signalFunctions.pyx":176
+        /* "src/urh/cythonext/signalFunctions.pyx":179
  * 
  *             if behind_oversteuern and conseq_not_noise == 3:
  *                 return i - 3             # <<<<<<<<<<<<<<
@@ -4069,7 +4062,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
         __pyx_r = (__pyx_v_i - 3);
         goto __pyx_L0;
 
-        /* "src/urh/cythonext/signalFunctions.pyx":175
+        /* "src/urh/cythonext/signalFunctions.pyx":178
  *                 behind_oversteuern = 1
  * 
  *             if behind_oversteuern and conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4078,7 +4071,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       }
 
-      /* "src/urh/cythonext/signalFunctions.pyx":171
+      /* "src/urh/cythonext/signalFunctions.pyx":174
  *             conseq_not_noise += 1
  * 
  *         if has_oversteuern == 1:             # <<<<<<<<<<<<<<
@@ -4088,7 +4081,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       goto __pyx_L10;
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":178
+    /* "src/urh/cythonext/signalFunctions.pyx":181
  *                 return i - 3
  * 
  *         elif conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4098,7 +4091,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_3 = ((__pyx_v_conseq_not_noise == 3) != 0);
     if (__pyx_t_3) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":179
+      /* "src/urh/cythonext/signalFunctions.pyx":182
  * 
  *         elif conseq_not_noise == 3:
  *             return i -3             # <<<<<<<<<<<<<<
@@ -4108,7 +4101,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       __pyx_r = (__pyx_v_i - 3);
       goto __pyx_L0;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":178
+      /* "src/urh/cythonext/signalFunctions.pyx":181
  *                 return i - 3
  * 
  *         elif conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4119,7 +4112,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_L10:;
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":181
+  /* "src/urh/cythonext/signalFunctions.pyx":184
  *             return i -3
  * 
  *     return 0             # <<<<<<<<<<<<<<
@@ -4129,7 +4122,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":138
+  /* "src/urh/cythonext/signalFunctions.pyx":141
  *     return np.asarray(result)
  * 
  * cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):             # <<<<<<<<<<<<<<
@@ -4175,11 +4168,11 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_5find_signal_st
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mod_type)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_signal_start", 1, 2, 2, 1); __PYX_ERR(0, 138, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_signal_start", 1, 2, 2, 1); __PYX_ERR(0, 141, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_signal_start") < 0)) __PYX_ERR(0, 138, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_signal_start") < 0)) __PYX_ERR(0, 141, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4187,12 +4180,12 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_5find_signal_st
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_demod_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(values[0]); if (unlikely(!__pyx_v_demod_samples.memview)) __PYX_ERR(0, 138, __pyx_L3_error)
-    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L3_error)
+    __pyx_v_demod_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(values[0]); if (unlikely(!__pyx_v_demod_samples.memview)) __PYX_ERR(0, 141, __pyx_L3_error)
+    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_signal_start", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 138, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_signal_start", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 141, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.urh.cythonext.signalFunctions.find_signal_start", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4211,7 +4204,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_4find_signal_st
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("find_signal_start", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_unsigned_PY_LONG_LONG(__pyx_f_3src_3urh_9cythonext_15signalFunctions_find_signal_start(__pyx_v_demod_samples, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_unsigned_PY_LONG_LONG(__pyx_f_3src_3urh_9cythonext_15signalFunctions_find_signal_start(__pyx_v_demod_samples, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4229,7 +4222,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_4find_signal_st
   return __pyx_r;
 }
 
-/* "src/urh/cythonext/signalFunctions.pyx":183
+/* "src/urh/cythonext/signalFunctions.pyx":186
  *     return 0
  * 
  * cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type):             # <<<<<<<<<<<<<<
@@ -4253,7 +4246,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("find_signal_end", 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":187
+  /* "src/urh/cythonext/signalFunctions.pyx":190
  *     cdef unsigned long long i
  *     cdef float dsample
  *     cdef int conseq_not_noise = 0             # <<<<<<<<<<<<<<
@@ -4262,7 +4255,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_conseq_not_noise = 0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":188
+  /* "src/urh/cythonext/signalFunctions.pyx":191
  *     cdef float dsample
  *     cdef int conseq_not_noise = 0
  *     cdef float NOISE = get_noise_for_mod_type(mod_type)             # <<<<<<<<<<<<<<
@@ -4271,20 +4264,20 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
   __pyx_v_NOISE = __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(__pyx_v_mod_type, 0);
 
-  /* "src/urh/cythonext/signalFunctions.pyx":189
+  /* "src/urh/cythonext/signalFunctions.pyx":192
  *     cdef int conseq_not_noise = 0
  *     cdef float NOISE = get_noise_for_mod_type(mod_type)
  *     cdef unsigned long long ns = len(demod_samples)             # <<<<<<<<<<<<<<
  * 
  *     for i in range(ns, 0, -1):
  */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_demod_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_demod_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 189, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_ns = __pyx_t_2;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":191
+  /* "src/urh/cythonext/signalFunctions.pyx":194
  *     cdef unsigned long long ns = len(demod_samples)
  * 
  *     for i in range(ns, 0, -1):             # <<<<<<<<<<<<<<
@@ -4294,7 +4287,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
   for (__pyx_t_3 = __pyx_v_ns + 1; __pyx_t_3 > 0 + 1; ) { __pyx_t_3-=1;
     __pyx_v_i = __pyx_t_3;
 
-    /* "src/urh/cythonext/signalFunctions.pyx":192
+    /* "src/urh/cythonext/signalFunctions.pyx":195
  * 
  *     for i in range(ns, 0, -1):
  *         dsample = demod_samples[i]             # <<<<<<<<<<<<<<
@@ -4304,7 +4297,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_4 = __pyx_v_i;
     __pyx_v_dsample = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_demod_samples.data) + __pyx_t_4)) )));
 
-    /* "src/urh/cythonext/signalFunctions.pyx":194
+    /* "src/urh/cythonext/signalFunctions.pyx":197
  *         dsample = demod_samples[i]
  * 
  *         if dsample > NOISE:             # <<<<<<<<<<<<<<
@@ -4314,7 +4307,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_5 = ((__pyx_v_dsample > __pyx_v_NOISE) != 0);
     if (__pyx_t_5) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":195
+      /* "src/urh/cythonext/signalFunctions.pyx":198
  * 
  *         if dsample > NOISE:
  *             conseq_not_noise += 1             # <<<<<<<<<<<<<<
@@ -4323,7 +4316,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
       __pyx_v_conseq_not_noise = (__pyx_v_conseq_not_noise + 1);
 
-      /* "src/urh/cythonext/signalFunctions.pyx":194
+      /* "src/urh/cythonext/signalFunctions.pyx":197
  *         dsample = demod_samples[i]
  * 
  *         if dsample > NOISE:             # <<<<<<<<<<<<<<
@@ -4332,7 +4325,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
  */
     }
 
-    /* "src/urh/cythonext/signalFunctions.pyx":197
+    /* "src/urh/cythonext/signalFunctions.pyx":200
  *             conseq_not_noise += 1
  * 
  *         if conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4342,7 +4335,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     __pyx_t_5 = ((__pyx_v_conseq_not_noise == 3) != 0);
     if (__pyx_t_5) {
 
-      /* "src/urh/cythonext/signalFunctions.pyx":198
+      /* "src/urh/cythonext/signalFunctions.pyx":201
  * 
  *         if conseq_not_noise == 3:
  *             return i + 3             # <<<<<<<<<<<<<<
@@ -4352,7 +4345,7 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
       __pyx_r = (__pyx_v_i + 3);
       goto __pyx_L0;
 
-      /* "src/urh/cythonext/signalFunctions.pyx":197
+      /* "src/urh/cythonext/signalFunctions.pyx":200
  *             conseq_not_noise += 1
  * 
  *         if conseq_not_noise == 3:             # <<<<<<<<<<<<<<
@@ -4362,17 +4355,17 @@ static unsigned PY_LONG_LONG __pyx_f_3src_3urh_9cythonext_15signalFunctions_find
     }
   }
 
-  /* "src/urh/cythonext/signalFunctions.pyx":200
+  /* "src/urh/cythonext/signalFunctions.pyx":203
  *             return i + 3
  * 
  *     return ns             # <<<<<<<<<<<<<<
  * 
- * cdef:
+ * cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
  */
   __pyx_r = __pyx_v_ns;
   goto __pyx_L0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":183
+  /* "src/urh/cythonext/signalFunctions.pyx":186
  *     return 0
  * 
  * cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type):             # <<<<<<<<<<<<<<
@@ -4418,11 +4411,11 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_7find_signal_en
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mod_type)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_signal_end", 1, 2, 2, 1); __PYX_ERR(0, 183, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_signal_end", 1, 2, 2, 1); __PYX_ERR(0, 186, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_signal_end") < 0)) __PYX_ERR(0, 183, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_signal_end") < 0)) __PYX_ERR(0, 186, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4430,12 +4423,12 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_7find_signal_en
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_demod_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(values[0]); if (unlikely(!__pyx_v_demod_samples.memview)) __PYX_ERR(0, 183, __pyx_L3_error)
-    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L3_error)
+    __pyx_v_demod_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(values[0]); if (unlikely(!__pyx_v_demod_samples.memview)) __PYX_ERR(0, 186, __pyx_L3_error)
+    __pyx_v_mod_type = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_mod_type == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 186, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_signal_end", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 183, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_signal_end", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 186, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.urh.cythonext.signalFunctions.find_signal_end", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4454,7 +4447,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_6find_signal_en
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("find_signal_end", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_unsigned_PY_LONG_LONG(__pyx_f_3src_3urh_9cythonext_15signalFunctions_find_signal_end(__pyx_v_demod_samples, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_unsigned_PY_LONG_LONG(__pyx_f_3src_3urh_9cythonext_15signalFunctions_find_signal_end(__pyx_v_demod_samples, __pyx_v_mod_type, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4473,7 +4466,7 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_6find_signal_en
 }
 
 /* "src/urh/cythonext/signalFunctions.pyx":205
- *     double complex imag_unit = 1j
+ *     return ns
  * 
  * cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,             # <<<<<<<<<<<<<<
  *                                                  float treshold, int tolerance, int mod_type):
@@ -5254,7 +5247,7 @@ __pyx_r = __pyx_t_7;
   goto __pyx_L0;
 
   /* "src/urh/cythonext/signalFunctions.pyx":205
- *     double complex imag_unit = 1j
+ *     return ns
  * 
  * cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,             # <<<<<<<<<<<<<<
  *                                                  float treshold, int tolerance, int mod_type):
@@ -22383,7 +22376,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 56, __pyx_L1_error)
   __pyx_builtin_id = __Pyx_GetBuiltinName(__pyx_n_s_id); if (!__pyx_builtin_id) __PYX_ERR(0, 315, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 218, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 799, __pyx_L1_error)
@@ -22914,6 +22907,15 @@ PyMODINIT_FUNC PyInit_signalFunctions(void)
 
   /* "src/urh/cythonext/signalFunctions.pyx":13
  * 
+ * cdef:
+ *     double complex imag_unit = 1j             # <<<<<<<<<<<<<<
+ * 
+ * cdef float NOISE_FSK_PSK = -4.0
+ */
+  __pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit = __pyx_t_double_complex_from_parts(0, 1.0);
+
+  /* "src/urh/cythonext/signalFunctions.pyx":15
+ *     double complex imag_unit = 1j
  * 
  * cdef float NOISE_FSK_PSK = -4.0             # <<<<<<<<<<<<<<
  * cdef float NOISE_ASK = 0.0
@@ -22921,7 +22923,7 @@ PyMODINIT_FUNC PyInit_signalFunctions(void)
  */
   __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_FSK_PSK = -4.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":14
+  /* "src/urh/cythonext/signalFunctions.pyx":16
  * 
  * cdef float NOISE_FSK_PSK = -4.0
  * cdef float NOISE_ASK = 0.0             # <<<<<<<<<<<<<<
@@ -22930,7 +22932,7 @@ PyMODINIT_FUNC PyInit_signalFunctions(void)
  */
   __pyx_v_3src_3urh_9cythonext_15signalFunctions_NOISE_ASK = 0.0;
 
-  /* "src/urh/cythonext/signalFunctions.pyx":17
+  /* "src/urh/cythonext/signalFunctions.pyx":19
  * 
  * 
  * cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -22939,7 +22941,7 @@ PyMODINIT_FUNC PyInit_signalFunctions(void)
  */
   __pyx_k_ = (1.0 / sqrt(2.0));
 
-  /* "src/urh/cythonext/signalFunctions.pyx":23
+  /* "src/urh/cythonext/signalFunctions.pyx":25
  *     return alpha
  * 
  * cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:             # <<<<<<<<<<<<<<
@@ -22947,15 +22949,6 @@ PyMODINIT_FUNC PyInit_signalFunctions(void)
  *     cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
  */
   __pyx_k__2 = (1.0 / sqrt(2.0));
-
-  /* "src/urh/cythonext/signalFunctions.pyx":203
- * 
- * cdef:
- *     double complex imag_unit = 1j             # <<<<<<<<<<<<<<
- * 
- * cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
- */
-  __pyx_v_3src_3urh_9cythonext_15signalFunctions_imag_unit = __pyx_t_double_complex_from_parts(0, 1.0);
 
   /* "src/urh/cythonext/signalFunctions.pyx":1
  * # noinspection PyUnresolvedReferences             # <<<<<<<<<<<<<<
@@ -25279,6 +25272,161 @@ bad:
 /* Declarations */
           #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
+    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
+      return ::std::complex< double >(x, y);
+    }
+  #else
+    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
+      return x + y*(__pyx_t_double_complex)_Complex_I;
+    }
+  #endif
+#else
+    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
+      __pyx_t_double_complex z;
+      z.real = x;
+      z.imag = y;
+      return z;
+    }
+#endif
+
+/* Arithmetic */
+          #if CYTHON_CCOMPLEX
+#else
+    static CYTHON_INLINE int __Pyx_c_eq_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+       return (a.real == b.real) && (a.imag == b.imag);
+    }
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_sum_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+        __pyx_t_double_complex z;
+        z.real = a.real + b.real;
+        z.imag = a.imag + b.imag;
+        return z;
+    }
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_diff_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+        __pyx_t_double_complex z;
+        z.real = a.real - b.real;
+        z.imag = a.imag - b.imag;
+        return z;
+    }
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_prod_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+        __pyx_t_double_complex z;
+        z.real = a.real * b.real - a.imag * b.imag;
+        z.imag = a.real * b.imag + a.imag * b.real;
+        return z;
+    }
+    #if 1
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+        if (b.imag == 0) {
+            return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.real);
+        } else if (fabs(b.real) >= fabs(b.imag)) {
+            if (b.real == 0 && b.imag == 0) {
+                return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.imag);
+            } else {
+                double r = b.imag / b.real;
+                double s = 1.0 / (b.real + b.imag * r);
+                return __pyx_t_double_complex_from_parts(
+                    (a.real + a.imag * r) * s, (a.imag - a.real * r) * s);
+            }
+        } else {
+            double r = b.real / b.imag;
+            double s = 1.0 / (b.imag + b.real * r);
+            return __pyx_t_double_complex_from_parts(
+                (a.real * r + a.imag) * s, (a.imag * r - a.real) * s);
+        }
+    }
+    #else
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+        if (b.imag == 0) {
+            return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.real);
+        } else {
+            double denom = b.real * b.real + b.imag * b.imag;
+            return __pyx_t_double_complex_from_parts(
+                (a.real * b.real + a.imag * b.imag) / denom,
+                (a.imag * b.real - a.real * b.imag) / denom);
+        }
+    }
+    #endif
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_neg_double(__pyx_t_double_complex a) {
+        __pyx_t_double_complex z;
+        z.real = -a.real;
+        z.imag = -a.imag;
+        return z;
+    }
+    static CYTHON_INLINE int __Pyx_c_is_zero_double(__pyx_t_double_complex a) {
+       return (a.real == 0) && (a.imag == 0);
+    }
+    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_conj_double(__pyx_t_double_complex a) {
+        __pyx_t_double_complex z;
+        z.real =  a.real;
+        z.imag = -a.imag;
+        return z;
+    }
+    #if 1
+        static CYTHON_INLINE double __Pyx_c_abs_double(__pyx_t_double_complex z) {
+          #if !defined(HAVE_HYPOT) || defined(_MSC_VER)
+            return sqrt(z.real*z.real + z.imag*z.imag);
+          #else
+            return hypot(z.real, z.imag);
+          #endif
+        }
+        static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_pow_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
+            __pyx_t_double_complex z;
+            double r, lnr, theta, z_r, z_theta;
+            if (b.imag == 0 && b.real == (int)b.real) {
+                if (b.real < 0) {
+                    double denom = a.real * a.real + a.imag * a.imag;
+                    a.real = a.real / denom;
+                    a.imag = -a.imag / denom;
+                    b.real = -b.real;
+                }
+                switch ((int)b.real) {
+                    case 0:
+                        z.real = 1;
+                        z.imag = 0;
+                        return z;
+                    case 1:
+                        return a;
+                    case 2:
+                        z = __Pyx_c_prod_double(a, a);
+                        return __Pyx_c_prod_double(a, a);
+                    case 3:
+                        z = __Pyx_c_prod_double(a, a);
+                        return __Pyx_c_prod_double(z, a);
+                    case 4:
+                        z = __Pyx_c_prod_double(a, a);
+                        return __Pyx_c_prod_double(z, z);
+                }
+            }
+            if (a.imag == 0) {
+                if (a.real == 0) {
+                    return a;
+                } else if (b.imag == 0) {
+                    z.real = pow(a.real, b.real);
+                    z.imag = 0;
+                    return z;
+                } else if (a.real > 0) {
+                    r = a.real;
+                    theta = 0;
+                } else {
+                    r = -a.real;
+                    theta = atan2(0, -1);
+                }
+            } else {
+                r = __Pyx_c_abs_double(a);
+                theta = atan2(a.imag, a.real);
+            }
+            lnr = log(r);
+            z_r = exp(lnr * b.real - theta * b.imag);
+            z_theta = theta * b.real + lnr * b.imag;
+            z.real = z_r * cos(z_theta);
+            z.imag = z_r * sin(z_theta);
+            return z;
+        }
+    #endif
+#endif
+
+/* Declarations */
+          #if CYTHON_CCOMPLEX
+  #ifdef __cplusplus
     static CYTHON_INLINE __pyx_t_float_complex __pyx_t_float_complex_from_parts(float x, float y) {
       return ::std::complex< float >(x, y);
     }
@@ -25525,161 +25673,6 @@ __pyx_capsule_create(void *p, CYTHON_UNUSED const char *sig)
 #endif
     return cobj;
 }
-
-/* Declarations */
-          #if CYTHON_CCOMPLEX
-  #ifdef __cplusplus
-    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
-      return ::std::complex< double >(x, y);
-    }
-  #else
-    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
-      return x + y*(__pyx_t_double_complex)_Complex_I;
-    }
-  #endif
-#else
-    static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
-      __pyx_t_double_complex z;
-      z.real = x;
-      z.imag = y;
-      return z;
-    }
-#endif
-
-/* Arithmetic */
-          #if CYTHON_CCOMPLEX
-#else
-    static CYTHON_INLINE int __Pyx_c_eq_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-       return (a.real == b.real) && (a.imag == b.imag);
-    }
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_sum_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-        __pyx_t_double_complex z;
-        z.real = a.real + b.real;
-        z.imag = a.imag + b.imag;
-        return z;
-    }
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_diff_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-        __pyx_t_double_complex z;
-        z.real = a.real - b.real;
-        z.imag = a.imag - b.imag;
-        return z;
-    }
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_prod_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-        __pyx_t_double_complex z;
-        z.real = a.real * b.real - a.imag * b.imag;
-        z.imag = a.real * b.imag + a.imag * b.real;
-        return z;
-    }
-    #if 1
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-        if (b.imag == 0) {
-            return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.real);
-        } else if (fabs(b.real) >= fabs(b.imag)) {
-            if (b.real == 0 && b.imag == 0) {
-                return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.imag);
-            } else {
-                double r = b.imag / b.real;
-                double s = 1.0 / (b.real + b.imag * r);
-                return __pyx_t_double_complex_from_parts(
-                    (a.real + a.imag * r) * s, (a.imag - a.real * r) * s);
-            }
-        } else {
-            double r = b.real / b.imag;
-            double s = 1.0 / (b.imag + b.real * r);
-            return __pyx_t_double_complex_from_parts(
-                (a.real * r + a.imag) * s, (a.imag * r - a.real) * s);
-        }
-    }
-    #else
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_quot_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-        if (b.imag == 0) {
-            return __pyx_t_double_complex_from_parts(a.real / b.real, a.imag / b.real);
-        } else {
-            double denom = b.real * b.real + b.imag * b.imag;
-            return __pyx_t_double_complex_from_parts(
-                (a.real * b.real + a.imag * b.imag) / denom,
-                (a.imag * b.real - a.real * b.imag) / denom);
-        }
-    }
-    #endif
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_neg_double(__pyx_t_double_complex a) {
-        __pyx_t_double_complex z;
-        z.real = -a.real;
-        z.imag = -a.imag;
-        return z;
-    }
-    static CYTHON_INLINE int __Pyx_c_is_zero_double(__pyx_t_double_complex a) {
-       return (a.real == 0) && (a.imag == 0);
-    }
-    static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_conj_double(__pyx_t_double_complex a) {
-        __pyx_t_double_complex z;
-        z.real =  a.real;
-        z.imag = -a.imag;
-        return z;
-    }
-    #if 1
-        static CYTHON_INLINE double __Pyx_c_abs_double(__pyx_t_double_complex z) {
-          #if !defined(HAVE_HYPOT) || defined(_MSC_VER)
-            return sqrt(z.real*z.real + z.imag*z.imag);
-          #else
-            return hypot(z.real, z.imag);
-          #endif
-        }
-        static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_pow_double(__pyx_t_double_complex a, __pyx_t_double_complex b) {
-            __pyx_t_double_complex z;
-            double r, lnr, theta, z_r, z_theta;
-            if (b.imag == 0 && b.real == (int)b.real) {
-                if (b.real < 0) {
-                    double denom = a.real * a.real + a.imag * a.imag;
-                    a.real = a.real / denom;
-                    a.imag = -a.imag / denom;
-                    b.real = -b.real;
-                }
-                switch ((int)b.real) {
-                    case 0:
-                        z.real = 1;
-                        z.imag = 0;
-                        return z;
-                    case 1:
-                        return a;
-                    case 2:
-                        z = __Pyx_c_prod_double(a, a);
-                        return __Pyx_c_prod_double(a, a);
-                    case 3:
-                        z = __Pyx_c_prod_double(a, a);
-                        return __Pyx_c_prod_double(z, a);
-                    case 4:
-                        z = __Pyx_c_prod_double(a, a);
-                        return __Pyx_c_prod_double(z, z);
-                }
-            }
-            if (a.imag == 0) {
-                if (a.real == 0) {
-                    return a;
-                } else if (b.imag == 0) {
-                    z.real = pow(a.real, b.real);
-                    z.imag = 0;
-                    return z;
-                } else if (a.real > 0) {
-                    r = a.real;
-                    theta = 0;
-                } else {
-                    r = -a.real;
-                    theta = atan2(0, -1);
-                }
-            } else {
-                r = __Pyx_c_abs_double(a);
-                theta = atan2(a.imag, a.real);
-            }
-            lnr = log(r);
-            z_r = exp(lnr * b.real - theta * b.imag);
-            z_theta = theta * b.real + lnr * b.imag;
-            z.real = z_r * cos(z_theta);
-            z.imag = z_r * sin(z_theta);
-            return z;
-        }
-    #endif
-#endif
 
 /* CIntFromPyVerify */
           #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\

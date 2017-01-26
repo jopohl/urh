@@ -406,7 +406,6 @@ class GeneratorTabController(QWidget):
             i = next((i for i, d in enumerate(encodings_from_file) if d.name == msg.decoder.name), 0)
             if msg.decoder != encodings_from_file[i]:
                 update = True
-                print("Generator", msg.decoder.name)
                 msg.decoder = encodings_from_file[i]
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()

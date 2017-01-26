@@ -1,5 +1,7 @@
 import unittest
 
+from subprocess import call, DEVNULL
+import time
 from tests.docker import docker_util
 
 
@@ -25,5 +27,20 @@ class TestInstallation(unittest.TestCase):
     def test_gentoo(self):
         self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
 
-    def tearDown(self):
-        docker_util.remove_containers()
+    def test_osx(self):
+        call("VBoxManage startvm OSX", shell=True)
+        while self.__send_command_via_ssh("boss", 3022, "ls") != 0:
+            time.sleep(3)
+
+        python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
+
+        self.__send_command_via_ssh("boss", 3022, python_bin_path + "pip3 install urh")
+        rc = self.__send_command_via_ssh("boss", 3022, python_bin_path + "urh autoclose")
+        self.__send_command_via_ssh("boss", 3022, python_bin_path + "pip3 uninstall --yes urh")
+        self.__send_command_via_ssh("boss", 3022, "sudo shutdown -h now")
+
+        self.assertEqual(rc, 0)
+
+    @staticmethod
+    def __send_command_via_ssh(username: str, port: int, command: str) -> int:
+        return call('ssh -p {0} {1}@127.0.0.1 "{2}"'.format(port, username, command), shell=True)

@@ -39,10 +39,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.received_bits = []
 
     def create_connects(self):
-        ip_regex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        #ip_regex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 
-        self.settings_frame.lineEditClientIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
-        self.settings_frame.lineEditServerIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
+        #self.settings_frame.lineEditClientIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
+        #self.settings_frame.lineEditServerIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
 
         self.settings_frame.lineEditClientIP.setText(self.client_ip)
         #self.settings_frame.lineEditServerIP.setText(self.server_ip)

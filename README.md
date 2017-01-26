@@ -44,7 +44,7 @@ sudo pip3 install urh
 ### Mac OS X
 1. Install [Python for Mac OS X](https://www.python.org/downloads/mac-osx/).
 2. In a terminal, type: ``` pip3 install urh ```.
-3. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
+3. Type ``` urh ``` in a terminal to get it started.
 
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.

@@ -1,6 +1,6 @@
 import unittest
 
-from subprocess import call, DEVNULL
+from subprocess import call
 import time
 from tests.docker import docker_util
 
@@ -24,8 +24,9 @@ class TestInstallation(unittest.TestCase):
     def test_kali(self):
         self.assertTrue(docker_util.run_image("kali", rebuild=self.REBUILD_IMAGES))
 
-    def test_gentoo(self):
-        self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
+    #def test_gentoo(self):
+    #    cant test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
+    #    self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
 
     def test_osx(self):
         call("VBoxManage startvm OSX", shell=True)

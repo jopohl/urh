@@ -8,6 +8,7 @@ from PyQt5.QtGui import QRegExpValidator
 import socket
 
 from urh.plugins.Plugin import SDRPlugin
+from urh.util.Errors import Errors
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
@@ -81,10 +82,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def send_data(self, data:bytearray):
         # Create a socket (SOCK_STREAM means a TCP socket)
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            # Connect to server and send data
-            sock.connect((self.client_ip, self.client_port))
-            sock.sendall(data)
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                # Connect to server and send data
+                sock.connect((self.client_ip, self.client_port))
+                sock.sendall(data)
+        except Exception as e:
+            Errors.generic_error("Could not connect to " + self.client_ip + ":" + self.client_port, msg=str(e))
 
     @staticmethod
     def bytearray_to_bit_str(arr: bytearray) -> str:

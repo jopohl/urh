@@ -49,7 +49,7 @@ class GeneratorTabController(QWidget):
 
         self.has_default_modulation = True
 
-        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")])
+        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")], compare_frame_controller.decodings)
         """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableMessages.setModel(self.table_model)
@@ -71,6 +71,7 @@ class GeneratorTabController(QWidget):
         self.ui.btnEditModulation.clicked.connect(self.show_modulation_dialog)
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
         self.ui.tableMessages.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
+        self.ui.tableMessages.encodings_updated.connect(self.on_table_selection_changed)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_table)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_pause_list)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_label_list)

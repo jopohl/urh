@@ -5,6 +5,7 @@ from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh.signalprocessing.encoder import Encoder
 from urh.ui.actions.Clear import Clear
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 from urh.ui.actions.InsertBitsAndPauses import InsertBitsAndPauses
@@ -13,11 +14,13 @@ from urh.util.Logger import logger
 
 
 class GeneratorTableModel(TableModel):
-    def __init__(self, tree_root_item: ProtocolTreeItem, modulators, parent = None):
+    def __init__(self, tree_root_item: ProtocolTreeItem, modulators, decodings, parent = None):
         super().__init__(participants=[], parent=parent)
         self.protocol = ProtocolAnalyzerContainer(modulators)
         self.tree_root_item = tree_root_item
         self.dropped_row = -1
+
+        self.decodings = decodings  # type: list[Encoder]
 
         self.cfc = None
         self.is_writeable = True

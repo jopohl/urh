@@ -39,7 +39,8 @@ class FuzzingTableModel(QAbstractTableModel):
             self.row_count = 0
             self.data = None
 
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return self.row_count

@@ -41,7 +41,7 @@ PROPERTY_NOT_FOUND_COLOR = QColor.fromRgb(124, 0, 0, 100)
 
 SEPARATION_ROW_HEIGHT = 30
 
-SETTINGS = QSettings(QSettings.UserScope, 'urh', 'urh')
+SETTINGS = QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
 PROJECT_FILE = "URHProject.xml"
 DECODINGS_FILE = "decodings.txt"
 FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(SETTINGS.fileName(), "..", "fieldtypes.xml"))

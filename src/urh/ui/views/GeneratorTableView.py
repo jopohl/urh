@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QRect, pyqtSignal
 from PyQt5.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
     QContextMenuEvent
+from PyQt5.QtWidgets import QActionGroup
 
 from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
 
@@ -11,6 +12,7 @@ from urh.ui.views.TableView import TableView
 class GeneratorTableView(TableView):
     create_fuzzing_label_clicked = pyqtSignal(int, int, int)
     edit_fuzzing_label_clicked = pyqtSignal(int)
+    encodings_updated = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -165,6 +167,26 @@ class GeneratorTableView(TableView):
             insertColLeft, insertColRight, duplicateAction, clearAction, fuzzingAction = 1, 1, 1, 1, 1
 
         selected_rows = list(range(min_row, max_row + 1))
+        encoding_actions = {}
+        if selected_rows:
+            selected_encoding = self.model().protocol.messages[selected_rows[0]].decoder
+            for i in selected_rows:
+                if self.model().protocol.messages[i].decoder != selected_encoding:
+                    selected_encoding = None
+                    break
+
+            menu.addSeparator()
+            encoding_group = QActionGroup(self)
+            encoding_menu = menu.addMenu("Enforce encoding")
+
+            for decoding in self.model().decodings:
+                ea = encoding_menu.addAction(decoding.name)
+                ea.setCheckable(True)
+                ea.setActionGroup(encoding_group)
+                if selected_encoding == decoding:
+                    ea.setChecked(True)
+
+                encoding_actions[ea] = decoding
 
         action = menu.exec_(self.mapToGlobal(pos))
         if action == fuzzingAction:
@@ -181,3 +203,7 @@ class GeneratorTableView(TableView):
             self.model().insert_column(start, selected_rows)
         elif action == insertColRight:
             self.model().insert_column(end, selected_rows)
+        elif action in encoding_actions:
+            for row in selected_rows:
+                self.model().protocol.messages[row].decoder = encoding_actions[action]
+            self.encodings_updated.emit()

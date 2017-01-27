@@ -144,6 +144,7 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.tblLabeltypes = QtWidgets.QTableView(self.tabFieldtypes)
+        self.tblLabeltypes.setAlternatingRowColors(True)
         self.tblLabeltypes.setObjectName("tblLabeltypes")
         self.horizontalLayout_3.addWidget(self.tblLabeltypes)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()

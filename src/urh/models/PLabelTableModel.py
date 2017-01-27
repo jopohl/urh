@@ -27,7 +27,8 @@ class PLabelTableModel(QAbstractTableModel):
         self.proto_view = 0
         self.message_type = message_type
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
 
     def __index2bit(self, index: int, from_view: int):
@@ -42,7 +43,8 @@ class PLabelTableModel(QAbstractTableModel):
             i1 = self.createIndex(0, 0)
             i2 = self.createIndex(self.row_count-1, len(self.header_labels)-1)
             self.dataChanged.emit(i1, i2)
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.header_labels)

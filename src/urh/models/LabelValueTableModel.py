@@ -38,7 +38,8 @@ class LabelValueTableModel(QAbstractTableModel):
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
         self.ascii_str = self.proto_analyzer.decoded_ascii_str
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.header_labels)

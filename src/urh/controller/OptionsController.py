@@ -191,10 +191,9 @@ class OptionsController(QDialog):
         settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
 
         FieldType.save_to_xml(self.field_type_table_model.field_types)
+        self.plugin_controller.save_enabled_states()
 
         self.values_changed.emit(changed_values)
-
-        self.plugin_controller.save_enabled_states()
 
         event.accept()
 

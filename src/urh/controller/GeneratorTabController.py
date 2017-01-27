@@ -13,6 +13,7 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController, Mo
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
+from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -57,6 +58,7 @@ class GeneratorTabController(QWidget):
         self.label_list_model = GeneratorListModel(None)
         self.ui.listViewProtoLabels.setModel(self.label_list_model)
 
+        self.set_network_sdr_send_button_visibility()
         self.refresh_modulators()
         self.on_selected_modulation_changed()
         self.set_fuzzing_ui_status()
@@ -510,7 +512,10 @@ class GeneratorTabController(QWidget):
         except:
             logger.error("You done something wrong to the xml fuzzing profile.")
 
-
     def on_project_updated(self):
         self.table_model.participants = self.project_manager.participants
         self.table_model.refresh_vertical_header()
+
+    def set_network_sdr_send_button_visibility(self):
+        is_plugin_enabled = PluginManager().is_plugin_enabled("NetworkSDRInterface")
+        self.ui.btnNetworkSDRSend.setVisible(is_plugin_enabled)

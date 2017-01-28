@@ -28,7 +28,7 @@ COMPILER_DIRECTIVES = {'language_level': 3,
                        }
 
 UI_SUBDIRS = ("actions", "delegates", "views")
-PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide")
+PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide", "NetworkSDRInterface")
 URH_DIR = "urh"
 
 try:

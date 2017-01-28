@@ -153,7 +153,6 @@ class ProtocolTreeModel(QAbstractItemModel):
         self.beginResetModel()
         self.rootItem.child(group_id).addProtocol(protocol)
         self.endResetModel()
-        self.layoutChanged.emit()
         self.proto_to_group_added.emit(group_id)
         return self.groups[group_id]
 
@@ -165,7 +164,6 @@ class ProtocolTreeModel(QAbstractItemModel):
                 result = True
                 break
         self.endResetModel()
-        self.layoutChanged.emit()
         return result
 
     def flags(self, index: QModelIndex):

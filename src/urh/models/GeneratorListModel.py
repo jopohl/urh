@@ -84,7 +84,8 @@ class GeneratorListModel(QAbstractListModel):
         self.protolabel_removed.emit(lbl)
 
     def update(self):
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
 
     def flags(self, index):
         flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable

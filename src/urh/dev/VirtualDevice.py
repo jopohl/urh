@@ -2,6 +2,8 @@ import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
+
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
 from urh.dev.BackendHandler import Backends, BackendHandler
@@ -17,6 +19,7 @@ class Mode(Enum):
     send = 2
     spectrum = 3
 
+
 class VirtualDevice(QObject):
     """
     Wrapper class for providing sending methods for grc and native devices
@@ -27,21 +30,23 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
-
     def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False):
         super().__init__(parent)
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
-        try:
-            self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
-        except KeyError:
-            logger.warning("Invalid device name: {0}".format(name))
-            self.backend = Backends.none
-            self.__dev = None
-            return
 
+        if self.name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
+            self.backend = Backends.network
+        else:
+            try:
+                self.backend = self.backend_handler.device_backends[name.lower()].selected_backend
+            except KeyError:
+                logger.warning("Invalid device name: {0}".format(name))
+                self.backend = Backends.none
+                self.__dev = None
+                return
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
@@ -76,6 +81,9 @@ class VirtualDevice(QObject):
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
+        elif self.backend == Backends.network:
+            self.__dev = NetworkSDRInterfacePlugin()
+            self.__dev.rcv_index_changed.connect(self.emit_index_changed)
         elif self.backend == Backends.none:
             self.__dev = None
         else:
@@ -104,6 +112,8 @@ class VirtualDevice(QObject):
             self.__dev.freq = value
         elif self.backend == Backends.native:
             self.__dev.frequency = value
+        elif self.backend == Backends.network:
+            pass
         else:
             raise ValueError("Unsupported Backend")
 
@@ -147,7 +157,7 @@ class VirtualDevice(QObject):
             self.__dev.usrp_ip = value
         elif self.backend == Backends.native:
             self.__dev.device_ip = value
-        elif self.backend == Backends.none:
+        elif self.backend in (Backends.none, Backends.network):
             pass
         else:
             raise ValueError("Unsupported Backend")
@@ -175,9 +185,13 @@ class VirtualDevice(QObject):
                 return self.__dev.samples_to_send
             else:
                 return self.__dev.receive_buffer
+        elif self.backend == Backends.network:
+            if self.mode == Mode.send:
+                raise NotImplementedError("Todo")
+            else:
+                return self.__dev.received_bits
         else:
             raise ValueError("Unsupported Backend")
-
 
     @data.setter
     def data(self, value):
@@ -191,13 +205,14 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
-
     def free_data(self):
         if self.backend == Backends.grc:
             del self.__dev.data
         elif self.backend == Backends.native:
             del self.__dev.samples_to_send
             del self.__dev.receive_buffer
+        elif self.backend == Backends.network:
+            self.__dev.received_bits[:] = []
         elif self.backend == Backends.none:
             pass
         else:
@@ -294,7 +309,7 @@ class VirtualDevice(QObject):
             self.__dev.setTerminationEnabled(True)
             self.__dev.terminate()
             time.sleep(0.1)
-            self.__dev.start() # Already connected to started signal in constructor
+            self.__dev.start()  # Already connected to started signal in constructor
         elif self.backend == Backends.native:
             if not self.__dev.is_open:
                 self.__dev.open()
@@ -305,30 +320,37 @@ class VirtualDevice(QObject):
                 self.__dev.start_rx_mode()
 
             self.emit_started_signal()
+        elif self.backend == Backends.network:
+            if self.mode == Mode.receive:
+                self.__dev.start_tcp_server_for_receiving()
+
+            self.emit_started_signal()
         else:
             raise ValueError("Unsupported Backend")
 
-
     def stop(self, msg: str):
         if self.backend == Backends.grc:
-            self.__dev.stop(msg) # Already connected to stopped in constructor
+            self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
             if self.mode == Mode.send:
-               self.__dev.stop_tx_mode(msg)
+                self.__dev.stop_tx_mode(msg)
             else:
-               self.__dev.stop_rx_mode(msg)
+                self.__dev.stop_rx_mode(msg)
+            self.emit_stopped_signal()
+        elif self.backend == Backends.network:
+            self.__dev.stop_tcp_server()
             self.emit_stopped_signal()
         elif self.backend == Backends.none:
             pass
         else:
-            logger.error("Stop device: Unsupported backend "+str(self.backend))
+            logger.error("Stop device: Unsupported backend " + str(self.backend))
 
     def stop_on_error(self, msg: str):
         if self.backend == Backends.grc:
-            self.__dev.stop(msg) # Already connected to stopped in constructor
+            self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
             self.__dev.close()
-            self.read_errors() # Clear errors
+            self.read_errors()  # Clear errors
             self.emit_stopped_signal()
         else:
             raise ValueError("Unsupported Backend")
@@ -350,8 +372,6 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
-
-
     def emit_stopped_signal(self):
         self.stopped.emit()
 
@@ -371,3 +391,7 @@ class VirtualDevice(QObject):
             errors = "\n\n".join(self.__dev.errors)
             self.__dev.errors.clear()
             return errors
+        elif self.backend == Backends.network:
+            return ""
+        else:
+            raise ValueError("Unsupported Backend")

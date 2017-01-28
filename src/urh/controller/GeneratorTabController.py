@@ -13,6 +13,8 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController, Mo
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -49,13 +51,17 @@ class GeneratorTabController(QWidget):
 
         self.has_default_modulation = True
 
-        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")])
+        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")], compare_frame_controller.decodings)
         """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableMessages.setModel(self.table_model)
 
         self.label_list_model = GeneratorListModel(None)
         self.ui.listViewProtoLabels.setModel(self.label_list_model)
+
+        self.network_sdr_button_orig_tooltip = self.ui.btnNetworkSDRSend.toolTip()
+        self.set_network_sdr_send_button_visibility()
+        self.network_sdr_plugin = NetworkSDRInterfacePlugin()
 
         self.refresh_modulators()
         self.on_selected_modulation_changed()
@@ -66,11 +72,12 @@ class GeneratorTabController(QWidget):
 
 
     def create_connects(self, compare_frame_controller):
-        compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
+        compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
         compare_frame_controller.participant_changed.connect(self.table_model.refresh_vertical_header)
         self.ui.btnEditModulation.clicked.connect(self.show_modulation_dialog)
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
         self.ui.tableMessages.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
+        self.ui.tableMessages.encodings_updated.connect(self.on_table_selection_changed)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_table)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_pause_list)
         self.table_model.undo_stack.indexChanged.connect(self.refresh_label_list)
@@ -98,6 +105,11 @@ class GeneratorTabController(QWidget):
         self.ui.tableMessages.edit_fuzzing_label_clicked.connect(self.show_fuzzing_dialog)
         self.ui.listViewProtoLabels.selection_changed.connect(self.handle_label_selection_changed)
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
+
+        self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
+        self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
+        self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
+        self.network_sdr_plugin.current_send_message_changed.connect(self.on_network_sdr_send_message_changed)
 
 
     @property
@@ -130,8 +142,8 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_tree(self):
-        #self.tree_model.reset()
-        self.tree_model.layoutChanged.emit()
+        self.tree_model.beginResetModel()
+        self.tree_model.endResetModel()
         self.ui.treeProtocols.expandAll()
 
     @pyqtSlot()
@@ -353,7 +365,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def handle_plabel_fuzzing_state_changed(self):
         self.refresh_table()
-        self.label_list_model.layoutChanged.emit()
+        self.label_list_model.update()
 
     @pyqtSlot(ProtocolLabel)
     def handle_proto_label_removed(self, plabel: ProtocolLabel):
@@ -406,7 +418,6 @@ class GeneratorTabController(QWidget):
             i = next((i for i, d in enumerate(encodings_from_file) if d.name == msg.decoder.name), 0)
             if msg.decoder != encodings_from_file[i]:
                 update = True
-                print("Generator", msg.decoder.name)
                 msg.decoder = encodings_from_file[i]
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()
@@ -484,6 +495,10 @@ class GeneratorTabController(QWidget):
                 Errors.no_device()
                 dialog.close()
                 return
+            elif PluginManager().is_plugin_enabled("NetworkSDRInterface") and dialog.ui.cbDevice.count() == 1:
+                Errors.network_sdr_send_is_elsewhere()
+                dialog.close()
+                return
 
             dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
             dialog.show()
@@ -510,7 +525,36 @@ class GeneratorTabController(QWidget):
         except:
             logger.error("You done something wrong to the xml fuzzing profile.")
 
-
     def on_project_updated(self):
         self.table_model.participants = self.project_manager.participants
         self.table_model.refresh_vertical_header()
+
+    def set_network_sdr_send_button_visibility(self):
+        is_plugin_enabled = PluginManager().is_plugin_enabled("NetworkSDRInterface")
+        self.ui.btnNetworkSDRSend.setVisible(is_plugin_enabled)
+
+    @pyqtSlot()
+    def on_btn_network_sdr_clicked(self):
+        if not self.network_sdr_plugin.is_sending:
+            messages = self.table_model.protocol.messages
+            sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            self.network_sdr_plugin.start_sending_thread(messages, sample_rates)
+        else:
+            self.network_sdr_plugin.stop_sending_thread()
+
+    @pyqtSlot(bool)
+    def on_network_sdr_sending_status_changed(self, is_sending: bool):
+        self.ui.btnNetworkSDRSend.setChecked(is_sending)
+        self.ui.btnNetworkSDRSend.setEnabled(True)
+        self.ui.btnNetworkSDRSend.setToolTip("Sending in progress" if is_sending else self.network_sdr_button_orig_tooltip)
+        if not is_sending:
+            self.ui.tableMessages.clearSelection()
+
+    @pyqtSlot()
+    def on_network_sdr_sending_stop_requested(self):
+        self.ui.btnNetworkSDRSend.setToolTip("Stopping sending")
+        self.ui.btnNetworkSDRSend.setEnabled(False)
+
+    @pyqtSlot(int)
+    def on_network_sdr_send_message_changed(self, message_index: int):
+        self.ui.tableMessages.selectRow(message_index)

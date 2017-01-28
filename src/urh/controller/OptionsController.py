@@ -35,7 +35,6 @@ class OptionsController(QDialog):
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
 
-
         self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
@@ -91,11 +90,11 @@ class OptionsController(QDialog):
             return None
 
     def create_connects(self):
-        self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.handle_spinbox_symbol_treshold_value_changed)
+        self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.on_spinbox_symbol_threshold_value_changed)
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
         self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
-        self.ui.listWidgetDevices.currentRowChanged.connect(self.show_selected_device_params)
+        self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
         self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
@@ -106,38 +105,6 @@ class OptionsController(QDialog):
         self.ui.checkBoxDefaultFuzzingPause.clicked.connect(self.on_checkbox_default_fuzzing_pause_clicked)
         self.ui.btnAddLabelType.clicked.connect(self.on_btn_add_label_type_clicked)
         self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
-
-    def on_btn_add_label_type_clicked(self):
-        suffix = 1
-        field_type_names = {ft.caption for ft in self.field_type_table_model.field_types}
-        while "New Fieldtype #" + str(suffix) in field_type_names:
-            suffix += 1
-
-        caption = "New Fieldtype #" + str(suffix)
-        self.field_type_table_model.field_types.append(FieldType(caption, FieldType.Function.CUSTOM))
-        self.field_type_table_model.update()
-
-    def on_btn_remove_label_type_clicked(self):
-        if self.field_type_table_model.field_types:
-            selected_indices = {i.row() for i in self.ui.tblLabeltypes.selectedIndexes()}
-
-            if selected_indices:
-                for i in reversed(sorted(selected_indices)):
-                    self.field_type_table_model.field_types.pop(i)
-            else:
-                self.field_type_table_model.field_types.pop()
-
-            self.field_type_table_model.update()
-
-    def set_device_enabled_suffix(self):
-        for i in range(self.ui.listWidgetDevices.count()):
-            w = self.ui.listWidgetDevices.item(i)
-            dev_key = self.__get_key_from_device_display_text(w.text())
-            is_enabled = self.backend_handler.device_backends[dev_key].is_enabled
-            suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
-            dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
-            w.setText("{0} - {1}".format(dev_name, suffix))
-
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -174,29 +141,14 @@ class OptionsController(QDialog):
                 self.ui.lSupport.setText(self.tr("device supports neither sending nor receiving"))
                 self.ui.lSupport.setStyleSheet("color: red")
 
-
-
-    def closeEvent(self, event: QCloseEvent):
-        changed_values = {}
-        if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:
-            changed_values["rel_symbol_length"] = 100 - 2 * self.ui.spinBoxSymbolTreshold.value()
-        if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
-            changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
-        if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
-            changed_values['default_view'] = self.ui.comboBoxDefaultView.currentIndex()
-
-        settings = constants.SETTINGS
-        settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())
-        settings.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
-        settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
-
-        FieldType.save_to_xml(self.field_type_table_model.field_types)
-
-        self.values_changed.emit(changed_values)
-
-        self.plugin_controller.save_enabled_states()
-
-        event.accept()
+    def set_device_enabled_suffix(self):
+        for i in range(self.ui.listWidgetDevices.count()):
+            w = self.ui.listWidgetDevices.item(i)
+            dev_key = self.__get_key_from_device_display_text(w.text())
+            is_enabled = self.backend_handler.device_backends[dev_key].is_enabled
+            suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
+            dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
+            w.setText("{0} - {1}".format(dev_name, suffix))
 
     def read_options(self):
         settings = constants.SETTINGS
@@ -215,8 +167,59 @@ class OptionsController(QDialog):
         self.field_type_table_model.field_types = FieldType.load_from_xml()
         self.field_type_table_model.update()
 
+    def refresh_device_tab(self):
+        self.backend_handler.get_backends()
+        self.show_gnuradio_infos()
+        self.show_selected_device_params()
+        self.set_device_enabled_suffix()
+
+    def closeEvent(self, event: QCloseEvent):
+        changed_values = {}
+        if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:
+            changed_values["rel_symbol_length"] = 100 - 2 * self.ui.spinBoxSymbolTreshold.value()
+        if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
+            changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
+        if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
+            changed_values['default_view'] = self.ui.comboBoxDefaultView.currentIndex()
+
+        settings = constants.SETTINGS
+        settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())
+        settings.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
+        settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
+
+        FieldType.save_to_xml(self.field_type_table_model.field_types)
+        self.plugin_controller.save_enabled_states()
+
+        self.values_changed.emit(changed_values)
+
+        event.accept()
+
     @pyqtSlot()
-    def handle_spinbox_symbol_treshold_value_changed(self):
+    def on_btn_add_label_type_clicked(self):
+        suffix = 1
+        field_type_names = {ft.caption for ft in self.field_type_table_model.field_types}
+        while "New Fieldtype #" + str(suffix) in field_type_names:
+            suffix += 1
+
+        caption = "New Fieldtype #" + str(suffix)
+        self.field_type_table_model.field_types.append(FieldType(caption, FieldType.Function.CUSTOM))
+        self.field_type_table_model.update()
+
+    @pyqtSlot()
+    def on_btn_remove_label_type_clicked(self):
+        if self.field_type_table_model.field_types:
+            selected_indices = {i.row() for i in self.ui.tblLabeltypes.selectedIndexes()}
+
+            if selected_indices:
+                for i in reversed(sorted(selected_indices)):
+                    self.field_type_table_model.field_types.pop(i)
+            else:
+                self.field_type_table_model.field_types.pop()
+
+            self.field_type_table_model.update()
+
+    @pyqtSlot()
+    def on_spinbox_symbol_threshold_value_changed(self):
         val = self.ui.spinBoxSymbolTreshold.value()
         self.ui.lSymbolLength.setText(str(100 - 2 * val) + "%")
         if val == 50:
@@ -236,7 +239,8 @@ class OptionsController(QDialog):
                 "{3:d} - {4:d}: \tSymbol A\n"
                 "{5:d} - {6:d}: \tStandard symbol (0 or 1)\n"
                 "{7:d} - {8:d}: \tSymbol B\n"
-                "{9:d} - {10:d}: \tStandard symbol (0 or 1)\n\nNote there will be different symbols for various signal levels (e.g. low and high).".format(
+                "{9:d} - {10:d}: \tStandard symbol (0 or 1)\n\n"
+                "Note there will be different symbols for various signal levels (e.g. low and high).".format(
                     100 - val, 100 + val, bit_len,
                     int((1 - rel_val) * bit_len - rel_symbol_len * bit_len), int((1 - rel_val) * bit_len),
                     int((1 - rel_val) * bit_len), int((1 + rel_val) * bit_len),
@@ -244,26 +248,30 @@ class OptionsController(QDialog):
                     int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
         self.ui.lExplanation.setText(txt)
 
-    def on_checkbox_fallback_theme_clicked(self):
-        use_fallback = bool(self.ui.checkBoxFallBackTheme.isChecked())
+    @pyqtSlot(bool)
+    def on_checkbox_fallback_theme_clicked(self, use_fallback: bool):
         constants.SETTINGS.setValue('use_fallback_theme', use_fallback)
         if use_fallback:
             QApplication.setStyle(QStyleFactory.create("Fusion"))
         else:
             QApplication.setStyle(constants.SETTINGS.value("default_theme", type=str))
 
-    def on_checkbox_confirm_close_dialog_clicked(self):
-        constants.SETTINGS.setValue("not_show_close_dialog", not bool(self.ui.checkBoxShowConfirmCloseDialog.isChecked()))
+    @pyqtSlot(bool)
+    def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
+        constants.SETTINGS.setValue("not_show_close_dialog", not checked)
 
-    def on_checkbox_hold_shift_to_drag_clicked(self):
-        constants.SETTINGS.setValue("hold_shift_to_drag", bool(self.ui.checkBoxHoldShiftToDrag.isChecked()))
+    @pyqtSlot(bool)
+    def on_checkbox_hold_shift_to_drag_clicked(self, checked: bool):
+        constants.SETTINGS.setValue("hold_shift_to_drag", checked)
 
-    def on_checkbox_default_fuzzing_pause_clicked(self):
-        constants.SETTINGS.setValue('use_default_fuzzing_pause', bool(self.ui.checkBoxDefaultFuzzingPause.isChecked()))
-        self.ui.doubleSpinBoxFuzzingPause.setEnabled(bool(self.ui.checkBoxDefaultFuzzingPause.isChecked()))
+    @pyqtSlot(bool)
+    def on_checkbox_default_fuzzing_pause_clicked(self, checked: bool):
+        constants.SETTINGS.setValue('use_default_fuzzing_pause', checked)
+        self.ui.doubleSpinBoxFuzzingPause.setEnabled(checked)
 
-    def on_spinbox_fuzzing_pause_value_changed(self):
-        constants.SETTINGS.setValue("default_fuzzing_pause", int(self.ui.doubleSpinBoxFuzzingPause.value()))
+    @pyqtSlot(float)
+    def on_spinbox_fuzzing_pause_value_changed(self, value: float):
+        constants.SETTINGS.setValue("default_fuzzing_pause", int(value))
 
     @pyqtSlot()
     def on_python2_exe_path_edited(self):
@@ -294,20 +302,20 @@ class OptionsController(QDialog):
             self.selected_device.selected_backend = Backends.native
             self.selected_device.write_settings()
 
-    def on_chkbox_enable_symbols_clicked(self):
-        if self.ui.chkBoxEnableSymbols.isChecked():
+    @pyqtSlot(bool)
+    def on_chkbox_enable_symbols_clicked(self, checked: bool):
+        if checked:
             self.ui.spinBoxSymbolTreshold.setValue(10)
         else:
             self.ui.spinBoxSymbolTreshold.setValue(50)
 
-    def on_checkbox_align_labels_clicked(self):
-        constants.SETTINGS.setValue("align_labels", bool(self.ui.checkBoxAlignLabels.isChecked()))
+    @pyqtSlot(bool)
+    def on_checkbox_align_labels_clicked(self, checked: bool):
+        constants.SETTINGS.setValue("align_labels", checked)
 
-    def refresh_device_tab(self):
-        self.backend_handler.get_backends()
-        self.show_gnuradio_infos()
+    @pyqtSlot(int)
+    def on_list_widget_devices_current_row_changed(self, current_row: int):
         self.show_selected_device_params()
-        self.set_device_enabled_suffix()
 
     @staticmethod
     def write_default_options():

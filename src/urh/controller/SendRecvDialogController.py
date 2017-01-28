@@ -8,6 +8,8 @@ from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.PluginManager import PluginManager
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
@@ -94,6 +96,9 @@ class SendRecvDialogController(QDialog):
                 items.append(device_name)
             elif mode in (Mode.receive, Mode.spectrum) and dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
+
+        if mode == Mode.send and PluginManager().is_plugin_enabled("NetworkSDRInterface"):
+            items.append(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.ui.cbDevice.addItems(items)
         if device in items:
@@ -198,6 +203,14 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_selected_device_changed(self):
         dev_name = self.ui.cbDevice.currentText()
+        if dev_name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
+            self.ui.cbDevice.blockSignals(True)
+            self.ui.cbDevice.setCurrentText(self.device.name)
+            self.ui.cbDevice.blockSignals(False)
+            Errors.network_sdr_send_is_elsewhere()
+            return
+
+
         nrep = self.ui.spinBoxNRepeat.value()
         sts = self.device.samples_to_send
         self.device.free_data()
@@ -399,6 +412,10 @@ class SendRecvDialogController(QDialog):
 
 
     def closeEvent(self, QCloseEvent):
+        if self.device.backend == Backends.network:
+            QCloseEvent.accept()
+            return
+
         self.device.stop("Dialog closed. Killing recording process.")
         if self.mode == Mode.receive and not self.already_saved and self.device.current_index > 0:
             reply = QMessageBox.question(self, self.tr("Save data?"),

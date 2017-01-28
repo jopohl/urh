@@ -137,7 +137,8 @@ class TableModel(QAbstractTableModel):
         self.refresh_fonts()  # Will be overriden
         self.refresh_vertical_header()
 
-        self.layoutChanged.emit()
+        self.beginResetModel()
+        self.endResetModel()
         self.locked = False
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):

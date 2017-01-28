@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(746, 486)
+        DialogOptions.resize(953, 655)
         self.horizontalLayout = QtWidgets.QHBoxLayout(DialogOptions)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.tabWidget = QtWidgets.QTabWidget(DialogOptions)
@@ -144,6 +144,7 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.tblLabeltypes = QtWidgets.QTableView(self.tabFieldtypes)
+        self.tblLabeltypes.setAlternatingRowColors(True)
         self.tblLabeltypes.setObjectName("tblLabeltypes")
         self.horizontalLayout_3.addWidget(self.tblLabeltypes)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
@@ -246,7 +247,7 @@ class Ui_DialogOptions(object):
         self.horizontalLayout.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(DialogOptions)
 
     def retranslateUi(self, DialogOptions):

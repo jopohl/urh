@@ -1,3 +1,8 @@
 With this plugin you can interface external applications using TCP.
 You can use your external application for performing protocol simulation on logical level or advanced modulation/decoding.
-If you activate this plugin, a new SDR will be selectable in protocol sniffer and generator dialogs.
+If you activate this plugin, a new SDR will be selectable:
+
+ 1. in protocol sniffer dialog
+ 2. in sending dialog.
+
+ Furthermore, a new button below generator table will be created.

@@ -255,6 +255,7 @@ class Ui_GeneratorTab(object):
         self.btnNetworkSDRSend = QtWidgets.QPushButton(self.frame)
         icon = QtGui.QIcon.fromTheme("network-wired")
         self.btnNetworkSDRSend.setIcon(icon)
+        self.btnNetworkSDRSend.setCheckable(True)
         self.btnNetworkSDRSend.setObjectName("btnNetworkSDRSend")
         self.gridLayout.addWidget(self.btnNetworkSDRSend, 2, 1, 1, 1)
         self.cbViewType.raise_()

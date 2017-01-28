@@ -495,6 +495,10 @@ class GeneratorTabController(QWidget):
                 Errors.no_device()
                 dialog.close()
                 return
+            elif PluginManager().is_plugin_enabled("NetworkSDRInterface") and dialog.ui.cbDevice.count() == 1:
+                Errors.network_sdr_send_is_elsewhere()
+                dialog.close()
+                return
 
             dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
             dialog.show()

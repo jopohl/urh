@@ -73,3 +73,9 @@ class Errors:
         w = QWidget()
         QMessageBox.critical(w, w.tr("Invalid Path"),
                              w.tr("The path {0} is invalid.".format(path)))
+
+    @staticmethod
+    def network_sdr_send_is_elsewhere():
+        w = QWidget()
+        QMessageBox.information(w, "This feature is elsewhere", "You can send your data with the network SDR by "
+                                                                   "using the button below the generator table.")

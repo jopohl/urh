@@ -35,7 +35,7 @@ class TestInstallation(unittest.TestCase):
 
         python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
 
-        self.__send_command_via_ssh("boss", 3022, python_bin_path + "pip3 install urh")
+        self.__send_command_via_ssh("boss", 3022, python_bin_path + "pip3 --no-cache-dir install urh")
         rc = self.__send_command_via_ssh("boss", 3022, python_bin_path + "urh autoclose")
         self.__send_command_via_ssh("boss", 3022, python_bin_path + "pip3 uninstall --yes urh")
         self.__send_command_via_ssh("boss", 3022, "sudo shutdown -h now")

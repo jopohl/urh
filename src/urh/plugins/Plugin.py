@@ -59,9 +59,15 @@ class ProtocolPlugin(Plugin):
         """
         raise NotImplementedError("Abstract Method.")
 
+
 class LabelAssignPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
 
     def get_action(self, protocol_analyzer: ProtocolAnalyzer, message_type: MessageType):
         raise NotImplementedError("Abstract Method.")
+
+
+class SDRPlugin(Plugin):
+    def __init__(self, name: str):
+        Plugin.__init__(self, name)

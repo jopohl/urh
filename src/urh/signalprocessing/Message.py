@@ -166,10 +166,6 @@ class Message(object):
         end = self.convert_index(end, 0, 2, decoded=decoded)[0]
         return int(end)
 
-    def get_bytes(self, start=0, decoded=True) -> list:
-        data = self.decoded_ascii_str[start:] if decoded else self.plain_ascii_str[start:]
-        return list(map(ord, data))
-
     def bits2string(self, bits) -> str:
         """
 

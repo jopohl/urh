@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>882</width>
-    <height>786</height>
+    <height>787</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,21 +17,21 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="10" column="0">
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="labelModulation">
        <property name="text">
         <string>Modulation:</string>
        </property>
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="labelTolerance">
        <property name="text">
         <string>Error Tolerance:</string>
        </property>
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="labelCenter">
        <property name="text">
         <string>Center:</string>
        </property>
@@ -45,7 +45,7 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="labelGain">
        <property name="text">
         <string>Gain:</string>
        </property>
@@ -59,35 +59,35 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="labelFreq">
        <property name="text">
         <string>Frequency (Hz):</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="labelSampleRate">
        <property name="text">
         <string>Sample rate (Sps):</string>
        </property>
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="labelBandWidth">
        <property name="text">
         <string>Bandwidth (Hz):</string>
        </property>
       </widget>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="labelNoise">
        <property name="text">
         <string>Noise:</string>
        </property>
       </widget>
      </item>
      <item row="8" column="0">
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="labelBitLength">
        <property name="text">
         <string>Bit Length:</string>
        </property>

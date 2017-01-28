@@ -23,6 +23,9 @@ class PluginController(QFrame):
 
     def create_connects(self):
         self.ui.listViewPlugins.selectionModel().selectionChanged.connect(self.handle_list_selection_changed)
+        for plugin in self.model.plugins:
+            if hasattr(plugin, "show_proto_sniff_dialog_clicked"):
+                plugin.show_proto_sniff_dialog_clicked.connect(self.parent().parent().show_proto_sniff_dialog)
 
     def save_enabled_states(self):
         for plugin in self.model.plugins:

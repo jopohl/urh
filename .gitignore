@@ -29,6 +29,7 @@ src/urh/ui/delegates/__pycache__/
 src/urh/ui/views/__pycache__/
 src/urh/util/__pycache__/
 tmp/
-
+dist/
+src/urh.egg-info/
 
 tests/data/URHProject.xml

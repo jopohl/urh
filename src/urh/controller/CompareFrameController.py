@@ -1297,36 +1297,6 @@ class CompareFrameController(QFrame):
 
         self.fill_message_type_combobox() # in case message types were added by logic analyzer
 
-    def show_proto_sniff_dialog(self):
-        pm = self.project_manager
-        signal = None
-        for proto in self.protocol_list:
-            signal = proto.signal
-            if signal:
-                break
-
-        if signal:
-            bit_len = signal.bit_len
-            mod_type = signal.modulation_type
-            tolerance = signal.tolerance
-            noise = signal.noise_treshold
-            center = signal.qad_center
-        else:
-            bit_len = 100
-            mod_type = 1
-            tolerance = 5
-            noise = 0.001
-            center = 0.02
-
-        psd = ProtocolSniffDialogController(pm.frequency, pm.sample_rate,
-                                            pm.bandwidth, pm.gain,
-                                            pm.device, noise, center,
-                                            bit_len, tolerance, mod_type,
-                                            parent=self)
-        psd.protocol_accepted.connect(self.add_sniffed_protocol_messages)
-        psd.show()
-
-
     def get_labels_from_selection(self, row_start: int, row_end: int, col_start: int, col_end: int):
         """
 

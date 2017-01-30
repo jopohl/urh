@@ -47,6 +47,53 @@ class TestInstallation(unittest.TestCase):
     #    cant test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
     #    self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
 
+    def test_windows_pip(self):
+        """
+        To Fix Windows Error in Guest OS:
+        type gpedit.msc and go to:
+        Windows Settings
+            -> Security Settings
+                -> Local Policies
+                    -> Security Options
+                        -> Accounts: Limit local account use of blank passwords to console logon only
+        and set it to DISABLED.
+
+
+        configure pip on guest:
+
+        %APPDATA%\Roaming\pip
+
+        [global]
+        no-cache-dir = false
+
+        [uninstall]
+        yes = true
+        """
+        call('VBoxManage startvm "Windows 10"', shell=True)
+        time.sleep(10)
+
+        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "install" "urh"', shell=True)
+        rc = call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\urh.exe" "autoclose"', shell=True)
+        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "uninstall" "urh"', shell=True)
+
+        call('VBoxManage controlvm "Windows 10" acpipowerbutton', shell=True)
+
+        self.assertEqual(rc, 0)
+
+    def test_windows_git(self):
+        call('VBoxManage startvm "Windows 10"', shell=True)
+        time.sleep(10)
+
+        target_dir = r"C:\Users\joe\urh"
+
+        call(r'VBoxManage guestcontrol "Windows 10" run "cmd.exe" "/c" "rd" "/s" "/q" "{0}"'.format(target_dir), shell=True)
+        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Program Files\Git\bin\git.exe" "clone" "https://github.com/jopohl/urh" "{0}"'.format(target_dir), shell=True)
+        rc = call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\python.exe" "{0}\src\urh\main.py" "autoclose"'.format(target_dir), shell=True)
+
+        call('VBoxManage controlvm "Windows 10" acpipowerbutton', shell=True)
+
+        self.assertEqual(rc, 0)
+
     def test_osx_pip(self):
         call("VBoxManage startvm OSX", shell=True)
         ssh_helper = SSHHelper("boss", 3022)
@@ -54,6 +101,7 @@ class TestInstallation(unittest.TestCase):
         python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
         ssh_helper.send_command(python_bin_path + "pip3 --no-cache-dir install urh")
         rc = ssh_helper.send_command(python_bin_path + "urh autoclose")
+        ssh_helper.send_command(python_bin_path + "pip3 --yes uninstall urh")
         ssh_helper.send_command("sudo shutdown -h now")
 
         self.assertEqual(rc, 0)

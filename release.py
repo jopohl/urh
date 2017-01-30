@@ -1,6 +1,9 @@
 from subprocess import call, check_output
 import os, sys
 
+if input("Did you run all Unittests + Git Install Tests? [y/N]").lower() not in ("y", "yes"):
+    sys.exit(1)
+
 open("/tmp/urh_releasing", "w").close()
 
 script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
@@ -62,3 +65,5 @@ call(["git", "commit", "-am", "version "+cur_version])
 call(["git", "push"])
 
 os.remove("/tmp/urh_releasing")
+
+print("\033[1m\033[91mFinished. Do not forget to run the install tests for new release\033[0m")

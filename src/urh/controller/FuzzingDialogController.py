@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QDialog
 from urh.models.FuzzingTableModel import FuzzingTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.Message import Message
 from urh.ui.ui_fuzzing import Ui_FuzzingDialog
 
 
@@ -30,7 +29,6 @@ class FuzzingDialogController(QDialog):
         self.fuzz_table_model.remove_duplicates = self.ui.chkBRemoveDuplicates.isChecked()
         self.ui.tblFuzzingValues.setModel(self.fuzz_table_model)
         self.fuzz_table_model.update()
-
 
         self.ui.spinBoxFuzzingStart.setValue(self.current_label_start + 1)
         self.ui.spinBoxFuzzingEnd.setValue(self.current_label_end)
@@ -90,7 +88,7 @@ class FuzzingDialogController(QDialog):
     def create_connects(self):
         self.ui.spinBoxFuzzingStart.valueChanged.connect(self.on_fuzzing_start_changed)
         self.ui.spinBoxFuzzingEnd.valueChanged.connect(self.on_fuzzing_end_changed)
-        self.ui.comboBoxFuzzingLabel.currentIndexChanged.connect(self.on_current_label_changed)
+        self.ui.comboBoxFuzzingLabel.currentIndexChanged.connect(self.on_combo_box_fuzzing_label_current_index_changed)
         self.ui.btnAddRow.clicked.connect(self.on_btn_add_row_clicked)
         self.ui.btnDelRow.clicked.connect(self.on_btn_del_row_clicked)
         self.ui.tblFuzzingValues.deletion_wanted.connect(self.delete_lines)
@@ -138,10 +136,9 @@ class FuzzingDialogController(QDialog):
         self.ui.lPostBits.setText(self.message_data[self.current_label_end:proto_end] + postambel)
         self.set_add_spinboxes_maximum_on_label_change()
 
-    @pyqtSlot()
-    def on_fuzzing_start_changed(self):
+    @pyqtSlot(int)
+    def on_fuzzing_start_changed(self, value: int):
         self.ui.spinBoxFuzzingEnd.setMinimum(self.ui.spinBoxFuzzingStart.value())
-        value = self.ui.spinBoxFuzzingStart.value()
         new_start = \
         self.message.convert_index(value - 1, self.proto_view, 0, False)[0]
         self.message.message_type[self.current_label_index].start = new_start
@@ -150,10 +147,9 @@ class FuzzingDialogController(QDialog):
         self.fuzz_table_model.update()
         self.ui.tblFuzzingValues.resize_me()
 
-    @pyqtSlot()
-    def on_fuzzing_end_changed(self):
+    @pyqtSlot(int)
+    def on_fuzzing_end_changed(self, value: int):
         self.ui.spinBoxFuzzingStart.setMaximum(self.ui.spinBoxFuzzingEnd.value())
-        value = self.ui.spinBoxFuzzingEnd.value()
         new_end = self.message.convert_index(value - 1, self.proto_view, 0, False)[1] + 1
         self.message.message_type[self.current_label_index].end = new_end
         self.current_label.fuzz_values[:] = []
@@ -161,12 +157,20 @@ class FuzzingDialogController(QDialog):
         self.fuzz_table_model.update()
         self.ui.tblFuzzingValues.resize_me()
 
-    @pyqtSlot()
-    def on_current_label_changed(self):
+    @pyqtSlot(int)
+    def on_combo_box_fuzzing_label_current_index_changed(self, index: int):
         self.fuzz_table_model.fuzzing_label = self.current_label
         self.fuzz_table_model.update()
         self.update_message_data_string()
         self.ui.tblFuzzingValues.resize_me()
+
+        self.ui.spinBoxFuzzingStart.blockSignals(True)
+        self.ui.spinBoxFuzzingStart.setValue(self.current_label_start + 1)
+        self.ui.spinBoxFuzzingStart.blockSignals(False)
+
+        self.ui.spinBoxFuzzingEnd.blockSignals(True)
+        self.ui.spinBoxFuzzingEnd.setValue(self.current_label_end)
+        self.ui.spinBoxFuzzingEnd.blockSignals(False)
 
     @pyqtSlot()
     def on_btn_add_row_clicked(self):
@@ -214,15 +218,15 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxRandomMaximum.setMaximum(max_val)
         self.ui.spinBoxRandomMaximum.setValue(max_val)
 
-    @pyqtSlot()
-    def on_fuzzing_range_start_changed(self):
-        self.ui.sBAddRangeEnd.setMinimum(self.ui.sBAddRangeStart.value())
-        self.ui.sBAddRangeStep.setMaximum(self.ui.sBAddRangeEnd.value() - self.ui.sBAddRangeStart.value())
+    @pyqtSlot(int)
+    def on_fuzzing_range_start_changed(self, value: int):
+        self.ui.sBAddRangeEnd.setMinimum(value)
+        self.ui.sBAddRangeStep.setMaximum(self.ui.sBAddRangeEnd.value() - value)
 
-    @pyqtSlot()
-    def on_fuzzing_range_end_changed(self):
-        self.ui.sBAddRangeStart.setMaximum(self.ui.sBAddRangeEnd.value() - 1)
-        self.ui.sBAddRangeStep.setMaximum(self.ui.sBAddRangeEnd.value() - self.ui.sBAddRangeStart.value())
+    @pyqtSlot(int)
+    def on_fuzzing_range_end_changed(self, value: int):
+        self.ui.sBAddRangeStart.setMaximum(value - 1)
+        self.ui.sBAddRangeStep.setMaximum(value - self.ui.sBAddRangeStart.value())
 
     @pyqtSlot()
     def on_lower_bound_checked_changed(self):
@@ -311,8 +315,8 @@ class FuzzingDialogController(QDialog):
         lbl.name = self.ui.comboBoxFuzzingLabel.currentText()
         self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), lbl.name)
 
-
-    def on_fuzz_msg_changed(self):
+    @pyqtSlot(int)
+    def on_fuzz_msg_changed(self, index: int):
         self.ui.comboBoxFuzzingLabel.setDisabled(False)
 
         sel_label_ind = self.ui.comboBoxFuzzingLabel.currentIndex()

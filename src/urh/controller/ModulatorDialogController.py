@@ -4,11 +4,12 @@ from PyQt5.QtGui import QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
 
 
 class ModulatorDialogController(QDialog):
-    def __init__(self, modulators, parent = None):
+    def __init__(self, modulators, parent=None):
         """
         :type modulators: list of Modulator
         """
@@ -31,8 +32,7 @@ class ModulatorDialogController(QDialog):
 
         self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
         self.ui.cbShowDataBitsOnly.setEnabled(False)
-        self.protocol = None
-        """:type: ProtocolAnalyzer """
+        self.protocol = None  # type: ProtocolAnalyzer
         self.search_results = []
         self.ui.cbShowDataBitsOnly.setEnabled(False)
         self.ui.btnSearchNext.setEnabled(False)
@@ -40,13 +40,46 @@ class ModulatorDialogController(QDialog):
 
         self.ui.chkBoxLockSIV.setDisabled(True)
 
-
         self.create_connects()
         self.on_modulation_type_changed()
 
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
 
+    def __cur_selected_mod_type(self):
+        s = self.ui.comboBoxModulationType.currentText()
+        return s[s.rindex("(") + 1:s.rindex(")")]
+
+    @staticmethod
+    def __trim_number(number):
+        if abs(number) >= 1e9:  # giga
+            return numpy.round(number / 1e9) * 1e9
+        elif abs(number) >= 1e6:  # mega
+            return numpy.round(number / 1e6) * 1e6
+        elif abs(number) >= 1e3:  # Kilo
+            return numpy.round(number / 1e3) * 1e3
+        else:
+            return number
+
+    @staticmethod
+    def __ensure_multitude(num1, num2):
+        try:
+            if abs(num1) > abs(num2):
+                num1 = abs(int(num1 / num2)) * num2
+            else:
+                num2 = abs(int(num2 / num1)) * num1
+            return num1, num2
+        except Exception:
+            return num1, num2
+
+    def __set_gauss_ui_visibility(self, show: bool):
+        self.ui.lGaussBT.setVisible(show)
+        self.ui.lGaussWidth.setVisible(show)
+        self.ui.spinBoxGaussBT.setVisible(show)
+        self.ui.spinBoxGaussFilterWidth.setVisible(show)
+
+        self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
+        self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)
 
     @property
     def current_modulator(self):
@@ -54,7 +87,8 @@ class ModulatorDialogController(QDialog):
         return mod
 
     def set_ui_for_current_modulator(self):
-        index = self.ui.comboBoxModulationType.findText("*("+self.current_modulator.modulation_type_str+")", Qt.MatchWildcard)
+        index = self.ui.comboBoxModulationType.findText("*(" + self.current_modulator.modulation_type_str + ")",
+                                                        Qt.MatchWildcard)
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
@@ -62,7 +96,6 @@ class ModulatorDialogController(QDialog):
         self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
         self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
         self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
-
 
     def create_connects(self):
         self.ui.doubleSpinBoxCarrierFreq.editingFinished.connect(self.on_carrier_freq_changed)
@@ -93,7 +126,7 @@ class ModulatorDialogController(QDialog):
         self.ui.btnRestoreBits.clicked.connect(self.on_btn_restore_bits_clicked)
         self.ui.btnSaveAndClose.clicked.connect(self.close)
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
-        self.ui.btnAutoDetect.clicked.connect(self.on_btnautodetect_clicked)
+        self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
 
     def draw_carrier(self):
         self.ui.gVCarrier.plot_data(self.current_modulator.carrier_data)
@@ -103,7 +136,7 @@ class ModulatorDialogController(QDialog):
         self.ui.gVData.update()
 
     def draw_modulated(self):
-        self.current_modulator.modulate(pause = 0)
+        self.current_modulator.modulate(pause=0)
         self.ui.gVModulated.plot_data(self.current_modulator.modulated_samples.imag.astype(numpy.float32))
         if self.lock_samples_in_view:
             siv = self.ui.gVOriginalSignal.view_rect().width()
@@ -131,6 +164,139 @@ class ModulatorDialogController(QDialog):
             self.adjust_samples_in_view(self.ui.gVModulated.view_rect().width())
         else:
             self.mark_samples_in_view()
+
+    def update_views(self):
+        self.ui.gVCarrier.update()
+        self.ui.gVData.update()
+        self.ui.gVModulated.update()
+        self.ui.gVOriginalSignal.update()
+
+    def search_data_sequence(self):
+        if not self.ui.cbShowDataBitsOnly.isEnabled() or not self.ui.cbShowDataBitsOnly.isChecked():
+            return
+
+        search_seq = self.ui.linEdDataBits.text()
+        if len(search_seq) == 0 or self.protocol is None:
+            return
+
+        self.search_results[:] = []
+        proto_bits = self.protocol.plain_bits_str
+        len_seq = len(search_seq)
+
+        for i, message in enumerate(proto_bits):
+            j = message.find(search_seq)
+            while j != -1:
+                self.search_results.append((i, j, j + len_seq))
+                j = message.find(search_seq, j + 1)
+
+        self.ui.lTotalSearchresults.setText(str(len(self.search_results)))
+        self.show_search_result(0)
+
+    def show_search_result(self, i: int):
+        if len(self.search_results) == 0:
+            self.ui.lCurrentSearchResult.setText("0")
+            self.ui.gVOriginalSignal.scene_creator.clear_path()
+            return
+
+        message, start_index, end_index = self.search_results[i]
+
+        start, nsamples = self.protocol.get_samplepos_of_bitseq(message, start_index, message, end_index, False)
+        self.draw_original_signal(start=start, end=start + nsamples)
+
+        self.ui.lCurrentSearchResult.setText(str(i + 1))
+        if i == len(self.search_results) - 1:
+            self.ui.btnSearchNext.setEnabled(False)
+        else:
+            self.ui.btnSearchNext.setEnabled(True)
+
+        if i == 0:
+            self.ui.btnSearchPrev.setEnabled(False)
+        else:
+            self.ui.btnSearchPrev.setEnabled(True)
+
+    def add_modulator(self):
+        names = [m.name for m in self.modulators]
+        name = "Modulation"
+        number = 1
+        while name in names:
+            name = "Modulation " + str(number)
+            number += 1
+        self.modulators.append(Modulator(name))
+        self.ui.comboBoxCustomModulations.addItem(name)
+        self.ui.comboBoxCustomModulations.setCurrentIndex(len(self.modulators) - 1)
+        self.ui.btnRemoveModulation.setEnabled(True)
+
+    def adjust_samples_in_view(self, target_siv: float):
+        self.ui.gVOriginalSignal.scale(self.ui.gVOriginalSignal.view_rect().width() / target_siv, 1)
+        mod_zoom_factor = self.ui.gVModulated.view_rect().width() / target_siv
+        self.ui.gVModulated.scale(mod_zoom_factor, 1)
+        self.ui.gVCarrier.scale(mod_zoom_factor, 1)
+        self.ui.gVData.scale(mod_zoom_factor, 1)
+        self.mark_samples_in_view()
+
+    def autodetect_fsk_freqs(self):
+        if self.__cur_selected_mod_type() not in ("FSK", "GFSK"):
+            return
+
+        try:
+            zero_freq = self.protocol.estimate_frequency_for_zero(self.current_modulator.sample_rate)
+            one_freq = self.protocol.estimate_frequency_for_one(self.current_modulator.sample_rate)
+            zero_freq = self.__trim_number(zero_freq)
+            one_freq = self.__trim_number(one_freq)
+            zero_freq, one_freq = self.__ensure_multitude(zero_freq, one_freq)
+
+            self.ui.spinBoxParameter0.setValue(zero_freq)
+            self.ui.spinBoxParameter1.setValue(one_freq)
+
+        except AttributeError:
+            self.ui.spinBoxParameter0.setValue(self.current_modulator.carrier_freq_hz / 2)
+            self.ui.spinBoxParameter1.setValue(self.current_modulator.carrier_freq_hz)
+
+        self.ui.spinBoxParameter0.editingFinished.emit()
+        self.ui.spinBoxParameter1.editingFinished.emit()
+
+    def handle_signal_loaded(self, protocol):
+        self.setCursor(Qt.WaitCursor)
+        self.ui.cbShowDataBitsOnly.setEnabled(True)
+        self.ui.chkBoxLockSIV.setEnabled(True)
+        self.ui.btnAutoDetect.setEnabled(True)
+        self.protocol = protocol
+        self.ui.spinBoxBitLength.setValue(self.ui.gVOriginalSignal.signal.bit_len)
+        self.ui.spinBoxBitLength.editingFinished.emit()
+        self.unsetCursor()
+
+    def mark_samples_in_view(self):
+        self.ui.lSamplesInViewModulated.setText(str(int(self.ui.gVModulated.view_rect().width())))
+        if self.ui.gVOriginalSignal.scene_creator is not None:
+            self.ui.lSamplesInViewOrigSignal.setText(str(int(self.ui.gVOriginalSignal.view_rect().width())))
+        else:
+            self.ui.lSamplesInViewOrigSignal.setText("-")
+
+        if int(self.ui.gVOriginalSignal.view_rect().width()) != int(self.ui.gVModulated.view_rect().width()):
+            font = self.ui.lSamplesInViewModulated.font()
+            font.setBold(False)
+            self.ui.lSamplesInViewModulated.setFont(font)
+            self.ui.lSamplesInViewOrigSignal.setFont(font)
+
+            self.ui.lSamplesInViewOrigSignal.setStyleSheet("QLabel { color : red; }")
+            self.ui.lSamplesInViewModulated.setStyleSheet("QLabel { color : red; }")
+        else:
+            font = self.ui.lSamplesInViewModulated.font()
+            font.setBold(True)
+            self.ui.lSamplesInViewModulated.setFont(font)
+            self.ui.lSamplesInViewOrigSignal.setFont(font)
+
+            self.ui.lSamplesInViewOrigSignal.setStyleSheet("")
+            self.ui.lSamplesInViewModulated.setStyleSheet("")
+
+    def resizeEvent(self, event: QResizeEvent):
+        self.update_views()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+            return
+        else:
+            super().keyPressEvent(event)
 
     @pyqtSlot()
     def on_carrier_freq_changed(self):
@@ -173,11 +339,6 @@ class ModulatorDialogController(QDialog):
             self.ui.btnRestoreBits.setDisabled(True)
         else:
             self.ui.btnRestoreBits.setEnabled(True)
-
-    def __cur_selected_mod_type(self):
-        s = self.ui.comboBoxModulationType.currentText()
-        return s[s.rindex("(")+1:s.rindex(")")]
-
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
@@ -276,16 +437,6 @@ class ModulatorDialogController(QDialog):
         self.ui.spinBoxParameter0.editingFinished.emit()
         self.ui.spinBoxParameter1.editingFinished.emit()
 
-
-    def resizeEvent(self, event: QResizeEvent):
-        self.update_views()
-
-    def update_views(self):
-        self.ui.gVCarrier.update()
-        self.ui.gVData.update()
-        self.ui.gVModulated.update()
-        self.ui.gVOriginalSignal.update()
-
     @pyqtSlot()
     def on_orig_signal_zoomed(self):
         start = self.ui.gVOriginalSignal.view_rect().x()
@@ -320,30 +471,6 @@ class ModulatorDialogController(QDialog):
             self.ui.gVOriginalSignal.centerOn(x, y)
         else:
             self.mark_samples_in_view()
-
-    def mark_samples_in_view(self):
-        self.ui.lSamplesInViewModulated.setText(str(int(self.ui.gVModulated.view_rect().width())))
-        if self.ui.gVOriginalSignal.scene_creator is not None:
-            self.ui.lSamplesInViewOrigSignal.setText(str(int(self.ui.gVOriginalSignal.view_rect().width())))
-        else:
-            self.ui.lSamplesInViewOrigSignal.setText("-")
-
-        if int(self.ui.gVOriginalSignal.view_rect().width()) != int(self.ui.gVModulated.view_rect().width()):
-            font = self.ui.lSamplesInViewModulated.font()
-            font.setBold(False)
-            self.ui.lSamplesInViewModulated.setFont(font)
-            self.ui.lSamplesInViewOrigSignal.setFont(font)
-
-            self.ui.lSamplesInViewOrigSignal.setStyleSheet("QLabel { color : red; }")
-            self.ui.lSamplesInViewModulated.setStyleSheet("QLabel { color : red; }")
-        else:
-            font = self.ui.lSamplesInViewModulated.font()
-            font.setBold(True)
-            self.ui.lSamplesInViewModulated.setFont(font)
-            self.ui.lSamplesInViewOrigSignal.setFont(font)
-
-            self.ui.lSamplesInViewOrigSignal.setStyleSheet("")
-            self.ui.lSamplesInViewModulated.setStyleSheet("")
 
     @pyqtSlot()
     def on_custom_modulation_name_edited(self):
@@ -383,64 +510,6 @@ class ModulatorDialogController(QDialog):
         if self.ui.cbShowDataBitsOnly.isEnabled() and not show_data_bits_only:
             self.draw_original_signal()
 
-
-    def search_data_sequence(self):
-        if not self.ui.cbShowDataBitsOnly.isEnabled() or not self.ui.cbShowDataBitsOnly.isChecked():
-            return
-
-        search_seq = self.ui.linEdDataBits.text()
-        if len(search_seq) == 0 or self.protocol is None:
-            return
-
-        self.search_results[:] = []
-        proto_bits = self.protocol.plain_bits_str
-        len_seq = len(search_seq)
-
-        for i, message in enumerate(proto_bits):
-            j = message.find(search_seq)
-            while j != -1:
-                self.search_results.append((i, j, j + len_seq))
-                j = message.find(search_seq, j + 1)
-
-        self.ui.lTotalSearchresults.setText(str(len(self.search_results)))
-        self.show_search_result(0)
-
-
-    def show_search_result(self, i: int):
-        if len(self.search_results) == 0:
-            self.ui.lCurrentSearchResult.setText("0")
-            self.ui.gVOriginalSignal.scene_creator.clear_path()
-            return
-
-        message, start_index, end_index = self.search_results[i]
-
-        start, nsamples = self.protocol.get_samplepos_of_bitseq(message, start_index, message, end_index, False)
-        self.draw_original_signal(start=start, end=start + nsamples)
-
-        self.ui.lCurrentSearchResult.setText(str(i + 1))
-        if i == len(self.search_results) - 1:
-            self.ui.btnSearchNext.setEnabled(False)
-        else:
-            self.ui.btnSearchNext.setEnabled(True)
-
-        if i == 0:
-            self.ui.btnSearchPrev.setEnabled(False)
-        else:
-            self.ui.btnSearchPrev.setEnabled(True)
-
-
-    def add_modulator(self):
-        names = [m.name for m in self.modulators]
-        name = "Modulation"
-        number = 1
-        while name in names:
-            name = "Modulation " + str(number)
-            number += 1
-        self.modulators.append(Modulator(name))
-        self.ui.comboBoxCustomModulations.addItem(name)
-        self.ui.comboBoxCustomModulations.setCurrentIndex(len(self.modulators) - 1)
-        self.ui.btnRemoveModulation.setEnabled(True)
-
     @pyqtSlot()
     def on_remove_modulator_clicked(self):
         index = self.ui.comboBoxCustomModulations.currentIndex()
@@ -449,16 +518,6 @@ class ModulatorDialogController(QDialog):
 
         if len(self.modulators) == 1:
             self.ui.btnRemoveModulation.setDisabled(True)
-
-
-
-    def adjust_samples_in_view(self, target_siv: float):
-        self.ui.gVOriginalSignal.scale(self.ui.gVOriginalSignal.view_rect().width() / target_siv, 1)
-        mod_zoom_factor = self.ui.gVModulated.view_rect().width() / target_siv
-        self.ui.gVModulated.scale(mod_zoom_factor, 1)
-        self.ui.gVCarrier.scale(mod_zoom_factor, 1)
-        self.ui.gVData.scale(mod_zoom_factor, 1)
-        self.mark_samples_in_view()
 
     @pyqtSlot()
     def on_lock_siv_changed(self):
@@ -471,7 +530,7 @@ class ModulatorDialogController(QDialog):
         self.ui.linEdDataBits.setText(self.original_bits)
 
     @pyqtSlot()
-    def on_btnautodetect_clicked(self):
+    def on_btn_autodetect_clicked(self):
         proto_bits = self.protocol.plain_bits_str
 
         message_index = -1
@@ -497,63 +556,6 @@ class ModulatorDialogController(QDialog):
         self.ui.doubleSpinBoxCarrierFreq.editingFinished.emit()
         self.autodetect_fsk_freqs()
 
-    def autodetect_fsk_freqs(self):
-        if self.__cur_selected_mod_type() not in ("FSK", "GFSK"):
-            return
-
-        try:
-            zero_freq = self.protocol.estimate_frequency_for_zero(self.current_modulator.sample_rate)
-            one_freq = self.protocol.estimate_frequency_for_one(self.current_modulator.sample_rate)
-            zero_freq = self.__trim_number(zero_freq)
-            one_freq = self.__trim_number(one_freq)
-            zero_freq, one_freq = self.__ensure_multitude(zero_freq, one_freq)
-
-            self.ui.spinBoxParameter0.setValue(zero_freq)
-            self.ui.spinBoxParameter1.setValue(one_freq)
-
-        except AttributeError:
-            self.ui.spinBoxParameter0.setValue(self.current_modulator.carrier_freq_hz / 2)
-            self.ui.spinBoxParameter1.setValue(self.current_modulator.carrier_freq_hz)
-
-        self.ui.spinBoxParameter0.editingFinished.emit()
-        self.ui.spinBoxParameter1.editingFinished.emit()
-
-    def __trim_number(self, number):
-        if abs(number) >= 1e9:  # giga
-            return numpy.round(number / 1e9) * 1e9
-        elif abs(number) >= 1e6:  # mega
-            return numpy.round(number / 1e6) * 1e6
-        elif abs(number) >= 1e3:  # Kilo
-            return numpy.round(number / 1e3) * 1e3
-        else:
-            return number
-
-    def __ensure_multitude(self, num1, num2):
-        try:
-            if abs(num1) > abs(num2):
-                num1 = abs(int(num1 / num2)) * num2
-            else:
-                num2 = abs(int(num2 / num1)) * num1
-            return num1, num2
-        except Exception:
-            return num1, num2
-
-    def handle_signal_loaded(self, protocol):
-        self.setCursor(Qt.WaitCursor)
-        self.ui.cbShowDataBitsOnly.setEnabled(True)
-        self.ui.chkBoxLockSIV.setEnabled(True)
-        self.ui.btnAutoDetect.setEnabled(True)
-        self.protocol = protocol
-        self.ui.spinBoxBitLength.setValue(self.ui.gVOriginalSignal.signal.bit_len)
-        self.ui.spinBoxBitLength.editingFinished.emit()
-        self.unsetCursor()
-
-    def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
-            return
-        else:
-            super().keyPressEvent(event)
-
     @pyqtSlot(int)
     def on_modulated_selection_changed(self, new_width: int):
         self.ui.lModulatedSelectedSamples.setText(str(abs(new_width)))
@@ -561,13 +563,3 @@ class ModulatorDialogController(QDialog):
     @pyqtSlot(int)
     def on_original_selection_changed(self, new_width: int):
         self.ui.lOriginalSignalSamplesSelected.setText(str(abs(new_width)))
-
-
-    def __set_gauss_ui_visibility(self, show:bool):
-        self.ui.lGaussBT.setVisible(show)
-        self.ui.lGaussWidth.setVisible(show)
-        self.ui.spinBoxGaussBT.setVisible(show)
-        self.ui.spinBoxGaussFilterWidth.setVisible(show)
-
-        self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
-        self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)

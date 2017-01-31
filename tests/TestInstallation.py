@@ -1,3 +1,5 @@
+import os
+import tempfile
 import unittest
 
 from subprocess import call, DEVNULL
@@ -6,6 +8,54 @@ import time
 import sys
 
 from tests.docker import docker_util
+
+
+class VMHelper(object):
+    def __init__(self, vm_name: str, shell: str, ssh_username: str = None, ssh_port: str = None):
+        self.vm_name = vm_name
+        self.shell = shell # like bash -c or cmd.exe /c
+        self.ssh_username = ssh_username
+        self.ssh_port = ssh_port
+
+        self.use_ssh = self.ssh_username is not None and self.ssh_port is not None
+        self.__vm_is_up = False
+
+    def start_vm(self):
+        call('VBoxManage startvm "{0}"'.format(self.vm_name), shell=True)
+
+    def stop_vm(self):
+        if self.use_ssh:
+            self.send_command("sudo shutdown -h now")
+        else:
+            call('VBoxManage controlvm "{0}" acpipowerbutton'.format(self.vm_name), shell=True)
+
+    def wait_for_vm_up(self):
+        if not self.__vm_is_up:
+            print("Waiting for {} to come up.".format(self.vm_name))
+            while self.__send_command("echo", hide_output=True, print_command=False) != 0:
+                time.sleep(1)
+            self.__vm_is_up = True
+
+    def send_command(self, command: str) -> int:
+        self.wait_for_vm_up()
+        return self.__send_command(command)
+
+    def __send_command(self, command: str, hide_output=False, print_command=True) -> int:
+        cmd = list(self.shell.split(" "))
+        cmd.extend(command.split(" "))
+
+        if self.use_ssh:
+            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),
+                       '"{0}"'.format(" ".join(cmd))]
+        else:
+            fullcmd = ["VBoxManage", "guestcontrol", self.vm_name, "run"] + cmd
+
+        if print_command:
+            print("Running", " ".join(fullcmd))
+
+        kwargs = {"stdout": DEVNULL, "stderr": DEVNULL} if hide_output else {}
+
+        return call(fullcmd, **kwargs)
 
 
 class SSHHelper(object):
@@ -26,26 +76,39 @@ class SSHHelper(object):
 
 class TestInstallation(unittest.TestCase):
 
-    REBUILD_IMAGES = False # Rebuild images, even if they are present
+    def test_linux(self):
+        distributions = [
+            #"archlinux",
+            "debian8",
+            #"ubuntu1404",
+            "ubuntu1604",
+            #"kali",
+            # "gentoo"   # cant test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
+        ]
 
-    def test_archlinux(self):
-        self.assertTrue(docker_util.run_image("archlinux", rebuild=self.REBUILD_IMAGES))
+        for distribution in distributions:
+            self.assertTrue(docker_util.run_image(distribution, rebuild=False), msg=distribution)
 
-    def test_debian8(self):
-        self.assertTrue(docker_util.run_image("debian8", rebuild=self.REBUILD_IMAGES))
+    def test_windows(self):
+        """
+        Run the unittests on Windows + Install via Pip
+        :return:
+        """
+        target_dir = r"C:\urh"
+        vm_helper = VMHelper("Windows 10", shell="cmd.exe /c")
+        vm_helper.start_vm()
+        vm_helper.send_command("rd /s /q {0}".format(target_dir))
+        vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
+        rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
+        self.assertEqual(rc, 0)
 
-    def test_ubuntu1404(self):
-        self.assertTrue(docker_util.run_image("ubuntu1404", rebuild=self.REBUILD_IMAGES))
+        rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
+        self.assertEqual(rc, 0)
+        # "set PYTHONPATH={0}\src && py.test C:\urh\tests ".format(target_dir)
+        #vm_helper.stop_vm()
+        #vm_helper.send_command("git clone ")
 
-    def test_ubuntu1604(self):
-        self.assertTrue(docker_util.run_image("ubuntu1604", rebuild=self.REBUILD_IMAGES))
 
-    def test_kali(self):
-        self.assertTrue(docker_util.run_image("kali", rebuild=self.REBUILD_IMAGES))
-
-    #def test_gentoo(self):
-    #    cant test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
-    #    self.assertTrue(docker_util.run_image("gentoo", rebuild=self.REBUILD_IMAGES))
 
     def test_windows_pip(self):
         """
@@ -77,6 +140,8 @@ class TestInstallation(unittest.TestCase):
         call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "uninstall" "urh"', shell=True)
 
         call('VBoxManage controlvm "Windows 10" acpipowerbutton', shell=True)
+
+        # -v -p no:cacheprovider
 
         self.assertEqual(rc, 0)
 

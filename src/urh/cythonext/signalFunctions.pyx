@@ -106,8 +106,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
         if mod_type == 3:
             qam = True
 
-        costa_alpha = calc_costa_alpha(2 * M_PI / 100)
-        costa_beta = calc_costa_beta(2 * M_PI / 100)
+        costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
+        costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
 
     else:

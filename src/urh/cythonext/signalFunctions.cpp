@@ -3136,7 +3136,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
  *         if mod_type == 3:
  *             qam = True             # <<<<<<<<<<<<<<
  * 
- *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
+ *         costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
  */
       __pyx_v_qam = 1;
 
@@ -3152,24 +3152,24 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_afp_demod(_
     /* "src/urh/cythonext/signalFunctions.pyx":109
  *             qam = True
  * 
- *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)             # <<<<<<<<<<<<<<
- *         costa_beta = calc_costa_beta(2 * M_PI / 100)
+ *         costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))             # <<<<<<<<<<<<<<
+ *         costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
  *         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
  */
-    __pyx_v_costa_alpha = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(((2.0 * M_PI) / 100.0), NULL);
+    __pyx_v_costa_alpha = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(((float)((2.0 * M_PI) / 100.0)), NULL);
 
     /* "src/urh/cythonext/signalFunctions.pyx":110
  * 
- *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
- *         costa_beta = calc_costa_beta(2 * M_PI / 100)             # <<<<<<<<<<<<<<
+ *         costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
+ *         costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))             # <<<<<<<<<<<<<<
  *         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
  * 
  */
-    __pyx_v_costa_beta = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(((2.0 * M_PI) / 100.0), NULL);
+    __pyx_v_costa_beta = __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(((float)((2.0 * M_PI) / 100.0)), NULL);
 
     /* "src/urh/cythonext/signalFunctions.pyx":111
- *         costa_alpha = calc_costa_alpha(2 * M_PI / 100)
- *         costa_beta = calc_costa_beta(2 * M_PI / 100)
+ *         costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
+ *         costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
  *         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)             # <<<<<<<<<<<<<<
  * 
  *     else:

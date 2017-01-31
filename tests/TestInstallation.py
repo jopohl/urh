@@ -28,7 +28,7 @@ class VMHelper(object):
     def wait_for_vm_up(self):
         if not self.__vm_is_up:
             print("Waiting for {} to come up.".format(self.vm_name))
-            while self.__send_command("echo", hide_output=False, print_command=False) != 0:
+            while self.__send_command("echo", hide_output=True, print_command=False) != 0:
                 time.sleep(1)
             self.__vm_is_up = True
 
@@ -37,21 +37,21 @@ class VMHelper(object):
         return self.__send_command(command)
 
     def __send_command(self, command: str, hide_output=False, print_command=True) -> int:
-        cmd = list(self.shell.split(" "))
-        cmd.extend(command.split(" "))
-
         if self.use_ssh:
-            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),
-                       '"{0}"'.format(" ".join(cmd))]
+            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),  "'{0}'".format(command)]
         else:
-            fullcmd = ["VBoxManage", "guestcontrol", self.vm_name, "run"] + cmd
-
-        if print_command:
-            print("Running", " ".join(fullcmd))
+            fullcmd = ["VBoxManage", "guestcontrol", '"{0}"'.format(self.vm_name), "run"] \
+                      + self.shell.split(" ") \
+                      + ["'{0}'".format(command)]
 
         kwargs = {"stdout": DEVNULL, "stderr": DEVNULL} if hide_output else {}
 
-        return call(" ".join(fullcmd), **kwargs, shell=True)
+        fullcmd = " ".join(fullcmd)
+
+        if print_command:
+            print("'\033[1m'" + str(fullcmd) + "'\033[0m'")
+
+        return call(fullcmd, shell=True, **kwargs)
 
 
 class TestInstallation(unittest.TestCase):
@@ -102,8 +102,8 @@ class TestInstallation(unittest.TestCase):
         rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
         self.assertEqual(rc, 0)
 
-        #rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
-        #self.assertEqual(rc, 0)
+        rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
+        self.assertEqual(rc, 0)
 
         vm_helper.send_command("pip install urh")
         rc = vm_helper.send_command("urh autoclose")
@@ -125,11 +125,14 @@ class TestInstallation(unittest.TestCase):
         target_dir = "/tmp/urh"
         vm_helper.send_command("rm -rf {0}".format(target_dir))
         vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
+
+        # Build extensions
         rc = vm_helper.send_command("{0}python3 {1}/src/urh/cythonext/build.py".format(python_bin_dir, target_dir))
         self.assertEqual(rc, 0)
 
-        #rc = vm_helper.send_command("export PYTHONPATH='{0}/urh/src && py.test {0}/urh/tests'".format(target_dir))
-        #self.assertEqual(rc, 0)
+        # Run Unit tests
+        rc = vm_helper.send_command("export PYTHONPATH='{0}/src' && {1}py.test {0}/tests".format(target_dir, python_bin_dir))
+        self.assertEqual(rc, 0)
 
         vm_helper.send_command("{0}pip3 --no-cache-dir install urh".format(python_bin_dir))
         rc = vm_helper.send_command("{0}urh autoclose".format(python_bin_dir))

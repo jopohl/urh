@@ -18,13 +18,11 @@ class TestSignalTabGUI(unittest.TestCase):
         for _ in range(NUM_SIGNALS):
             self.form.add_signalfile("./data/esaver.complex")
 
-        QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_signals, NUM_SIGNALS)
 
         self.form.close_all()
-        QTest.qWait(10)
+        QTest.qWait(1)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         self.form.add_signalfile("./data/ask.complex")
-        QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)

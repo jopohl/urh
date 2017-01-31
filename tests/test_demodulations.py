@@ -11,7 +11,6 @@ class TestDemodulations(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
     def test_ask(self):
         signal = Signal("./data/ask.complex", "ASK-Test")
-        QTest.qWait(100)
         signal.modulation_type = 0
         signal.bit_len = 295
         signal.qad_center = -0.1667
@@ -23,7 +22,6 @@ class TestDemodulations(unittest.TestCase):
 
     def test_fsk(self):
         signal = Signal("./data/fsk.complex", "FSK-Test")
-        QTest.qWait(100)
         signal.modulation_type = 1
         signal.bit_len = 100
         signal.qad_center = 0
@@ -35,7 +33,6 @@ class TestDemodulations(unittest.TestCase):
 
     def test_psk(self):
         signal = Signal("./data/psk_gen_noisy.complex", "PSK-Test")
-        QTest.qWait(100)
         signal.modulation_type = 2
         signal.bit_len = 300
         signal.qad_center = 0.0281

@@ -12,7 +12,6 @@ from urh.signalprocessing.Message import Message
 app = tests.startApp.app
 
 
-
 class TestProtocolTable(unittest.TestCase):
     NUM_MESSAGES = 100
     BITS_PER_MESSAGE = 100
@@ -20,7 +19,6 @@ class TestProtocolTable(unittest.TestCase):
 
     def setUp(self):
         self.form = MainController()
-        QTest.qWait(10)
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
@@ -28,13 +26,11 @@ class TestProtocolTable(unittest.TestCase):
         proto = self.__build_protocol()
         self.cframe.add_protocol(proto)
         proto.qt_signals.protocol_updated.emit()
-        QTest.qWait(10)
 
         self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_MESSAGES)
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
         self.__add_labels()
-        QTest.qWait(10)
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
 
     def test_model_data_performance(self):

@@ -1,11 +1,8 @@
 import copy
 import unittest
 
-import time
-
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode

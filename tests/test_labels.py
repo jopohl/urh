@@ -15,12 +15,8 @@ class TestLabels(unittest.TestCase):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
-        QTest.qWait(100)
-
         self.form = MainController()
         self.form.add_signalfile("./data/esaver.complex")
-        QTest.qWait(100)
-
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
@@ -39,7 +35,6 @@ class TestLabels(unittest.TestCase):
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)
-        QTest.qWait(10)
         for i in range(0, 40):
             self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
         self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg = "Bit 43")
@@ -47,7 +42,6 @@ class TestLabels(unittest.TestCase):
             self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
 
         self.cframe.ui.cbProtoView.setCurrentIndex(1)  # Hex View
-        QTest.qWait(10)
         for i in range(0, 10):
             self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Hex " + str(i))
         for i in range(13, self.cframe.protocol_model.col_count):

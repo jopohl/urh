@@ -17,18 +17,14 @@ class TestFuzzing(unittest.TestCase):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
-        QTest.qWait(10)
-
         self.form = MainController()
         self.form.add_signalfile("./data/steckdose_anlernen.complex")
-        QTest.qWait(10)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.setValue(0.06)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0127)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.setValue(100)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.editingFinished.emit()
-        QTest.qWait(10)
 
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
@@ -38,14 +34,12 @@ class TestFuzzing(unittest.TestCase):
         # Rest auf False anlegen und setzen
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cframe.ui.cbProtoView.setCurrentIndex(1) # Hex
-        QTest.qWait(10)
         decoding = Encoder(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x8"])
         self.cframe.decodings.append(decoding)
         self.cframe.ui.cbDecoding.addItem(decoding.name)
         self.cframe.set_decoding(decoding)
 
         # CRC Check
-        QTest.qWait(10)
         self.assertEqual(self.cframe.protocol_model.display_data[0][-4:], "0000")
 
         # Serial Part 1: Bits 207-226 (Dezimal: 91412) (20 Bits)
@@ -56,7 +50,6 @@ class TestFuzzing(unittest.TestCase):
 
         # Serial Part 2: Bit 245 - 264 (Dezimal: 1034678) (20 Bits)
         self.cframe.add_protocol_label(start=244, end=263, messagenr=0, proto_view=0, edit_label_name = False)
-        QTest.qWait(10)
 
         self.form.ui.tabWidget.setCurrentIndex(2)
         item = self.gframe.tree_model.rootItem.children[0].children[0]
@@ -68,7 +61,6 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
         self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))
-        QTest.qWait(10)
 
         self.assertEqual(self.gframe.table_model.row_count, 1)
         self.assertEqual(len(self.gframe.table_model.protocol.protocol_labels), 3)
@@ -78,7 +70,6 @@ class TestFuzzing(unittest.TestCase):
 
     def test_fuzz_label_bit(self):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
-        QTest.qWait(10)
 
         fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0, proto_view=0, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
@@ -97,7 +88,6 @@ class TestFuzzing(unittest.TestCase):
 
 
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
-        QTest.qWait(10)
 
         fdc = FuzzingDialogController(self.gframe.table_model.protocol, 0, 1, 1, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)

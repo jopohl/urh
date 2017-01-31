@@ -10,7 +10,6 @@ from urh.signalprocessing.Signal import Signal
 class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
         signal = Signal("./data/ASK_mod.complex", "Bit sample pos test")
-        QTest.qWait(10)
         signal.modulation_type = 0
         signal.bit_len = 100
 

@@ -70,7 +70,7 @@ class TestInstallation(unittest.TestCase):
         yes = true
         """
         call('VBoxManage startvm "Windows 10"', shell=True)
-        time.sleep(10)
+        time.sleep(30)
 
         call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "install" "urh"', shell=True)
         rc = call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\urh.exe" "autoclose"', shell=True)
@@ -82,7 +82,7 @@ class TestInstallation(unittest.TestCase):
 
     def test_windows_git(self):
         call('VBoxManage startvm "Windows 10"', shell=True)
-        time.sleep(10)
+        time.sleep(30)
 
         target_dir = r"C:\Users\joe\urh"
 

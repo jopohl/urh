@@ -101,7 +101,7 @@ class TestInstallation(unittest.TestCase):
         python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
         ssh_helper.send_command(python_bin_path + "pip3 --no-cache-dir install urh")
         rc = ssh_helper.send_command(python_bin_path + "urh autoclose")
-        ssh_helper.send_command(python_bin_path + "pip3 --yes uninstall urh")
+        ssh_helper.send_command(python_bin_path + "pip3 uninstall --yes urh")
         ssh_helper.send_command("sudo shutdown -h now")
 
         self.assertEqual(rc, 0)

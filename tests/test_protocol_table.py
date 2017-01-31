@@ -4,12 +4,12 @@ import unittest
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 
-app = tests.startApp.app
+app = tests.utils_testing.app
 
 
 class TestProtocolTable(unittest.TestCase):

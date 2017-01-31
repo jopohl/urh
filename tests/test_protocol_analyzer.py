@@ -5,11 +5,11 @@ from PyQt5.QtTest import QTest
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-
+from tests.utils_testing import get_path_for_data_file
 
 class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
-        signal = Signal("./data/ASK_mod.complex", "Bit sample pos test")
+        signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = 0
         signal.bit_len = 100
 
@@ -20,7 +20,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
             self.assertLess(pos, signal.num_samples, msg = i)
 
     def test_fsk_freq_detection(self):
-        s = Signal("./data/steckdose_anlernen.complex", "RWE")
+        s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
         s.noise_treshold = 0.06
         s.qad_center = 0
         s.bit_len = 100
@@ -41,7 +41,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
     def test_symbols(self):
         old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 20)  # Set Symbol length for this test
-        s = Signal("./data/vw_symbols.complex", "VW")
+        s = Signal(get_path_for_data_file("vw_symbols.complex"), "VW")
         s.noise_treshold = 0.0111
         s.qad_center = 0.0470
         s.bit_len = 500

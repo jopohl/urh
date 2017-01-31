@@ -3,13 +3,13 @@ import unittest
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
-
-app = tests.startApp.app
+from tests.utils_testing import get_path_for_data_file
+app = tests.utils_testing.app
 
 
 class TestFuzzing(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestFuzzing(unittest.TestCase):
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
         self.form = MainController()
-        self.form.add_signalfile("./data/steckdose_anlernen.complex")
+        self.form.add_signalfile(get_path_for_data_file("steckdose_anlernen.complex"))
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.setValue(0.06)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0127)

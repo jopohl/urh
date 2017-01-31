@@ -7,12 +7,12 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
 from urh.signalprocessing.encoder import Encoder
-
+from tests.utils_testing import get_path_for_data_file
 
 class TestAutoAssignments(unittest.TestCase):
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
-        with open("./data/decoded_bits.txt") as f:
+        with open(get_path_for_data_file("decoded_bits.txt")) as f:
             for line in f:
                 self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
@@ -106,7 +106,7 @@ class TestAutoAssignments(unittest.TestCase):
 
     def test_assign_decodings(self):
         self.undecoded_protocol = ProtocolAnalyzer(None)
-        with open("./data/undecoded.txt") as f:
+        with open(get_path_for_data_file("undecoded.txt")) as f:
             for line in f:
                 self.undecoded_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
 

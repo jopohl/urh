@@ -5,10 +5,10 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
-
-app = tests.startApp.app
+from tests.utils_testing import get_path_for_data_file
+app = tests.utils_testing.app
 
 
 class TestGenerator(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestGenerator(unittest.TestCase):
 
         """
         # Load a Signal
-        self.form.add_signalfile("./data/ask.complex")
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -80,7 +80,7 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue(proto.startswith(gen_proto))
 
     def test_close_signal(self):
-        self.form.add_signalfile("./data/ask.complex")
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)

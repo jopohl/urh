@@ -2,10 +2,10 @@ import unittest
 
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
-
-app = tests.startApp.app
+from tests.utils_testing import get_path_for_data_file
+app = tests.utils_testing.app
 
 
 class TestSignalTabGUI(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestSignalTabGUI(unittest.TestCase):
         # Add a bunch of signals
         NUM_SIGNALS = 10
         for _ in range(NUM_SIGNALS):
-            self.form.add_signalfile("./data/esaver.complex")
+            self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
 
         self.assertEqual(self.form.signal_tab_controller.num_signals, NUM_SIGNALS)
 
@@ -24,5 +24,5 @@ class TestSignalTabGUI(unittest.TestCase):
         QTest.qWait(1)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
-        self.form.add_signalfile("./data/ask.complex")
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)

@@ -1,19 +1,15 @@
-import os
-import tempfile
 import unittest
 
 from subprocess import call, DEVNULL
 import time
 
-import sys
-
 from tests.docker import docker_util
 
 
 class VMHelper(object):
-    def __init__(self, vm_name: str, shell: str, ssh_username: str = None, ssh_port: str = None):
+    def __init__(self, vm_name: str, shell: str = "", ssh_username: str = None, ssh_port: str = None):
         self.vm_name = vm_name
-        self.shell = shell # like bash -c or cmd.exe /c
+        self.shell = shell # like cmd.exe /c
         self.ssh_username = ssh_username
         self.ssh_port = ssh_port
 
@@ -32,7 +28,7 @@ class VMHelper(object):
     def wait_for_vm_up(self):
         if not self.__vm_is_up:
             print("Waiting for {} to come up.".format(self.vm_name))
-            while self.__send_command("echo", hide_output=True, print_command=False) != 0:
+            while self.__send_command("echo", hide_output=False, print_command=False) != 0:
                 time.sleep(1)
             self.__vm_is_up = True
 
@@ -55,23 +51,7 @@ class VMHelper(object):
 
         kwargs = {"stdout": DEVNULL, "stderr": DEVNULL} if hide_output else {}
 
-        return call(fullcmd, **kwargs)
-
-
-class SSHHelper(object):
-    def __init__(self, username: str, port: int):
-        self.username = username
-        self.port = port
-
-    def wait_for_ssh_running(self):
-        print("Waiting for SSH...")
-        while self.send_command("ls", suppress_stdout=True) != 0:
-            time.sleep(1)
-        print("Can connect via SSH!")
-
-    def send_command(self, command: str, suppress_stdout=False) -> int:
-        kwargs = {} if not suppress_stdout else {"stdout": DEVNULL}
-        return call('ssh -p {0} {1}@127.0.0.1 "{2}"'.format(self.port, self.username, command), shell=True, **kwargs)
+        return call(" ".join(fullcmd), **kwargs, shell=True)
 
 
 class TestInstallation(unittest.TestCase):
@@ -92,26 +72,7 @@ class TestInstallation(unittest.TestCase):
     def test_windows(self):
         """
         Run the unittests on Windows + Install via Pip
-        :return:
-        """
-        target_dir = r"C:\urh"
-        vm_helper = VMHelper("Windows 10", shell="cmd.exe /c")
-        vm_helper.start_vm()
-        vm_helper.send_command("rd /s /q {0}".format(target_dir))
-        vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
-        rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
-        self.assertEqual(rc, 0)
 
-        rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
-        self.assertEqual(rc, 0)
-        # "set PYTHONPATH={0}\src && py.test C:\urh\tests ".format(target_dir)
-        #vm_helper.stop_vm()
-        #vm_helper.send_command("git clone ")
-
-
-
-    def test_windows_pip(self):
-        """
         To Fix Windows Error in Guest OS:
         type gpedit.msc and go to:
         Windows Settings
@@ -131,53 +92,47 @@ class TestInstallation(unittest.TestCase):
 
         [uninstall]
         yes = true
+        :return:
         """
-        call('VBoxManage startvm "Windows 10"', shell=True)
-        time.sleep(30)
-
-        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "install" "urh"', shell=True)
-        rc = call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\urh.exe" "autoclose"', shell=True)
-        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\Scripts\pip.exe" "uninstall" "urh"', shell=True)
-
-        call('VBoxManage controlvm "Windows 10" acpipowerbutton', shell=True)
-
-        # -v -p no:cacheprovider
-
+        target_dir = r"C:\urh"
+        vm_helper = VMHelper("Windows 10", shell="cmd.exe /c")
+        vm_helper.start_vm()
+        vm_helper.send_command("rd /s /q {0}".format(target_dir))
+        vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
+        rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
         self.assertEqual(rc, 0)
 
-    def test_windows_git(self):
-        call('VBoxManage startvm "Windows 10"', shell=True)
-        time.sleep(30)
+        #rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
+        #self.assertEqual(rc, 0)
 
-        target_dir = r"C:\Users\joe\urh"
+        vm_helper.send_command("pip install urh")
+        rc = vm_helper.send_command("urh autoclose")
+        self.assertEqual(rc, 0)
+        vm_helper.send_command("pip uninstall urh")
+        vm_helper.stop_vm()
 
-        call(r'VBoxManage guestcontrol "Windows 10" run "cmd.exe" "/c" "rd" "/s" "/q" "{0}"'.format(target_dir), shell=True)
-        call(r'VBoxManage guestcontrol "Windows 10" run "C:\Program Files\Git\bin\git.exe" "clone" "https://github.com/jopohl/urh" "{0}"'.format(target_dir), shell=True)
-        rc = call(r'VBoxManage guestcontrol "Windows 10" run "C:\Python35\python.exe" "{0}\src\urh\main.py" "autoclose"'.format(target_dir), shell=True)
+    def test_osx(self):
+        """
+        Run Unittests + Pip Installation on OSX
 
-        call('VBoxManage controlvm "Windows 10" acpipowerbutton', shell=True)
+        :return:
+        """
 
+        vm_helper = VMHelper("OSX", ssh_port="3022", ssh_username="boss")
+        vm_helper.start_vm()
+
+        python_bin_dir = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
+        target_dir = "/tmp/urh"
+        vm_helper.send_command("rm -rf {0}".format(target_dir))
+        vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
+        rc = vm_helper.send_command("{0}python3 {1}/src/urh/cythonext/build.py".format(python_bin_dir, target_dir))
         self.assertEqual(rc, 0)
 
-    def test_osx_pip(self):
-        call("VBoxManage startvm OSX", shell=True)
-        ssh_helper = SSHHelper("boss", 3022)
-        ssh_helper.wait_for_ssh_running()
-        python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
-        ssh_helper.send_command(python_bin_path + "pip3 --no-cache-dir install urh")
-        rc = ssh_helper.send_command(python_bin_path + "urh autoclose")
-        ssh_helper.send_command(python_bin_path + "pip3 uninstall --yes urh")
-        ssh_helper.send_command("sudo shutdown -h now")
+        #rc = vm_helper.send_command("export PYTHONPATH='{0}/urh/src && py.test {0}/urh/tests'".format(target_dir))
+        #self.assertEqual(rc, 0)
 
+        vm_helper.send_command("{0}pip3 --no-cache-dir install urh".format(python_bin_dir))
+        rc = vm_helper.send_command("{0}urh autoclose".format(python_bin_dir))
         self.assertEqual(rc, 0)
-
-    def test_osx_git(self):
-        call("VBoxManage startvm OSX", shell=True)
-        ssh_helper = SSHHelper("boss", 3022)
-        ssh_helper.wait_for_ssh_running()
-        ssh_helper.send_command("cd /tmp && rm -rf urh && git clone 'https://github.com/jopohl/urh'")
-        python_bin_path = "/Library/Frameworks/Python.framework/Versions/3.5/bin/"
-        rc = ssh_helper.send_command(python_bin_path+"python3 /tmp/urh/src/urh/main.py autoclose")
-        ssh_helper.send_command("sudo shutdown -h now")
-
-        self.assertEqual(rc, 0)
+        vm_helper.send_command("{0}pip3 uninstall --yes urh".format(python_bin_dir))
+        vm_helper.stop_vm()

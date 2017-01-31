@@ -38,18 +38,18 @@ class VMHelper(object):
 
     def __send_command(self, command: str, hide_output=False, print_command=True) -> int:
         if self.use_ssh:
-            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),  "'{0}'".format(command)]
+            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),  '"{0}"'.format(command)]
         else:
             fullcmd = ["VBoxManage", "guestcontrol", '"{0}"'.format(self.vm_name), "run"] \
                       + self.shell.split(" ") \
-                      + ["'{0}'".format(command)]
+                      + ['"{0}"'.format(command)]
 
         kwargs = {"stdout": DEVNULL, "stderr": DEVNULL} if hide_output else {}
 
         fullcmd = " ".join(fullcmd)
 
         if print_command:
-            print("'\033[1m'" + str(fullcmd) + "'\033[0m'")
+            print("\033[1m" + fullcmd + "\033[0m")
 
         return call(fullcmd, shell=True, **kwargs)
 

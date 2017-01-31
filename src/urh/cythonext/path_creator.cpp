@@ -5,8 +5,6 @@
     "distutils": {
         "depends": [],
         "extra_compile_args": [
-            "-static",
-            "-static-libgcc",
             "-fopenmp"
         ],
         "extra_link_args": [

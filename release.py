@@ -1,13 +1,27 @@
+import os
+import sys
 from subprocess import call, check_output
-import os, sys
 
-if input("Did you run all Unittests + Git Install Tests? [y/N]").lower() not in ("y", "yes"):
-    sys.exit(1)
+import pytest
+from urh import constants
 
 open("/tmp/urh_releasing", "w").close()
 
 script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
-sys.path.append(script_dir)
+sys.path.append(os.path.realpath(os.path.join(script_dir, "src")))
+
+rc = pytest.main(["--exitfirst", "tests"])
+
+if rc != 0:
+    print(constants.color.RED + constants.color.BOLD + "Unittests failed. Abort release." + constants.color.END)
+    sys.exit(1)
+
+# -n for parallel with pytest-xdist
+rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+
+if rc != 0:
+    print(constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
+    sys.exit(1)
 
 from src.urh import version
 version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))
@@ -66,4 +80,9 @@ call(["git", "push"])
 
 os.remove("/tmp/urh_releasing")
 
-print("\033[1m\033[91mFinished. Do not forget to run the install tests for new release\033[0m")
+rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+
+if rc != 0:
+    print(constants.color.BOLD + constants.color.RED + "Installation Test failed." + constants.color.END)
+else:
+    print(constants.color.BOLD + constants.color.GREEN + "Success" + constants.color.END)

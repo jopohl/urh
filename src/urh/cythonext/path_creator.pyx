@@ -55,6 +55,8 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
         scale_factor = 1.0
 
     cdef list result = []
+    if scale_factor == 0:
+        scale_factor = 1  # prevent division by zero
     for subpath_range in subpath_ranges:
         substart = int((subpath_range[0]-start)/scale_factor)
         subend = int((subpath_range[1]-start)/scale_factor) + 1

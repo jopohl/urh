@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu
 from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
 import math
@@ -30,6 +30,7 @@ class ParticipantItem(QGraphicsItem):
         if not self.scene():
             return
 
+        self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, (len(self.scene().messages) + 1) * 50)
         super().update()
@@ -43,11 +44,21 @@ class ParticipantItem(QGraphicsItem):
 class MessageItem(QGraphicsItem):
     def __init__(self, source, destination, parent=None):
         super().__init__(parent)
-        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemHasNoContents)
+        self.setFlags(QGraphicsItem.ItemIsSelectable)
         self.arrow = MessageArrowItem(self)
         self.source = source
         self.destination = destination
         self.labels = []
+        self.setAcceptHoverEvents(True)
+        self.hover_active = False
+
+    def hoverEnterEvent(self, event):
+        self.hover_active = True
+        super().update()
+
+    def hoverLeaveEvent(self, event):
+        self.hover_active = False
+        super().update()
 
     def labels_width(self):
         width = sum([lbl.boundingRect().width() for lbl in self.labels])
@@ -59,6 +70,7 @@ class MessageItem(QGraphicsItem):
         self.labels.append(label)
 
     def update(self, y_pos):
+        self.prepareGeometryChange()
         self.arrow.setLine(self.source.line.line().x1(), y_pos, self.destination.line.line().x1(), y_pos)
 
         start_x = min(self.source.line.line().x1(), self.destination.line.line().x1())
@@ -71,14 +83,20 @@ class MessageItem(QGraphicsItem):
         super().update()
 
     def boundingRect(self):
-        return QRectF()
+        return self.childrenBoundingRect()
 
     def paint(self, painter, option, widget):
-        pass
+        if self.hover_active or self.isSelected():
+            rect = self.boundingRect()
+            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setBrush(constants.SELECTION_COLOR)
+            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.drawRect(self.boundingRect())
 
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.extra = 5
         self.setPen(QPen(Qt.black, 1, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):
@@ -105,6 +123,8 @@ class MessageArrowItem(QGraphicsLineItem):
         arrowP1 = self.line().p2() - QPointF(math.sin(angle + math.pi / 2.5) * arrowSize,
                     math.cos(angle + math.pi / 2.5) * arrowSize)
 
+        self.extra = abs(self.line().y1() - arrowP1.y())
+
         arrowP2 = self.line().p2() - QPointF(math.sin(angle + math.pi - math.pi / 2.5) * arrowSize,
                     math.cos(angle + math.pi - math.pi / 2.5) * arrowSize)
 
@@ -127,6 +147,25 @@ class SimulatorScene(QGraphicsScene):
 
         self.messages = []
 
+    def mousePressEvent(self, event):
+        if event.button() != Qt.LeftButton:
+            event.accept()
+            return
+
+        super().mousePressEvent(event)
+
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+
+        delAction = menu.addAction("Delete selected messages")
+        action = menu.exec_(event.screenPos())
+
+        if action == delAction:
+            for item in self.selectedItems():
+                self.messages.remove(item)
+                self.arrange_items()
+                self.removeItem(item)
+
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
@@ -134,12 +173,12 @@ class SimulatorScene(QGraphicsScene):
             if msg.source not in self.participants or msg.destination not in self.participants:
                 self.removeItem(msg)
 
-        self.messages[:] = [msg for msg in self.messages
+        self.messages = [msg for msg in self.messages
                                 if msg.source in self.participants
                                 and msg.destination in self.participants]
 
         self.arrange_items()
-        
+
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):
             if key not in participants:

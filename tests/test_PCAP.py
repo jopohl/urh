@@ -4,11 +4,11 @@ import unittest
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-
+from tests.utils_testing import get_path_for_data_file
 
 class TestPCAP(unittest.TestCase):
     def test_write(self):
-        signal = Signal("./data/ask.complex", "ASK-Test")
+        signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = 0
         signal.bit_len = 295
         signal.qad_center = -0.1667

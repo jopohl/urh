@@ -1,30 +1,25 @@
 import unittest
 
 import math
-from PyQt5.QtTest import QTest
-
+import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 
-__author__ = 'joe'
+from tests.utils_testing import get_path_for_data_file
 
-import tests.startApp
-
-app = tests.startApp.app
+app = tests.utils_testing.app
 
 
 class TestPlugins(unittest.TestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-        QTest.qWait(100)
 
         self.form = MainController()
-        self.form.add_signalfile("./data/esaver.complex")
-        QTest.qWait(100)
+        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
@@ -40,11 +35,9 @@ class TestPlugins(unittest.TestCase):
                                (1, 1, 4, 4), self.cframe.proto_analyzer, 0)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
         action.trigger()
-        QTest.qWait(100)
         self.assertEqual(self.cframe.protocol_model.row_count, 4)
 
         self.cframe.protocol_undo_stack.undo()
-        QTest.qWait(100)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
     def test_zero_hide_plugin_gui(self):
@@ -54,26 +47,22 @@ class TestPlugins(unittest.TestCase):
         action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
                                self.cframe.proto_analyzer, 0)
         action.trigger()
-        QTest.qWait(100)
         self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 377 - 188)
 
         self.cframe.protocol_undo_stack.undo()
-        QTest.qWait(100)
         self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 377)
 
     def test_zero_hide_plugin_function(self):
         zh = ZeroHidePlugin()
         zh.following_zeros = 3
-        self.form.add_signalfile("./data/ask.complex")
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.ui.tabWidget.setCurrentIndex(1)
-        QTest.qWait(100)
         test_bits = "10110010010110110110110110110110110001000000"
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits)
 
         action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
                                self.cframe.proto_analyzer, 0)
         action.trigger()
-        QTest.qWait(100)
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], "10110010010110110110110110110110111")
 
     def test_sdr_interface_plugin(self):

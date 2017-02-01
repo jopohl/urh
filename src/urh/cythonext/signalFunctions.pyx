@@ -12,7 +12,6 @@ from libc.math cimport atan2, sqrt, M_PI, sin, cos
 cdef:
     float complex imag_unit = 1j
 
-
 cdef float NOISE_FSK_PSK = -4.0
 cdef float NOISE_ASK = 0.0
 
@@ -79,9 +78,11 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
         return np.empty(len(samples), dtype=np.float32)
 
     cdef long long i, ns
-    cdef np.complex64_t tmp, c
-    cdef float arg, noise_sqrd, real, imag, complex_phase, prev_phase
-    cdef float NOISE
+    cdef float complex tmp = 0
+    cdef float complex c = 0
+    cdef float arg, noise_sqrd, complex_phase, prev_phase, NOISE
+    cdef float real = 0
+    cdef float imag = 0
     ns = len(samples)
 
     cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
@@ -91,7 +92,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     cdef float phase_error
     cdef float costa_alpha, costa_beta
     cdef complex nco_times_sample
-    cdef float magnitude
+    cdef float magnitude = 0
 
     # Atan2 liefert Werte im Bereich von -Pi bis Pi
     # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
@@ -105,8 +106,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
         if mod_type == 3:
             qam = True
 
-        costa_alpha = calc_costa_alpha(2 * M_PI / 100)
-        costa_beta = calc_costa_beta(2 * M_PI / 100)
+        costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
+        costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
 
     else:
@@ -128,9 +129,9 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
 
 cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):
 
-    cdef unsigned long long i, ns
+    cdef unsigned long long i, ns, l
     cdef float dsample
-    cdef int has_oversteuern, l, conseq_noise, conseq_not_noise, behind_oversteuern
+    cdef int has_oversteuern, conseq_noise, conseq_not_noise, behind_oversteuern
     cdef float NOISE = get_noise_for_mod_type(mod_type)
 
     has_oversteuern = 0
@@ -191,7 +192,7 @@ cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type)
     return ns
 
 cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
-                                                 float treshold, int tolerance, int mod_type):
+                                                 float treshold, unsigned int tolerance, int mod_type):
     """
     Holt sich die Pulslängen aus den quadraturdemodulierten Samples
     @param samples: Samples nach der QAD
@@ -223,13 +224,6 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
     for i in range(ns-1):
         pulselen += 1
         s = samples[i]
-        # True Nullen abdecken (Kollidiert mit Noise bei ASK, daher auskommentiert)
-        # Das "Modulationsproblem", für das wir diese Änderung gemacht hatten (Ordner Homematic/Testdata)war eine übersteuerte FSK.
-        # if s == 0:
-        #     if   cur_state == 1:    conseq_ones  += 1
-        #     elif cur_state == 0:    conseq_zeros += 1
-        #     else:                   conseq_pause += 1
-        #     continue
         if s == NOISE:
             conseq_pause += 1
             conseq_ones = 0
@@ -268,13 +262,14 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
             cur_state = 42
 
     # Letzen anfügen
-    if cur_index < len(result):
+    cdef unsigned long long len_result = len(result)
+    if cur_index < len_result:
         result[cur_index, 0] = cur_state
         result[cur_index, 1] = pulselen
         cur_index += 1
 
-    if cur_index > len(result):
-        cur_index = len(result)
+    if cur_index > len_result:
+        cur_index = len_result
 
     return result[:cur_index]
 
@@ -313,7 +308,7 @@ cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_cent
     cdef unsigned long long l = len(ppseq)
     for i in range(0, l):
         if ppseq[i, 0] == 1:
-            return ppseq[i, 1] # Erster Puls nach der Pause
+            return ppseq[i, 1] # first pulse after pause
 
     return 100
 
@@ -341,9 +336,15 @@ cdef:
         double sum
         unsigned long long int nitems
 
-cpdef float estimate_qad_center(float[::1] samples, int num_centers):
-    # Estimate the Centers using Lloyds algorithm
-    # Use more Centers for ks Clipping
+cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
+    """
+    Estimate the centers using Lloyds algorithm
+    Use more centers for ks clipping
+
+    :param samples:
+    :param num_centers:
+    :return:
+    """
     cdef unsigned long long nsamples = len(samples)
     if nsamples == 0:
         return 0

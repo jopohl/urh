@@ -4,6 +4,7 @@ from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
+from tests.utils_testing import get_path_for_data_file
 
 class TestSignal(unittest.TestCase):
     def setUp(self):
@@ -11,7 +12,7 @@ class TestSignal(unittest.TestCase):
         constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
 
     def test_freq_detection(self):
-        s = Signal("./data/steckdose_anlernen.complex", "RWE")
+        s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
         s.noise_treshold = 0.06
         s.qad_center = 0
         s.bit_len = 100

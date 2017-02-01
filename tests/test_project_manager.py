@@ -3,18 +3,17 @@ import unittest
 
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
 from urh.signalprocessing.Modulator import Modulator
-
-app = tests.startApp.app
+from tests.utils_testing import get_path_for_data_file
+app = tests.utils_testing.app
 
 
 class TestProjectManager(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
-        self.form.project_manager.set_project_folder("./data")
-        QTest.qWait(100)
+        self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
 
@@ -49,12 +48,11 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        QTest.qWait(10)
-        self.form.add_signalfile("./data/ask.complex")
-        self.form.add_signalfile("./data/fsk.complex")
-        QTest.qWait(10)
+        QTest.qWait(1)
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 2)
         self.form.close_all()
-        QTest.qWait(10)
+        QTest.qWait(1)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
         self.assertEqual(self.form.project_manager.project_file, None)

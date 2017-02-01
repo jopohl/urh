@@ -5,10 +5,10 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
-
-app = tests.startApp.app
+from tests.utils_testing import get_path_for_data_file
+app = tests.utils_testing.app
 
 
 class TestGenerator(unittest.TestCase):
@@ -26,14 +26,12 @@ class TestGenerator(unittest.TestCase):
 
         """
         # Load a Signal
-        self.form.add_signalfile("./data/ask.complex")
-        QTest.qWait(10)
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
         sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
         sframe.refresh()
-        QTest.qWait(10)
 
         proto = "1011001001011011011011011011011011001000000"
         self.assertTrue(sframe.ui.txtEdProto.toPlainText().startswith(proto))
@@ -42,7 +40,6 @@ class TestGenerator(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         cfc = self.form.compare_frame_controller
         cfc.ui.cbDecoding.setCurrentIndex(1) # NRZ-I
-        QTest.qWait(10)
         proto_inv = cfc.proto_analyzer.decoded_proto_bits_str[0]
         self.assertTrue(self.__is_inv_proto(proto, proto_inv))
 
@@ -66,11 +63,9 @@ class TestGenerator(unittest.TestCase):
         modulated_data = gframe.modulate_data()
         filename = os.path.join(QDir.tempPath(), "generator_test.complex")
         modulated_data.tofile(filename)
-        QTest.qWait(10)
 
         # Reload datafile and see if bits match
         self.form.add_signalfile(filename)
-        QTest.qWait(10)
         sframe = self.form.signal_tab_controller.signal_frames[1]
         self.assertEqual(sframe.ui.lineEditSignalName.text(), "generator_test")
         sframe.ui.cbSignalView.setCurrentIndex(1)  # ASK
@@ -79,14 +74,13 @@ class TestGenerator(unittest.TestCase):
         sframe.ui.spinBoxCenterOffset.setValue(0.1)
         sframe.ui.spinBoxCenterOffset.editingFinished.emit()
         sframe.refresh()
-        QTest.qWait(10)
 
         gen_proto = sframe.ui.txtEdProto.toPlainText()
         gen_proto = gen_proto[:gen_proto.index(" ")]
         self.assertTrue(proto.startswith(gen_proto))
 
     def test_close_signal(self):
-        self.form.add_signalfile("./data/ask.complex")
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -107,13 +101,10 @@ class TestGenerator(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(0)
         self.form.on_selected_tab_changed()
         sframe.ui.btnCloseSignal.click()
-        QTest.qWait(1000)
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.form.on_selected_tab_changed()
-        QTest.qWait(1000)
         self.form.ui.tabWidget.setCurrentIndex(2)
         self.form.on_selected_tab_changed()
-        QTest.qWait(1000)
         self.assertEqual(1, 1)
 
 

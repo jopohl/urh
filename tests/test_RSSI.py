@@ -1,17 +1,12 @@
-import os
 import unittest
-
-from PyQt5.QtTest import QTest
-
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-
+from tests.utils_testing import get_path_for_data_file
 
 class TestRSSI(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten
     def test_get_rssi_of_message(self):
-        signal = Signal(os.path.realpath(os.path.join(os.curdir, "data", "two_participants.complex")), "RSSI-Test")
-        QTest.qWait(10)
+        signal = Signal(get_path_for_data_file("two_participants.complex"), "RSSI-Test")
         signal.modulation_type = 1
         signal.bit_len = 100
         signal.qad_center = -0.0507

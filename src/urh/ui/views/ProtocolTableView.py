@@ -13,14 +13,14 @@ class ProtocolTableView(TableView):
     show_interpretation_clicked = pyqtSignal(int, int, int, int)
     selection_changed = pyqtSignal()
     protocol_view_change_clicked = pyqtSignal(int)
-    row_visibilty_changed = pyqtSignal()
+    row_visibility_changed = pyqtSignal()
     writeable_changed = pyqtSignal(bool)
     crop_sync_clicked = pyqtSignal()
     revert_sync_cropping_wanted = pyqtSignal()
     edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
-    new_messagetype_clicked  = pyqtSignal(list) # list of protocol messages
+    new_messagetype_clicked = pyqtSignal(list) # list of protocol messages
     messagetype_selected = pyqtSignal(MessageType, list)
 
     def __init__(self, parent=None):
@@ -90,7 +90,7 @@ class ProtocolTableView(TableView):
         if refindex < self.model().row_count:
             self.model().refindex = refindex
         self.model().update()
-        self.row_visibilty_changed.emit()
+        self.row_visibility_changed.emit()
 
     def contextMenuEvent(self, event):
         menu = QMenu()
@@ -242,7 +242,7 @@ class ProtocolTableView(TableView):
                 self.showRow(i)
             self.model().hidden_rows.clear()
             self.model().update()
-            self.row_visibilty_changed.emit()
+            self.row_visibility_changed.emit()
         elif action == bitAction:
             self.protocol_view_change_clicked.emit(0)
         elif action == hexAction:

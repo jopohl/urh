@@ -16,11 +16,8 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
+from tests.utils_testing import get_path_for_data_file
 
-
-
-
-from urh.cythonext import util
 class TestAWRE(unittest.TestCase):
     def setUp(self):
         self.field_types = FieldType.default_field_types()
@@ -33,7 +30,7 @@ class TestAWRE(unittest.TestCase):
         self.src_address_field_type = self.__field_type_with_function(self.field_types, FieldType.Function.SRC_ADDRESS)
 
         self.protocol = ProtocolAnalyzer(None)
-        with open("./data/awre_consistent_addresses.txt") as f:
+        with open(get_path_for_data_file("awre_consistent_addresses.txt")) as f:
             for line in f:
                 self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
@@ -48,7 +45,7 @@ class TestAWRE(unittest.TestCase):
         self.participants = [alice, bob]
 
         self.zero_crc_protocol = ProtocolAnalyzer(None)
-        with open("./data/awre_zeroed_crc.txt") as f:
+        with open(get_path_for_data_file("awre_zeroed_crc.txt")) as f:
             for line in f:
                 self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 self.zero_crc_protocol.messages[-1].message_type = self.protocol.default_message_type
@@ -135,7 +132,7 @@ class TestAWRE(unittest.TestCase):
 
     def test_format_finding_enocean(self):
         enocean_protocol = ProtocolAnalyzer(None)
-        with open("./data/enocean_bits.txt") as f:
+        with open(get_path_for_data_file("enocean_bits.txt")) as f:
             for line in f:
                 enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
                 enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type

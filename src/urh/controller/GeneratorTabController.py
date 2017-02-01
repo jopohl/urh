@@ -31,8 +31,7 @@ from urh.util.Logger import logger
 
 
 class GeneratorTabController(QWidget):
-    def __init__(self, compare_frame_controller: CompareFrameController,
-                 project_manager: ProjectManager, parent=None):
+    def __init__(self, compare_frame_controller: CompareFrameController, project_manager: ProjectManager, parent=None):
         """
         :type encoders: list of Encoder
         :return:
@@ -51,7 +50,8 @@ class GeneratorTabController(QWidget):
 
         self.has_default_modulation = True
 
-        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem, [Modulator("Modulation")], compare_frame_controller.decodings)
+        self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
+                                               [Modulator("Modulation")], compare_frame_controller.decodings)
         """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableMessages.setModel(self.table_model)
@@ -70,6 +70,31 @@ class GeneratorTabController(QWidget):
         self.ui.prBarGeneration.hide()
         self.create_connects(compare_frame_controller)
 
+    @property
+    def selected_message_index(self) -> int:
+        min_row, _, _, _ = self.ui.tableMessages.selection_range()
+        return min_row  #
+
+    @property
+    def selected_message(self) -> Message:
+        selected_msg_index = self.selected_message_index
+        if selected_msg_index == -1 or selected_msg_index >= len(self.table_model.protocol.messages):
+            return None
+
+        return self.table_model.protocol.messages[selected_msg_index]
+
+    @property
+    def active_groups(self):
+        return self.tree_model.groups
+
+    @property
+    def modulators(self):
+        return self.table_model.protocol.modulators
+
+    @modulators.setter
+    def modulators(self, value):
+        assert type(value) == list
+        self.table_model.protocol.modulators = value
 
     def create_connects(self, compare_frame_controller):
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
@@ -110,35 +135,6 @@ class GeneratorTabController(QWidget):
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_network_sdr_send_message_changed)
-
-
-    @property
-    def selected_message_index(self) -> int:
-        min_row, _, _, _ = self.ui.tableMessages.selection_range()
-        return min_row#
-
-
-    @property
-    def selected_message(self) -> Message:
-        selected_msg_index = self.selected_message_index
-        if selected_msg_index == -1 or selected_msg_index >= len(self.table_model.protocol.messages):
-            return None
-
-        return self.table_model.protocol.messages[selected_msg_index]
-
-
-    @property
-    def active_groups(self):
-        return self.tree_model.groups
-
-    @property
-    def modulators(self):
-        return self.table_model.protocol.modulators
-
-    @modulators.setter
-    def modulators(self, value):
-        assert type(value) == list
-        self.table_model.protocol.modulators = value
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -184,7 +180,6 @@ class GeneratorTabController(QWidget):
                     self.table_model.protocol.messages[row].modulator_indx = cur_ind
                 except IndexError:
                     continue
-
 
         self.show_modulation_info()
 
@@ -241,7 +236,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.sample_rate
 
-        c = ModulatorDialogController(self.modulators, parent = self)
+        c = ModulatorDialogController(self.modulators, parent=self)
         c.ui.treeViewSignals.setModel(self.tree_model)
         c.ui.treeViewSignals.expandAll()
         c.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -439,7 +434,8 @@ class GeneratorTabController(QWidget):
         pause_samples = sum(c.pauses)
         nsamples = c.num_messages * avg_msg_len * avg_bit_len + pause_samples
 
-        self.ui.lEstimatedTime.setText(locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
+        self.ui.lEstimatedTime.setText(
+            locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
 
     @pyqtSlot(int, int, int)
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
@@ -461,7 +457,8 @@ class GeneratorTabController(QWidget):
         except IndexError:
             return
         if label.show and self.selected_message:
-            start, end = self.selected_message.get_label_range(lbl=label, view=self.table_model.proto_view, decode=False)
+            start, end = self.selected_message.get_label_range(lbl=label, view=self.table_model.proto_view,
+                                                               decode=False)
             indx = self.table_model.index(0, int((start + end) / 2))
             self.ui.tableMessages.scrollTo(indx)
 
@@ -505,7 +502,6 @@ class GeneratorTabController(QWidget):
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
-
 
     @pyqtSlot()
     def on_btn_save_clicked(self):

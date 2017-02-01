@@ -4,12 +4,12 @@ import unittest
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh.controller.MainController import MainController
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 
-app = tests.startApp.app
+app = tests.utils_testing.app
 
 
 class TestGeneratorTable(unittest.TestCase):
@@ -19,7 +19,6 @@ class TestGeneratorTable(unittest.TestCase):
 
     def setUp(self):
         self.form = MainController()
-        QTest.qWait(10)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -29,14 +28,11 @@ class TestGeneratorTable(unittest.TestCase):
         proto = self.__build_protocol()
         self.cframe.add_protocol(proto)
         proto.qt_signals.protocol_updated.emit()
-        QTest.qWait(10)
-
 
         self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_MESSAGES)
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
         self.__add_labels()
-        QTest.qWait(10)
 
     def test_performance(self):
         item = self.gframe.tree_model.rootItem.children[0].children[0]
@@ -61,7 +57,7 @@ class TestGeneratorTable(unittest.TestCase):
             print("{0}: {1} µs".format(self.__role_to_str(role), microseconds))
 
     def __build_protocol(self):
-        result = ProtocolAnalyzer(signal = None)
+        result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_MESSAGES):
             b = Message([True] * self.BITS_PER_MESSAGE, pause = 1000, message_type=result.default_message_type)
             result.messages.append(b)

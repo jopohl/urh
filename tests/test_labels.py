@@ -3,11 +3,12 @@ import unittest
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.startApp
+import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
+from tests.utils_testing import get_path_for_data_file
 
-app = tests.startApp.app
+app = tests.utils_testing.app
 
 
 class TestLabels(unittest.TestCase):
@@ -15,12 +16,8 @@ class TestLabels(unittest.TestCase):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
-        QTest.qWait(100)
-
         self.form = MainController()
-        self.form.add_signalfile("./data/esaver.complex")
-        QTest.qWait(100)
-
+        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
@@ -39,7 +36,6 @@ class TestLabels(unittest.TestCase):
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)
-        QTest.qWait(10)
         for i in range(0, 40):
             self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
         self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg = "Bit 43")
@@ -47,15 +43,12 @@ class TestLabels(unittest.TestCase):
             self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
 
         self.cframe.ui.cbProtoView.setCurrentIndex(1)  # Hex View
-        QTest.qWait(10)
         for i in range(0, 10):
             self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Hex " + str(i))
         for i in range(13, self.cframe.protocol_model.col_count):
             self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Hex " + str(i))
 
-
     def test_generator_label(self):
-
         labels = self.cframe.proto_analyzer.protocol_labels
         self.assertEqual(len(labels), 2)
 

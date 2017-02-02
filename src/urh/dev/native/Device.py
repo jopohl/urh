@@ -337,3 +337,4 @@ class Device(QObject):
             return b""
         except ValueError:
             logger.info("Receiving Thread was closed. Callback cant read queue.")
+            return b""

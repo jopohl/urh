@@ -82,7 +82,7 @@ class Signal(QObject):
                     self._fulldata = np.fromfile(extracted_filename, dtype=np.complex64)
                     os.remove(extracted_filename)
 
-                self._fulldata = np.ascontiguousarray(self._fulldata, dtype=np.complex64)
+                self._fulldata = np.ascontiguousarray(self._fulldata, dtype=np.complex64)  # type: np.ndarray
             else:
                 f = wave.open(filename, "r")
                 n = f.getnframes()
@@ -371,3 +371,10 @@ class Signal(QObject):
 
     def silent_set_modulation_type(self, mod_type: int):
         self.__modulation_type = mod_type
+
+    def insert_data(self, index: int, data: np.ndarray):
+        self._fulldata = np.insert(self._fulldata, index, data)
+        self._qad = None
+        self._num_samples = len(self.data)
+        self.data_edited.emit()
+        self.protocol_needs_update.emit()

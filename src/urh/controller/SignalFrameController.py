@@ -141,7 +141,7 @@ class SignalFrameController(QFrame):
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
-            self.signal.data_edited.connect(self.refresh_signal) # Crop/Delete Mute etc.
+            self.signal.data_edited.connect(self.refresh_signal)  # Crop/Delete Mute etc.
             self.signal.sample_rate_changed.connect(self.__set_duration)
             self.signal.sample_rate_changed.connect(self.show_protocol)  # Update times
 

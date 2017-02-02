@@ -1,6 +1,7 @@
-from PyQt5.QtCore import Qt, QPoint, QSize, pyqtSignal
+from PyQt5.QtCore import Qt, QPoint, QSize, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QMouseEvent, QKeyEvent, QCursor, QPen, QPainter, QPixmap, QIcon, QKeySequence, \
     QContextMenuEvent, QWheelEvent
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication, QMenu, QActionGroup
 
 from urh import constants
@@ -33,8 +34,37 @@ class EpicGraphicView(SelectableGraphicView):
         self.y_sep = 0
         self.is_locked = False
 
+        self.stored_item = None  # For copy/paste
+        self.paste_position = 0  # Where to paste? Set in contextmenuevent
+
         self.parent_frame = self.parent().parent().parent()
 
+        self.save_action = QAction(self.tr("Save"))  # type: QAction
+        self.save_action.setIcon(QIcon.fromTheme("document-save"))
+        self.save_action.setShortcut(QKeySequence.Save)
+        self.save_action.triggered.connect(self.on_save_action_triggered)
+        self.addAction(self.save_action)
+
+        self.save_as_action = QAction(self.tr("Save Signal as..."))  # type: QAction
+        self.save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
+        self.save_as_action.setShortcut(QKeySequence.SaveAs)
+        self.save_as_action.triggered.connect(self.on_save_as_action_triggered)
+        self.addAction(self.save_as_action)
+
+        self.copy_action = QAction(self.tr("Copy selection"))  # type: QAction
+        self.copy_action.setShortcut(QKeySequence.Copy)
+        self.copy_action.triggered.connect(self.on_copy_action_triggered)
+        self.addAction(self.copy_action)
+
+        self.paste_action = QAction(self.tr("Paste"))  # type: QAction
+        self.paste_action.setShortcut(QKeySequence.Paste)
+        self.paste_action.triggered.connect(self.on_paste_action_triggered)
+        self.addAction(self.paste_action)
+
+        self.delete_action = QAction(self.tr("Delete selection"))
+        self.delete_action.setShortcut(QKeySequence.Delete)
+        self.delete_action.triggered.connect(self.on_delete_action_triggered)
+        self.addAction(self.delete_action)
 
     @property
     def signal(self):
@@ -83,30 +113,34 @@ class EpicGraphicView(SelectableGraphicView):
         if self.ctrl_mode:
             return
 
-        menu = QMenu(self)
-        saveAction = menu.addAction(self.tr("Save"))
-        """:type: QAction """
-        saveAction.setIcon(QIcon.fromTheme("document-save"))
-        saveAction.setShortcut(QKeySequence.Save)
+        self.paste_position = int(self.mapToScene(event.pos()).x())
 
-        saveAsAction = menu.addAction(self.tr("Save Signal as..."))
-        """:type: QAction """
-        saveAsAction.setIcon(QIcon.fromTheme("document-save-as"))
-        zoomAction = None
-        createAction = None
-        noiseAction = None
+        menu = QMenu(self)
+        menu.addAction(self.save_action)
+        menu.addAction(self.save_as_action)
+
+        zoom_action = None
+        create_action = None
+        noise_action = None
+        crop_action = None
+        mute_action = None
+
+        menu.addAction(self.copy_action)
+        self.copy_action.setEnabled(not self.selection_area.is_empty)
+        menu.addAction(self.paste_action)
+        self.paste_action.setEnabled(self.stored_item is not None)
 
         menu.addSeparator()
         #autorangeAction = menu.addAction(self.tr("Show Autocrop Range"))
-        cropAction = None
 
         if not self.selection_area.is_empty:
-            cropAction = menu.addAction(self.tr("Crop to Selection"))
-            deleteAction = menu.addAction(self.tr("Delete Selection"))
-            muteAction = menu.addAction(self.tr("Mute Selection"))
+            menu.addAction(self.delete_action)
+            crop_action = menu.addAction(self.tr("Crop to selection"))
+            mute_action = menu.addAction(self.tr("Mute selection"))
+
             menu.addSeparator()
-            zoomAction = menu.addAction(self.tr("Zoom Selection"))
-            createAction = menu.addAction(self.tr("Create Signal from Selection"))
+            zoom_action = menu.addAction(self.tr("Zoom selection"))
+            create_action = menu.addAction(self.tr("Create signal from selection"))
 
         selected_messages = self.selected_messages
 
@@ -141,32 +175,25 @@ class EpicGraphicView(SelectableGraphicView):
         if self.scene_type == 0:
             if not self.selection_area.is_empty:
                 menu.addSeparator()
-                noiseAction = menu.addAction(self.tr("Set noise level from Selection"))
+                noise_action = menu.addAction(self.tr("Set noise level from Selection"))
 
         QApplication.processEvents()  # Ohne dies flackert das Menü beim ersten Erscheinen
         action = menu.exec_(self.mapToGlobal(event.pos()))
 
         if action is None:
             return
-        elif action == saveAction:
-            self.save_clicked.emit()
-        elif action == saveAsAction:
-            self.save_as_clicked.emit()
-        elif action == zoomAction:
+        elif action == zoom_action:
             self.zoom_to_selection(self.selection_area.x, self.selection_area.end)
-        elif action == createAction:
+        elif action == create_action:
             self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
         #elif action == autorangeAction:
         #    self.show_crop_range_clicked.emit()
-        elif action == cropAction:
+        elif action == crop_action:
             self.crop_clicked.emit()
-        elif action == noiseAction:
+        elif action == noise_action:
             self.set_noise_clicked.emit()
-        elif action == deleteAction:
-            self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
-        elif action == muteAction:
+        elif action == mute_action:
             self.mute_wanted.emit(self.selection_area.start, self.selection_area.end)
-
         elif action == none_partipnt_action:
             for msg in selected_messages:
                 msg.participant = None
@@ -259,10 +286,6 @@ class EpicGraphicView(SelectableGraphicView):
             step = self.horizontalScrollBar().singleStep()
             self.horizontalScrollBar().setValue(cur_val - step)
 
-        elif key == Qt.Key_Delete:
-            if not self.selection_area.is_empty:
-                self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
-
     def draw_full_signal(self):
         if hasattr(self.parent_frame, "scene_creator"):
             self.parent_frame.scene_creator.show_full_scene()
@@ -299,10 +322,34 @@ class EpicGraphicView(SelectableGraphicView):
     def clear_selection(self):
         self.set_selection_area(0, 0)
 
-
     def resizeEvent(self, event):
         if self.view_rect().width() > self.sceneRect().width():
             x_factor = self.width() / self.sceneRect().width()
             self.scale(x_factor / self.transform().m11(), 1)
 
         self.autofit_view()
+
+    @pyqtSlot()
+    def on_copy_action_triggered(self):
+        if not self.selection_area.is_empty:
+            self.stored_item = self.signal._fulldata[int(self.selection_area.start):int(self.selection_area.end)]
+
+    @pyqtSlot()
+    def on_paste_action_triggered(self):
+        if self.stored_item is not None:
+            # paste_position is set in ContextMenuEvent
+            self.signal.insert_data(self.paste_position, self.stored_item)
+
+    @pyqtSlot()
+    def on_delete_action_triggered(self):
+        if not self.selection_area.is_empty:
+            self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
+
+    @pyqtSlot()
+    def on_save_action_triggered(self):
+        self.save_clicked.emit()
+
+    @pyqtSlot()
+    def on_save_as_action_triggered(self):
+        self.save_as_clicked.emit()
+

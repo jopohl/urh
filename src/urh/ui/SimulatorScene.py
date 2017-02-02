@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction
 from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
 import math
@@ -96,7 +96,6 @@ class MessageItem(QGraphicsItem):
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.extra = 5
         self.setPen(QPen(Qt.black, 1, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):
@@ -122,8 +121,6 @@ class MessageArrowItem(QGraphicsLineItem):
 
         arrowP1 = self.line().p2() - QPointF(math.sin(angle + math.pi / 2.5) * arrowSize,
                     math.cos(angle + math.pi / 2.5) * arrowSize)
-
-        self.extra = abs(self.line().y1() - arrowP1.y())
 
         arrowP2 = self.line().p2() - QPointF(math.sin(angle + math.pi - math.pi / 2.5) * arrowSize,
                     math.cos(angle + math.pi - math.pi / 2.5) * arrowSize)
@@ -157,7 +154,11 @@ class SimulatorScene(QGraphicsScene):
     def contextMenuEvent(self, event):
         menu = QMenu()
 
-        delAction = menu.addAction("Delete selected messages")
+        delAction = QAction("Delete selected messages")
+
+        if len(self.selectedItems()) > 0:
+            menu.addAction(delAction)
+
         action = menu.exec_(event.screenPos())
 
         if action == delAction:
@@ -181,7 +182,7 @@ class SimulatorScene(QGraphicsScene):
 
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):
-            if key not in participants:
+            if key is not None and key not in participants:
                 self.removeItem(self.participants_dict[key])
                 self.participants.remove(self.participants_dict[key])
                 del self.participants_dict[key]

@@ -2,6 +2,7 @@ language: python
 sudo: required
 
 python:
+  - "3.4"
   - "3.5"
   - "3.6"
 
@@ -15,6 +16,5 @@ install:
   - "pip install -r requirements.txt"
 
 script:
-  - python3 -c "from PyQt5.QtWidgets import QApplication; app=QApplication([""])"
   - python3 src/urh/cythonext/build.py
   - pytest -v tests

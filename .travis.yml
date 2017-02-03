@@ -1,4 +1,5 @@
 language: python
+sudo: required
 python:
   - "3.5"
   - "3.6"

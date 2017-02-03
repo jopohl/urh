@@ -12,7 +12,7 @@ class Formatter:
 
 
     @staticmethod
-    def science_time(time_in_seconds: float) -> str:
+    def science_time(time_in_seconds: float, decimals=2) -> str:
         if time_in_seconds < 1e-6:
             suffix = "n"
             value = time_in_seconds * 1e9
@@ -26,7 +26,7 @@ class Formatter:
             suffix = ""
             value = time_in_seconds
 
-        return locale.format_string("%.2f " + suffix, value) + "s"
+        return locale.format_string("%.{0}f ".format(decimals) + suffix, value) + "s"
 
     @staticmethod
     def big_value_with_suffix(value: float, decimals=3) -> str:

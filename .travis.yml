@@ -5,4 +5,4 @@ python:
 install: "pip install -r requirements.txt"
 script:
   - python3 src/urh/cythonext/build.py
-  - pytest -v tests
+  - pytest -v tests/test_encoding.py

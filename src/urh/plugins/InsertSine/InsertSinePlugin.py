@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
@@ -42,24 +43,37 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.show()
         self.__create_dialog_connects()
 
+    def draw_sine_wave(self):
+        self.complex_wave = np.empty(int(self.num_samples), dtype=np.complex64)
+        t = (np.arange(0, self.num_samples) / self.sample_rate)
+        self.complex_wave.real = self.amplitude * np.cos(2 * np.pi * self.frequency * t + self.phase)
+        self.complex_wave.imag = self.amplitude * np.sin(2 * np.pi * self.frequency * t + self.phase)
+
+        self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
+
     @pyqtSlot(float)
     def on_double_spin_box_amplitude_value_changed(self, value: float):
         self.amplitude = value
+        self.draw_sine_wave()
 
     @pyqtSlot(float)
     def on_double_spin_box_frequency_value_changed(self, value: float):
         self.frequency = value
+        self.draw_sine_wave()
 
     @pyqtSlot(float)
     def on_double_spin_box_phase_value_changed(self, value: float):
         self.phase = value
+        self.draw_sine_wave()
 
     @pyqtSlot(float)
     def on_double_spin_box_sample_rate_value_changed(self, value: float):
         self.sample_rate = value
         self.dialog_ui.labelTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3))
+        self.draw_sine_wave()
 
     @pyqtSlot(float)
     def on_spin_box_n_samples_value_changed(self, value: float):
         self.num_samples = int(value)
         self.dialog_ui.labelTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3))
+        self.draw_sine_wave()

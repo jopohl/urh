@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout">
        <item row="4" column="0">
         <widget class="QLabel" name="label_4">
@@ -160,12 +160,17 @@
        </item>
       </layout>
      </widget>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="ZoomableGraphicView" name="graphicsViewSineWave"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ZoomableGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.ZoomableGraphicView.h</header>
+  </customwidget>
   <customwidget>
    <class>KillerDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>

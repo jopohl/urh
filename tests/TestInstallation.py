@@ -102,7 +102,7 @@ class TestInstallation(unittest.TestCase):
         rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
         self.assertEqual(rc, 0)
 
-        rc = vm_helper.send_command(r"set PYTHONPATH={0}\src && py.test C:\urh\tests".format(target_dir))
+        rc = vm_helper.send_command(r"py.test C:\urh\tests".format(target_dir))
         self.assertEqual(rc, 0)
 
         vm_helper.send_command("pip install urh")
@@ -131,7 +131,7 @@ class TestInstallation(unittest.TestCase):
         self.assertEqual(rc, 0)
 
         # Run Unit tests
-        rc = vm_helper.send_command("export PYTHONPATH='{0}/src' && {1}py.test {0}/tests".format(target_dir, python_bin_dir))
+        rc = vm_helper.send_command("{1}py.test {0}/tests".format(target_dir, python_bin_dir))
         self.assertEqual(rc, 0)
 
         vm_helper.send_command("{0}pip3 --no-cache-dir install urh".format(python_bin_dir))

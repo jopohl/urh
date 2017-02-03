@@ -1,10 +1,12 @@
 language: python
+sudo: require
 
 python:
   - "3.5"
   - "3.6"
 
 install:
+  - sudo apt-get install -qq libegl1-mesa
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - "pip install -r requirements.txt"

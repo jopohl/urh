@@ -142,6 +142,14 @@ class SimulatorScene(QGraphicsScene):
         self.participants_dict = {}
         self.participants = []
 
+        self.not_assigned_part = ParticipantItem("?")
+        self.participants.append(self.not_assigned_part)
+        self.addItem(self.not_assigned_part)
+
+        self.broadcast_part = ParticipantItem("Broadcast")
+        self.participants.append(self.broadcast_part)
+        self.addItem(self.broadcast_part)
+
         self.messages = []
 
     def mousePressEvent(self, event):
@@ -182,7 +190,7 @@ class SimulatorScene(QGraphicsScene):
 
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):
-            if key is not None and key not in participants:
+            if key not in participants:
                 self.removeItem(self.participants_dict[key])
                 self.participants.remove(self.participants_dict[key])
                 del self.participants_dict[key]
@@ -262,7 +270,7 @@ class SimulatorScene(QGraphicsScene):
         for protocol in protocols_to_add:
             for message in protocol.messages:
                 source, destination = self.__detect_source_destination(message)
-                simulator_message = MessageItem(self.participants_dict[source], self.participants_dict[destination])
+                simulator_message = MessageItem(source, destination)
                 for label in message.message_type:
                     simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
                 self.messages.append(simulator_message)
@@ -275,17 +283,22 @@ class SimulatorScene(QGraphicsScene):
     def __detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels
         participants = self.controller.project_manager.participants
+
         source = None
         destination = None
 
-        if len(participants) < 2:
-            return (None, None)
-
-        if message.participant:
-            source = message.participant
-            destination = participants[0] if source == participants[1] else participants[1]
+        if len(participants) == 0:
+            source = self.not_assigned_part
+            destination = self.broadcast_part
+        elif len(participants) == 1:
+            source = self.participants_dict[participants[0]]
+            destination = self.broadcast_part
         else:
-            source = participants[0]
-            destination = participants[1]
+            if message.participant:
+                source = self.participants_dict[message.participant]
+                destination = self.participants_dict[participants[0]] if message.participant == participants[1] else self.participants_dict[participants[1]]
+            else:
+                source = self.participants_dict[participants[0]]
+                destination = self.participants_dict[participants[1]]
 
         return (source, destination)

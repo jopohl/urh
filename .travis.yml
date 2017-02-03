@@ -1,7 +1,8 @@
 language: python
-sudo: required
 python:
   - "3.5"
   - "3.6"
 install: "pip install -r requirements.txt"
-script: pytest -v tests
+script:
+  - python3 src/urh/cythonext/build.py
+  - pytest -v tests

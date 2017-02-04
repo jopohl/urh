@@ -160,7 +160,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="ZoomableGraphicView" name="graphicsViewSineWave"/>
+     <widget class="ZoomableGraphicView" name="graphicsViewSineWave">
+      <property name="renderHints">
+       <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

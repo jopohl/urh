@@ -15,7 +15,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dirname, "insert_sine_dialog.ui")))  # type: QDialog
 
         self.amplitude = 1
-        self.frequency = 1e6
+        self.frequency = 10
         self.phase = 0
         self.sample_rate = 1e6
         self.num_samples = 1e6
@@ -42,6 +42,7 @@ class InsertSinePlugin(SignalEditorPlugin):
     def show_insert_sine_dialog(self):
         self.dialog_ui.show()
         self.__create_dialog_connects()
+        self.draw_sine_wave()
 
     def draw_sine_wave(self):
         self.complex_wave = np.empty(int(self.num_samples), dtype=np.complex64)
@@ -50,6 +51,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.complex_wave.imag = self.amplitude * np.sin(2 * np.pi * self.frequency * t + self.phase)
 
         self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
+        self.dialog_ui.graphicsViewSineWave.draw_full()
 
     @pyqtSlot(float)
     def on_double_spin_box_amplitude_value_changed(self, value: float):

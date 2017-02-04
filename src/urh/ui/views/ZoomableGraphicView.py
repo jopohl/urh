@@ -1,4 +1,5 @@
 from PyQt5.QtCore import pyqtSignal, QRectF
+from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QGraphicsScene
 
@@ -72,3 +73,7 @@ class ZoomableGraphicView(SelectableGraphicView):
             x1 = self.view_rect().x()
             x2 = x1 + self.view_rect().width()
             self.scene_creator.show_scene_section(x1, x2)
+
+    def resizeEvent(self, event: QResizeEvent):
+        self.draw_full()
+        event.accept()

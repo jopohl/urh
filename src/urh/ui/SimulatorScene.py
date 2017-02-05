@@ -101,8 +101,10 @@ class MessageArrowItem(QGraphicsLineItem):
     def boundingRect(self):
         extra = (self.pen().width() + 20) / 2.0
 
-        return QRectF(self.line().p1(), QSizeF(self.line().p2().x() - self.line().p1().x(),
-                    self.line().p2().y() - self.line().p1().y())).normalized().adjusted(-extra, -extra, extra, extra)
+#        return QRectF(self.line().p1(), QSizeF(self.line().p2().x() - self.line().p1().x(),
+#                    self.line().p2().y() - self.line().p1().y())).normalized().adjusted(-extra, -extra, extra, extra)
+
+        return super().boundingRect().adjusted(0, -6, 0, 6)
 
     def paint(self, painter, option, widget):
         if self.line().length() == 0:

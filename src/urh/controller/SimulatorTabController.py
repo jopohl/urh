@@ -44,7 +44,7 @@ class SimulatorTabController(QWidget):
 
     def create_connects(self, compare_frame_controller):
         self.project_manager.project_updated.connect(self.on_project_updated)
-        compare_frame_controller.proto_tree_model.layoutChanged.connect(self.refresh_tree)
+        compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
 
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
@@ -54,7 +54,8 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_tree(self):
-        self.tree_model.layoutChanged.emit()
+        self.tree_model.beginResetModel()
+        self.tree_model.endResetModel()
         self.ui.treeProtocols.expandAll()
 
     def close_all(self):

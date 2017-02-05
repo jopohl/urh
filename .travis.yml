@@ -1,18 +1,21 @@
 language: python
+dist: trusty
 sudo: required
 
 python:
+  - "3.4_with_system_site_packages"
   - "3.5"
   - "3.6"
 
 before_script:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.4'* ]]; then sudo apt-get -y install python3-pyqt5 python3-numpy python3-psutil; fi
   - sudo apt-get install -qq libegl1-mesa
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - sleep 3
 
 install:
-  - "pip install -r requirements.txt"
+  - if [[ $TRAVIS_PYTHON_VERSION != '3.4'* ]]; then pip install -r requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
 
 script:
   - python3 src/urh/cythonext/build.py

@@ -60,8 +60,10 @@ class SenderThread(AbstractBaseThread):
 
             if self.connection in outputready:
                 try:
+                    # tostring() is a compatibility (numpy < 1.9) alias for tobytes().
+                    # Despite its name it returns bytes not strings.
                     self.connection.send(
-                        self.data[self.current_index:self.current_index + self.samples_per_transmission].tobytes())
+                        self.data[self.current_index:self.current_index + self.samples_per_transmission].tostring())
                 except OSError:
                     self.current_index = 0
                     # Pipe is broken, restart Thread with new Port

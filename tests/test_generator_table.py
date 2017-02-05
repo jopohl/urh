@@ -51,7 +51,7 @@ class TestGeneratorTable(unittest.TestCase):
             t = time.time()
             self.gframe.table_model.data(indx, role = role)
             microseconds = (time.time() - t) * 10 ** 6
-            self.assertLessEqual(microseconds, 1.75 * time_for_display, msg=self.__role_to_str(role))
+            self.assertLessEqual(microseconds, 2 * time_for_display, msg=self.__role_to_str(role))
             if role == Qt.DisplayRole:
                 time_for_display = microseconds
             print("{0}: {1} µs".format(self.__role_to_str(role), microseconds))

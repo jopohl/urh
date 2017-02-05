@@ -8,7 +8,6 @@ from urh import constants
 open("/tmp/urh_releasing", "w").close()
 
 script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
-sys.path.append(os.path.realpath(os.path.join(script_dir, "src")))
 
 rc = pytest.main(["--exitfirst", "tests"])
 

@@ -2,10 +2,9 @@ import socketserver
 import threading
 
 import time
-from PyQt5.QtCore import QRegExp, pyqtSlot
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QRegExpValidator
 import socket
 
 from urh.plugins.Plugin import SDRPlugin

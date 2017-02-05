@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication, QMenu, QActionGroup
 
 from urh import constants
+from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
+from urh.plugins.PluginManager import PluginManager
 from urh.ui.ROI import ROI
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
 
@@ -66,6 +68,16 @@ class EpicGraphicView(SelectableGraphicView):
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
         self.addAction(self.delete_action)
 
+        self.insert_sine_action = QAction(self.tr("Insert sine wave..."))
+        font = self.insert_sine_action.font()
+        font.setBold(True)
+        self.insert_sine_action.setFont(font)
+        self.insert_sine_action.triggered.connect(self.on_insert_sine_action_triggered)
+
+        self.insert_sine_plugin = InsertSinePlugin()
+        self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
+
+
     @property
     def signal(self):
         return self.parent_frame.signal
@@ -118,6 +130,7 @@ class EpicGraphicView(SelectableGraphicView):
         menu = QMenu(self)
         menu.addAction(self.save_action)
         menu.addAction(self.save_as_action)
+        menu.addSeparator()
 
         zoom_action = None
         create_action = None
@@ -131,6 +144,11 @@ class EpicGraphicView(SelectableGraphicView):
         self.paste_action.setEnabled(self.stored_item is not None)
 
         menu.addSeparator()
+        if PluginManager().is_plugin_enabled("InsertSine"):
+            menu.addAction(self.insert_sine_action)
+            if not self.selection_area.is_empty:
+                menu.addSeparator()
+
         #autorangeAction = menu.addAction(self.tr("Show Autocrop Range"))
 
         if not self.selection_area.is_empty:
@@ -353,3 +371,11 @@ class EpicGraphicView(SelectableGraphicView):
     def on_save_as_action_triggered(self):
         self.save_as_clicked.emit()
 
+    @pyqtSlot()
+    def on_insert_sine_action_triggered(self):
+        self.insert_sine_plugin.show_insert_sine_dialog()
+
+    @pyqtSlot()
+    def on_insert_sine_wave_clicked(self):
+        if self.insert_sine_plugin.complex_wave is not None:
+            self.signal.insert_data(self.paste_position, self.insert_sine_plugin.complex_wave)

@@ -320,14 +320,13 @@ class Message(object):
 
     @property
     def decoded_bits_buffer(self) -> bytes:
-        bits = [b if isinstance(b, bool) else True if b.pulsetype == 1 else False for b in self.decoded_bits]
+        bits = [int(b) if isinstance(b, bool) else 1 if b.pulsetype == 1 else 0 for b in self.decoded_bits]
         return np.packbits(bits).tobytes()
 
     @property
     def plain_hex_str(self) -> str:
         padded_bitchains = self.split(decode=False)
         return self.__bitchains_to_hex(padded_bitchains)
-
 
     @property
     def plain_ascii_str(self) -> str:

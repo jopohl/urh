@@ -24,15 +24,21 @@ class ParticipantItem(QGraphicsItem):
         self.text = QGraphicsTextItem(name, self)
         self.line = QGraphicsLineItem(self)
         self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
-        self.update()
+        self.update(y_pos = 150)
 
-    def update(self, x_pos=50):
+    def update(self, x_pos = -1, y_pos = -1):
         if not self.scene():
             return
 
+        if x_pos == -1:
+            x_pos = self.line.line().x1()
+
+        if y_pos == -1:
+            y_pos = self.line.line().y2()
+
         self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
-        self.line.setLine(x_pos, 30, x_pos, (len(self.scene().messages) + 1) * 50)
+        self.line.setLine(x_pos, 30, x_pos, y_pos)
         super().update()
 
     def boundingRect(self):
@@ -70,16 +76,22 @@ class MessageItem(QGraphicsItem):
         self.labels.append(label)
 
     def update(self, y_pos):
-        self.prepareGeometryChange()
-        self.arrow.setLine(self.source.line.line().x1(), y_pos, self.destination.line.line().x1(), y_pos)
+        arrow_width = abs(self.source.line.line().x1() - self.destination.line.line().x1())
 
         start_x = min(self.source.line.line().x1(), self.destination.line.line().x1())
-        start_x += (self.arrow.line().length() - self.labels_width()) / 2
-        
+        start_x += (arrow_width - self.labels_width()) / 2
+
+        self.prepareGeometryChange()
+
         for label in self.labels:
-            label.setPos(start_x, y_pos - (label.boundingRect().height() + 5))
+            label.setPos(start_x, y_pos)
             start_x += label.boundingRect().width() + 5
 
+        if len(self.labels) > 0:
+            y_pos += self.labels[0].boundingRect().height() + 5
+
+        self.arrow.setLine(self.source.line.line().x1(), y_pos, self.destination.line.line().x1(), y_pos)
+        
         super().update()
 
     def boundingRect(self):
@@ -211,7 +223,7 @@ class SimulatorScene(QGraphicsScene):
         if len(self.participants) < 1:
             return
 
-        self.participants[0].update()
+        self.participants[0].update(x_pos = 0)
 
         for i in range(1, len(self.participants)):
             curr_participant = self.participants[i]
@@ -230,10 +242,24 @@ class SimulatorScene(QGraphicsScene):
                 if x > x_max:
                     x_max = x
 
-            curr_participant.update(x_max)
+            curr_participant.update(x_pos = x_max)
 
-        for i, message in enumerate(self.messages):
-            message.update((i + 1) * 50)
+        y_pos = 30
+
+        for message in self.messages:
+            message.update(y_pos)
+            y_pos += message.boundingRect().height()
+
+        for participant in self.participants:
+            participant.update(y_pos = max(y_pos, 50))
+
+        # resize scrollbar
+        rect = self.itemsBoundingRect()
+
+        if rect is None:
+            self.setSceneRect(QRectF(0, 0, 1, 1))
+        else:
+            self.setSceneRect(rect)
 
     def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
         event.setAccepted(True)

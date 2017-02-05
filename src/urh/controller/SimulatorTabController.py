@@ -9,8 +9,6 @@ from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,

@@ -41,34 +41,34 @@ class EpicGraphicView(SelectableGraphicView):
 
         self.parent_frame = self.parent().parent().parent()
 
-        self.save_action = QAction(self.tr("Save"), parent=self)  # type: QAction
+        self.save_action = QAction(self.tr("Save"), self)  # type: QAction
         self.save_action.setIcon(QIcon.fromTheme("document-save"))
         self.save_action.setShortcut(QKeySequence.Save)
         self.save_action.triggered.connect(self.on_save_action_triggered)
         self.addAction(self.save_action)
 
-        self.save_as_action = QAction(self.tr("Save Signal as..."), parent=self)  # type: QAction
+        self.save_as_action = QAction(self.tr("Save Signal as..."), self)  # type: QAction
         self.save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
         self.save_as_action.setShortcut(QKeySequence.SaveAs)
         self.save_as_action.triggered.connect(self.on_save_as_action_triggered)
         self.addAction(self.save_as_action)
 
-        self.copy_action = QAction(self.tr("Copy selection"), parent=self)  # type: QAction
+        self.copy_action = QAction(self.tr("Copy selection"), self)  # type: QAction
         self.copy_action.setShortcut(QKeySequence.Copy)
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
         self.addAction(self.copy_action)
 
-        self.paste_action = QAction(self.tr("Paste"), parent=self)  # type: QAction
+        self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
         self.paste_action.setShortcut(QKeySequence.Paste)
         self.paste_action.triggered.connect(self.on_paste_action_triggered)
         self.addAction(self.paste_action)
 
-        self.delete_action = QAction(self.tr("Delete selection"), parent=self)
+        self.delete_action = QAction(self.tr("Delete selection"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
         self.addAction(self.delete_action)
 
-        self.insert_sine_action = QAction(self.tr("Insert sine wave..."), parent=self)
+        self.insert_sine_action = QAction(self.tr("Insert sine wave..."), self)
         font = self.insert_sine_action.font()
         font.setBold(True)
         self.insert_sine_action.setFont(font)

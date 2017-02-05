@@ -71,3 +71,9 @@ class LabelAssignPlugin(Plugin):
 class SDRPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
+
+
+class SignalEditorPlugin(Plugin):
+    def __init__(self, name: str):
+        Plugin.__init__(self, name)
+

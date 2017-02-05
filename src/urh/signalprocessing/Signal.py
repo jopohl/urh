@@ -378,3 +378,4 @@ class Signal(QObject):
         self._num_samples = len(self.data)
         self.data_edited.emit()
         self.protocol_needs_update.emit()
+        self.changed = True

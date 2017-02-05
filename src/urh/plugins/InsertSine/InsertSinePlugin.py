@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 from PyQt5 import uic
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
@@ -10,11 +11,14 @@ from urh.util.Formatter import Formatter
 
 
 class InsertSinePlugin(SignalEditorPlugin):
+    insert_sine_wave_clicked = pyqtSignal()
+
     def __init__(self):
         dirname = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
         self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dirname, "insert_sine_dialog.ui")))  # type: QDialog
 
-        self.amplitude = 1
+        self.complex_wave = None
+        self.amplitude = 0.5
         self.frequency = 10
         self.phase = 0
         self.sample_rate = 1e6
@@ -38,6 +42,8 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.doubleSpinBoxPhase.valueChanged.connect(self.on_double_spin_box_phase_value_changed)
         self.dialog_ui.doubleSpinBoxSampleRate.valueChanged.connect(self.on_double_spin_box_sample_rate_value_changed)
         self.dialog_ui.doubleSpinBoxNSamples.valueChanged.connect(self.on_spin_box_n_samples_value_changed)
+        self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
+        self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
 
     def show_insert_sine_dialog(self):
         self.dialog_ui.show()
@@ -79,3 +85,12 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.num_samples = int(value)
         self.dialog_ui.labelTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3))
         self.draw_sine_wave()
+
+    @pyqtSlot()
+    def on_btn_abort_clicked(self):
+        self.dialog_ui.close()
+
+    @pyqtSlot()
+    def on_btn_ok_clicked(self):
+        self.insert_sine_wave_clicked.emit()
+        self.dialog_ui.close()

@@ -73,7 +73,9 @@ class EpicGraphicView(SelectableGraphicView):
         font.setBold(True)
         self.insert_sine_action.setFont(font)
         self.insert_sine_action.triggered.connect(self.on_insert_sine_action_triggered)
+
         self.insert_sine_plugin = InsertSinePlugin()
+        self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
 
 
     @property
@@ -373,3 +375,7 @@ class EpicGraphicView(SelectableGraphicView):
     def on_insert_sine_action_triggered(self):
         self.insert_sine_plugin.show_insert_sine_dialog()
 
+    @pyqtSlot()
+    def on_insert_sine_wave_clicked(self):
+        if self.insert_sine_plugin.complex_wave is not None:
+            self.signal.insert_data(self.paste_position, self.insert_sine_plugin.complex_wave)

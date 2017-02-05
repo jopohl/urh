@@ -31,5 +31,6 @@ src/urh/util/__pycache__/
 tmp/
 dist/
 src/urh.egg-info/
-
+.cache/
 tests/data/URHProject.xml
+src/urh/cythonext/*.html

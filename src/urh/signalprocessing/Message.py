@@ -321,7 +321,8 @@ class Message(object):
     @property
     def decoded_bits_buffer(self) -> bytes:
         bits = [int(b) if isinstance(b, bool) else 1 if b.pulsetype == 1 else 0 for b in self.decoded_bits]
-        return np.packbits(bits).tobytes()
+        # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
+        return np.packbits(bits).tostring()
 
     @property
     def plain_hex_str(self) -> str:
@@ -337,7 +338,6 @@ class Message(object):
     def decoded_hex_str(self) -> str:
         padded_bitchains = self.split()
         return self.__bitchains_to_hex(padded_bitchains)
-
 
     @property
     def decoded_ascii_str(self) -> str:

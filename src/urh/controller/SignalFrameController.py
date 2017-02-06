@@ -3,7 +3,8 @@ import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, QApplication
+from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
+    QApplication
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -102,11 +103,11 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.setScene(self.scene_creator.scene)
 
             self.jump_sync = True
-            self.handle_show_hide_start_end_clicked()
+            self.on_show_hide_start_end_clicked()
 
             self.refresh_signal_information(block=True)
             self.create_connects()
-            self.set_protocol_visibilty()
+            self.set_protocol_visibility()
 
             self.ui.chkBoxShowProtocol.setChecked(True)
             self.set_qad_tooltip(self.signal.noise_treshold)
@@ -134,20 +135,19 @@ class SignalFrameController(QFrame):
             self.minimize_maximize()
 
     def create_connects(self):
-        self.ui.spinBoxSelectionStart.valueChanged.connect(self.set_selection_start)
-        self.ui.spinBoxSelectionEnd.valueChanged.connect(self.set_selection_end)
-        self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
-        self.ui.btnCloseSignal.clicked.connect(self.my_close)
-
+        self.ui.btnCloseSignal.clicked.connect(self.on_btn_close_signal_clicked)
+        self.ui.btnReplay.clicked.connect(self.on_btn_replay_clicked)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
+        self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
+        self.ui.btnShowHideStartEnd.clicked.connect(self.on_show_hide_start_end_clicked)
+        self.ui.btnMinimize.clicked.connect(self.minimize_maximize)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
-            self.signal.qad_center_changed.connect(self.update_qad_center_view)
-            self.signal.qad_center_changed.connect(self.ui.spinBoxCenterOffset.setValue)
-            self.signal.noise_treshold_changed.connect(self.redraw_noise)
+            self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
+            self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
@@ -157,10 +157,10 @@ class SignalFrameController(QFrame):
 
             self.ui.gvSignal.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
-            self.signal.saved_status_changed.connect(self.handle_signal_data_changed_before_save)
+            self.signal.saved_status_changed.connect(self.on_signal_data_changed_before_save)
             self.ui.btnSaveSignal.clicked.connect(self.save_signal)
             self.signal.name_changed.connect(self.ui.lineEditSignalName.setText)
-            self.ui.gvLegend.resized.connect(self.handle_gv_legend_resized)
+            self.ui.gvLegend.resized.connect(self.on_gv_legend_resized)
 
             self.ui.gvSignal.sel_area_width_changed.connect(self.start_proto_selection_timer)
             self.ui.gvSignal.sel_area_start_end_changed.connect(self.start_proto_selection_timer)
@@ -170,48 +170,46 @@ class SignalFrameController(QFrame):
             self.proto_analyzer.qt_signals.protocol_updated.connect(self.on_protocol_updated)
             self.redraw_timer.timeout.connect(self.redraw_signal)
 
-        self.ui.btnReplay.clicked.connect(self.on_btn_replay_clicked)
+        self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.show_crop_range_clicked.connect(self.show_autocrop_range)
-        self.ui.gvSignal.crop_clicked.connect(self.crop_signal)
-        self.ui.gvSignal.zoomed.connect(self.handle_signal_zoomed)
+        self.ui.gvSignal.crop_clicked.connect(self.on_crop_signal_clicked)
+        self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
+        self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
+        self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
+        self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
+        self.ui.gvSignal.deletion_wanted.connect(self.delete_selection)
+        self.ui.gvSignal.mute_wanted.connect(self.mute_selection)
+
         self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
-        self.ui.spinBoxXZoom.valueChanged.connect(self.handle_spinbox_xzoom_value_changed)
+        self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
 
         self.project_manager.project_updated.connect(self.on_participant_changed)
         self.ui.txtEdProto.participant_changed.connect(self.on_participant_changed)
         self.ui.gvSignal.participant_changed.connect(self.on_participant_changed)
 
-        self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
-
         self.proto_selection_timer.timeout.connect(self.update_number_selected_samples)
-        self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
+
         self.ui.cbSignalView.currentIndexChanged.connect(self.on_cb_signal_view_index_changed)
+        self.ui.cbModulationType.currentIndexChanged.connect(self.on_combobox_modulation_type_index_changed)
+        self.ui.cbProtoView.currentIndexChanged.connect(self.on_combo_box_proto_view_index_changed)
 
-        self.ui.cbModulationType.currentIndexChanged.connect(self.on_cbmodulationtype_index_changed)
+        self.ui.chkBoxShowProtocol.stateChanged.connect(self.set_protocol_visibility)
+        self.ui.chkBoxSyncSelection.stateChanged.connect(self.handle_protocol_sync_changed)
 
-        self.ui.chkBoxShowProtocol.stateChanged.connect(self.set_protocol_visibilty)
-        self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.txtEdProto.proto_view_changed.connect(self.show_protocol)
         self.ui.txtEdProto.show_proto_clicked.connect(self.update_roi_from_protocol_selection)
         self.ui.txtEdProto.show_proto_clicked.connect(self.zoom_to_roi)
-        self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
         self.ui.txtEdProto.selectionChanged.connect(self.update_roi_from_protocol_selection)
-        self.ui.chkBoxSyncSelection.stateChanged.connect(self.handle_protocol_sync_changed)
-        self.ui.gvSignal.deletion_wanted.connect(self.delete_selection)
-        self.ui.gvSignal.mute_wanted.connect(self.mute_selection)
-
-        self.ui.spinBoxCenterOffset.editingFinished.connect(self.on_spinBoxCenter_editingFinished)
-        self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinBoxTolerance_editingFinished)
-        self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinBoxNoiseTreshold_editingFinished)
-        self.ui.spinBoxInfoLen.editingFinished.connect(self.on_spinBoxInfoLen_editingFinished)
-
-        self.ui.btnShowHideStartEnd.clicked.connect(self.handle_show_hide_start_end_clicked)
-        self.ui.cbProtoView.currentIndexChanged.connect(self.handle_proto_infos_index_changed)
         self.ui.txtEdProto.deletion_wanted.connect(self.delete_from_protocol_selection)
 
-        self.ui.btnMinimize.clicked.connect(self.minimize_maximize)
+        self.ui.spinBoxSelectionStart.valueChanged.connect(self.on_spinbox_selection_start_value_changed)
+        self.ui.spinBoxSelectionEnd.valueChanged.connect(self.on_spinbox_selection_end_value_changed)
+        self.ui.spinBoxCenterOffset.editingFinished.connect(self.on_spinbox_center_editing_finished)
+        self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinbox_tolerance_editing_finished)
+        self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinbox_noise_threshold_editing_finished)
+        self.ui.spinBoxInfoLen.editingFinished.connect(self.on_spinbox_infolen_editing_finished)
 
     def refresh_signal_information(self, block=True):
         self.ui.spinBoxTolerance.blockSignals(block)
@@ -259,6 +257,310 @@ class SignalFrameController(QFrame):
         else:
             self.ui.labelRSSI.setText("")
 
+    def change_signal_name(self):
+        self.signal.name = self.ui.lineEditSignalName.text()
+
+    def __set_duration(self):  # On Signal Sample Rate changed
+        try:
+            num_samples = int(self.ui.lNumSelectedSamples.text())
+        except ValueError:
+            return
+
+        if self.signal:
+            t = num_samples / self.signal.sample_rate
+            self.ui.lDuration.setText(Formatter.science_time(t))
+
+    def handle_slideryscale_value_changed(self):
+        try:
+            gvs = self.ui.gvSignal
+            yscale = self.ui.sliderYScale.value()
+            current_factor = gvs.sceneRect().height() / gvs.view_rect().height()
+            gvs.scale(1, yscale / current_factor)
+            x, w = self.ui.gvSignal.view_rect().x(), self.ui.gvSignal.view_rect().width()
+            gvs.centerOn(x + w / 2, gvs.y_center)
+        except ZeroDivisionError:
+            pass
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drag_started.emit(self.mapToParent(event.pos()))
+            drag = QDrag(self)
+            mimeData = QMimeData()
+            mimeData.setText("Move Signal")
+            pixmap = QPixmap(self.rect().size())
+            self.render(pixmap, QPoint(), QRegion(self.rect()))
+            drag.setPixmap(pixmap)
+
+            drag.setMimeData(mimeData)
+
+            drag.exec_()
+
+    def dragMoveEvent(self, event):
+        event.accept()
+
+    def dragEnterEvent(self, event):
+        event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        if len(event.mimeData().urls()) == 0:
+            self.frame_dropped.emit(self.mapToParent(event.pos()))
+        else:
+            self.files_dropped.emit(event.mimeData().urls())
+
+    def create_new_signal(self, start, end):
+        if start < end:
+            new_signal = self.signal.create_new(start, end)
+            self.signal_created.emit(new_signal)
+        else:
+            Errors.empty_selection()
+
+    def my_close(self):
+        settings = constants.SETTINGS
+        not_show = settings.value('not_show_close_dialog', False)
+
+        if not not_show:
+            ok, not_show_again = CustomDialog.dialog(self, "Do you want to close?", "close")
+            settings.setValue("not_show_close_dialog", not_show_again)
+            self.not_show_again_changed.emit()
+            if not ok:
+                return
+
+        self.closed.emit(self)
+
+    def save_signal(self):
+        if len(self.signal.filename) > 0:
+            self.signal.save()
+        else:
+            self.save_signal_as()
+
+    def save_signal_as(self):
+        filename = FileOperator.get_save_file_name(self.signal.filename, wav_only=self.signal.wav_mode, parent=self)
+        if filename:
+            try:
+                self.signal.save_as(filename)
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+
+    def show_autocrop_range(self):
+        start = self.signal.get_signal_start()
+        end = self.signal.get_signal_end()
+
+        self.ui.gvSignal.set_selection_area(start, end - start)
+        self.ui.gvSignal.selection_area.finished = True
+        self.ui.gvSignal.emit_sel_area_width_changed()
+
+    def draw_signal(self, full_signal=False):
+        gvs = self.ui.gvSignal
+        gv_legend = self.ui.gvLegend
+        gv_legend.ysep = -self.signal.qad_center
+
+        # Save current visible region for restoring it after drawing
+        y, h = gvs.sceneRect().y(), gvs.sceneRect().height()
+        x, w = gvs.view_rect().x(), gvs.view_rect().width()
+
+        self.scene_creator.scene_type = self.ui.cbSignalView.currentIndex()
+        self.scene_creator.init_scene()
+        if full_signal:
+            gvs.draw_full_signal()
+        else:
+            self.display_scene()
+
+        legend = LegendScene()
+        legend.setBackgroundBrush(constants.BGCOLOR)
+        legend.setSceneRect(0, self.scene_creator.scene.sceneRect().y(), gv_legend.width(),
+                            self.scene_creator.scene.sceneRect().height())
+        legend.draw_one_zero_arrows(-self.signal.qad_center)
+        gv_legend.setScene(legend)
+
+        num_samples = self.signal.num_samples
+        self.ui.spinBoxSelectionStart.setMaximum(num_samples)
+        self.ui.spinBoxSelectionEnd.setMaximum(num_samples)
+        gvs.nsamples = num_samples
+
+        gvs.sel_area_active = True
+        gvs.y_sep = -self.signal.qad_center
+
+        if not full_signal:
+            # Restore Zoom
+            w = w if w < self.signal.num_samples else self.signal.num_samples
+            gvs.fitInView(QRectF(x, y, w, h))
+            gvs.centerOn(x + w / 2, gvs.y_center)
+
+    def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
+        if old_protoview == self.proto_view:
+            return
+
+        self.protocol_selection_is_updateable = False
+        sel_start = int(self.proto_analyzer.convert_index(sel_start, old_protoview, self.proto_view, True)[0])
+        sel_end = int(math.ceil(self.proto_analyzer.convert_index(sel_end, old_protoview, self.proto_view, True)[1]))
+
+        c = self.ui.txtEdProto.textCursor()
+
+        c.setPosition(0)
+        cur_message = 0
+        i = 0
+        text = self.ui.txtEdProto.toPlainText()
+        while cur_message < start_message:
+            if text[i] == "\n":
+                cur_message += 1
+            i += 1
+
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, i)
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, sel_start)
+        text = text[i:]
+        i = 0
+        while cur_message < end_message:
+            if text[i] == "\n":
+                cur_message += 1
+            i += 1
+
+        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, i)
+        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, sel_end)
+
+        self.ui.txtEdProto.setTextCursor(c)
+
+        self.protocol_selection_is_updateable = True
+
+    def update_protocol(self):
+        self.ui.txtEdProto.setEnabled(False)
+        QApplication.processEvents()
+
+        self.proto_analyzer.get_protocol_from_signal()
+
+    def show_protocol(self, old_view=-1, refresh=False):
+        if not self.proto_analyzer:
+            return
+
+        if not self.ui.chkBoxShowProtocol.isChecked():
+            return
+
+        if old_view == -1:
+            old_view = self.ui.cbProtoView.currentIndex()
+
+        if self.proto_analyzer.messages is None or refresh:
+            self.update_protocol()
+        else:
+            # Keep things synchronized and restore selection
+            self.ui.txtEdProto.blockSignals(True)
+            self.ui.cbProtoView.blockSignals(True)
+            self.ui.cbProtoView.setCurrentIndex(self.proto_view)
+            self.ui.cbProtoView.blockSignals(False)
+
+            start_message = 0
+            sel_start = self.ui.txtEdProto.textCursor().selectionStart()
+            text = self.ui.txtEdProto.toPlainText()[:sel_start]
+            sel_start = 0
+            read_pause = False
+            for t in text:
+                if t == "\t":
+                    read_pause = True
+
+                if not read_pause:
+                    sel_start += 1
+
+                if t == "\n":
+                    sel_start = 0
+                    start_message += 1
+                    read_pause = False
+
+            sel_end = self.ui.txtEdProto.textCursor().selectionEnd()
+            text = self.ui.txtEdProto.toPlainText()[self.ui.txtEdProto.textCursor().selectionStart():sel_end]
+            end_message = 0
+            sel_end = 0
+            read_pause = False
+            for t in text:
+                if t == "\t":
+                    read_pause = True
+
+                if not read_pause:
+                    sel_end += 1
+
+                if t == "\n":
+                    sel_end = 0
+                    end_message += 1
+                    read_pause = False
+
+            self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
+            # self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
+            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+
+            self.ui.txtEdProto.blockSignals(False)
+
+    @pyqtSlot()
+    def on_signal_zoomed(self):
+        gvs = self.ui.gvSignal
+        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
+        self.ui.spinBoxXZoom.blockSignals(True)
+        self.ui.spinBoxXZoom.setValue(int(gvs.sceneRect().width() / gvs.view_rect().width() * 100))
+        self.ui.spinBoxXZoom.blockSignals(False)
+        self.redraw_timer.start()
+
+    @pyqtSlot(int)
+    def on_spinbox_x_zoom_value_changed(self, value: int):
+        gvs = self.ui.gvSignal
+        zoom_factor = value / 100
+        current_factor = gvs.sceneRect().width() / gvs.view_rect().width()
+        gvs.zoom(zoom_factor / current_factor)
+
+    @pyqtSlot()
+    def on_btn_close_signal_clicked(self):
+        self.my_close()
+
+    @pyqtSlot()
+    def on_set_noise_in_graphic_view_clicked(self):
+        self.setCursor(Qt.WaitCursor)
+        start = self.ui.gvSignal.selection_area.x
+        end = start + self.ui.gvSignal.selection_area.width
+
+        new_thresh = self.signal.calc_noise_treshold(start, end)
+        self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
+        self.ui.spinBoxNoiseTreshold.editingFinished.emit()
+        self.unsetCursor()
+
+    @pyqtSlot()
+    def on_noise_threshold_changed(self):
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
+        minimum = self.signal.noise_min_plot
+        maximum = self.signal.noise_max_plot
+        if self.ui.cbSignalView.currentIndex() == 0:
+            # Draw Noise only in Analog View
+            self.ui.gvSignal.scene().draw_noise_area(minimum, maximum - minimum)
+
+    @pyqtSlot(int)
+    def on_spinbox_selection_start_value_changed(self, value: int):
+        if self.ui.gvSignal.sel_area_active:
+            self.ui.gvSignal.set_selection_area(x=value)
+            self.ui.gvSignal.selection_area.finished = True
+            self.ui.gvSignal.emit_sel_area_width_changed()
+
+    @pyqtSlot(int)
+    def on_spinbox_selection_end_value_changed(self, value: int):
+        if self.ui.gvSignal.sel_area_active:
+            self.ui.gvSignal.set_selection_area(w=value - self.ui.spinBoxSelectionStart.value())
+            self.ui.gvSignal.selection_area.finished = True
+            self.ui.gvSignal.emit_sel_area_width_changed()
+
+    @pyqtSlot()
+    def on_crop_signal_clicked(self):
+        gvs = self.ui.gvSignal
+        if not gvs.selection_area.is_empty:
+            start = gvs.selection_area.x
+            end = start + gvs.selection_area.width
+            if end < start:
+                start, end = end, start
+
+            crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
+                                            mode=RangeAction.crop)
+            self.undo_stack.push(crop_action)
+
+    @pyqtSlot()
+    def on_protocol_updated(self):
+        self.redraw_signal()  # Participants may have changed
+        self.ui.txtEdProto.setEnabled(True)
+        cur_scroll = self.ui.txtEdProto.verticalScrollBar().value()
+        self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
+        self.ui.txtEdProto.verticalScrollBar().setValue(cur_scroll)
+
     @pyqtSlot(float)
     def update_legend(self, y_sep):
         if self.ui.gvLegend.isVisible():
@@ -268,22 +570,19 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxCenterOffset.setValue(-y_sep)
         self.ui.spinBoxCenterOffset.blockSignals(False)
 
-    def emit_signal_drawing_finished(self):
-        self.signal_drawing_finished.emit()
-
     @pyqtSlot()
     def handle_protocol_sync_changed(self):
         self.sync_protocol = self.ui.chkBoxSyncSelection.isChecked()
 
     @pyqtSlot()
-    def set_protocol_visibilty(self):
+    def set_protocol_visibility(self):
         checked = self.ui.chkBoxShowProtocol.isChecked()
 
         if checked:
             self.show_protocol()
             self.ui.cbProtoView.setEnabled(True)
             # Disabled because never used
-            #self.ui.chkBoxSyncSelection.show()
+            # self.ui.chkBoxSyncSelection.show()
             self.ui.txtEdProto.show()
         else:
             self.ui.txtEdProto.hide()
@@ -346,320 +645,14 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxSelectionEnd.setValue(end)
         self.ui.spinBoxSelectionEnd.blockSignals(False)
 
-    def change_signal_name(self):
-        self.signal.name = self.ui.lineEditSignalName.text()
-
-    def __set_duration(self):  # On Signal Sample Rate changed
-        try:
-            nsamples = int(self.ui.lNumSelectedSamples.text())
-        except ValueError:
-            return
-
-        if self.signal:
-            t = nsamples / self.signal.sample_rate
-            self.ui.lDuration.setText(Formatter.science_time(t))
-
-    @pyqtSlot()
-    def handle_signal_zoomed(self):
-        gvs = self.ui.gvSignal
-        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
-        self.ui.spinBoxXZoom.blockSignals(True)
-        self.ui.spinBoxXZoom.setValue(int(gvs.sceneRect().width() / gvs.view_rect().width() * 100))
-        self.ui.spinBoxXZoom.blockSignals(False)
-        self.redraw_timer.start()
-
-    def handle_spinbox_xzoom_value_changed(self):
-        gvs = self.ui.gvSignal
-        zoom_factor = self.ui.spinBoxXZoom.value() / 100
-        current_factor = gvs.sceneRect().width() / gvs.view_rect().width()
-        gvs.zoom(zoom_factor / current_factor)
-
-    def handle_slideryscale_value_changed(self):
-        try:
-            gvs = self.ui.gvSignal
-            yscale = self.ui.sliderYScale.value()
-            current_factor = gvs.sceneRect().height() / gvs.view_rect().height()
-            gvs.scale(1, yscale / current_factor)
-            x, w = self.ui.gvSignal.view_rect().x(), self.ui.gvSignal.view_rect().width()
-            gvs.centerOn(x + w / 2, gvs.y_center)
-        except ZeroDivisionError:
-            pass
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.drag_started.emit(self.mapToParent(event.pos()))
-            drag = QDrag(self)
-            mimeData = QMimeData()
-            mimeData.setText("Move Signal")
-            pixmap = QPixmap(self.rect().size())
-            self.render(pixmap, QPoint(), QRegion(self.rect()))
-            drag.setPixmap(pixmap)
-
-            drag.setMimeData(mimeData)
-
-            drag.exec_()
-
-    def dragMoveEvent(self, event):
-        event.accept()
-
-    def dragEnterEvent(self, event):
-        event.acceptProposedAction()
-
-    def dropEvent(self, event: QDropEvent):
-        if len(event.mimeData().urls()) == 0:
-            self.frame_dropped.emit(self.mapToParent(event.pos()))
-        else:
-            self.files_dropped.emit(event.mimeData().urls())
-
-    def create_new_signal(self, start, end):
-        if start < end:
-            new_signal = self.signal.create_new(start, end)
-            self.signal_created.emit(new_signal)
-        else:
-            Errors.empty_selection()
-
-    def my_close(self):
-        settings = constants.SETTINGS
-        try:
-            not_show = settings.value('not_show_close_dialog', type=bool)
-        except TypeError:
-            not_show = False
-
-        if not not_show:
-            #ok, notshowagain = CloseDialog.dialog(self)
-            ok, notshowagain = CustomDialog.dialog(self, "Do you want to close?", "close")
-            settings.setValue("not_show_close_dialog", notshowagain)
-            self.not_show_again_changed.emit()
-            if not ok:
-                return
-
-        self.closed.emit(self)
-        #self.signal.deleteLater()
-        #self.scene_creator.deleteLater()
-        #
-
-    @pyqtSlot()
-    def on_set_noise_in_graphic_view_clicked(self):
-        self.setCursor(Qt.WaitCursor)
-        start = self.ui.gvSignal.selection_area.x
-        end = start + self.ui.gvSignal.selection_area.width
-
-        new_tresh = self.signal.calc_noise_treshold(start, end)
-        self.ui.spinBoxNoiseTreshold.setValue(new_tresh)
-        self.ui.spinBoxNoiseTreshold.editingFinished.emit()
-        self.unsetCursor()
-
-    def redraw_noise(self):
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
-        minimum = self.signal.noise_min_plot
-        maximum = self.signal.noise_max_plot
-        if self.ui.cbSignalView.currentIndex() == 0:
-            # Draw Noise only in Analog View
-            self.ui.gvSignal.scene().draw_noise_area(minimum, maximum - minimum)
-
-    @pyqtSlot()
-    def set_selection_start(self):
-        if self.ui.gvSignal.sel_area_active:
-            self.ui.gvSignal.set_selection_area(x=self.ui.spinBoxSelectionStart.value())
-            self.ui.gvSignal.selection_area.finished = True
-            self.ui.gvSignal.emit_sel_area_width_changed()
-
-    @pyqtSlot()
-    def set_selection_end(self):
-        if self.ui.gvSignal.sel_area_active:
-            self.ui.gvSignal.set_selection_area(
-                w=self.ui.spinBoxSelectionEnd.value() - self.ui.spinBoxSelectionStart.value())
-            self.ui.gvSignal.selection_area.finished = True
-            self.ui.gvSignal.emit_sel_area_width_changed()
-
-    def save_signal(self):
-        if len(self.signal.filename) > 0:
-            self.signal.save()
-        else:
-            self.save_signal_as()
-
-    def save_signal_as(self):
-        filename = FileOperator.get_save_file_name(self.signal.filename, wav_only=self.signal.wav_mode, parent=self)
-        if filename:
-            try:
-                self.signal.save_as(filename)
-            except Exception as e:
-                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
-
-    def crop_signal(self):
-        gvs = self.ui.gvSignal
-        if not gvs.selection_area.is_empty:
-            w = gvs.sceneRect().width()
-            start = gvs.selection_area.x
-            end = start + gvs.selection_area.width
-            if end < start:
-                start, end = end, start
-
-            crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.crop)
-            self.undo_stack.push(crop_action)
-
-    def show_autocrop_range(self):
-        start = self.signal.get_signal_start()
-        end = self.signal.get_signal_end()
-
-        self.ui.gvSignal.set_selection_area(start, end - start)
-        self.ui.gvSignal.selection_area.finished = True
-        self.ui.gvSignal.emit_sel_area_width_changed()
-
-    def draw_signal(self, full_signal=False):
-        gvs = self.ui.gvSignal
-        gv_legend = self.ui.gvLegend
-        gv_legend.ysep = -self.signal.qad_center
-
-        # Save current visible region for restoring it after drawing
-        y, h = gvs.sceneRect().y(), gvs.sceneRect().height()
-        x, w = gvs.view_rect().x(), gvs.view_rect().width()
-
-        self.scene_creator.scene_type = self.ui.cbSignalView.currentIndex()
-        self.scene_creator.init_scene()
-        if full_signal:
-            gvs.draw_full_signal()
-        else:
-            self.display_scene()
-
-        legend = LegendScene()
-        legend.setBackgroundBrush(constants.BGCOLOR)
-        legend.setSceneRect(0, self.scene_creator.scene.sceneRect().y(), gv_legend.width(),
-                            self.scene_creator.scene.sceneRect().height())
-        legend.draw_one_zero_arrows(-self.signal.qad_center)
-        gv_legend.setScene(legend)
-
-        num_samples = self.signal.num_samples
-        self.ui.spinBoxSelectionStart.setMaximum(num_samples)
-        self.ui.spinBoxSelectionEnd.setMaximum(num_samples)
-        gvs.nsamples = num_samples
-
-        gvs.sel_area_active = True
-        gvs.y_sep = -self.signal.qad_center
-
-        if not full_signal:
-            # Restore Zoom
-            w = w if w < self.signal.num_samples else self.signal.num_samples
-            gvs.fitInView(QRectF(x, y, w, h))
-            gvs.centerOn(x + w / 2, gvs.y_center)
-
-    def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
-        if old_protoview == self.proto_view:
-            return
-
-        self.protocol_selection_is_updateable = False
-        sel_start = int(self.proto_analyzer.convert_index(sel_start, old_protoview, self.proto_view, True)[0])
-        sel_end = int(math.ceil(self.proto_analyzer.convert_index(sel_end, old_protoview, self.proto_view, True)[1]))
-
-
-        c = self.ui.txtEdProto.textCursor()
-
-        c.setPosition(0)
-        cur_message = 0
-        i = 0
-        text = self.ui.txtEdProto.toPlainText()
-        while cur_message < start_message:
-            if text[i] == "\n":
-                cur_message += 1
-            i += 1
-
-        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, i)
-        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, sel_start)
-        text = text[i:]
-        i = 0
-        while cur_message < end_message:
-            if text[i] == "\n":
-                cur_message += 1
-            i += 1
-
-        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, i)
-        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, sel_end)
-
-        self.ui.txtEdProto.setTextCursor(c)
-
-        self.protocol_selection_is_updateable = True
-
-    def update_protocol(self):
-        self.ui.txtEdProto.setEnabled(False)
-        QApplication.processEvents()
-
-        self.proto_analyzer.get_protocol_from_signal()
-
-    def on_protocol_updated(self):
-        self.redraw_signal() # Participants may have changed
-        self.ui.txtEdProto.setEnabled(True)
-        cur_scroll = self.ui.txtEdProto.verticalScrollBar().value()
-        self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
-        self.ui.txtEdProto.verticalScrollBar().setValue(cur_scroll)
-
-    def show_protocol(self, old_view=-1, refresh=False):
-        if not self.proto_analyzer:
-            return
-
-        chkd = self.ui.chkBoxShowProtocol.isChecked()
-        if not chkd:
-            return
-
-        if old_view == -1:
-            old_view = self.ui.cbProtoView.currentIndex()
-
-        if self.proto_analyzer.messages is None or refresh:
-            self.update_protocol()
-        else:
-            # Keep things synchronized and restore selection
-            self.ui.txtEdProto.blockSignals(True)
-            self.ui.cbProtoView.blockSignals(True)
-            self.ui.cbProtoView.setCurrentIndex(self.proto_view)
-            self.ui.cbProtoView.blockSignals(False)
-
-            start_message = 0
-            sel_start = self.ui.txtEdProto.textCursor().selectionStart()
-            text = self.ui.txtEdProto.toPlainText()[:sel_start]
-            sel_start = 0
-            read_pause = False
-            for t in text:
-                if t == "\t":
-                    read_pause = True
-
-                if not read_pause:
-                    sel_start += 1
-
-                if t == "\n":
-                    sel_start = 0
-                    start_message += 1
-                    read_pause = False
-
-            sel_end = self.ui.txtEdProto.textCursor().selectionEnd()
-            text = self.ui.txtEdProto.toPlainText()[self.ui.txtEdProto.textCursor().selectionStart():sel_end]
-            end_message = 0
-            sel_end = 0
-            read_pause = False
-            for t in text:
-                if t == "\t":
-                    read_pause = True
-
-                if not read_pause:
-                    sel_end += 1
-
-                if t == "\n":
-                    sel_end = 0
-                    end_message += 1
-                    read_pause = False
-
-            self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
-            #self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
-
-            self.ui.txtEdProto.blockSignals(False)
-
     @pyqtSlot()
     def refresh_protocol(self):
         self.show_protocol(refresh=True)
 
-    @pyqtSlot()
-    def handle_proto_infos_index_changed(self):
+    @pyqtSlot(int)
+    def on_combo_box_proto_view_index_changed(self, index: int):
         old_view = self.ui.txtEdProto.cur_view
-        self.ui.txtEdProto.cur_view = self.ui.cbProtoView.currentIndex()
+        self.ui.txtEdProto.cur_view = index
         self.show_protocol(old_view=old_view)
 
     @pyqtSlot(float)
@@ -673,7 +666,7 @@ class SignalFrameController(QFrame):
 
         if not self.ui.chkBoxShowProtocol.isChecked():
             self.ui.chkBoxShowProtocol.setChecked(True)
-            self.set_protocol_visibilty()
+            self.set_protocol_visibility()
 
         self.ui.cbProtoView.setCurrentIndex(view_type)
 
@@ -686,19 +679,19 @@ class SignalFrameController(QFrame):
             start_pos *= 8
             end_pos *= 8
 
-        samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos,
-                                                                          end_message, end_pos,
-                                                                          True)
+        sample_pos, num_samples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos,
+                                                                              end_message, end_pos,
+                                                                              True)
         self.protocol_selection_is_updateable = False
-        if samplepos != -1:
+        if sample_pos != -1:
             if self.jump_sync and self.sync_protocol:
-                self.ui.gvSignal.centerOn(samplepos, self.ui.gvSignal.y_center)
-                self.ui.gvSignal.set_selection_area(samplepos, nsamples)
-                self.ui.gvSignal.centerOn(samplepos + nsamples, self.ui.gvSignal.y_center)
+                self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
+                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                self.ui.gvSignal.centerOn(sample_pos + num_samples, self.ui.gvSignal.y_center)
             else:
-                self.ui.gvSignal.set_selection_area(samplepos, nsamples)
+                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
 
-            self.ui.gvSignal.zoom_to_selection(samplepos, samplepos + nsamples)
+            self.ui.gvSignal.zoom_to_selection(sample_pos, sample_pos + num_samples)
         else:
             self.ui.gvSignal.set_selection_area(0, 0)
 
@@ -707,72 +700,72 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def update_roi_from_protocol_selection(self):
-        txtEdit = self.ui.txtEdProto
-        end_pos = txtEdit.textCursor().selectionEnd()
-        start_pos = txtEdit.textCursor().selectionStart()
-        forward_selection = txtEdit.textCursor().anchor() <= txtEdit.textCursor().position()
+        text_edit = self.ui.txtEdProto
+        end_pos = text_edit.textCursor().selectionEnd()
+        start_pos = text_edit.textCursor().selectionStart()
+        forward_selection = text_edit.textCursor().anchor() <= text_edit.textCursor().position()
 
         if start_pos > end_pos:
             start_pos, end_pos = end_pos, start_pos
 
-        start_message = txtEdit.toPlainText()[:start_pos].count("\n")
-        end_message = start_message + txtEdit.toPlainText()[start_pos:end_pos].count("\n")
-        newline_pos = txtEdit.toPlainText()[:start_pos].rfind("\n")
+        start_message = text_edit.toPlainText()[:start_pos].count("\n")
+        end_message = start_message + text_edit.toPlainText()[start_pos:end_pos].count("\n")
+        newline_pos = text_edit.toPlainText()[:start_pos].rfind("\n")
 
         if newline_pos != -1:
             start_pos -= (newline_pos + 1)
 
-        newline_pos = txtEdit.toPlainText()[:end_pos].rfind("\n")
+        newline_pos = text_edit.toPlainText()[:end_pos].rfind("\n")
         if newline_pos != -1:
             end_pos -= (newline_pos + 1)
 
-        if txtEdit.cur_view == 1:
+        if text_edit.cur_view == 1:
             # Hex View
             start_pos *= 4
             end_pos *= 4
-        elif txtEdit.cur_view == 2:
+        elif text_edit.cur_view == 2:
             # ASCII View
             start_pos *= 8
             end_pos *= 8
 
         try:
             include_last_pause = False
-            s = txtEdit.textCursor().selectionStart()
-            e = txtEdit.textCursor().selectionEnd()
+            s = text_edit.textCursor().selectionStart()
+            e = text_edit.textCursor().selectionEnd()
             if s > e:
-                s,e = e,s
+                s, e = e, s
 
-            selected_text = txtEdit.toPlainText()[s:e]
+            selected_text = text_edit.toPlainText()[s:e]
 
             last_newline = selected_text.rfind("\n")
             if last_newline == -1:
                 last_newline = 0
 
             if selected_text.endswith(" "):
-               end_pos -= 1
+                end_pos -= 1
             elif selected_text.endswith(" \t"):
                 end_pos -= 2
 
             if "[" in selected_text[last_newline:]:
                 include_last_pause = True
 
-            samplepos, nsamples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos, end_message,
-                                                                              end_pos, include_last_pause)
+            sample_pos, num_samples = self.proto_analyzer.get_samplepos_of_bitseq(start_message, start_pos, end_message,
+                                                                                  end_pos, include_last_pause)
 
         except IndexError:
             return
 
         self.ui.gvSignal.blockSignals(True)
-        if samplepos != -1:
+        if sample_pos != -1:
             if self.jump_sync and self.sync_protocol:
-                self.ui.gvSignal.centerOn(samplepos, self.ui.gvSignal.y_center)
-                self.ui.gvSignal.set_selection_area(samplepos, nsamples)
-                if forward_selection: # Forward Selection --> Center ROI to End of Selection
-                    self.ui.gvSignal.centerOn(samplepos + nsamples, self.ui.gvSignal.y_center)
-                else: # Backward Selection --> Center ROI to Start of Selection
-                    self.ui.gvSignal.centerOn(samplepos, self.ui.gvSignal.y_center)
+                self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
+                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                if forward_selection:  # Forward Selection --> Center ROI to End of Selection
+                    self.ui.gvSignal.centerOn(sample_pos + num_samples, self.ui.gvSignal.y_center)
+                else:  # Backward Selection --> Center ROI to Start of Selection
+                    self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
             else:
-                self.ui.gvSignal.set_selection_area(samplepos, nsamples)
+                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
         else:
             self.ui.gvSignal.set_selection_area(0, 0)
         self.ui.gvSignal.blockSignals(False)
@@ -807,7 +800,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(True)
 
         try:
-            startmessage, startindex, endmessage, endindex = protocol.get_bitseq_from_selection(
+            start_message, start_index, end_message, end_index = protocol.get_bitseq_from_selection(
                 start, w,
                 self.signal.bit_len)
         except IndexError:
@@ -817,32 +810,30 @@ class SignalFrameController(QFrame):
             self.ui.txtEdProto.blockSignals(False)
             return
 
-        if startmessage == -1 or endindex == -1 or startindex == -1 or endmessage == -1:
+        if start_message == -1 or end_index == -1 or start_index == -1 or end_message == -1:
             c.clearSelection()
             self.ui.txtEdProto.setTextCursor(c)
             self.jump_sync = True
             self.ui.txtEdProto.blockSignals(False)
             return
 
-        startindex = int(
-            protocol.convert_index(startindex, 0, self.proto_view, True)[0])
-        endindex = int(math.ceil(
-            protocol.convert_index(endindex, 0, self.proto_view, True)[1]))
+        start_index = int(protocol.convert_index(start_index, 0, self.proto_view, True)[0])
+        end_index = int(math.ceil(protocol.convert_index(end_index, 0, self.proto_view, True)[1]))
         text = self.ui.txtEdProto.toPlainText()
         n = 0
-        messagepos = 0
+        message_pos = 0
         c.setPosition(0)
 
         for i, t in enumerate(text):
-            messagepos += 1
+            message_pos += 1
             if t == "\n":
                 n += 1
-                messagepos = 0
+                message_pos = 0
 
-            if n == startmessage and messagepos == startindex:
-                c.setPosition(i+1, QTextCursor.MoveAnchor)
+            if n == start_message and message_pos == start_index:
+                c.setPosition(i + 1, QTextCursor.MoveAnchor)
 
-            if n == endmessage and messagepos == endindex:
+            if n == end_message and message_pos == end_index:
                 c.setPosition(i, QTextCursor.KeepAnchor)
                 break
 
@@ -868,97 +859,36 @@ class SignalFrameController(QFrame):
         self.set_qad_tooltip(self.signal.noise_treshold)
         gvs.sel_area_active = True
 
-    @pyqtSlot()
-    def refresh(self, draw_full_signal=False):
-        self.refresh_signal(draw_full_signal=draw_full_signal)
-        self.refresh_signal_information(block=True)
-        self.show_protocol(refresh=True)
-
-
     def delete_selection(self, start, end):
         self.ui.gvSignal.clear_selection()
-        del_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.delete)
+        del_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
+                                       mode=RangeAction.delete)
         self.undo_stack.push(del_action)
         self.ui.gvSignal.centerOn(start, self.ui.gvSignal.y_center)
 
     def mute_selection(self, start: int, end: int):
-        mute_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end, mode=RangeAction.mute)
+        mute_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
+                                        mode=RangeAction.mute)
         self.undo_stack.push(mute_action)
 
-    @pyqtSlot()
-    def on_spinBoxCenter_editingFinished(self):
-        if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
-            self.ui.spinBoxCenterOffset.blockSignals(True)
-            center_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="qad_center", parameter_value=self.ui.spinBoxCenterOffset.value())
-            self.undo_stack.push(center_action)
-            self.disable_auto_detection()
-
-    def update_qad_center_view(self):
-        self.ui.gvSignal.y_sep = -self.signal.qad_center
-        self.ui.gvLegend.ysep = -self.signal.qad_center
+    @pyqtSlot(float)
+    def on_signal_qad_center_changed(self, qad_center):
+        self.ui.gvSignal.y_sep = -qad_center
+        self.ui.gvLegend.ysep = -qad_center
 
         if self.ui.cbSignalView.currentIndex() > 0:
-            self.scene_creator.scene.draw_sep_area(-self.signal.qad_center)
+            self.scene_creator.scene.draw_sep_area(-qad_center)
             self.ui.gvLegend.refresh()
         self.ui.spinBoxCenterOffset.blockSignals(False)
+        self.ui.spinBoxCenterOffset.setValue(qad_center)
 
-    @pyqtSlot()
-    def on_spinBoxTolerance_editingFinished(self):
-        if self.signal.tolerance != self.ui.spinBoxTolerance.value():
-            self.ui.spinBoxTolerance.blockSignals(True)
-            tolerance_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="tolerance",
-                                                  parameter_value=self.ui.spinBoxTolerance.value())
-            self.undo_stack.push(tolerance_action)
-            self.ui.spinBoxTolerance.blockSignals(False)
-            self.disable_auto_detection()
-
-    @pyqtSlot()
-    def on_spinBoxInfoLen_editingFinished(self):
-        if self.signal.bit_len != self.ui.spinBoxInfoLen.value():
-            self.ui.spinBoxInfoLen.blockSignals(True)
-            bitlen_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                     parameter_name="bit_len",
-                                                     parameter_value=self.ui.spinBoxInfoLen.value())
-            self.undo_stack.push(bitlen_action)
-            self.ui.spinBoxInfoLen.blockSignals(False)
-            self.disable_auto_detection()
-
-    def on_spinBoxNoiseTreshold_editingFinished(self):
+    def on_spinbox_noise_threshold_editing_finished(self):
         if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():
             noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="noise_treshold",
-                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
+                                                 parameter_name="noise_treshold",
+                                                 parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
             self.disable_auto_detection()
-
-
-    @pyqtSlot()
-    def handle_show_hide_start_end_clicked(self):
-        if self.ui.btnShowHideStartEnd.text() == "+":
-            self.ui.btnShowHideStartEnd.setText("-")
-            self.ui.verticalLayout.insertItem(2, self.ui.additionalInfos)
-            self.ui.lStart.show()
-            self.ui.lEnd.show()
-            self.ui.lSamplesInView.show()
-            self.ui.lStrich.show()
-            self.ui.lSamplesTotal.show()
-            self.ui.lSamplesViewText.show()
-            self.ui.spinBoxSelectionStart.show()
-            self.ui.spinBoxSelectionEnd.show()
-
-        else:
-            self.ui.btnShowHideStartEnd.setText("+")
-            self.ui.lStart.hide()
-            self.ui.lEnd.hide()
-            self.ui.lSamplesInView.hide()
-            self.ui.lStrich.hide()
-            self.ui.lSamplesTotal.hide()
-            self.ui.lSamplesViewText.hide()
-            self.ui.spinBoxSelectionStart.hide()
-            self.ui.spinBoxSelectionEnd.hide()
-            self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
 
     def display_scene(self):
         self.scene_creator.scene_type = self.ui.cbSignalView.currentIndex()
@@ -972,21 +902,14 @@ class SignalFrameController(QFrame):
             end = self.ui.gvSignal.selection_area.end
             self.delete_selection(start, end)
 
-    @pyqtSlot()
-    def handle_gv_legend_resized(self):
-        if self.ui.gvLegend.isVisible():
-            self.ui.gvLegend.y_zoom_factor = self.ui.gvSignal.transform().m22()
-            self.ui.gvLegend.refresh()
-            self.ui.gvLegend.translate(0, 1) # Resize verschiebt sonst Pfeile
-
-
     def minimize_maximize(self):
-        elems = vars(self.ui)
+        elements = vars(self.ui)
 
         if not self.is_minimized:
-            for name, widget in elems.items():
-                if name != "btnMinimize" and type(widget) not in (QHBoxLayout, QVBoxLayout, QGridLayout)\
-                        and name not in ("lSignalNr", "lineEditSignalName", "btnCloseSignal", "lSignalTyp", "btnSaveSignal"):
+            for name, widget in elements.items():
+                if name != "btnMinimize" and type(widget) not in (QHBoxLayout, QVBoxLayout, QGridLayout) \
+                        and name not in (
+                                "lSignalNr", "lineEditSignalName", "btnCloseSignal", "lSignalTyp", "btnSaveSignal"):
                     widget.hide()
 
             self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/uparrow.png"))
@@ -994,13 +917,14 @@ class SignalFrameController(QFrame):
             self.setFixedHeight(65)
         else:
             show_start_end = self.ui.btnShowHideStartEnd.text() == "-"
-            for name, widget in elems.items():
+            for name, widget in elements.items():
                 if type(widget) in (QHBoxLayout, QVBoxLayout, QGridLayout):
                     continue
                 if not self.ui.chkBoxShowProtocol.isChecked() and name in ("txtEdProto", "chkBoxSyncSelection"):
                     continue
-                if not show_start_end and name in ("lStart", "spinBoxSelectionStart", "lEnd", "spinBoxSelectionEnd", "lSamplesInView",
-                "lStrich", "lSamplesTotal", "lSamplesViewText", "btnSaveSignal"):
+                if not show_start_end and name in (
+                        "lStart", "spinBoxSelectionStart", "lEnd", "spinBoxSelectionEnd", "lSamplesInView",
+                        "lStrich", "lSamplesTotal", "lSamplesViewText", "btnSaveSignal"):
                     continue
 
                 if not self.signal.changed and name == "btnSaveSignal":
@@ -1026,38 +950,23 @@ class SignalFrameController(QFrame):
             "<html><head/><body><p>Choose the view of your signal.</p><p>The quadrature demodulation uses a <span style=\" text-decoration: underline;\">threshold of magnitude,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this threshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" text-decoration: underline;\">context menu</span>.</p><p>Current noise threshold is: <b>" + str(
                 noise_threshold) + "</b></p></body></html>")
 
-    @pyqtSlot()
-    def handle_signal_data_changed_before_save(self):
-        font = self.ui.lineEditSignalName.font()
-        """:type: QFont """
-        if self.signal.changed:
-            font.setBold(True)
-            self.ui.btnSaveSignal.show()
-        else:
-            font.setBold(False)
-            self.ui.btnSaveSignal.hide()
-        self.ui.lineEditSignalName.setFont(font)
-
     def contextMenuEvent(self, event: QContextMenuEvent):
         if self.signal is None:
             return
 
         menu = QMenu()
-        applyToAllAction = menu.addAction(self.tr("Apply values (BitLen, 0/1-Threshold, Tolerance) to all signals"))
+        apply_to_all_action = menu.addAction(self.tr("Apply values (BitLen, 0/1-Threshold, Tolerance) to all signals"))
         menu.addSeparator()
-        autoDetectAction = menu.addAction(self.tr("Auto-Detect signal parameters"))
-        #sortAction = menu.addAction("Sort Frames by name")
+        auto_detect_action = menu.addAction(self.tr("Auto-Detect signal parameters"))
         action = menu.exec_(self.mapToGlobal(event.pos()))
-        if action == applyToAllAction:
+        if action == apply_to_all_action:
             self.setCursor(Qt.WaitCursor)
             self.apply_to_all_clicked.emit(self.signal)
             self.unsetCursor()
-        elif action == autoDetectAction:
+        elif action == auto_detect_action:
             self.setCursor(Qt.WaitCursor)
             self.signal.auto_detect()
             self.unsetCursor()
-        #elif action == sortAction:
-        #    self.sort_action_clicked.emit()
 
     def zoom_all_signals(self, factor):
         """
@@ -1072,9 +981,6 @@ class SignalFrameController(QFrame):
         for sWidget in self.signal_widgets:
             if sWidget == self:
                 continue
-
-    def on_signal_scrolled(self):
-        self.redraw_timer.start(0)
 
     def redraw_signal(self):
         vr = self.ui.gvSignal.view_rect()
@@ -1094,14 +1000,15 @@ class SignalFrameController(QFrame):
             if message.bit_sample_pos[-2] < start:
                 continue
 
-            color = None if message.participant is None else constants.PARTICIPANT_COLORS[message.participant.color_index]
+            color = None if message.participant is None else constants.PARTICIPANT_COLORS[
+                message.participant.color_index]
 
             # Append the pause until first bit of message
             subpath_ranges.append((start, message.bit_sample_pos[0]))
             if start < message.bit_sample_pos[0]:
                 colors.append(None)
             else:
-                colors.append(color) # Zoomed inside a message
+                colors.append(color)  # Zoomed inside a message
 
             if message.bit_sample_pos[-2] > end:
                 subpath_ranges.append((message.bit_sample_pos[0], end))
@@ -1122,10 +1029,6 @@ class SignalFrameController(QFrame):
         colors = colors if colors else None
         return subpath_ranges, colors
 
-    def on_info_btn_clicked(self):
-        sdc = SignalDetailsController(self.signal, self)
-        sdc.exec_()
-
     def show_modulation_type(self):
         self.ui.cbModulationType.blockSignals(True)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
@@ -1145,9 +1048,102 @@ class SignalFrameController(QFrame):
         if self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
-    def on_cbmodulationtype_index_changed(self):
+    @pyqtSlot()
+    def on_info_btn_clicked(self):
+        sdc = SignalDetailsController(self.signal, self)
+        sdc.exec_()
+
+    @pyqtSlot(int)
+    def on_combobox_modulation_type_index_changed(self, index: int):
         modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                              parameter_name="modulation_type",
-                                              parameter_value=self.ui.cbModulationType.currentIndex())
+                                                  parameter_name="modulation_type",
+                                                  parameter_value=index)
 
         self.undo_stack.push(modulation_action)
+
+    @pyqtSlot()
+    def on_signal_scrolled(self):
+        self.redraw_timer.start(0)
+
+    @pyqtSlot()
+    def on_signal_data_changed_before_save(self):
+        font = self.ui.lineEditSignalName.font()
+        """:type: QFont """
+        if self.signal.changed:
+            font.setBold(True)
+            self.ui.btnSaveSignal.show()
+        else:
+            font.setBold(False)
+            self.ui.btnSaveSignal.hide()
+        self.ui.lineEditSignalName.setFont(font)
+
+    @pyqtSlot()
+    def on_gv_legend_resized(self):
+        if self.ui.gvLegend.isVisible():
+            self.ui.gvLegend.y_zoom_factor = self.ui.gvSignal.transform().m22()
+            self.ui.gvLegend.refresh()
+            self.ui.gvLegend.translate(0, 1)  # Resize verschiebt sonst Pfeile
+
+    @pyqtSlot()
+    def on_show_hide_start_end_clicked(self):
+        if self.ui.btnShowHideStartEnd.text() == "+":
+            self.ui.btnShowHideStartEnd.setText("-")
+            self.ui.verticalLayout.insertItem(2, self.ui.additionalInfos)
+            self.ui.lStart.show()
+            self.ui.lEnd.show()
+            self.ui.lSamplesInView.show()
+            self.ui.lStrich.show()
+            self.ui.lSamplesTotal.show()
+            self.ui.lSamplesViewText.show()
+            self.ui.spinBoxSelectionStart.show()
+            self.ui.spinBoxSelectionEnd.show()
+
+        else:
+            self.ui.btnShowHideStartEnd.setText("+")
+            self.ui.lStart.hide()
+            self.ui.lEnd.hide()
+            self.ui.lSamplesInView.hide()
+            self.ui.lStrich.hide()
+            self.ui.lSamplesTotal.hide()
+            self.ui.lSamplesViewText.hide()
+            self.ui.spinBoxSelectionStart.hide()
+            self.ui.spinBoxSelectionEnd.hide()
+            self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
+
+    @pyqtSlot()
+    def on_spinbox_tolerance_editing_finished(self):
+        if self.signal.tolerance != self.ui.spinBoxTolerance.value():
+            self.ui.spinBoxTolerance.blockSignals(True)
+            tolerance_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                     parameter_name="tolerance",
+                                                     parameter_value=self.ui.spinBoxTolerance.value())
+            self.undo_stack.push(tolerance_action)
+            self.ui.spinBoxTolerance.blockSignals(False)
+            self.disable_auto_detection()
+
+    @pyqtSlot()
+    def on_spinbox_infolen_editing_finished(self):
+        if self.signal.bit_len != self.ui.spinBoxInfoLen.value():
+            self.ui.spinBoxInfoLen.blockSignals(True)
+            bitlen_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                  parameter_name="bit_len",
+                                                  parameter_value=self.ui.spinBoxInfoLen.value())
+            self.undo_stack.push(bitlen_action)
+            self.ui.spinBoxInfoLen.blockSignals(False)
+            self.disable_auto_detection()
+
+    @pyqtSlot()
+    def on_spinbox_center_editing_finished(self):
+        if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
+            self.ui.spinBoxCenterOffset.blockSignals(True)
+            center_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                  parameter_name="qad_center",
+                                                  parameter_value=self.ui.spinBoxCenterOffset.value())
+            self.undo_stack.push(center_action)
+            self.disable_auto_detection()
+
+    @pyqtSlot()
+    def refresh(self, draw_full_signal=False):
+        self.refresh_signal(draw_full_signal=draw_full_signal)
+        self.refresh_signal_information(block=True)
+        self.show_protocol(refresh=True)

@@ -62,6 +62,10 @@ class ProtocolTreeModel(QAbstractItemModel):
 
         return result
 
+    def update(self):
+        self.beginResetModel()
+        self.endResetModel()
+
     def get_groupid_for_index(self, index: QModelIndex) -> int:
         item = self.getItem(index)
         if item.parent() == self.rootItem:

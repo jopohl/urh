@@ -96,7 +96,7 @@ class SignalTabController(QWidget):
             start_sig_widget = self.splitter.widget(from_index)
             self.splitter.insertWidget(to_index, start_sig_widget)
 
-    def handle_files_dropped(self, files):
+    def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
     def close_frame(self, frame:SignalFrameController):
@@ -144,7 +144,7 @@ class SignalTabController(QWidget):
         sig_frame.ui.gvSignal.shift_state_changed.connect(self.set_shift_statuslabel)
         sig_frame.ui.gvSignal.ctrl_state_changed.connect(self.set_ctrl_statuslabel)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
-        sig_frame.files_dropped.connect(self.handle_files_dropped)
+        sig_frame.files_dropped.connect(self.on_files_dropped)
         sig_frame.apply_to_all_clicked.connect(self.handle_apply_to_all_clicked)
 
 
@@ -179,7 +179,7 @@ class SignalTabController(QWidget):
         sig_frame.ui.lineEditSignalName.setText(filename)
         sig_frame.drag_started.connect(self.frame_dragged)
         sig_frame.frame_dropped.connect(self.frame_dropped)
-        sig_frame.files_dropped.connect(self.handle_files_dropped)
+        sig_frame.files_dropped.connect(self.on_files_dropped)
         sig_frame.setMinimumHeight(sig_frame.height())
         sig_frame.closed.connect(self.close_frame)
         sig_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)

@@ -99,7 +99,7 @@ class ProjectManager(QObject):
                                              QMessageBox.Yes | QMessageBox.No)
 
                 if reply == QMessageBox.Yes:
-                    self.maincontroller.on_project_settings_clicked()
+                    self.maincontroller.show_project_settings()
                 else:
                     self.project_file = None
 
@@ -137,7 +137,7 @@ class ProjectManager(QObject):
         else:
             self.maincontroller.ui.actionConvert_Folder_to_Project.setEnabled(False)
 
-        self.maincontroller.adjustForCurrentFile(path)
+        self.maincontroller.adjust_for_current_file(path)
         self.maincontroller.filemodel.setRootPath(path)
         self.maincontroller.ui.fileTree.setRootIndex(
             self.maincontroller.file_proxy_model.mapFromSource(self.maincontroller.filemodel.index(path)))
@@ -146,7 +146,7 @@ class ProjectManager(QObject):
         if collapse_project_tabs:
             self.maincontroller.collapse_project_tab_bar()
         else:
-            self.maincontroller.uncollapse_project_tab_bar()
+            self.maincontroller.expand_project_tab_bar()
 
 
         self.maincontroller.setWindowTitle("Universal Radio Hacker [" + path + "]")
@@ -156,7 +156,7 @@ class ProjectManager(QObject):
 
     def convert_folder_to_project(self):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
-        self.maincontroller.on_project_settings_clicked()
+        self.maincontroller.show_project_settings()
 
     def write_signal_information_to_project_file(self, signal: Signal, messages, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:

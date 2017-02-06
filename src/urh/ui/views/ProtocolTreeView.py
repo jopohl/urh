@@ -57,7 +57,7 @@ class ProtocolTreeView(QTreeView):
         action = menu.exec_(self.mapToGlobal(event.pos()))
         if action == newGroupAction:
             self.model().addGroup()
-            self.model().layoutChanged.emit()
+            self.model().update()
         elif action == deleteGroupAction:
             self.model().deleteGroup(item)
         elif action in moveToGroupActions.keys():

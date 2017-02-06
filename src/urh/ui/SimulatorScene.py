@@ -6,6 +6,10 @@ import math
 from urh import constants
 from urh.signalprocessing.Message import Message
 
+class RuleItem(QGraphicsItem):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
         super().__init__(parent)
@@ -164,7 +168,7 @@ class SimulatorScene(QGraphicsScene):
         self.participants.append(self.broadcast_part)
         self.addItem(self.broadcast_part)
 
-        self.messages = []
+        self.items = []
 
     def mousePressEvent(self, event):
         if event.button() != Qt.LeftButton:
@@ -184,19 +188,22 @@ class SimulatorScene(QGraphicsScene):
         action = menu.exec_(event.screenPos())
 
         if action == delAction:
+            self.delete_selected_items()
+
+    def delete_selected_items(self):
             for item in self.selectedItems():
-                self.messages.remove(item)
+                self.items.remove(item)
                 self.arrange_items()
                 self.removeItem(item)
 
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
-        for msg in self.messages:
+        for msg in self.items:
             if msg.source not in self.participants or msg.destination not in self.participants:
                 self.removeItem(msg)
 
-        self.messages = [msg for msg in self.messages
+        self.items = [msg for msg in self.items
                                 if msg.source in self.participants
                                 and msg.destination in self.participants]
 
@@ -229,13 +236,13 @@ class SimulatorScene(QGraphicsScene):
             curr_participant = self.participants[i]
             participants_left = self.participants[:i]
 
-            messages = [msg for msg in self.messages
+            items = [msg for msg in self.items
                     if (msg.source == curr_participant and msg.destination in participants_left)
                     or (msg.source in participants_left and msg.destination == curr_participant)]
 
             x_max = self.participants[i - 1].line.line().x1() + 50
 
-            for msg in messages:
+            for msg in items:
                 x = msg.labels_width() +  30
                 x += msg.source.line.line().x1() if msg.source != curr_participant else msg.destination.line.line().x1()
 
@@ -246,9 +253,9 @@ class SimulatorScene(QGraphicsScene):
 
         y_pos = 30
 
-        for message in self.messages:
-            message.update(y_pos)
-            y_pos += message.boundingRect().height()
+        for item in self.items:
+            item.update(y_pos)
+            y_pos += item.boundingRect().height()
 
         for participant in self.participants:
             participant.update(y_pos = max(y_pos, 50))
@@ -301,7 +308,7 @@ class SimulatorScene(QGraphicsScene):
                 simulator_message = MessageItem(source, destination)
                 for label in message.message_type:
                     simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
-                self.messages.append(simulator_message)
+                self.items.append(simulator_message)
                 self.addItem(simulator_message)
 
         self.update_view()

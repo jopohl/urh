@@ -94,11 +94,9 @@ class ProtocolSniffDialogController(QDialog):
         self.sniffer.started.connect(self.on_sniffer_rcv_started)
         self.sniffer.stopped.connect(self.on_sniffer_rcv_stopped)
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
-        self.sniffer.qt_signals.sniff_device_errors_changed.connect(
-            self.on_device_errors_changed)
+        self.sniffer.qt_signals.sniff_device_errors_changed.connect(self.on_device_errors_changed)
 
-        self.ui.spinBoxSampleRate.editingFinished.connect(
-            self.on_sample_rate_edited)
+        self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_edited)
         self.ui.spinBoxGain.editingFinished.connect(self.on_gain_edited)
         self.ui.spinBoxFreq.editingFinished.connect(self.on_freq_edited)
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_bw_edited)
@@ -113,6 +111,8 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.spinboxErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
         self.ui.comboxModulation.currentIndexChanged.connect(self.on_modulation_changed)
         self.ui.comboBoxViewType.currentIndexChanged.connect(self.on_view_type_changed)
+        self.ui.lineEditOutputFile.textChanged.connect(self.on_line_edit_output_file_text_changed)
+
     @property
     def view_type(self):
         return self.ui.comboBoxViewType.currentIndex()
@@ -120,6 +120,11 @@ class ProtocolSniffDialogController(QDialog):
     @property
     def has_empty_device_list(self):
         return self.ui.cbDevice.count() == 0
+
+    def closeEvent(self, event: QCloseEvent):
+        if hasattr(self, "sniffer"):
+            self.sniffer.stop()
+        event.accept()
 
     @pyqtSlot()
     def on_sample_rate_edited(self):
@@ -182,8 +187,6 @@ class ProtocolSniffDialogController(QDialog):
                        "labelNoise", "labelCenter", "labelBitLength", "labelTolerance", "labelModulation"):
             getattr(self.ui, object).setHidden(self.sniffer.device_name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
-
-
     @pyqtSlot()
     def on_start_clicked(self):
         self.ui.spinBoxFreq.editingFinished.emit()
@@ -241,12 +244,13 @@ class ProtocolSniffDialogController(QDialog):
         self.ui.lineEditIP.setDisabled(True)
         self.ui.cbDevice.setDisabled(True)
 
+    @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
         else:
-             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 
     @pyqtSlot()
     def on_clear_clicked(self):
@@ -275,12 +279,7 @@ class ProtocolSniffDialogController(QDialog):
     def on_device_errors_changed(self, txt: str):
         self.ui.txtEditErrors.append(txt)
 
-    def closeEvent(self, event: QCloseEvent):
-        if hasattr(self, "sniffer"):
-            self.sniffer.stop()
-        event.accept()
-
     @pyqtSlot(str)
-    def on_lineEditOutputFile_textChanged(self, text: str):
+    def on_line_edit_output_file_text_changed(self, text: str):
         self.sniffer.sniff_file = text
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))

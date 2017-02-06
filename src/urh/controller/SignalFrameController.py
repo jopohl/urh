@@ -23,6 +23,7 @@ from urh.util.Formatter import Formatter
 
 locale.setlocale(locale.LC_ALL, '')
 
+
 class SignalFrameController(QFrame):
     closed = pyqtSignal(QWidget)
     signal_created = pyqtSignal(Signal)
@@ -33,6 +34,16 @@ class SignalFrameController(QFrame):
     signal_drawing_finished = pyqtSignal()
     apply_to_all_clicked = pyqtSignal(Signal)
     sort_action_clicked = pyqtSignal()
+
+    @property
+    def proto_view(self):
+        return self.ui.txtEdProto.cur_view
+
+    @property
+    def signal_widgets(self):
+        splitter = self.parent()
+        for i in range(splitter.count() - 1):
+            yield (splitter.widget(i))
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack,
                  project_manager, proto_bits=None, parent=None):
@@ -54,8 +65,7 @@ class SignalFrameController(QFrame):
         self.project_manager = project_manager
 
         self.proto_analyzer = proto_analyzer
-        self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None
-        """:type: Signal """
+        self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
 
         self.redraw_timer = QTimer()
         self.redraw_timer.setSingleShot(True)
@@ -94,7 +104,7 @@ class SignalFrameController(QFrame):
             self.jump_sync = True
             self.handle_show_hide_start_end_clicked()
 
-            self.refresh_signal_informations(block=True)
+            self.refresh_signal_information(block=True)
             self.create_connects()
             self.set_protocol_visibilty()
 
@@ -105,7 +115,7 @@ class SignalFrameController(QFrame):
             self.show_protocol(refresh=False)
 
         else:
-            self.ui.lSignalTyp.setText("Protocol (*.txt)")
+            self.ui.lSignalTyp.setText("Protocol (*.proto)")
 
             scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
 
@@ -175,7 +185,7 @@ class SignalFrameController(QFrame):
 
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
 
-        self.proto_selection_timer.timeout.connect(self.update_nselected_samples)
+        self.proto_selection_timer.timeout.connect(self.update_number_selected_samples)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.cbSignalView.currentIndexChanged.connect(self.on_cb_signal_view_index_changed)
 
@@ -203,17 +213,7 @@ class SignalFrameController(QFrame):
 
         self.ui.btnMinimize.clicked.connect(self.minimize_maximize)
 
-    @property
-    def proto_view(self):
-        return self.ui.txtEdProto.cur_view
-
-    @property
-    def signal_widgets(self):
-        splitter = self.parent()
-        for i in range(splitter.count() - 1):
-            yield (splitter.widget(i))
-
-    def refresh_signal_informations(self, block=True):
+    def refresh_signal_information(self, block=True):
         self.ui.spinBoxTolerance.blockSignals(block)
         self.ui.spinBoxCenterOffset.blockSignals(block)
         self.ui.spinBoxInfoLen.blockSignals(block)
@@ -247,9 +247,17 @@ class SignalFrameController(QFrame):
         self.ui.gvLegend.hide()
         self.ui.cbSignalView.hide()
         self.ui.cbModulationType.hide()
-        #self.ui.btnCloseSignal.hide()
         self.ui.btnSaveSignal.hide()
         self.ui.btnMinimize.hide()
+
+    def update_number_selected_samples(self):
+        self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
+        self.__set_duration()
+        sel_messages = self.ui.gvSignal.selected_messages
+        if len(sel_messages) == 1:
+            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
+        else:
+            self.ui.labelRSSI.setText("")
 
     @pyqtSlot(float)
     def update_legend(self, y_sep):
@@ -315,33 +323,20 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_btn_replay_clicked(self):
-        pmngr = self.project_manager
-        dialog = SendRecvDialogController(pmngr.frequency, pmngr.sample_rate,
-                                          pmngr.bandwidth, pmngr.gain, pmngr.device,
+        project_manager = self.project_manager
+        dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
+                                          project_manager.bandwidth, project_manager.gain, project_manager.device,
                                           Mode.send, modulated_data=self.signal.data, parent=self)
         if dialog.has_empty_device_list:
             Errors.no_device()
             dialog.close()
             return
 
-        dialog.recording_parameters.connect(pmngr.set_recording_parameters)
+        dialog.recording_parameters.connect(project_manager.set_recording_parameters)
         dialog.show()
-
-    def update_nselected_samples(self):
-        self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
-        self.__set_duration()
-        sel_messages = self.ui.gvSignal.selected_messages
-        if len(sel_messages) == 1:
-            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
-        else:
-            self.ui.labelRSSI.setText("")
-
 
     @pyqtSlot(int, int)
     def update_selection_area(self, start, end):
-        # if start > end:
-        #     start, end = end, start
-
         self.ui.lNumSelectedSamples.setText(str(end - start))
         self.__set_duration()
         self.ui.spinBoxSelectionStart.blockSignals(True)
@@ -363,7 +358,6 @@ class SignalFrameController(QFrame):
         if self.signal:
             t = nsamples / self.signal.sample_rate
             self.ui.lDuration.setText(Formatter.science_time(t))
-
 
     @pyqtSlot()
     def handle_signal_zoomed(self):
@@ -783,7 +777,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.set_selection_area(0, 0)
         self.ui.gvSignal.blockSignals(False)
 
-        self.update_nselected_samples()
+        self.update_number_selected_samples()
 
     def zoom_to_roi(self):
         roi = self.ui.gvSignal.selection_area
@@ -877,7 +871,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def refresh(self, draw_full_signal=False):
         self.refresh_signal(draw_full_signal=draw_full_signal)
-        self.refresh_signal_informations(block=True)
+        self.refresh_signal_information(block=True)
         self.show_protocol(refresh=True)
 
 

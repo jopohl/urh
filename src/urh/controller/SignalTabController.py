@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import pyqtSignal, Qt, QCoreApplication, pyqtSlot
 from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
 
@@ -44,6 +45,10 @@ class SignalTabController(QWidget):
         """
         return [sw.signal.signal_frame_number for sw in self.signal_frames]
 
+    @property
+    def signal_undo_stack(self):
+        return self.undo_stack
+
     def __init__(self, project_manager, parent=None):
         super().__init__(parent)
         self.ui = Ui_Interpretation()
@@ -64,14 +69,12 @@ class SignalTabController(QWidget):
 
         self.drag_pos = None
 
-    @property
-    def signal_undo_stack(self):
-        return self.undo_stack
-
-    def frame_dragged(self, pos):
+    @pyqtSlot(QPoint)
+    def frame_dragged(self, pos: QPoint):
         self.drag_pos = pos
 
-    def frame_dropped(self, pos):
+    @pyqtSlot(QPoint)
+    def frame_dropped(self, pos: QPoint):
         start = self.drag_pos
         if start is None:
             return
@@ -135,18 +138,13 @@ class SignalTabController(QWidget):
             # Neues Signal aus "Create Signal from Selection"
             sig_frame.ui.btnSaveSignal.show()
 
-        sig_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
-        sig_frame.closed.connect(self.close_frame)
+        self.__create_connects_for_signal_frame(signal_frame=sig_frame)
         sig_frame.signal_created.connect(self.signal_created.emit)
-        sig_frame.drag_started.connect(self.frame_dragged)
-        sig_frame.frame_dropped.connect(self.frame_dropped)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
         sig_frame.ui.gvSignal.shift_state_changed.connect(self.set_shift_statuslabel)
         sig_frame.ui.gvSignal.ctrl_state_changed.connect(self.set_ctrl_statuslabel)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
-        sig_frame.files_dropped.connect(self.on_files_dropped)
         sig_frame.apply_to_all_clicked.connect(self.handle_apply_to_all_clicked)
-
 
         if prev_signal_frame is not None:
             sig_frame.ui.cbProtoView.setCurrentIndex(prev_signal_frame.ui.cbProtoView.currentIndex())
@@ -171,25 +169,28 @@ class SignalTabController(QWidget):
 
         return sig_frame
 
+    def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
+        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
+        signal_frame.drag_started.connect(self.frame_dragged)
+        signal_frame.frame_dropped.connect(self.frame_dropped)
+        signal_frame.files_dropped.connect(self.on_files_dropped)
+        signal_frame.closed.connect(self.close_frame)
+
     def add_empty_frame(self, filename: str, proto):
         sig_frame = SignalFrameController(proto_analyzer=proto, undo_stack=self.undo_stack,
                                           project_manager=self.project_manager, proto_bits=proto.decoded_proto_bits_str,
                                           parent=self)
 
         sig_frame.ui.lineEditSignalName.setText(filename)
-        sig_frame.drag_started.connect(self.frame_dragged)
-        sig_frame.frame_dropped.connect(self.frame_dropped)
-        sig_frame.files_dropped.connect(self.on_files_dropped)
         sig_frame.setMinimumHeight(sig_frame.height())
-        sig_frame.closed.connect(self.close_frame)
-        sig_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
         sig_frame.set_empty_frame_visibilities()
-
+        self.__create_connects_for_signal_frame(signal_frame=sig_frame)
 
         self.splitter.insertWidget(self.num_signals, sig_frame)
         QCoreApplication.processEvents()
 
         return sig_frame
+
 
     def set_frame_numbers(self):
         for i, f in enumerate(self.signal_frames):

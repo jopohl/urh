@@ -48,8 +48,8 @@ class OptionsController(QDialog):
         completer.setModel(QDirModel(completer))
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
 
-        for devname in self.backend_handler.DEVICE_NAMES:
-            self.ui.listWidgetDevices.addItem(devname)
+        for dev_name in self.backend_handler.DEVICE_NAMES:
+            self.ui.listWidgetDevices.addItem(dev_name)
 
         self.set_device_enabled_suffix()
 

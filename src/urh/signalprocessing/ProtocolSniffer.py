@@ -61,6 +61,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def plain_to_string(self, view: int, show_pauses=True, start=0) -> str:
         """
 
+        :param start: First message to begin with
+        :param show_pauses: Show pauses in output?
         :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
         """
         return '\n'.join(msg.view_to_string(view, False, show_pauses) for

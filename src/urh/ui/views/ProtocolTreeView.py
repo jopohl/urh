@@ -60,10 +60,10 @@ class ProtocolTreeView(QTreeView):
             self.model().addGroup()
             self.model().update()
         elif action == delete_group_action:
-            self.model().deleteGroup(item)
+            self.model().delete_group(item)
         elif action in move_to_group_actions.keys():
             i = move_to_group_actions[action]
-            self.model().moveToGroup(selected_items, i)
+            self.model().move_to_group(selected_items, i)
         elif action == close_action:
             self.close_wanted.emit(selected_protocols)
         elif action == sort_group_elements_action:
@@ -79,7 +79,7 @@ class ProtocolTreeView(QTreeView):
 
     def dropEvent(self, event: QDropEvent):
         if len(event.mimeData().urls()) > 0:
-            group_id = self.model().get_groupid_for_index(self.indexAt(event.pos()))
+            group_id = self.model().get_group_id_for_index(self.indexAt(event.pos()))
             self.files_dropped_on_group.emit(event.mimeData().urls(), group_id)
         else:
             super().dropEvent(event)

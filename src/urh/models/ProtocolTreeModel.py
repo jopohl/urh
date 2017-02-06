@@ -15,7 +15,6 @@ class ProtocolTreeModel(QAbstractItemModel):
     proto_to_group_added = pyqtSignal(int)
     group_added = pyqtSignal(QModelIndex)
 
-
     def __init__(self, controller, parent=None):
         self.rootItem = ProtocolTreeItem(None, None)
         self.rootItem.addGroup()
@@ -35,9 +34,6 @@ class ProtocolTreeModel(QAbstractItemModel):
             result[i] = [child.protocol for child in group.children]
 
         return result
-
-    def group_at(self, index: int) -> ProtocolGroup:
-        return self.rootItem.child(index).group
 
     @property
     def ngroups(self):
@@ -62,19 +58,21 @@ class ProtocolTreeModel(QAbstractItemModel):
 
         return result
 
+    def group_at(self, index: int) -> ProtocolGroup:
+        return self.rootItem.child(index).group
+
     def update(self):
         self.beginResetModel()
         self.endResetModel()
 
-    def get_groupid_for_index(self, index: QModelIndex) -> int:
+    def get_group_id_for_index(self, index: QModelIndex) -> int:
         item = self.getItem(index)
         if item.parent() == self.rootItem:
             return self.rootItem.index_of(item)
         elif item == self.rootItem:
-            return self.ngroups - 1 # Last group when dropped on root
+            return self.ngroups - 1  # Last group when dropped on root
         else:
-            return self.rootItem.index_of(item.parent()) # Item is Protocol
-
+            return self.rootItem.index_of(item.parent())  # Item is Protocol
 
     def getItem(self, index: QModelIndex) -> ProtocolTreeItem:
         if index.isValid():
@@ -84,21 +82,21 @@ class ProtocolTreeModel(QAbstractItemModel):
 
         return self.rootItem
 
-    def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
-        parentItem = self.getItem(QModelIndex_parent)
-        return parentItem.childCount()
+    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
+        parent_item = self.getItem(parent)
+        return parent_item.childCount()
 
-    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
         return 1
 
     def index(self, row: int, column: int, parent=None, *args, **kwargs):
         if parent is None:
             return QModelIndex()
 
-        parentItem = self.getItem(parent)
-        childItem = parentItem.child(row)
-        if childItem:
-            return self.createIndex(row, column, childItem)
+        parent_item = self.getItem(parent)
+        child_item = parent_item.child(row)
+        if child_item:
+            return self.createIndex(row, column, child_item)
         else:
             return QModelIndex()
 
@@ -106,16 +104,16 @@ class ProtocolTreeModel(QAbstractItemModel):
         if not index.isValid():
             return QModelIndex()
 
-        childItem = self.getItem(index)
+        child_item = self.getItem(index)
         try:
-            parentItem = childItem.parent()
+            parent_item = child_item.parent()
         except AttributeError:
             return QModelIndex()
 
-        if parentItem == self.rootItem or parentItem is None:
+        if parent_item == self.rootItem or parent_item is None:
             return QModelIndex()
 
-        return self.createIndex(parentItem.indexInParent(), 0, parentItem)
+        return self.createIndex(parent_item.indexInParent(), 0, parent_item)
 
     def data(self, index: QModelIndex, role=None):
         item = self.getItem(index)
@@ -191,9 +189,9 @@ class ProtocolTreeModel(QAbstractItemModel):
                 data += "{0},{1},{2}/".format(index.row(), index.column(), -1)
             else:
                 data += "{0},{1},{2}/".format(index.row(), index.column(), self.rootItem.index_of(parent_item))
-        mimeData = QMimeData()
-        mimeData.setText(data)
-        return mimeData
+        mime_data = QMimeData()
+        mime_data.setText(data)
+        return mime_data
 
     def dropMimeData(self, mimedata, action, row, column, parentIndex):
         if action == Qt.IgnoreAction:
@@ -204,13 +202,13 @@ class ProtocolTreeModel(QAbstractItemModel):
             # Labels Dropped
             data_str = data_str.replace("'", "")
             label_ids = list(map(int, data_str.replace("PLabels:", "").split("/")))
-            dropNode = self.getItem(parentIndex)
-            if dropNode == self.rootItem:
+            drop_node = self.getItem(parentIndex)
+            if drop_node == self.rootItem:
                 return False
-            elif dropNode.is_group:
-                parent = dropNode
+            elif drop_node.is_group:
+                parent = drop_node
             else:
-                parent = dropNode.parent()
+                parent = drop_node.parent()
 
             dropped_group_id = self.rootItem.index_of(parent)
 
@@ -219,7 +217,7 @@ class ProtocolTreeModel(QAbstractItemModel):
             return True
 
         indexes = list(reversed(data_str.split("/")[:-1]))
-        dragNodes = []
+        drag_nodes = []
 
         # Ensure we only drop groups or files
         contains_groups = False
@@ -242,60 +240,60 @@ class ProtocolTreeModel(QAbstractItemModel):
                            self.tr("You can only drag/drop groups or protocols, no mixtures of both."))
                 return False
 
-            dragNodes.append(node)
+            drag_nodes.append(node)
 
-        dropNode = self.getItem(parentIndex)
+        drop_node = self.getItem(parentIndex)
 
-        if dropNode == self.rootItem:
+        if drop_node == self.rootItem:
             # Append to Last Group when dropped on root
             try:
-                dropNode = self.rootItem.children[-1]
+                drop_node = self.rootItem.children[-1]
             except IndexError:
                 return False
 
-        if not dropNode.is_group:
-            parentNode = dropNode.parent()
+        if not drop_node.is_group:
+            parent_node = drop_node.parent()
             dropped_on_group = False
         else:
-            parentNode = dropNode
+            parent_node = drop_node
             dropped_on_group = True
 
-        if parentNode is None:
+        if parent_node is None:
             return False
 
         if dropped_on_group and contains_groups:
-            parentNode = dropNode.parent()
-            pos = parentNode.index_of(dropNode)
-            parentNode.bringChildsToIndex(pos, dragNodes)
+            parent_node = drop_node.parent()
+            pos = parent_node.index_of(drop_node)
+            parent_node.bringChildsToIndex(pos, drag_nodes)
         elif dropped_on_group:
-            if parentNode.containsChilds(dragNodes):
+            if parent_node.containsChilds(drag_nodes):
                 # "Nodes on parent folder Dropped"
-                parentNode.bringChildsToFront(dragNodes)
+                parent_node.bringChildsToFront(drag_nodes)
             else:
                 # "Nodes on distinct folder dropped"
-                for dragNode in dragNodes:
-                    parentNode.appendChild(dragNode)
+                for dragNode in drag_nodes:
+                    parent_node.appendChild(dragNode)
 
-                self.proto_to_group_added.emit(self.rootItem.index_of(parentNode))
+                self.proto_to_group_added.emit(self.rootItem.index_of(parent_node))
         else:
             # Dropped on file
             if contains_groups:
                 # Cant drop groups on files
                 return False
 
-            elif parentNode.containsChilds(dragNodes) and dropNode in parentNode.children:
+            elif parent_node.containsChilds(drag_nodes) and drop_node in parent_node.children:
                 # "Nodes on node in parent folder dropped"
-                pos = parentNode.index_of(dropNode)
-                parentNode.bringChildsToIndex(pos, dragNodes)
-            elif parentNode.containsChilds(dragNodes):
-                parentNode.bringChildsToFront(dragNodes)
+                pos = parent_node.index_of(drop_node)
+                parent_node.bringChildsToIndex(pos, drag_nodes)
+            elif parent_node.containsChilds(drag_nodes):
+                parent_node.bringChildsToFront(drag_nodes)
             else:
                 # "Nodes on node in distinct folder dropped"
-                pos = parentNode.index_of(dropNode)
-                for dragNode in dragNodes:
-                    dragNode.setParent(parentNode)
-                    parentNode.insertChild(pos, dragNode)
-                self.proto_to_group_added.emit(self.rootItem.index_of(parentNode))
+                pos = parent_node.index_of(drop_node)
+                for dragNode in drag_nodes:
+                    dragNode.setParent(parent_node)
+                    parent_node.insertChild(pos, dragNode)
+                self.proto_to_group_added.emit(self.rootItem.index_of(parent_node))
 
         self.item_dropped.emit()
         return True
@@ -324,7 +322,7 @@ class ProtocolTreeModel(QAbstractItemModel):
         child_nr = self.rootItem.childCount() - 1
         self.group_added.emit(self.createIndex(child_nr, 0, self.rootItem.child(child_nr)))
 
-    def deleteGroup(self, group_item: ProtocolTreeItem):
+    def delete_group(self, group_item: ProtocolTreeItem):
         if self.rootItem.childCount() == 1:
             QMessageBox.critical(self.controller, self.tr("Group not deletable"),
                            self.tr("You can't delete the last group. Think about the children, they would be homeless!"))
@@ -344,7 +342,7 @@ class ProtocolTreeModel(QAbstractItemModel):
         self.removeRow(group_id, QModelIndex())
         self.group_deleted.emit(group_id, new_group_index)
 
-    def moveToGroup(self, items, new_group_id: int):
+    def move_to_group(self, items, new_group_id: int):
         """
         :type items: list of ProtocolTreeItem
         """

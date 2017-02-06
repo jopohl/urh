@@ -89,3 +89,22 @@ class TestPlugins(unittest.TestCase):
                 self.assertEqual(bits, recalculated.rstrip("0"))
             else:
                 self.assertTrue(recalculated.startswith(bits))
+
+    def test_insert_sine_plugin(self):
+        insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
+        insert_sine_plugin.show_insert_sine_dialog()
+
+        insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.setValue(0.1)
+        self.assertEqual(insert_sine_plugin.amplitude, 0.1)
+
+        insert_sine_plugin.dialog_ui.doubleSpinBoxFrequency.setValue(1e6)
+        self.assertEqual(insert_sine_plugin.frequency, 1e6)
+
+        insert_sine_plugin.dialog_ui.doubleSpinBoxPhase.setValue(100)
+        self.assertEqual(insert_sine_plugin.phase, 100)
+
+        insert_sine_plugin.dialog_ui.doubleSpinBoxSampleRate.setValue(2e6)
+        self.assertEqual(insert_sine_plugin.sample_rate, 2e6)
+
+        insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.setValue(0.5e6)
+        self.assertEqual(insert_sine_plugin.num_samples, 0.5e6)

@@ -101,12 +101,12 @@ class TestGenerator(unittest.TestCase):
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
         self.assertEqual(gframe.table_model.row_count, self.form.compare_frame_controller.protocol_model.row_count)
         self.form.ui.tabWidget.setCurrentIndex(0)
-        self.form.on_selected_tab_changed()
+        self.form.on_selected_tab_changed(0)
         sframe.ui.btnCloseSignal.click()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.form.on_selected_tab_changed()
+        self.form.on_selected_tab_changed(1)
         self.form.ui.tabWidget.setCurrentIndex(2)
-        self.form.on_selected_tab_changed()
+        self.form.on_selected_tab_changed(2)
         self.assertEqual(1, 1)
 
 

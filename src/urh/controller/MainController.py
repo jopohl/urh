@@ -98,7 +98,7 @@ class MainController(QMainWindow):
 
         self.recentFileActionList = []
         self.create_connects()
-        self.updateRecentActionList()
+        self.update_recent_action_list()
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()
@@ -145,115 +145,67 @@ class MainController(QMainWindow):
 
 
     def create_connects(self):
-        self.ui.actionNew_Project.triggered.connect(self.on_new_project_clicked)
-        self.ui.actionProject_settings.triggered.connect(self.on_project_settings_clicked)
-        self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
         self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
-        self.ui.actionAbout_AutomaticHacker.triggered.connect(self.show_about)
-        self.ui.actionRecord.triggered.connect(self.show_record_dialog)
-
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
-        self.ui.actionFullscreen_mode.triggered.connect(self.toggle_fullscreen)
-
-        self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
-        self.signal_tab_controller.signal_created.connect(self.add_signal)
-        self.compare_frame_controller.show_interpretation_clicked.connect(
-            self.show_protocol_selection_in_interpretation)
-        self.signal_tab_controller.ui.scrollArea.files_dropped.connect(self.handle_files_dropped)
-        self.signal_tab_controller.files_dropped.connect(self.handle_files_dropped)
-        self.compare_frame_controller.files_dropped.connect(self.handle_files_dropped)
-        self.signal_tab_controller.frame_was_dropped.connect(self.set_frame_numbers)
-        self.ui.actionMinimize_all.triggered.connect(self.minimize_all)
-        self.ui.actionMaximize_all.triggered.connect(self.maximize_all)
-        self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
-        self.ui.actionClose_all.triggered.connect(self.close_all)
-        self.ui.actionOpen.triggered.connect(self.open)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionMinimize_all.setShortcut("F10")
         self.ui.actionMaximize_all.setShortcut("F11")
-        self.ui.lnEdtTreeFilter.textChanged.connect(self.handle_filtetree_filter_text_changed)
-        self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
-        self.ui.actionDecoding.triggered.connect(self.show_decoding_dialog)
-        self.compare_frame_controller.show_decoding_clicked.connect(self.show_decoding_dialog)
-        self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
-        self.ui.actionSpectrum_Analyzer.triggered.connect(self.show_spectrum_dialog)
-        self.ui.actionOptions.triggered.connect(self.show_options_dialog)
-        self.project_save_timer.timeout.connect(self.project_manager.saveProject)
+
+        self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
+        self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
+        self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
+
+        self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
+        self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
+
+        self.ui.actionFullscreen_mode.triggered.connect(self.on_fullscreen_action_triggered)
+        self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
+        self.ui.actionClose_all.triggered.connect(self.on_close_all_action_triggered)
+        self.ui.actionOpen.triggered.connect(self.on_open_action_triggered)
+        self.ui.actionDecoding.triggered.connect(self.on_show_decoding_dialog_triggered)
+        self.ui.actionSpectrum_Analyzer.triggered.connect(self.on_show_spectrum_dialog_action_triggered)
+        self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
 
-        self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(
-            self.handle_files_dropped)
+        self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
+        self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)
+        self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
+        self.signal_tab_controller.signal_created.connect(self.add_signal)
+        self.signal_tab_controller.ui.scrollArea.files_dropped.connect(self.on_files_dropped)
+        self.signal_tab_controller.files_dropped.connect(self.on_files_dropped)
+        self.signal_tab_controller.frame_was_dropped.connect(self.set_frame_numbers)
 
+        self.compare_frame_controller.show_interpretation_clicked.connect(self.show_protocol_selection_in_interpretation)
+        self.compare_frame_controller.files_dropped.connect(self.on_files_dropped)
+        self.compare_frame_controller.show_decoding_clicked.connect(self.on_show_decoding_dialog_triggered)
+        self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(self.on_files_dropped_on_group)
+        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
+        self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
+        self.compare_frame_controller.show_config_field_types_triggered.connect(self.on_show_field_types_config_action_triggered)
+
+        self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
+
+        self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
+        self.project_save_timer.timeout.connect(self.project_manager.saveProject)
+
+        self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionSave_project.setVisible)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
         self.project_manager.project_updated.connect(self.on_project_updated)
 
-        self.ui.textEditProjectDescription.textChanged.connect(self.on_textEditProjectDescription_edited)
+        self.ui.textEditProjectDescription.textChanged.connect(self.on_text_edit_project_description_text_changed)
         self.ui.tabWidget_Project.tabBarDoubleClicked.connect(self.on_project_tab_bar_double_clicked)
 
-        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
-        self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
-        self.compare_frame_controller.show_config_field_types_triggered.connect(self.show_field_types_config)
-        self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_clicked)
+        self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_action_triggered)
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
             recentFileAction = QAction(self)
             recentFileAction.setVisible(False)
-            recentFileAction.triggered.connect(self.openRecent)
+            recentFileAction.triggered.connect(self.on_open_recent_action_triggered)
             self.recentFileActionList.append(recentFileAction)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
-
-    @pyqtSlot()
-    def open(self):
-        fip = FileIconProvider()
-        self.dialog = QFileDialog(self)
-        self.dialog.setIconProvider(fip)
-        self.dialog.setDirectory(FileOperator.RECENT_PATH)
-        self.dialog.setWindowTitle("Open Folder")
-        self.dialog.setFileMode(QFileDialog.ExistingFiles)
-        self.dialog.setOptions(QFileDialog.DontUseNativeDialog | QFileDialog.DontResolveSymlinks)
-        self.dialog.setViewMode(QFileDialog.Detail)
-        self.dialog.setNameFilter(
-            "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
-            "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-
-        self.dialog.currentChanged.connect(self.handle_dialog_selection_changed)
-
-
-        if self.dialog.exec_():
-            try:
-                fileNames = self.dialog.selectedFiles()
-                folders = [folder for folder in fileNames if os.path.isdir(folder)]
-
-                if len(folders) > 0:
-                    folder = folders[0]
-                    for f in self.signal_tab_controller.signal_frames:
-                        self.close_signal_frame(f)
-
-                    self.project_manager.set_project_folder(folder)
-                else:
-                    fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
-                    self.add_files(fileNames)
-            except Exception as e:
-                Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
-                self.ui.progressBar.hide()
-                QApplication.restoreOverrideCursor()
-
-    @pyqtSlot(str)
-    def handle_dialog_selection_changed(self, path: str):
-        if os.path.isdir(path):
-            self.dialog.setFileMode(QFileDialog.Directory)
-            self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
-                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-        else:
-            self.dialog.setFileMode(QFileDialog.ExistingFiles)
-            self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
-                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-
 
     def add_protocol_file(self, filename):
 
@@ -264,12 +216,9 @@ class MainController(QMainWindow):
             self.set_frame_numbers()
             self.file_proxy_model.open_files.add(filename)
 
-
     def add_fuzz_profile(self, filename):
         self.ui.tabWidget.setCurrentIndex(2)
         self.generator_tab_controller.load_from_file(filename)
-
-
 
     def add_signalfile(self, filename: str, group_id=0):
         if not os.path.exists(filename):
@@ -292,7 +241,7 @@ class MainController(QMainWindow):
                         sample_rate=self.project_manager.sample_rate)
 
         if self.project_manager.project_file is None:
-            self.adjustForCurrentFile(signal.filename)
+            self.adjust_for_current_file(signal.filename)
 
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
@@ -339,14 +288,6 @@ class MainController(QMainWindow):
         self.refresh_main_menu()
         self.ui.progressBar.hide()
 
-    def on_cfc_close_wanted(self, protocols):
-        frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
-        if len(frames) != len(protocols):
-            logger.error("failed to close {} protocols".format(len(protocols)-len(frames)))
-
-        for frame in frames:
-            self.close_signal_frame(frame)
-
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.messages)
@@ -389,47 +330,166 @@ class MainController(QMainWindow):
             self.ui.progressBar.hide()
             self.unsetCursor()
 
+    def update_recent_action_list(self):
+        recent_file_paths = constants.SETTINGS.value("recentFiles")
+        recent_file_paths = [p for p in recent_file_paths if os.path.exists(p)] if recent_file_paths else []
+        it_end = len(recent_file_paths) if len(
+            recent_file_paths) < constants.MAX_RECENT_FILE_NR else constants.MAX_RECENT_FILE_NR
 
-    def updateRecentActionList(self):
-        recentFilePaths = constants.SETTINGS.value("recentFiles")
-        recentFilePaths = [p for p in recentFilePaths if os.path.exists(p)] if recentFilePaths else []
-        itEnd = len(recentFilePaths) if len(
-            recentFilePaths) < constants.MAX_RECENT_FILE_NR else constants.MAX_RECENT_FILE_NR
-
-        for i in range(itEnd):
-            suffix = " (Directory)" if os.path.isdir(recentFilePaths[i]) else ""
-            strippedName = QFileInfo(recentFilePaths[i]).fileName() + suffix
-            self.recentFileActionList[i].setText(strippedName)
-            self.recentFileActionList[i].setData(recentFilePaths[i])
+        for i in range(it_end):
+            suffix = " (Directory)" if os.path.isdir(recent_file_paths[i]) else ""
+            stripped_name = QFileInfo(recent_file_paths[i]).fileName() + suffix
+            self.recentFileActionList[i].setText(stripped_name)
+            self.recentFileActionList[i].setData(recent_file_paths[i])
             self.recentFileActionList[i].setVisible(True)
 
-        for i in range(itEnd, constants.MAX_RECENT_FILE_NR):
+        for i in range(it_end, constants.MAX_RECENT_FILE_NR):
             self.recentFileActionList[i].setVisible(False)
 
-        constants.SETTINGS.setValue("recentFiles", recentFilePaths)
+        constants.SETTINGS.setValue("recentFiles", recent_file_paths)
 
-    @pyqtSlot(str)
-    def adjustForCurrentFile(self, filePath):
-        if filePath in FileOperator.archives.keys():
-            filePath = copy.copy(FileOperator.archives[filePath])
+    def add_files(self, filepaths, group_id=0):
+        num_files = len(filepaths)
+        if num_files == 0:
+            return
 
-        settings = constants.SETTINGS
-        recentFilePaths = settings.value("recentFiles")
-        if recentFilePaths is None:
-            recentFilePaths = []
+        for i, file in enumerate(filepaths):
+            if not os.path.exists(file):
+                continue
 
-        recentFilePaths = [p for p in recentFilePaths if p != filePath]
-        recentFilePaths.insert(0, filePath)
+            if os.path.isdir(file):
+                for f in self.signal_tab_controller.signal_frames:
+                    self.close_signal_frame(f)
 
-        while len(recentFilePaths) > constants.MAX_RECENT_FILE_NR:
-            recentFilePaths.pop()
+                FileOperator.RECENT_PATH = file
+                self.project_manager.set_project_folder(file)
+                return
 
-        settings.setValue("recentFiles", recentFilePaths)
+            _, file_extension = os.path.splitext(file)
+            FileOperator.RECENT_PATH = os.path.split(file)[0]
 
-        self.updateRecentActionList()
+            self.signal_tab_controller.ui.lLoadingFile.setText(
+                self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
+            QApplication.processEvents()
+
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+
+            if file_extension == ".complex":
+                self.add_signalfile(file, group_id)
+            elif file_extension == ".coco":
+                self.add_signalfile(file, group_id)
+            elif file_extension == ".proto":
+                self.add_protocol_file(file)
+            elif file_extension == ".wav":
+                self.add_signalfile(file, group_id)
+            elif file_extension == ".fuzz":
+                self.add_fuzz_profile(file)
+            else:
+                self.add_signalfile(file, group_id)
+
+            QApplication.restoreOverrideCursor()
+        self.signal_tab_controller.ui.lLoadingFile.setText("")
+
+    def set_frame_numbers(self):
+        self.signal_tab_controller.set_frame_numbers()
+
+    def closeEvent(self, event: QCloseEvent):
+        self.project_manager.saveProject()
+        event.accept()
+
+    def close_all(self):
+        self.filemodel.setRootPath(QDir.homePath())
+        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
+        self.project_manager.saveProject()
+
+        self.signal_tab_controller.close_all()
+        self.compare_frame_controller.reset()
+        self.generator_tab_controller.close_all()
+        self.simulator_tab_controller.close_all()
+
+        self.project_manager.project_path = ""
+        self.project_manager.project_file = None
+        self.signal_tab_controller.signal_undo_stack.clear()
+        self.compare_frame_controller.protocol_undo_stack.clear()
+        self.generator_tab_controller.generator_undo_stack.clear()
+
+    def show_options_dialog_specific_tab(self, tab_index: int):
+        op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
+        op.values_changed.connect(self.on_options_changed)
+        op.ui.tabWidget.setCurrentIndex(tab_index)
+        op.show()
+
+    def refresh_main_menu(self):
+        enable = len(self.signal_protocol_dict) > 0
+        self.ui.actionSaveAllSignals.setEnabled(enable)
+        self.ui.actionClose_all.setEnabled(enable)
+
+    def apply_default_view(self):
+        view_index = constants.SETTINGS.value('default_view', type=int)
+        self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
+        self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
+        for sig_frame in self.signal_tab_controller.signal_frames:
+            sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
+
+    def show_project_settings(self):
+        pdc = ProjectDialogController(new_project=False, project_manager=self.project_manager, parent=self)
+        pdc.finished.connect(self.on_project_dialog_finished)
+        pdc.show()
+
+    def collapse_project_tab_bar(self):
+        self.ui.tabParticipants.hide()
+        self.ui.tabDescription.hide()
+        self.ui.tabWidget_Project.setMaximumHeight(self.ui.tabWidget_Project.tabBar().height())
+
+    def expand_project_tab_bar(self):
+        self.ui.tabDescription.show()
+        self.ui.tabParticipants.show()
+        self.ui.tabWidget_Project.setMaximumHeight(9000)
 
     @pyqtSlot()
-    def openRecent(self):
+    def on_project_tab_bar_double_clicked(self):
+        if self.ui.tabParticipants.isVisible():
+            self.collapse_project_tab_bar()
+        else:
+            self.expand_project_tab_bar()
+
+    @pyqtSlot()
+    def on_project_updated(self):
+        self.participant_legend_model.participants = self.project_manager.participants
+        self.participant_legend_model.update()
+        self.compare_frame_controller.refresh()
+        self.ui.textEditProjectDescription.setText(self.project_manager.description)
+
+    @pyqtSlot()
+    def on_fullscreen_action_triggered(self):
+        if self.ui.actionFullscreen_mode.isChecked():
+            self.showFullScreen()
+        else:
+            self.showMaximized()
+
+    @pyqtSlot(str)
+    def adjust_for_current_file(self, file_path):
+        if file_path in FileOperator.archives.keys():
+            file_path = copy.copy(FileOperator.archives[file_path])
+
+        settings = constants.SETTINGS
+        recent_file_paths = settings.value("recentFiles", [])
+        recent_file_paths = [p for p in recent_file_paths if p != file_path]
+        recent_file_paths.insert(0, file_path)
+
+        while len(recent_file_paths) > constants.MAX_RECENT_FILE_NR:
+            recent_file_paths.pop()
+
+        settings.setValue("recentFiles", recent_file_paths)
+
+        self.update_recent_action_list()
+
+    @pyqtSlot()
+    def on_show_field_types_config_action_triggered(self):
+        self.show_options_dialog_specific_tab(tab_index=3)
+
+    @pyqtSlot()
+    def on_open_recent_action_triggered(self):
         action = self.sender()
         try:
             if os.path.isdir(action.data()):
@@ -442,11 +502,18 @@ class MainController(QMainWindow):
             self.unsetCursor()
 
     @pyqtSlot()
-    def show_about(self):
-        QMessageBox.about(self, self.tr("About"), self.tr("<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />Contributors:<i><ul><li>Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li><li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li></ul></i>").format(version.VERSION))
+    def on_show_about_clicked(self):
+        descr = "<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />" \
+                "GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />" \
+                "Contributors:<i><ul><li>" \
+                "Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li>" \
+                "<li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li>" \
+                "</ul></i>".format(version.VERSION)
+
+        QMessageBox.about(self, self.tr("About"), self.tr(descr))
 
     @pyqtSlot(int, int, int, int)
-    def show_protocol_selection_in_interpretation(self, startmessage, start, endmessage, end):
+    def show_protocol_selection_in_interpretation(self, start_message, start, end_message, end):
         cfc = self.compare_frame_controller
         msg_total = 0
         last_sig_frame = None
@@ -455,7 +522,7 @@ class MainController(QMainWindow):
                 continue
             n = protocol.num_messages
             view_type = cfc.ui.cbProtoView.currentIndex()
-            messages = [i - msg_total for i in range(msg_total, msg_total + n) if startmessage <= i <= endmessage]
+            messages = [i - msg_total for i in range(msg_total, msg_total + n) if start_message <= i <= end_message]
             if len(messages) > 0:
                 try:
                     signal_frame = next((sf for sf, pf in self.signal_protocol_dict.items() if pf == protocol))
@@ -475,85 +542,15 @@ class MainController(QMainWindow):
         if focus_frame is not None:
             focus_frame.ui.txtEdProto.setFocus()
 
-    def handle_files_dropped(self, files, group_id=0):
-        """
-        :type files: list of QtCore.QUrl
-        """
-        localfiles = [fileurl.toLocalFile() for fileurl in files if fileurl.isLocalFile()]
-
-        if len(localfiles) > 0:
-            self.add_files(FileOperator.uncompress_archives(localfiles, QDir.tempPath()), group_id)
-
-    def add_files(self, filepaths, group_id=0):
-        num_files = len(filepaths)
-        if num_files == 0:
-            return
-
-        for i, file in enumerate(filepaths):
-            if not os.path.exists(file):
-                continue
-
-            if os.path.isdir(file):
-                for f in self.signal_tab_controller.signal_frames:
-                    self.close_signal_frame(f)
-
-                FileOperator.RECENT_PATH = file
-                self.project_manager.set_project_folder(file)
-                return
-
-            _, fileExtension = os.path.splitext(file)
-            FileOperator.RECENT_PATH = os.path.split(file)[0]
-
-            self.signal_tab_controller.ui.lLoadingFile.setText(
-                self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
-            QApplication.processEvents()
-
-            QApplication.setOverrideCursor(Qt.WaitCursor)
-
-            if fileExtension == ".complex":
-                self.add_signalfile(file, group_id)
-            elif fileExtension == ".coco":
-                self.add_signalfile(file, group_id)
-            elif fileExtension == ".proto":
-                self.add_protocol_file(file)
-            elif fileExtension == ".wav":
-                self.add_signalfile(file, group_id)
-            elif fileExtension == ".fuzz":
-                self.add_fuzz_profile(file)
-            else:
-                self.add_signalfile(file, group_id)
-
-            QApplication.restoreOverrideCursor()
-        self.signal_tab_controller.ui.lLoadingFile.setText("")
-
-    def set_frame_numbers(self):
-        self.signal_tab_controller.set_frame_numbers()
-
-    @pyqtSlot()
-    def minimize_all(self):
-        self.signal_tab_controller.minimize_all()
-
-    @pyqtSlot()
-    def maximize_all(self):
-        self.signal_tab_controller.maximize_all()
-
-    @pyqtSlot()
-    def handle_filtetree_filter_text_changed(self):
-        text = self.ui.lnEdtTreeFilter.text()
-
+    @pyqtSlot(str)
+    def on_file_tree_filter_text_changed(self, text: str):
         if len(text) > 0:
             self.filemodel.setNameFilters(["*"+text+"*"])
         else:
             self.filemodel.setNameFilters(["*"])
 
-
-
-    def closeEvent(self, event: QCloseEvent):
-        self.project_manager.saveProject()
-        event.accept()
-
     @pyqtSlot()
-    def show_decoding_dialog(self):
+    def on_show_decoding_dialog_triggered(self):
         signals = [sf.signal for sf in self.signal_tab_controller.signal_frames]
         decoding_controller = DecoderWidgetController(
             self.compare_frame_controller.decodings, signals,
@@ -570,38 +567,19 @@ class MainController(QMainWindow):
 
         self.generator_tab_controller.refresh_existing_encodings(self.compare_frame_controller.decodings)
 
-
-    @pyqtSlot()
-    def on_selected_tab_changed(self):
-        indx = self.ui.tabWidget.currentIndex()
-        if indx == 0:
+    @pyqtSlot(int)
+    def on_selected_tab_changed(self, index: int):
+        if index == 0:
             self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
-        elif indx == 1:
+        elif index == 1:
             self.undo_group.setActiveStack(self.compare_frame_controller.protocol_undo_stack)
             self.compare_frame_controller.ui.tblViewProtocol.resize_columns()
             self.compare_frame_controller.ui.tblViewProtocol.resize_vertical_header()
-        elif indx == 2:
+        elif index == 2:
             self.undo_group.setActiveStack(self.generator_tab_controller.generator_undo_stack)
 
-
-    def close_all(self):
-        self.filemodel.setRootPath(QDir.homePath())
-        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.project_manager.saveProject()
-
-        self.signal_tab_controller.close_all()
-        self.compare_frame_controller.reset()
-        self.generator_tab_controller.close_all()
-        self.simulator_tab_controller.close_all()
-
-        self.project_manager.project_path = ""
-        self.project_manager.project_file = None
-        self.signal_tab_controller.signal_undo_stack.clear()
-        self.compare_frame_controller.protocol_undo_stack.clear()
-        self.generator_tab_controller.generator_undo_stack.clear()
-
     @pyqtSlot()
-    def show_record_dialog(self):
+    def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
         r = SendRecvDialogController(pm.frequency, pm.sample_rate,
                                      pm.bandwidth, pm.gain,
@@ -613,7 +591,7 @@ class MainController(QMainWindow):
             return
 
         r.recording_parameters.connect(pm.set_recording_parameters)
-        r.files_recorded.connect(self.load_recorded_signals)
+        r.files_recorded.connect(self.on_signals_recorded)
         r.show()
 
     @pyqtSlot()
@@ -647,7 +625,7 @@ class MainController(QMainWindow):
         psd.show()
 
     @pyqtSlot()
-    def show_spectrum_dialog(self):
+    def on_show_spectrum_dialog_action_triggered(self):
         pm = self.project_manager
         r = SendRecvDialogController(pm.frequency, pm.sample_rate,
                                      pm.bandwidth, pm.gain, pm.device,
@@ -661,25 +639,118 @@ class MainController(QMainWindow):
         r.show()
 
     @pyqtSlot(list)
-    def load_recorded_signals(self, filenames):
+    def on_signals_recorded(self, file_names: list):
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        for filename in filenames:
+        for filename in file_names:
             self.add_signalfile(filename)
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot()
-    def show_options_dialog(self):
+    def show_options_dialog_action_triggered(self):
         self.show_options_dialog_specific_tab(tab_index=0)
 
-    def show_field_types_config(self):
-        self.show_options_dialog_specific_tab(tab_index=3)
+    @pyqtSlot()
+    def on_new_project_action_triggered(self):
+        pdc = ProjectDialogController(parent=self)
+        pdc.finished.connect(self.on_project_dialog_finished)
+        pdc.show()
 
-    def show_options_dialog_specific_tab(self, tab_index: int):
-        op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
-        op.values_changed.connect(self.on_options_changed)
-        op.ui.tabWidget.setCurrentIndex(tab_index)
-        op.show()
+    @pyqtSlot()
+    def on_project_settings_action_triggered(self):
+        self.show_project_settings()
 
+    @pyqtSlot()
+    def on_project_dialog_finished(self):
+        if self.sender().commited:
+            if self.sender().new_project:
+                for f in self.signal_tab_controller.signal_frames:
+                    self.close_signal_frame(f)
+
+            self.project_manager.from_dialog(self.sender())
+
+    @pyqtSlot()
+    def on_open_action_triggered(self):
+        fip = FileIconProvider()
+        self.dialog = QFileDialog(self)
+        self.dialog.setIconProvider(fip)
+        self.dialog.setDirectory(FileOperator.RECENT_PATH)
+        self.dialog.setWindowTitle("Open Folder")
+        self.dialog.setFileMode(QFileDialog.ExistingFiles)
+        self.dialog.setOptions(QFileDialog.DontUseNativeDialog | QFileDialog.DontResolveSymlinks)
+        self.dialog.setViewMode(QFileDialog.Detail)
+        self.dialog.setNameFilter(
+            "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
+            "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+
+        self.dialog.currentChanged.connect(self.on_dialog_selection_changed)
+
+
+        if self.dialog.exec_():
+            try:
+                file_names = self.dialog.selectedFiles()
+                folders = [folder for folder in file_names if os.path.isdir(folder)]
+
+                if len(folders) > 0:
+                    folder = folders[0]
+                    for f in self.signal_tab_controller.signal_frames:
+                        self.close_signal_frame(f)
+
+                    self.project_manager.set_project_folder(folder)
+                else:
+                    file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
+                    self.add_files(file_names)
+            except Exception as e:
+                Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
+                self.ui.progressBar.hide()
+                QApplication.restoreOverrideCursor()
+
+    @pyqtSlot(str)
+    def on_dialog_selection_changed(self, path: str):
+        if os.path.isdir(path):
+            self.dialog.setFileMode(QFileDialog.Directory)
+            self.dialog.setNameFilter(
+                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
+                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+        else:
+            self.dialog.setFileMode(QFileDialog.ExistingFiles)
+            self.dialog.setNameFilter(
+                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
+                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+
+    @pyqtSlot()
+    def on_close_all_action_triggered(self):
+        self.close_all()
+
+    @pyqtSlot(list)
+    def on_files_dropped(self, files):
+        """
+        :type files: list of QtCore.QUrl
+        """
+        self.__add_urls_to_group(files, group_id=0)
+
+    @pyqtSlot(list, int)
+    def on_files_dropped_on_group(self, files, group_id: int):
+        """
+        :param group_id:
+        :type files: list of QtCore.QUrl
+        """
+        self.__add_urls_to_group(files, group_id=group_id)
+
+    def __add_urls_to_group(self, file_urls, group_id=0):
+        local_files = [file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()]
+        if len(local_files) > 0:
+            self.add_files(FileOperator.uncompress_archives(local_files, QDir.tempPath()), group_id=group_id)
+
+    @pyqtSlot(list)
+    def on_cfc_close_wanted(self, protocols: list):
+        frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
+        if len(frames) != len(protocols):
+            logger.error("failed to close {} protocols".format(len(protocols)-len(frames)))
+
+        for frame in frames:
+            self.close_signal_frame(frame)
+
+    @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):
         refresh_protocol_needed = False
         for key in changed_options.keys():
@@ -701,67 +772,6 @@ class MainController(QMainWindow):
         if "default_view" in changed_options.keys():
             self.apply_default_view()
 
-    def refresh_main_menu(self):
-        enable = len(self.signal_protocol_dict) > 0
-        self.ui.actionSaveAllSignals.setEnabled(enable)
-        self.ui.actionClose_all.setEnabled(enable)
-
     @pyqtSlot()
-    def on_new_project_clicked(self):
-        pdc = ProjectDialogController(parent=self)
-        pdc.finished.connect(self.on_project_dialog_finished)
-        pdc.show()
-
-    @pyqtSlot()
-    def on_project_settings_clicked(self):
-        pdc = ProjectDialogController(new_project=False, project_manager=self.project_manager, parent=self)
-        pdc.finished.connect(self.on_project_dialog_finished)
-        pdc.show()
-
-
-    @pyqtSlot()
-    def on_project_dialog_finished(self):
-        if self.sender().commited:
-            if self.sender().new_project:
-                for f in self.signal_tab_controller.signal_frames:
-                    self.close_signal_frame(f)
-
-            self.project_manager.from_dialog(self.sender())
-
-    def apply_default_view(self):
-        view_index = constants.SETTINGS.value('default_view', type=int)
-        self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
-        self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
-        for sig_frame in self.signal_tab_controller.signal_frames:
-            sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
-
-    def on_project_updated(self):
-        self.participant_legend_model.participants = self.project_manager.participants
-        self.participant_legend_model.update()
-        self.compare_frame_controller.refresh()
-        self.ui.textEditProjectDescription.setText(self.project_manager.description)
-
-    def on_textEditProjectDescription_edited(self):
+    def on_text_edit_project_description_text_changed(self):
         self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()
-
-    def on_project_tab_bar_double_clicked(self):
-        if self.ui.tabParticipants.isVisible():
-            self.collapse_project_tab_bar()
-        else:
-            self.uncollapse_project_tab_bar()
-
-    def collapse_project_tab_bar(self):
-        self.ui.tabParticipants.hide()
-        self.ui.tabDescription.hide()
-        self.ui.tabWidget_Project.setMaximumHeight(self.ui.tabWidget_Project.tabBar().height())
-
-    def uncollapse_project_tab_bar(self):
-        self.ui.tabDescription.show()
-        self.ui.tabParticipants.show()
-        self.ui.tabWidget_Project.setMaximumHeight(9000)
-
-    def toggle_fullscreen(self):
-        if self.ui.actionFullscreen_mode.isChecked():
-            self.showFullScreen()
-        else:
-            self.showMaximized()

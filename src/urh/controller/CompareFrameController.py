@@ -530,7 +530,8 @@ class CompareFrameController(QFrame):
 
     def set_shown_protocols(self):
         # Instant Visual Refresh of Tree
-        self.proto_tree_model.layoutChanged.emit()
+        self.proto_tree_model.update()
+        self.ui.treeViewProtocols.expandAll()
         QApplication.processEvents()
 
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
@@ -652,7 +653,8 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
 
         self.protocol_label_list_model.update()
-        self.proto_tree_model.layoutChanged.emit()
+        self.proto_tree_model.update()
+        self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()
 

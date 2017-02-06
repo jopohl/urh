@@ -10,13 +10,8 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         super().__init__(parent)
 
         self.lineEdit().setValidator(None)
-        self.editingFinished.connect(self.adjust_step)
+        self.valueChanged.connect(self.adjust_step)
         self.auto_suffix = True
-
-
-    def setValue(self, val: float):
-        super().setValue(val)
-        self.adjust_step()
 
     def adjust_step(self):
         value = abs(self.value())

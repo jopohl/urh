@@ -5,6 +5,7 @@ import gc
 
 import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 
@@ -410,10 +411,9 @@ class SendRecvDialogController(QDialog):
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)
 
-
-    def closeEvent(self, QCloseEvent):
+    def closeEvent(self, event: QCloseEvent):
         if self.device.backend == Backends.network:
-            QCloseEvent.accept()
+            event.accept()
             return
 
         self.device.stop("Dialog closed. Killing recording process.")
@@ -424,7 +424,7 @@ class SendRecvDialogController(QDialog):
             if reply == QMessageBox.Yes:
                 self.on_save_clicked()
             elif reply == QMessageBox.Abort:
-                QCloseEvent.ignore()
+                event.ignore()
                 return
 
         time.sleep(0.1)
@@ -437,7 +437,7 @@ class SendRecvDialogController(QDialog):
                                            str(self.device.gain),
                                            str(self.device.name))
 
-        QCloseEvent.accept()
+        event.accept()
 
     def handle_signal_zoomed_or_scrolled(self):
         if not self.ui.graphicsView.capturing_data:

@@ -1,6 +1,6 @@
 import copy
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
 from urh.models.RulesetTableModel import RulesetTableModel
@@ -54,34 +54,6 @@ class MessageTypeDialogController(QDialog):
         self.ui.btnSaveAndApply.clicked.connect(self.on_btn_save_and_apply_clicked)
         self.ui.btnClose.clicked.connect(self.on_btn_close_clicked)
 
-    def on_btn_add_rule_clicked(self):
-        self.ui.btnRemoveRule.setEnabled(True)
-        self.message_type.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
-        self.ruleset_table_model.update()
-
-        for i in range(len(self.message_type.ruleset)):
-            self.open_editors(i)
-
-    def on_btn_close_clicked(self):
-        self.message_type = self.orig_message_type
-        self.close()
-
-    def on_btn_save_and_apply_clicked(self):
-        self.close()
-
-    def on_btn_remove_rule_clicked(self):
-        self.ruleset_table_model.ruleset.remove(self.message_type.ruleset[-1])
-        self.ruleset_table_model.update()
-        self.ui.btnRemoveRule.setEnabled(len(self.message_type.ruleset) > 0)
-
-    def on_rb_assign_automatically_clicked(self):
-        self.message_type.assigned_by_ruleset = True
-        self.set_ruleset_ui_status()
-
-    def on_rb_assign_manually_clicked(self):
-        self.message_type.assigned_by_ruleset = False
-        self.set_ruleset_ui_status()
-
     def set_ruleset_ui_status(self):
         self.ui.tblViewRuleset.setEnabled(self.message_type.assigned_by_ruleset)
         self.ui.btnRemoveRule.setEnabled(self.message_type.assigned_by_ruleset and len(self.message_type.ruleset) > 0)
@@ -92,5 +64,40 @@ class MessageTypeDialogController(QDialog):
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 2))
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 3))
 
-    def on_cb_rulesetmode_current_index_changed(self):
-        self.message_type.ruleset.mode = Ruleset.Mode(self.ui.cbRulesetMode.currentIndex())
+    @pyqtSlot()
+    def on_btn_add_rule_clicked(self):
+        self.ui.btnRemoveRule.setEnabled(True)
+        self.message_type.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
+        self.ruleset_table_model.update()
+
+        for i in range(len(self.message_type.ruleset)):
+            self.open_editors(i)
+
+    @pyqtSlot()
+    def on_btn_close_clicked(self):
+        self.message_type = self.orig_message_type
+        self.close()
+
+    @pyqtSlot()
+    def on_btn_save_and_apply_clicked(self):
+        self.close()
+
+    @pyqtSlot()
+    def on_btn_remove_rule_clicked(self):
+        self.ruleset_table_model.ruleset.remove(self.message_type.ruleset[-1])
+        self.ruleset_table_model.update()
+        self.ui.btnRemoveRule.setEnabled(len(self.message_type.ruleset) > 0)
+
+    @pyqtSlot()
+    def on_rb_assign_automatically_clicked(self):
+        self.message_type.assigned_by_ruleset = True
+        self.set_ruleset_ui_status()
+
+    @pyqtSlot()
+    def on_rb_assign_manually_clicked(self):
+        self.message_type.assigned_by_ruleset = False
+        self.set_ruleset_ui_status()
+
+    @pyqtSlot(int)
+    def on_cb_rulesetmode_current_index_changed(self, index: int):
+        self.message_type.ruleset.mode = Ruleset.Mode(index)

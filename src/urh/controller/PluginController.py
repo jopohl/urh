@@ -7,7 +7,7 @@ from urh.ui.ui_plugins import Ui_FramePlugins
 
 
 class PluginController(QFrame):
-    def __init__(self, plugins, highlighted_plugins = None, parent=None):
+    def __init__(self, plugins, highlighted_plugins=None, parent=None):
         """
         :type plugins: list of Plugin
         :type highlighted_plugins: list of Plugin
@@ -22,7 +22,7 @@ class PluginController(QFrame):
         self.create_connects()
 
     def create_connects(self):
-        self.ui.listViewPlugins.selectionModel().selectionChanged.connect(self.handle_list_selection_changed)
+        self.ui.listViewPlugins.selectionModel().selectionChanged.connect(self.on_list_selection_changed)
         for plugin in self.model.plugins:
             if hasattr(plugin, "show_proto_sniff_dialog_clicked"):
                 plugin.show_proto_sniff_dialog_clicked.connect(self.parent().parent().show_proto_sniff_dialog)
@@ -32,7 +32,7 @@ class PluginController(QFrame):
             constants.SETTINGS.setValue(plugin.name, plugin.enabled)
 
     @pyqtSlot()
-    def handle_list_selection_changed(self):
+    def on_list_selection_changed(self):
         i = self.ui.listViewPlugins.currentIndex().row()
         self.ui.txtEditPluginDescription.setText(self.model.plugins[i].description)
         self.model.plugins[i].load_settings_frame()

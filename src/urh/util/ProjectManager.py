@@ -405,7 +405,7 @@ class ProjectManager(QObject):
         self.maincontroller.compare_frame_controller.refresh()
 
     def from_dialog(self, dialog):
-        if dialog.commited:
+        if dialog.committed:
             if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, constants.PROJECT_FILE)):
                 self.set_project_folder(dialog.path, ask_for_new_project=False)
             self.frequency = dialog.freq

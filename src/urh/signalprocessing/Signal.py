@@ -23,7 +23,7 @@ class Signal(QObject):
 
     bit_len_changed = pyqtSignal(int)
     tolerance_changed = pyqtSignal(int)
-    noise_treshold_changed = pyqtSignal()
+    noise_threshold_changed = pyqtSignal()
     qad_center_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
@@ -224,7 +224,7 @@ class Signal(QObject):
             self._noise_treshold = value
             self.noise_min_plot = -value
             self.noise_max_plot = value
-            self.noise_treshold_changed.emit()
+            self.noise_threshold_changed.emit()
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 

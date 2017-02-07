@@ -70,7 +70,7 @@ class SignalFrameController(QFrame):
 
         self.redraw_timer = QTimer()
         self.redraw_timer.setSingleShot(True)
-        self.redraw_timer.setInterval(1)
+        self.redraw_timer.setInterval(10)
 
         self.proto_selection_timer = QTimer()  # For Update Proto Selection from ROI
         self.proto_selection_timer.setSingleShot(True)

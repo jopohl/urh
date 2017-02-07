@@ -1345,14 +1345,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
                                                      int is_list, int wraparound, int boundscheck);
 
-/* PyIntBinop.proto */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
-#else
-#define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace)\
-    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
-#endif
-
 /* ListAppend.proto */
 #if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
 static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
@@ -1560,6 +1552,14 @@ static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
 }
 #else
 #define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* PyIntBinop.proto */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
+#else
+#define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace)\
+    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
 
 /* ListExtend.proto */
@@ -2403,7 +2403,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
  *     if samples_per_pixel > 1:
  *         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)             # <<<<<<<<<<<<<<
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
- *         scale_factor = num_samples / (2 * len(sample_rng))
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
  */
     __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -2452,7 +2452,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
  *     if samples_per_pixel > 1:
  *         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")             # <<<<<<<<<<<<<<
- *         scale_factor = num_samples / (2 * len(sample_rng))
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
  *         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
  */
     __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 29, __pyx_L1_error)
@@ -2496,7 +2496,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
     /* "src/urh/cythonext/path_creator.pyx":30
  *         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
- *         scale_factor = num_samples / (2 * len(sample_rng))             # <<<<<<<<<<<<<<
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!             # <<<<<<<<<<<<<<
  *         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
  *             chunk_end = i + samples_per_pixel
  */
@@ -2504,11 +2504,11 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = PyObject_Length(__pyx_t_5); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 30, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_v_scale_factor = (__pyx_v_num_samples / ((PY_LONG_LONG)(2 * __pyx_t_9)));
+    __pyx_v_scale_factor = (((double)__pyx_v_num_samples) / (2.0 * __pyx_t_9));
 
     /* "src/urh/cythonext/path_creator.pyx":31
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
- *         scale_factor = num_samples / (2 * len(sample_rng))
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
  *         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):             # <<<<<<<<<<<<<<
  *             chunk_end = i + samples_per_pixel
  *             if chunk_end >= end:
@@ -2553,7 +2553,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
                               __pyx_v_tmp = ((float)__PYX_NAN());
 
                               /* "src/urh/cythonext/path_creator.pyx":32
- *         scale_factor = num_samples / (2 * len(sample_rng))
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
  *         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
  *             chunk_end = i + samples_per_pixel             # <<<<<<<<<<<<<<
  *             if chunk_end >= end:
@@ -2740,7 +2740,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_12path_creator_create_path(__Pyx_m
 
         /* "src/urh/cythonext/path_creator.pyx":31
  *         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
- *         scale_factor = num_samples / (2 * len(sample_rng))
+ *         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
  *         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):             # <<<<<<<<<<<<<<
  *             chunk_end = i + samples_per_pixel
  *             if chunk_end >= end:
@@ -2968,7 +2968,7 @@ __pyx_v_values = __pyx_t_10;
  *         scale_factor = 1  # prevent division by zero
  *     for subpath_range in subpath_ranges:             # <<<<<<<<<<<<<<
  *         substart = int((subpath_range[0]-start)/scale_factor)
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1
+ *         subend = int((subpath_range[1]-start)/scale_factor)
  */
   if (unlikely(__pyx_v_subpath_ranges == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
@@ -2990,7 +2990,7 @@ __pyx_v_values = __pyx_t_10;
  *         scale_factor = 1  # prevent division by zero
  *     for subpath_range in subpath_ranges:
  *         substart = int((subpath_range[0]-start)/scale_factor)             # <<<<<<<<<<<<<<
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1
+ *         subend = int((subpath_range[1]-start)/scale_factor)
  *         result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
  */
     __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_subpath_range, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
@@ -3016,7 +3016,7 @@ __pyx_v_values = __pyx_t_10;
     /* "src/urh/cythonext/path_creator.pyx":62
  *     for subpath_range in subpath_ranges:
  *         substart = int((subpath_range[0]-start)/scale_factor)
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1             # <<<<<<<<<<<<<<
+ *         subend = int((subpath_range[1]-start)/scale_factor)             # <<<<<<<<<<<<<<
  *         result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
  *     return result
  */
@@ -3037,15 +3037,12 @@ __pyx_v_values = __pyx_t_10;
     __pyx_t_1 = __Pyx_PyNumber_Int(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 62, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_subend, __pyx_t_4);
-    __pyx_t_4 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_subend, __pyx_t_1);
+    __pyx_t_1 = 0;
 
     /* "src/urh/cythonext/path_creator.pyx":63
  *         substart = int((subpath_range[0]-start)/scale_factor)
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1
+ *         subend = int((subpath_range[1]-start)/scale_factor)
  *         result.append(array_to_QPath(x[substart:subend], values[substart:subend]))             # <<<<<<<<<<<<<<
  *     return result
  * 
@@ -3096,29 +3093,29 @@ __pyx_t_22 = __Pyx_PyIndex_AsSsize_t(__pyx_v_substart); if (unlikely((__pyx_t_22
     __PYX_ERR(0, 63, __pyx_L1_error)
 }
 
-__pyx_t_4 = __pyx_f_3src_3urh_9cythonext_12path_creator_array_to_QPath(__pyx_t_20, __pyx_t_10, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
+__pyx_t_1 = __pyx_f_3src_3urh_9cythonext_12path_creator_array_to_QPath(__pyx_t_20, __pyx_t_10, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
     __pyx_t_20.memview = NULL;
     __pyx_t_20.data = NULL;
     __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
     __pyx_t_10.memview = NULL;
     __pyx_t_10.data = NULL;
-    __pyx_t_23 = __Pyx_PyList_Append(__pyx_v_result, __pyx_t_4); if (unlikely(__pyx_t_23 == -1)) __PYX_ERR(0, 63, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_23 = __Pyx_PyList_Append(__pyx_v_result, __pyx_t_1); if (unlikely(__pyx_t_23 == -1)) __PYX_ERR(0, 63, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "src/urh/cythonext/path_creator.pyx":60
  *     if scale_factor == 0:
  *         scale_factor = 1  # prevent division by zero
  *     for subpath_range in subpath_ranges:             # <<<<<<<<<<<<<<
  *         substart = int((subpath_range[0]-start)/scale_factor)
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1
+ *         subend = int((subpath_range[1]-start)/scale_factor)
  */
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "src/urh/cythonext/path_creator.pyx":64
- *         subend = int((subpath_range[1]-start)/scale_factor) + 1
+ *         subend = int((subpath_range[1]-start)/scale_factor)
  *         result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
  *     return result             # <<<<<<<<<<<<<<
  * 
@@ -21066,122 +21063,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
 }
 
-/* PyIntBinop */
-    #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
-    #if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_CheckExact(op1))) {
-        const long b = intval;
-        long x;
-        long a = PyInt_AS_LONG(op1);
-            x = (long)((unsigned long)a + b);
-            if (likely((x^a) >= 0 || (x^b) >= 0))
-                return PyInt_FromLong(x);
-            return PyLong_Type.tp_as_number->nb_add(op1, op2);
-    }
-    #endif
-    #if CYTHON_USE_PYLONG_INTERNALS
-    if (likely(PyLong_CheckExact(op1))) {
-        const long b = intval;
-        long a, x;
-#ifdef HAVE_LONG_LONG
-        const PY_LONG_LONG llb = intval;
-        PY_LONG_LONG lla, llx;
-#endif
-        const digit* digits = ((PyLongObject*)op1)->ob_digit;
-        const Py_ssize_t size = Py_SIZE(op1);
-        if (likely(__Pyx_sst_abs(size) <= 1)) {
-            a = likely(size) ? digits[0] : 0;
-            if (size == -1) a = -a;
-        } else {
-            switch (size) {
-                case -2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        a = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                case 2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        a = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                case -3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        a = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                case 3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        a = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                case -4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        a = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                case 4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        a = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
-            }
-        }
-                x = a + b;
-            return PyLong_FromLong(x);
-#ifdef HAVE_LONG_LONG
-        long_long:
-                llx = lla + llb;
-            return PyLong_FromLongLong(llx);
-#endif
-        
-        
-    }
-    #endif
-    if (PyFloat_CheckExact(op1)) {
-        const long b = intval;
-        double a = PyFloat_AS_DOUBLE(op1);
-            double result;
-            PyFPE_START_PROTECT("add", return NULL)
-            result = ((double)a) + (double)b;
-            PyFPE_END_PROTECT(result)
-            return PyFloat_FromDouble(result);
-    }
-    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
-}
-#endif
-
 /* RaiseArgTupleInvalid */
     static void __Pyx_RaiseArgtupleInvalid(
     const char* func_name,
@@ -22210,6 +22091,122 @@ bad:
     Py_XDECREF(empty_dict);
     return module;
 }
+
+/* PyIntBinop */
+            #if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op1))) {
+        const long b = intval;
+        long x;
+        long a = PyInt_AS_LONG(op1);
+            x = (long)((unsigned long)a + b);
+            if (likely((x^a) >= 0 || (x^b) >= 0))
+                return PyInt_FromLong(x);
+            return PyLong_Type.tp_as_number->nb_add(op1, op2);
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS
+    if (likely(PyLong_CheckExact(op1))) {
+        const long b = intval;
+        long a, x;
+#ifdef HAVE_LONG_LONG
+        const PY_LONG_LONG llb = intval;
+        PY_LONG_LONG lla, llx;
+#endif
+        const digit* digits = ((PyLongObject*)op1)->ob_digit;
+        const Py_ssize_t size = Py_SIZE(op1);
+        if (likely(__Pyx_sst_abs(size) <= 1)) {
+            a = likely(size) ? digits[0] : 0;
+            if (size == -1) a = -a;
+        } else {
+            switch (size) {
+                case -2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                case 2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                case -3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                case 3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                case -4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                case 4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
+            }
+        }
+                x = a + b;
+            return PyLong_FromLong(x);
+#ifdef HAVE_LONG_LONG
+        long_long:
+                llx = lla + llb;
+            return PyLong_FromLongLong(llx);
+#endif
+        
+        
+    }
+    #endif
+    if (PyFloat_CheckExact(op1)) {
+        const long b = intval;
+        double a = PyFloat_AS_DOUBLE(op1);
+            double result;
+            PyFPE_START_PROTECT("add", return NULL)
+            result = ((double)a) + (double)b;
+            PyFPE_END_PROTECT(result)
+            return PyFloat_FromDouble(result);
+    }
+    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
+}
+#endif
 
 /* None */
             static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {

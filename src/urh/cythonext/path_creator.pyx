@@ -27,7 +27,7 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
     if samples_per_pixel > 1:
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
-        scale_factor = num_samples / (2 * len(sample_rng))
+        scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
             chunk_end = i + samples_per_pixel
             if chunk_end >= end:
@@ -59,7 +59,7 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
         scale_factor = 1  # prevent division by zero
     for subpath_range in subpath_ranges:
         substart = int((subpath_range[0]-start)/scale_factor)
-        subend = int((subpath_range[1]-start)/scale_factor) + 1
+        subend = int((subpath_range[1]-start)/scale_factor)
         result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
     return result
 

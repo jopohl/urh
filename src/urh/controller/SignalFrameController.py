@@ -60,7 +60,6 @@ class SignalFrameController(QFrame):
 
         self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
         self.is_minimized = False
-        self.common_zoom = False
         self.undo_stack = undo_stack
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
@@ -173,7 +172,6 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
-        self.ui.gvSignal.show_crop_range_clicked.connect(self.show_autocrop_range)
         self.ui.gvSignal.crop_clicked.connect(self.on_crop_signal_clicked)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
@@ -967,20 +965,6 @@ class SignalFrameController(QFrame):
             self.setCursor(Qt.WaitCursor)
             self.signal.auto_detect()
             self.unsetCursor()
-
-    def zoom_all_signals(self, factor):
-        """
-        This method is used, when 'common Zoom' is enabled
-        :param factor:
-        :return:
-        """
-        for sWidget in self.signal_widgets:
-            gvs = sWidget.ui.gvSignal
-            gvs.zoom(factor)
-
-        for sWidget in self.signal_widgets:
-            if sWidget == self:
-                continue
 
     def redraw_signal(self):
         vr = self.ui.gvSignal.view_rect()

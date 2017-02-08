@@ -17,6 +17,50 @@
    <string>Record Signal</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,5,1">
+   <item row="1" column="2">
+    <widget class="QSlider" name="sliderYscale">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>5</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" rowspan="3">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="page_receive">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="LiveGraphicView" name="graphicsViewReceive">
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_send">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="EditableGraphicView" name="graphicsViewSend"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
    <item row="0" column="0" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -512,36 +556,10 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="1" rowspan="2">
-    <widget class="LiveGraphicView" name="graphicsView">
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="2">
     <widget class="QLabel" name="label_6">
      <property name="text">
       <string>Y-Scale</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QSlider" name="sliderYscale">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>10</number>
-     </property>
-     <property name="value">
-      <number>5</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </item>
@@ -558,6 +576,11 @@
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.LiveGraphicView.h</header>
   </customwidget>
+  <customwidget>
+   <class>EditableGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.EditableGraphicView.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>cbDevice</tabstop>
@@ -571,7 +594,6 @@
   <tabstop>btnStop</tabstop>
   <tabstop>btnSave</tabstop>
   <tabstop>btnClear</tabstop>
-  <tabstop>graphicsView</tabstop>
   <tabstop>sliderYscale</tabstop>
   <tabstop>txtEditErrors</tabstop>
  </tabstops>

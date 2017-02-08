@@ -40,8 +40,6 @@ class GeneratorTabController(QWidget):
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
 
-        self.modulated_scene_is_locked = False
-
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
         self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)

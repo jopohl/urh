@@ -136,9 +136,7 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setVisible(False)
         self.ui.actionMaximize_all.setVisible(False)
 
-
     def create_connects(self):
-        self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionMinimize_all.setShortcut("F10")

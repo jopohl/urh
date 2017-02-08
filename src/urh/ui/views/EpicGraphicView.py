@@ -46,14 +46,6 @@ class EpicGraphicView(EditableGraphicView):
         return self.parent_frame.ui.cbSignalView.currentIndex()
 
     @property
-    def y_center(self):
-        if self.scene_type == 0:
-            # Normal scene
-            return 0
-        else:
-            return -self.signal.qad_center
-
-    @property
     def selected_messages(self):
         if not self.selection_area.is_empty:
             pa = self.parent_frame.proto_analyzer

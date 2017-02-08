@@ -79,6 +79,14 @@ class EditableGraphicView(SelectableGraphicView):
     def selection_area(self, value):
         self.scene().selection_area = value
 
+    @property
+    def y_center(self):
+        if not hasattr(self, "scene_type") or self.scene_type == 0:
+            # Normal scene
+            return 0
+        else:
+            return -self.signal.qad_center
+
     def set_signal(self, signal: Signal):
         self.__signal = signal
 
@@ -201,7 +209,10 @@ class EditableGraphicView(SelectableGraphicView):
             if self.create_new_signal_enabled:
                 create_action = menu.addAction(self.tr("Create signal from selection"))
 
-        selected_messages = self.selected_messages
+        if hasattr(self, "selected_messages"):
+            selected_messages = self.selected_messages
+        else:
+            selected_messages = []
 
         if len(selected_messages) == 1:
             selected_msg = selected_messages[0]

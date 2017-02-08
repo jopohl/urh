@@ -379,3 +379,11 @@ class Signal(QObject):
         self.data_edited.emit()
         self.protocol_needs_update.emit()
         self.changed = True
+
+    @staticmethod
+    def from_samples(samples: np.ndarray, name: str, sample_rate: float):
+        signal = Signal("", name, sample_rate=sample_rate)
+        signal._fulldata = samples
+        signal._num_samples = len(samples)
+
+        return signal

@@ -9,8 +9,10 @@ from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 
+from urh.SignalSceneManager import SignalSceneManager
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.Signal import Signal
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
@@ -38,6 +40,8 @@ class SendRecvDialogController(QDialog):
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
+        self.graphics_view = self.ui.graphicsViewSend if mode == Mode.send else self.ui.graphicsViewReceive
+
         self.backend_handler = BackendHandler()
         if mode == Mode.spectrum:
             self.update_interval = 1
@@ -54,6 +58,10 @@ class SendRecvDialogController(QDialog):
             self.ui.lblRepeatText.hide()
             self.ui.lSamplesSentText.hide()
             self.ui.progressBar.hide()
+            self.ui.stackedWidget.setCurrentIndex(0)
+        else:
+            self.ui.stackedWidget.setCurrentIndex(1)
+
 
         if mode == Mode.send or mode == Mode.spectrum:
             self.ui.lSamplesCaptured.hide()
@@ -117,12 +125,17 @@ class SendRecvDialogController(QDialog):
 
         self.timer = QTimer(self)
 
-        if mode == Mode.receive or mode == Mode.send:
+        if mode == Mode.receive:
             self.scene_creator = LiveSceneManager(np.array([]), parent=self) # set really in on_device_started
+        elif mode == Mode.send:
+            signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
+            self.scene_creator = SignalSceneManager(signal, parent=self)
+            self.scene_creator.init_scene()
+            self.graphics_view.set_signal(signal)
         else:
-            self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.ui.graphicsViewReceive)
+            self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.graphics_view)
 
-        self.ui.graphicsViewReceive.setScene(self.scene_creator.scene)
+        self.graphics_view.setScene(self.scene_creator.scene)
 
         ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
         ipRegex = QRegExp("^" + ipRange
@@ -152,11 +165,12 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_nrepeat_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slideyscale_value_changed)
-        self.ui.graphicsViewReceive.freq_clicked.connect(self.on_graphics_view_freq_clicked)
+        if hasattr(self.graphics_view, "freq_clicked"):
+            self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
-        self.ui.graphicsViewReceive.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
-        self.ui.graphicsViewReceive.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
+        #self.graphics_view.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
+        #self.graphics_view.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
 
     def __create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
@@ -220,9 +234,9 @@ class SendRecvDialogController(QDialog):
                                     self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()
         del self.scene_creator.plot_data
-        if self.mode == Mode.receive or self.mode == Mode.send:
+        if self.mode == Mode.receive:
             self.scene_creator = LiveSceneManager(np.array([]), parent=self)
-        self.ui.graphicsViewReceive.setScene(self.scene_creator.scene)
+        self.graphics_view.setScene(self.scene_creator.scene)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
@@ -258,7 +272,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_device_stopped(self):
-        self.ui.graphicsViewReceive.capturing_data = False
+        self.graphics_view.capturing_data = False
         if self.mode == Mode.send:
             self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
             self.ui.btnStart.setToolTip("Start sending")
@@ -286,7 +300,7 @@ class SendRecvDialogController(QDialog):
 
         self.ui.txtEditErrors.clear()
         self.scene_creator.set_text("Waiting for device..")
-        self.ui.graphicsViewReceive.capturing_data = True
+        self.graphics_view.capturing_data = True
         self.ui.btnSave.setEnabled(False)
 
         if self.mode == Mode.send:
@@ -352,8 +366,8 @@ class SendRecvDialogController(QDialog):
         if self.device.current_index == 0:
             return
 
-        if self.mode == Mode.send or self.mode == Mode.receive:
-            self.ui.graphicsViewReceive.horizontalScrollBar().blockSignals(True)
+        if self.mode == Mode.receive:
+            self.graphics_view.horizontalScrollBar().blockSignals(True)
             self.scene_creator.end = self.device.current_index
         elif self.mode == Mode.spectrum:
             x, y = self.device.spectrum
@@ -362,10 +376,9 @@ class SendRecvDialogController(QDialog):
             self.scene_creator.scene.frequencies = x
             self.scene_creator.plot_data = y
 
-
         self.scene_creator.init_scene()
         self.scene_creator.show_full_scene()
-        self.ui.graphicsViewReceive.update()
+        self.graphics_view.update()
 
     def __restart_device_thread(self):
         self.device.stop("Restarting with new port")
@@ -384,7 +397,7 @@ class SendRecvDialogController(QDialog):
             self.device.current_index = 0
             self.scene_creator.clear_path()
             self.device.current_iteration = 0
-            self.ui.graphicsViewReceive.repaint()
+            self.graphics_view.repaint()
             self.ui.lSamplesCaptured.setText("0")
             self.ui.lSignalSize.setText("0")
             self.ui.lTime.setText("0")
@@ -440,10 +453,10 @@ class SendRecvDialogController(QDialog):
         event.accept()
 
     def handle_signal_zoomed_or_scrolled(self):
-        if not self.ui.graphicsViewReceive.capturing_data:
-            x1 = self.ui.graphicsViewReceive.view_rect().x()
-            x2 = x1 + self.ui.graphicsViewReceive.view_rect().width()
-            self.scene_creator.show_scene_section(x1, x2)
+        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
+            vr = self.graphics_view.view_rect()
+            start, end = vr.x(), vr.x() + vr.width()
+            self.scene_creator.show_scene_section(start, end)
 
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
@@ -453,16 +466,15 @@ class SendRecvDialogController(QDialog):
         else:
              self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 
-
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):
         # Scale Up = Top Half, Scale Down = Lower Half
         middle = int((self.ui.sliderYscale.maximum() + 1 - self.ui.sliderYscale.minimum()) / 2)
         scale_up = new_value >= middle
-        current_factor = self.ui.graphicsViewReceive.sceneRect().height() / self.ui.graphicsViewReceive.view_rect().height()
+        current_factor = self.graphics_view.sceneRect().height() / self.graphics_view.view_rect().height()
         scale_factor = (new_value + 1 - middle) / current_factor if scale_up else current_factor / new_value
         if scale_factor > 0:
-            self.ui.graphicsViewReceive.scale(1, scale_factor)
+            self.graphics_view.scale(1, scale_factor)
 
     @pyqtSlot(float)
     def on_graphics_view_freq_clicked(self, freq: float):

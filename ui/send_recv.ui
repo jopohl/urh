@@ -13,6 +13,9 @@
     <height>628</height>
    </rect>
   </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string>Record Signal</string>
   </property>
@@ -55,7 +58,20 @@
      <widget class="QWidget" name="page_send">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="EditableGraphicView" name="graphicsViewSend"/>
+        <widget class="EditableGraphicView" name="graphicsViewSend">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="renderHints">
+          <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+         </property>
+         <property name="transformationAnchor">
+          <enum>QGraphicsView::NoAnchor</enum>
+         </property>
+         <property name="resizeAnchor">
+          <enum>QGraphicsView::NoAnchor</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

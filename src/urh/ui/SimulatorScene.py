@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction
-from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont
+from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
 import math
 
@@ -10,11 +10,23 @@ class RuleItem(QGraphicsItem):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.if_cond = RuleConditionItem(self)
+        self.else_cond = None
+
+class RuleConditionItem(QGraphicsItem):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.text = QGraphicsTextItem(rule_name, self)        
+        self.items = []
+        self.rect = QRectF()
+
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
         super().__init__(parent)
         self.color = color
-        self.setFont(QFont("Courier", 8))
+        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font.setPointSize(8)
+        self.setFont(font)
         self.setPlainText(text)
 
     def paint(self, painter, option, widget):
@@ -28,7 +40,7 @@ class ParticipantItem(QGraphicsItem):
         self.text = QGraphicsTextItem(name, self)
         self.line = QGraphicsLineItem(self)
         self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
-        self.update(y_pos = 150)
+        self.update(y_pos = 50)
 
     def update(self, x_pos = -1, y_pos = -1):
         if not self.scene():
@@ -43,7 +55,6 @@ class ParticipantItem(QGraphicsItem):
         self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, y_pos)
-        super().update()
 
     def boundingRect(self):
         return self.childrenBoundingRect()
@@ -120,7 +131,7 @@ class MessageArrowItem(QGraphicsLineItem):
 #        return QRectF(self.line().p1(), QSizeF(self.line().p2().x() - self.line().p1().x(),
 #                    self.line().p2().y() - self.line().p1().y())).normalized().adjusted(-extra, -extra, extra, extra)
 
-        return super().boundingRect().adjusted(0, -6, 0, 6)
+        return super().boundingRect().adjusted(0, -7, 0, 7)
 
     def paint(self, painter, option, widget):
         if self.line().length() == 0:
@@ -169,6 +180,7 @@ class SimulatorScene(QGraphicsScene):
         self.addItem(self.broadcast_part)
 
         self.items = []
+        self.arrange_items()
 
     def mousePressEvent(self, event):
         if event.button() != Qt.LeftButton:
@@ -255,7 +267,7 @@ class SimulatorScene(QGraphicsScene):
 
         for item in self.items:
             item.update(y_pos)
-            y_pos += item.boundingRect().height()
+            y_pos += math.floor(item.boundingRect().height()) + 1
 
         for participant in self.participants:
             participant.update(y_pos = max(y_pos, 50))

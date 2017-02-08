@@ -149,6 +149,14 @@ class SendRecvDialogController(QDialog):
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
 
+    @property
+    def mode(self):
+        return self.device.mode
+
+    @property
+    def has_empty_device_list(self):
+        return self.ui.cbDevice.count() == 0
+
     def create_connects(self):
         self.ui.btnStart.clicked.connect(self.on_start_clicked)
         self.ui.btnStop.clicked.connect(self.on_stop_clicked)
@@ -166,8 +174,23 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_nrepeat_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slideyscale_value_changed)
+
         if hasattr(self.graphics_view, "freq_clicked"):
             self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
+
+        if hasattr(self.graphics_view, "deletion_wanted"):
+            self.graphics_view.deletion_wanted.connect(self.graphics_view.signal.delete_range)
+
+        if hasattr(self.graphics_view, "mute_wanted"):
+            self.graphics_view.mute_wanted.connect(self.graphics_view.signal.mute_range)
+
+        if hasattr(self.graphics_view, "crop_clicked"):
+            self.graphics_view.crop_clicked.connect(self.graphics_view.signal.crop_to_range)
+
+        if hasattr(self.scene_creator, "signal"):
+            self.scene_creator.signal.data_edited.connect(self.on_signal_data_edited)
+
+
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.graphics_view.zoomed.connect(self.on_signal_zoomed)
@@ -178,13 +201,10 @@ class SendRecvDialogController(QDialog):
         self.device.started.connect(self.on_device_started)
         self.device.sender_needs_restart.connect(self.__restart_device_thread)
 
-    @property
-    def mode(self):
-        return self.device.mode
-
-    @property
-    def has_empty_device_list(self):
-        return self.ui.cbDevice.count() == 0
+    def redraw_signal(self):
+        vr = self.graphics_view.view_rect()
+        start, end = vr.x(), vr.x() + vr.width()
+        self.scene_creator.show_scene_section(start, end)
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
@@ -475,9 +495,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_zoom_scroll_redraw_timer_timeout(self):
-        vr = self.graphics_view.view_rect()
-        start, end = vr.x(), vr.x() + vr.width()
-        self.scene_creator.show_scene_section(start, end)
+        self.redraw_signal()
 
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):
@@ -493,3 +511,8 @@ class SendRecvDialogController(QDialog):
     def on_graphics_view_freq_clicked(self, freq: float):
         self.ui.spinBoxFreq.setValue(freq)
         self.ui.spinBoxFreq.editingFinished.emit()
+
+    @pyqtSlot()
+    def on_signal_data_edited(self):
+        self.scene_creator.init_scene()
+        self.redraw_signal()

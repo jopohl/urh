@@ -70,28 +70,11 @@ class ChangeSignalRange(QUndoCommand):
                     keep_bock_indices[i] = i - len(removed_left)
 
         if self.mode == RangeAction.delete:
-            mask = np.ones(self.orig_num_samples, dtype=bool)
-            mask[self.start:self.end] = False
-
-            try:
-                self.signal._fulldata = self.signal._fulldata[mask]
-                self.signal._qad = self.signal._qad[mask]
-                self.signal._num_samples = len(self.signal.data)
-            except IndexError as e:
-                logger.warning("Could not delete data: "+str(e))
-                return
+            self.signal.delete_range(self.start, self.end)
         elif self.mode == RangeAction.mute:
-            self.signal._fulldata[self.start:self.end] = 0
-            self.signal._qad[self.start:self.end] = 0
+            self.signal.mute_range(self.start, self.end)
         elif self.mode == RangeAction.crop:
-            self.signal._num_samples = self.end - self.start
-            self.signal._fulldata = self.signal._fulldata[self.start:self.end]
-            self.signal._qad = self.signal._qad[self.start:self.end]
-
-        self.signal.clear_parameter_cache()
-        self.signal.changed = True
-        self.signal.data_edited.emit()
-        self.signal.protocol_needs_update.emit()
+            self.signal.crop_to_range(self.start, self.end)
 
         # Restore old msg data
         for old_index, new_index in keep_bock_indices.items():

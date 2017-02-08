@@ -20,7 +20,7 @@ class EditableGraphicView(SelectableGraphicView):
     deletion_wanted = pyqtSignal(int, int)
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
-    crop_clicked = pyqtSignal()
+    crop_clicked = pyqtSignal(int, int)
     mute_wanted = pyqtSignal(int, int)
     participant_changed = pyqtSignal()
 
@@ -257,7 +257,7 @@ class EditableGraphicView(SelectableGraphicView):
         elif action == create_action:
             self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
         elif action == crop_action:
-            self.crop_clicked.emit()
+            self.crop_clicked.emit(self.selection_area.start, self.selection_area.end)
         elif action == noise_action:
             self.set_noise_clicked.emit()
         elif action == mute_action:

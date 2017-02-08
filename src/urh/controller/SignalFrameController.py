@@ -538,15 +538,10 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_sel_area_width_changed()
 
-    @pyqtSlot()
-    def on_crop_signal_clicked(self):
+    @pyqtSlot(int, int)
+    def on_crop_signal_clicked(self, start: int, end: int):
         gvs = self.ui.gvSignal
         if not gvs.selection_area.is_empty:
-            start = gvs.selection_area.x
-            end = start + gvs.selection_area.width
-            if end < start:
-                start, end = end, start
-
             crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
                                             mode=RangeAction.crop)
             self.undo_stack.push(crop_action)

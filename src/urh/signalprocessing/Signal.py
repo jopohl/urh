@@ -376,9 +376,41 @@ class Signal(QObject):
         self._fulldata = np.insert(self._fulldata, index, data)
         self._qad = None
         self._num_samples = len(self.data)
+
+        self.__invalidate_after_edit()
+
+    def delete_range(self, start: int, end: int):
+        mask = np.ones(self.num_samples, dtype=bool)
+        mask[start:end] = False
+
+        try:
+            self._fulldata = self._fulldata[mask]
+            self._qad = self._qad[mask] if self._qad is not None else None
+            self._num_samples = len(self.data)
+        except IndexError as e:
+            logger.warning("Could not delete data: " + str(e))
+
+        self.__invalidate_after_edit()
+
+    def mute_range(self, start: int, end: int):
+        self._fulldata[start:end] = 0
+        if self._qad is not None:
+            self._qad[start:end] = 0
+
+        self.__invalidate_after_edit()
+
+    def crop_to_range(self, start: int, end: int):
+        self._num_samples = end - start
+        self._fulldata = self._fulldata[start:end]
+        self._qad = self._qad[start:end] if self._qad is not None else None
+
+        self.__invalidate_after_edit()
+
+    def __invalidate_after_edit(self):
+        self.clear_parameter_cache()
+        self.changed = True
         self.data_edited.emit()
         self.protocol_needs_update.emit()
-        self.changed = True
 
     @staticmethod
     def from_samples(samples: np.ndarray, name: str, sample_rate: float):

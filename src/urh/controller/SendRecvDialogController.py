@@ -61,9 +61,6 @@ class SendRecvDialogController(QDialog):
             self.ui.stackedWidget.setCurrentIndex(0)
         else:
             self.ui.stackedWidget.setCurrentIndex(1)
-            self.zoom_scroll_redraw_timer = QTimer()
-            self.zoom_scroll_redraw_timer.timeout.connect(self.on_zoom_scroll_redraw_timer_timeout)
-            self.zoom_scroll_redraw_timer.setSingleShot(True)
 
         if mode == Mode.send or mode == Mode.spectrum:
             self.ui.lSamplesCaptured.hide()
@@ -124,6 +121,9 @@ class SendRecvDialogController(QDialog):
 
         self.recorded_files = []
 
+        self.zoom_scroll_redraw_timer = QTimer()
+        self.zoom_scroll_redraw_timer.setSingleShot(True)
+
         self.timer = QTimer(self)
 
         if mode == Mode.receive:
@@ -166,6 +166,7 @@ class SendRecvDialogController(QDialog):
         self.__create_device_connects()
 
         self.timer.timeout.connect(self.update_view)
+        self.zoom_scroll_redraw_timer.timeout.connect(self.on_zoom_scroll_redraw_timer_timeout)
         self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
         self.ui.spinBoxGain.editingFinished.connect(self.on_gain_changed)
         self.ui.spinBoxFreq.editingFinished.connect(self.on_freq_changed)

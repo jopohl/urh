@@ -626,6 +626,8 @@ class SignalFrameController(QFrame):
 
         dialog.recording_parameters.connect(project_manager.set_recording_parameters)
         dialog.show()
+        dialog.graphics_view.draw_full_signal()
+        dialog.scene_creator.show_full_scene()
 
     @pyqtSlot(int, int)
     def update_selection_area(self, start, end):

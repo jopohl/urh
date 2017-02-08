@@ -61,7 +61,9 @@ class SendRecvDialogController(QDialog):
             self.ui.stackedWidget.setCurrentIndex(0)
         else:
             self.ui.stackedWidget.setCurrentIndex(1)
-
+            self.zoom_scroll_redraw_timer = QTimer()
+            self.zoom_scroll_redraw_timer.timeout.connect(self.on_zoom_scroll_redraw_timer_timeout)
+            self.zoom_scroll_redraw_timer.setSingleShot(True)
 
         if mode == Mode.send or mode == Mode.spectrum:
             self.ui.lSamplesCaptured.hide()
@@ -112,7 +114,6 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.addItems(items)
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
-
 
         dev_name = self.ui.cbDevice.currentText()
         nrep = self.ui.spinBoxNRepeat.value()
@@ -169,8 +170,8 @@ class SendRecvDialogController(QDialog):
             self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
-        #self.graphics_view.zoomed.connect(self.handle_signal_zoomed_or_scrolled)
-        #self.graphics_view.horizontalScrollBar().valueChanged.connect(self.handle_signal_zoomed_or_scrolled)
+        self.graphics_view.zoomed.connect(self.on_signal_zoomed)
+        self.graphics_view.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
     def __create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
@@ -410,6 +411,7 @@ class SendRecvDialogController(QDialog):
             self.scene_creator.clear_path()
             self.scene_creator.clear_peak()
 
+    @pyqtSlot()
     def on_save_clicked(self):
         data = self.device.data[:self.device.current_index]
 
@@ -452,12 +454,7 @@ class SendRecvDialogController(QDialog):
 
         event.accept()
 
-    def handle_signal_zoomed_or_scrolled(self):
-        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
-            vr = self.graphics_view.view_rect()
-            start, end = vr.x(), vr.x() + vr.width()
-            self.scene_creator.show_scene_section(start, end)
-
+    @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
         constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
@@ -465,6 +462,22 @@ class SendRecvDialogController(QDialog):
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
         else:
              self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
+
+    @pyqtSlot()
+    def on_signal_zoomed(self):
+        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
+            self.zoom_scroll_redraw_timer.start(self.update_interval)
+
+    @pyqtSlot()
+    def on_signal_scrolled(self):
+        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
+            self.zoom_scroll_redraw_timer.start(0)
+
+    @pyqtSlot()
+    def on_zoom_scroll_redraw_timer_timeout(self):
+        vr = self.graphics_view.view_rect()
+        start, end = vr.x(), vr.x() + vr.width()
+        self.scene_creator.show_scene_section(start, end)
 
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):

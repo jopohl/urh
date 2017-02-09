@@ -330,6 +330,7 @@ class EditableGraphicView(SelectableGraphicView):
     def on_paste_action_triggered(self):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
+            self.clear_selection()
             self.signal.insert_data(self.paste_position, self.stored_item)
 
     @pyqtSlot()

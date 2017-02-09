@@ -11,61 +11,83 @@ from enum import Enum
 from urh.util.Logger import logger
 
 
-class RangeAction(Enum):
+class EditAction(Enum):
     crop = 1
     mute = 2
     delete = 3
+    paste = 4
+    insert = 5
+    replace = 6
 
 
-class ChangeSignalRange(QUndoCommand):
-    def __init__(self, signal: Signal, protocol: ProtocolAnalyzer, start: int, end: int, mode: RangeAction,
-                 cache_qad=True):
+class EditSignalAction(QUndoCommand):
+    def __init__(self, signal: Signal, mode: EditAction,
+                 start: int = 0, end: int = 0, position: int = 0,
+                 data_to_insert: np.ndarray=None,
+                 protocol: ProtocolAnalyzer=None, cache_qad=True):
+        """
+
+        :param signal: Signal to change
+        :param mode: Mode
+        :param start: Start of selection
+        :param end: End of selection
+        :param position: Position to insert
+        :param data_to_insert: (optionally) data to insert/paste
+        :param protocol: (optional) protocol for the signal
+        :param cache_qad: Enable/Disable caching of quad demod data.
+        It is necessary to disable caching, when the signal does not use/need quad demod data
+        """
         super().__init__()
 
+        self.signal = signal
         self.mode = mode
         self.start = int(start)
         self.end = int(end)
-        self.signal = signal
+        self.position = int(position)
+        self.data_to_insert = data_to_insert
+        self.protocol = protocol
         self.cache_qad = cache_qad
 
-        if self.mode == RangeAction.crop:
+        if self.mode == EditAction.crop:
             self.setText("Crop Signal {0}".format(signal.name))
             self.pre_crop_data = self.signal._fulldata[0:self.start]
             self.post_crop_data = self.signal._fulldata[self.end:]
             if self.cache_qad:
                 self.pre_crop_qad = self.signal._qad[0:self.start]
                 self.post_crop_qad = self.signal._qad[self.end:]
-        elif self.mode == RangeAction.mute:
-            self.setText("Mute Range of Signal {0}".format(signal.name))
+        elif self.mode == EditAction.mute:
+            self.setText("mute range of signal {0}".format(signal.name))
             self.orig_data_part = copy.copy(self.signal._fulldata[self.start:self.end])
             if self.cache_qad:
                 self.orig_qad_part = copy.copy(self.signal._qad[self.start:self.end])
-        elif self.mode == RangeAction.delete:
-            self.setText("Deleting Range from Signal {0}".format(signal.name))
+        elif self.mode == EditAction.delete:
+            self.setText("deleting range from signal {0}".format(signal.name))
             self.orig_data_part = self.signal._fulldata[self.start:self.end]
             if self.cache_qad:
                 self.orig_qad_part = self.signal._qad[self.start:self.end]
+        elif self.mode == EditAction.paste:
+            self.setText("insert data at signal {0}".format(signal.name))
 
-        self.orig_num_samples = self.signal.num_samples
         self.orig_parameter_cache = copy.deepcopy(self.signal.parameter_cache)
         self.signal_was_changed = self.signal.changed
-        self.protocol = protocol
+
         if self.protocol:
             self.orig_messages = copy.deepcopy(self.protocol.messages)
 
     def redo(self):
-        keep_bock_indices = {}
-        if self.mode in (RangeAction.delete, RangeAction.mute) and self.protocol:
+        keep_msg_indices = {}
+
+        if self.mode in (EditAction.delete, EditAction.mute) and self.protocol:
             removed_msg_indices = self.__find_message_indices_in_sample_range(self.start, self.end)
             if removed_msg_indices:
                 for i in range(self.protocol.num_messages):
                     if i < removed_msg_indices[0]:
-                        keep_bock_indices[i] = i
+                        keep_msg_indices[i] = i
                     elif i > removed_msg_indices[-1]:
-                        keep_bock_indices[i] = i - len(removed_msg_indices)
+                        keep_msg_indices[i] = i - len(removed_msg_indices)
             else:
-                keep_bock_indices = {i: i for i in range(self.protocol.num_messages)}
-        elif self.mode == RangeAction.crop and self.protocol:
+                keep_msg_indices = {i: i for i in range(self.protocol.num_messages)}
+        elif self.mode == EditAction.crop and self.protocol:
             removed_left = self.__find_message_indices_in_sample_range(0, self.start)
             removed_right = self.__find_message_indices_in_sample_range(self.end, self.signal.num_samples)
             last_removed_left = removed_left[-1] if removed_left else -1
@@ -73,18 +95,22 @@ class ChangeSignalRange(QUndoCommand):
 
             for i in range(self.protocol.num_messages):
                 if last_removed_left < i < first_removed_right:
-                    keep_bock_indices[i] = i - len(removed_left)
+                    keep_msg_indices[i] = i - len(removed_left)
 
-        if self.mode == RangeAction.delete:
+        if self.mode == EditAction.delete:
             self.signal.delete_range(self.start, self.end)
-        elif self.mode == RangeAction.mute:
+        elif self.mode == EditAction.mute:
             self.signal.mute_range(self.start, self.end)
-        elif self.mode == RangeAction.crop:
+        elif self.mode == EditAction.crop:
             self.signal.crop_to_range(self.start, self.end)
+        elif self.mode == EditAction.paste:
+            self.signal.insert_data(self.position, self.data_to_insert)
+            if self.protocol:
+                keep_msg_indices = self.__get_keep_msg_indices_for_paste()
 
         # Restore old msg data
         if self.protocol:
-            for old_index, new_index in keep_bock_indices.items():
+            for old_index, new_index in keep_msg_indices.items():
                 try:
                     old_msg = self.orig_messages[old_index]
                     new_msg = self.protocol.messages[new_index]
@@ -98,22 +124,24 @@ class ChangeSignalRange(QUndoCommand):
             self.protocol.qt_signals.protocol_updated.emit()
 
     def undo(self):
-        if self.mode == RangeAction.delete:
+        if self.mode == EditAction.delete:
             self.signal._fulldata = np.insert(self.signal._fulldata, self.start, self.orig_data_part)
             if self.cache_qad:
                 self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
 
-        elif self.mode == RangeAction.mute:
+        elif self.mode == EditAction.mute:
             self.signal._fulldata[self.start:self.end] = self.orig_data_part
             if self.cache_qad:
                 self.signal._qad[self.start:self.end] = self.orig_qad_part
 
-        elif self.mode == RangeAction.crop:
+        elif self.mode == EditAction.crop:
             self.signal._fulldata = np.concatenate((self.pre_crop_data, self.signal._fulldata, self.post_crop_data))
             if self.cache_qad:
                 self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))
 
-        self.signal._num_samples = self.orig_num_samples
+        elif self.mode == EditAction.paste:
+            self.signal.delete_range(self.position, self.position+len(self.data_to_insert))
+
         self.signal.parameter_cache = self.orig_parameter_cache
 
         if self.protocol:
@@ -131,3 +159,28 @@ class ChangeSignalRange(QUndoCommand):
             elif message.bit_sample_pos[-2] > end:
                 break
         return result
+
+    def __get_keep_msg_indices_for_paste(self):
+        keep_msg_indices = {i: i for i in range(len(self.orig_messages))}
+
+        try:
+            paste_start_index = self.__find_message_indices_in_sample_range(self.position, self.signal.num_samples)[0]
+        except IndexError:
+            paste_start_index = None
+
+        try:
+            paste_end_index = self.__find_message_indices_in_sample_range(self.position + len(self.data_to_insert),
+                                                                          self.signal.num_samples)[0]
+        except IndexError:
+            paste_end_index = None
+
+        if paste_start_index and paste_end_index:
+            for i in range(paste_start_index, paste_end_index):
+                del keep_msg_indices[i]
+
+        if paste_start_index is not None and paste_end_index is not None:
+            n = paste_end_index - paste_start_index
+            for i in range(paste_end_index, len(self.orig_messages) + n):
+                keep_msg_indices[i - n] = i
+
+        return keep_msg_indices

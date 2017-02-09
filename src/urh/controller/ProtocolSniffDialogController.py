@@ -154,7 +154,7 @@ class ProtocolSniffDialogController(QDialog):
 
     @pyqtSlot()
     def on_noise_edited(self):
-        self.sniffer.signal._noise_treshold = self.ui.spinboxNoise.value()
+        self.sniffer.signal._noise_threshold = self.ui.spinboxNoise.value()
 
     @pyqtSlot()
     def on_center_edited(self):

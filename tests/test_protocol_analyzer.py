@@ -21,7 +21,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
 
     def test_fsk_freq_detection(self):
         s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
-        s.noise_treshold = 0.06
+        s.noise_threshold = 0.06
         s.qad_center = 0
         s.bit_len = 100
         pa = ProtocolAnalyzer(s)
@@ -42,7 +42,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 20)  # Set Symbol length for this test
         s = Signal(get_path_for_data_file("vw_symbols.complex"), "VW")
-        s.noise_treshold = 0.0111
+        s.noise_threshold = 0.0111
         s.qad_center = 0.0470
         s.bit_len = 500
         s.modulation_type = 0  # ASK

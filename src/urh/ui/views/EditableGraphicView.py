@@ -15,7 +15,7 @@ from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ROI import ROI
-from urh.ui.actions.ChangeSignalRange import ChangeSignalRange, RangeAction
+from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
 
 
@@ -292,16 +292,16 @@ class EditableGraphicView(SelectableGraphicView):
             self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
         elif action == crop_action:
             if not self.selection_area.is_empty:
-                crop_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
-                                                start=self.selection_area.start, end=self.selection_area.end,
-                                                mode=RangeAction.crop, cache_qad=self.cache_qad)
+                crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                               start=self.selection_area.start, end=self.selection_area.end,
+                                               mode=EditAction.crop, cache_qad=self.cache_qad)
                 self.undo_stack.push(crop_action)
         elif action == noise_action:
             self.set_noise_clicked.emit()
         elif action == mute_action:
-            mute_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
-                                            start=self.selection_area.start, end=self.selection_area.end,
-                                            mode=RangeAction.mute, cache_qad=self.cache_qad)
+            mute_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                           start=self.selection_area.start, end=self.selection_area.end,
+                                           mode=EditAction.mute, cache_qad=self.cache_qad)
             self.undo_stack.push(mute_action)
         elif action == none_participant_action:
             for msg in selected_messages:
@@ -372,15 +372,19 @@ class EditableGraphicView(SelectableGraphicView):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
             self.clear_selection()
-            self.signal.insert_data(self.paste_position, self.stored_item)
+            paste_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                            start=self.selection_area.start, end=self.selection_area.end,
+                                            data_to_insert=self.stored_item, position=self.paste_position,
+                                            mode=EditAction.paste, cache_qad=self.cache_qad)
+            self.undo_stack.push(paste_action)
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
         if not self.selection_area.is_empty:
             start, end = self.selection_area.start, self.selection_area.end
             self.clear_selection()
-            del_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
-                                           start=start, end=end,
-                                           mode=RangeAction.delete, cache_qad=self.cache_qad)
+            del_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                          start=start, end=end,
+                                          mode=EditAction.delete, cache_qad=self.cache_qad)
             self.undo_stack.push(del_action)
             self.centerOn(start, self.y_center)

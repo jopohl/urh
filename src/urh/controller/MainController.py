@@ -597,7 +597,7 @@ class MainController(QMainWindow):
             bit_len = signal.bit_len
             mod_type = signal.modulation_type
             tolerance = signal.tolerance
-            noise = signal.noise_treshold
+            noise = signal.noise_threshold
             center = signal.qad_center
         else:
             bit_len = 100

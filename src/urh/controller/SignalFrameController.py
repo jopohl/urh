@@ -15,7 +15,7 @@ from urh.signalprocessing.Signal import Signal
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
-from urh.ui.actions.ChangeSignalRange import ChangeSignalRange, RangeAction
+from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util import FontHelper
@@ -111,7 +111,7 @@ class SignalFrameController(QFrame):
             self.set_protocol_visibility()
 
             self.ui.chkBoxShowProtocol.setChecked(True)
-            self.set_qad_tooltip(self.signal.noise_treshold)
+            self.set_qad_tooltip(self.signal.noise_threshold)
             self.ui.btnSaveSignal.hide()
 
             self.show_protocol(refresh=False)
@@ -218,7 +218,7 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
         self.show_modulation_type()
 
@@ -509,14 +509,14 @@ class SignalFrameController(QFrame):
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
-        new_thresh = self.signal.calc_noise_treshold(start, end)
+        new_thresh = self.signal.calc_noise_threshold(start, end)
         self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
     @pyqtSlot()
     def on_noise_threshold_changed(self):
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         minimum = self.signal.noise_min_plot
         maximum = self.signal.noise_max_plot
         if self.ui.cbSignalView.currentIndex() == 0:
@@ -842,7 +842,7 @@ class SignalFrameController(QFrame):
         self.ui.lNumSelectedSamples.setText(str(selected))
         self.__set_duration()
 
-        self.set_qad_tooltip(self.signal.noise_treshold)
+        self.set_qad_tooltip(self.signal.noise_threshold)
         gvs.sel_area_active = True
 
     @pyqtSlot(float)
@@ -857,9 +857,9 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
-        if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():
+        if self.signal is not None and self.signal.noise_threshold != self.ui.spinBoxNoiseTreshold.value():
             noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                 parameter_name="noise_treshold",
+                                                 parameter_name="noise_threshold",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
             self.disable_auto_detection()

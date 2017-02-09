@@ -68,7 +68,7 @@ class ProtocolAnalyzer(object):
         self.show = Qt.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()
 
-        self.decoder = Encoder(["Non Return To Zero (NRZ)"]) # For Default Encoding of Protocol
+        self.decoder = Encoder(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol
 
         self.message_types = [MessageType("default")]
 
@@ -180,9 +180,8 @@ class ProtocolAnalyzer(object):
             srate = None
 
         return '\n'.join(msg.view_to_string(view, False, show_pauses,
-                                              sample_rate=srate
-                                              ) for msg in self.messages)
-
+                                            sample_rate=srate
+                                            ) for msg in self.messages)
 
     def plain_to_html(self, view, show_pauses=True) -> str:
         time = constants.SETTINGS.value('show_pause_as_time', type=bool)
@@ -196,11 +195,12 @@ class ProtocolAnalyzer(object):
             cur_str = ""
             if message.participant:
                 color = constants.PARTICIPANT_COLORS[message.participant.color_index]
-                red, green, blue  = color.red(), color.green(), color.blue()
+                red, green, blue = color.red(), color.green(), color.blue()
                 fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
-                cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue, fgcolor)
+                cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue,
+                                                                                                  fgcolor)
 
-                #cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
+                # cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
 
             cur_str += message.view_to_string(view=view, decoded=False, show_pauses=False, sample_rate=srate)
 
@@ -240,7 +240,6 @@ class ProtocolAnalyzer(object):
                                                 signal.modulation_type)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, rel_symbol_len)
-
 
         i = 0
         for bits, pause in zip(bit_data, pauses):
@@ -411,7 +410,7 @@ class ProtocolAnalyzer(object):
 
             return start, end
         except KeyError:
-            return  -1, -1
+            return -1, -1
 
     def get_bitseq_from_selection(self, selection_start: int, selection_width: int, bitlen: int):
         """
@@ -426,7 +425,7 @@ class ProtocolAnalyzer(object):
         start_index = -1
         end_message = -1
         end_index = -1
-        lookup =  [msg.bit_sample_pos for msg in self.messages]
+        lookup = [msg.bit_sample_pos for msg in self.messages]
         if not lookup:
             return -1, -1, -1, -1
 
@@ -490,7 +489,7 @@ class ProtocolAnalyzer(object):
             return 0, 0
 
         if message_indx == -1:
-            message_indx = self.messages.index(max(self.messages, key=len)) # Longest message
+            message_indx = self.messages.index(max(self.messages, key=len))  # Longest message
 
         if message_indx >= len(self.messages):
             message_indx = len(self.messages) - 1
@@ -503,7 +502,7 @@ class ProtocolAnalyzer(object):
             return 0, 0
 
         if message_indx == -1:
-            message_indx = self.messages.index(max(self.messages, key=len)) # Longest message
+            message_indx = self.messages.index(max(self.messages, key=len))  # Longest message
 
         if message_indx >= len(self.messages):
             message_indx = len(self.messages) - 1
@@ -533,7 +532,6 @@ class ProtocolAnalyzer(object):
 
         refmessage = proto[refindex]
         len_refmessage = len(refmessage)
-
 
         for i, message in enumerate(proto):
             if i == refindex:
@@ -599,7 +597,6 @@ class ProtocolAnalyzer(object):
         else:
             return 0
 
-
     def __str__(self):
         return "ProtoAnalyzer " + self.name
 
@@ -613,14 +610,16 @@ class ProtocolAnalyzer(object):
         while True:
             i += 1
             if name + str(i) not in names:
-                self.message_types.append(MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
+                self.message_types.append(
+                    MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
 
-    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False, write_bits=False) -> ET.Element:
+    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False,
+                   write_bits=False) -> ET.Element:
         root = ET.Element(tag_name)
 
         # Save modulators
-        if hasattr(self, "modulators"): # For protocol analyzer container
+        if hasattr(self, "modulators"):  # For protocol analyzer container
             modulators_tag = ET.SubElement(root, "modulators")
             for i, modulator in enumerate(self.modulators):
                 modulators_tag.append(modulator.to_xml(i))
@@ -675,15 +674,16 @@ class ProtocolAnalyzer(object):
 
         return root
 
-    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_message_types=False, write_bits=False):
-        tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name, include_message_type=include_message_types, write_bits=write_bits)
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_message_types=False,
+                    write_bits=False):
+        tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name,
+                              include_message_type=include_message_types, write_bits=write_bits)
 
         xmlstr = minidom.parseString(ET.tostring(tag)).toprettyxml(indent="   ")
         with open(filename, "w") as f:
             for line in xmlstr.split("\n"):
                 if line.strip():
-                    f.write(line+"\n")
-
+                    f.write(line + "\n")
 
     def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None, decodings=None):
         if not root:
@@ -708,7 +708,6 @@ class ProtocolAnalyzer(object):
         if participants is None:
             participants = self.read_participants_from_xml_tag(root)
 
-
         if read_bits:
             self.messages[:] = []
 
@@ -719,7 +718,6 @@ class ProtocolAnalyzer(object):
         except AttributeError:
             message_types = []
 
-
         for message_type in message_types:
             if message_type not in self.message_types:
                 self.message_types.append(message_type)
@@ -729,16 +727,22 @@ class ProtocolAnalyzer(object):
             for i, message_tag in enumerate(message_tags):
                 if read_bits:
                     message = Message.from_plain_bits_str(bits=message_tag.get("bits"),
-                                                        symbols={s.name: s for s in self.used_symbols})
-                    message.from_xml(tag=message_tag, participants=participants, decoders=decoders, message_types=self.message_types)
+                                                          symbols={s.name: s for s in self.used_symbols})
+                    message.from_xml(tag=message_tag, participants=participants, decoders=decoders,
+                                     message_types=self.message_types)
                     self.messages.append(message)
                 else:
-                    self.messages[i].from_xml(tag=message_tag, participants=participants, decoders=decoders, message_types=self.message_types)
+                    try:
+                        self.messages[i].from_xml(tag=message_tag, participants=participants,
+                                                  decoders=decoders, message_types=self.message_types)
+                    except IndexError:
+                        pass  # Part of signal was copied in last session but signal was not saved
 
         except AttributeError:
             pass
 
-    def read_participants_from_xml_tag(self, root: ET.Element):
+    @staticmethod
+    def read_participants_from_xml_tag(root: ET.Element):
         try:
             participants = []
             for parti_tag in root.find("participants").findall("participant"):
@@ -748,7 +752,8 @@ class ProtocolAnalyzer(object):
             logger.warning("no participants found in xml")
             return []
 
-    def read_decoders_from_xml_tag(self, root: ET.Element):
+    @staticmethod
+    def read_decoders_from_xml_tag(root: ET.Element):
         try:
             decoders = []
             for decoding_tag in root.find("decodings").findall("decoding"):
@@ -759,12 +764,11 @@ class ProtocolAnalyzer(object):
             logger.error("no decodings found in xml")
             return []
 
-
     def from_xml_file(self, filename: str, read_bits=False):
         try:
             tree = ET.parse(filename)
         except FileNotFoundError:
-            logger.error("Could not find file "+filename)
+            logger.error("Could not find file " + filename)
             return
         except ET.ParseError:
             logger.error("Could not parse file " + filename)
@@ -772,7 +776,6 @@ class ProtocolAnalyzer(object):
 
         root = tree.getroot()
         self.from_xml_tag(root, read_bits=read_bits)
-
 
     def destroy(self):
         try:
@@ -807,16 +810,16 @@ class ProtocolAnalyzer(object):
         rssis = np.array([msg.rssi for msg in self.messages], dtype=np.float32)
         min_rssi, max_rssi = util.minmax(rssis)
         center_spacing = (max_rssi - min_rssi) / (len(participants) - 1)
-        centers = [min_rssi + i*center_spacing for i in range(0, len(participants))]
+        centers = [min_rssi + i * center_spacing for i in range(0, len(participants))]
         rssi_assigned_centers = []
 
         for rssi in rssis:
             center_index = 0
             diff = 999
             for i, center in enumerate(centers):
-                if abs(center-rssi) < diff:
+                if abs(center - rssi) < diff:
                     center_index = i
-                    diff = abs(center-rssi)
+                    diff = abs(center - rssi)
             rssi_assigned_centers.append(center_index)
 
         participants.sort(key=lambda participant: participant.relative_rssi)

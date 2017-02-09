@@ -15,7 +15,7 @@ class TestSignalPerformance(unittest.TestCase):
         t = time.time()
         signal = Signal("../../noack/USRP/Fabema/Testdata/trafficlight_fhside_full.complex", "PerfTest",
                         modulation="ASK")
-        # signal.noise_treshold = 0.2377
+        # signal.noise_threshold = 0.2377
         print(self.prefix + "Signal creation: {0:.2f} ({1:.2f})".format(time.time() - t, time.time() - total))
         t = time.time()
         signal.qad_center = signal.estimate_qad_center()
@@ -28,7 +28,7 @@ class TestSignalPerformance(unittest.TestCase):
     def test_fabema_get_proto(self):
         signal = Signal("../../noack/USRP/Fabema/Testdata/trafficlight_fhside_full.complex", "PerfTest",
                         modulation="ASK")
-        signal.noise_treshold = 0.1
+        signal.noise_threshold = 0.1
         signal.qad_center = 0.009
         signal.bit_len = 16
         proto_analyzer = ProtocolAnalyzer(signal)
@@ -41,7 +41,7 @@ class TestSignalPerformance(unittest.TestCase):
     def test_fabema_many_messages(self):
         signal = Signal("../../noack/USRP/Fabema/Testdata/trafficlight_fhside_full.complex", "PerfTest",
                         modulation="ASK")
-        signal.noise_treshold = 0.1
+        signal.noise_threshold = 0.1
         signal.qad_center = -0.0249
         signal.bit_len = 1
         proto_analyzer = ProtocolAnalyzer(signal)

@@ -181,9 +181,9 @@ class ProjectManager(QObject):
         signal_tag.set("name", signal.name)
         signal_tag.set("filename", os.path.relpath(signal.filename, self.project_path))
         signal_tag.set("bit_length", str(signal.bit_len))
-        signal_tag.set("zero_treshold", str(signal.qad_center))
+        signal_tag.set("qad_center", str(signal.qad_center))
         signal_tag.set("tolerance", str(signal.tolerance))
-        signal_tag.set("noise_treshold", str(signal.noise_treshold))
+        signal_tag.set("noise_threshold", str(signal.noise_threshold))
         signal_tag.set("noise_minimum", str(signal.noise_min_plot))
         signal_tag.set("noise_maximum", str(signal.noise_max_plot))
         signal_tag.set("auto_detect_on_modulation_changed", str(signal.auto_detect_on_modulation_changed))
@@ -325,8 +325,6 @@ class ProjectManager(QObject):
 
         return False
 
-
-
     def read_project_file_for_signal(self, signal: Signal):
         if self.project_file is None or len(signal.filename) == 0:
             return False
@@ -337,20 +335,16 @@ class ProjectManager(QObject):
             if sig_tag.attrib["filename"] == os.path.relpath(signal.filename,
                                                              self.project_path):
                 signal.name = sig_tag.attrib["name"]
-                signal.qad_center = float(sig_tag.attrib["zero_treshold"])
-                signal.tolerance = int(sig_tag.attrib["tolerance"])
+                signal.qad_center = float(sig_tag.get("qad_center", 0))
+                signal.tolerance = int(sig_tag.get("tolerance", 5))
                 signal.auto_detect_on_modulation_changed = False if \
                 sig_tag.attrib[
                                                                         "auto_detect_on_modulation_changed"] == 'False' else True
 
-                signal.noise_treshold = float(sig_tag.attrib["noise_treshold"])
-                try:
-                    signal.sample_rate = float(sig_tag.attrib["sample_rate"])
-                except KeyError:
-                    pass  # For old project files
-
-                signal.bit_len = int(sig_tag.attrib["bit_length"])
-                signal.modulation_type = int(sig_tag.attrib["modulation_type"])
+                signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
+                signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
+                signal.bit_len = int(sig_tag.get("bit_length", 100))
+                signal.modulation_type = int(sig_tag.get("modulation_type", 0))
                 break
 
         return True

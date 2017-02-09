@@ -347,6 +347,15 @@ class SimulatorScene(QGraphicsScene):
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
         protocols_to_add = [node.protocol for node in nodes_to_add]
 
+
+        self.add_protocols(protocols_to_add)
+
+        self.update_view()
+
+        super().dropEvent(event)
+
+
+    def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:
                 source, destination = self.__detect_source_destination(message)
@@ -355,10 +364,6 @@ class SimulatorScene(QGraphicsScene):
                     simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
                 self.items.append(simulator_message)
                 self.addItem(simulator_message)
-
-        self.update_view()
-
-        super().dropEvent(event)
 
     def __detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels

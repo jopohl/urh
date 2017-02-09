@@ -185,7 +185,6 @@ class SendRecvDialogController(QDialog):
         if hasattr(self.scene_creator, "signal"):
             self.scene_creator.signal.data_edited.connect(self.on_signal_data_edited)
 
-
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.graphics_view.zoomed.connect(self.on_signal_zoomed)
@@ -311,7 +310,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_device_started(self):
-        if self.mode == Mode.receive or self.mode == Mode.send:
+        if self.mode == Mode.receive:
             self.scene_creator.plot_data = self.device.data.real if self.device.data is not None else None
 
         self.ui.txtEditErrors.clear()
@@ -509,6 +508,9 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_signal_data_edited(self):
+        signal = self.scene_creator.signal
+        self.ui.progressBar.setMaximum(signal.num_samples)
+        self.device.samples_to_send = signal.data
         self.scene_creator.init_scene()
         self.redraw_signal()
 

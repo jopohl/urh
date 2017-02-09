@@ -52,18 +52,21 @@ class EditableGraphicView(SelectableGraphicView):
         self.copy_action.setShortcut(QKeySequence.Copy)
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
         self.copy_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.addAction(self.copy_action)
 
         self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
         self.paste_action.setShortcut(QKeySequence.Paste)
         self.paste_action.triggered.connect(self.on_paste_action_triggered)
         self.paste_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.paste_action.setIcon(QIcon.fromTheme("edit-paste"))
         self.addAction(self.paste_action)
 
         self.delete_action = QAction(self.tr("Delete selection"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
         self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.addAction(self.delete_action)
 
         self.insert_sine_action = QAction(self.tr("Insert sine wave..."), self)
@@ -231,8 +234,10 @@ class EditableGraphicView(SelectableGraphicView):
 
             menu.addSeparator()
             zoom_action = menu.addAction(self.tr("Zoom selection"))
+            zoom_action.setIcon(QIcon.fromTheme("zoom-in"))
             if self.create_new_signal_enabled:
                 create_action = menu.addAction(self.tr("Create signal from selection"))
+                create_action.setIcon(QIcon.fromTheme("document-new"))
 
         if hasattr(self, "selected_messages"):
             selected_messages = self.selected_messages

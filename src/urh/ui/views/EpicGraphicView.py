@@ -310,13 +310,11 @@ class EpicGraphicView(SelectableGraphicView):
             self.horizontalScrollBar().setValue(cur_val - step)
 
     def draw_full_signal(self):
-        if hasattr(self.parent_frame, "scene_creator"):
-            self.parent_frame.scene_creator.show_full_scene()
-            y_factor = self.transform().m22()
-            self.resetTransform()
-            x_factor = self.width() / self.sceneRect().width()
-            self.scale(x_factor, y_factor)
-            self.centerOn(0, self.y_center)
+        y_factor = self.transform().m22()
+        self.resetTransform()
+        x_factor = self.width() / self.sceneRect().width()
+        self.scale(x_factor, y_factor)
+        self.centerOn(0, self.y_center)
 
     def zoom_to_selection(self, start: int, end: int):
         if start == end:

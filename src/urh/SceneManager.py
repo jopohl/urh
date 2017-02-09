@@ -15,8 +15,8 @@ class SceneManager(QObject):
         super().__init__(parent)
         self.scene = ZoomableScene()
         self.plot_data = np.array([0] * 100)
-        self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR,  Qt.FlatCap))
-        self.text_item = self.scene.addText("",  QFont("Helvetica", 20))
+        self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
+        self.text_item = self.scene.addText("", QFont("Helvetica", 20))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
 
@@ -38,7 +38,7 @@ class SceneManager(QObject):
         :return:
         """
         paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1), end=self.__limit_value(x2),
-                                                         subpath_ranges=subpath_ranges)
+                                         subpath_ranges=subpath_ranges)
         self.set_path(paths, colors=colors)
 
     def set_path(self, paths: list, colors=None):
@@ -46,10 +46,10 @@ class SceneManager(QObject):
         colors = [constants.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
-            self.scene.addPath(path, QPen(color if color else constants.LINECOLOR,  Qt.FlatCap))
+            self.scene.addPath(path, QPen(color if color else constants.LINECOLOR, Qt.FlatCap))
 
     def __limit_value(self, val: float) -> int:
-        return 0 if val < 0  else self.num_samples if val > self.num_samples else int(val)
+        return 0 if val < 0 else self.num_samples if val > self.num_samples else int(val)
 
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)
@@ -66,8 +66,8 @@ class SceneManager(QObject):
             minimum, maximum = self.minimum, self.maximum
 
         if abs(minimum) > abs(maximum):
-            minimum = -self.padding*abs(minimum)
-            maximum = -self.padding*minimum
+            minimum = -self.padding * abs(minimum)
+            maximum = -self.padding * minimum
         else:
             maximum = abs(maximum)
             minimum = -maximum

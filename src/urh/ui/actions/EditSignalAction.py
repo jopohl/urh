@@ -166,21 +166,19 @@ class EditSignalAction(QUndoCommand):
         try:
             paste_start_index = self.__find_message_indices_in_sample_range(self.position, self.signal.num_samples)[0]
         except IndexError:
-            paste_start_index = None
+            paste_start_index = 0
 
         try:
             paste_end_index = self.__find_message_indices_in_sample_range(self.position + len(self.data_to_insert),
                                                                           self.signal.num_samples)[0]
         except IndexError:
-            paste_end_index = None
+            paste_end_index = 0
 
-        if paste_start_index and paste_end_index:
-            for i in range(paste_start_index, paste_end_index):
-                del keep_msg_indices[i]
+        for i in range(paste_start_index, paste_end_index):
+            del keep_msg_indices[i]
 
-        if paste_start_index is not None and paste_end_index is not None:
-            n = paste_end_index - paste_start_index
-            for i in range(paste_end_index, len(self.orig_messages) + n):
-                keep_msg_indices[i - n] = i
+        n = paste_end_index - paste_start_index
+        for i in range(paste_end_index, len(self.orig_messages) + n):
+            keep_msg_indices[i - n] = i
 
         return keep_msg_indices

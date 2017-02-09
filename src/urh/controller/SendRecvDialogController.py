@@ -179,6 +179,9 @@ class SendRecvDialogController(QDialog):
         if hasattr(self.graphics_view, "freq_clicked"):
             self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
 
+        if hasattr(self.graphics_view, "save_as_clicked"):
+            self.graphics_view.save_as_clicked.connect(self.on_graphics_view_save_as_clicked)
+
         if hasattr(self.scene_creator, "signal"):
             self.scene_creator.signal.data_edited.connect(self.on_signal_data_edited)
 
@@ -508,3 +511,12 @@ class SendRecvDialogController(QDialog):
     def on_signal_data_edited(self):
         self.scene_creator.init_scene()
         self.redraw_signal()
+
+    @pyqtSlot()
+    def on_graphics_view_save_as_clicked(self):
+        filename = FileOperator.get_save_file_name("signal.complex", parent=self)
+        if filename:
+            try:
+                self.scene_creator.signal.save_as(filename)
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])

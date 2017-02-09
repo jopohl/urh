@@ -21,6 +21,7 @@ from urh.ui.views.SelectableGraphicView import SelectableGraphicView
 
 class EditableGraphicView(SelectableGraphicView):
     ctrl_state_changed = pyqtSignal(bool)
+    save_as_clicked = pyqtSignal()
     zoomed = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
@@ -68,6 +69,13 @@ class EditableGraphicView(SelectableGraphicView):
         self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.addAction(self.delete_action)
+
+        self.save_as_action = QAction(self.tr("Save Signal as..."), self)  # type: QAction
+        self.save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
+        self.save_as_action.setShortcut(QKeySequence.SaveAs)
+        self.save_as_action.triggered.connect(self.save_as_clicked.emit)
+        self.save_as_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.addAction(self.save_as_action)
 
         self.insert_sine_action = QAction(self.tr("Insert sine wave..."), self)
         font = self.insert_sine_action.font()
@@ -207,8 +215,9 @@ class EditableGraphicView(SelectableGraphicView):
         menu = QMenu(self)
         if self.save_enabled:
             menu.addAction(self.save_action)
-            menu.addAction(self.save_as_action)
-            menu.addSeparator()
+
+        menu.addAction(self.save_as_action)
+        menu.addSeparator()
 
         zoom_action = None
         create_action = None

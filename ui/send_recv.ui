@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>868</width>
-    <height>628</height>
+    <height>686</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -70,6 +70,18 @@
          </property>
          <property name="resizeAnchor">
           <enum>QGraphicsView::NoAnchor</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="text">
+          <string>Hint: You can edit the raw signal before sending.</string>
          </property>
         </widget>
        </item>

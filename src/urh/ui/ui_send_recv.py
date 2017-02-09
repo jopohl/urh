@@ -10,7 +10,7 @@ class Ui_SendRecvDialog(object):
     def setupUi(self, SendRecvDialog):
         SendRecvDialog.setObjectName("SendRecvDialog")
         SendRecvDialog.setWindowModality(QtCore.Qt.NonModal)
-        SendRecvDialog.resize(868, 628)
+        SendRecvDialog.resize(868, 686)
         SendRecvDialog.setMouseTracking(False)
         self.gridLayout_3 = QtWidgets.QGridLayout(SendRecvDialog)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -46,6 +46,12 @@ class Ui_SendRecvDialog(object):
         self.graphicsViewSend.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
         self.graphicsViewSend.setObjectName("graphicsViewSend")
         self.verticalLayout_3.addWidget(self.graphicsViewSend)
+        self.label_7 = QtWidgets.QLabel(self.page_send)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.verticalLayout_3.addWidget(self.label_7)
         self.stackedWidget.addWidget(self.page_send)
         self.gridLayout_3.addWidget(self.stackedWidget, 0, 1, 3, 1)
         self.verticalLayout = QtWidgets.QVBoxLayout()
@@ -282,6 +288,7 @@ class Ui_SendRecvDialog(object):
     def retranslateUi(self, SendRecvDialog):
         _translate = QtCore.QCoreApplication.translate
         SendRecvDialog.setWindowTitle(_translate("SendRecvDialog", "Record Signal"))
+        self.label_7.setText(_translate("SendRecvDialog", "Hint: You can edit the raw signal before sending."))
         self.lineEditIP.setText(_translate("SendRecvDialog", "192.168.10.2"))
         self.label_4.setText(_translate("SendRecvDialog", "Gain:"))
         self.label_5.setText(_translate("SendRecvDialog", "Bandwidth (Hz):"))

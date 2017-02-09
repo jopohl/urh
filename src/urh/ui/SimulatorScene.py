@@ -13,12 +13,39 @@ class RuleItem(QGraphicsItem):
         self.if_cond = RuleConditionItem(self)
         self.else_cond = None
 
+    def update(self, y_pos):
+        self.if_cond.update(y_pos)
+        super().update()
+
+    def boundingRect(self):
+        return self.childrenBoundingRect()
+
+    def paint(self, painter, option, widget):
+        pass
+
 class RuleConditionItem(QGraphicsItem):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.text = QGraphicsTextItem(rule_name, self)        
+        #self.text = QGraphicsTextItem(rule_name, self)        
         self.items = []
         self.rect = QRectF()
+
+    def update(self, y_pos):
+        if not self.scene() or len(self.scene().participants) < 2:
+            return
+
+        x = self.scene().participants[0].line.line().x1()
+        height = 50
+        width = self.scene().participants[-1].line.line().x1() - x
+        self.prepareGeometryChange()
+        self.rect.setRect(x, y_pos, width, height)
+        super().update()
+
+    def boundingRect(self):
+        return self.rect
+
+    def paint(self, painter, option, widget):
+        painter.drawRect(self.rect)
 
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
@@ -40,7 +67,6 @@ class ParticipantItem(QGraphicsItem):
         self.text = QGraphicsTextItem(name, self)
         self.line = QGraphicsLineItem(self)
         self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
-        self.update(y_pos = 50)
 
     def update(self, x_pos = -1, y_pos = -1):
         if not self.scene():
@@ -55,6 +81,7 @@ class ParticipantItem(QGraphicsItem):
         self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, y_pos)
+        super().update()
 
     def boundingRect(self):
         return self.childrenBoundingRect()
@@ -193,31 +220,36 @@ class SimulatorScene(QGraphicsScene):
         menu = QMenu()
 
         delAction = QAction("Delete selected messages")
+        addRuleAction = QAction("Add rule")
 
         if len(self.selectedItems()) > 0:
             menu.addAction(delAction)
+
+        menu.addAction(addRuleAction)
 
         action = menu.exec_(event.screenPos())
 
         if action == delAction:
             self.delete_selected_items()
+        elif action == addRuleAction:
+            rule = RuleItem()
+            self.items.append(rule)
+            self.addItem(rule)
+            self.update_view()
 
     def delete_selected_items(self):
             for item in self.selectedItems():
                 self.items.remove(item)
-                self.arrange_items()
                 self.removeItem(item)
+                self.arrange_items()
 
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
-        for msg in self.items:
-            if msg.source not in self.participants or msg.destination not in self.participants:
-                self.removeItem(msg)
-
-        self.items = [msg for msg in self.items
-                                if msg.source in self.participants
-                                and msg.destination in self.participants]
+        for item in self.items[:]:
+            if type(item) is MessageItem and (item.source not in self.participants or item.destination not in self.participants):
+                self.items.remove(item)
+                self.removeItem(item)
 
         self.arrange_items()
 
@@ -249,8 +281,9 @@ class SimulatorScene(QGraphicsScene):
             participants_left = self.participants[:i]
 
             items = [msg for msg in self.items
-                    if (msg.source == curr_participant and msg.destination in participants_left)
-                    or (msg.source in participants_left and msg.destination == curr_participant)]
+                    if type(msg) is MessageItem
+                    and ((msg.source == curr_participant and msg.destination in participants_left)
+                    or (msg.source in participants_left and msg.destination == curr_participant))]
 
             x_max = self.participants[i - 1].line.line().x1() + 50
 

@@ -1,27 +1,29 @@
 from PyQt5.QtCore import QSize, Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence, QMouseEvent, QPainter, QPen, QPixmap, QWheelEvent
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QUndoGroup
+from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ROI import ROI
+from urh.ui.actions.ChangeSignalRange import ChangeSignalRange, RangeAction
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
 
 
 class EditableGraphicView(SelectableGraphicView):
     ctrl_state_changed = pyqtSignal(bool)
     zoomed = pyqtSignal()
-    deletion_wanted = pyqtSignal(int, int)
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
-    crop_clicked = pyqtSignal(int, int)
-    mute_wanted = pyqtSignal(int, int)
     participant_changed = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -34,11 +36,17 @@ class EditableGraphicView(SelectableGraphicView):
         self.save_enabled = False  # Signal is can be saved
         self.create_new_signal_enabled = False
         self.participants_assign_enabled = False
+        self.cache_qad = False  # cache qad demod after edit operations?
 
         self.__signal = None  # type: Signal
 
         self.stored_item = None  # For copy/paste
         self.paste_position = 0  # Where to paste? Set in contextmenuevent
+
+        self._init_undo_stack(QUndoStack())
+
+        self.addAction(self.undo_action)
+        self.addAction(self.redo_action)
 
         self.copy_action = QAction(self.tr("Copy selection"), self)  # type: QAction
         self.copy_action.setShortcut(QKeySequence.Copy)
@@ -67,9 +75,26 @@ class EditableGraphicView(SelectableGraphicView):
         self.insert_sine_plugin = InsertSinePlugin()
         self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
 
+    def _init_undo_stack(self, undo_stack):
+        self.undo_stack = undo_stack
+
+        self.undo_action = self.undo_stack.createUndoAction(self)
+        self.undo_action.setIcon(QIcon.fromTheme("edit-undo"))
+        self.undo_action.setShortcut(QKeySequence.Undo)
+        self.undo_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+
+        self.redo_action = self.undo_stack.createRedoAction(self)
+        self.redo_action.setIcon(QIcon.fromTheme("edit-redo"))
+        self.redo_action.setShortcut(QKeySequence.Redo)
+        self.redo_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+
     @property
     def signal(self) -> Signal:
         return self.__signal
+
+    @property
+    def protocol(self) -> ProtocolAnalyzer:
+        return None  # Gets overwritten in EpicGraphicView
 
     @property
     def selection_area(self) -> ROI:
@@ -247,6 +272,10 @@ class EditableGraphicView(SelectableGraphicView):
                 menu.addSeparator()
                 noise_action = menu.addAction(self.tr("Set noise level from Selection"))
 
+        menu.addSeparator()
+        menu.addAction(self.undo_action)
+        menu.addAction(self.redo_action)
+
         QApplication.processEvents()  # without this the menu flickers on first create
         action = menu.exec_(self.mapToGlobal(event.pos()))
 
@@ -257,11 +286,18 @@ class EditableGraphicView(SelectableGraphicView):
         elif action == create_action:
             self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
         elif action == crop_action:
-            self.crop_clicked.emit(self.selection_area.start, self.selection_area.end)
+            if not self.selection_area.is_empty:
+                crop_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
+                                                start=self.selection_area.start, end=self.selection_area.end,
+                                                mode=RangeAction.crop, cache_qad=self.cache_qad)
+                self.undo_stack.push(crop_action)
         elif action == noise_action:
             self.set_noise_clicked.emit()
         elif action == mute_action:
-            self.mute_wanted.emit(self.selection_area.start, self.selection_area.end)
+            mute_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
+                                            start=self.selection_area.start, end=self.selection_area.end,
+                                            mode=RangeAction.mute, cache_qad=self.cache_qad)
+            self.undo_stack.push(mute_action)
         elif action == none_participant_action:
             for msg in selected_messages:
                 msg.participant = None
@@ -336,4 +372,10 @@ class EditableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_delete_action_triggered(self):
         if not self.selection_area.is_empty:
-            self.deletion_wanted.emit(self.selection_area.start, self.selection_area.end)
+            start, end = self.selection_area.start, self.selection_area.end
+            self.clear_selection()
+            del_action = ChangeSignalRange(signal=self.signal, protocol=self.protocol,
+                                           start=start, end=end,
+                                           mode=RangeAction.delete, cache_qad=self.cache_qad)
+            self.undo_stack.push(del_action)
+            self.centerOn(start, self.y_center)

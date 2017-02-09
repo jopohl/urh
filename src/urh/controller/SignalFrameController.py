@@ -49,6 +49,9 @@ class SignalFrameController(QFrame):
     def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack,
                  project_manager, proto_bits=None, parent=None):
         super().__init__(parent)
+
+        self.undo_stack = undo_stack
+
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
@@ -60,7 +63,6 @@ class SignalFrameController(QFrame):
 
         self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
         self.is_minimized = False
-        self.undo_stack = undo_stack
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
 
@@ -172,13 +174,10 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
-        self.ui.gvSignal.crop_clicked.connect(self.on_crop_signal_clicked)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
-        self.ui.gvSignal.deletion_wanted.connect(self.delete_selection)
-        self.ui.gvSignal.mute_wanted.connect(self.mute_selection)
 
         self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -538,14 +537,6 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_sel_area_width_changed()
 
-    @pyqtSlot(int, int)
-    def on_crop_signal_clicked(self, start: int, end: int):
-        gvs = self.ui.gvSignal
-        if not gvs.selection_area.is_empty:
-            crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                            mode=RangeAction.crop)
-            self.undo_stack.push(crop_action)
-
     @pyqtSlot()
     def on_protocol_updated(self):
         self.redraw_signal()  # Participants may have changed
@@ -853,18 +844,6 @@ class SignalFrameController(QFrame):
 
         self.set_qad_tooltip(self.signal.noise_treshold)
         gvs.sel_area_active = True
-
-    def delete_selection(self, start, end):
-        self.ui.gvSignal.clear_selection()
-        del_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                       mode=RangeAction.delete)
-        self.undo_stack.push(del_action)
-        self.ui.gvSignal.centerOn(start, self.ui.gvSignal.y_center)
-
-    def mute_selection(self, start: int, end: int):
-        mute_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                        mode=RangeAction.mute)
-        self.undo_stack.push(mute_action)
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):

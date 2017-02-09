@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QAction
 
 from urh import constants
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.views.EditableGraphicView import EditableGraphicView
 
 
@@ -19,9 +20,11 @@ class EpicGraphicView(EditableGraphicView):
         self.save_enabled = True
         self.create_new_signal_enabled = True
         self.participants_assign_enabled = True
+        self.cache_qad = True
         self.y_sep = 0
 
         self.parent_frame = self.parent().parent().parent()
+        self._init_undo_stack(self.parent_frame.undo_stack)
 
         self.save_action = QAction(self.tr("Save"), self)  # type: QAction
         self.save_action.setIcon(QIcon.fromTheme("document-save"))
@@ -40,6 +43,10 @@ class EpicGraphicView(EditableGraphicView):
     @property
     def signal(self):
         return self.parent_frame.signal
+
+    @property
+    def protocol(self) -> ProtocolAnalyzer:
+        return self.parent_frame.proto_analyzer
 
     @property
     def scene_type(self):

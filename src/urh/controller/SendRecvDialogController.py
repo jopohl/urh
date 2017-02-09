@@ -179,15 +179,6 @@ class SendRecvDialogController(QDialog):
         if hasattr(self.graphics_view, "freq_clicked"):
             self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
 
-        if hasattr(self.graphics_view, "deletion_wanted"):
-            self.graphics_view.deletion_wanted.connect(self.graphics_view.signal.delete_range)
-
-        if hasattr(self.graphics_view, "mute_wanted"):
-            self.graphics_view.mute_wanted.connect(self.graphics_view.signal.mute_range)
-
-        if hasattr(self.graphics_view, "crop_clicked"):
-            self.graphics_view.crop_clicked.connect(self.graphics_view.signal.crop_to_range)
-
         if hasattr(self.scene_creator, "signal"):
             self.scene_creator.signal.data_edited.connect(self.on_signal_data_edited)
 

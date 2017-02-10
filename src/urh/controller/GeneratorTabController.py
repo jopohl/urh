@@ -253,6 +253,8 @@ class GeneratorTabController(QWidget):
 
         self.has_default_modulation = False
 
+        return c
+
     @pyqtSlot()
     def on_table_selection_changed(self):
         min_row, max_row, start, end = self.ui.tableMessages.selection_range()

@@ -73,7 +73,7 @@ class Ui_DialogModulation(object):
         self.doubleSpinBoxCarrierFreq.setSuffix("")
         self.doubleSpinBoxCarrierFreq.setDecimals(3)
         self.doubleSpinBoxCarrierFreq.setMinimum(0.0)
-        self.doubleSpinBoxCarrierFreq.setMaximum(99999999.0)
+        self.doubleSpinBoxCarrierFreq.setMaximum(99999999999.0)
         self.doubleSpinBoxCarrierFreq.setObjectName("doubleSpinBoxCarrierFreq")
         self.gridLayout.addWidget(self.doubleSpinBoxCarrierFreq, 0, 1, 1, 1)
         self.label_2 = QtWidgets.QLabel(DialogModulation)

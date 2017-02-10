@@ -191,6 +191,17 @@
    <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>doubleSpinBoxAmplitude</tabstop>
+  <tabstop>doubleSpinBoxFrequency</tabstop>
+  <tabstop>doubleSpinBoxPhase</tabstop>
+  <tabstop>doubleSpinBoxSampleRate</tabstop>
+  <tabstop>doubleSpinBoxNSamples</tabstop>
+  <tabstop>lineEditTime</tabstop>
+  <tabstop>btnOK</tabstop>
+  <tabstop>btnAbort</tabstop>
+  <tabstop>graphicsViewSineWave</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -9,6 +9,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 
 from tests.utils_testing import get_path_for_data_file
+from urh.util.Formatter import Formatter
 
 app = tests.utils_testing.app
 
@@ -114,4 +115,5 @@ class TestPlugins(unittest.TestCase):
         insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.num_samples, 0.5e6)
 
-        self.assertEqual(insert_sine_plugin.dialog_ui.lineEditTime.text(), "250,000m")
+        sep = Formatter.local_decimal_seperator()
+        self.assertEqual(insert_sine_plugin.dialog_ui.lineEditTime.text(), "250" + sep + "000m")

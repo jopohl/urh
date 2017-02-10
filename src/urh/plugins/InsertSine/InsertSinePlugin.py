@@ -24,7 +24,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.frequency = 10
         self.phase = 0
         self.sample_rate = 1e6
-        self.num_samples = 1e6
+        self.num_samples = int(1e6)
 
         self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.amplitude)
         self.dialog_ui.doubleSpinBoxFrequency.setValue(self.frequency)
@@ -32,8 +32,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.doubleSpinBoxSampleRate.setValue(self.sample_rate)
         self.dialog_ui.doubleSpinBoxNSamples.setValue(self.num_samples)
         self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]([nmµ]|([\.,][0-9]{1,3}[nmµ]))?$")))
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples/self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
+        self.set_time()
 
         super().__init__(name="InsertSine")
 
@@ -50,16 +49,22 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
 
-    def show_insert_sine_dialog(self, sample_rate=None):
+    def show_insert_sine_dialog(self, sample_rate=None, num_samples=None):
         self.dialog_ui.show()
         self.__create_dialog_connects()
         if sample_rate is not None:
             self.sample_rate = sample_rate
             self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)
+
+        if num_samples is not None:
+            self.num_samples = int(num_samples)
+            self.dialog_ui.doubleSpinBoxNSamples.setValue(num_samples)
+
+        self.set_time()
         self.draw_sine_wave()
 
     def draw_sine_wave(self):
-        self.complex_wave = np.empty(int(self.num_samples), dtype=np.complex64)
+        self.complex_wave = np.empty(self.num_samples, dtype=np.complex64)
         t = (np.arange(0, self.num_samples) / self.sample_rate)
         self.complex_wave.real = self.amplitude * np.cos(2 * np.pi * self.frequency * t + self.phase)
         self.complex_wave.imag = self.amplitude * np.sin(2 * np.pi * self.frequency * t + self.phase)
@@ -85,15 +90,13 @@ class InsertSinePlugin(SignalEditorPlugin):
     @pyqtSlot()
     def on_double_spin_box_sample_rate_editing_finished(self):
         self.sample_rate = self.dialog_ui.doubleSpinBoxSampleRate.value()
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
+        self.set_time()
         self.draw_sine_wave()
 
     @pyqtSlot()
     def on_spin_box_n_samples_editing_finished(self):
-        self.num_samples = self.dialog_ui.doubleSpinBoxNSamples.value()
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
+        self.num_samples = int(self.dialog_ui.doubleSpinBoxNSamples.value())
+        self.set_time()
         self.draw_sine_wave()
 
     @pyqtSlot()
@@ -113,13 +116,12 @@ class InsertSinePlugin(SignalEditorPlugin):
         time_val = t * factor
 
         if self.sample_rate * time_val >= 1:
-            self.num_samples = self.sample_rate * time_val
+            self.num_samples = int(self.sample_rate * time_val)
             self.dialog_ui.doubleSpinBoxNSamples.setValue(self.num_samples)
 
             self.draw_sine_wave()
 
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
+        self.set_time()
 
     @pyqtSlot()
     def on_btn_abort_clicked(self):
@@ -129,3 +131,8 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_btn_ok_clicked(self):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
+
+    def set_time(self):
+        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples/self.sample_rate, decimals=3,
+                                                                   append_seconds=False, remove_spaces=True))
+

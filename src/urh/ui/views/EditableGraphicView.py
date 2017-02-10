@@ -373,7 +373,12 @@ class EditableGraphicView(SelectableGraphicView):
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):
-        self.insert_sine_plugin.show_insert_sine_dialog(sample_rate=self.sample_rate)
+        if not self.selection_area.is_empty:
+            num_samples = self.selection_area.width
+        else:
+            num_samples = None
+
+        self.insert_sine_plugin.show_insert_sine_dialog(sample_rate=self.sample_rate, num_samples=num_samples)
 
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):

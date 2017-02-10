@@ -1,6 +1,9 @@
 import unittest
 
 import math
+
+from PyQt5.QtTest import QTest
+
 import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
@@ -95,25 +98,49 @@ class TestPlugins(unittest.TestCase):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         insert_sine_plugin.show_insert_sine_dialog()
 
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
+
         insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.setValue(0.1)
         insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.amplitude, 0.1)
+
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
 
         insert_sine_plugin.dialog_ui.doubleSpinBoxFrequency.setValue(1e6)
         insert_sine_plugin.dialog_ui.doubleSpinBoxFrequency.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.frequency, 1e6)
 
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
+
         insert_sine_plugin.dialog_ui.doubleSpinBoxPhase.setValue(100)
         insert_sine_plugin.dialog_ui.doubleSpinBoxPhase.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.phase, 100)
+
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
 
         insert_sine_plugin.dialog_ui.doubleSpinBoxSampleRate.setValue(2e6)
         insert_sine_plugin.dialog_ui.doubleSpinBoxSampleRate.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.sample_rate, 2e6)
 
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
+
         insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.setValue(0.5e6)
         insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.num_samples, 0.5e6)
+
+        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+            app.processEvents()
+            QTest.qWait(10)
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(insert_sine_plugin.dialog_ui.lineEditTime.text(), "250" + sep + "000m")

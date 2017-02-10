@@ -40,8 +40,6 @@ class GeneratorTabController(QWidget):
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
 
-        self.modulated_scene_is_locked = False
-
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
         self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
@@ -499,6 +497,8 @@ class GeneratorTabController(QWidget):
 
             dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
             dialog.show()
+            dialog.graphics_view.draw_full_signal()
+            dialog.scene_creator.show_full_scene()
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()

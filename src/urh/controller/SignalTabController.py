@@ -150,7 +150,6 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbProtoView.setCurrentIndex(prev_signal_frame.ui.cbProtoView.currentIndex())
 
         sig_frame.blockSignals(True)
-        sig_frame.ui.gvSignal.is_locked = True
         sig_frame.ui.gvSignal.horizontalScrollBar().blockSignals(True)
 
         if proto_analyzer.signal.qad_demod_file_loaded:
@@ -160,7 +159,6 @@ class SignalTabController(QWidget):
         self.splitter.insertWidget(self.num_signals, sig_frame)
 
         self.reset_all_signalx_zoom()
-        sig_frame.ui.gvSignal.is_locked = False
         sig_frame.ui.gvSignal.horizontalScrollBar().blockSignals(False)
         sig_frame.blockSignals(False)
 
@@ -256,8 +254,8 @@ class SignalTabController(QWidget):
                     frame.signal.tolerance = signal.tolerance
                     proto_needs_update = True
 
-                if frame.signal.noise_treshold != signal.noise_treshold:
-                    frame.signal.noise_treshold = signal.noise_treshold
+                if frame.signal.noise_threshold != signal.noise_threshold:
+                    frame.signal.noise_threshold = signal.noise_threshold
                     proto_needs_update = True
 
                 if frame.signal.bit_len != signal.bit_len:

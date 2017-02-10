@@ -41,7 +41,7 @@ class Signal(QObject):
         self.__bit_len = 100
         self._qad = None
         self.__qad_center = 0
-        self._noise_treshold = 0
+        self._noise_threshold = 0
         self.__sample_rate = sample_rate
         self.noise_min_plot = 0
         self.noise_max_plot = 0
@@ -100,13 +100,11 @@ class Signal(QObject):
                 f.close()
 
             self.filename = filename
-            self._num_samples = len(self._fulldata)
 
             if not self.qad_demod_file_loaded:
-                self.noise_treshold = self.calc_noise_treshold(int(0.99 * self.num_samples), self.num_samples)
+                self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
 
         else:
-            self._num_samples = -1
             self.filename = ""
 
     @property
@@ -206,22 +204,21 @@ class Signal(QObject):
         if value != self.__name:
             self.__name = value
             self.name_changed.emit(self.__name)
+
     @property
     def num_samples(self):
-        if self._num_samples == -1:
-            self._num_samples = len(self.data)
-        return self._num_samples
+        return len(self.data)
 
     @property
-    def noise_treshold(self):
-        return self._noise_treshold
+    def noise_threshold(self):
+        return self._noise_threshold
 
-    @noise_treshold.setter
-    def noise_treshold(self, value):
-        if value != self.noise_treshold:
+    @noise_threshold.setter
+    def noise_threshold(self, value):
+        if value != self.noise_threshold:
             self._qad = None
             self.clear_parameter_cache()
-            self._noise_treshold = value
+            self._noise_threshold = value
             self.noise_min_plot = -value
             self.noise_max_plot = value
             self.noise_threshold_changed.emit()
@@ -285,15 +282,15 @@ class Signal(QObject):
         return signal_functions.find_signal_end(self.qad, self.modulation_type)
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.data, self.noise_treshold, self.modulation_type)
+        return signal_functions.afp_demod(self.data, self.noise_threshold, self.modulation_type)
 
-    def calc_noise_treshold(self, noise_start: int, noise_end: int):
+    def calc_noise_threshold(self, noise_start: int, noise_end: int):
         NDIGITS = 4
         try:
             return np.ceil(np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
         except ValueError:
             logger.warning("Could not caluclate noise treshold for range {}-{}".format(int(noise_start),int(noise_end)))
-            return self.noise_treshold
+            return self.noise_threshold
 
     def estimate_bitlen(self) -> int:
         bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]
@@ -314,8 +311,7 @@ class Signal(QObject):
     def create_new(self, start:int, end:int):
         new_signal = Signal("", "New " + self.name)
         new_signal._fulldata = self.data[start:end]
-        new_signal._num_samples = end - start
-        new_signal._noise_treshold = self.noise_treshold
+        new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
         new_signal.__bit_len = self.bit_len
@@ -375,7 +371,43 @@ class Signal(QObject):
     def insert_data(self, index: int, data: np.ndarray):
         self._fulldata = np.insert(self._fulldata, index, data)
         self._qad = None
-        self._num_samples = len(self.data)
+
+        self.__invalidate_after_edit()
+
+    def delete_range(self, start: int, end: int):
+        mask = np.ones(self.num_samples, dtype=bool)
+        mask[start:end] = False
+
+        try:
+            self._fulldata = self._fulldata[mask]
+            self._qad = self._qad[mask] if self._qad is not None else None
+        except IndexError as e:
+            logger.warning("Could not delete data: " + str(e))
+
+        self.__invalidate_after_edit()
+
+    def mute_range(self, start: int, end: int):
+        self._fulldata[start:end] = 0
+        if self._qad is not None:
+            self._qad[start:end] = 0
+
+        self.__invalidate_after_edit()
+
+    def crop_to_range(self, start: int, end: int):
+        self._fulldata = self._fulldata[start:end]
+        self._qad = self._qad[start:end] if self._qad is not None else None
+
+        self.__invalidate_after_edit()
+
+    def __invalidate_after_edit(self):
+        self.clear_parameter_cache()
+        self.changed = True
         self.data_edited.emit()
         self.protocol_needs_update.emit()
-        self.changed = True
+
+    @staticmethod
+    def from_samples(samples: np.ndarray, name: str, sample_rate: float):
+        signal = Signal("", name, sample_rate=sample_rate)
+        signal._fulldata = samples
+
+        return signal

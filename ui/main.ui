@@ -283,17 +283,6 @@
     <string>&amp;Redo</string>
    </property>
   </action>
-  <action name="actionCommon_Zoom">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Common Zoom</string>
-   </property>
-  </action>
   <action name="actionShow_Confirm_Close_Dialog">
    <property name="checkable">
     <bool>true</bool>

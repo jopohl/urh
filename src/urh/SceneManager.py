@@ -69,10 +69,9 @@ class SceneManager(QObject):
             minimum = -self.padding * abs(minimum)
             maximum = -self.padding * minimum
         else:
-            maximum = abs(maximum)
-            minimum = -maximum
+            maximum = self.padding*abs(maximum)
+            minimum = -self.padding*maximum
 
-        # self.scene.setSceneRect(0, -1, num_samples, 2)
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
         self.scene.setBackgroundBrush(constants.BGCOLOR)
         self.line_item.setLine(0, 0, self.num_samples, 0)

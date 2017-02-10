@@ -30,7 +30,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
-        signal.noise_treshold = noise
+        signal.noise_threshold = noise
         signal.tolerance = tolerance
         signal.silent_set_modulation_type(modulation_type)
         ProtocolAnalyzer.__init__(self, signal)

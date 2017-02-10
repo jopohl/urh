@@ -15,7 +15,7 @@ from urh.signalprocessing.Signal import Signal
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
-from urh.ui.actions.ChangeSignalRange import ChangeSignalRange, RangeAction
+from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util import FontHelper
@@ -49,6 +49,9 @@ class SignalFrameController(QFrame):
     def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack,
                  project_manager, proto_bits=None, parent=None):
         super().__init__(parent)
+
+        self.undo_stack = undo_stack
+
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
@@ -60,8 +63,6 @@ class SignalFrameController(QFrame):
 
         self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
         self.is_minimized = False
-        self.common_zoom = False
-        self.undo_stack = undo_stack
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
 
@@ -110,7 +111,7 @@ class SignalFrameController(QFrame):
             self.set_protocol_visibility()
 
             self.ui.chkBoxShowProtocol.setChecked(True)
-            self.set_qad_tooltip(self.signal.noise_treshold)
+            self.set_qad_tooltip(self.signal.noise_threshold)
             self.ui.btnSaveSignal.hide()
 
             self.show_protocol(refresh=False)
@@ -173,14 +174,10 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
-        self.ui.gvSignal.show_crop_range_clicked.connect(self.show_autocrop_range)
-        self.ui.gvSignal.crop_clicked.connect(self.on_crop_signal_clicked)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
-        self.ui.gvSignal.deletion_wanted.connect(self.delete_selection)
-        self.ui.gvSignal.mute_wanted.connect(self.mute_selection)
 
         self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -221,7 +218,7 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
         self.show_modulation_type()
 
@@ -512,14 +509,14 @@ class SignalFrameController(QFrame):
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
-        new_thresh = self.signal.calc_noise_treshold(start, end)
+        new_thresh = self.signal.calc_noise_threshold(start, end)
         self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
     @pyqtSlot()
     def on_noise_threshold_changed(self):
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_treshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         minimum = self.signal.noise_min_plot
         maximum = self.signal.noise_max_plot
         if self.ui.cbSignalView.currentIndex() == 0:
@@ -539,19 +536,6 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.set_selection_area(w=value - self.ui.spinBoxSelectionStart.value())
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_sel_area_width_changed()
-
-    @pyqtSlot()
-    def on_crop_signal_clicked(self):
-        gvs = self.ui.gvSignal
-        if not gvs.selection_area.is_empty:
-            start = gvs.selection_area.x
-            end = start + gvs.selection_area.width
-            if end < start:
-                start, end = end, start
-
-            crop_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                            mode=RangeAction.crop)
-            self.undo_stack.push(crop_action)
 
     @pyqtSlot()
     def on_protocol_updated(self):
@@ -633,6 +617,8 @@ class SignalFrameController(QFrame):
 
         dialog.recording_parameters.connect(project_manager.set_recording_parameters)
         dialog.show()
+        dialog.graphics_view.draw_full_signal()
+        dialog.scene_creator.show_full_scene()
 
     @pyqtSlot(int, int)
     def update_selection_area(self, start, end):
@@ -856,20 +842,8 @@ class SignalFrameController(QFrame):
         self.ui.lNumSelectedSamples.setText(str(selected))
         self.__set_duration()
 
-        self.set_qad_tooltip(self.signal.noise_treshold)
+        self.set_qad_tooltip(self.signal.noise_threshold)
         gvs.sel_area_active = True
-
-    def delete_selection(self, start, end):
-        self.ui.gvSignal.clear_selection()
-        del_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                       mode=RangeAction.delete)
-        self.undo_stack.push(del_action)
-        self.ui.gvSignal.centerOn(start, self.ui.gvSignal.y_center)
-
-    def mute_selection(self, start: int, end: int):
-        mute_action = ChangeSignalRange(signal=self.signal, protocol=self.proto_analyzer, start=start, end=end,
-                                        mode=RangeAction.mute)
-        self.undo_stack.push(mute_action)
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):
@@ -883,9 +857,9 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
-        if self.signal is not None and self.signal.noise_treshold != self.ui.spinBoxNoiseTreshold.value():
+        if self.signal is not None and self.signal.noise_threshold != self.ui.spinBoxNoiseTreshold.value():
             noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                 parameter_name="noise_treshold",
+                                                 parameter_name="noise_threshold",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
             self.disable_auto_detection()
@@ -967,20 +941,6 @@ class SignalFrameController(QFrame):
             self.setCursor(Qt.WaitCursor)
             self.signal.auto_detect()
             self.unsetCursor()
-
-    def zoom_all_signals(self, factor):
-        """
-        This method is used, when 'common Zoom' is enabled
-        :param factor:
-        :return:
-        """
-        for sWidget in self.signal_widgets:
-            gvs = sWidget.ui.gvSignal
-            gvs.zoom(factor)
-
-        for sWidget in self.signal_widgets:
-            if sWidget == self:
-                continue
 
     def redraw_signal(self):
         vr = self.ui.gvSignal.view_rect()

@@ -37,7 +37,7 @@ class TestDemodulations(unittest.TestCase):
         signal.modulation_type = 2
         signal.bit_len = 300
         signal.qad_center = 0.0281
-        signal.noise_treshold = 0
+        signal.noise_threshold = 0
         signal.tolerance = 10
 
         proto_analyzer = ProtocolAnalyzer(signal)

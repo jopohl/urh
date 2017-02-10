@@ -55,7 +55,6 @@ class FFTSceneManager(SceneManager):
                 item.setParentItem(None)
                 del item
 
-
     def clear_peak(self):
         self.peak = []
         self.peak_item.setPath(QPainterPath())

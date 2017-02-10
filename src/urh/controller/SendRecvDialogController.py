@@ -1,11 +1,14 @@
 import locale
 import random
 import time
-import gc
+import math
 
 import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
+from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QDialog, QMessageBox, QApplication
 
@@ -131,6 +134,9 @@ class SendRecvDialogController(QDialog):
         elif mode == Mode.send:
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_creator = SignalSceneManager(signal, parent=self)
+            self.send_indicator = self.scene_creator.scene.addRect(0, -2, 0, 4, QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                   QBrush(constants.SEND_INDICATOR_COLOR))
+            self.send_indicator.stackBefore(self.scene_creator.scene.selection_area)
             self.scene_creator.init_scene()
             self.graphics_view.set_signal(signal)
         else:
@@ -195,6 +201,10 @@ class SendRecvDialogController(QDialog):
         self.device.started.connect(self.on_device_started)
         self.device.sender_needs_restart.connect(self.__restart_device_thread)
 
+    def __update_send_indicator(self, width: int):
+        y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
+        self.send_indicator.setRect(0, y-h, width, 2*h + abs(y))
+
     def redraw_signal(self):
         vr = self.graphics_view.view_rect()
         start, end = vr.x(), vr.x() + vr.width()
@@ -240,7 +250,6 @@ class SendRecvDialogController(QDialog):
             Errors.network_sdr_send_is_elsewhere()
             return
 
-
         nrep = self.ui.spinBoxNRepeat.value()
         sts = self.device.samples_to_send
         self.device.free_data()
@@ -248,7 +257,9 @@ class SendRecvDialogController(QDialog):
         self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
                                     self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()
-        del self.scene_creator.plot_data
+        if hasattr(self.scene_creator, "plot_data"):
+            del self.scene_creator.plot_data
+
         if self.mode == Mode.receive:
             self.scene_creator = LiveSceneManager(np.array([]), parent=self)
         self.graphics_view.setScene(self.scene_creator.scene)
@@ -390,6 +401,9 @@ class SendRecvDialogController(QDialog):
                 return
             self.scene_creator.scene.frequencies = x
             self.scene_creator.plot_data = y
+        elif self.mode == Mode.send:
+            self.__update_send_indicator(self.device.current_index)
+            return
 
         self.scene_creator.init_scene()
         self.scene_creator.show_full_scene()
@@ -407,12 +421,15 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_clear_clicked(self):
-        if self.mode != Mode.spectrum:
+        if self.mode == Mode.send:
+            self.__update_send_indicator(0)
+        else:
+            self.scene_creator.clear_path()
+
+        if self.mode in (Mode.send, Mode.receive):
             self.ui.txtEditErrors.clear()
             self.device.current_index = 0
-            self.scene_creator.clear_path()
             self.device.current_iteration = 0
-            self.graphics_view.repaint()
             self.ui.lSamplesCaptured.setText("0")
             self.ui.lSignalSize.setText("0")
             self.ui.lTime.setText("0")
@@ -421,8 +438,7 @@ class SendRecvDialogController(QDialog):
             self.ui.progressBar.setValue(0)
             self.ui.btnClear.setEnabled(False)
             self.ui.btnSave.setEnabled(False)
-        else:
-            self.scene_creator.clear_path()
+        elif self.mode == Mode.spectrum:
             self.scene_creator.clear_peak()
 
     @pyqtSlot()

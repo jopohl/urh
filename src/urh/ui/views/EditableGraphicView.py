@@ -369,7 +369,12 @@ class EditableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):
         if self.insert_sine_plugin.complex_wave is not None:
-            self.signal.insert_data(self.paste_position, self.insert_sine_plugin.complex_wave)
+            self.clear_selection()
+            insert_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                             data_to_insert=self.insert_sine_plugin.complex_wave,
+                                             position=self.paste_position,
+                                             mode=EditAction.insert, cache_qad=self.cache_qad)
+            self.undo_stack.push(insert_action)
 
     @pyqtSlot()
     def on_copy_action_triggered(self):

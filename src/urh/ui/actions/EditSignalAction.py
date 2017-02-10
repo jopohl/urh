@@ -17,7 +17,6 @@ class EditAction(Enum):
     delete = 3
     paste = 4
     insert = 5
-    replace = 6
 
 
 class EditSignalAction(QUndoCommand):
@@ -49,24 +48,26 @@ class EditSignalAction(QUndoCommand):
         self.cache_qad = cache_qad
 
         if self.mode == EditAction.crop:
-            self.setText("Crop Signal {0}".format(signal.name))
+            self.setText("Crop Signal")
             self.pre_crop_data = self.signal._fulldata[0:self.start]
             self.post_crop_data = self.signal._fulldata[self.end:]
             if self.cache_qad:
                 self.pre_crop_qad = self.signal._qad[0:self.start]
                 self.post_crop_qad = self.signal._qad[self.end:]
         elif self.mode == EditAction.mute:
-            self.setText("mute range of signal {0}".format(signal.name))
+            self.setText("Mute Signal")
             self.orig_data_part = copy.copy(self.signal._fulldata[self.start:self.end])
             if self.cache_qad:
                 self.orig_qad_part = copy.copy(self.signal._qad[self.start:self.end])
         elif self.mode == EditAction.delete:
-            self.setText("deleting range from signal {0}".format(signal.name))
+            self.setText("Delete Range")
             self.orig_data_part = self.signal._fulldata[self.start:self.end]
             if self.cache_qad:
                 self.orig_qad_part = self.signal._qad[self.start:self.end]
         elif self.mode == EditAction.paste:
-            self.setText("insert data at signal {0}".format(signal.name))
+            self.setText("Paste")
+        elif self.mode == EditAction.insert:
+            self.setText("insert sine wave")
 
         self.orig_parameter_cache = copy.deepcopy(self.signal.parameter_cache)
         self.signal_was_changed = self.signal.changed
@@ -103,7 +104,7 @@ class EditSignalAction(QUndoCommand):
             self.signal.mute_range(self.start, self.end)
         elif self.mode == EditAction.crop:
             self.signal.crop_to_range(self.start, self.end)
-        elif self.mode == EditAction.paste:
+        elif self.mode == EditAction.paste or self.mode == EditAction.insert:
             self.signal.insert_data(self.position, self.data_to_insert)
             if self.protocol:
                 keep_msg_indices = self.__get_keep_msg_indices_for_paste()
@@ -139,7 +140,7 @@ class EditSignalAction(QUndoCommand):
             if self.cache_qad:
                 self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))
 
-        elif self.mode == EditAction.paste:
+        elif self.mode == EditAction.paste or self.mode == EditAction.insert:
             self.signal.delete_range(self.position, self.position+len(self.data_to_insert))
 
         self.signal.parameter_cache = self.orig_parameter_cache

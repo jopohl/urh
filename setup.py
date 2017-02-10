@@ -40,10 +40,9 @@ else:
 EXT = '.pyx' if USE_CYTHON else '.cpp'
 
 
-
 class build_ext(_build_ext):
     def finalize_options(self):
-        print("Finalizing optonms")
+        print("Finalizing options")
         _build_ext.finalize_options(self)
         # Prevent numpy from thinking it is still in its setup process:
         __builtins__.__NUMPY_SETUP__ = False
@@ -65,9 +64,9 @@ def get_packages():
 def get_package_data():
     package_data = {"urh.cythonext": ["*.cpp"]}
     for plugin in PLUGINS:
-        package_data["urh.plugins." + plugin] = ['settings.ui', "descr.txt"]
+        package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    is_release = os.path.isfile("/tmp/urh_releasing") # make sure precompiled binding are uploaded to PyPi
+    is_release = os.path.isfile("/tmp/urh_releasing")  # make sure precompiled binding are uploaded to PyPi
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows

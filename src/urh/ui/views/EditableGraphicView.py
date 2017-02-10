@@ -31,6 +31,7 @@ class EditableGraphicView(SelectableGraphicView):
         super().__init__(parent)
 
         self.participants = []
+        self.__sample_rate = None   # For default sample rate in insert sine dialog
 
         self.autoRangeY = True
         self.show_full_signal = True
@@ -98,6 +99,14 @@ class EditableGraphicView(SelectableGraphicView):
         self.redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         self.redo_action.setShortcut(QKeySequence.Redo)
         self.redo_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+
+    @property
+    def sample_rate(self) -> float:
+        return self.__sample_rate
+
+    @sample_rate.setter
+    def sample_rate(self, value):
+        self.__sample_rate = value
 
     @property
     def signal(self) -> Signal:
@@ -364,7 +373,7 @@ class EditableGraphicView(SelectableGraphicView):
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):
-        self.insert_sine_plugin.show_insert_sine_dialog()
+        self.insert_sine_plugin.show_insert_sine_dialog(sample_rate=self.sample_rate)
 
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):

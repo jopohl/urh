@@ -50,9 +50,12 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
 
-    def show_insert_sine_dialog(self):
+    def show_insert_sine_dialog(self, sample_rate=None):
         self.dialog_ui.show()
         self.__create_dialog_connects()
+        if sample_rate is not None:
+            self.sample_rate = sample_rate
+            self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)
         self.draw_sine_wave()
 
     def draw_sine_wave(self):

@@ -139,6 +139,7 @@ class SendRecvDialogController(QDialog):
             self.send_indicator.stackBefore(self.scene_creator.scene.selection_area)
             self.scene_creator.init_scene()
             self.graphics_view.set_signal(signal)
+            self.graphics_view.sample_rate = samp_rate
         else:
             self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.graphics_view)
 

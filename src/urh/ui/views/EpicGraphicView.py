@@ -33,6 +33,17 @@ class EpicGraphicView(EditableGraphicView):
         self.addAction(self.save_action)
 
     @property
+    def sample_rate(self):
+        try:
+            return self.signal.sample_rate
+        except AttributeError:
+            return None
+
+    @sample_rate.setter
+    def sample_rate(self, value):
+        raise ValueError("Not implemented for epic graphic view")
+
+    @property
     def signal(self):
         return self.parent_frame.signal
 

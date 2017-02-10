@@ -28,7 +28,7 @@ COMPILER_DIRECTIVES = {'language_level': 3,
                        }
 
 UI_SUBDIRS = ("actions", "delegates", "views")
-PLUGINS = ("AmbleAnalyzer", "MessageBreak", "ZeroHide", "NetworkSDRInterface", "InsertSine")
+PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]
 URH_DIR = "urh"
 
 try:

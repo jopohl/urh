@@ -24,8 +24,14 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(len(self.dialog.modulators), 1)
         self.dialog.ui.btnAddModulation.click()
         self.assertEqual(len(self.dialog.modulators), 2)
+        self.dialog.ui.btnAddModulation.click()
+        self.assertEqual(len(self.dialog.modulators), 3)
+        app.processEvents()
+        self.dialog.ui.btnRemoveModulation.click()
+        self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnRemoveModulation.click()
         self.assertEqual(len(self.dialog.modulators), 1)
+        self.assertFalse(self.dialog.ui.btnRemoveModulation.isEnabled())
 
     def test_edit_carrier(self):
         self.dialog.ui.doubleSpinBoxCarrierFreq.setValue(1e9)
@@ -78,6 +84,12 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertTrue(self.dialog.ui.spinBoxGaussBT.isVisible())
         self.assertTrue(self.dialog.ui.lGaussWidth.isVisible())
         self.assertTrue(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
+        self.dialog.ui.spinBoxGaussBT.setValue(0.5)
+        self.dialog.ui.spinBoxGaussBT.editingFinished.emit()
+        self.assertEqual(self.dialog.current_modulator.gauss_bt, 0.5)
+        self.dialog.ui.spinBoxGaussFilterWidth.setValue(5)
+        self.dialog.ui.spinBoxGaussFilterWidth.editingFinished.emit()
+        self.assertEqual(self.dialog.current_modulator.gauss_filter_width, 5)
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Phase Shift Keying (PSK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Phase (degree) for 0:")
@@ -116,3 +128,16 @@ class TestModulatorGUI(unittest.TestCase):
 
         self.assertEqual(int(self.dialog.ui.gVOriginalSignal.view_rect().width()),
                          int(self.dialog.ui.gVModulated.view_rect().width()))
+
+        freq = self.dialog.ui.doubleSpinBoxCarrierFreq.value()
+        self.dialog.ui.btnAutoDetect.click()
+        self.assertNotEqual(freq, self.dialog.ui.doubleSpinBoxCarrierFreq.value())
+
+        self.dialog.ui.comboBoxModulationType.setCurrentText("Frequency Shift Keying (FSK)")
+        self.dialog.ui.btnAutoDetect.click()
+
+        self.assertEqual(self.dialog.ui.lCurrentSearchResult.text(), "1")
+        self.dialog.ui.btnSearchNext.click()
+        self.assertEqual(self.dialog.ui.lCurrentSearchResult.text(), "2")
+        self.dialog.ui.btnSearchPrev.click()
+        self.assertEqual(self.dialog.ui.lCurrentSearchResult.text(), "1")

@@ -147,14 +147,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="labelTime">
-         <property name="text">
-          <string>20s</string>
+          <string>Time (seconds):</string>
          </property>
         </widget>
        </item>
@@ -172,11 +165,17 @@
          </property>
         </widget>
        </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="lineEditTime"/>
+       </item>
       </layout>
      </widget>
      <widget class="ZoomableGraphicView" name="graphicsViewSineWave">
       <property name="renderHints">
        <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
       </property>
      </widget>
     </widget>
@@ -195,6 +194,17 @@
    <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>doubleSpinBoxAmplitude</tabstop>
+  <tabstop>doubleSpinBoxFrequency</tabstop>
+  <tabstop>doubleSpinBoxPhase</tabstop>
+  <tabstop>doubleSpinBoxSampleRate</tabstop>
+  <tabstop>doubleSpinBoxNSamples</tabstop>
+  <tabstop>lineEditTime</tabstop>
+  <tabstop>btnOK</tabstop>
+  <tabstop>btnAbort</tabstop>
+  <tabstop>graphicsViewSineWave</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

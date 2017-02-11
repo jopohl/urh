@@ -1093,7 +1093,7 @@ class CompareFrameController(QFrame):
 
     @pyqtSlot()
     def on_table_selection_changed(self):
-        self.selection_timer.start(100)
+        self.selection_timer.start(0)
 
     @pyqtSlot()
     def on_combobox_decoding_current_index_changed(self):

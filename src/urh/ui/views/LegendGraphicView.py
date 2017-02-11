@@ -8,7 +8,6 @@ class LegendGraphicView(QGraphicsView):
 
     def __init__(self, parent=None):
         self.ysep = 0
-        self.autofit = False
         self.y_scene = -1
         self.scene_height = 2
         super().__init__(parent)

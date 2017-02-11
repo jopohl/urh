@@ -143,9 +143,7 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setVisible(False)
         self.ui.actionMaximize_all.setVisible(False)
 
-
     def create_connects(self):
-        self.ui.actionCommon_Zoom.setShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Z))
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionMinimize_all.setShortcut("F10")
@@ -276,9 +274,9 @@ class MainController(QMainWindow):
 
         sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
-            sframe.redraw_signal()
+            sframe.ui.gvSignal.redraw_view()
 
-        sframe.ui.gvSignal.autofit_view()
+        sframe.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
         QApplication.processEvents()
@@ -312,7 +310,7 @@ class MainController(QMainWindow):
             if signal_frame.signal is not None:
                 # Non-Empty Frame (when a signal and not a protocol is opended)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-                signal_frame.scene_creator.deleteLater()
+                signal_frame.scene_manager.deleteLater()
                 signal_frame.signal.destroy()
                 signal_frame.signal.deleteLater()
                 signal_frame.proto_analyzer.destroy()
@@ -607,7 +605,7 @@ class MainController(QMainWindow):
             bit_len = signal.bit_len
             mod_type = signal.modulation_type
             tolerance = signal.tolerance
-            noise = signal.noise_treshold
+            noise = signal.noise_threshold
             center = signal.qad_center
         else:
             bit_len = 100

@@ -142,6 +142,15 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
+    @samples_to_send.setter
+    def samples_to_send(self, value):
+        if self.backend == Backends.grc:
+            self.__dev.data = value
+        elif self.backend == Backends.native:
+            self.__dev.init_send_parameters(value, self.num_sending_repeats, skip_device_parameters=True)
+        else:
+            raise ValueError("Unsupported Backend")
+
     @property
     def ip(self):
         if self.backend == Backends.grc:

@@ -79,6 +79,7 @@ call(["git", "push"])
 
 os.remove("/tmp/urh_releasing")
 
+os.chdir(script_dir)
 rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
 
 if rc != 0:

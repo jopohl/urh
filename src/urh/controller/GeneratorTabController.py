@@ -32,15 +32,9 @@ from urh.util.Logger import logger
 
 class GeneratorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController, project_manager: ProjectManager, parent=None):
-        """
-        :type encoders: list of Encoder
-        :return:
-        """
         super().__init__(parent)
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
-
-        self.modulated_scene_is_locked = False
 
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
@@ -52,7 +46,6 @@ class GeneratorTabController(QWidget):
 
         self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
                                                [Modulator("Modulation")], compare_frame_controller.decodings)
-        """:type: GeneratorTableModel """
         self.table_model.controller = self
         self.ui.tableMessages.setModel(self.table_model)
 
@@ -159,16 +152,6 @@ class GeneratorTabController(QWidget):
     def generator_undo_stack(self) -> QUndoStack:
         return self.table_model.undo_stack
 
-    def refresh_modulators(self):
-        current_index = 0
-        if type(self.sender()) == ModulatorDialogController:
-            current_index = self.sender().ui.comboBoxCustomModulations.currentIndex()
-        self.ui.cBoxModulations.clear()
-        for modulator in self.modulators:
-            self.ui.cBoxModulations.addItem(modulator.name)
-
-        self.ui.cBoxModulations.setCurrentIndex(current_index)
-
     @pyqtSlot()
     def on_selected_modulation_changed(self):
         cur_ind = self.ui.cBoxModulations.currentIndex()
@@ -182,6 +165,16 @@ class GeneratorTabController(QWidget):
                     continue
 
         self.show_modulation_info()
+
+    def refresh_modulators(self):
+        current_index = 0
+        if type(self.sender()) == ModulatorDialogController:
+            current_index = self.sender().ui.comboBoxCustomModulations.currentIndex()
+        self.ui.cBoxModulations.clear()
+        for modulator in self.modulators:
+            self.ui.cBoxModulations.addItem(modulator.name)
+
+        self.ui.cBoxModulations.setCurrentIndex(current_index)
 
     def show_modulation_info(self):
 
@@ -218,41 +211,51 @@ class GeneratorTabController(QWidget):
         self.ui.lParamForOne.setText(prefix + " for 1:")
         self.ui.lParamForOneValue.setText(cur_mod.param_for_one_str)
 
-    @pyqtSlot()
-    def show_modulation_dialog(self):
+    def prepare_modulation_dialog(self) -> (ModulatorDialogController, Message):
         preselected_index = self.ui.cBoxModulations.currentIndex()
+
         min_row, max_row, start, end = self.ui.tableMessages.selection_range()
         if min_row > -1:
             try:
-                message = self.table_model.protocol.messages[min_row]
-                preselected_index = message.modulator_indx
+                selected_message = self.table_model.protocol.messages[min_row]
+                preselected_index = selected_message.modulator_indx
             except IndexError:
-                message = Message([True, False, True, False], 0, [], MessageType("empty"))
+                selected_message = Message([True, False, True, False], 0, [], MessageType("empty"))
         else:
-            message = Message([True, False, True, False], 0, [], MessageType("empty"))
+            selected_message = Message([True, False, True, False], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
-                message.bit_len = self.table_model.protocol.messages[0].bit_len
+                selected_message.bit_len = self.table_model.protocol.messages[0].bit_len
 
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.sample_rate
 
-        c = ModulatorDialogController(self.modulators, parent=self)
-        c.ui.treeViewSignals.setModel(self.tree_model)
-        c.ui.treeViewSignals.expandAll()
-        c.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
+        modulator_dialog = ModulatorDialogController(self.modulators, parent=self)
+        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
+        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
 
-        c.finished.connect(self.refresh_modulators)
-        c.finished.connect(self.refresh_pause_list)
-        c.show()
-        bits = message.encoded_bits_str[0:10]
-        c.original_bits = bits
-        c.ui.linEdDataBits.setText(bits)
-        c.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
-        c.draw_original_signal()
-        c.ui.gVModulated.draw_full()
-        c.ui.gVData.draw_full()
-        c.ui.gVCarrier.draw_full()
+        modulator_dialog.finished.connect(self.refresh_modulators)
+        modulator_dialog.finished.connect(self.refresh_pause_list)
 
+        return modulator_dialog, selected_message
+
+    def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialogController):
+        dialog.original_bits = bits
+        dialog.ui.linEdDataBits.setText(bits)
+        dialog.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
+        dialog.draw_original_signal()
+        dialog.ui.gVModulated.show_full_scene(reinitialize=True)
+        dialog.ui.gVData.show_full_scene(reinitialize=True)
+        dialog.ui.gVData.auto_fit_view()
+        dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
+        dialog.ui.gVCarrier.auto_fit_view()
+
+    @pyqtSlot()
+    def show_modulation_dialog(self):
+        modulator_dialog, message = self.prepare_modulation_dialog()
+        modulator_dialog.show()
+
+        self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
         self.has_default_modulation = False
 
     @pyqtSlot()
@@ -499,6 +502,7 @@ class GeneratorTabController(QWidget):
 
             dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
             dialog.show()
+            dialog.graphics_view.show_full_scene(reinitialize=True)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
@@ -521,6 +525,7 @@ class GeneratorTabController(QWidget):
         except:
             logger.error("You done something wrong to the xml fuzzing profile.")
 
+    @pyqtSlot()
     def on_project_updated(self):
         self.table_model.participants = self.project_manager.participants
         self.table_model.refresh_vertical_header()

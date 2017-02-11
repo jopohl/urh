@@ -549,6 +549,8 @@ class MainController(QMainWindow):
         decoding_controller.show()
         decoding_controller.decoder_update()
 
+        return decoding_controller
+
     @pyqtSlot()
     def update_decodings(self):
         self.compare_frame_controller.load_decodings()

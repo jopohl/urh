@@ -85,7 +85,6 @@ class DecoderWidgetController(QDialog):
         # Connects
         self.create_connects()
 
-
     def create_connects(self):
         self.ui.inpt.textChanged.connect(self.decoder_update)
         self.ui.multiple.valueChanged.connect(self.handle_multiple_changed)
@@ -107,10 +106,11 @@ class DecoderWidgetController(QDialog):
 
         self.ui.decoderchain.itemChanged.connect(self.decoderchainUpdate)
         self.ui.decoderchain.internalMove.connect(self.decoderchainUpdate)
-        self.ui.decoderchain.itemActivated.connect(self.setInformation)
         self.ui.decoderchain.deleteElement.connect(self.deleteElement)
-        self.ui.basefunctions.itemActivated.connect(self.setInformation)
-        self.ui.additionalfunctions.itemActivated.connect(self.setInformation)
+        self.ui.decoderchain.currentRowChanged.connect(self.on_decoder_chain_current_row_changed)
+        self.ui.basefunctions.currentRowChanged.connect(self.on_base_functions_current_row_changed)
+        self.ui.additionalfunctions.currentRowChanged.connect(self.on_additional_functions_current_row_changed)
+
         self.ui.combobox_decodings.currentIndexChanged.connect(self.set_e)
         self.ui.combobox_signals.currentIndexChanged.connect(self.set_signal)
         self.ui.saveas.clicked.connect(self.saveas)
@@ -158,14 +158,14 @@ class DecoderWidgetController(QDialog):
     def saveas(self):
         # Ask for a name
         txt = ["Please enter a name:", self.e.chain[0]]
-        ok , name = CustomDialog.dialog(self, txt, "input")
+        ok, name = CustomDialog.dialog(self, txt, "input")
 
         if ok and name != "":
             self.e.chain[0] = name
             self.decoderchainUpdate()
 
             # If name is already there, overwrite existing
-            for i in range (0, len(self.decodings)):
+            for i in range(0, len(self.decodings)):
                 if name == self.decodings[i].name:
                     self.ui.combobox_decodings.setCurrentIndex(i)
                     self.decodings[i] = Encoder(self.chainstr)
@@ -176,26 +176,24 @@ class DecoderWidgetController(QDialog):
 
             self.decodings.append(Encoder(self.chainstr))
             self.ui.combobox_decodings.addItem(self.chainstr[0])
-            self.ui.combobox_decodings.setCurrentIndex(self.ui.combobox_decodings.count()-1)
+            self.ui.combobox_decodings.setCurrentIndex(self.ui.combobox_decodings.count() - 1)
             self.set_e()
             self.save_to_file()
-
 
     def delete_decoding(self):
         num = self.ui.combobox_decodings.currentIndex()
         if num >= 0:
             # Ask for acknowledgement
             txt = "Do you really want to delete '" + self.decodings[num].name + "'?"
-            ok , _ = CustomDialog.dialog(self, txt, "yesno")
+            ok, _ = CustomDialog.dialog(self, txt, "yesno")
 
             if ok:
                 self.decodings.pop(num)
                 self.ui.combobox_decodings.removeItem(num)
                 self.save_to_file()
 
-
     def set_e(self):
-        if self.ui.combobox_decodings.count() < 1: # Empty list
+        if self.ui.combobox_decodings.count() < 1:  # Empty list
             return
 
         self.e = copy.deepcopy(self.decodings[self.ui.combobox_decodings.currentIndex()])
@@ -205,12 +203,15 @@ class DecoderWidgetController(QDialog):
         self.chainoptions.clear()
         last_i = ""
         for i in chain:
-            if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL, constants.DECODING_REDUNDANCY,
-                     constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE, constants.DECODING_DATAWHITENING,
-                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT, constants.DECODING_DISABLED_PREFIX]:
+            if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL,
+                     constants.DECODING_REDUNDANCY,
+                     constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE,
+                     constants.DECODING_DATAWHITENING,
+                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT,
+                     constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
                 self.decoderchainUpdate()
-                last_i = self.ui.decoderchain.item(self.ui.decoderchain.count()-1).text()
+                last_i = self.ui.decoderchain.item(self.ui.decoderchain.count() - 1).text()
             else:
                 if any(x in last_i for x in [constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER,
                                              constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL,
@@ -221,7 +222,6 @@ class DecoderWidgetController(QDialog):
         self.decoder_update()
         self.ui.saveas.setVisible(False)
 
-
     def decoderchainUpdate(self):
         # for i in range (0, self.ui.decoderchain.count()):
         #     print(i, "->", self.ui.decoderchain.item(i).text())
@@ -229,7 +229,7 @@ class DecoderWidgetController(QDialog):
         self.ui.saveas.setVisible(True)
         self.eliminateDuplicates()
         self.chainstr = [self.e.name]
-        for i in range (0, self.ui.decoderchain.count()):
+        for i in range(0, self.ui.decoderchain.count()):
             op = self.ui.decoderchain.item(i).text()
 
             # Is this function disabled?
@@ -245,35 +245,35 @@ class DecoderWidgetController(QDialog):
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = 2
-                    self.chainstr.append(2) # Default
+                    self.chainstr.append(2)  # Default
             elif constants.DECODING_CARRIER in op:
                 # Read Carrier Field and add string to chainstr
                 if op in self.chainoptions:
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("") # Default
+                    self.chainstr.append("")  # Default
             elif constants.DECODING_SUBSTITUTION in op:
                 # Add substitution string to chainstr: Format = src0:dst0;src1:dst1;...
                 if op in self.chainoptions:
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("") # Default
+                    self.chainstr.append("")  # Default
             elif constants.DECODING_EXTERNAL in op:
                 # Add program path's string to chainstr: Format = decoder;encoder
                 if op in self.chainoptions:
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("") # Default
+                    self.chainstr.append("")  # Default
             elif constants.DECODING_DATAWHITENING in op:
                 # Add Data Whitening Parameters
                 if op in self.chainoptions:
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("0xe9cae9ca;0x21;0x8") # Default
+                    self.chainstr.append("0xe9cae9ca;0x21;0x8")  # Default
             elif constants.DECODING_CUT in op:
                 # Add cut parameters
                 if op in self.chainoptions:
@@ -285,14 +285,12 @@ class DecoderWidgetController(QDialog):
         self.e.set_chain(self.chainstr)
         self.decoder_update()
 
-
     def deleteElement(self):
-        if self.ui.decoderchain.count() == 0:   # Clear all
+        if self.ui.decoderchain.count() == 0:  # Clear all
             self.chainoptions.clear()
         else:
             self.chainoptions.pop(self.ui.decoderchain.active_element_text, None)
         self.decoderchainUpdate()
-
 
     def eliminateDuplicates(self):
         decoderchain_count = self.ui.decoderchain.count()
@@ -317,7 +315,7 @@ class DecoderWidgetController(QDialog):
             # Count number of current elements and append string "#<num>" to current text, if num > 1
             txt = self.ui.decoderchain.item(elem).text()
             num = 0
-            for i in range (0, decoderchain_count):
+            for i in range(0, decoderchain_count):
                 if txt in self.ui.decoderchain.item(i).text():
                     num += 1
             if num > 1:
@@ -327,20 +325,20 @@ class DecoderWidgetController(QDialog):
 
             # Check duplicate names
             dup = False
-            for i in range (0, decoderchain_count):
+            for i in range(0, decoderchain_count):
                 if self.ui.decoderchain.item(i).text() == tmp_txt:
                     dup = True
                     break
 
             if dup:
-                for i in range (1, num):
+                for i in range(1, num):
                     if i > 1:
                         tmp_txt = txt + " #" + str(i)
                     else:
                         tmp_txt = txt + " "
 
                     dup = False
-                    for j in range (0, decoderchain_count):
+                    for j in range(0, decoderchain_count):
                         if self.ui.decoderchain.item(j).text() == tmp_txt:
                             dup = True
                             break
@@ -354,9 +352,8 @@ class DecoderWidgetController(QDialog):
 
         # Save current decoderchain to old_decoderchain
         self.old_decoderchain = []
-        for i in range (0, decoderchain_count):
+        for i in range(0, decoderchain_count):
             self.old_decoderchain.append(self.ui.decoderchain.item(i).text())
-
 
     def decoder_update(self):
         # Only allow {0, 1}
@@ -385,21 +382,32 @@ class DecoderWidgetController(QDialog):
             self.ui.graphicsView_decoded.setScene(temp_decoded)
             self.ui.graphicsView_decoded.update()
 
+    @pyqtSlot(int)
+    def on_base_functions_current_row_changed(self, index: int):
+        self.set_information(0)
 
-    def setInformation(self):
+    @pyqtSlot(int)
+    def on_additional_functions_current_row_changed(self, index: int):
+        self.set_information(1)
+
+    @pyqtSlot(int)
+    def on_decoder_chain_current_row_changed(self, index: int):
+        self.set_information(2)
+
+    def set_information(self, mode: int):
         # Presets
         decoderEdit = False
         self.ui.optionWidget.setCurrentIndex(0)
         txt = ""
 
         # Determine selected element
-        if self.ui.basefunctions.hasFocus():
+        if mode == 0:
             element = self.ui.basefunctions.currentItem().text()
             txt += element + ":\n"
-        elif self.ui.additionalfunctions.hasFocus():
+        elif mode == 1:
             element = self.ui.additionalfunctions.currentItem().text()
             txt += element + ":\n"
-        elif self.ui.decoderchain.hasFocus():
+        elif mode == 2:
             decoderEdit = True
             txt = "## DECODING PROCESS ##\n\n"
             element = self.ui.decoderchain.currentItem().text()
@@ -553,7 +561,7 @@ class DecoderWidgetController(QDialog):
                             self.ui.datawhitening_sync.setText(whitening_sync)
                             self.ui.datawhitening_polynomial.setText(whitening_polynomial)
                             opt = self.e.hex2bit(opt)
-                            if len(opt)>= 4:
+                            if len(opt) >= 4:
                                 self.ui.datawhitening_applycrc.setChecked(opt[0])
                                 self.ui.datawhitening_preamble_rm.setChecked(opt[1])
                                 self.ui.datawhitening_sync_rm.setChecked(opt[2])
@@ -577,7 +585,7 @@ class DecoderWidgetController(QDialog):
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
                    "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
                    "Example:\n" \
-                   "- Cut before '1010' would delete everything before first '1010' bits.\n" \
+                   "- Cut before '1010' would delete everything before first '1010' bits.\n"
 
             self.ui.optionWidget.setCurrentIndex(6)
             # Values can only be changed when editing decoder, otherwise default value
@@ -667,7 +675,8 @@ class DecoderWidgetController(QDialog):
         if self.ui.datawhitening_crc_rm.isChecked():
             opt = opt | 0x1
 
-        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + hex(opt)
+        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + hex(
+            opt)
         self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 
@@ -703,12 +712,13 @@ class DecoderWidgetController(QDialog):
     def handle_carrier_changed(self):
         # Only allow {0, 1}
         carrier_txt = self.ui.carrier.text()
-        if carrier_txt.count("0") + carrier_txt.count("1") + carrier_txt.count("_") + carrier_txt.count(".") + carrier_txt.count("*") < len(carrier_txt):
+        if carrier_txt.count("0") + carrier_txt.count("1") + carrier_txt.count("_") + carrier_txt.count(
+                ".") + carrier_txt.count("*") < len(carrier_txt):
             self.ui.carrier.setText(self.old_carrier_txt)
         else:
             self.old_carrier_txt = carrier_txt
         # Carrier Textbox
-        #self.e.carrier = self.e.str2bit(self.ui.carrier.text())
+        # self.e.carrier = self.e.str2bit(self.ui.carrier.text())
         self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
@@ -740,7 +750,7 @@ class DecoderWidgetController(QDialog):
                 cmode = 3
             cmark = str(self.ui.cutmark2.value())
 
-        cut_text = str(cmode)+";"+cmark
+        cut_text = str(cmode) + ";" + cmark
 
         self.chainoptions[self.active_message] = cut_text
         self.decoderchainUpdate()
@@ -749,7 +759,7 @@ class DecoderWidgetController(QDialog):
         event.accept()
 
     def dropEvent(self, event: QDropEvent):
-        #if not self.ui.decoderchain.geometry().contains(self.mapToGlobal(event.pos())):
+        # if not self.ui.decoderchain.geometry().contains(self.mapToGlobal(event.pos())):
         if self.ui.decoderchain.active_element >= 0:
             self.chainoptions.pop(self.ui.decoderchain.item(self.ui.decoderchain.active_element).text(), None)
         self.ui.decoderchain.takeItem(self.ui.decoderchain.active_element)
@@ -765,7 +775,7 @@ class DecoderWidgetController(QDialog):
             self.decoder_update()
             return
 
-        signal = self.signals[indx-1]
+        signal = self.signals[indx - 1]
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
         self.ui.inpt.setText("".join(pa.decoded_proto_bits_str))
@@ -785,4 +795,3 @@ class DecoderWidgetController(QDialog):
 
         self.ui.graphicsView_signal.centerOn(0, 0)
         QApplication.restoreOverrideCursor()
-

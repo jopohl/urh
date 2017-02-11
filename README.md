@@ -1,5 +1,4 @@
-# Universal Radio Hacker [![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh)
-
+# Universal Radio Hacker [![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 ## What's this?
 Universal Radio Hacker is a suite for investigating unknown wireless protocols. Features include
 

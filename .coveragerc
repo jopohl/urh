@@ -3,6 +3,7 @@ omit =
        /src/urh/tests/* 
        */__init__.py
        src/urh/cythonext/*
+       src/urh/dev/gr/scripts/*
 
 [report]
 sort = Miss

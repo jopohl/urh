@@ -33,7 +33,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
         self.dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
         self.dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
-        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]([nmµ]|([\.,][0-9]{1,3}[nmµ]))?$")))
+        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]+([nmµ]|([\.,][0-9]{1,3}[nmµ]))?$")))
         self.set_time()
 
         super().__init__(name="InsertSine")
@@ -183,8 +183,8 @@ class InsertSinePlugin(SignalEditorPlugin):
         time_val = t * factor
 
         if self.sample_rate * time_val >= 1:
-            self.dialog_ui.doubleSpinBoxNSamples.setValue(self.num_samples)
-            self.num_samples = self.sample_rate * time_val
+            self.dialog_ui.doubleSpinBoxNSamples.setValue(self.sample_rate * time_val)
+            self.dialog_ui.doubleSpinBoxNSamples.editingFinished.emit()
         else:
             self.set_time()
 

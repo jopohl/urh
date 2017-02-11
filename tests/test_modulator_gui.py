@@ -76,7 +76,6 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
                          int(self.dialog.ui.gVData.view_rect().width()))
 
-
     def test_edit_modulation(self):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")

@@ -16,10 +16,10 @@ before_script:
 
 install:
   - if [[ $TRAVIS_PYTHON_VERSION != '3.4'* ]]; then pip install -r requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
-  - pip install pytest-cov codecov
+  - pip install pytest-cov codeclimate-test-reporter
 
 script:
   - python3 src/urh/cythonext/build.py
   - pytest -v --cov=src/urh tests
 
-after_success: codecov
+after_success: codeclimate-test-reporter

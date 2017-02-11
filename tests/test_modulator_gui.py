@@ -68,7 +68,8 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
                          int(self.dialog.ui.gVData.view_rect().width()))
 
-        self.dialog.ui.gVModulated.zoom(0.8)
+        self.dialog.ui.gVModulated.zoom(1.01)
+
         self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
                          int(self.dialog.ui.gVCarrier.view_rect().width()))
 

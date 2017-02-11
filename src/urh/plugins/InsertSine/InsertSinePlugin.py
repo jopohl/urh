@@ -18,8 +18,8 @@ class InsertSinePlugin(SignalEditorPlugin):
     sine_wave_updated = pyqtSignal()
 
     def __init__(self):
-        dirname = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
-        self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dirname, "insert_sine_dialog.ui")))  # type: QDialog
+        dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
+        self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))  # type: QDialog
 
         self.complex_wave = None
         self.__amplitude = 0.5
@@ -127,24 +127,27 @@ class InsertSinePlugin(SignalEditorPlugin):
         sine_thread.setDaemon(True)
         sine_thread.start()
 
-        for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase", "doubleSpinBoxSampleRate",
-                    "doubleSpinBoxNSamples", "lineEditTime", "btnOK"):
-            getattr(self.dialog_ui, obj).setEnabled(False)
+        self.__set_status_of_editable_elements(enabled=False)
 
     def __update_sine_wave(self):
-        self.complex_wave = np.empty(self.num_samples, dtype=np.complex64)
-        t = (np.arange(0, self.num_samples) / self.sample_rate)
-        self.complex_wave.real = self.amplitude * np.cos(2 * np.pi * self.frequency * t + self.phase)
-        self.complex_wave.imag = self.amplitude * np.sin(2 * np.pi * self.frequency * t + self.phase)
+        t = np.arange(0, self.num_samples) / self.sample_rate
+        arg = ((2 * np.pi * self.frequency * t + self.phase) * 1j).astype(np.complex64)
+        self.complex_wave = self.amplitude * np.exp(arg)
         self.sine_wave_updated.emit()
 
     def on_sine_wave_updated(self):
-        for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase", "doubleSpinBoxSampleRate",
-                    "doubleSpinBoxNSamples", "lineEditTime", "btnOK"):
-            getattr(self.dialog_ui, obj).setEnabled(True)
-
+        self.__set_status_of_editable_elements(enabled=True)
         self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
         self.dialog_ui.graphicsViewSineWave.draw_full()
+
+    def __set_status_of_editable_elements(self, enabled: bool):
+        for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase",
+                    "doubleSpinBoxSampleRate", "doubleSpinBoxNSamples", "lineEditTime", "btnOK"):
+            getattr(self.dialog_ui, obj).setEnabled(enabled)
+
+    def set_time(self):
+        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples/self.sample_rate, decimals=3,
+                                                                   append_seconds=False, remove_spaces=True))
 
     @pyqtSlot()
     def on_double_spin_box_amplitude_editing_finished(self):
@@ -196,8 +199,4 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_btn_ok_clicked(self):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
-
-    def set_time(self):
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples/self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
 

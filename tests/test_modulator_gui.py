@@ -60,6 +60,22 @@ class TestModulatorGUI(unittest.TestCase):
         self.dialog.ui.spinBoxSampleRate.editingFinished.emit()
         self.assertEqual(self.dialog.current_modulator.sample_rate, 5e6)
 
+    def test_zoom(self):
+        self.dialog.ui.gVModulated.zoom(1.1)
+        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         int(self.dialog.ui.gVCarrier.view_rect().width()))
+
+        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         int(self.dialog.ui.gVData.view_rect().width()))
+
+        self.dialog.ui.gVModulated.zoom(1.01)
+
+        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         int(self.dialog.ui.gVCarrier.view_rect().width()))
+
+        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         int(self.dialog.ui.gVData.view_rect().width()))
+
     def test_edit_modulation(self):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")

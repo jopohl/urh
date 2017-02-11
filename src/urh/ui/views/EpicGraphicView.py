@@ -70,6 +70,48 @@ class EpicGraphicView(EditableGraphicView):
         padding = constants.SEPARATION_PADDING * self.view_rect().height()
         return self.y_sep - padding <= pos.y() <= self.y_sep + padding
 
+    def _get_sub_path_ranges_and_colors(self, start: float, end: float):
+        sub_path_ranges = []
+        colors = []
+        start = int(start) if start > 0 else 0
+        end = int(end) if end == int(end) else int(end) + 1
+
+        if not self.protocol.messages:
+            return None, None
+
+        for message in self.protocol.messages:
+            if message.bit_sample_pos[-2] < start:
+                continue
+
+            color = None if message.participant is None else constants.PARTICIPANT_COLORS[
+                message.participant.color_index]
+
+            # Append the pause until first bit of message
+            sub_path_ranges.append((start, message.bit_sample_pos[0]))
+            if start < message.bit_sample_pos[0]:
+                colors.append(None)
+            else:
+                colors.append(color)  # Zoomed inside a message
+
+            if message.bit_sample_pos[-2] > end:
+                sub_path_ranges.append((message.bit_sample_pos[0], end))
+                colors.append(color)
+                break
+
+            # Data part of the message
+            sub_path_ranges.append((message.bit_sample_pos[0], message.bit_sample_pos[-2]))
+            colors.append(color)
+
+            start = message.bit_sample_pos[-2] + 1
+
+        if sub_path_ranges and sub_path_ranges[-1][1] != end:
+            sub_path_ranges.append((sub_path_ranges[-1][1], end))
+            colors.append(None)
+
+        sub_path_ranges = sub_path_ranges if sub_path_ranges else None
+        colors = colors if colors else None
+        return sub_path_ranges, colors
+
     @pyqtSlot()
     def on_save_action_triggered(self):
         self.save_clicked.emit()

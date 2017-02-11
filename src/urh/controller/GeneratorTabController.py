@@ -247,9 +247,11 @@ class GeneratorTabController(QWidget):
         c.ui.linEdDataBits.setText(bits)
         c.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
         c.draw_original_signal()
-        c.ui.gVModulated.draw_full()
-        c.ui.gVData.draw_full()
-        c.ui.gVCarrier.draw_full()
+        c.ui.gVModulated.show_full_scene(reinitialize=True)
+        c.ui.gVData.show_full_scene(reinitialize=True)
+        c.ui.gVData.auto_fit_view()
+        c.ui.gVCarrier.show_full_scene(reinitialize=True)
+        c.ui.gVCarrier.auto_fit_view()
 
         self.has_default_modulation = False
 
@@ -499,8 +501,7 @@ class GeneratorTabController(QWidget):
 
             dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
             dialog.show()
-            dialog.graphics_view.draw_full_signal()
-            dialog.scene_creator.show_full_scene()
+            dialog.graphics_view.show_full_scene(reinitialize=True)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()

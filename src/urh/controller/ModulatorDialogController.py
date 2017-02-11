@@ -145,19 +145,18 @@ class ModulatorDialogController(QDialog):
             self.mark_samples_in_view()
 
     def draw_original_signal(self, start=0, end=-1):
-        scene_creator = self.ui.gVOriginalSignal.scene_creator
-        if scene_creator is None:
+        scene_manager = self.ui.gVOriginalSignal.scene_manager
+        if scene_manager is None:
             return
 
         if end == -1:
-            end = scene_creator.signal.num_samples
+            end = scene_manager.signal.num_samples
 
-        self.ui.gVOriginalSignal.horizontalScrollBar().blockSignals(True)
-        y = scene_creator.scene.sceneRect().y()
-        h = scene_creator.scene.sceneRect().height()
+        y = scene_manager.scene.sceneRect().y()
+        h = scene_manager.scene.sceneRect().height()
         self.ui.gVOriginalSignal.setSceneRect(start, y, end - start, h)
         self.ui.gVOriginalSignal.fitInView(self.ui.gVOriginalSignal.sceneRect())
-        scene_creator.show_scene_section(start, end)
+        scene_manager.show_scene_section(start, end)
         self.ui.gVOriginalSignal.update()
 
         if self.lock_samples_in_view:
@@ -195,7 +194,7 @@ class ModulatorDialogController(QDialog):
     def show_search_result(self, i: int):
         if len(self.search_results) == 0:
             self.ui.lCurrentSearchResult.setText("0")
-            self.ui.gVOriginalSignal.scene_creator.clear_path()
+            self.ui.gVOriginalSignal.scene_manager.clear_path()
             return
 
         message, start_index, end_index = self.search_results[i]
@@ -267,7 +266,7 @@ class ModulatorDialogController(QDialog):
 
     def mark_samples_in_view(self):
         self.ui.lSamplesInViewModulated.setText(str(int(self.ui.gVModulated.view_rect().width())))
-        if self.ui.gVOriginalSignal.scene_creator is not None:
+        if self.ui.gVOriginalSignal.scene_manager is not None:
             self.ui.lSamplesInViewOrigSignal.setText(str(int(self.ui.gVOriginalSignal.view_rect().width())))
         else:
             self.ui.lSamplesInViewOrigSignal.setText("-")
@@ -550,7 +549,7 @@ class ModulatorDialogController(QDialog):
             return
 
         start, nsamples = self.protocol.get_samplepos_of_bitseq(message_index, pos, message_index, pos + 1, False)
-        signal = self.ui.gVOriginalSignal.scene_creator.signal
+        signal = self.ui.gVOriginalSignal.scene_manager.signal
         freq = signal.estimate_frequency(start, start + nsamples, self.current_modulator.sample_rate)
         self.ui.doubleSpinBoxCarrierFreq.setValue(freq)
         self.ui.doubleSpinBoxCarrierFreq.editingFinished.emit()

@@ -267,9 +267,9 @@ class MainController(QMainWindow):
 
         sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
-            sframe.redraw_signal()
+            sframe.ui.gvSignal.redraw_view()
 
-        sframe.ui.gvSignal.autofit_view()
+        sframe.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
         QApplication.processEvents()
@@ -303,7 +303,7 @@ class MainController(QMainWindow):
             if signal_frame.signal is not None:
                 # Non-Empty Frame (when a signal and not a protocol is opended)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-                signal_frame.scene_creator.deleteLater()
+                signal_frame.scene_manager.deleteLater()
                 signal_frame.signal.destroy()
                 signal_frame.signal.deleteLater()
                 signal_frame.proto_analyzer.destroy()

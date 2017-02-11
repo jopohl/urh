@@ -1,3 +1,4 @@
+import time
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -42,12 +43,13 @@ class ZoomableGraphicView(SelectableGraphicView):
         if factor > 1 and self.view_rect().width() / factor < 300:
             factor = self.view_rect().width() / 300
 
-        old_pos = self.mapToScene(event.pos()) if event else None
+        old_pos = self.mapToScene(event.pos()) if event is not None else None
+
+        if self.view_rect().width() / factor > self.sceneRect().width():
+            self.show_full_scene()
+            factor = 1
 
         self.scale(factor, 1)
-
-        if self.view_rect().width() > self.sceneRect().width():
-            self.show_full_scene()
 
         if not suppress_signal:
             self.zoomed.emit(factor)

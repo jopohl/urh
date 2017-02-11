@@ -120,8 +120,8 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.draw_sine_wave()
 
     def draw_sine_wave(self):
-        if self.dialog_ui.graphicsViewSineWave.scene_creator:
-            self.dialog_ui.graphicsViewSineWave.scene_creator.clear_path()
+        if self.dialog_ui.graphicsViewSineWave.scene_manager:
+            self.dialog_ui.graphicsViewSineWave.scene_manager.clear_path()
 
         sine_thread = threading.Thread(target=self.__update_sine_wave)
         sine_thread.setDaemon(True)
@@ -138,7 +138,7 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_sine_wave_updated(self):
         self.__set_status_of_editable_elements(enabled=True)
         self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
-        self.dialog_ui.graphicsViewSineWave.draw_full()
+        self.dialog_ui.graphicsViewSineWave.show_full_scene()
 
     def __set_status_of_editable_elements(self, enabled: bool):
         for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase",

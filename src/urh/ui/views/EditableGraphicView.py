@@ -1,12 +1,11 @@
 from PyQt5.QtCore import QSize, Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence, QMouseEvent, QPainter, QPen, QPixmap, QWheelEvent
+from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence, QPainter, QPen, QPixmap
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMenu
-from PyQt5.QtWidgets import QUndoGroup
 from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
@@ -16,13 +15,12 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ROI import ROI
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
-from urh.ui.views.SelectableGraphicView import SelectableGraphicView
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
-class EditableGraphicView(SelectableGraphicView):
+class EditableGraphicView(ZoomableGraphicView):
     ctrl_state_changed = pyqtSignal(bool)
     save_as_clicked = pyqtSignal()
-    zoomed = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
     participant_changed = pyqtSignal()
@@ -34,7 +32,6 @@ class EditableGraphicView(SelectableGraphicView):
         self.__sample_rate = None   # For default sample rate in insert sine dialog
 
         self.autoRangeY = True
-        self.show_full_signal = True
         self.save_enabled = False  # Signal is can be saved
         self.create_new_signal_enabled = False
         self.participants_assign_enabled = False
@@ -124,59 +121,11 @@ class EditableGraphicView(SelectableGraphicView):
     def selection_area(self, value):
         self.scene().selection_area = value
 
-    @property
-    def y_center(self):
-        if not hasattr(self, "scene_type") or self.scene_type == 0:
-            # Normal scene
-            return 0
-        else:
-            return -self.signal.qad_center
-
     def set_signal(self, signal: Signal):
         self.__signal = signal
 
-    def zoom(self, factor, suppress_signal=False, event: QWheelEvent=None):
-        self.show_full_signal = False
-        if factor > 1 and self.view_rect().width() / factor < 300:
-            factor = self.view_rect().width() / 300
-
-        old_pos = self.mapToScene(event.pos()) if event else None
-
-        self.scale(factor, 1)
-
-        if self.view_rect().width() > self.sceneRect().width():
-            self.draw_full_signal()
-
-        if not suppress_signal:
-            self.zoomed.emit()
-
-        if event:
-            move = self.mapToScene(event.pos()) - old_pos
-            self.translate(move.x(), 0)
-        else:
-            self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
-
-    def wheelEvent(self, event: QWheelEvent):
-        zoom_factor = 1.001 ** event.angleDelta().y()
-        self.zoom(zoom_factor, event=event)
-
-    def mousePressEvent(self, event: QMouseEvent):
-        super().mousePressEvent(event)
-        if self.ctrl_mode and event.buttons() == Qt.LeftButton:
-            self.zoom(1.1)
-        elif self.ctrl_mode and event.buttons() == Qt.RightButton:
-            self.zoom(0.9)
-
-    def resizeEvent(self, event):
-        if self.view_rect().width() > self.sceneRect().width():
-            x_factor = self.width() / self.sceneRect().width()
-            self.scale(x_factor / self.transform().m11(), 1)
-
-        self.autofit_view()
-
     def keyPressEvent(self, event: QKeyEvent):
         key = event.key()
-        self.show_full_signal = False
 
         super().keyPressEvent(event)
 
@@ -333,13 +282,6 @@ class EditableGraphicView(SelectableGraphicView):
     def clear_selection(self):
         self.set_selection_area(0, 0)
 
-    def draw_full_signal(self):
-        y_factor = self.transform().m22()
-        self.resetTransform()
-        x_factor = self.width() / self.sceneRect().width()
-        self.scale(x_factor, y_factor)
-        self.centerOn(0, self.y_center)
-
     def set_loupe_cursor(self):
         pixmap = QPixmap(QSize(20, 20))
         pixmap.fill(Qt.transparent)
@@ -353,15 +295,6 @@ class EditableGraphicView(SelectableGraphicView):
         painter.drawLine(10, 10, 20, 20)
         del painter
         self.setCursor(QCursor(pixmap))
-
-    def autofit_view(self):
-
-        h_tar = self.sceneRect().height()
-        h_view = self.view_rect().height()
-
-        if abs(h_tar) > 0:
-            self.scale(1, h_view / h_tar)
-        self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
 
     def zoom_to_selection(self, start: int, end: int):
         if start == end:

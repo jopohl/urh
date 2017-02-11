@@ -1,8 +1,10 @@
 from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QGraphicsView
 
 from urh import constants
+from urh.SceneManager import SceneManager
 from urh.ui.ROI import ROI
 from urh.ui.ZoomableScene import ZoomableScene
 
@@ -17,17 +19,14 @@ class SelectableGraphicView(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.scene_creator = None
-        """:type: SceneManager """
+        self.setResizeAnchor(QGraphicsView.NoAnchor)
+        self.setTransformationAnchor(QGraphicsView.NoAnchor)
+        self.setRenderHints(QPainter.Antialiasing)
 
-        self.mouse_press_pos = None
-        """:type: QPoint """
-
-        self.mouse_pos = None
-        """:type: QPoint """
-
-        self.grab_start = None
-        """:type: QPoint"""
+        self.scene_manager = None     # type: SceneManager
+        self.mouse_press_pos = None   # type: QPoint
+        self.mouse_pos = None         # type: QPoint
+        self.grab_start = None        # type: QPoint
 
         self.xmove = 0
 
@@ -220,7 +219,6 @@ class SelectableGraphicView(QGraphicsView):
         self.emit_sel_area_width_changed()
         self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
 
-
     def set_selection_area(self, x=None, w=None):
         self.selection_area.setY(self.view_rect().y())
         self.selection_area.height = self.view_rect().height()
@@ -251,6 +249,6 @@ class SelectableGraphicView(QGraphicsView):
         """
         Return the boundaries of the view in scene coordinates
         """
-        topLeft = self.mapToScene(0, 0)
-        bottomRight = self.mapToScene(self.viewport().width() - 1, self.viewport().height() - 1 )
-        return QRectF(topLeft, bottomRight)
+        top_left = self.mapToScene(0, 0)
+        bottom_right = self.mapToScene(self.viewport().width() - 1, self.viewport().height() - 1)
+        return QRectF(top_left, bottom_right)

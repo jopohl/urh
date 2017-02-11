@@ -124,26 +124,24 @@ class SendRecvDialogController(QDialog):
 
         self.recorded_files = []
 
-        self.zoom_scroll_redraw_timer = QTimer()
-        self.zoom_scroll_redraw_timer.setSingleShot(True)
-
         self.timer = QTimer(self)
 
         if mode == Mode.receive:
-            self.scene_creator = LiveSceneManager(np.array([]), parent=self) # set really in on_device_started
+            self.scene_manager = LiveSceneManager(np.array([]), parent=self) # set really in on_device_started
         elif mode == Mode.send:
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
-            self.scene_creator = SignalSceneManager(signal, parent=self)
-            self.send_indicator = self.scene_creator.scene.addRect(0, -2, 0, 4, QPen(QColor(Qt.transparent), Qt.FlatCap),
+            self.scene_manager = SignalSceneManager(signal, parent=self)
+            self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4, QPen(QColor(Qt.transparent), Qt.FlatCap),
                                                                    QBrush(constants.SEND_INDICATOR_COLOR))
-            self.send_indicator.stackBefore(self.scene_creator.scene.selection_area)
-            self.scene_creator.init_scene()
+            self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
+            self.scene_manager.init_scene()
             self.graphics_view.set_signal(signal)
             self.graphics_view.sample_rate = samp_rate
         else:
-            self.scene_creator = FFTSceneManager(parent=self, graphic_view=self.graphics_view)
+            self.scene_manager = FFTSceneManager(parent=self, graphic_view=self.graphics_view)
 
-        self.graphics_view.setScene(self.scene_creator.scene)
+        self.graphics_view.setScene(self.scene_manager.scene)
+        self.graphics_view.scene_manager = self.scene_manager
 
         ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
         ipRegex = QRegExp("^" + ipRange
@@ -173,7 +171,6 @@ class SendRecvDialogController(QDialog):
         self.__create_device_connects()
 
         self.timer.timeout.connect(self.update_view)
-        self.zoom_scroll_redraw_timer.timeout.connect(self.on_zoom_scroll_redraw_timer_timeout)
         self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
         self.ui.spinBoxGain.editingFinished.connect(self.on_gain_changed)
         self.ui.spinBoxFreq.editingFinished.connect(self.on_freq_changed)
@@ -189,13 +186,10 @@ class SendRecvDialogController(QDialog):
         if hasattr(self.graphics_view, "save_as_clicked"):
             self.graphics_view.save_as_clicked.connect(self.on_graphics_view_save_as_clicked)
 
-        if hasattr(self.scene_creator, "signal"):
-            self.scene_creator.signal.data_edited.connect(self.on_signal_data_edited)
+        if hasattr(self.scene_manager, "signal"):
+            self.scene_manager.signal.data_edited.connect(self.on_signal_data_edited)
 
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
-
-        self.graphics_view.zoomed.connect(self.on_signal_zoomed)
-        self.graphics_view.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
     def __create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
@@ -205,11 +199,6 @@ class SendRecvDialogController(QDialog):
     def __update_send_indicator(self, width: int):
         y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
         self.send_indicator.setRect(0, y-h, width, 2*h + abs(y))
-
-    def redraw_signal(self):
-        vr = self.graphics_view.view_rect()
-        start, end = vr.x(), vr.x() + vr.width()
-        self.scene_creator.show_scene_section(start, end)
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
@@ -222,9 +211,9 @@ class SendRecvDialogController(QDialog):
     def on_freq_changed(self):
         self.device.frequency = self.ui.spinBoxFreq.value()
         if self.mode == Mode.spectrum:
-            self.scene_creator.scene.center_freq = self.ui.spinBoxFreq.value()
-            self.scene_creator.clear_path()
-            self.scene_creator.clear_peak()
+            self.scene_manager.scene.center_freq = self.ui.spinBoxFreq.value()
+            self.scene_manager.clear_path()
+            self.scene_manager.clear_peak()
 
     @pyqtSlot()
     def on_bw_changed(self):
@@ -258,12 +247,14 @@ class SendRecvDialogController(QDialog):
         self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
                                     self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()
-        if hasattr(self.scene_creator, "plot_data"):
-            del self.scene_creator.plot_data
+        if hasattr(self.scene_manager, "plot_data"):
+            del self.scene_manager.plot_data
 
         if self.mode == Mode.receive:
-            self.scene_creator = LiveSceneManager(np.array([]), parent=self)
-        self.graphics_view.setScene(self.scene_creator.scene)
+            self.scene_manager = LiveSceneManager(np.array([]), parent=self)
+
+        self.graphics_view.scene_manager = self.scene_manager
+        self.graphics_view.setScene(self.scene_manager.scene)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
@@ -317,16 +308,16 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.setEnabled(True)
         self.ui.spinBoxNRepeat.setEnabled(True)
         self.timer.stop()
-        self.scene_creator.set_text("")
+        self.scene_manager.set_text("")
         self.update_view()
 
     @pyqtSlot()
     def on_device_started(self):
         if self.mode == Mode.receive:
-            self.scene_creator.plot_data = self.device.data.real if self.device.data is not None else None
+            self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
 
         self.ui.txtEditErrors.clear()
-        self.scene_creator.set_text("Waiting for device..")
+        self.scene_manager.set_text("Waiting for device..")
         self.graphics_view.capturing_data = True
         self.ui.btnSave.setEnabled(False)
 
@@ -394,20 +385,19 @@ class SendRecvDialogController(QDialog):
             return
 
         if self.mode == Mode.receive:
-            self.graphics_view.horizontalScrollBar().blockSignals(True)
-            self.scene_creator.end = self.device.current_index
+            self.scene_manager.end = self.device.current_index
         elif self.mode == Mode.spectrum:
             x, y = self.device.spectrum
             if x is None or y is None:
                 return
-            self.scene_creator.scene.frequencies = x
-            self.scene_creator.plot_data = y
+            self.scene_manager.scene.frequencies = x
+            self.scene_manager.plot_data = y
         elif self.mode == Mode.send:
             self.__update_send_indicator(self.device.current_index)
             return
 
-        self.scene_creator.init_scene()
-        self.scene_creator.show_full_scene()
+        self.scene_manager.init_scene()
+        self.scene_manager.show_full_scene()
         self.graphics_view.update()
 
     def __restart_device_thread(self):
@@ -425,7 +415,7 @@ class SendRecvDialogController(QDialog):
         if self.mode == Mode.send:
             self.__update_send_indicator(0)
         else:
-            self.scene_creator.clear_path()
+            self.scene_manager.clear_path()
 
         if self.mode in (Mode.send, Mode.receive):
             self.ui.txtEditErrors.clear()
@@ -435,12 +425,12 @@ class SendRecvDialogController(QDialog):
             self.ui.lSignalSize.setText("0")
             self.ui.lTime.setText("0")
             self.ui.lblCurrentRepeatValue.setText("-")
-            self.scene_creator.set_text("")
+            self.scene_manager.set_text("")
             self.ui.progressBar.setValue(0)
             self.ui.btnClear.setEnabled(False)
             self.ui.btnSave.setEnabled(False)
         elif self.mode == Mode.spectrum:
-            self.scene_creator.clear_peak()
+            self.scene_manager.clear_peak()
 
     @pyqtSlot()
     def on_save_clicked(self):
@@ -494,20 +484,6 @@ class SendRecvDialogController(QDialog):
         else:
              self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 
-    @pyqtSlot()
-    def on_signal_zoomed(self):
-        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
-            self.zoom_scroll_redraw_timer.start(self.update_interval)
-
-    @pyqtSlot()
-    def on_signal_scrolled(self):
-        if not hasattr(self.graphics_view, "capturing_data") or not self.graphics_view.capturing_data:
-            self.zoom_scroll_redraw_timer.start(0)
-
-    @pyqtSlot()
-    def on_zoom_scroll_redraw_timer_timeout(self):
-        self.redraw_signal()
-
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):
         # Scale Up = Top Half, Scale Down = Lower Half
@@ -525,17 +501,17 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_signal_data_edited(self):
-        signal = self.scene_creator.signal
+        signal = self.scene_manager.signal
         self.ui.progressBar.setMaximum(signal.num_samples)
         self.device.samples_to_send = signal.data
-        self.scene_creator.init_scene()
-        self.redraw_signal()
+        self.scene_manager.init_scene()
+        self.ui.graphicsViewSend.redraw_view()
 
     @pyqtSlot()
     def on_graphics_view_save_as_clicked(self):
         filename = FileOperator.get_save_file_name("signal.complex", parent=self)
         if filename:
             try:
-                self.scene_creator.signal.save_as(filename)
+                self.scene_manager.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])

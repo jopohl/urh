@@ -18,7 +18,9 @@ class TestModulatorGUI(unittest.TestCase):
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
-        self.dialog = self.gframe.show_modulation_dialog()
+
+        self.dialog, _ = self.gframe.prepare_modulation_dialog()
+        self.gframe.initialize_modulation_dialog("1111", self.dialog)
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
@@ -80,26 +82,14 @@ class TestModulatorGUI(unittest.TestCase):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Amplitude for 1:")
-        self.assertFalse(self.dialog.ui.lGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.lGaussWidth.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Frequency Shift Keying (FSK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Frequency for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Frequency for 1:")
-        self.assertFalse(self.dialog.ui.lGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.lGaussWidth.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Gaussian Frequency Shift Keying (GFSK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Frequency for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Frequency for 1:")
-        self.assertTrue(self.dialog.ui.lGaussBT.isVisible())
-        self.assertTrue(self.dialog.ui.spinBoxGaussBT.isVisible())
-        self.assertTrue(self.dialog.ui.lGaussWidth.isVisible())
-        self.assertTrue(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
         self.dialog.ui.spinBoxGaussBT.setValue(0.5)
         self.dialog.ui.spinBoxGaussBT.editingFinished.emit()
         self.assertEqual(self.dialog.current_modulator.gauss_bt, 0.5)
@@ -110,18 +100,10 @@ class TestModulatorGUI(unittest.TestCase):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Phase Shift Keying (PSK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Phase (degree) for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Phase (degree) for 1:")
-        self.assertFalse(self.dialog.ui.lGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.lGaussWidth.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Amplitude for 1:")
-        self.assertFalse(self.dialog.ui.lGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussBT.isVisible())
-        self.assertFalse(self.dialog.ui.lGaussWidth.isVisible())
-        self.assertFalse(self.dialog.ui.spinBoxGaussFilterWidth.isVisible())
 
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 

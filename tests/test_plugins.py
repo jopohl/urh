@@ -96,7 +96,7 @@ class TestPlugins(unittest.TestCase):
 
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
-        insert_sine_plugin.show_insert_sine_dialog()
+        insert_sine_plugin.create_dialog_connects()
 
         while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()

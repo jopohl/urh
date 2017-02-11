@@ -94,7 +94,7 @@ class InsertSinePlugin(SignalEditorPlugin):
     def create_connects(self):
         pass
 
-    def __create_dialog_connects(self):
+    def create_dialog_connects(self):
         self.dialog_ui.doubleSpinBoxAmplitude.editingFinished.connect(self.on_double_spin_box_amplitude_editing_finished)
         self.dialog_ui.doubleSpinBoxFrequency.editingFinished.connect(self.on_double_spin_box_frequency_editing_finished)
         self.dialog_ui.doubleSpinBoxPhase.editingFinished.connect(self.on_double_spin_box_phase_editing_finished)
@@ -107,7 +107,7 @@ class InsertSinePlugin(SignalEditorPlugin):
 
     def show_insert_sine_dialog(self, sample_rate=None, num_samples=None):
         self.dialog_ui.show()
-        self.__create_dialog_connects()
+        self.create_dialog_connects()
         if sample_rate is not None:
             self.sample_rate = sample_rate
             self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)

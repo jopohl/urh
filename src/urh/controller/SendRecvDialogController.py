@@ -30,9 +30,6 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 
 
-
-
-
 class SendRecvDialogController(QDialog):
     files_recorded = pyqtSignal(list)
     recording_parameters = pyqtSignal(str, str, str, str, str)
@@ -117,7 +114,8 @@ class SendRecvDialogController(QDialog):
 
         dev_name = self.ui.cbDevice.currentText()
         nrep = self.ui.spinBoxNRepeat.value()
-        self.device = VirtualDevice(self.backend_handler, dev_name, mode, bw, freq, gain, samp_rate, samples_to_send=modulated_data,
+        self.device = VirtualDevice(self.backend_handler, dev_name, mode, bw, freq, gain, samp_rate,
+                                    samples_to_send=modulated_data,
                                     device_ip=self.ui.lineEditIP.text(), sending_repeats=nrep, parent=self)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
@@ -127,11 +125,12 @@ class SendRecvDialogController(QDialog):
         self.timer = QTimer(self)
 
         if mode == Mode.receive:
-            self.scene_manager = LiveSceneManager(np.array([]), parent=self) # set really in on_device_started
+            self.scene_manager = LiveSceneManager(np.array([]), parent=self)  # set really in on_device_started
         elif mode == Mode.send:
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_manager = SignalSceneManager(signal, parent=self)
-            self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4, QPen(QColor(Qt.transparent), Qt.FlatCap),
+            self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
+                                                                   QPen(QColor(Qt.transparent), Qt.FlatCap),
                                                                    QBrush(constants.SEND_INDICATOR_COLOR))
             self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
             self.scene_manager.init_scene()
@@ -177,7 +176,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_bw_changed)
         self.ui.lineEditIP.editingFinished.connect(self.on_usrp_ip_changed)
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
-        self.ui.spinBoxNRepeat.editingFinished.connect(self.on_nrepeat_changed)
+        self.ui.spinBoxNRepeat.editingFinished.connect(self.on_num_repeats_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slideyscale_value_changed)
 
         if hasattr(self.graphics_view, "freq_clicked"):
@@ -198,7 +197,7 @@ class SendRecvDialogController(QDialog):
 
     def __update_send_indicator(self, width: int):
         y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
-        self.send_indicator.setRect(0, y-h, width, 2*h + abs(y))
+        self.send_indicator.setRect(0, y - h, width, 2 * h + abs(y))
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
@@ -244,7 +243,8 @@ class SendRecvDialogController(QDialog):
         sts = self.device.samples_to_send
         self.device.free_data()
         # gc.collect() # Cant do GC here, because the SencRecvDialog itself would be deleted (see https://github.com/jopohl/urh/issues/83)
-        self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth, self.device.frequency, self.device.gain,
+        self.device = VirtualDevice(self.backend_handler, dev_name, self.device.mode, self.device.bandwidth,
+                                    self.device.frequency, self.device.gain,
                                     self.device.sample_rate, sts, self.device.ip, nrep, self)
         self.__create_device_connects()
         if hasattr(self.scene_manager, "plot_data"):
@@ -276,7 +276,7 @@ class SendRecvDialogController(QDialog):
             self.device.start()
 
     @pyqtSlot()
-    def on_nrepeat_changed(self):
+    def on_num_repeats_changed(self):
         if not self.ui.spinBoxNRepeat.isVisible():
             return
 
@@ -438,11 +438,12 @@ class SendRecvDialogController(QDialog):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        inital_name = "{0} {1}Hz {2}Sps {3}Hz.complex".format(dev.name, big_val(dev.frequency),
-                                                      big_val(dev.sample_rate),
-                                                      big_val(dev.bandwidth)).replace(Formatter.local_decimal_seperator(), "_").replace("_000","")
+        initial_name = "{0} {1}Hz {2}Sps {3}Hz.complex".format(dev.name, big_val(dev.frequency),
+                                                               big_val(dev.sample_rate),
+                                                               big_val(dev.bandwidth)).replace(
+            Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
-        filename = FileOperator.save_data_dialog(inital_name, data, parent=self)
+        filename = FileOperator.save_data_dialog(initial_name, data, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)
@@ -482,7 +483,7 @@ class SendRecvDialogController(QDialog):
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
         else:
-             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 
     @pyqtSlot(int)
     def on_slideyscale_value_changed(self, new_value: int):

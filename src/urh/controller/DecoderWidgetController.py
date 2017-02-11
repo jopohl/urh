@@ -49,8 +49,9 @@ class DecoderWidgetController(QDialog):
 
         # Signals
         self.signals = signals if signals is not None else []
-        for i in signals:
-            self.ui.combobox_signals.addItem(i.name)
+        for signal in signals:
+            if signal:
+                self.ui.combobox_signals.addItem(signal.name)
 
         # Function lists
         self.ui.basefunctions.addItem(constants.DECODING_EDGE)

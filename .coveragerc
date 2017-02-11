@@ -1,0 +1,8 @@
+[run]
+omit = 
+       /src/urh/tests/* 
+       */__init__.py
+       src/urh/cythonext/*
+
+[report]
+sort = Miss

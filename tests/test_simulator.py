@@ -25,3 +25,7 @@ class TestSimulator(unittest.TestCase):
     def test_add_signal(self):
         self.sim_frame.ui.gvSimulator.scene().add_protocols([self.sframe.proto_analyzer])
         self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), len(self.sframe.proto_analyzer.messages))
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 3)
+
+    def test_add_rule(self):
+        self.assertEqual(len(self.sframe.proto_analyzer.messages), 3)

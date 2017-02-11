@@ -17,6 +17,7 @@ class SimulatorTabController(QWidget):
         super().__init__(parent)
 
         self.project_manager = project_manager
+        self.compare_frame_controller = compare_frame_controller
 
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)

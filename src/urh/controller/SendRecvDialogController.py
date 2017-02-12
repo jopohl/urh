@@ -277,7 +277,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_num_repeats_changed(self):
-        if not self.ui.spinBoxNRepeat.isVisible():
+        if self.mode != Mode.send:
             return
 
         self.device.num_sending_repeats = self.ui.spinBoxNRepeat.value()

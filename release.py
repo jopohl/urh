@@ -23,15 +23,6 @@ if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
     sys.exit(1)
 
-# Generate Readme for PyPi (RST)
-try:
-    rc = call("pandoc --from=markdown --to=rst --output=README README.md", shell=True)
-except:
-    rc = 1
-
-if rc != 0:
-    logger.warning("Could not generate rst docs. Is pandoc installed?")
-
 from src.urh import version
 version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))
 
@@ -42,6 +33,16 @@ cur_version = ".".join(numbers)
 
 with open(version_file, "w") as f:
     f.write('VERSION = "{0}" \n'.format(cur_version))
+
+# Generate Readme for PyPi (RST)
+try:
+    rc = call("pandoc --from=markdown --to=rst --output=README README.md", shell=True)
+except Exception as e:
+    rc = 1
+    logger.error(str(e))
+
+if rc != 0:
+    logger.warning("Could not generate rst docs. Is pandoc installed?")
 
 # Publish new version number
 os.chdir(script_dir)

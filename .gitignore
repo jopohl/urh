@@ -1,6 +1,8 @@
 # C extensions
 *.so
 
+.coverage
+
 # Pycharm
 .idea/
 

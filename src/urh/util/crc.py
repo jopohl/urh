@@ -80,15 +80,14 @@ class crc_generic:
                 crc_old.append(crc[self.poly_order - 2 - i])
             crc = crc_old
 
-        if self.little_endian:
-            if self.poly_order - 1 in (16, 32, 64):
-                self.__swap_bytes(crc, 0, 1)
-            if self.poly_order - 1 in (32, 64):
-                self.__swap_bytes(crc, 2, 3)
-            if self.poly_order - 1 == 64:
-                # Swap last four bytes
-                self.__swap_bytes(crc, 4, 5)
-                self.__swap_bytes(crc, 6, 7)
+        if self.poly_order - 1 == 16 and self.little_endian:
+            self.__swap_bytes(crc, 0, 1)
+        elif self.poly_order - 1 == 32 and self.little_endian:
+            self.__swap_bytes(crc, 0, 3)
+            self.__swap_bytes(crc, 1, 2)
+        elif self.poly_order - 1 == 64 and self.little_endian:
+            for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
+                self.__swap_bytes(crc, pos1, pos2)
 
         return crc
 

@@ -15,7 +15,7 @@ Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 
 Like to see things in action? Watch URH on YouTube!
 
-[![Youtube Image](/doc/screenshots/youtube.png?raw=true)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+[![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 ## Installation
 ### Requirements
@@ -76,10 +76,11 @@ And start the application by typing ``` urh ``` in a terminal.
 
 ## Screenshots
 ### Get the data out of raw signals
- ![Interpreation phase](https://github.com/jopohl/urh/blob/master/doc/screenshots/interpretation_full.png)
+![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
+
 
 ### Keep an overview even on complex protocols
- ![Analysis phase](https://github.com/jopohl/urh/blob/master/doc/screenshots/analysis_full.png)
+ ![Analysis phase](http://i.imgur.com/ubAL3pE.png)
 
 ### Record and send signals
- ![Record](https://github.com/jopohl/urh/blob/master/doc/screenshots/record_signal.png)
+ ![Record](http://i.imgur.com/BfQpg23.png)

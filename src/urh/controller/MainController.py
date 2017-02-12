@@ -139,6 +139,7 @@ class MainController(QMainWindow):
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
+        self.ui.actionOpen_directory.setShortcut(QKeySequence("Ctrl+Shift+O"))
         self.ui.actionMinimize_all.setShortcut("F10")
         self.ui.actionMaximize_all.setShortcut("F11")
 

@@ -838,5 +838,5 @@ class ProtocolAnalyzer(object):
     def auto_assign_labels(self):
         format_finder = FormatFinder(self)
 
-        # TODO Perform multiple iterations with varying priorities
+        # OPEN: Perform multiple iterations with varying priorities later
         format_finder.perform_iteration()

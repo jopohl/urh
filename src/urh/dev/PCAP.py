@@ -22,7 +22,7 @@ class PCAP(object):
         THISZONE = 0
         SIGFIGS = 0
         SNAPLEN = 65535
-        NETWORK = 147 # TODO Find a good type: https://wiki.wireshark.org/Development/LibpcapFileFormat
+        NETWORK = 147
 
         self.reset_timestamp()
 

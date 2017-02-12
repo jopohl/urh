@@ -19,20 +19,18 @@ def main():
     t = time.time()
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
-            autohacker_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))
-            sys.path.append(autohacker_dir)
-            sys.path.append(os.path.join(autohacker_dir, "src"))
+            urh_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))
+            sys.path.append(urh_dir)
+            sys.path.append(os.path.join(urh_dir, "src"))
 
             import generate_ui
 
-            generate_ui.gen()  # Im Release rausnehmen
+            generate_ui.gen()
 
             print("Time for generating UI: %.2f seconds" % (time.time() - t), file=sys.stderr)
         except (ImportError, FileNotFoundError):
             print("Will not regenerate UI, because script cant be found. This is okay in "
                   "release.", file=sys.stderr)
-
-
 
     urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
@@ -68,7 +66,6 @@ def main():
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(sys.argv)
-    app.setApplicationName("Universal Radio Hacker")
 
     # noinspection PyUnresolvedReferences
     import urh.ui.xtra_icons_rc  # Use oxy theme always
@@ -81,9 +78,9 @@ def main():
 
     mainwindow = MainController()
     mainwindow.showMaximized()
-    #mainwindow.setFixedSize(1920, 1080 - 30)  # Youtube
+    # mainwindow.setFixedSize(1920, 1080 - 30)  # Youtube
 
-    # Systemfarben als Zeichenfarbe setzen
+    # use system colors for painting
     widget = QWidget()
     bgcolor = widget.palette().color(QPalette.Background)
     fgcolor = widget.palette().color(QPalette.Foreground)
@@ -99,6 +96,7 @@ def main():
         timer.start(1000)
 
     os._exit(app.exec_())  # sys.exit() is not enough on Windows and will result in crash on exit
+
 
 if __name__ == "__main__":
     main()

@@ -68,6 +68,7 @@ def main():
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(sys.argv)
+    app.setApplicationName("Universal Radio Hacker")
 
     # noinspection PyUnresolvedReferences
     import urh.ui.xtra_icons_rc  # Use oxy theme always

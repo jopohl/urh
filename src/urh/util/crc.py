@@ -81,14 +81,16 @@ class crc_generic:
             crc = crc_old
 
         if self.little_endian:
-            if self.poly_order - 1 == 16:
+            if self.poly_order - 1 in (16, 32, 64):
+                # Swap first two bytes
                 crc[0:8], crc[8:16] = crc[8:16], crc[0:8]
-            elif self.poly_order - 1 == 32:
-                crc[0:8], crc[8:16], crc[16:24], crc[24:32] = crc[24:32], crc[16:32], crc[8:16], crc[0:8]
-            elif self.poly_order - 1 == 64:
-                crc[0:8], crc[8:16], crc[16:24], crc[24:32] = crc[24:32], crc[16:32], crc[8:16], crc[0:8]
-                crc[32 + 0:32 + 8], crc[32 + 8:32 + 16], crc[32 + 16:32 + 24], crc[32 + 24:32 + 32] = \
-                    crc[32 + 24:32 + 32], crc[32 + 16:32 + 32], crc[32 + 8:32 + 16], crc[32 + 0:32 + 8]
+            if self.poly_order - 1 in (32, 64):
+                # Swap next two bytes
+                crc[16:24], crc[24:32] = crc[24:32], crc[16:24]
+            if self.poly_order - 1 == 64:
+                # Swap last four bytes
+                crc[32 + 0:32 + 8], crc[32 + 8:32 + 16] = crc[32 + 8:32 + 16], crc[32 + 0:32 + 8]
+                crc[32 + 16:32 + 24], crc[32 + 24:32 + 32] = crc[32 + 24:32 + 32], crc[32 + 16:32 + 32]
 
         return crc
 

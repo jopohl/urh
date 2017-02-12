@@ -34,16 +34,6 @@ cur_version = ".".join(numbers)
 with open(version_file, "w") as f:
     f.write('VERSION = "{0}" \n'.format(cur_version))
 
-# Generate Readme for PyPi (RST)
-try:
-    rc = call("pandoc --from=markdown --to=rst --output=README README.md", shell=True)
-except Exception as e:
-    rc = 1
-    logger.error(str(e))
-
-if rc != 0:
-    logger.warning("Could not generate rst docs. Is pandoc installed?")
-
 # Publish new version number
 os.chdir(script_dir)
 call(["git", "commit", "-am", "version" + cur_version])

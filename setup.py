@@ -116,6 +116,13 @@ def get_device_modules():
             pass
     return extensions
 
+def read_long_description():
+    try:
+        with open("README") as fp:  # README is created during release.py
+            content = fp.read()
+        return content
+    except:
+        return ""
 
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
@@ -139,6 +146,7 @@ setup(
     name="urh",
     version=version.VERSION,
     description="Universal Radio Hacker: investigate wireless protocols like a boss",
+    long_description=read_long_description(),
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},

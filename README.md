@@ -1,6 +1,7 @@
-# Universal Radio Hacker [![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
-## What's this?
-Universal Radio Hacker is a suite for investigating unknown wireless protocols. Features include
+# Universal Radio Hacker
+[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh) [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh) [![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
+
+The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 
 * __hardware interfaces__ for common Software Defined Radios
 * __easy demodulation__ of signals

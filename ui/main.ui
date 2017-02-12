@@ -187,6 +187,7 @@
     <addaction name="actionSave_project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionOpen_directory"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
     <addaction name="actionSpectrum_Analyzer"/>
@@ -531,6 +532,14 @@
    </property>
    <property name="text">
     <string>Fullscreen mode</string>
+   </property>
+  </action>
+  <action name="actionOpen_directory">
+   <property name="icon">
+    <iconset theme="folder-open"/>
+   </property>
+   <property name="text">
+    <string>Open directory...</string>
    </property>
   </action>
  </widget>

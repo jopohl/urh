@@ -152,7 +152,8 @@ class MainController(QMainWindow):
         self.ui.actionFullscreen_mode.triggered.connect(self.on_fullscreen_action_triggered)
         self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
         self.ui.actionClose_all.triggered.connect(self.on_close_all_action_triggered)
-        self.ui.actionOpen.triggered.connect(self.on_open_action_triggered)
+        self.ui.actionOpen.triggered.connect(self.on_open_file_action_triggered)
+        self.ui.actionOpen_directory.triggered.connect(self.on_open_directory_action_triggered)
         self.ui.actionDecoding.triggered.connect(self.on_show_decoding_dialog_triggered)
         self.ui.actionSpectrum_Analyzer.triggered.connect(self.on_show_spectrum_dialog_action_triggered)
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
@@ -659,21 +660,29 @@ class MainController(QMainWindow):
             self.project_manager.from_dialog(self.sender())
 
     @pyqtSlot()
-    def on_open_action_triggered(self):
+    def on_open_file_action_triggered(self):
+        self.show_open_dialog(directory=False)
+
+    @pyqtSlot()
+    def on_open_directory_action_triggered(self):
+        self.show_open_dialog(directory=True)
+
+    def show_open_dialog(self, directory=False):
         fip = FileIconProvider()
         self.dialog = QFileDialog(self)
         self.dialog.setIconProvider(fip)
         self.dialog.setDirectory(FileOperator.RECENT_PATH)
         self.dialog.setWindowTitle("Open Folder")
-        self.dialog.setFileMode(QFileDialog.ExistingFiles)
+        if directory:
+            self.dialog.setFileMode(QFileDialog.Directory)
+        else:
+            self.dialog.setFileMode(QFileDialog.ExistingFiles)
+            self.dialog.setNameFilter(
+                "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
+                "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+
         self.dialog.setOptions(QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)
-        self.dialog.setNameFilter(
-            "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
-            "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-
-        self.dialog.currentChanged.connect(self.on_dialog_selection_changed)
-
 
         if self.dialog.exec_():
             try:
@@ -693,19 +702,6 @@ class MainController(QMainWindow):
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
                 self.ui.progressBar.hide()
                 QApplication.restoreOverrideCursor()
-
-    @pyqtSlot(str)
-    def on_dialog_selection_changed(self, path: str):
-        if os.path.isdir(path):
-            self.dialog.setFileMode(QFileDialog.Directory)
-            self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
-                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-        else:
-            self.dialog.setFileMode(QFileDialog.ExistingFiles)
-            self.dialog.setNameFilter(
-                "All files (*);;Complex Files *.complex (*.complex);;Wav Files *.wav (*.wav);;Protocols *.proto (*.proto);;"
-                "Fuzzprofiles *.fuzz (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
     @pyqtSlot()
     def on_close_all_action_triggered(self):

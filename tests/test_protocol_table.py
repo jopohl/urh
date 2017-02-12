@@ -41,7 +41,7 @@ class TestProtocolTable(unittest.TestCase):
             t = time.time()
             self.cframe.protocol_model.data(indx, role=role)
             microseconds = (time.time()-t)*10**6
-            self.assertLess(microseconds, 30)
+            self.assertLess(microseconds, 100)
 
     def test_set_shown_protocols_performance(self):
         t = time.time()

@@ -28,3 +28,5 @@ exclude_paths:
 - src/urh/cythonext/signalFunctions.cpp
 - src/urh/cythonext/util.cpp
 - src/urh/dev/native/lib/hackrf.cpp
+- src/urh/ui/ui_*
+- src/urh/ui/*_rc.py

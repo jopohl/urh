@@ -33,16 +33,6 @@ class TestProtocolTable(unittest.TestCase):
         self.__add_labels()
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
 
-    def test_model_data_performance(self):
-        indx = self.cframe.protocol_model.createIndex(int(self.NUM_MESSAGES / 2), int(self.BITS_PER_MESSAGE / 2))
-        roles = (Qt.DisplayRole, Qt.BackgroundColorRole, Qt.TextAlignmentRole, Qt.TextColorRole, Qt.FontRole)
-
-        for role in roles:
-            t = time.time()
-            self.cframe.protocol_model.data(indx, role=role)
-            microseconds = (time.time()-t)*10**6
-            self.assertLess(microseconds, 100)
-
     def test_set_shown_protocols_performance(self):
         t = time.time()
         self.cframe.set_shown_protocols()

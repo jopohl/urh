@@ -76,10 +76,10 @@ And start the application by typing ``` urh ``` in a terminal.
 
 ## Screenshots
 ### Get the data out of raw signals
- ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
+ ![Interpreation phase](https://github.com/jopohl/urh/blob/master/doc/screenshots/interpretation_full.png)
 
 ### Keep an overview even on complex protocols
- ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
+ ![Analysis phase](https://github.com/jopohl/urh/blob/master/doc/screenshots/analysis_full.png)
 
 ### Record and send signals
- ![Record](/doc/screenshots/record_signal.png?raw=true)
+ ![Record](https://github.com/jopohl/urh/blob/master/doc/screenshots/record_signal.png)

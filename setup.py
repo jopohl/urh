@@ -138,7 +138,7 @@ if USE_CYTHON:
 setup(
     name="urh",
     version=version.VERSION,
-    description="Universal Radio Hacker: Hacking wireless protocols made easy",
+    description="Universal Radio Hacker: investigate wireless protocols like a boss",
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},

@@ -666,7 +666,7 @@ class MainController(QMainWindow):
         self.dialog.setDirectory(FileOperator.RECENT_PATH)
         self.dialog.setWindowTitle("Open Folder")
         self.dialog.setFileMode(QFileDialog.ExistingFiles)
-        self.dialog.setOptions(QFileDialog.DontUseNativeDialog | QFileDialog.DontResolveSymlinks)
+        self.dialog.setOptions(QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)
         self.dialog.setNameFilter(
             "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"

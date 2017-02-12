@@ -8,9 +8,9 @@ from urh import constants
 from urh.signalprocessing.Message import Message
 
 class ConditionType(Enum):
-    IF = "if ... :"
-    ELSE_IF = "else if ... :"
-    ELSE = "else:"
+    IF = "if ..."
+    ELSE_IF = "else if ..."
+    ELSE = "else"
 
 class RuleItem(QGraphicsItem):
     def __init__(self, parent=None):
@@ -113,9 +113,11 @@ class RuleConditionItem(QGraphicsItem):
         menu = QMenu()
 
         addMessageAction = QAction("Add empty message")
-        addElseCondAction = QAction("Add else condition")
+        addElseIfCondAction = QAction("Add else if block")
+        addElseCondAction = QAction("Add else block")
 
         menu.addAction(addMessageAction)
+        menu.addAction(addElseIfCondAction)
 
         if not self.parentItem().has_else_condition():
             menu.addAction(addElseCondAction)
@@ -129,6 +131,8 @@ class RuleConditionItem(QGraphicsItem):
             simulator_message.add_label(LabelItem("preamble", constants.LABEL_COLORS[0]))
             simulator_message.add_label(LabelItem("synchronization", constants.LABEL_COLORS[1]))
             self.items.append(simulator_message)
+        elif action == addElseIfCondAction:
+            self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
         elif action == addElseCondAction:
             self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
 

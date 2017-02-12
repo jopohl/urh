@@ -34,7 +34,8 @@ class SendRecvDialogController(QDialog):
     files_recorded = pyqtSignal(list)
     recording_parameters = pyqtSignal(str, str, str, str, str)
 
-    def __init__(self, freq, samp_rate, bw, gain, device: str, mode: Mode, modulated_data=None, parent=None):
+    def __init__(self, freq, samp_rate, bw, gain, device: str, mode: Mode,
+                 modulated_data=None, parent=None, testing_mode=False):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
@@ -42,7 +43,7 @@ class SendRecvDialogController(QDialog):
 
         self.graphics_view = self.ui.graphicsViewSend if mode == Mode.send else self.ui.graphicsViewReceive
 
-        self.backend_handler = BackendHandler()
+        self.backend_handler = BackendHandler(testing_mode=testing_mode)
         if mode == Mode.spectrum:
             self.update_interval = 1
         else:

@@ -20,23 +20,22 @@ class TestSendRecvDialog(unittest.TestCase):
         project_manager = self.form.project_manager
         self.receive_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
                                                        project_manager.bandwidth, project_manager.gain,
-                                                       project_manager.device, Mode.receive)
+                                                       project_manager.device, Mode.receive, testing_mode=True)
 
         self.send_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
                                                     project_manager.bandwidth, project_manager.gain,
                                                     project_manager.device,
-                                                    Mode.send, modulated_data=self.signal.data)
+                                                    Mode.send, modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
 
         self.spectrum_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
                                                         project_manager.bandwidth, project_manager.gain,
-                                                        project_manager.device, Mode.spectrum)
+                                                        project_manager.device, Mode.spectrum, testing_mode=True)
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog]
 
     def test_send_dialog_scene_zoom(self):
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
-
         view_width = self.send_dialog.graphics_view.view_rect().width()
         self.send_dialog.graphics_view.zoom(1.1)
         self.assertLess(self.send_dialog.graphics_view.view_rect().width(), view_width)
@@ -46,9 +45,11 @@ class TestSendRecvDialog(unittest.TestCase):
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
         self.assertEqual(num_samples, self.send_dialog.scene_manager.signal.num_samples)
+        self.assertEqual(num_samples, len(self.send_dialog.device.samples_to_send))
         self.send_dialog.graphics_view.set_selection_area(0, 1337)
         self.send_dialog.graphics_view.delete_action.trigger()
         self.assertEqual(self.send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
+        self.assertEqual(len(self.send_dialog.device.samples_to_send), num_samples - 1337)
 
     def test_send_dialog_y_slider(self):
         y, h = self.send_dialog.graphics_view.view_rect().y(), self.send_dialog.graphics_view.view_rect().height()

@@ -76,9 +76,14 @@ def main():
     if constants.SETTINGS.value("use_fallback_theme", False, bool):
         QApplication.setStyle(QStyleFactory.create("Fusion"))
 
-    mainwindow = MainController()
-    mainwindow.showMaximized()
-    # mainwindow.setFixedSize(1920, 1080 - 30)  # Youtube
+    main_window = MainController()
+
+    if sys.platform == "darwin":
+        menu_bar = main_window.menuBar()
+        menu_bar.setNativeMenuBar(False)
+
+    main_window.showMaximized()
+    # main_window.setFixedSize(1920, 1080 - 30)  # Youtube
 
     # use system colors for painting
     widget = QWidget()

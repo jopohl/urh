@@ -4,6 +4,7 @@ from subprocess import call, check_output
 
 import pytest
 from urh import constants
+from urh.util.Logger import logger
 
 open("/tmp/urh_releasing", "w").close()
 
@@ -21,6 +22,15 @@ rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
 if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
     sys.exit(1)
+
+# Generate Readme for PyPi (RST)
+try:
+    rc = call("pandoc --from=markdown --to=rst --output=README README.md", shell=True)
+except:
+    rc = 1
+
+if rc != 0:
+    logger.warning("Could not generate rst docs. Is pandoc installed?")
 
 from src.urh import version
 version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))

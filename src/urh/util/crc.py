@@ -82,17 +82,20 @@ class crc_generic:
 
         if self.little_endian:
             if self.poly_order - 1 in (16, 32, 64):
-                # Swap first two bytes
-                crc[0:8], crc[8:16] = crc[8:16], crc[0:8]
+                self.__swap_bytes(crc, 0, 1)
             if self.poly_order - 1 in (32, 64):
-                # Swap next two bytes
-                crc[16:24], crc[24:32] = crc[24:32], crc[16:24]
+                self.__swap_bytes(crc, 2, 3)
             if self.poly_order - 1 == 64:
                 # Swap last four bytes
-                crc[32 + 0:32 + 8], crc[32 + 8:32 + 16] = crc[32 + 8:32 + 16], crc[32 + 0:32 + 8]
-                crc[32 + 16:32 + 24], crc[32 + 24:32 + 32] = crc[32 + 24:32 + 32], crc[32 + 16:32 + 32]
+                self.__swap_bytes(crc, 4, 5)
+                self.__swap_bytes(crc, 6, 7)
 
         return crc
+
+    @staticmethod
+    def __swap_bytes(array, pos1: int, pos2: int):
+        array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] =\
+            array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1*8 + 8]
 
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Test all standard parameters and return true, if a valid CRC could be computed.

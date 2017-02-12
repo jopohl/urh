@@ -116,12 +116,12 @@ def get_device_modules():
             pass
     return extensions
 
+
 def read_long_description():
     try:
-        with open("README") as fp:  # README is created during release.py
-            content = fp.read()
-        return content
-    except:
+        import pypandoc
+        return pypandoc.convert('README.md', 'rst')
+    except(IOError, ImportError):
         return ""
 
 # import generate_ui

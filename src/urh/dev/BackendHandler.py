@@ -85,6 +85,9 @@ class BackendHandler(object):
         else:
             self.gnuradio_installed = False
 
+        if self.testing_mode:
+            self.gnuradio_installed = True
+
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
         else:
@@ -130,10 +133,10 @@ class BackendHandler(object):
         if self.gnuradio_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
 
-        if devname.lower() == "hackrf" and (self.__hackrf_native_enabled or self.testing_mode):
+        if devname.lower() == "hackrf" and self.__hackrf_native_enabled:
             backends.add(Backends.native)
 
-        if devname.lower() == "usrp" and (self.__usrp_native_enabled or self.testing_mode):
+        if devname.lower() == "usrp" and self.__usrp_native_enabled:
             backends.add(Backends.native)
 
         return backends, supports_rx, supports_tx

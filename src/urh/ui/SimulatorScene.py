@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup
 from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
 import math
@@ -107,6 +107,7 @@ class RuleConditionItem(QGraphicsItem):
 
     def paint(self, painter, option, widget):
         #painter.setBrush(QColor.fromRgb(61,67,67,125))
+        painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
         painter.drawRect(self.boundingRect())
 
     def contextMenuEvent(self, event):
@@ -117,6 +118,7 @@ class RuleConditionItem(QGraphicsItem):
         addElseCondAction = QAction("Add else block")
 
         menu.addAction(addMessageAction)
+        menu.addSeparator()
         menu.addAction(addElseIfCondAction)
 
         if not self.parentItem().has_else_condition():
@@ -238,6 +240,72 @@ class MessageItem(QGraphicsItem):
             painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
             painter.drawRect(self.boundingRect())
 
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+        scene = self.scene()
+
+        delAction = QAction("Delete message")
+        menu.addAction(delAction)
+
+        menu.addSeparator()
+
+        sourcegroup = QActionGroup(scene)
+        source_menu = menu.addMenu("Source")
+        source_actions = {}
+
+        for particpnt in scene.participants:
+            if self.destination == particpnt:
+                continue
+
+            pa = source_menu.addAction(particpnt.text.toPlainText())
+            pa.setCheckable(True)
+            pa.setActionGroup(sourcegroup)
+
+            if self.source == particpnt:
+                pa.setChecked(True)
+
+            source_actions[pa] = particpnt
+
+        destinationgroup = QActionGroup(scene)
+        destination_menu = menu.addMenu("Destination")
+        destination_actions = {}
+
+        for particpnt in scene.participants:
+            if self.source == particpnt:
+                continue
+
+            pa = destination_menu.addAction(particpnt.text.toPlainText())
+            pa.setCheckable(True)
+            pa.setActionGroup(destinationgroup)
+
+            if self.destination == particpnt:
+                pa.setChecked(True)
+
+            destination_actions[pa] = particpnt
+
+        swapPartAction = QAction("Swap source and destination")
+        menu.addAction(swapPartAction)
+
+        action = menu.exec_(event.screenPos())
+
+        if action == delAction:
+            if self.parentItem() is None:
+                scene.items.remove(self)
+            else:
+                self.parentItem().items.remove(self)
+
+            scene.removeItem(self)
+        elif action == swapPartAction:
+            tmp = self.source
+            self.source = self.destination
+            self.destination = tmp
+        elif action in source_actions:
+            self.source = source_actions[action]
+        elif action in destination_actions:
+            self.destination = destination_actions[action]
+
+        scene.update_view()
+
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -308,7 +376,9 @@ class SimulatorScene(QGraphicsScene):
         super().mousePressEvent(event)
 
     def contextMenuEvent(self, event):
-        if self.itemAt(event.scenePos(), QTransform()) is not None:
+        item = self.itemAt(event.scenePos(), QTransform())
+
+        if type(item) is not ParticipantItem and item is not None:
             super().contextMenuEvent(event)
             return
 
@@ -349,6 +419,8 @@ class SimulatorScene(QGraphicsScene):
             if type(item) is MessageItem and (item.source not in self.participants or item.destination not in self.participants):
                 self.items.remove(item)
                 self.removeItem(item)
+            elif type(item) is GroupItem:
+                pass
 
         self.arrange_participants()
         self.arrange_items()

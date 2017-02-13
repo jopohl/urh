@@ -1,15 +1,12 @@
-import os
 import unittest
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDropEvent
-from PyQt5.QtTest import QTest
+from PyQt5.QtCore import QModelIndex
 
 import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.OptionsController import OptionsController
+from urh.models.PluginListModel import PluginListModel
+from urh.plugins.PluginManager import PluginManager
 
 app = tests.utils_testing.app
 
@@ -18,12 +15,6 @@ class TestOptionsGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
-        with open(constants.SETTINGS.fileName(), "r") as f:
-            self.settings_content = f.read()
-
-    def tearDown(self):
-        with open(constants.SETTINGS.fileName(), "w") as f:
-            f.write(self.settings_content)
 
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
@@ -58,3 +49,20 @@ class TestOptionsGUI(unittest.TestCase):
         self.dialog.ui.checkBoxDefaultFuzzingPause.click()
         self.assertEqual(self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
                          self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
+
+    def test_plugins_tab(self):
+        self.dialog.ui.tabWidget.setCurrentIndex(4)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Plugins")
+
+        list_view = self.dialog.plugin_controller.ui.listViewPlugins
+        model = list_view.model()
+        self.assertIsInstance(model, PluginListModel)
+        self.assertEqual(model.rowCount(), len(PluginManager().installed_plugins))
+
+        for i in range(model.rowCount()):
+            descr = self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText()
+            list_view.setCurrentIndex(model.index(i, 0))
+            self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
+
+
+

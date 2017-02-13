@@ -30,12 +30,10 @@ class RuleItem(QGraphicsItem):
 
         return messages
 
-    def delete_selected_items(self):
+    def delete_items(self, items):
         for condition in self.conditions:
-            for item in [item for item in condition.items if item.isSelected()]:
-                condition.items.remove(item)
-                self.scene().removeItem(item)
-            
+            condition.items = [x for x in condition.items if x not in items]
+
     def update(self, y_pos):
         if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
 
@@ -395,32 +393,33 @@ class SimulatorScene(QGraphicsScene):
         action = menu.exec_(event.screenPos())
 
         if action == delAction:
-           self.delete_selected_items()
+            self.delete_selected_items()
         elif action == addRuleAction:
             rule = RuleItem()
             self.items.append(rule)
             self.addItem(rule)
-            self.update_view()
-
-    def delete_selected_items(self):
-        for item in self.items[:]:
-            if type(item) == MessageItem and item.isSelected():
-                self.items.remove(item)
-                self.removeItem(item)
-            elif type(item) == RuleItem:
-                item.delete_selected_items()
 
         self.update_view()
+
+    def delete_selected_items(self):
+        self.delete_items(self.selectedItems())
+
+    def delete_items(self, items):
+        for item in self.items[:]:
+            if type(item) == MessageItem and item in items:
+                self.items.remove(item)
+            elif type(item) == RuleItem:
+                item.delete_items(items)
+
+        for item in items:
+            self.removeItem(item)
 
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
-        for item in self.items[:]:
-            if type(item) is MessageItem and (item.source not in self.participants or item.destination not in self.participants):
-                self.items.remove(item)
-                self.removeItem(item)
-            elif type(item) is GroupItem:
-                pass
+        items = [msg for msg in self.get_all_messages() if (msg.source not in self.participants) or (msg.destination not in self.participants)]
+
+        self.delete_items(items)
 
         self.arrange_participants()
         self.arrange_items()

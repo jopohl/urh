@@ -395,9 +395,7 @@ class SimulatorScene(QGraphicsScene):
         if action == delAction:
             self.delete_selected_items()
         elif action == addRuleAction:
-            rule = RuleItem()
-            self.items.append(rule)
-            self.addItem(rule)
+            self.add_rule()
 
         self.update_view()
 
@@ -536,6 +534,11 @@ class SimulatorScene(QGraphicsScene):
 
         super().dropEvent(event)
 
+    def add_rule(self):
+        rule = RuleItem()
+        self.items.append(rule)
+        self.addItem(rule)
+        
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:

@@ -2,6 +2,7 @@ import unittest
 import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
+from urh.ui.SimulatorScene import RuleItem
 
 from tests.utils_testing import get_path_for_data_file
 
@@ -25,7 +26,9 @@ class TestSimulator(unittest.TestCase):
     def test_add_signal(self):
         self.sim_frame.ui.gvSimulator.scene().add_protocols([self.sframe.proto_analyzer])
         self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), len(self.sframe.proto_analyzer.messages))
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 3)
 
     def test_add_rule(self):
-        self.assertEqual(len(self.sframe.proto_analyzer.messages), 3)
+        number_of_items = len(self.sim_frame.ui.gvSimulator.scene().items)
+        self.sim_frame.ui.gvSimulator.scene().add_rule()
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), number_of_items + 1)
+        self.assertEqual(type(self.sim_frame.ui.gvSimulator.scene().items[number_of_items]), RuleItem)

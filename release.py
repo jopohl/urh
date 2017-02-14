@@ -4,6 +4,7 @@ from subprocess import call, check_output
 
 import pytest
 from urh import constants
+from urh.util.Logger import logger
 
 open("/tmp/urh_releasing", "w").close()
 

@@ -1,6 +1,7 @@
-# Universal Radio Hacker [![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
-## What's this?
-Universal Radio Hacker is a suite for investigating unknown wireless protocols. Features include
+# Universal Radio Hacker
+[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh) [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh) [![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
+
+The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 
 * __hardware interfaces__ for common Software Defined Radios
 * __easy demodulation__ of signals
@@ -14,7 +15,7 @@ Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information.
 
 Like to see things in action? Watch URH on YouTube!
 
-[![Youtube Image](/doc/screenshots/youtube.png?raw=true)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+[![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 ## Installation
 ### Requirements
@@ -75,10 +76,11 @@ And start the application by typing ``` urh ``` in a terminal.
 
 ## Screenshots
 ### Get the data out of raw signals
- ![Interpreation phase](/doc/screenshots/interpretation_full.png?raw=true)
+![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
+
 
 ### Keep an overview even on complex protocols
- ![Analysis phase](/doc/screenshots/analysis_full.png?raw=true)
+ ![Analysis phase](http://i.imgur.com/ubAL3pE.png)
 
 ### Record and send signals
- ![Record](/doc/screenshots/record_signal.png?raw=true)
+ ![Record](http://i.imgur.com/BfQpg23.png)

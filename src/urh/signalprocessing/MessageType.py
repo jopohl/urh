@@ -9,6 +9,7 @@ from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
 import xml.etree.ElementTree as ET
 
+
 class MessageType(list):
     """
     A message type is a list of protocol fields.
@@ -22,7 +23,8 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
-        self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
+        self.__id = ''.join(
+            random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
 
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False
@@ -50,7 +52,6 @@ class MessageType(list):
     @property
     def id(self) -> str:
         return self.__id
-
 
     @property
     def unlabeled_ranges(self):
@@ -91,7 +92,7 @@ class MessageType(list):
         self.sort()
 
     def add_protocol_label(self, start: int, end: int, name=None, color_ind=None,
-                           auto_created=False, type:FieldType=None) -> ProtocolLabel:
+                           auto_created=False, type: FieldType = None) -> ProtocolLabel:
 
         name = "" if not name else name
         used_colors = [p.color_index for p in self]
@@ -110,7 +111,7 @@ class MessageType(list):
             self.append(proto_label)
             self.sort()
 
-        return proto_label # Return label to set editor focus after adding
+        return proto_label  # Return label to set editor focus after adding
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
@@ -121,8 +122,6 @@ class MessageType(list):
             super().remove(lbl)
         else:
             logger.warning(lbl.name + " is not in set, so cant be removed")
-
-
 
     def to_xml(self) -> ET.Element:
         result = ET.Element("message_type", attrib={"name": self.name, "id": self.id,
@@ -136,7 +135,7 @@ class MessageType(list):
         return result
 
     @staticmethod
-    def from_xml(tag:  ET.Element):
+    def from_xml(tag: ET.Element):
         field_types_by_type_id = {ft.id: ft for ft in FieldType.load_from_xml()}
 
         name = tag.get("name", "blank")
@@ -146,7 +145,7 @@ class MessageType(list):
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
-        result =  MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
+        result = MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
 

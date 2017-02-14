@@ -117,6 +117,13 @@ def get_device_modules():
     return extensions
 
 
+def read_long_description():
+    try:
+        import pypandoc
+        return pypandoc.convert('README.md', 'rst')
+    except(IOError, ImportError):
+        return ""
+
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
@@ -138,7 +145,8 @@ if USE_CYTHON:
 setup(
     name="urh",
     version=version.VERSION,
-    description="Universal Radio Hacker: Hacking wireless protocols made easy",
+    description="Universal Radio Hacker: investigate wireless protocols like a boss",
+    long_description=read_long_description(),
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},

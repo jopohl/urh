@@ -15,10 +15,10 @@ class RulesetTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.endResetModel()
 
-    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.header_labels)
 
-    def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
+    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.ruleset)
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -65,9 +65,7 @@ class RulesetTableModel(QAbstractTableModel):
             except ValueError:
                 return False
 
-            return  True
+            return True
 
     def flags(self, index: QModelIndex):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
-
-

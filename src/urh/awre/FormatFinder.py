@@ -71,7 +71,7 @@ class FormatFinder(object):
 
     def perform_iteration(self):
         for component in self.build_component_order():
-            # TODO: Creating new message types e.g. for addresses
+            # OPEN: Create new message types e.g. for addresses
             component.find_field(self.protocol.messages)
 
     def cluster_lengths(self):

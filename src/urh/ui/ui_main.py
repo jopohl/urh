@@ -255,11 +255,16 @@ class Ui_MainWindow(object):
         self.actionFullscreen_mode = QtWidgets.QAction(MainWindow)
         self.actionFullscreen_mode.setCheckable(True)
         self.actionFullscreen_mode.setObjectName("actionFullscreen_mode")
+        self.actionOpen_directory = QtWidgets.QAction(MainWindow)
+        icon = QtGui.QIcon.fromTheme("folder-open")
+        self.actionOpen_directory.setIcon(icon)
+        self.actionOpen_directory.setObjectName("actionOpen_directory")
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionSave_project)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionOpen_directory)
         self.menuFile.addAction(self.actionRecord)
         self.menuFile.addAction(self.actionSniff_protocol)
         self.menuFile.addAction(self.actionSpectrum_Analyzer)
@@ -335,6 +340,7 @@ class Ui_MainWindow(object):
         self.actionProject_settings.setText(_translate("MainWindow", "&Project settings..."))
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
         self.actionFullscreen_mode.setText(_translate("MainWindow", "Fullscreen mode"))
+        self.actionOpen_directory.setText(_translate("MainWindow", "Open directory..."))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

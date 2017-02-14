@@ -12,21 +12,17 @@ class crc_generic:
         self.little_endian = little_endian
         self.lsb_first = lsb_first
 
-        if not isinstance(start_value, bool):
-            if len(start_value) == self.poly_order - 1:
-                self.start_value = start_value
-            else:
-                self.start_value = start_value[0] * (self.poly_order - 1)
-        else:
-            self.start_value = [start_value] * (self.poly_order - 1)
+        self.start_value = self.__read_parameter(start_value)
+        self.final_xor = self.__read_parameter(final_xor)
 
-        if not isinstance(final_xor, bool):
-            if len(final_xor) == self.poly_order - 1:
-                self.final_xor = final_xor
+    def __read_parameter(self, value):
+        if not isinstance(value, bool):
+            if len(value) == self.poly_order - 1:
+                return value
             else:
-                self.final_xor = final_xor[0] * (self.poly_order - 1)
+                return value[0] * (self.poly_order - 1)
         else:
-            self.final_xor = [final_xor] * (self.poly_order - 1)
+            return [value] * (self.poly_order - 1)
 
     def choose_polynomial(self, polynomial):
         if polynomial == "16_standard" or polynomial == 0:
@@ -43,7 +39,7 @@ class crc_generic:
                     False, True, True, False, False, True, False, True]  # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
         elif polynomial == "8_en" or polynomial == 3:
             return [True,
-                    False, False, False, False, False, True, True, True] # x^8+x^2+x+1
+                    False, False, False, False, False, True, True, True]  # x^8+x^2+x+1
         return polynomial
 
     def crc(self, inpt):
@@ -84,17 +80,21 @@ class crc_generic:
                 crc_old.append(crc[self.poly_order - 2 - i])
             crc = crc_old
 
-        if self.little_endian:
-            if self.poly_order - 1 == 16:
-                crc[0:8], crc[8:16] = crc[8:16], crc[0:8]
-            elif self.poly_order - 1 == 32:
-                crc[0:8], crc[8:16], crc[16:24], crc[24:32] = crc[24:32], crc[16:32], crc[8:16], crc[0:8]
-            elif self.poly_order - 1 == 64:
-                crc[0:8], crc[8:16], crc[16:24], crc[24:32] = crc[24:32], crc[16:32], crc[8:16], crc[0:8]
-                crc[32 + 0:32 + 8], crc[32 + 8:32 + 16], crc[32 + 16:32 + 24], crc[32 + 24:32 + 32] = \
-                    crc[32 + 24:32 + 32], crc[32 + 16:32 + 32], crc[32 + 8:32 + 16], crc[32 + 0:32 + 8]
+        if self.poly_order - 1 == 16 and self.little_endian:
+            self.__swap_bytes(crc, 0, 1)
+        elif self.poly_order - 1 == 32 and self.little_endian:
+            self.__swap_bytes(crc, 0, 3)
+            self.__swap_bytes(crc, 1, 2)
+        elif self.poly_order - 1 == 64 and self.little_endian:
+            for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
+                self.__swap_bytes(crc, pos1, pos2)
 
         return crc
+
+    @staticmethod
+    def __swap_bytes(array, pos1: int, pos2: int):
+        array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] =\
+            array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1*8 + 8]
 
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Test all standard parameters and return true, if a valid CRC could be computed.
@@ -106,17 +106,11 @@ class crc_generic:
 
             # Bit 2 = Start Value
             val = (i >> 2) & 1
-            if val == 0:
-                self.start_value = [False] * (self.poly_order - 1)
-            else:
-                self.start_value = [True] * (self.poly_order - 1)
+            self.start_value = [val != 0] * (self.poly_order - 1)
 
             # Bit 3 = Final XOR
             val = (i >> 3) & 1
-            if val == 0:
-                self.final_xor = [False] * (self.poly_order - 1)
-            else:
-                self.final_xor = [True] * (self.poly_order - 1)
+            self.final_xor = [val != 0] * (self.poly_order - 1)
 
             # Bit 4 = Reverse Polynomial
             val = (i >> 4) & 1
@@ -194,16 +188,14 @@ class crc_generic:
     def bit2str(inpt, points=False):
         if not points:
             return "".join(["1" if x else "0" for x in inpt])
-        else:
-            bitstring = ""
-            for i in range(0, len(inpt)):
-                if i > 0 and i % 4 == 0:
-                    bitstring += "."
-                if inpt[i]:
-                    bitstring += "1"
-                else:
-                    bitstring += "0"
-            return bitstring
+
+        bitstring = []
+        for n in range(0, len(inpt)):
+            if n % 4 == 0:
+                bitstring.append(".")
+            bitstring.append("1" if inpt[n] else "0")
+
+        return "".join(bitstring)
 
     @staticmethod
     def str2bit(inpt):

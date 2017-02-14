@@ -2,7 +2,7 @@
 Type=Application
 Version=1.0
 Name=Universal Radio Hacker
-Comment=Hacking wireless protocols made easy
+Comment=investigate wireless protocols like a boss
 Path=/usr/bin/urh
 Exec=urh
 Icon=urh

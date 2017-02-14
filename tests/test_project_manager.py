@@ -63,20 +63,26 @@ class TestProjectManager(unittest.TestCase):
         self.assertEqual(self.form.project_manager.project_file, None)
 
     def test_project_dialog(self):
-        self.dialog.ui.spinBoxFreq.setValue(1e9)
-        self.assertEqual(self.dialog.freq, 1e9)
+        frequency = 1e9
+        sample_rate = 10e9
+        bandwidth = 10
+        gain = 42
+        descr = "URH rockz."
 
-        self.dialog.ui.spinBoxSampleRate.setValue(10e9)
-        self.assertEqual(self.dialog.sample_rate, 10e9)
+        self.dialog.ui.spinBoxFreq.setValue(frequency)
+        self.assertEqual(self.dialog.freq, frequency)
 
-        self.dialog.ui.spinBoxBandwidth.setValue(10)
-        self.assertEqual(self.dialog.bandwidth, 10)
+        self.dialog.ui.spinBoxSampleRate.setValue(sample_rate)
+        self.assertEqual(self.dialog.sample_rate, sample_rate)
 
-        self.dialog.ui.spinBoxGain.setValue(42)
-        self.assertEqual(self.dialog.gain, 42)
+        self.dialog.ui.spinBoxBandwidth.setValue(bandwidth)
+        self.assertEqual(self.dialog.bandwidth, bandwidth)
 
-        self.dialog.ui.txtEdDescription.setPlainText("URH rockz.")
-        self.assertEqual(self.dialog.description, "URH rockz.")
+        self.dialog.ui.spinBoxGain.setValue(gain)
+        self.assertEqual(self.dialog.gain, gain)
+
+        self.dialog.ui.txtEdDescription.setPlainText(descr)
+        self.assertEqual(self.dialog.description, descr)
 
         self.dialog.ui.lineEditBroadcastAddress.setText("abcd")
         self.dialog.ui.lineEditBroadcastAddress.textEdited.emit("abcd")
@@ -85,6 +91,19 @@ class TestProjectManager(unittest.TestCase):
         if len(self.dialog.participants) == 0:
             self.dialog.ui.btnAddParticipant.click()
             self.assertEqual(len(self.dialog.participants), 1)
+
+        model = self.dialog.participant_table_model
+        model.setData(model.index(0, 0), "Testing")
+        model.setData(model.index(0, 1), "T")
+        model.setData(model.index(0, 2), 5)
+        model.setData(model.index(0, 3), 0)
+        model.setData(model.index(0, 4), "aaaa")
+        participant = self.dialog.participants[0]
+        self.assertEqual(participant.name, "Testing")
+        self.assertEqual(participant.shortname, "T")
+        self.assertEqual(participant.color_index, 5)
+        self.assertEqual(participant.relative_rssi, 0)
+        self.assertEqual(participant.address_hex, "aaaa")
 
         num_participants = len(self.dialog.participants)
         self.dialog.ui.btnAddParticipant.click()
@@ -105,3 +124,13 @@ class TestProjectManager(unittest.TestCase):
         self.dialog.ui.btnOK.click()
 
         self.assertTrue(os.path.isdir(test_path))
+
+        self.form.project_manager.from_dialog(self.dialog)
+
+        self.dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form, new_project=False)
+        self.assertEqual(self.dialog.ui.spinBoxFreq.value(), frequency)
+        self.assertEqual(self.dialog.ui.spinBoxSampleRate.value(), sample_rate)
+        self.assertEqual(self.dialog.ui.spinBoxBandwidth.value(), bandwidth)
+        self.assertEqual(self.dialog.ui.spinBoxGain.value(), gain)
+        self.assertEqual(self.dialog.ui.txtEdDescription.toPlainText(), descr)
+        self.assertFalse(self.dialog.ui.lineEdit_Path.isEnabled())

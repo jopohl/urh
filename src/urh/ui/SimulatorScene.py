@@ -116,6 +116,13 @@ class RuleConditionItem(QGraphicsItem):
         addElseCondAction = QAction("Add else block")
 
         menu.addAction(addMessageAction)
+        message_type_menu = menu.addMenu("Add message with message type ...")
+        message_type_actions = {}
+
+        for message_type in self.scene().controller.proto_analyzer.message_types:
+            action = message_type_menu.addAction(message_type.name)
+            message_type_actions[action] = message_type
+
         menu.addSeparator()
         menu.addAction(addElseIfCondAction)
 
@@ -124,9 +131,10 @@ class RuleConditionItem(QGraphicsItem):
 
         action = menu.exec_(event.screenPos())
 
+        source = self.scene().not_assigned_part
+        destination = self.scene().broadcast_part
+
         if action == addMessageAction:
-            source = self.scene().not_assigned_part
-            destination = self.scene().broadcast_part
             simulator_message = MessageItem(source, destination, self)
             simulator_message.add_label(LabelItem("preamble", constants.LABEL_COLORS[0]))
             simulator_message.add_label(LabelItem("synchronization", constants.LABEL_COLORS[1]))
@@ -135,6 +143,13 @@ class RuleConditionItem(QGraphicsItem):
             self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
         elif action == addElseCondAction:
             self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
+        elif action in message_type_actions:
+            simulator_message = MessageItem(source, destination, self)
+
+            for label in message_type_actions[action]:
+                simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+
+            self.items.append(simulator_message)           
 
         self.scene().update_view()
 
@@ -475,7 +490,7 @@ class SimulatorScene(QGraphicsScene):
             x_max = self.participants[i - 1].line.line().x1() + 50
 
             for msg in items:
-                x = msg.labels_width() +  30
+                x = msg.labels_width() + 30
                 x += msg.source.line.line().x1() if msg.source != curr_participant else msg.destination.line.line().x1()
 
                 if x > x_max:
@@ -538,16 +553,21 @@ class SimulatorScene(QGraphicsScene):
         rule = RuleItem()
         self.items.append(rule)
         self.addItem(rule)
+
+    def add_message(self, source, destination, message_type):
+        simulator_message = MessageItem(source, destination)
+
+        for label in message_type:
+            simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            self.items.append(simulator_message)
+            self.addItem(simulator_message)
         
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:
                 source, destination = self.__detect_source_destination(message)
-                simulator_message = MessageItem(source, destination)
-                for label in message.message_type:
-                    simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
-                self.items.append(simulator_message)
-                self.addItem(simulator_message)
+
+                self.add_message(source, destination, message.message_type)
 
     def __detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels

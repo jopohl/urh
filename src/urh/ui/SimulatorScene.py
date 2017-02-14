@@ -1,20 +1,54 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction
-from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup
+from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
 import math
+from enum import Enum
 
 from urh import constants
 from urh.signalprocessing.Message import Message
+
+class ConditionType(Enum):
+    IF = "if ..."
+    ELSE_IF = "else if ..."
+    ELSE = "else"
 
 class RuleItem(QGraphicsItem):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.if_cond = RuleConditionItem(self)
-        self.else_cond = None
+        self.conditions = []
+        self.conditions.append(RuleConditionItem(ConditionType.IF, self))
+
+    def has_else_condition(self):
+        return len([cond for cond in self.conditions if cond.type is ConditionType.ELSE]) == 1
+
+    def get_all_messages(self):
+        messages = []
+
+        for cond in self.conditions:
+            messages.extend([item for item in cond.items if type(item) is MessageItem])
+
+        return messages
+
+    def delete_items(self, items):
+        for condition in self.conditions:
+            condition.items = [x for x in condition.items if x not in items]
 
     def update(self, y_pos):
-        self.if_cond.update(y_pos)
+        if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
+
+        if_cond.update(y_pos)
+        y_pos += math.floor(if_cond.boundingRect().height())
+
+        for cond in [cond for cond in self.conditions if cond.type is ConditionType.ELSE_IF]:
+            cond.update(y_pos)
+            y_pos += math.floor(cond.boundingRect().height())
+
+        else_cond = [cond for cond in self.conditions if cond.type is ConditionType.ELSE]
+
+        if len(else_cond) == 1:
+            else_cond[0].update(y_pos)
+
         super().update()
 
     def boundingRect(self):
@@ -23,10 +57,27 @@ class RuleItem(QGraphicsItem):
     def paint(self, painter, option, widget):
         pass
 
-class RuleConditionItem(QGraphicsItem):
-    def __init__(self, parent=None):
+class RuleTextItem(QGraphicsTextItem):
+    def __init__(self, text, color, parent=None):
         super().__init__(parent)
-        #self.text = QGraphicsTextItem(rule_name, self)        
+        self.color = color
+        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font.setPointSize(10)
+        font.setWeight(QFont.DemiBold)
+        self.setFont(font)
+        self.setPlainText(text)
+
+    def paint(self, painter, option, widget):
+        #painter.setBrush(self.color)
+        painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+        painter.drawRect(self.boundingRect())
+        super().paint(painter, option, widget)
+
+class RuleConditionItem(QGraphicsItem):
+    def __init__(self, type, parent):
+        super().__init__(parent)
+        self.type = type
+        self.text = RuleTextItem(type.value, QColor.fromRgb(139,148,148), self)        
         self.items = []
         self.rect = QRectF()
 
@@ -35,17 +86,72 @@ class RuleConditionItem(QGraphicsItem):
             return
 
         x = self.scene().participants[0].line.line().x1()
-        height = 50
+        tmp_y = y_pos
+
         width = self.scene().participants[-1].line.line().x1() - x
         self.prepareGeometryChange()
-        self.rect.setRect(x, y_pos, width, height)
+        self.text.setPos(-20, tmp_y)
+        tmp_y += math.floor(self.text.boundingRect().height()) + 1
+
+        for item in self.items:
+            item.update(tmp_y)
+            tmp_y += math.floor(item.boundingRect().height()) + 1
+
+        self.rect.setRect(x - 20, y_pos, width + 40, tmp_y - y_pos)
         super().update()
 
     def boundingRect(self):
         return self.rect
 
     def paint(self, painter, option, widget):
-        painter.drawRect(self.rect)
+        #painter.setBrush(QColor.fromRgb(61,67,67,125))
+        painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
+        painter.drawRect(self.boundingRect())
+
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+
+        addMessageAction = QAction("Add empty message")
+        addElseIfCondAction = QAction("Add else if block")
+        addElseCondAction = QAction("Add else block")
+
+        menu.addAction(addMessageAction)
+        message_type_menu = menu.addMenu("Add message with message type ...")
+        message_type_actions = {}
+
+        for message_type in self.scene().controller.proto_analyzer.message_types:
+            action = message_type_menu.addAction(message_type.name)
+            message_type_actions[action] = message_type
+
+        menu.addSeparator()
+        menu.addAction(addElseIfCondAction)
+
+        if not self.parentItem().has_else_condition():
+            menu.addAction(addElseCondAction)
+
+        action = menu.exec_(event.screenPos())
+
+        source = self.scene().not_assigned_part
+        destination = self.scene().broadcast_part
+
+        if action == addMessageAction:
+            simulator_message = MessageItem(source, destination, self)
+            simulator_message.add_label(LabelItem("preamble", constants.LABEL_COLORS[0]))
+            simulator_message.add_label(LabelItem("synchronization", constants.LABEL_COLORS[1]))
+            self.items.append(simulator_message)
+        elif action == addElseIfCondAction:
+            self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
+        elif action == addElseCondAction:
+            self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
+        elif action in message_type_actions:
+            simulator_message = MessageItem(source, destination, self)
+
+            for label in message_type_actions[action]:
+                simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+
+            self.items.append(simulator_message)           
+
+        self.scene().update_view()
 
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
@@ -147,6 +253,72 @@ class MessageItem(QGraphicsItem):
             painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
             painter.drawRect(self.boundingRect())
 
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+        scene = self.scene()
+
+        delAction = QAction("Delete message")
+        menu.addAction(delAction)
+
+        menu.addSeparator()
+
+        sourcegroup = QActionGroup(scene)
+        source_menu = menu.addMenu("Source")
+        source_actions = {}
+
+        for particpnt in scene.participants:
+            if self.destination == particpnt:
+                continue
+
+            pa = source_menu.addAction(particpnt.text.toPlainText())
+            pa.setCheckable(True)
+            pa.setActionGroup(sourcegroup)
+
+            if self.source == particpnt:
+                pa.setChecked(True)
+
+            source_actions[pa] = particpnt
+
+        destinationgroup = QActionGroup(scene)
+        destination_menu = menu.addMenu("Destination")
+        destination_actions = {}
+
+        for particpnt in scene.participants:
+            if self.source == particpnt:
+                continue
+
+            pa = destination_menu.addAction(particpnt.text.toPlainText())
+            pa.setCheckable(True)
+            pa.setActionGroup(destinationgroup)
+
+            if self.destination == particpnt:
+                pa.setChecked(True)
+
+            destination_actions[pa] = particpnt
+
+        swapPartAction = QAction("Swap source and destination")
+        menu.addAction(swapPartAction)
+
+        action = menu.exec_(event.screenPos())
+
+        if action == delAction:
+            if self.parentItem() is None:
+                scene.items.remove(self)
+            else:
+                self.parentItem().items.remove(self)
+
+            scene.removeItem(self)
+        elif action == swapPartAction:
+            tmp = self.source
+            self.source = self.destination
+            self.destination = tmp
+        elif action in source_actions:
+            self.source = source_actions[action]
+        elif action in destination_actions:
+            self.destination = destination_actions[action]
+
+        scene.update_view()
+
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -207,7 +379,7 @@ class SimulatorScene(QGraphicsScene):
         self.addItem(self.broadcast_part)
 
         self.items = []
-        self.arrange_items()
+        self.update_view()
 
     def mousePressEvent(self, event):
         if event.button() != Qt.LeftButton:
@@ -217,6 +389,12 @@ class SimulatorScene(QGraphicsScene):
         super().mousePressEvent(event)
 
     def contextMenuEvent(self, event):
+        item = self.itemAt(event.scenePos(), QTransform())
+
+        if type(item) is not ParticipantItem and item is not None:
+            super().contextMenuEvent(event)
+            return
+
         menu = QMenu()
 
         delAction = QAction("Delete selected messages")
@@ -232,26 +410,40 @@ class SimulatorScene(QGraphicsScene):
         if action == delAction:
             self.delete_selected_items()
         elif action == addRuleAction:
-            rule = RuleItem()
-            self.items.append(rule)
-            self.addItem(rule)
-            self.update_view()
+            self.add_rule()
+
+        self.update_view()
 
     def delete_selected_items(self):
-            for item in self.selectedItems():
+        self.delete_items(self.selectedItems())
+
+    def delete_items(self, items):
+        for item in self.items[:]:
+            if type(item) == MessageItem and item in items:
                 self.items.remove(item)
-                self.removeItem(item)
-                self.arrange_items()
+            elif type(item) == RuleItem:
+                item.delete_items(items)
+
+        for item in items:
+            self.removeItem(item)
 
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
-        for item in self.items[:]:
-            if type(item) is MessageItem and (item.source not in self.participants or item.destination not in self.participants):
-                self.items.remove(item)
-                self.removeItem(item)
+        items = [msg for msg in self.get_all_messages() if (msg.source not in self.participants) or (msg.destination not in self.participants)]
 
+        self.delete_items(items)
+
+        self.arrange_participants()
         self.arrange_items()
+
+        # resize scrollbar
+        rect = self.itemsBoundingRect()
+
+        if rect is None:
+            self.setSceneRect(QRectF(0, 0, 1, 1))
+        else:
+            self.setSceneRect(rect)
 
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):
@@ -270,7 +462,18 @@ class SimulatorScene(QGraphicsScene):
                 self.participants_dict[participant] = participant_item
                 self.participants.append(participant_item)
 
-    def arrange_items(self):
+    def get_all_messages(self):
+        messages = []
+
+        for item in self.items:
+            if type(item) is MessageItem:
+                messages.append(item)
+            elif type(item) is RuleItem:
+                messages.extend(item.get_all_messages())
+
+        return messages
+
+    def arrange_participants(self):
         if len(self.participants) < 1:
             return
 
@@ -280,15 +483,14 @@ class SimulatorScene(QGraphicsScene):
             curr_participant = self.participants[i]
             participants_left = self.participants[:i]
 
-            items = [msg for msg in self.items
-                    if type(msg) is MessageItem
-                    and ((msg.source == curr_participant and msg.destination in participants_left)
+            items = [msg for msg in self.get_all_messages()
+                    if ((msg.source == curr_participant and msg.destination in participants_left)
                     or (msg.source in participants_left and msg.destination == curr_participant))]
 
             x_max = self.participants[i - 1].line.line().x1() + 50
 
             for msg in items:
-                x = msg.labels_width() +  30
+                x = msg.labels_width() + 30
                 x += msg.source.line.line().x1() if msg.source != curr_participant else msg.destination.line.line().x1()
 
                 if x > x_max:
@@ -296,22 +498,15 @@ class SimulatorScene(QGraphicsScene):
 
             curr_participant.update(x_pos = x_max)
 
+    def arrange_items(self):
         y_pos = 30
 
         for item in self.items:
             item.update(y_pos)
-            y_pos += math.floor(item.boundingRect().height()) + 1
+            y_pos += math.floor(item.boundingRect().height()) + 5
 
         for participant in self.participants:
             participant.update(y_pos = max(y_pos, 50))
-
-        # resize scrollbar
-        rect = self.itemsBoundingRect()
-
-        if rect is None:
-            self.setSceneRect(QRectF(0, 0, 1, 1))
-        else:
-            self.setSceneRect(rect)
 
     def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
         event.setAccepted(True)
@@ -354,16 +549,25 @@ class SimulatorScene(QGraphicsScene):
 
         super().dropEvent(event)
 
+    def add_rule(self):
+        rule = RuleItem()
+        self.items.append(rule)
+        self.addItem(rule)
 
+    def add_message(self, source, destination, message_type):
+        simulator_message = MessageItem(source, destination)
+
+        for label in message_type:
+            simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            self.items.append(simulator_message)
+            self.addItem(simulator_message)
+        
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:
                 source, destination = self.__detect_source_destination(message)
-                simulator_message = MessageItem(source, destination)
-                for label in message.message_type:
-                    simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
-                self.items.append(simulator_message)
-                self.addItem(simulator_message)
+
+                self.add_message(source, destination, message.message_type)
 
     def __detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels

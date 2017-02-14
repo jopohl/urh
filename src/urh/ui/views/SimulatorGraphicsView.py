@@ -18,3 +18,4 @@ class SimulatorGraphicsView(QGraphicsView):
     @pyqtSlot()
     def on_delete_action_triggered(self):
         self.scene().delete_selected_items()
+        self.scene().update_view()

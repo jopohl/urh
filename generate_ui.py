@@ -28,6 +28,17 @@ def gen():
         file_path = os.path.join(ui_path, f)
         outfile = "ui_" + f.replace(".ui", ".py")
         out_file_path = os.path.join(out_path, outfile)
+        time_ui_file = os.path.getmtime(file_path)
+        try:
+            time_generated_file = os.path.getmtime(out_file_path)
+        except os.error:
+            time_generated_file = 0
+
+        if time_generated_file >= time_ui_file:
+            # Generated file is already there and newer than ui file, no need to recompile it
+            continue
+
+
         call([uic_path, "--from-imports", file_path, "-o", out_file_path])
 
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'

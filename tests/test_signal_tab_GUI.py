@@ -21,7 +21,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_signals, NUM_SIGNALS)
 
         self.form.close_all()
-        QTest.qWait(1)
+        QTest.qWait(100)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))

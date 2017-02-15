@@ -1,5 +1,4 @@
 import copy
-import math
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from collections import defaultdict
@@ -75,6 +74,10 @@ class ProtocolAnalyzer(object):
 
     @property
     def protocol_labels(self):
+        """
+
+        :rtype: list of ProtocolLabel
+        """
         return [lbl for message_type in self.message_types for lbl in message_type]
 
     def __deepcopy__(self, memo):

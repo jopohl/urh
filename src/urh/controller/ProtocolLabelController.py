@@ -41,7 +41,7 @@ class ProtocolLabelController(QDialog):
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        for i in range(self.model.row_count):
+        for i in range(self.model.rowCount()):
             self.open_editors(i)
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()

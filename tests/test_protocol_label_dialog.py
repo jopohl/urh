@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from urh import constants
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
@@ -17,15 +18,14 @@ app = tests.utils_testing.app
 
 class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
+        constants.SETTINGS.setValue("align_labels", True)
+
         self.form = MainController()
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
         self.cframe = self.form.compare_frame_controller
 
         self.cframe.add_protocol_label(9, 19, 0, 0, edit_label_name=False)  # equals 10-20 in view
         self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False) # equals 40-55 in view
-
-        for msg in self.cframe.proto_analyzer.messages:
-            msg.align_labels = True
 
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), 2)
         self.dialog = ProtocolLabelController(preselected_index=1,

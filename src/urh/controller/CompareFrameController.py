@@ -675,10 +675,9 @@ class CompareFrameController(QFrame):
 
     def show_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        max_end = max(len(msg) for msg in self.proto_analyzer.messages) if self.proto_analyzer.messages else 10000
+        longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
         label_controller = ProtocolLabelController(preselected_index=preselected_index,
-                                                   message_type=self.active_message_type,
-                                                   max_end=max_end, viewtype=view_type, parent=self)
+                                                   message=longest_message, viewtype=view_type, parent=self)
         label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         label_controller.exec_()
 

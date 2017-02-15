@@ -15,27 +15,20 @@ class PLabelTableModel(QAbstractTableModel):
     label_removed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, message_type: MessageType, field_types, parent=None):
+    def __init__(self, message: Message, field_types, parent=None):
         """
 
-        :param message_type:
+        :param message:
         :type field_types: list of FieldType
         :param parent:
         """
         super().__init__(parent)
-        self.row_count = len(message_type)
+        self.row_count = len(message.message_type)
         self.proto_view = 0
-        self.message_type = message_type
+        self.message = message
+        self.message_type = message.message_type
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
         self.update()
-
-    @staticmethod
-    def __index2bit(index: int, from_view: int):
-        return index if from_view == 0 else 4 * index if from_view == 1 else 8 * index
-
-    @staticmethod
-    def __bit2index(index: int, to_view: int):
-        return index if to_view == 0 else int(math.ceil(index / 4)) if to_view == 1 else int(math.ceil(index / 8))
 
     def update(self):
         self.beginResetModel()
@@ -59,9 +52,9 @@ class PLabelTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return self.__bit2index(lbl.start + 1, self.proto_view)
+                return self.message.get_label_range(lbl, view=self.proto_view, decode=True)[0] + 1
             elif j == 2:
-                return self.__bit2index(lbl.end + 1, self.proto_view) - 1
+                return self.message.get_label_range(lbl, view=self.proto_view, decode=True)[1]
             elif j == 3:
                 return lbl.color_index
             elif j == 4:
@@ -93,9 +86,9 @@ class PLabelTableModel(QAbstractTableModel):
             else:
                 lbl.type = None
         elif j == 1:
-            lbl.start = self.__index2bit(int(value), self.proto_view) - 1
+            lbl.start = self.message.convert_index(int(value-1), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 2:
-            lbl.end = self.__index2bit(int(value), self.proto_view)
+            lbl.end = self.message.convert_index(int(value), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 3:
             lbl.color_index = value
         elif j == 4:

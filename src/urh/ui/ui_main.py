@@ -114,7 +114,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 30))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -332,8 +332,8 @@ class Ui_MainWindow(object):
         self.actionSniff_protocol.setText(_translate("MainWindow", "Sn&iff protocol..."))
         self.actionProject_settings.setText(_translate("MainWindow", "&Project settings..."))
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
-        self.actionFullscreen_mode.setText(_translate("MainWindow", "Fullscreen mode"))
-        self.actionOpen_directory.setText(_translate("MainWindow", "Open directory..."))
+        self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
+        self.actionOpen_directory.setText(_translate("MainWindow", "Open &directory..."))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

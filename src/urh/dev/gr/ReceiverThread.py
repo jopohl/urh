@@ -5,6 +5,7 @@ import psutil
 from PyQt5.QtCore import pyqtSignal
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
+from urh.util.Logger import logger
 
 
 class ReceiverThread(AbstractBaseThread):
@@ -49,6 +50,8 @@ class ReceiverThread(AbstractBaseThread):
             except ConnectionResetError:
                 self.stop("Stopped receiving, because connection was reset.")
                 return
+            except OSError as e:   # https://github.com/jopohl/urh/issues/131
+                logger.warning("Error occurred", str(e))
 
             if len(rcvd) < 8:
                 self.stop("Stopped receiving: No data received anymore")

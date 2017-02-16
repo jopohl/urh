@@ -141,7 +141,8 @@ class GeneratorTableView(TableView):
             painter.setPen(pen)
             painter.drawLine(rect.topLeft(), rect.topRight())
 
-    def build_context_menu(self) -> QMenu:
+    def create_context_menu(self) -> QMenu:
+        assert self.context_menu_pos is not None
         menu = QMenu()
         selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
                                                                      column=self.columnAt(self.context_menu_pos.x()))
@@ -196,7 +197,7 @@ class GeneratorTableView(TableView):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_pos = event.pos()
-        menu = self.build_context_menu()
+        menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
 
     @pyqtSlot()

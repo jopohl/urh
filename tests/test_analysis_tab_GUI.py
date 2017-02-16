@@ -1,5 +1,6 @@
 import unittest
 
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
@@ -114,3 +115,13 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
+
+    def test_create_context_menu(self):
+        # Add protocol label should be disabled if table is empty
+        self.form.close_all()
+        self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
+        self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
+        menu = self.cfc.ui.tblViewProtocol.create_context_menu()
+
+        create_label_action = next(a for a in menu.actions() if a.text() == "Add protocol label")
+        self.assertFalse(create_label_action.isEnabled())

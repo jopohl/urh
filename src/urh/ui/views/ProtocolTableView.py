@@ -67,7 +67,7 @@ class ProtocolTableView(TableView):
         if len(event.mimeData().urls()) > 0:
             self.files_dropped.emit(event.mimeData().urls())
 
-    def build_context_menu(self):
+    def create_context_menu(self):
         menu = QMenu()
 
         view_group = QActionGroup(self)
@@ -215,7 +215,7 @@ class ProtocolTableView(TableView):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_pos = event.pos()
-        menu = self.build_context_menu()
+        menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(self.context_menu_pos))
         self.context_menu_pos = None
 

@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from urh import constants
 from urh.controller.MainController import MainController
 
 from tests.utils_testing import get_path_for_data_file
@@ -14,6 +15,7 @@ app = tests.utils_testing.app
 
 class TestAnalysisTabGUI(unittest.TestCase):
     def setUp(self):
+        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
         self.form = MainController()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
@@ -119,7 +121,6 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
         self.form.close_all()
-        app.processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()

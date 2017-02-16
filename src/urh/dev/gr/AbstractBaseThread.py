@@ -5,6 +5,7 @@ from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
 
+import time
 from PyQt5.QtCore import QThread, pyqtSignal
 from urh.util.Logger import logger
 
@@ -121,6 +122,22 @@ class AbstractBaseThread(QThread):
         t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
         t.daemon = True  # thread dies with the program
         t.start()
+
+    def init_recv_socket(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+
+        while not self.isInterruptionRequested():
+            try:
+                time.sleep(0.1)
+                # Not reinitializing the socket may result in OS Error, see:
+                # https://github.com/jopohl/urh/issues/131
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                self.socket.connect((self.ip, self.port))
+                break
+            except (ConnectionRefusedError, ConnectionResetError):
+                continue
 
     def run(self):
         pass

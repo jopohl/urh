@@ -1,9 +1,12 @@
+import os
 import unittest
 
+from PyQt5.QtCore import QDir
 from PyQt5.QtCore import QPoint
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
 
@@ -12,6 +15,7 @@ app = tests.utils_testing.app
 
 class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
+        constants.SETTINGS.setValue("not_show_save_dialog", True)
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.frame = self.form.signal_tab_controller.signal_frames[0]
@@ -93,3 +97,47 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.frame.ui.btnShowHideStartEnd.text(), "+")
         self.frame.ui.btnShowHideStartEnd.click()
         self.assertEqual(self.frame.ui.btnShowHideStartEnd.text(), "-")
+
+    def test_apply_to_all(self):
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        frame2 = self.form.signal_tab_controller.signal_frames[1]
+
+        self.frame.ui.spinBoxInfoLen.setValue(42)
+        self.frame.ui.spinBoxInfoLen.editingFinished.emit()
+
+        self.frame.ui.spinBoxCenterOffset.setValue(0.1)
+        self.frame.ui.spinBoxCenterOffset.editingFinished.emit()
+
+        self.frame.ui.spinBoxNoiseTreshold.setValue(0.5)
+        self.frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
+
+        self.frame.ui.spinBoxTolerance.setValue(10)
+        self.frame.ui.spinBoxTolerance.editingFinished.emit()
+
+        self.frame.apply_to_all_clicked.emit(self.frame.signal)
+
+        self.assertEqual(42, frame2.ui.spinBoxInfoLen.value())
+        self.assertEqual(0.1, frame2.ui.spinBoxCenterOffset.value())
+        self.assertEqual(0.5, frame2.ui.spinBoxNoiseTreshold.value())
+        self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
+
+    def test_save_all(self):
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        frame2 = self.form.signal_tab_controller.signal_frames[1]
+
+        self.frame.signal.changed = True
+        self.frame.signal.filename = os.path.join(QDir.tempPath(), "sig1.complex")
+
+        frame2.signal.changed = True
+        frame2.signal.filename = os.path.join(QDir.tempPath(), "sig2.complex")
+
+        self.assertFalse(os.path.isfile(self.frame.signal.filename))
+        self.assertFalse(os.path.isfile(frame2.signal.filename))
+
+        self.form.signal_tab_controller.save_all()
+
+        self.assertTrue(os.path.isfile(self.frame.signal.filename))
+        self.assertTrue(os.path.isfile(frame2.signal.filename))
+
+        os.remove(self.frame.signal.filename)
+        os.remove(frame2.signal.filename)

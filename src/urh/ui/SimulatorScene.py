@@ -110,10 +110,15 @@ class RuleConditionItem(QGraphicsItem):
 
     def contextMenuEvent(self, event):
         menu = QMenu()
+        scene = self.scene()
 
         addMessageAction = QAction("Add empty message")
         addElseIfCondAction = QAction("Add else if block")
         addElseCondAction = QAction("Add else block")
+
+        removeRuleAction = QAction("Remove rule")
+        removeElseIfCondAction = QAction("Remove else if block")
+        removeElseCondAction = QAction("Remove else block")
 
         menu.addAction(addMessageAction)
         message_type_menu = menu.addMenu("Add message with message type ...")
@@ -129,6 +134,15 @@ class RuleConditionItem(QGraphicsItem):
         if not self.parentItem().has_else_condition():
             menu.addAction(addElseCondAction)
 
+        menu.addSeparator()
+
+        menu.addAction(removeRuleAction)
+
+        if self.type == ConditionType.ELSE_IF:
+            menu.addAction(removeElseIfCondAction)
+        elif self.type == ConditionType.ELSE:
+            menu.addAction(removeElseCondAction)
+
         action = menu.exec_(event.screenPos())
 
         source = self.scene().not_assigned_part
@@ -136,8 +150,6 @@ class RuleConditionItem(QGraphicsItem):
 
         if action == addMessageAction:
             simulator_message = MessageItem(source, destination, self)
-            simulator_message.add_label(LabelItem("preamble", constants.LABEL_COLORS[0]))
-            simulator_message.add_label(LabelItem("synchronization", constants.LABEL_COLORS[1]))
             self.items.append(simulator_message)
         elif action == addElseIfCondAction:
             self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
@@ -149,9 +161,15 @@ class RuleConditionItem(QGraphicsItem):
             for label in message_type_actions[action]:
                 simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
 
-            self.items.append(simulator_message)           
+            self.items.append(simulator_message)
+        elif action == removeRuleAction:
+            self.scene().items.remove(self.parentItem())
+            self.scene().removeItem(self.parentItem())
+        elif action == removeElseIfCondAction or action == removeElseCondAction:
+            self.parentItem().conditions.remove(self)
+            self.scene().removeItem(self)
 
-        self.scene().update_view()
+        scene.update_view()
 
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
@@ -399,11 +417,19 @@ class SimulatorScene(QGraphicsScene):
 
         delAction = QAction("Delete selected messages")
         addRuleAction = QAction("Add rule")
+        addMessageAction = QAction("Add empty message")
 
         if len(self.selectedItems()) > 0:
             menu.addAction(delAction)
 
         menu.addAction(addRuleAction)
+        menu.addAction(addMessageAction)
+        message_type_menu = menu.addMenu("Add message with message type ...")
+        message_type_actions = {}
+
+        for message_type in self.controller.proto_analyzer.message_types:
+            action = message_type_menu.addAction(message_type.name)
+            message_type_actions[action] = message_type
 
         action = menu.exec_(event.screenPos())
 
@@ -411,6 +437,18 @@ class SimulatorScene(QGraphicsScene):
             self.delete_selected_items()
         elif action == addRuleAction:
             self.add_rule()
+        elif action == addMessageAction:
+            simulator_message = MessageItem(source, destination, self)
+            self.items.append(simulator_message)
+            self.addItem(simulator_message)
+        elif action in message_type_actions:
+            simulator_message = MessageItem(self.not_assigned_part, self.broadcast_part)
+
+            for label in message_type_actions[action]:
+                simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+
+            self.items.append(simulator_message)
+            self.addItem(simulator_message)
 
         self.update_view()
 
@@ -559,8 +597,9 @@ class SimulatorScene(QGraphicsScene):
 
         for label in message_type:
             simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
-            self.items.append(simulator_message)
-            self.addItem(simulator_message)
+
+        self.items.append(simulator_message)
+        self.addItem(simulator_message)
         
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:

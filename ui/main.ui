@@ -181,7 +181,7 @@
      <x>0</x>
      <y>0</y>
      <width>1017</width>
-     <height>21</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -537,15 +537,16 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fullscreen mode</string>
+    <string>&amp;Fullscreen mode</string>
    </property>
   </action>
   <action name="actionOpen_directory">
    <property name="icon">
-    <iconset theme="folder-open"/>
+    <iconset theme="folder-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open directory...</string>
+    <string>Open &amp;directory...</string>
    </property>
   </action>
  </widget>

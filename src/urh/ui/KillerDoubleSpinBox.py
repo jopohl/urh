@@ -10,8 +10,15 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         super().__init__(parent)
 
         self.lineEdit().setValidator(None)
-        self.valueChanged.connect(self.adjust_step)
+
+        # Cant connect to value changed, as it would delete the number when changing a digit
+        # see: https://github.com/jopohl/urh/issues/129
+        self.editingFinished.connect(self.adjust_step)
         self.auto_suffix = True
+
+    def setValue(self, value: float):
+        super().setValue(value)
+        self.adjust_step()
 
     def adjust_step(self):
         value = abs(self.value())

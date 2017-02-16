@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QHeaderView
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
@@ -17,19 +18,19 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 class ProtocolLabelController(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
 
-    def __init__(self, preselected_index, message_type: MessageType, viewtype: int, max_end: int, parent=None):
+    def __init__(self, preselected_index, message: Message, viewtype: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
         field_types = FieldType.load_from_xml()
-        self.model = PLabelTableModel(message_type, field_types)
+        self.model = PLabelTableModel(message, field_types)
         self.preselected_index = preselected_index
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types],
                                                                                 is_editable=True,
                                                                                 return_index=False, parent=self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, max_end, self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, max_end, self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, len(message), self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, len(message), self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(3,
                                                             ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
                                                                              colors=constants.LABEL_COLORS,
@@ -41,11 +42,11 @@ class ProtocolLabelController(QDialog):
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        for i in range(self.model.row_count):
+        for i in range(self.model.rowCount()):
             self.open_editors(i)
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
-        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message_type.name)
+        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message.message_type.name)
 
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)

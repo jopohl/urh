@@ -40,12 +40,6 @@ class SignalFrameController(QFrame):
     def proto_view(self):
         return self.ui.txtEdProto.cur_view
 
-    @property
-    def signal_widgets(self):
-        splitter = self.parent()
-        for i in range(splitter.count() - 1):
-            yield (splitter.widget(i))
-
     def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack,
                  project_manager, proto_bits=None, parent=None):
         super().__init__(parent)
@@ -193,7 +187,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.show_proto_clicked.connect(self.update_roi_from_protocol_selection)
         self.ui.txtEdProto.show_proto_clicked.connect(self.zoom_to_roi)
         self.ui.txtEdProto.selectionChanged.connect(self.update_roi_from_protocol_selection)
-        self.ui.txtEdProto.deletion_wanted.connect(self.delete_from_protocol_selection)
+        self.ui.txtEdProto.deletion_wanted.connect(self.ui.gvSignal.on_delete_action_triggered)
 
         self.ui.spinBoxSelectionStart.valueChanged.connect(self.on_spinbox_selection_start_value_changed)
         self.ui.spinBoxSelectionEnd.valueChanged.connect(self.on_spinbox_selection_end_value_changed)
@@ -605,7 +599,6 @@ class SignalFrameController(QFrame):
         dialog.show()
         dialog.graphics_view.show_full_scene(reinitialize=True)
 
-
     @pyqtSlot(int, int)
     def update_selection_area(self, start, end):
         self.ui.lNumSelectedSamples.setText(str(end - start))
@@ -850,12 +843,6 @@ class SignalFrameController(QFrame):
             self.undo_stack.push(noise_action)
             self.disable_auto_detection()
 
-    def delete_from_protocol_selection(self):
-        if not self.ui.gvSignal.selection_area.is_empty:
-            start = self.ui.gvSignal.selection_area.x
-            end = self.ui.gvSignal.selection_area.end
-            self.delete_selection(start, end)
-
     def minimize_maximize(self):
         elements = vars(self.ui)
 
@@ -944,7 +931,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def on_info_btn_clicked(self):
         sdc = SignalDetailsController(self.signal, self)
-        sdc.exec_()
+        sdc.show()
 
     @pyqtSlot(int)
     def on_combobox_modulation_type_index_changed(self, index: int):

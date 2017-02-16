@@ -93,6 +93,7 @@ def main():
     constants.BGCOLOR = bgcolor
     constants.LINECOLOR = fgcolor
     constants.SELECTION_COLOR = selection_color
+    constants.SEND_INDICATOR_COLOR = selection_color
 
     if "autoclose" in sys.argv[1:]:
         # Autoclose after 1 second, this is useful for automated testing

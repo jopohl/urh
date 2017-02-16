@@ -75,6 +75,8 @@ class TestGenerator(unittest.TestCase):
         sframe.ui.spinBoxInfoLen.editingFinished.emit()
         sframe.ui.spinBoxCenterOffset.setValue(0.1)
         sframe.ui.spinBoxCenterOffset.editingFinished.emit()
+        sframe.ui.spinBoxTolerance.setValue(6)
+        sframe.ui.spinBoxTolerance.editingFinished.emit()
         sframe.refresh()
 
         gen_proto = sframe.ui.txtEdProto.toPlainText()

@@ -438,7 +438,7 @@ class SimulatorScene(QGraphicsScene):
         elif action == addRuleAction:
             self.add_rule()
         elif action == addMessageAction:
-            simulator_message = MessageItem(source, destination, self)
+            simulator_message = MessageItem(self.not_assigned_part, self.broadcast_part)
             self.items.append(simulator_message)
             self.addItem(simulator_message)
         elif action in message_type_actions:

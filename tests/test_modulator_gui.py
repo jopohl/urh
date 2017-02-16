@@ -114,6 +114,7 @@ class TestModulatorGUI(unittest.TestCase):
         index = tree_model.createIndex(0, 0, item)
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.LeftButton, pos=rect.center())
+        tree_view.selectAll()
         self.assertEqual(tree_view.selectedIndexes()[0], index)
         mime_data = tree_model.mimeData(tree_view.selectedIndexes())
         drag_drop = QDropEvent(rect.center(), Qt.CopyAction|Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)

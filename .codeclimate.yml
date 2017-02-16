@@ -8,7 +8,7 @@ engines:
   fixme:
     enabled: true
   radon:
-    enabled: false  # cyclomatic complexity checks
+    enabled: true  # cyclomatic complexity checks
 ratings:
   paths:
   - "**.inc"

@@ -288,6 +288,9 @@ class MessageItem(QGraphicsItem):
             if self.destination == particpnt:
                 continue
 
+            if particpnt == scene.broadcast_part:
+                continue
+
             pa = source_menu.addAction(particpnt.text.toPlainText())
             pa.setCheckable(True)
             pa.setActionGroup(sourcegroup)
@@ -305,9 +308,6 @@ class MessageItem(QGraphicsItem):
             if self.source == particpnt:
                 continue
 
-            if particpnt == scene.broadcast_part:
-                continue
-
             pa = destination_menu.addAction(particpnt.text.toPlainText())
             pa.setCheckable(True)
             pa.setActionGroup(destinationgroup)
@@ -318,7 +318,9 @@ class MessageItem(QGraphicsItem):
             destination_actions[pa] = particpnt
 
         swapPartAction = QAction("Swap source and destination")
-        menu.addAction(swapPartAction)
+
+        if self.destination != scene.broadcast_part:
+            menu.addAction(swapPartAction)
 
         action = menu.exec_(event.screenPos())
 

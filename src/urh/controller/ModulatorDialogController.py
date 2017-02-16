@@ -260,8 +260,16 @@ class ModulatorDialogController(QDialog):
         self.ui.chkBoxLockSIV.setEnabled(True)
         self.ui.btnAutoDetect.setEnabled(True)
         self.protocol = protocol
+
+        # Apply bit length of original signal to current modulator
         self.ui.spinBoxBitLength.setValue(self.ui.gVOriginalSignal.signal.bit_len)
         self.ui.spinBoxBitLength.editingFinished.emit()
+
+        # https://github.com/jopohl/urh/issues/130
+        self.ui.gVModulated.show_full_scene(reinitialize=True)
+        self.ui.gVCarrier.show_full_scene(reinitialize=True)
+        self.ui.gVData.show_full_scene(reinitialize=True)
+
         self.unsetCursor()
 
     def mark_samples_in_view(self):

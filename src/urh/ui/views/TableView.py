@@ -13,6 +13,10 @@ class TableView(QTableView):
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
+    @property
+    def selection_is_empty(self) -> bool:
+        return self.selectionModel().selection().isEmpty()
+
     def selection_range(self):
         """
         :rtype: int, int, int, int
@@ -20,7 +24,7 @@ class TableView(QTableView):
         selected = self.selectionModel().selection()
         """:type: QItemSelection """
 
-        if selected.isEmpty():
+        if self.selection_is_empty:
             return -1, -1, -1, -1
 
         min_row = numpy.min([rng.top() for rng in selected])

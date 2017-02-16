@@ -143,30 +143,33 @@ class GeneratorTableView(TableView):
         pos = event.pos()
         min_row, max_row, start, end = self.selection_range()
 
-        selected_label_indx = self.model().get_selected_label_index(row=self.rowAt(event.pos().y()),column=self.columnAt(event.pos().x()))
+        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(event.pos().y()),column=self.columnAt(event.pos().x()))
 
         if self.model().row_count > 0:
-            if selected_label_indx == -1:
-                fuzzingAction = menu.addAction("Create Fuzzing Label...")
+            if selected_label_index == -1:
+                fuzzing_action = menu.addAction("Create Fuzzing Label...")
             else:
-                fuzzingAction = menu.addAction("Edit Fuzzing Label...")
+                fuzzing_action = menu.addAction("Edit Fuzzing Label...")
 
             menu.addSeparator()
 
             column_menu = menu.addMenu("Add column")
 
-            insertColLeft = column_menu.addAction("on the left")
-            insertColRight = column_menu.addAction("on the right")
+            insert_column_left_action = column_menu.addAction("on the left")
+            insert_column_right_action = column_menu.addAction("on the right")
 
-            duplicateAction = menu.addAction("Duplicate Line")
+            duplicate_action = menu.addAction("Duplicate Line")
 
             menu.addSeparator()
-            clearAction = menu.addAction("Clear Table")
+            clear_action = menu.addAction("Clear Table")
 
         else:
-            insertColLeft, insertColRight, duplicateAction, clearAction, fuzzingAction = 1, 1, 1, 1, 1
+            insert_column_left_action, insert_column_right_action, duplicate_action, clear_action, fuzzing_action = 1, 1, 1, 1, 1
 
-        selected_rows = list(range(min_row, max_row + 1))
+        if not self.selection_is_empty:
+            selected_rows = list(range(min_row, max_row + 1))
+        else:
+            selected_rows = []
         encoding_actions = {}
         if selected_rows:
             selected_encoding = self.model().protocol.messages[selected_rows[0]].decoder
@@ -189,19 +192,19 @@ class GeneratorTableView(TableView):
                 encoding_actions[ea] = decoding
 
         action = menu.exec_(self.mapToGlobal(pos))
-        if action == fuzzingAction:
-            if selected_label_indx == -1:
+        if action == fuzzing_action:
+            if selected_label_index == -1:
                 self.create_fuzzing_label_clicked.emit(min_row, start, end)
             else:
-                self.edit_fuzzing_label_clicked.emit(selected_label_indx)
-        elif action == clearAction:
+                self.edit_fuzzing_label_clicked.emit(selected_label_index)
+        elif action == clear_action:
             self.model().clear()
-        elif action == duplicateAction:
+        elif action == duplicate_action:
             row = self.rowAt(event.pos().y())
             self.model().duplicate_row(row)
-        elif action == insertColLeft:
+        elif action == insert_column_left_action:
             self.model().insert_column(start, selected_rows)
-        elif action == insertColRight:
+        elif action == insert_column_right_action:
             self.model().insert_column(end, selected_rows)
         elif action in encoding_actions:
             for row in selected_rows:

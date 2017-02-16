@@ -141,3 +141,24 @@ class TestSignalTabGUI(unittest.TestCase):
 
         os.remove(self.frame.signal.filename)
         os.remove(frame2.signal.filename)
+
+    def test_crop_and_save_signal(self):
+        self.frame.ui.gvSignal.selection_area.end = 4000
+        self.frame.ui.gvSignal.selection_area.start = 1000
+
+        self.assertEqual(self.frame.ui.gvSignal.selection_area.end, 4000)
+        self.assertEqual(self.frame.ui.gvSignal.selection_area.width, 3000)
+        self.frame.ui.gvSignal.sel_area_start_end_changed.emit(1000, 4000)
+
+        self.frame.ui.gvSignal.on_crop_action_triggered()
+        self.assertEqual(self.frame.signal.num_samples, 3000)
+        self.assertTrue(self.frame.signal.changed)
+
+        self.frame.signal.filename = os.path.join(QDir.tempPath(), "sig.complex")
+        self.assertFalse(os.path.isfile(self.frame.signal.filename))
+        self.frame.ui.btnSaveSignal.click()
+        self.form.close_signal_frame(self.frame)
+        QTest.qWait(50)
+        self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
+        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
+        os.remove(os.path.join(QDir.tempPath(), "sig.complex"))

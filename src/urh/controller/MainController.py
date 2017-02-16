@@ -172,7 +172,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.files_dropped.connect(self.on_files_dropped)
         self.compare_frame_controller.show_decoding_clicked.connect(self.on_show_decoding_dialog_triggered)
         self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(self.on_files_dropped_on_group)
-        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.refresh_participant_information)
+        self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.on_participant_changed)
         self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
         self.compare_frame_controller.show_config_field_types_triggered.connect(self.on_show_field_types_config_action_triggered)
 

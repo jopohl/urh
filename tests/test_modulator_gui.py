@@ -108,12 +108,14 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
+        #self.dialog.show()   # if on KDE
         tree_view = self.dialog.ui.treeViewSignals
         tree_model = tree_view.model()
         item = tree_model.rootItem.children[0].children[0]
         index = tree_model.createIndex(0, 0, item)
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.LeftButton, pos=rect.center())
+        tree_view.selectAll()
         self.assertEqual(tree_view.selectedIndexes()[0], index)
         mime_data = tree_model.mimeData(tree_view.selectedIndexes())
         drag_drop = QDropEvent(rect.center(), Qt.CopyAction|Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)

@@ -40,6 +40,7 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
     def test_table_selection(self):
         self.form.ui.tabWidget.setCurrentIndex(1)
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.ui.btnAnalyze.click()
 
         self.cfc.ui.tblViewProtocol.selectRow(1)
@@ -62,6 +63,7 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
     def test_search(self):
         search_str = "100110001"
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.ui.tblViewProtocol.clearSelection()
         self.cfc.ui.lineEditSearch.setText(search_str)
         self.cfc.ui.btnSearchSelectFilter.click()

@@ -1,4 +1,6 @@
+from PyQt5.QtCore import QItemSelection, pyqtSlot
 from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QHeaderView, QAction, QMenu, QActionGroup
 from PyQt5.QtGui import QKeySequence, QDropEvent, QIcon
 import numpy
@@ -20,7 +22,7 @@ class ProtocolTableView(TableView):
     edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
-    new_messagetype_clicked = pyqtSignal(list) # list of protocol messages
+    new_messagetype_clicked = pyqtSignal(list)  # list of protocol messages
     messagetype_selected = pyqtSignal(MessageType, list)
 
     def __init__(self, parent=None):
@@ -51,9 +53,9 @@ class ProtocolTableView(TableView):
         rows = set(i.row() for i in self.selectionModel().selectedIndexes())
         return [messages[i] for i in rows]
 
-    def selectionChanged(self, QItemSelection, QItemSelection_1):
+    def selectionChanged(self, selection_1: QItemSelection, selection_2: QItemSelection):
         self.selection_changed.emit()
-        super().selectionChanged(QItemSelection, QItemSelection_1)
+        super().selectionChanged(selection_1, selection_2)
 
     def dragMoveEvent(self, event):
         event.accept()
@@ -65,7 +67,8 @@ class ProtocolTableView(TableView):
         if len(event.mimeData().urls()) > 0:
             self.files_dropped.emit(event.mimeData().urls())
 
-    def set_ref_message(self, *args, y=None):
+    @pyqtSlot()
+    def set_ref_message(self, y=None):
         if self.model().refindex == -1:
             return
 
@@ -75,7 +78,8 @@ class ProtocolTableView(TableView):
         else:
             self.model().refindex = self.rowAt(y)
 
-    def hide_row(self, *args, row=None):
+    @pyqtSlot()
+    def hide_row(self, row=None):
         if row is None:
             rows = [index.row() for index in self.selectionModel().selectedIndexes()]
         else:
@@ -92,27 +96,27 @@ class ProtocolTableView(TableView):
         self.model().update()
         self.row_visibility_changed.emit()
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event: QContextMenuEvent):
         menu = QMenu()
 
-        viewgroup = QActionGroup(self)
-        viewmenu = menu.addMenu("View")
-        bitAction = viewmenu.addAction("Bits")
-        bitAction.setCheckable(True)
-        hexAction = viewmenu.addAction("Hex")
-        hexAction.setCheckable(True)
-        asciiAction = viewmenu.addAction("ASCII")
-        asciiAction.setCheckable(True)
-        bitAction.setActionGroup(viewgroup)
-        hexAction.setActionGroup(viewgroup)
-        asciiAction.setActionGroup(viewgroup)
+        view_group = QActionGroup(self)
+        view_menu = menu.addMenu("View")
+        bit_action = view_menu.addAction("Bits")
+        bit_action.setCheckable(True)
+        hex_action = view_menu.addAction("Hex")
+        hex_action.setCheckable(True)
+        ascii_action = view_menu.addAction("ASCII")
+        ascii_action.setCheckable(True)
+        bit_action.setActionGroup(view_group)
+        hex_action.setActionGroup(view_group)
+        ascii_action.setActionGroup(view_group)
 
         if self.model().proto_view == 0:
-            bitAction.setChecked(True)
+            bit_action.setChecked(True)
         elif self.model().proto_view == 1:
-            hexAction.setChecked(True)
+            hex_action.setChecked(True)
         elif self.model().proto_view == 2:
-            asciiAction.setChecked(True)
+            ascii_action.setChecked(True)
 
         menu.addSeparator()
         row = self.rowAt(event.pos().y())
@@ -123,58 +127,56 @@ class ProtocolTableView(TableView):
         row = self.rowAt(pos.y())
         min_row, max_row, start, end = self.selection_range()
         selected_messages = self.selected_messages
-        particpnt_actions = {}
+        participant_actions = {}
 
         if len(selected_messages) == 0:
             selected_participant = -1
             selected_message_type = -1
         else:
             selected_participant = selected_messages[0].participant
-            selected_message_type  = selected_messages[0].message_type
+            selected_message_type = selected_messages[0].message_type
             for message in selected_messages:
                 if selected_participant != message.participant:
                     selected_participant = -1
                 if selected_message_type != message.message_type:
-                    selected_message_type  = -1
+                    selected_message_type = -1
                 if selected_message_type == -1 and selected_participant == -1:
                     break
 
+        if self.model().participants and self.model().protocol and not self.selection_is_empty:
 
-        if self.model().participants and self.model().protocol and not self.selectionModel().selection().isEmpty():
-
-            partigroup = QActionGroup(self)
+            participant_group = QActionGroup(self)
             participant_menu = menu.addMenu("Participant")
-            none_partipnt_action = participant_menu.addAction("None")
-            none_partipnt_action.setCheckable(True)
-            none_partipnt_action.setActionGroup(partigroup)
+            none_participant_action = participant_menu.addAction("None")
+            none_participant_action.setCheckable(True)
+            none_participant_action.setActionGroup(participant_group)
 
             if selected_participant is None:
-                none_partipnt_action.setChecked(True)
+                none_participant_action.setChecked(True)
 
-            for particpnt in self.model().participants:
-                pa = participant_menu.addAction(particpnt.name + " (" + particpnt.shortname + ")")
+            for participant in self.model().participants:
+                pa = participant_menu.addAction(participant.name + " (" + participant.shortname + ")")
                 pa.setCheckable(True)
-                pa.setActionGroup(partigroup)
-                if selected_participant == particpnt:
+                pa.setActionGroup(participant_group)
+                if selected_participant == participant:
                     pa.setChecked(True)
 
-                particpnt_actions[pa] = particpnt
+                participant_actions[pa] = participant
         else:
-            none_partipnt_action = 42
+            none_participant_action = 42
 
         try:
-            selected_label = self.controller.get_labels_from_selection(row, row, cols[0],
-                                                                      cols[-1])[0]
-            editLabelAction = menu.addAction(self.tr("Edit Label ") + selected_label.name)
-
+            selected_label = self.controller.get_labels_from_selection(row, row, cols[0], cols[-1])[0]
+            edit_label_action = menu.addAction(self.tr("Edit Label ") + selected_label.name)
         except IndexError:
-            editLabelAction = 42
+            edit_label_action = 42
             selected_label = None
 
         menu.addSeparator()
 
-        createLabelAction = menu.addAction(self.tr("Add protocol label"))
-        createLabelAction.setIcon(QIcon.fromTheme("list-add"))
+        create_label_action = menu.addAction(self.tr("Add protocol label"))  # type: QAction
+        create_label_action.setIcon(QIcon.fromTheme("list-add"))
+        create_label_action.setEnabled(not self.selection_is_empty)
 
         message_type_menu = menu.addMenu(self.tr("Message type"))
         message_type_group = QActionGroup(self)
@@ -193,29 +195,29 @@ class ProtocolTableView(TableView):
 
         menu.addSeparator()
         if not self.model().is_writeable:
-            showInterpretationAction = menu.addAction(self.tr("Show in Interpretation"))
+            show_interpretation_action = menu.addAction(self.tr("Show in Interpretation"))
         else:
-            showInterpretationAction = 42
+            show_interpretation_action = 42
 
         menu.addSeparator()
         menu.addAction(self.hide_row_action)
         hidden_rows = self.model().hidden_rows
-        showRowAction = 42
+        show_row_action = 42
         if len(hidden_rows) > 0:
-            showRowAction = menu.addAction(self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows))))
+            show_row_action = menu.addAction(self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows))))
 
         if self.model().refindex != -1:
             menu.addAction(self.ref_message_action)
 
         menu.addSeparator()
         if self.model().is_writeable:
-            writeAbleAction = menu.addAction(self.tr("Writeable"))
-            writeAbleAction.setCheckable(True)
-            writeAbleAction.setChecked(True)
+            writeable_action = menu.addAction(self.tr("Writeable"))
+            writeable_action.setCheckable(True)
+            writeable_action.setChecked(True)
         else:
-            writeAbleAction = menu.addAction(self.tr("Writeable (decouples from signal)"))
-            writeAbleAction.setCheckable(True)
-            writeAbleAction.setChecked(False)
+            writeable_action = menu.addAction(self.tr("Writeable (decouples from signal)"))
+            writeable_action.setCheckable(True)
+            writeable_action.setChecked(False)
 
         menu.addSeparator()
         undo_stack = self.model().undo_stack
@@ -231,36 +233,35 @@ class ProtocolTableView(TableView):
         action = menu.exec_(self.mapToGlobal(pos))
         if action == self.ref_message_action:
             self.set_ref_message(y=pos.y())
-        elif action == editLabelAction:
+        elif action == edit_label_action:
             self.edit_label_clicked.emit(selected_label)
-        elif action == createLabelAction:
+        elif action == create_label_action:
             self.model().addProtoLabel(start, end - 1, row)
-        elif action == showInterpretationAction:
+        elif action == show_interpretation_action:
             self.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
-        elif action == showRowAction:
+        elif action == show_row_action:
             for i in hidden_rows:
                 self.showRow(i)
             self.model().hidden_rows.clear()
             self.model().update()
             self.row_visibility_changed.emit()
-        elif action == bitAction:
+        elif action == bit_action:
             self.protocol_view_change_clicked.emit(0)
-        elif action == hexAction:
+        elif action == hex_action:
             self.protocol_view_change_clicked.emit(1)
-        elif action == asciiAction:
+        elif action == ascii_action:
             self.protocol_view_change_clicked.emit(2)
-        elif action == writeAbleAction:
-            self.writeable_changed.emit(writeAbleAction.isChecked())
-        elif action == none_partipnt_action:
+        elif action == writeable_action:
+            self.writeable_changed.emit(writeable_action.isChecked())
+        elif action == none_participant_action:
             for message in selected_messages:
                 message.participant = None
             self.participant_changed.emit()
-        elif action in particpnt_actions:
+        elif action in participant_actions:
             for message in selected_messages:
-                message.participant = particpnt_actions[action]
+                message.participant = participant_actions[action]
             self.participant_changed.emit()
         elif action == new_message_type_action:
             self.new_messagetype_clicked.emit(selected_messages)
         elif action in message_type_actions:
             self.messagetype_selected.emit(message_type_actions[action], selected_messages)
-

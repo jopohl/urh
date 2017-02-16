@@ -34,6 +34,7 @@ class TestGenerator(unittest.TestCase):
         sframe.ui.spinBoxInfoLen.setValue(295)
         sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
         sframe.refresh()
+        sframe.ui.cbProtoView.setCurrentIndex(0)
 
         proto = "1011001001011011011011011011011011001000000"
         self.assertTrue(sframe.ui.txtEdProto.toPlainText().startswith(proto))
@@ -69,6 +70,7 @@ class TestGenerator(unittest.TestCase):
         # Reload datafile and see if bits match
         self.form.add_signalfile(filename)
         sframe = self.form.signal_tab_controller.signal_frames[1]
+        sframe.ui.cbProtoView.setCurrentIndex(0)
         self.assertEqual(sframe.ui.lineEditSignalName.text(), "generator_test")
         sframe.ui.cbSignalView.setCurrentIndex(1)  # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)

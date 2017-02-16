@@ -305,6 +305,9 @@ class MessageItem(QGraphicsItem):
             if self.source == particpnt:
                 continue
 
+            if particpnt == scene.broadcast_part:
+                continue
+
             pa = destination_menu.addAction(particpnt.text.toPlainText())
             pa.setCheckable(True)
             pa.setActionGroup(destinationgroup)

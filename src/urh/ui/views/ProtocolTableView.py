@@ -22,7 +22,7 @@ class ProtocolTableView(TableView):
     edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
-    new_messagetype_clicked = pyqtSignal(list) # list of protocol messages
+    new_messagetype_clicked = pyqtSignal(list)  # list of protocol messages
     messagetype_selected = pyqtSignal(MessageType, list)
 
     def __init__(self, parent=None):
@@ -134,16 +134,16 @@ class ProtocolTableView(TableView):
             selected_message_type = -1
         else:
             selected_participant = selected_messages[0].participant
-            selected_message_type  = selected_messages[0].message_type
+            selected_message_type = selected_messages[0].message_type
             for message in selected_messages:
                 if selected_participant != message.participant:
                     selected_participant = -1
                 if selected_message_type != message.message_type:
-                    selected_message_type  = -1
+                    selected_message_type = -1
                 if selected_message_type == -1 and selected_participant == -1:
                     break
 
-        if self.model().participants and self.model().protocol and not self.selectionModel().selection().isEmpty():
+        if self.model().participants and self.model().protocol and not self.selection_is_empty:
 
             participant_group = QActionGroup(self)
             participant_menu = menu.addMenu("Participant")

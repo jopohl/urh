@@ -1,19 +1,28 @@
+import socket
 import unittest
+
+import numpy as np
+from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
-from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
-from urh.dev.VirtualDevice import Mode
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 
 app = tests.utils_testing.app
 
 
 class TestSendRecvDialog(unittest.TestCase):
     def setUp(self):
+        constants.SETTINGS.setValue("NetworkSDRInterface", True)
+        network_sdr_plugin = NetworkSDRInterfacePlugin()
+        network_sdr_plugin.qsettings.setValue("client_port", 2222)
+        network_sdr_plugin.qsettings.setValue("server_port", 2222)
+
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
@@ -22,13 +31,13 @@ class TestSendRecvDialog(unittest.TestCase):
 
         project_manager = self.form.project_manager
         self.receive_dialog = ReceiveDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                       project_manager.bandwidth, project_manager.gain,
-                                                       project_manager.device, testing_mode=True)
+                                                      project_manager.bandwidth, project_manager.gain,
+                                                      project_manager.device, testing_mode=True)
 
         self.send_dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                    project_manager.bandwidth, project_manager.gain,
-                                                    project_manager.device,
-                                                    modulated_data=self.signal.data, testing_mode=True)
+                                                project_manager.bandwidth, project_manager.gain,
+                                                project_manager.device,
+                                                modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
 
         self.spectrum_dialog = SpectrumDialogController(project_manager.frequency, project_manager.sample_rate,
@@ -36,6 +45,44 @@ class TestSendRecvDialog(unittest.TestCase):
                                                         project_manager.device, testing_mode=True)
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog]
+
+    def test_network_sdr_enabled(self):
+        for dialog in self.dialogs:
+            items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
+            if isinstance(dialog, SpectrumDialogController):
+                self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
+            else:
+                self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
+
+    def test_receive(self):
+        self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.receive_dialog.ui.btnStart.click()
+        network_sdr_plugin = NetworkSDRInterfacePlugin()
+        data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(("127.0.0.1", network_sdr_plugin.server_port))
+        sock.sendall(data.tostring())
+        sock.close()
+
+        QTest.qWait(100)
+
+        self.assertEqual(self.receive_dialog.device.current_index, 3)
+        self.assertEqual(self.receive_dialog.device.data[:3].all(), data.all())
+
+        self.receive_dialog.ui.btnStop.click()
+
+    def test_send(self):
+        self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.receive_dialog.ui.btnStart.click()
+
+        self.send_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.send_dialog.ui.spinBoxNRepeat.setValue(2)
+        self.send_dialog.ui.btnStart.click()
+        QTest.qWait(500)
+
+        self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
+        self.assertEqual(self.receive_dialog.device.data.all(), self.signal.data.all())
 
     def test_send_dialog_scene_zoom(self):
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)

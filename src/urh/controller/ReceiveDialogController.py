@@ -17,6 +17,8 @@ class ReceiveDialogController(SendRecvDialogController):
         self.is_rx = True
         super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
 
+        self.update_interval = 25
+
         self.graphics_view = self.ui.graphicsViewReceive
         self.ui.stackedWidget.setCurrentIndex(0)
         self.hide_send_ui_items()
@@ -46,8 +48,7 @@ class ReceiveDialogController(SendRecvDialogController):
             elif reply == QMessageBox.Abort:
                 return False
 
-            self.files_recorded.emit(self.recorded_files)
-
+        self.files_recorded.emit(self.recorded_files)
         return True
 
     def update_view(self):

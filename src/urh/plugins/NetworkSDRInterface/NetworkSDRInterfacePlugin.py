@@ -2,6 +2,9 @@ import socketserver
 import threading
 
 import time
+
+import numpy as np
+import psutil
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
@@ -23,19 +26,31 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
-            self.data = self.request.recv(1024)
+            received = self.request.recv(4096)
+            self.data = received
+            while received:
+                received = self.request.recv(4096)
+                self.data += received
             #print("{} wrote:".format(self.client_address[0]))
             #print(self.data)
-            self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
+            if hasattr(self.server, "received_bits"):
+                self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
+            else:
+                received = np.frombuffer(self.data, dtype=np.complex64)
+                self.server.receive_buffer[self.server.current_receive_index:self.server.current_receive_index+len(received)] = received
+                self.server.current_receive_index += len(received)
 
-    def __init__(self):
+    def __init__(self, raw_mode=False):
+        """
+
+        :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
+        """
         super().__init__(name="NetworkSDRInterface")
         self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
-        #self.server_ip = self.qsettings.value("server_ip", defaultValue="", type=str)
         self.server_ip = ""
 
-        self.client_port = self.qsettings.value("client_port", defaultValue=1338, type=int)
-        self.server_port = self.qsettings.value("server_port", defaultValue=1337, type=int)
+        self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
+        self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
 
         self.receive_check_timer = QTimer()
         self.receive_check_timer.setInterval(250)
@@ -45,7 +60,16 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.__is_sending = False
         self.__sending_interrupt_requested = False
 
-        self.received_bits = []
+        self.sending_repeats = 1  # only used in raw mode
+        self.current_sent_sample = 0
+
+        self.raw_mode = raw_mode
+        if self.raw_mode:
+            # Take 60% of avail memory
+            num_samples = 0.6*(psutil.virtual_memory().free / 8)
+            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
+        else:
+            self.received_bits = []
 
     @property
     def is_sending(self) -> bool:
@@ -57,14 +81,28 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
 
+    @property
+    def received_data(self):
+        if self.raw_mode:
+            return self.receive_buffer[:self.current_receive_index]
+        else:
+            return self.received_bits
+
+    @property
+    def current_receive_index(self):
+        if hasattr(self.server, "current_receive_index"):
+            return self.server.current_receive_index
+        else:
+            return 0
+
+    def free_data(self):
+        if self.raw_mode:
+            self.receive_buffer = np.empty(0)
+        else:
+            self.received_bits[:] = []
+
     def create_connects(self):
-        #ip_regex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-
-        #self.settings_frame.lineEditClientIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
-        #self.settings_frame.lineEditServerIP.setValidator(QRegExpValidator(QRegExp(ip_regex)))
-
         self.settings_frame.lineEditClientIP.setText(self.client_ip)
-        #self.settings_frame.lineEditServerIP.setText(self.server_ip)
         self.settings_frame.spinBoxClientPort.setValue(self.client_port)
         self.settings_frame.spinBoxServerPort.setValue(self.server_port)
 
@@ -76,10 +114,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     def start_tcp_server_for_receiving(self):
-        print("Server ip:", self.server_ip)
         self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler,
                                              bind_and_activate=False)
-        self.server.received_bits = self.received_bits
+        if self.raw_mode:
+            self.server.receive_buffer = self.receive_buffer
+            self.server.current_receive_index = 0
+        else:
+            self.server.received_bits = self.received_bits
 
         self.server.allow_reuse_address = True  # allow reusing addresses if the server is stopped and started again
         self.server.server_bind()      # only necessary, because we disabled bind_and_activate above
@@ -98,7 +139,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.server_thread.join()
         self.receive_check_timer.stop()
 
-    def send_data(self, data: bytearray) -> str:
+    def send_data(self, data) -> str:
         # Create a socket (SOCK_STREAM means a TCP socket)
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -108,6 +149,20 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 return ""
         except Exception as e:
             return str(e)
+
+    def send_raw_data(self, data: np.ndarray, num_repeats: int):
+        byte_data = data.tostring()
+
+        if num_repeats == -1:
+            # forever
+            rng = iter(int, 1)
+        else:
+            rng = range(0, num_repeats)
+
+        for _ in rng:
+            self.send_data(byte_data)
+            self.current_sent_sample = len(data)
+
 
     def __send_messages(self, messages, sample_rates):
         """
@@ -140,7 +195,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         logger.debug("Sending finished")
         self.is_sending = False
 
-    def start_sending_thread(self, messages, sample_rates):
+    def start_message_sending_thread(self, messages, sample_rates):
         """
 
         :type messages: list of Message
@@ -151,6 +206,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         """
         self.__sending_interrupt_requested = False
         self.sending_thread = threading.Thread(target=self.__send_messages, args=(messages, sample_rates))
+        self.sending_thread.daemon = True
+        self.sending_thread.start()
+
+    def start_raw_sending_thread(self):
+        self.__sending_interrupt_requested = False
+        self.sending_thread = threading.Thread(target=self.send_raw_data, args=(self.samples_to_send, self.sending_repeats))
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
@@ -188,7 +249,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.qsettings.setValue('server_port', str(self.server_port))
 
     def __emit_rcv_index_changed(self):
-        if self.received_bits:
+        # for updating received bits in protocol sniffer
+        if hasattr(self, "received_bits") and self.received_bits:
             self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
 
     @pyqtSlot(str)

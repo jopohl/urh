@@ -538,7 +538,7 @@ class GeneratorTabController(QWidget):
         if not self.network_sdr_plugin.is_sending:
             messages = self.table_model.protocol.messages
             sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
-            self.network_sdr_plugin.start_sending_thread(messages, sample_rates)
+            self.network_sdr_plugin.start_message_sending_thread(messages, sample_rates)
         else:
             self.network_sdr_plugin.stop_sending_thread()
 

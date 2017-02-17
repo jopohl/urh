@@ -9,8 +9,6 @@ from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator
 
@@ -20,6 +18,7 @@ class SendDialogController(SendRecvDialogController):
         self.is_tx = True
         super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
 
+        self.update_interval = 25
         self.graphics_view = self.ui.graphicsViewSend
         self.ui.stackedWidget.setCurrentIndex(1)
         self.hide_receive_ui_items()
@@ -31,12 +30,6 @@ class SendDialogController(SendRecvDialogController):
         self.ui.progressBar.setMaximum(len(modulated_data))
 
         self.device_is_sending = False
-
-        if PluginManager().is_plugin_enabled("NetworkSDRInterface"):
-            self.ui.cbDevice.addItem(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-
-        if device == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
-            self.ui.cbDevice.setCurrentText(device)
 
         signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
         self.scene_manager = SignalSceneManager(signal, parent=self)
@@ -69,6 +62,10 @@ class SendDialogController(SendRecvDialogController):
     def update_view(self):
         if super().update_view():
             self.__update_send_indicator(self.device.current_index)
+            if not self.device.sending_finished:
+                self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
+            else:
+                self.ui.lblCurrentRepeatValue.setText("Done")
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()

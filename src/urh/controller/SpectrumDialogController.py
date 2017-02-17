@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot
 from urh.FFTSceneManager import FFTSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 
 
 class SpectrumDialogController(SendRecvDialogController):
@@ -22,6 +23,12 @@ class SpectrumDialogController(SendRecvDialogController):
 
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
+
+        # do not use network sdr plugin for spectrum analysis
+        index = next((i for i in range(self.ui.cbDevice.count())
+                      if self.ui.cbDevice.itemText(i) == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME), None)
+        if index is not None:
+            self.ui.cbDevice.removeItem(index)
 
         self.init_device()
 

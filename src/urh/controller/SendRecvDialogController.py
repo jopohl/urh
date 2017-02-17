@@ -12,6 +12,7 @@ from urh import constants
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
@@ -103,6 +104,10 @@ class SendRecvDialogController(QDialog):
                 items.append(device_name)
             elif hasattr(self, "is_rx") and dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
+
+        if PluginManager().is_plugin_enabled("NetworkSDRInterface"):
+            items.append(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+
         return items
 
     def create_connects(self):
@@ -174,12 +179,6 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_selected_device_changed(self):
         dev_name = self.ui.cbDevice.currentText()
-        if dev_name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
-            self.ui.cbDevice.blockSignals(True)
-            self.ui.cbDevice.setCurrentText(self.device.name)
-            self.ui.cbDevice.blockSignals(False)
-            Errors.network_sdr_send_is_elsewhere()
-            return
 
         self.init_device()
 
@@ -267,10 +266,6 @@ class SendRecvDialogController(QDialog):
         self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
         self.ui.lSignalSize.setText("{0:n}".format((8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
-        if not self.device.sending_finished:
-            self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
-        else:
-            self.ui.lblCurrentRepeatValue.setText("Done")
 
         if self.device.current_index == 0:
             return False

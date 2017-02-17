@@ -68,7 +68,7 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(100)
 
         self.assertEqual(self.receive_dialog.device.current_index, 3)
-        self.assertEqual(self.receive_dialog.device.data[:3].all(), data.all())
+        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
 
         self.receive_dialog.ui.btnStop.click()
 
@@ -82,7 +82,8 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(500)
 
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
-        self.assertEqual(self.receive_dialog.device.data.all(), self.signal.data.all())
+        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index//2],
+                                       self.signal.data))
 
     def test_send_dialog_scene_zoom(self):
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)

@@ -81,6 +81,17 @@ class RuleConditionItem(QGraphicsItem):
         self.items = []
         self.rect = QRectF()
 
+        self.setAcceptHoverEvents(True)
+        self.hover_active = False
+
+    def hoverEnterEvent(self, event):
+        self.hover_active = True
+        super().update()
+
+    def hoverLeaveEvent(self, event):
+        self.hover_active = False
+        super().update()
+
     def update(self, y_pos):
         if not self.scene() or len(self.scene().participants) < 2:
             return
@@ -104,7 +115,10 @@ class RuleConditionItem(QGraphicsItem):
         return self.rect
 
     def paint(self, painter, option, widget):
-        #painter.setBrush(QColor.fromRgb(61,67,67,125))
+        if self.hover_active or self.isSelected():
+            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setBrush(constants.SELECTION_COLOR)
+
         painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
         painter.drawRect(self.boundingRect())
 
@@ -216,13 +230,13 @@ class ParticipantItem(QGraphicsItem):
 class MessageItem(QGraphicsItem):
     def __init__(self, source, destination, parent=None):
         super().__init__(parent)
-        self.setFlags(QGraphicsItem.ItemIsSelectable)
+        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsPanel)
         self.arrow = MessageArrowItem(self)
         self.source = source
         self.destination = destination
         self.labels = []
-        self.setAcceptHoverEvents(True)
         self.hover_active = False
+        self.setAcceptHoverEvents(True)
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
@@ -265,7 +279,6 @@ class MessageItem(QGraphicsItem):
 
     def paint(self, painter, option, widget):
         if self.hover_active or self.isSelected():
-            rect = self.boundingRect()
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)
             painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
@@ -464,7 +477,7 @@ class SimulatorScene(QGraphicsScene):
         for item in self.items[:]:
             if type(item) == MessageItem and item in items:
                 self.items.remove(item)
-            elif type(item) == RuleItem:
+            elif type(item) == RuleItem :
                 item.delete_items(items)
 
         for item in items:

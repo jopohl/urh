@@ -1,23 +1,20 @@
 import os
 import random
+import string
 
 import numpy
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel, QTableWidgetItem
-from urh import constants
+from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 
-from urh.controller.SendRecvDialogController import SendRecvDialogController
-from urh.dev.VirtualDevice import Mode
+from urh import constants
+from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.signalprocessing.Participant import Participant
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_project import Ui_ProjectDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
-
-import string
-
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -34,10 +31,10 @@ class ProjectDialogController(QDialog):
             self.beginResetModel()
             self.endResetModel()
 
-        def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
+        def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
             return len(self.header_labels)
 
-        def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
+        def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
             return len(self.participants)
 
         def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -277,8 +274,8 @@ class ProjectDialogController(QDialog):
     @pyqtSlot(str)
     def on_spectrum_analyzer_link_activated(self, link: str):
         if link == "open_spectrum_analyzer":
-            r = SendRecvDialogController(freq=self.freq, bw=self.bandwidth, samp_rate=self.sample_rate,
-                                         gain=self.gain, device="", mode=Mode.spectrum, parent=self)
+            r = SpectrumDialogController(freq=self.freq, bw=self.bandwidth, samp_rate=self.sample_rate,
+                                         gain=self.gain, device="", parent=self)
             if r.has_empty_device_list:
                 Errors.no_device()
                 r.close()

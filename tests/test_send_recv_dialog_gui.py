@@ -3,7 +3,10 @@ import unittest
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.controller.ReceiveDialogController import ReceiveDialogController
+from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SendRecvDialogController import SendRecvDialogController
+from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.dev.VirtualDevice import Mode
 
 app = tests.utils_testing.app
@@ -18,19 +21,19 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
         project_manager = self.form.project_manager
-        self.receive_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
+        self.receive_dialog = ReceiveDialogController(project_manager.frequency, project_manager.sample_rate,
                                                        project_manager.bandwidth, project_manager.gain,
-                                                       project_manager.device, Mode.receive, testing_mode=True)
+                                                       project_manager.device, testing_mode=True)
 
-        self.send_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
+        self.send_dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
                                                     project_manager.bandwidth, project_manager.gain,
                                                     project_manager.device,
-                                                    Mode.send, modulated_data=self.signal.data, testing_mode=True)
+                                                    modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
 
-        self.spectrum_dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
+        self.spectrum_dialog = SpectrumDialogController(project_manager.frequency, project_manager.sample_rate,
                                                         project_manager.bandwidth, project_manager.gain,
-                                                        project_manager.device, Mode.spectrum, testing_mode=True)
+                                                        project_manager.device, testing_mode=True)
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog]
 
@@ -62,10 +65,10 @@ class TestSendRecvDialog(unittest.TestCase):
     def test_change_device_parameters(self):
         for dialog in self.dialogs:
             dialog.ui.cbDevice.setCurrentText("HackRF")
-            self.assertEqual(dialog.device.name, "HackRF", msg=dialog.mode)
+            self.assertEqual(dialog.device.name, "HackRF", msg=type(dialog))
 
             dialog.ui.cbDevice.setCurrentText("USRP")
-            self.assertEqual(dialog.device.name, "USRP", msg=dialog.mode)
+            self.assertEqual(dialog.device.name, "USRP", msg=type(dialog))
 
             dialog.ui.lineEditIP.setText("1.3.3.7")
             dialog.ui.lineEditIP.editingFinished.emit()
@@ -92,7 +95,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
             dialog.ui.spinBoxNRepeat.setValue(10)
             dialog.ui.spinBoxNRepeat.editingFinished.emit()
-            if dialog.mode == Mode.send:
+            if isinstance(dialog, SendDialogController):
                 self.assertEqual(dialog.device.num_sending_repeats, 10)
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)

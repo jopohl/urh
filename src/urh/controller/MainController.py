@@ -2,8 +2,8 @@ import copy
 import os
 import traceback
 
-from PyQt5.QtCore import pyqtSignal, QDir, Qt, pyqtSlot, QFileInfo, QTimer
-from PyQt5.QtGui import QIcon, QResizeEvent, QCloseEvent
+from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
+from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication
@@ -16,13 +16,14 @@ from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.OptionsController import OptionsController
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.SendRecvDialogController import SendRecvDialogController, Mode
+from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
+from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
-from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
+from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
@@ -35,7 +36,6 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class MainController(QMainWindow):
-
     def __init__(self, *args):
         super().__init__(*args)
         self.ui = Ui_MainWindow()
@@ -47,7 +47,7 @@ class MainController(QMainWindow):
         self.project_manager = ProjectManager(self)
         self.plugin_manager = PluginManager()
         self.signal_tab_controller = SignalTabController(self.project_manager,
-                                                                         parent=self.ui.tab_interpretation)
+                                                         parent=self.ui.tab_interpretation)
         self.ui.tab_interpretation.layout().addWidget(self.signal_tab_controller)
         self.compare_frame_controller = CompareFrameController(parent=self.ui.tab_protocol,
                                                                plugin_manager=self.plugin_manager,
@@ -168,13 +168,16 @@ class MainController(QMainWindow):
         self.signal_tab_controller.files_dropped.connect(self.on_files_dropped)
         self.signal_tab_controller.frame_was_dropped.connect(self.set_frame_numbers)
 
-        self.compare_frame_controller.show_interpretation_clicked.connect(self.show_protocol_selection_in_interpretation)
+        self.compare_frame_controller.show_interpretation_clicked.connect(
+            self.show_protocol_selection_in_interpretation)
         self.compare_frame_controller.files_dropped.connect(self.on_files_dropped)
         self.compare_frame_controller.show_decoding_clicked.connect(self.on_show_decoding_dialog_triggered)
-        self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(self.on_files_dropped_on_group)
+        self.compare_frame_controller.ui.treeViewProtocols.files_dropped_on_group.connect(
+            self.on_files_dropped_on_group)
         self.compare_frame_controller.participant_changed.connect(self.signal_tab_controller.on_participant_changed)
         self.compare_frame_controller.ui.treeViewProtocols.close_wanted.connect(self.on_cfc_close_wanted)
-        self.compare_frame_controller.show_config_field_types_triggered.connect(self.on_show_field_types_config_action_triggered)
+        self.compare_frame_controller.show_config_field_types_triggered.connect(
+            self.on_show_field_types_config_action_triggered)
 
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 
@@ -216,8 +219,8 @@ class MainController(QMainWindow):
     def add_signalfile(self, filename: str, group_id=0):
         if not os.path.exists(filename):
             QMessageBox.critical(self, self.tr("File not Found"),
-                                       self.tr("The file {0} could not be found. Was it moved or renamed?").format(
-                                           filename))
+                                 self.tr("The file {0} could not be found. Was it moved or renamed?").format(
+                                     filename))
             return
 
         alrdy_qad_demod = False
@@ -283,7 +286,8 @@ class MainController(QMainWindow):
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
-            self.project_manager.write_signal_information_to_project_file(signal_frame.signal, signal_frame.proto_analyzer.messages)
+            self.project_manager.write_signal_information_to_project_file(signal_frame.signal,
+                                                                          signal_frame.proto_analyzer.messages)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
             except KeyError:
@@ -537,7 +541,7 @@ class MainController(QMainWindow):
     @pyqtSlot(str)
     def on_file_tree_filter_text_changed(self, text: str):
         if len(text) > 0:
-            self.filemodel.setNameFilters(["*"+text+"*"])
+            self.filemodel.setNameFilters(["*" + text + "*"])
         else:
             self.filemodel.setNameFilters(["*"])
 
@@ -573,10 +577,9 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
-        r = SendRecvDialogController(pm.frequency, pm.sample_rate,
-                                     pm.bandwidth, pm.gain,
-                                     pm.device, Mode.receive,
-                                     parent=self)
+        r = ReceiveDialogController(pm.frequency, pm.sample_rate,
+                                    pm.bandwidth, pm.gain,
+                                    pm.device, parent=self)
         if r.has_empty_device_list:
             Errors.no_device()
             r.close()
@@ -619,9 +622,9 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_spectrum_dialog_action_triggered(self):
         pm = self.project_manager
-        r = SendRecvDialogController(pm.frequency, pm.sample_rate,
+        r = SpectrumDialogController(pm.frequency, pm.sample_rate,
                                      pm.bandwidth, pm.gain, pm.device,
-                                     Mode.spectrum, parent=self)
+                                     parent=self)
         if r.has_empty_device_list:
             Errors.no_device()
             r.close()
@@ -732,7 +735,7 @@ class MainController(QMainWindow):
     def on_cfc_close_wanted(self, protocols: list):
         frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
         if len(frames) != len(protocols):
-            logger.error("failed to close {} protocols".format(len(protocols)-len(frames)))
+            logger.error("failed to close {} protocols".format(len(protocols) - len(frames)))
 
         for frame in frames:
             self.close_signal_frame(frame)

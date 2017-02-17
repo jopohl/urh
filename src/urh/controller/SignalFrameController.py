@@ -8,14 +8,13 @@ from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGrid
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
-from urh.controller.SendRecvDialogController import SendRecvDialogController, Mode
+from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
-from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util import FontHelper
@@ -587,9 +586,9 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
-        dialog = SendRecvDialogController(project_manager.frequency, project_manager.sample_rate,
-                                          project_manager.bandwidth, project_manager.gain, project_manager.device,
-                                          Mode.send, modulated_data=self.signal.data, parent=self)
+        dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
+                                      project_manager.bandwidth, project_manager.gain, project_manager.device,
+                                      modulated_data=self.signal.data, parent=self)
         if dialog.has_empty_device_list:
             Errors.no_device()
             dialog.close()

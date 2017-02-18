@@ -23,9 +23,6 @@ app = tests.utils_testing.app
 class TestSendRecvDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
-        network_sdr_plugin = NetworkSDRInterfacePlugin()
-        network_sdr_plugin.qsettings.setValue("client_port", 2222)
-        network_sdr_plugin.qsettings.setValue("server_port", 2222)
 
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
@@ -68,12 +65,13 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_receive(self):
         self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.receive_dialog.device.set_server_port(2222)
         self.receive_dialog.ui.btnStart.click()
-        network_sdr_plugin = NetworkSDRInterfacePlugin()
+
         data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(("127.0.0.1", network_sdr_plugin.server_port))
+        sock.connect(("127.0.0.1", 2222))
         sock.sendall(data.tostring())
         sock.close()
 
@@ -86,9 +84,11 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_send(self):
         self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.receive_dialog.device.set_server_port(3333)
         self.receive_dialog.ui.btnStart.click()
 
         self.send_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.send_dialog.device.set_client_port(3333)
         self.send_dialog.ui.spinBoxNRepeat.setValue(2)
         self.send_dialog.ui.btnStart.click()
         QTest.qWait(500)
@@ -112,6 +112,9 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.assertEqual(self.sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+
+        self.sniff_dialog.device.set_server_port(4444)
+        self.sniff_dialog.device.set_client_port(4444)
 
         self.sniff_dialog.ui.btnStart.click()
         gframe.ui.btnNetworkSDRSend.click()

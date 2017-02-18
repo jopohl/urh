@@ -422,3 +422,15 @@ class VirtualDevice(QObject):
             return ""
         else:
             raise ValueError("Unsupported Backend")
+
+    def set_server_port(self, port: int):
+        if self.backend == Backends.network:
+            self.__dev.server_port = port
+        else:
+            raise ValueError("Setting port only supported for NetworkSDR Plugin")
+
+    def set_client_port(self, port: int):
+        if self.backend == Backends.network:
+            self.__dev.client_port = port
+        else:
+            raise ValueError("Setting port only supported for NetworkSDR Plugin")

@@ -1,17 +1,10 @@
-from PyQt5.QtCore import Qt, pyqtSlot, QRegExp, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator, QCloseEvent, QIcon
-from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
-from urh.dev.BackendHandler import BackendHandler
-
-from urh import constants
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.ui.ui_proto_sniff import Ui_SniffProtocol
-from urh.util.Errors import Errors
-from urh.util.Logger import logger
 
 
 class ProtocolSniffDialogController(SendRecvDialogController):
@@ -188,7 +181,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        self.ui.txtEdPreview.appendPlainText(self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False))
+        self.ui.txtEdPreview.appendPlainText(
+            self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False))
         self.ui.txtEdPreview.verticalScrollBar().setValue(self.ui.txtEdPreview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)

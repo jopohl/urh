@@ -8,6 +8,7 @@ import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
+from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
@@ -44,7 +45,15 @@ class TestSendRecvDialog(unittest.TestCase):
                                                         project_manager.bandwidth, project_manager.gain,
                                                         project_manager.device, testing_mode=True)
 
-        self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog]
+        self.sniff_dialog = ProtocolSniffDialogController(project_manager.frequency, project_manager.sample_rate,
+                                                          project_manager.bandwidth, project_manager.gain,
+                                                          project_manager.device, self.signal.noise_threshold,
+                                                          self.signal.qad_center,
+                                                          self.signal.bit_len, self.signal.tolerance,
+                                                          self.signal.modulation_type,
+                                                          testing_mode=True)
+
+        self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:
@@ -82,7 +91,7 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(500)
 
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
-        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index//2],
+        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
                                        self.signal.data))
 
     def test_send_dialog_scene_zoom(self):

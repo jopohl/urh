@@ -15,7 +15,10 @@ class ReceiveDialogController(SendRecvDialogController):
 
     def __init__(self, freq, samp_rate, bw, gain, device: str, parent=None, testing_mode=False):
         self.is_rx = True
-        super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+        try:
+            super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+        except ValueError:
+            return
 
         self.update_interval = 25
 

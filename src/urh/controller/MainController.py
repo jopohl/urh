@@ -616,8 +616,12 @@ class MainController(QMainWindow):
                                             pm.device, noise, center,
                                             bit_len, tolerance, mod_type,
                                             parent=self)
-        psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
-        psd.show()
+        if psd.has_empty_device_list:
+            Errors.no_device()
+            psd.close()
+        else:
+            psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
+            psd.show()
 
     @pyqtSlot()
     def on_show_spectrum_dialog_action_triggered(self):

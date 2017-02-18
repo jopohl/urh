@@ -22,7 +22,7 @@ class TestSignalTabGUI(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        QTest.qWait(50)
+        QTest.qWait(250)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         # Add a bunch of signals
@@ -33,7 +33,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_signals, num_signals)
 
         self.form.close_all()
-        QTest.qWait(50)
+        QTest.qWait(250)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)

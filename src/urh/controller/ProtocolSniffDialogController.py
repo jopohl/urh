@@ -17,6 +17,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.ui.stackedWidget.setCurrentIndex(2)
         self.hide_send_ui_items()
+        self.hide_receive_ui_items()
         self.ui.sliderYscale.hide()
         self.ui.label_y_scale.hide()
 

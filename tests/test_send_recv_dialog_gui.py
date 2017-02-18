@@ -122,8 +122,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(self.sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.sniff_dialog.device.set_server_port(4444)
-        self.sniff_dialog.device.set_client_port(4444)
-
+        gframe.network_sdr_plugin.client_port = 4444
         self.sniff_dialog.ui.btnStart.click()
         gframe.ui.btnNetworkSDRSend.click()
 

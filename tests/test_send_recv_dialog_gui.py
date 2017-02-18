@@ -1,7 +1,7 @@
+import os
 import socket
 import unittest
 
-import os
 import numpy as np
 from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt
@@ -105,7 +105,6 @@ class TestSendRecvDialog(unittest.TestCase):
         self.send_dialog.on_clear_clicked()
         self.assertEqual(self.send_dialog.send_indicator.rect().width(), 0)
 
-
     def test_sniff(self):
         # Move with encoding to generator
         gframe = self.form.generator_tab_controller
@@ -113,7 +112,7 @@ class TestSendRecvDialog(unittest.TestCase):
         item = gframe.tree_model.rootItem.children[0].children[0]
         index = gframe.tree_model.createIndex(0, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)
-        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos = rect.center())
+        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
@@ -152,7 +151,7 @@ class TestSendRecvDialog(unittest.TestCase):
         with open(target_file, "r") as f:
             for i, line in enumerate(f):
                 pad = 0 if len(orig_msgs[i]) % 8 == 0 else 8 - len(orig_msgs[i]) % 8
-                self.assertEqual(line.strip(), orig_msgs[i] + "0"*pad)
+                self.assertEqual(line.strip(), orig_msgs[i] + "0" * pad)
 
         os.remove(target_file)
 

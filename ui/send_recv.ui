@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>758</height>
+    <height>786</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -127,7 +127,7 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="8" column="1">
+       <item row="9" column="1">
         <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
          <property name="decimals">
           <number>4</number>
@@ -155,14 +155,14 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelGain">
          <property name="text">
           <string>Gain:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="labelBandWidth">
          <property name="text">
           <string>Bandwidth (Hz):</string>
          </property>
@@ -190,7 +190,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="labelSampleRate">
          <property name="text">
           <string>Sample rate (Sps):</string>
          </property>
@@ -214,7 +214,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelFreq">
          <property name="text">
           <string>Frequency (Hz):</string>
          </property>
@@ -283,7 +283,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="8" column="1">
         <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
          <property name="decimals">
           <number>4</number>
@@ -296,45 +296,28 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="9" column="0">
         <widget class="QLabel" name="label_sniff_Noise">
          <property name="text">
           <string>Noise:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="label_sniff_Center">
          <property name="text">
           <string>Center:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_sniff_BitLength">
-         <property name="text">
-          <string>Bit Length:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QSpinBox" name="spinbox_sniff_BitLen">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>999999999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="label_sniff_Modulation">
          <property name="text">
           <string>Modulation:</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="11" column="1">
         <widget class="QComboBox" name="combox_sniff_Modulation">
          <item>
           <property name="text">
@@ -353,14 +336,14 @@
          </item>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item row="12" column="0">
         <widget class="QLabel" name="label_sniff_OutputFile">
          <property name="text">
           <string>Output file:</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="12" column="1">
         <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
          <property name="readOnly">
           <bool>false</bool>
@@ -370,6 +353,40 @@
          </property>
          <property name="clearButtonEnabled">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_sniff_BitLength">
+         <property name="text">
+          <string>Bit Length:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QSpinBox" name="spinbox_sniff_BitLen">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>999999999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_sniff_Tolerance">
+         <property name="text">
+          <string>Error Tolerance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
+         <property name="maximum">
+          <number>999999</number>
+         </property>
+         <property name="value">
+          <number>5</number>
          </property>
         </widget>
        </item>

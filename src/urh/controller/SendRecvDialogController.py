@@ -58,6 +58,7 @@ class SendRecvDialogController(QDialog):
         self.timer = QTimer(self)
 
         dev_name = self.ui.cbDevice.currentText()
+        self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
@@ -89,6 +90,11 @@ class SendRecvDialogController(QDialog):
         for item in self.ui.__dict__:
             if "_sniff_" in item:
                 getattr(self.ui, item).setVisible(visible)
+
+    def set_device_ui_items_visible(self, visible: bool):
+        for object in ("spinBoxFreq", "spinBoxSampleRate", "spinBoxBandwidth", "spinBoxGain",
+                       "btnLockBWSR", "labelFreq", "labelSampleRate", "labelBandWidth", "labelGain"):
+            getattr(self.ui, object).setVisible(visible)
 
     def set_device_ui_items_enabled(self, enabled: bool):
         self.ui.spinBoxSampleRate.setEnabled(enabled)
@@ -184,6 +190,7 @@ class SendRecvDialogController(QDialog):
 
         self.graphics_view.scene_manager = self.scene_manager
         self.graphics_view.setScene(self.scene_manager.scene)
+        self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 

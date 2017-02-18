@@ -13,6 +13,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def __init__(self, freq, samp_rate, bw, gain, device, noise,
                  center, bit_length, tolerance, modulation_type_index,
                  parent=None, testing_mode=False):
+        self.is_rx = True
         super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
 
         self.ui.stackedWidget.setCurrentIndex(2)

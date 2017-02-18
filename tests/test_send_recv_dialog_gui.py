@@ -129,7 +129,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
             dialog.ui.lineEditIP.setText("1.3.3.7")
             dialog.ui.lineEditIP.editingFinished.emit()
-            self.assertEqual(dialog.device.ip, "1.3.3.7")
+            self.assertEqual(dialog.device.ip, "1.3.3.7", msg=type(dialog))
 
             dialog.ui.spinBoxFreq.setValue(10e9)
             dialog.ui.spinBoxFreq.editingFinished.emit()

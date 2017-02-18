@@ -2,7 +2,7 @@ import os
 import time
 
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtWidgets import QApplication
 
 from urh.cythonext.signalFunctions import grab_pulse_lens
@@ -11,7 +11,6 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.util.Errors import Errors
 
 
 class ProtocolSniffer(ProtocolAnalyzer, QObject):
@@ -41,10 +40,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
-
-        self.rcv_timer = QTimer()
-        self.rcv_timer.setInterval(1000)
-        self.rcv_timer.timeout.connect(self.on_rcv_timer_timeout)
 
         self.rel_symbol_len = self._read_symbol_len()
 
@@ -94,7 +89,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def sniff(self):
         self.rcv_device.start()
-        self.rcv_timer.start()
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
@@ -184,7 +178,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         return bool(bit_data)
 
     def stop(self):
-        self.rcv_timer.stop()
         self.rcv_device.stop("Stopping receiving due to user interaction")
         QApplication.processEvents()
         time.sleep(0.1)
@@ -192,30 +185,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def clear(self):
         del self.data_cache[:]
         del self.messages[:]
-
-    def on_rcv_timer_timeout(self):
-        new_errors = self.rcv_device.read_errors()
-        self.qt_signals.sniff_device_errors_changed.emit(new_errors)
-        if "No devices found for" in new_errors:
-            self.rcv_device.stop("Could not establish connection to USRP")
-            Errors.usrp_ip_not_found()
-            self.stop()
-
-        elif "FATAL: No supported devices found" in new_errors or \
-                        "HACKRF_ERROR_NOT_FOUND" in new_errors:
-            self.rcv_device.stop("Could not establish connection to HackRF")
-            Errors.hackrf_not_found()
-            self.stop()
-
-        elif "No module named gnuradio" in new_errors:
-            self.rcv_device.stop("Did not find gnuradio.")
-            Errors.gnuradio_not_installed()
-            self.stop()
-
-        elif "Address already in use" in new_errors:
-            self.rcv_device.port += 1
-            self.stop()
-            self.sniff()
 
     def __emit_started(self):
         self.started.emit()

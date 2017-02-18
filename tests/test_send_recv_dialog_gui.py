@@ -81,6 +81,9 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
 
         self.receive_dialog.ui.btnStop.click()
+        self.receive_dialog.ui.btnClear.click()
+
+        self.assertEqual(self.receive_dialog.device.current_index, 0)
 
     def test_send(self):
         self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
@@ -96,6 +99,12 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
                                        self.signal.data))
+
+        self.assertEqual(self.send_dialog.send_indicator.rect().width(), self.signal.num_samples)
+        self.assertFalse(self.send_dialog.ui.btnClear.isEnabled())
+        self.send_dialog.on_clear_clicked()
+        self.assertEqual(self.send_dialog.send_indicator.rect().width(), 0)
+
 
     def test_sniff(self):
         # Move with encoding to generator

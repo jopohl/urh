@@ -291,7 +291,7 @@ class VirtualDevice(QObject):
     def current_iteration(self):
         if self.backend == Backends.grc:
             return self.__dev.current_iteration
-        elif self.backend == Backends.native:
+        elif self.backend in (Backends.native, Backends.network):
             return self.__dev.current_sending_repeat
         else:
             raise ValueError("Unsupported Backend")
@@ -300,7 +300,7 @@ class VirtualDevice(QObject):
     def current_iteration(self, value):
         if self.backend == Backends.grc:
             self.__dev.current_iteration = value
-        elif self.backend == Backends.native:
+        elif self.backend in (Backends.native, Backends.network):
             self.__dev.current_sending_repeat = value
         else:
             raise ValueError("Unsupported Backend")

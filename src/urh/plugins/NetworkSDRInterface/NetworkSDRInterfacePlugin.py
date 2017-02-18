@@ -62,6 +62,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.sending_repeats = 1  # only used in raw mode
         self.current_sent_sample = 0
+        self.current_sending_repeat = 0
 
         self.raw_mode = raw_mode
         if self.raw_mode:
@@ -94,6 +95,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             return self.server.current_receive_index
         else:
             return 0
+
+    @current_receive_index.setter
+    def current_receive_index(self, value):
+        if hasattr(self.server, "current_receive_index"):
+            self.server.current_receive_index = value
+        else:
+            pass
 
     def free_data(self):
         if self.raw_mode:
@@ -162,6 +170,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         for _ in rng:
             self.send_data(byte_data)
             self.current_sent_sample = len(data)
+            self.current_sending_repeat += 1
 
 
     def __send_messages(self, messages, sample_rates):

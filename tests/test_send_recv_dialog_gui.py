@@ -97,7 +97,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
                                        self.signal.data))
 
-    def test_sniff_with_live_preview(self):
+    def test_sniff(self):
         # Move with encoding to generator
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(0)
@@ -124,6 +124,25 @@ class TestSendRecvDialog(unittest.TestCase):
         for received, orig in zip(received_msgs, orig_msgs):
             pad = 0 if len(orig) % 8 == 0 else 8 - len(orig) % 8
             self.assertEqual(received, orig + "0" * pad)
+
+        self.sniff_dialog.ui.btnStop.click()
+        target_file = os.path.join(QDir.tempPath(), "sniff_file")
+        self.assertFalse(os.path.isfile(target_file))
+
+        self.sniff_dialog.ui.btnClear.click()
+        self.sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
+        self.sniff_dialog.ui.btnStart.click()
+        self.assertFalse(self.sniff_dialog.ui.btnAccept.isEnabled())
+
+        gframe.ui.btnNetworkSDRSend.click()
+        QTest.qWait(500)
+
+        with open(target_file, "r") as f:
+            for i, line in enumerate(f):
+                pad = 0 if len(orig_msgs[i]) % 8 == 0 else 8 - len(orig_msgs[i]) % 8
+                self.assertEqual(line.strip(), orig_msgs[i] + "0"*pad)
+
+        os.remove(target_file)
 
     def test_send_dialog_scene_zoom(self):
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)

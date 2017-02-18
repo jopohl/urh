@@ -111,15 +111,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.qt_signals.data_sniffed.emit(old_nmsgs)
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
-            # Write Header
-            if not os.path.isfile(self.sniff_file):
-                with open(self.sniff_file, "w") as f:
-                    f.write("PROTOCOL:\n\n")
-
             with open(self.sniff_file, "a") as myfile:
-                if self.plain_bits_str:
-                    myfile.write("\n")
-
                 myfile.write("\n".join(self.plain_bits_str))
 
         if not self.__store_data:

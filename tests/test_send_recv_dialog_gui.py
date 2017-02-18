@@ -1,7 +1,10 @@
 import socket
 import unittest
 
+import os
 import numpy as np
+from PyQt5.QtCore import QDir
+from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
@@ -93,6 +96,34 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
                                        self.signal.data))
+
+    def test_sniff_with_live_preview(self):
+        # Move with encoding to generator
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(0)
+        item = gframe.tree_model.rootItem.children[0].children[0]
+        index = gframe.tree_model.createIndex(0, 0, item)
+        rect = gframe.ui.treeProtocols.visualRect(index)
+        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos = rect.center())
+        self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
+        mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.assertEqual(gframe.table_model.rowCount(), 3)
+
+        self.sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.assertEqual(self.sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+
+        self.sniff_dialog.ui.btnStart.click()
+        gframe.ui.btnNetworkSDRSend.click()
+
+        QTest.qWait(500)
+        received_msgs = self.sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
+        orig_msgs = gframe.table_model.protocol.plain_bits_str
+
+        self.assertEqual(len(received_msgs), len(orig_msgs))
+        for received, orig in zip(received_msgs, orig_msgs):
+            pad = 0 if len(orig) % 8 == 0 else 8 - len(orig) % 8
+            self.assertEqual(received, orig + "0" * pad)
 
     def test_send_dialog_scene_zoom(self):
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)

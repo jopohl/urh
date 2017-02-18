@@ -199,7 +199,10 @@ class VirtualDevice(QObject):
             if self.mode == Mode.send:
                 raise NotImplementedError("Todo")
             else:
-                return self.__dev.receive_buffer
+                if self.__dev.raw_mode:
+                    return self.__dev.receive_buffer
+                else:
+                    return self.__dev.received_bits
         else:
             raise ValueError("Unsupported Backend")
 

@@ -88,7 +88,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @property
     def view_type(self):
-        return self.ui.comboBoxViewType.currentIndex()
+        return self.ui.comboBox_sniff_viewtype.currentIndex()
 
     @pyqtSlot()
     def on_noise_edited(self):
@@ -183,13 +183,13 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        self.ui.txtEdPreview.appendPlainText(
+        self.ui.txtEd_sniff_Preview.appendPlainText(
             self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False))
-        self.ui.txtEdPreview.verticalScrollBar().setValue(self.ui.txtEdPreview.verticalScrollBar().maximum())
+        self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)
     def on_view_type_changed(self, new_index: int):
-        self.ui.txtEdPreview.setPlainText(self.sniffer.plain_to_string(new_index, show_pauses=False))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.plain_to_string(new_index, show_pauses=False))
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):

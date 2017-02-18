@@ -31,7 +31,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         device = self.ui.cbDevice.currentText()
         self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
                                        modulation_type_index, samp_rate, freq,
-                                       gain, bw, device)
+                                       gain, bw, device, testing_mode=testing_mode)
 
         self.set_sniff_ui_items_visible(True)
         self.set_device_ui_items_visible(device != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)

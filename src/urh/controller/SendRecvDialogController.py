@@ -297,12 +297,14 @@ class SendRecvDialogController(QDialog):
             return
 
         time.sleep(0.1)
-        self.device.cleanup()
-        self.recording_parameters.emit(str(self.device.frequency),
-                                       str(self.device.sample_rate),
-                                       str(self.device.bandwidth),
-                                       str(self.device.gain),
-                                       str(self.device.name))
+        if self.device.backend != Backends.none:
+            # Backend none is selected, when no device is available
+            self.device.cleanup()
+            self.recording_parameters.emit(str(self.device.frequency),
+                                           str(self.device.sample_rate),
+                                           str(self.device.bandwidth),
+                                           str(self.device.gain),
+                                           str(self.device.name))
 
         event.accept()
 

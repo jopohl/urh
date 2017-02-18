@@ -30,7 +30,7 @@ class SendRecvDialogController(QDialog):
         self.set_sniff_ui_items_visible(False)
 
         self.graphics_view = None  # type: QGraphicsView
-        self.device = None  # type: VirtualDevice
+        self.__device = None  # type: VirtualDevice
 
         self.backend_handler = BackendHandler(testing_mode=testing_mode)
 
@@ -75,6 +75,14 @@ class SendRecvDialogController(QDialog):
     @property
     def has_empty_device_list(self):
         return self.ui.cbDevice.count() == 0
+
+    @property
+    def device(self) -> VirtualDevice:
+        return self.__device
+
+    @device.setter
+    def device(self, value):
+        self.__device = value
 
     def hide_send_ui_items(self):
         for item in ("spinBoxNRepeat", "labelNRepeat", "lblCurrentRepeatValue",

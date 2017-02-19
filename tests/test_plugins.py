@@ -112,6 +112,8 @@ class TestPlugins(unittest.TestCase):
             QTest.qWait(10)
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
+        self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
+        self.assertEqual(insert_sine_plugin.insert_indicator.rect().x(), 2000)
 
         dialog.doubleSpinBoxAmplitude.setValue(0.1)
         dialog.doubleSpinBoxAmplitude.editingFinished.emit()

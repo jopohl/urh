@@ -28,7 +28,8 @@ class ReceiveDialogController(SendRecvDialogController):
         self.already_saved = True
         self.recorded_files = []
 
-        self.scene_manager = LiveSceneManager(np.array([]), parent=self)  # set really in on_device_started
+        # set really in on_device_started
+        self.scene_manager = None  # type: LiveSceneManager
 
         self.init_device()
 

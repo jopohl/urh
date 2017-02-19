@@ -35,7 +35,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.backend_handler = BackendHandler(testing_mode=testing_mode)
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, bandwidth, freq, gain,
-                                        sample_rate, device_ip=usrp_ip, is_ringbuffer=True, raw_mode=False)
+                                        sample_rate, device_ip=usrp_ip, is_ringbuffer=False, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
@@ -82,7 +82,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, bw=1e6,
                                             freq=433.92e6, gain=20, samp_rate=1e6,
-                                            device_ip="192.168.10.2", is_ringbuffer=True, raw_mode=False)
+                                            device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
@@ -92,6 +92,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
+        if old_index == new_index:
+            return
+
         old_nmsgs = len(self.messages)
         if self.rcv_device.backend in (Backends.native, Backends.grc):
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])

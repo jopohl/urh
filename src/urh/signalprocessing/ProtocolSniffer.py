@@ -92,11 +92,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
-        if old_index == new_index:
-            return
-
         old_nmsgs = len(self.messages)
         if self.rcv_device.backend in (Backends.native, Backends.grc):
+            if old_index == new_index:
+                return
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here

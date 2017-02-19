@@ -12,6 +12,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 
 from tests.utils_testing import get_path_for_data_file
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 
 app = tests.utils_testing.app
@@ -98,12 +99,19 @@ class TestPlugins(unittest.TestCase):
 
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
+        num_samples = 10000
         dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
-                                                           sample_rate=self.signal.sample_rate, num_samples=10000)
+                                                           position=2000,
+                                                           sample_rate=self.signal.sample_rate,
+                                                           num_samples=num_samples)
+
+        graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
+
+        self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
 
         dialog.doubleSpinBoxAmplitude.setValue(0.1)
         dialog.doubleSpinBoxAmplitude.editingFinished.emit()

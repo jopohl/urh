@@ -71,6 +71,8 @@ class SelectableGraphicView(QGraphicsView):
                 self.unsetCursor()
                 self.grab_start = None
 
+        super().keyPressEvent(event)
+
     def keyReleaseEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Shift:
             self.shift_mode = False
@@ -81,6 +83,8 @@ class SelectableGraphicView(QGraphicsView):
                 self.grab_start = None
             else:
                 self.setCursor(Qt.OpenHandCursor)
+
+        super().keyPressEvent(event)
 
     def mousePressEvent(self, event: QMouseEvent):
         if self.scene() is None:

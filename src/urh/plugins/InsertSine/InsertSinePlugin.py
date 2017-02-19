@@ -20,6 +20,7 @@ class InsertSinePlugin(SignalEditorPlugin):
     def __init__(self):
         dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
         self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))  # type: QDialog
+        self.dialog_ui.setModal(True)
 
         self.complex_wave = None
         self.__amplitude = 0.5

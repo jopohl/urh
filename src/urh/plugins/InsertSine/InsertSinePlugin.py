@@ -45,7 +45,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
         self.dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
         self.dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
-        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]+([nmµ]|([\.,][0-9]{1,3}[nmµ]))?$")))
+        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
         scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
         self.dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
         self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,

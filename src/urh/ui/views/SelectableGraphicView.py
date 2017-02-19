@@ -23,17 +23,17 @@ class SelectableGraphicView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.NoAnchor)
         self.setRenderHints(QPainter.Antialiasing)
 
-        self.scene_manager = None     # type: SceneManager
-        self.mouse_press_pos = None   # type: QPoint
-        self.mouse_pos = None         # type: QPoint
-        self.grab_start = None        # type: QPoint
+        self.scene_manager = None  # type: SceneManager
+        self.mouse_press_pos = None  # type: QPoint
+        self.mouse_pos = None  # type: QPoint
+        self.grab_start = None  # type: QPoint
 
         self.xmove = 0
 
         self.separation_area_moving = False
 
         self.shift_mode = False  # Shift Key currently pressed?
-        self.ctrl_mode = False   # Ctrl Key currently pressed?
+        self.ctrl_mode = False  # Ctrl Key currently pressed?
 
     def scene(self) -> ZoomableScene:
         return super().scene()
@@ -89,7 +89,7 @@ class SelectableGraphicView(QGraphicsView):
 
         cursor = self.cursor().shape()
         has_shift_modifier = event.modifiers() == Qt.ShiftModifier
-        is_in_shift_mode = (has_shift_modifier and self.hold_shift_to_drag)\
+        is_in_shift_mode = (has_shift_modifier and self.hold_shift_to_drag) \
                            or (not has_shift_modifier and not self.hold_shift_to_drag) \
                               and cursor != Qt.SplitHCursor and cursor != Qt.SplitVCursor
 

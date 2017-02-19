@@ -1,15 +1,13 @@
 from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QSize, Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence, QPainter, QPen, QPixmap
+from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QUndoStack
 
-from urh import constants
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -30,7 +28,7 @@ class EditableGraphicView(ZoomableGraphicView):
         super().__init__(parent)
 
         self.participants = []
-        self.__sample_rate = None   # For default sample rate in insert sine dialog
+        self.__sample_rate = None  # For default sample rate in insert sine dialog
 
         self.autoRangeY = True
         self.save_enabled = False  # Signal is can be saved

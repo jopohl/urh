@@ -1,4 +1,3 @@
-import time
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -37,7 +36,7 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     @property
     def scene_type(self):
-        return 0   # gets overwritten in Epic Graphic View
+        return 0  # gets overwritten in Epic Graphic View
 
     def zoom(self, factor, suppress_signal=False, event: QWheelEvent = None):
         if factor > 1 and self.view_rect().width() / factor < 300:
@@ -139,4 +138,3 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_signal_scrolled(self):
         self.redraw_timer.start(0)
-

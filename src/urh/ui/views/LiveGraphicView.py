@@ -45,7 +45,8 @@ class LiveGraphicView(QGraphicsView):
         if isinstance(self.scene(), GridScene):
             freq = self.scene().get_freq_for_pos(int(self.mapToScene(event.pos()).x()))
             if freq is not None:
-                QToolTip.showText(self.mapToGlobal(event.pos()), "Tune to:"+Formatter.big_value_with_suffix(freq), None, QRect(), 10000)
+                QToolTip.showText(self.mapToGlobal(event.pos()), "Tune to:" + Formatter.big_value_with_suffix(freq),
+                                  None, QRect(), 10000)
 
     def mousePressEvent(self, event: QMouseEvent):
         if isinstance(self.scene(), GridScene):

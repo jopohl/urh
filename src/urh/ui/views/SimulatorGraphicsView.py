@@ -10,7 +10,6 @@ class SimulatorGraphicsView(QGraphicsView):
         super().__init__(parent)
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
-        #self.setContextMenuPolicy(Qt.ActionsContextMenu)
 
         self.proto_analyzer = None
 
@@ -36,17 +35,20 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu = QMenu()
 
-        addRuleAction = QAction("Add rule")
-        addMessageAction = QAction("Add empty message")
+        add_rule_action = QAction("Add rule")
+        add_message_action = QAction("Add empty message")
+        clear_all_action = QAction("Clear all")
 
         if len(self.scene().selectedItems()) > 0:
             menu.addAction(self.delete_action)
 
         if len(self.scene().items) > 0:
             menu.addAction(self.select_all_action)
+            menu.addAction(clear_all_action)
 
-        menu.addAction(addRuleAction)
-        menu.addAction(addMessageAction)
+        menu.addSeparator()
+        menu.addAction(add_rule_action)
+        menu.addAction(add_message_action)
 
         message_type_menu = menu.addMenu("Add message with message type ...")
         message_type_actions = {}
@@ -57,12 +59,14 @@ class SimulatorGraphicsView(QGraphicsView):
 
         action = menu.exec_(event.globalPos())
 
-        if action == addRuleAction:
+        if action == add_rule_action:
             self.scene().add_rule()
-        elif action == addMessageAction:
+        elif action == add_message_action:
             self.scene().add_message()
         elif action in message_type_actions:
             self.scene().add_message(message_type=message_type_actions[action])
+        elif action == clear_all_action:
+            self.scene().clear_all()
 
     @pyqtSlot()
     def on_delete_action_triggered(self):

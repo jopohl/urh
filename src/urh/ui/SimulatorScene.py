@@ -603,7 +603,14 @@ class SimulatorScene(QGraphicsScene):
         self.items.append(simulator_message)
         self.addItem(simulator_message)
         self.update_view()
-        
+
+    def clear_all(self):
+        for item in self.items[:]:
+            self.items.remove(item)
+            self.removeItem(item)
+
+        self.update_view()
+
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:

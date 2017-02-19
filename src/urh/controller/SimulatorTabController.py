@@ -39,6 +39,7 @@ class SimulatorTabController(QWidget):
         #self.simulator_scene.setSceneRect(0, 0, 500, 500)
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.create_connects(compare_frame_controller)
 

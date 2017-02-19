@@ -98,7 +98,8 @@ class TestPlugins(unittest.TestCase):
 
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
-        dialog = insert_sine_plugin.get_insert_sine_dialog(sample_rate=self.signal.sample_rate, num_samples=10000)
+        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
+                                                           sample_rate=self.signal.sample_rate, num_samples=10000)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()

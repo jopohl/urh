@@ -29,7 +29,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.__sample_rate = 1e6
         self.__num_samples = int(1e6)
 
-        self.original_signal = None
+        self.original_data = None
 
         self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
         self.dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
@@ -108,7 +108,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
         self.sine_wave_updated.connect(self.on_sine_wave_updated)
 
-    def get_insert_sine_dialog(self, sample_rate=None, num_samples=None) -> QDialog:
+    def get_insert_sine_dialog(self, original_data, sample_rate=None, num_samples=None) -> QDialog:
         self.create_dialog_connects()
         if sample_rate is not None:
             self.sample_rate = sample_rate
@@ -117,6 +117,8 @@ class InsertSinePlugin(SignalEditorPlugin):
         if num_samples is not None:
             self.num_samples = int(num_samples)
             self.dialog_ui.doubleSpinBoxNSamples.setValue(num_samples)
+
+        self.original_data = original_data
 
         self.set_time()
         self.draw_sine_wave()

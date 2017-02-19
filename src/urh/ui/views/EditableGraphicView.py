@@ -269,7 +269,10 @@ class EditableGraphicView(ZoomableGraphicView):
         else:
             num_samples = None
 
-        dialog = self.insert_sine_plugin.get_insert_sine_dialog(sample_rate=self.sample_rate, num_samples=num_samples)
+        original_data = self.signal.data if self.signal is not None else None
+        dialog = self.insert_sine_plugin.get_insert_sine_dialog(original_data=original_data,
+                                                                sample_rate=self.sample_rate,
+                                                                num_samples=num_samples)
         dialog.show()
 
     @pyqtSlot()

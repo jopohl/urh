@@ -82,9 +82,10 @@ class ReceiveDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
+        self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
+
         super().on_device_started()
 
-        self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
         self.already_saved = False
         self.ui.btnStart.setEnabled(False)
         self.set_device_ui_items_enabled(False)

@@ -183,9 +183,10 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        self.ui.txtEd_sniff_Preview.appendPlainText(
-            self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False))
-        self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
+        new_data = self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False)
+        if new_data.strip():
+            self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
+            self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)
     def on_view_type_changed(self, new_index: int):

@@ -2,6 +2,7 @@ import os
 import unittest
 
 from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
@@ -113,6 +114,12 @@ class TestGenerator(unittest.TestCase):
         self.form.on_selected_tab_changed(2)
         self.assertEqual(1, 1)
 
+    def test_create_context_menu(self):
+        # Context menu should be empty if table is empty
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
+        menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        self.assertEqual(len(menu.actions()), 0)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

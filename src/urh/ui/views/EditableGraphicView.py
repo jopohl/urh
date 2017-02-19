@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize, Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence, QPainter, QPen, QPixmap
@@ -41,6 +42,7 @@ class EditableGraphicView(ZoomableGraphicView):
 
         self.stored_item = None  # For copy/paste
         self.paste_position = 0  # Where to paste? Set in contextmenuevent
+        self.context_menu_position = None  # type: QPoint
 
         self._init_undo_stack(QUndoStack())
 
@@ -130,7 +132,7 @@ class EditableGraphicView(ZoomableGraphicView):
         super().keyPressEvent(event)
 
         if key == Qt.Key_Control and not self.shift_mode:
-            self.set_loupe_cursor()
+            self.set_zoom_cursor()
             self.ctrl_mode = True
             self.ctrl_state_changed.emit(True)
 
@@ -164,11 +166,8 @@ class EditableGraphicView(ZoomableGraphicView):
             self.ctrl_state_changed.emit(False)
             self.unsetCursor()
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
-        if self.ctrl_mode:
-            return
-
-        self.paste_position = int(self.mapToScene(event.pos()).x())
+    def create_context_menu(self):
+        self.paste_position = int(self.mapToScene(self.context_menu_position).x())
 
         menu = QMenu(self)
         if self.save_enabled:
@@ -176,12 +175,6 @@ class EditableGraphicView(ZoomableGraphicView):
 
         menu.addAction(self.save_as_action)
         menu.addSeparator()
-
-        zoom_action = None
-        create_action = None
-        noise_action = None
-        crop_action = None
-        mute_action = None
 
         menu.addAction(self.copy_action)
         self.copy_action.setEnabled(not self.selection_area.is_empty)
@@ -197,14 +190,18 @@ class EditableGraphicView(ZoomableGraphicView):
         if not self.selection_area.is_empty:
             menu.addAction(self.delete_action)
             crop_action = menu.addAction(self.tr("Crop to selection"))
+            crop_action.triggered.connect(self.on_crop_action_triggered)
             mute_action = menu.addAction(self.tr("Mute selection"))
+            mute_action.triggered.connect(self.on_mute_action_triggered)
 
             menu.addSeparator()
             zoom_action = menu.addAction(self.tr("Zoom selection"))
             zoom_action.setIcon(QIcon.fromTheme("zoom-in"))
+            zoom_action.triggered.connect(self.on_zoom_action_triggered)
             if self.create_new_signal_enabled:
                 create_action = menu.addAction(self.tr("Create signal from selection"))
                 create_action.setIcon(QIcon.fromTheme("document-new"))
+                create_action.triggered.connect(self.on_create_action_triggered)
 
         if hasattr(self, "selected_messages"):
             selected_messages = self.selected_messages
@@ -216,7 +213,7 @@ class EditableGraphicView(ZoomableGraphicView):
         else:
             selected_msg = None
 
-        participant_actions = {}
+        self.participant_actions = {}
 
         if len(selected_messages) > 0 and self.participants_assign_enabled:
             participant_group = QActionGroup(self)
@@ -224,6 +221,7 @@ class EditableGraphicView(ZoomableGraphicView):
             none_participant_action = participant_menu.addAction("None")
             none_participant_action.setCheckable(True)
             none_participant_action.setActionGroup(participant_group)
+            none_participant_action.triggered.connect(self.on_none_participant_action_triggered)
 
             if selected_msg and selected_msg.participant is None:
                 none_participant_action.setChecked(True)
@@ -235,66 +233,34 @@ class EditableGraphicView(ZoomableGraphicView):
                 if selected_msg and selected_msg.participant == participant:
                     pa.setChecked(True)
 
-                participant_actions[pa] = participant
-        else:
-            none_participant_action = 42
+                self.articipant_actions[pa] = participant
+                pa.triggered.connect(self.on_participant_action_triggered)
 
         if hasattr(self, "scene_type") and self.scene_type == 0:
             if not self.selection_area.is_empty:
                 menu.addSeparator()
                 noise_action = menu.addAction(self.tr("Set noise level from Selection"))
+                noise_action.triggered.connect(self.on_noise_action_triggered)
 
         menu.addSeparator()
         menu.addAction(self.undo_action)
         menu.addAction(self.redo_action)
 
-        QApplication.processEvents()  # without this the menu flickers on first create
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+        return menu
 
-        if action is None:
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        if self.ctrl_mode:
             return
-        elif action == zoom_action:
-            self.zoom_to_selection(self.selection_area.x, self.selection_area.end)
-        elif action == create_action:
-            self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
-        elif action == crop_action:
-            if not self.selection_area.is_empty:
-                crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                               start=self.selection_area.start, end=self.selection_area.end,
-                                               mode=EditAction.crop, cache_qad=self.cache_qad)
-                self.undo_stack.push(crop_action)
-        elif action == noise_action:
-            self.set_noise_clicked.emit()
-        elif action == mute_action:
-            mute_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                           start=self.selection_area.start, end=self.selection_area.end,
-                                           mode=EditAction.mute, cache_qad=self.cache_qad)
-            self.undo_stack.push(mute_action)
-        elif action == none_participant_action:
-            for msg in selected_messages:
-                msg.participant = None
-            self.participant_changed.emit()
-        elif action in participant_actions:
-            for msg in selected_messages:
-                msg.participant = participant_actions[action]
-            self.participant_changed.emit()
+        self.context_menu_position = event.pos()
+        menu = self.create_context_menu()
+        menu.exec_(self.mapToGlobal(event.pos()))
+        self.context_menu_position = None
 
     def clear_selection(self):
         self.set_selection_area(0, 0)
 
-    def set_loupe_cursor(self):
-        pixmap = QPixmap(QSize(20, 20))
-        pixmap.fill(Qt.transparent)
-        painter = QPainter(pixmap)
-        painter.setCompositionMode(QPainter.CompositionMode_Source)
-        painter.setPen(QPen(constants.AXISCOLOR, 2))
-        painter.Antialiasing = True
-        painter.HighQualityAntialiasing = True
-
-        painter.drawEllipse(0, 0, 10, 10)
-        painter.drawLine(10, 10, 20, 20)
-        del painter
-        self.setCursor(QCursor(pixmap))
+    def set_zoom_cursor(self):
+        self.setCursor(QCursor(QIcon.fromTheme("zoom-in").pixmap(16, 16)))
 
     def zoom_to_selection(self, start: int, end: int):
         if start == end:
@@ -349,3 +315,42 @@ class EditableGraphicView(ZoomableGraphicView):
                                           mode=EditAction.delete, cache_qad=self.cache_qad)
             self.undo_stack.push(del_action)
             self.centerOn(start, self.y_center)
+
+    @pyqtSlot()
+    def on_crop_action_triggered(self):
+        if not self.selection_area.is_empty:
+            crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                           start=self.selection_area.start, end=self.selection_area.end,
+                                           mode=EditAction.crop, cache_qad=self.cache_qad)
+            self.undo_stack.push(crop_action)
+
+    @pyqtSlot()
+    def on_mute_action_triggered(self):
+        mute_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
+                                       start=self.selection_area.start, end=self.selection_area.end,
+                                       mode=EditAction.mute, cache_qad=self.cache_qad)
+        self.undo_stack.push(mute_action)
+
+    @pyqtSlot()
+    def on_zoom_action_triggered(self):
+        self.zoom_to_selection(self.selection_area.x, self.selection_area.end)
+
+    @pyqtSlot()
+    def on_create_action_triggered(self):
+        self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
+
+    @pyqtSlot()
+    def on_none_participant_action_triggered(self):
+        for msg in self.selected_messages:
+            msg.participant = None
+        self.participant_changed.emit()
+
+    @pyqtSlot()
+    def on_participant_action_triggered(self):
+        for msg in self.selected_messages:
+            msg.participant = self.participant_actions[self.sender()]
+        self.participant_changed.emit()
+
+    @pyqtSlot()
+    def on_noise_action_triggered(self):
+        self.set_noise_clicked.emit()

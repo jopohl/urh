@@ -7,8 +7,9 @@ import numpy
 
 class TableView(QTableView):
     def __init__(self, parent=None):
-
         super().__init__(parent)
+
+        self.context_menu_pos = None  # type: QPoint
 
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
@@ -16,6 +17,16 @@ class TableView(QTableView):
     @property
     def selection_is_empty(self) -> bool:
         return self.selectionModel().selection().isEmpty()
+
+    @property
+    def selected_rows(self):
+        min_row, max_row, _, _ = self.selection_range()
+        if not self.selection_is_empty:
+            selected_rows = list(range(min_row, max_row + 1))
+        else:
+            selected_rows = []
+
+        return selected_rows
 
     def selection_range(self):
         """

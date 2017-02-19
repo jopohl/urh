@@ -12,7 +12,6 @@ from urh.ui.ui_tab_interpretation import Ui_Interpretation
 class SignalTabController(QWidget):
     frame_closed = pyqtSignal(SignalFrameController)
     not_show_again_changed = pyqtSignal()
-    signal_frame_updated = pyqtSignal(SignalFrameController)
     signal_created = pyqtSignal(Signal)
     files_dropped = pyqtSignal(list)
     frame_was_dropped = pyqtSignal(int, int)
@@ -38,14 +37,6 @@ class SignalTabController(QWidget):
         return [sWidget.ui.gvSignal for sWidget in self.signal_frames]
 
     @property
-    def signal_numbers(self):
-        """
-
-        :rtype: list of int
-        """
-        return [sw.signal.signal_frame_number for sw in self.signal_frames]
-
-    @property
     def signal_undo_stack(self):
         return self.undo_stack
 
@@ -57,7 +48,6 @@ class SignalTabController(QWidget):
         self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
         self.placeholder_widget = QWidget()
-        # self.placeholder_widget.setMaximumHeight(1)
         self.placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.undo_stack = QUndoStack()
         self.project_manager = project_manager
@@ -69,73 +59,23 @@ class SignalTabController(QWidget):
 
         self.drag_pos = None
 
-    @pyqtSlot(QPoint)
-    def frame_dragged(self, pos: QPoint):
-        self.drag_pos = pos
-
-    @pyqtSlot(QPoint)
-    def frame_dropped(self, pos: QPoint):
-        start = self.drag_pos
-        if start is None:
-            return
-
-        end = pos
-        start_index = -1
-        end_index = -1
-        if self.num_signals > 1:
-            for i, w in enumerate(self.signal_frames):
-                if w.geometry().contains(start):
-                    start_index = i
-
-                if w.geometry().contains(end):
-                    end_index = i
-
-        self.swap_frames(start_index, end_index)
-        self.frame_was_dropped.emit(start_index, end_index)
-
-    @pyqtSlot(int, int)
-    def swap_frames(self, from_index: int, to_index: int):
-        if from_index != to_index:
-            start_sig_widget = self.splitter.widget(from_index)
-            self.splitter.insertWidget(to_index, start_sig_widget)
-
     def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
     def close_frame(self, frame:SignalFrameController):
         self.frame_closed.emit(frame)
 
-    @pyqtSlot(bool)
-    def set_shift_statuslabel(self, shift_pressed):
-        if shift_pressed and constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
-            self.ui.lShiftStatus.setText("[SHIFT] Use Mouse to scroll signal.")
-            self.ui.lCtrlStatus.clear()
-
-        elif shift_pressed and not constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
-            self.ui.lShiftStatus.setText("[SHIFT] Use mouse to create a selection.")
-            self.ui.lCtrlStatus.clear()
-        else:
-            self.ui.lShiftStatus.clear()
-
-    @pyqtSlot(bool)
-    def set_ctrl_statuslabel(self, ctrl_pressed):
-        if ctrl_pressed and len(self.ui.lShiftStatus.text()) == 0:
-            self.ui.lCtrlStatus.setText("[CTRL] Zoom signal with mousclicks or arrow up/down.")
-        else:
-            self.ui.lCtrlStatus.clear()
-
     def reset_all_signalx_zoom(self):
         for gvs in self.signal_views:
             gvs.showing_full_signal = True
 
     def add_signal_frame(self, proto_analyzer):
-        # self.set_tab_busy(True)
         sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
         sframes = self.signal_frames
         prev_signal_frame = sframes[-1] if len(sframes) > 0 else None
 
         if len(proto_analyzer.signal.filename) == 0:
-            # Neues Signal aus "Create Signal from Selection"
+            # new signal from "create signal from selection"
             sig_frame.ui.btnSaveSignal.show()
 
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
@@ -144,7 +84,7 @@ class SignalTabController(QWidget):
         sig_frame.ui.gvSignal.shift_state_changed.connect(self.set_shift_statuslabel)
         sig_frame.ui.gvSignal.ctrl_state_changed.connect(self.set_ctrl_statuslabel)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
-        sig_frame.apply_to_all_clicked.connect(self.handle_apply_to_all_clicked)
+        sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
 
         if prev_signal_frame is not None:
             sig_frame.ui.cbProtoView.setCurrentIndex(prev_signal_frame.ui.cbProtoView.currentIndex())
@@ -186,7 +126,6 @@ class SignalTabController(QWidget):
         QCoreApplication.processEvents()
 
         return sig_frame
-
 
     def set_frame_numbers(self):
         for i, f in enumerate(self.signal_frames):
@@ -231,7 +170,7 @@ class SignalTabController(QWidget):
             f.my_close()
 
     @pyqtSlot(Signal)
-    def handle_apply_to_all_clicked(self, signal: Signal):
+    def on_apply_to_all_clicked(self, signal: Signal):
         for frame in self.signal_frames:
             if frame.signal is not None:
                 frame.signal.noise_min_plot = signal.noise_min_plot
@@ -265,18 +204,56 @@ class SignalTabController(QWidget):
                 if proto_needs_update:
                     frame.signal.protocol_needs_update.emit()
 
-    def __get_sorted_positions(self):
-        frame_names = [sf.ui.lineEditSignalName.text() for sf in self.signal_frames]
-        sorted_frame_names = frame_names[:]
-        sorted_frame_names.sort()
-        sorted_positions = []
-        for name in frame_names:
-            pos = sorted_frame_names.index(name)
-            if pos in sorted_positions:
-                pos += 1
-            sorted_positions.append(pos)
-        return sorted_positions
+    @pyqtSlot(QPoint)
+    def frame_dragged(self, pos: QPoint):
+        self.drag_pos = pos
 
-    def refresh_participant_information(self):
+    @pyqtSlot(QPoint)
+    def frame_dropped(self, pos: QPoint):
+        start = self.drag_pos
+        if start is None:
+            return
+
+        end = pos
+        start_index = -1
+        end_index = -1
+        if self.num_signals > 1:
+            for i, w in enumerate(self.signal_frames):
+                if w.geometry().contains(start):
+                    start_index = i
+
+                if w.geometry().contains(end):
+                    end_index = i
+
+        self.swap_frames(start_index, end_index)
+        self.frame_was_dropped.emit(start_index, end_index)
+
+    @pyqtSlot(int, int)
+    def swap_frames(self, from_index: int, to_index: int):
+        if from_index != to_index:
+            start_sig_widget = self.splitter.widget(from_index)
+            self.splitter.insertWidget(to_index, start_sig_widget)
+
+    @pyqtSlot(bool)
+    def set_shift_statuslabel(self, shift_pressed):
+        if shift_pressed and constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
+            self.ui.lShiftStatus.setText("[SHIFT] Use Mouse to scroll signal.")
+            self.ui.lCtrlStatus.clear()
+
+        elif shift_pressed and not constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
+            self.ui.lShiftStatus.setText("[SHIFT] Use mouse to create a selection.")
+            self.ui.lCtrlStatus.clear()
+        else:
+            self.ui.lShiftStatus.clear()
+
+    @pyqtSlot(bool)
+    def set_ctrl_statuslabel(self, ctrl_pressed):
+        if ctrl_pressed and len(self.ui.lShiftStatus.text()) == 0:
+            self.ui.lCtrlStatus.setText("[CTRL] Zoom signal with mousclicks or arrow up/down.")
+        else:
+            self.ui.lCtrlStatus.clear()
+
+    @pyqtSlot()
+    def on_participant_changed(self):
         for sframe in self.signal_frames:
             sframe.on_participant_changed()

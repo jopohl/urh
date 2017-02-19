@@ -1,19 +1,16 @@
 import os
 import time
 
-import gc
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtWidgets import QApplication
+
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice, Mode
-
-from urh.dev.gr.ReceiverThread import ReceiverThread
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.util.Errors import Errors
 
 
 class ProtocolSniffer(ProtocolAnalyzer, QObject):
@@ -24,9 +21,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     started = pyqtSignal()
     stopped = pyqtSignal()
 
-    def __init__(self, bit_len: int, center: float, noise: float, tolerance:
-    int, modulation_type: int, sample_rate: float, freq: float, gain: int,
-                 bandwidth: float, device: str, usrp_ip="192.168.10.2"):
+    def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
+                 modulation_type: int, sample_rate: float, freq: float, gain: int,
+                 bandwidth: float, device: str, usrp_ip="192.168.10.2", testing_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -36,16 +33,13 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
-        self.backend_handler = BackendHandler()
-        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, bandwidth, freq, gain, sample_rate, device_ip=usrp_ip, is_ringbuffer=True)
+        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, bandwidth, freq, gain,
+                                        sample_rate, device_ip=usrp_ip, is_ringbuffer=False, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
-
-        self.rcv_timer = QTimer()
-        self.rcv_timer.setInterval(1000)
-        self.rcv_timer.timeout.connect(self.on_rcv_timer_timeout)
 
         self.rel_symbol_len = self._read_symbol_len()
 
@@ -86,29 +80,22 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            self.rcv_device = VirtualDevice(self.backend_handler, value, self.rcv_device.mode, bw=1e6,
+            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, bw=1e6,
                                             freq=433.92e6, gain=20, samp_rate=1e6,
-                                            device_ip="192.168.10.2", is_ringbuffer=True)
+                                            device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
 
-    @property
-    def usrp_ip(self):
-        return self.rcv_device.ip
-
-    @usrp_ip.setter
-    def usrp_ip(self, value: str):
-        self.rcv_device.ip = value
-
     def sniff(self):
         self.rcv_device.start()
-        self.rcv_timer.start()
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
         old_nmsgs = len(self.messages)
         if self.rcv_device.backend in (Backends.native, Backends.grc):
+            if old_index == new_index:
+                return
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
@@ -120,15 +107,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.qt_signals.data_sniffed.emit(old_nmsgs)
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
-            # Write Header
-            if not os.path.isfile(self.sniff_file):
-                with open(self.sniff_file, "w") as f:
-                    f.write("PROTOCOL:\n\n")
-
             with open(self.sniff_file, "a") as myfile:
-                if self.plain_bits_str:
-                    myfile.write("\n")
-
                 myfile.write("\n".join(self.plain_bits_str))
 
         if not self.__store_data:
@@ -198,12 +177,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
-
         return bool(bit_data)
 
-
     def stop(self):
-        self.rcv_timer.stop()
         self.rcv_device.stop("Stopping receiving due to user interaction")
         QApplication.processEvents()
         time.sleep(0.1)
@@ -211,31 +187,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def clear(self):
         del self.data_cache[:]
         del self.messages[:]
-
-    def on_rcv_timer_timeout(self):
-        new_errors = self.rcv_device.read_errors()
-        self.qt_signals.sniff_device_errors_changed.emit(new_errors)
-        if "No devices found for" in new_errors:
-            self.rcv_device.stop("Could not establish connection to USRP")
-            Errors.usrp_ip_not_found()
-            self.stop()
-
-        elif "FATAL: No supported devices found" in new_errors or \
-                        "HACKRF_ERROR_NOT_FOUND" in new_errors:
-            self.rcv_device.stop("Could not establish connection to HackRF")
-            Errors.hackrf_not_found()
-            self.stop()
-
-        elif "No module named gnuradio" in new_errors:
-            self.rcv_device.stop("Did not find gnuradio.")
-            Errors.gnuradio_not_installed()
-            self.stop()
-
-        elif "Address already in use" in new_errors:
-            self.rcv_device.port += 1
-            self.stop()
-            self.sniff()
-
 
     def __emit_started(self):
         self.started.emit()

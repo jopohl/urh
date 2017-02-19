@@ -9,25 +9,24 @@ from PyQt5.QtWidgets import QInputDialog, QApplication, QWidget, QUndoStack
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
-from urh.controller.SendRecvDialogController import SendRecvDialogController, Mode
+from urh.controller.SendDialogController import SendDialogController
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.encoder import Encoder
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
-from urh.util.ProjectManager import ProjectManager
 from urh.util.Logger import logger
+from urh.util.ProjectManager import ProjectManager
 
 
 class GeneratorTabController(QWidget):
@@ -484,19 +483,15 @@ class GeneratorTabController(QWidget):
     def on_btn_send_clicked(self):
         try:
             modulated_data = self.modulate_data()
-            dialog = SendRecvDialogController(self.project_manager.frequency,
-                                              self.project_manager.sample_rate,
-                                              self.project_manager.bandwidth,
-                                              self.project_manager.gain,
-                                              self.project_manager.device,
-                                              Mode.send, modulated_data=modulated_data,
-                                              parent=self)
+            dialog = SendDialogController(self.project_manager.frequency,
+                                          self.project_manager.sample_rate,
+                                          self.project_manager.bandwidth,
+                                          self.project_manager.gain,
+                                          self.project_manager.device,
+                                          modulated_data=modulated_data,
+                                          parent=self)
             if dialog.has_empty_device_list:
                 Errors.no_device()
-                dialog.close()
-                return
-            elif PluginManager().is_plugin_enabled("NetworkSDRInterface") and dialog.ui.cbDevice.count() == 1:
-                Errors.network_sdr_send_is_elsewhere()
                 dialog.close()
                 return
 
@@ -539,7 +534,7 @@ class GeneratorTabController(QWidget):
         if not self.network_sdr_plugin.is_sending:
             messages = self.table_model.protocol.messages
             sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
-            self.network_sdr_plugin.start_sending_thread(messages, sample_rates)
+            self.network_sdr_plugin.start_message_sending_thread(messages, sample_rates)
         else:
             self.network_sdr_plugin.stop_sending_thread()
 
@@ -547,7 +542,8 @@ class GeneratorTabController(QWidget):
     def on_network_sdr_sending_status_changed(self, is_sending: bool):
         self.ui.btnNetworkSDRSend.setChecked(is_sending)
         self.ui.btnNetworkSDRSend.setEnabled(True)
-        self.ui.btnNetworkSDRSend.setToolTip("Sending in progress" if is_sending else self.network_sdr_button_orig_tooltip)
+        self.ui.btnNetworkSDRSend.setToolTip(
+            "Sending in progress" if is_sending else self.network_sdr_button_orig_tooltip)
         if not is_sending:
             self.ui.tableMessages.clearSelection()
 

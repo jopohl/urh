@@ -239,7 +239,6 @@ class Device(QObject):
             try:
                 while not self.queue.empty():
                     byte_buffer = self.queue.get()
-                    old_index = self.current_recv_index
 
                     nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
                     if nsamples > 0:
@@ -257,6 +256,8 @@ class Device(QObject):
                         end = nsamples*self.BYTES_PER_SAMPLE
                         self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
                             self.unpack_complex(byte_buffer[:end], nsamples)
+
+                        old_index = self.current_recv_index
                         self.current_recv_index += nsamples
 
                         self.rcv_index_changed.emit(old_index, self.current_recv_index)

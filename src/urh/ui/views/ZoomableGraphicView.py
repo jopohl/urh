@@ -98,6 +98,14 @@ class ZoomableGraphicView(SelectableGraphicView):
 
         self.redraw_view(reinitialize)
 
+    def zoom_to_selection(self, start: int, end: int):
+        if start == end:
+            return
+
+        x_factor = self.view_rect().width() / (end - start)
+        self.zoom(x_factor)
+        self.centerOn(start + (end - start) / 2, self.y_center)
+
     def setScene(self, scene: QGraphicsScene):
         super().setScene(scene)
         self.margin = 0.25 * self.scene().height()
@@ -131,3 +139,4 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_signal_scrolled(self):
         self.redraw_timer.start(0)
+

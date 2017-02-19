@@ -262,14 +262,6 @@ class EditableGraphicView(ZoomableGraphicView):
     def set_zoom_cursor(self):
         self.setCursor(QCursor(QIcon.fromTheme("zoom-in").pixmap(16, 16)))
 
-    def zoom_to_selection(self, start: int, end: int):
-        if start == end:
-            return
-
-        x_factor = self.view_rect().width() / (end - start)
-        self.zoom(x_factor)
-        self.centerOn(start + (end - start) / 2, self.y_center)
-
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):
         if not self.selection_area.is_empty:

@@ -269,7 +269,8 @@ class EditableGraphicView(ZoomableGraphicView):
         else:
             num_samples = None
 
-        self.insert_sine_plugin.show_insert_sine_dialog(sample_rate=self.sample_rate, num_samples=num_samples)
+        dialog = self.insert_sine_plugin.get_insert_sine_dialog(sample_rate=self.sample_rate, num_samples=num_samples)
+        dialog.show()
 
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):

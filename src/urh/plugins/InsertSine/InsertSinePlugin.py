@@ -29,6 +29,8 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.__sample_rate = 1e6
         self.__num_samples = int(1e6)
 
+        self.original_signal = None
+
         self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
         self.dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
         self.dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
@@ -106,8 +108,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
         self.sine_wave_updated.connect(self.on_sine_wave_updated)
 
-    def show_insert_sine_dialog(self, sample_rate=None, num_samples=None):
-        self.dialog_ui.show()
+    def get_insert_sine_dialog(self, sample_rate=None, num_samples=None) -> QDialog:
         self.create_dialog_connects()
         if sample_rate is not None:
             self.sample_rate = sample_rate
@@ -119,6 +120,8 @@ class InsertSinePlugin(SignalEditorPlugin):
 
         self.set_time()
         self.draw_sine_wave()
+
+        return self.dialog_ui
 
     def draw_sine_wave(self):
         if self.dialog_ui.graphicsViewSineWave.scene_manager:
@@ -139,7 +142,8 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_sine_wave_updated(self):
         self.__set_status_of_editable_elements(enabled=True)
         self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
-        self.dialog_ui.graphicsViewSineWave.show_full_scene()
+        self.dialog_ui.graphicsViewSineWave.scene_manager.show_scene_section(0, len(self.complex_wave) + 1)
+        self.dialog_ui.graphicsViewSineWave.zoom_to_selection(0, len(self.complex_wave) + 1)
 
     def __set_status_of_editable_elements(self, enabled: bool):
         for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase",

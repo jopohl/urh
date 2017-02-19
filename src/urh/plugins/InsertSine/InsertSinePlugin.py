@@ -30,6 +30,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.__num_samples = int(1e6)
 
         self.original_data = None
+        self.draw_data = None
         self.position = 0
 
         self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
@@ -140,14 +141,14 @@ class InsertSinePlugin(SignalEditorPlugin):
     def __update_sine_wave(self):
         t = np.arange(0, self.num_samples) / self.sample_rate
         arg = ((2 * np.pi * self.frequency * t + self.phase) * 1j).astype(np.complex64)
-        self.complex_wave = self.amplitude * np.exp(arg)
+        self.complex_wave = self.amplitude * np.exp(arg)  # type: np.ndarray
+        self.draw_data = np.insert(self.original_data, self.position, self.complex_wave).imag.astype(np.float32)
         self.sine_wave_updated.emit()
 
     def on_sine_wave_updated(self):
         self.__set_status_of_editable_elements(enabled=True)
-        self.dialog_ui.graphicsViewSineWave.plot_data(self.complex_wave.imag.astype(np.float32))
-        self.dialog_ui.graphicsViewSineWave.scene_manager.show_scene_section(0, len(self.complex_wave) + 1)
-        self.dialog_ui.graphicsViewSineWave.zoom_to_selection(0, len(self.complex_wave) + 1)
+        self.dialog_ui.graphicsViewSineWave.plot_data(self.draw_data)
+        self.dialog_ui.graphicsViewSineWave.show_full_scene()
 
     def __set_status_of_editable_elements(self, enabled: bool):
         for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase",

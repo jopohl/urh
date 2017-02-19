@@ -30,10 +30,10 @@ class ReceiveDialogController(SendRecvDialogController):
 
         self.scene_manager = LiveSceneManager(np.array([]), parent=self)  # set really in on_device_started
 
+        self.init_device()
+
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
-
-        self.init_device()
 
         self.create_connects()
 

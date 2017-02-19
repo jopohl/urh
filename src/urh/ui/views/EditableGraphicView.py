@@ -316,8 +316,10 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_crop_action_triggered(self):
         if not self.selection_area.is_empty:
+            start, end = self.selection_area.start, self.selection_area.end
+            self.clear_selection()
             crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                           start=self.selection_area.start, end=self.selection_area.end,
+                                           start=start, end=end,
                                            mode=EditAction.crop, cache_qad=self.cache_qad)
             self.undo_stack.push(crop_action)
 

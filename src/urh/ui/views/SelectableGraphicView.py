@@ -33,7 +33,6 @@ class SelectableGraphicView(QGraphicsView):
         self.separation_area_moving = False
 
         self.shift_mode = False  # Shift Key currently pressed?
-        self.ctrl_mode = False  # Ctrl Key currently pressed?
 
     def scene(self) -> ZoomableScene:
         return super().scene()
@@ -214,8 +213,6 @@ class SelectableGraphicView(QGraphicsView):
 
         self.selection_area.finished = True
         self.selection_area.resizing = False
-        if not self.ctrl_mode:
-            self.unsetCursor()
         self.emit_sel_area_width_changed()
         self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
 

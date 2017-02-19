@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtGui import QCursor, QKeyEvent, QKeySequence
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QMenu
@@ -18,7 +18,6 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
 class EditableGraphicView(ZoomableGraphicView):
-    ctrl_state_changed = pyqtSignal(bool)
     save_as_clicked = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
@@ -124,46 +123,6 @@ class EditableGraphicView(ZoomableGraphicView):
     def set_signal(self, signal: Signal):
         self.__signal = signal
 
-    def keyPressEvent(self, event: QKeyEvent):
-        key = event.key()
-
-        super().keyPressEvent(event)
-
-        if key == Qt.Key_Control and not self.shift_mode:
-            self.set_zoom_cursor()
-            self.ctrl_mode = True
-            self.ctrl_state_changed.emit(True)
-
-        if self.ctrl_mode and (key == Qt.Key_Plus or key == Qt.Key_Up):
-            self.zoom(1.1)
-        elif self.ctrl_mode and (key == Qt.Key_Minus or key == Qt.Key_Down):
-            self.zoom(0.9)
-        elif self.ctrl_mode and key == Qt.Key_Right:
-            cur_val = self.horizontalScrollBar().value()
-            step = self.horizontalScrollBar().pageStep()
-            self.horizontalScrollBar().setValue(cur_val + step)
-        elif key == Qt.Key_Right:
-            cur_val = self.horizontalScrollBar().value()
-            step = self.horizontalScrollBar().singleStep()
-            self.horizontalScrollBar().setValue(cur_val + step)
-
-        elif self.ctrl_mode and key == Qt.Key_Left:
-            cur_val = self.horizontalScrollBar().value()
-            step = self.horizontalScrollBar().pageStep()
-            self.horizontalScrollBar().setValue(cur_val - step)
-
-        elif key == Qt.Key_Left:
-            cur_val = self.horizontalScrollBar().value()
-            step = self.horizontalScrollBar().singleStep()
-            self.horizontalScrollBar().setValue(cur_val - step)
-
-    def keyReleaseEvent(self, event: QKeyEvent):
-        super().keyReleaseEvent(event)
-        if event.key() == Qt.Key_Control:
-            self.ctrl_mode = False
-            self.ctrl_state_changed.emit(False)
-            self.unsetCursor()
-
     def create_context_menu(self):
         self.paste_position = int(self.mapToScene(self.context_menu_position).x())
 
@@ -185,7 +144,15 @@ class EditableGraphicView(ZoomableGraphicView):
             if not self.selection_area.is_empty:
                 menu.addSeparator()
 
+        menu.addAction(self.zoom_in_action)
+        menu.addAction(self.zoom_out_action)
+
         if not self.selection_area.is_empty:
+            zoom_action = menu.addAction(self.tr("Zoom selection"))
+            zoom_action.setIcon(QIcon.fromTheme("zoom-fit-best"))
+            zoom_action.triggered.connect(self.on_zoom_action_triggered)
+
+            menu.addSeparator()
             menu.addAction(self.delete_action)
             crop_action = menu.addAction(self.tr("Crop to selection"))
             crop_action.triggered.connect(self.on_crop_action_triggered)
@@ -193,9 +160,7 @@ class EditableGraphicView(ZoomableGraphicView):
             mute_action.triggered.connect(self.on_mute_action_triggered)
 
             menu.addSeparator()
-            zoom_action = menu.addAction(self.tr("Zoom selection"))
-            zoom_action.setIcon(QIcon.fromTheme("zoom-in"))
-            zoom_action.triggered.connect(self.on_zoom_action_triggered)
+
             if self.create_new_signal_enabled:
                 create_action = menu.addAction(self.tr("Create signal from selection"))
                 create_action.setIcon(QIcon.fromTheme("document-new"))
@@ -247,8 +212,6 @@ class EditableGraphicView(ZoomableGraphicView):
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
-        if self.ctrl_mode:
-            return
         self.context_menu_position = event.pos()
         menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
@@ -256,9 +219,6 @@ class EditableGraphicView(ZoomableGraphicView):
 
     def clear_selection(self):
         self.set_selection_area(0, 0)
-
-    def set_zoom_cursor(self):
-        self.setCursor(QCursor(QIcon.fromTheme("zoom-in").pixmap(16, 16)))
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):

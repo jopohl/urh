@@ -1,8 +1,11 @@
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtGui import QWheelEvent
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.SceneManager import SceneManager
@@ -14,6 +17,20 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.zoom_in_action = QAction(self.tr("Zoom in"), self)
+        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
+        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
+        self.addAction(self.zoom_in_action)
+
+        self.zoom_out_action = QAction(self.tr("Zoom out"), self)
+        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
+        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
+        self.addAction(self.zoom_out_action)
 
         self.margin = 0.25
         self.min_width = 100
@@ -62,13 +79,6 @@ class ZoomableGraphicView(SelectableGraphicView):
     def wheelEvent(self, event: QWheelEvent):
         zoom_factor = 1.001 ** event.angleDelta().y()
         self.zoom(zoom_factor, event=event)
-
-    def mousePressEvent(self, event: QMouseEvent):
-        super().mousePressEvent(event)
-        if self.ctrl_mode and event.buttons() == Qt.LeftButton:
-            self.zoom(1.1)
-        elif self.ctrl_mode and event.buttons() == Qt.RightButton:
-            self.zoom(0.9)
 
     def resizeEvent(self, event):
         if self.sceneRect().width() == 0:
@@ -138,3 +148,11 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_signal_scrolled(self):
         self.redraw_timer.start(0)
+
+    @pyqtSlot()
+    def on_zoom_in_action_triggered(self):
+        self.zoom(1.1)
+
+    @pyqtSlot()
+    def on_zoom_out_action_triggered(self):
+        self.zoom(0.9)

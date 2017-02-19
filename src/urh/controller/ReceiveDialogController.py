@@ -91,6 +91,7 @@ class ReceiveDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_clear_clicked(self):
+        self.scene_manager.clear_path()
         self.reset()
 
     @pyqtSlot()

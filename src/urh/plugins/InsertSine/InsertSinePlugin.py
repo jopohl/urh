@@ -30,6 +30,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.__num_samples = int(1e6)
 
         self.original_data = None
+        self.position = 0
 
         self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
         self.dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)

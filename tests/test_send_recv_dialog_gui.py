@@ -75,7 +75,7 @@ class TestSendRecvDialog(unittest.TestCase):
         sock.sendall(data.tostring())
         sock.close()
 
-        QTest.qWait(100)
+        QTest.qWait(1000)
 
         self.assertEqual(self.receive_dialog.device.current_index, 3)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
@@ -94,7 +94,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.send_dialog.device.set_client_port(3333)
         self.send_dialog.ui.spinBoxNRepeat.setValue(2)
         self.send_dialog.ui.btnStart.click()
-        QTest.qWait(500)
+        QTest.qWait(1000)
 
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
@@ -126,7 +126,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.sniff_dialog.ui.btnStart.click()
         gframe.ui.btnNetworkSDRSend.click()
 
-        QTest.qWait(500)
+        QTest.qWait(1000)
         received_msgs = self.sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = gframe.table_model.protocol.plain_bits_str
 
@@ -145,7 +145,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertFalse(self.sniff_dialog.ui.btnAccept.isEnabled())
 
         gframe.ui.btnNetworkSDRSend.click()
-        QTest.qWait(500)
+        QTest.qWait(1000)
 
         with open(target_file, "r") as f:
             for i, line in enumerate(f):

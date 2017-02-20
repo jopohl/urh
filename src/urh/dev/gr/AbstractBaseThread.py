@@ -126,6 +126,7 @@ class AbstractBaseThread(QThread):
     def init_recv_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         while not self.isInterruptionRequested():
             try:
@@ -134,6 +135,7 @@ class AbstractBaseThread(QThread):
                 # https://github.com/jopohl/urh/issues/131
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.socket.connect((self.ip, self.port))
                 break
             except (ConnectionRefusedError, ConnectionResetError):

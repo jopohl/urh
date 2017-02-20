@@ -5,6 +5,7 @@ import time
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
+from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtWidgets import QGraphicsView
 
@@ -249,6 +250,8 @@ class SendRecvDialogController(QDialog):
         self.timer.start(self.update_interval)
 
     def update_view(self):
+        self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
+
         txt = self.ui.txtEditErrors.toPlainText()
         new_errors = self.device.read_errors()
 
@@ -335,9 +338,7 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot(int)
     def on_slider_y_scale_value_changed(self, new_value: int):
         # Scale Up = Top Half, Scale Down = Lower Half
-        middle = int((self.ui.sliderYscale.maximum() + 1 - self.ui.sliderYscale.minimum()) / 2)
-        scale_up = new_value >= middle
-        current_factor = self.graphics_view.sceneRect().height() / self.graphics_view.view_rect().height()
-        scale_factor = (new_value + 1 - middle) / current_factor if scale_up else current_factor / new_value
-        if scale_factor > 0:
-            self.graphics_view.scale(1, scale_factor)
+        transform = self.graphics_view.transform()
+        self.graphics_view.setTransform(QTransform(transform.m11(), transform.m12(), transform.m13(),
+                                                   transform.m21(), new_value, transform.m23(),
+                                                   transform.m31(), transform.m32(), transform.m33()))

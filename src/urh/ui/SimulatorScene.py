@@ -96,7 +96,6 @@ class RuleConditionItem(QGraphicsObject):
 
         self.setAcceptHoverEvents(True)
         self.hover_active = False
-        self.message_type_actions = {}
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
@@ -175,9 +174,10 @@ class RuleConditionItem(QGraphicsObject):
 
     @pyqtSlot()
     def on_remove_cond_action_triggered(self):
+        scene = self.scene()
         self.parentItem().conditions.remove(self)
-        self.scene().removeItem(self)
-        self.scene().update_view()
+        scene.removeItem(self)
+        scene.update_view()
 
     def create_context_menu(self):
         menu = QMenu()
@@ -242,9 +242,6 @@ class ParticipantItem(QGraphicsItem):
         self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
 
     def update(self, x_pos = -1, y_pos = -1):
-        if not self.scene():
-            return
-
         if x_pos == -1:
             x_pos = self.line.line().x1()
 

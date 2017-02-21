@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup, QGraphicsObject
 from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform
-from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF
+from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF, pyqtSignal, pyqtSlot
 import math
 from enum import Enum
 
@@ -85,7 +85,7 @@ class RuleTextItem(QGraphicsTextItem):
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
-class RuleConditionItem(QGraphicsItem):
+class RuleConditionItem(QGraphicsObject):
     def __init__(self, type, parent):
         super().__init__(parent)
         self.type = type
@@ -96,6 +96,7 @@ class RuleConditionItem(QGraphicsItem):
 
         self.setAcceptHoverEvents(True)
         self.hover_active = False
+        self.message_type_actions = {}
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
@@ -106,9 +107,6 @@ class RuleConditionItem(QGraphicsItem):
         super().update()
 
     def update(self, y_pos):
-        if not self.scene() or len(self.scene().participants) < 2:
-            return
-
         x = self.scene().participants[0].line.line().x1()
         tmp_y = y_pos
 
@@ -141,68 +139,86 @@ class RuleConditionItem(QGraphicsItem):
                 self.items.remove(item)
                 self.scene().removeItem(item)
 
-    def contextMenuEvent(self, event):
-        menu = QMenu()
-        scene = self.scene()
-
-        addMessageAction = QAction("Add empty message")
-        addElseIfCondAction = QAction("Add else if block")
-        addElseCondAction = QAction("Add else block")
-
-        removeRuleAction = QAction("Remove rule")
-        removeElseIfCondAction = QAction("Remove else if block")
-        removeElseCondAction = QAction("Remove else block")
-
-        menu.addAction(addMessageAction)
-        message_type_menu = menu.addMenu("Add message with message type ...")
-        message_type_actions = {}
-
-        for message_type in self.scene().controller.proto_analyzer.message_types:
-            action = message_type_menu.addAction(message_type.name)
-            message_type_actions[action] = message_type
-
-        menu.addSeparator()
-        menu.addAction(addElseIfCondAction)
-
-        if not self.parentItem().has_else_condition():
-            menu.addAction(addElseCondAction)
-
-        menu.addSeparator()
-
-        menu.addAction(removeRuleAction)
-
-        if self.type == ConditionType.ELSE_IF:
-            menu.addAction(removeElseIfCondAction)
-        elif self.type == ConditionType.ELSE:
-            menu.addAction(removeElseCondAction)
-
-        action = menu.exec_(event.screenPos())
-
+    @pyqtSlot()
+    def on_add_message_action_triggered(self):
         source = self.scene().not_assigned_part
         destination = self.scene().broadcast_part
 
-        if action == addMessageAction:
-            simulator_message = MessageItem(source, destination, self)
-            self.items.append(simulator_message)
-        elif action == addElseIfCondAction:
-            self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
-        elif action == addElseCondAction:
-            self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
-        elif action in message_type_actions:
-            simulator_message = MessageItem(source, destination, self)
+        if self.sender() in self.message_type_actions:
+            message_type = self.message_type_actions[self.sender()]
+        else:
+            message_type = []
+            
+        simulator_message = MessageItem(source, destination, self)
 
-            for label in message_type_actions[action]:
-                simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+        for label in message_type:
+            simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
 
-            self.items.append(simulator_message)
-        elif action == removeRuleAction:
-            self.scene().items.remove(self.parentItem())
-            self.scene().removeItem(self.parentItem())
-        elif action == removeElseIfCondAction or action == removeElseCondAction:
-            self.parentItem().conditions.remove(self)
-            self.scene().removeItem(self)
+        self.items.append(simulator_message)
+        self.scene().update_view()
 
-        scene.update_view()
+    @pyqtSlot()
+    def on_add_else_if_cond_action_triggered(self):
+        self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_add_else_cond_action_triggered(self):
+        self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_remove_rule_action_triggered(self):
+        self.scene().items.remove(self.parentItem())
+        self.scene().removeItem(self.parentItem())
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_remove_cond_action_triggered(self):
+        self.parentItem().conditions.remove(self)
+        self.scene().removeItem(self)
+        self.scene().update_view()
+
+    def create_context_menu(self):
+        menu = QMenu()
+
+        add_message_action = menu.addAction("Add empty message")
+        add_message_action.triggered.connect(self.on_add_message_action_triggered)
+
+        message_type_menu = menu.addMenu("Add message with message type ...")
+        self.message_type_actions = {}
+
+        for message_type in self.scene().controller.proto_analyzer.message_types:
+            action = message_type_menu.addAction(message_type.name)
+            self.message_type_actions[action] = message_type
+            action.triggered.connect(self.on_add_message_action_triggered)
+
+        menu.addSeparator()
+
+        add_else_if_cond_action = menu.addAction("Add else if block")
+        add_else_if_cond_action.triggered.connect(self.on_add_else_if_cond_action_triggered)
+
+        if not self.parentItem().has_else_condition():
+            add_else_cond_action = menu.addAction("Add else block")
+            add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
+
+        menu.addSeparator()
+
+        remove_rule_action = menu.addAction("Remove rule")
+        remove_rule_action.triggered.connect(self.on_remove_rule_action_triggered)
+
+        if self.type == ConditionType.ELSE_IF:
+            remove_else_if_cond_action = menu.addAction("Remove else if block")
+            remove_else_if_cond_action.triggered.connect(self.on_remove_cond_action_triggered)
+        elif self.type == ConditionType.ELSE:
+            remove_else_cond_action = menu.addAction("Remove else block")
+            remove_else_cond_action.triggered.connect(self.on_remove_cond_action_triggered)
+
+        return menu
+
+    def contextMenuEvent(self, event):
+        menu = self.create_context_menu()
+        action = menu.exec_(event.screenPos())
 
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):

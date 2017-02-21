@@ -74,7 +74,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle")
+    DEVICE_NAMES = ("Bladerf" , "HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle")
 
     def __init__(self, testing_mode=False):
         self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests

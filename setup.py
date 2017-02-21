@@ -62,15 +62,17 @@ def get_packages():
 
 
 def get_package_data():
-    package_data = {"urh.cythonext": ["*.cpp"]}
+    package_data = {"urh.cythonext": ["*.cpp", "*.pyx"]}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
     is_release = os.path.isfile("/tmp/urh_releasing")  # make sure precompiled binding are uploaded to PyPi
 
+    package_data["urh.dev.native.lib"] = ["*.cpp", "*.pyx", "*.pxd"]
+
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
-        package_data["urh.dev.native.lib"] = ["hackrf.cp35-win_amd64.pyd"]
+        package_data["urh.dev.native.lib"].append("hackrf.cp35-win_amd64.pyd")
 
     return package_data
 
@@ -158,7 +160,7 @@ setup(
     setup_requires=['numpy'],
     packages=get_packages(),
     ext_modules=extensions,
-    cmdclass={'build_ext':build_ext},
+    cmdclass={'build_ext': build_ext},
     zip_safe=False,
     entry_points={
         'console_scripts': [

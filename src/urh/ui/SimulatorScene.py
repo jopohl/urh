@@ -168,9 +168,10 @@ class RuleConditionItem(QGraphicsObject):
 
     @pyqtSlot()
     def on_remove_rule_action_triggered(self):
-        self.scene().items.remove(self.parentItem())
-        self.scene().removeItem(self.parentItem())
-        self.scene().update_view()
+        scene = self.scene()
+        scene.items.remove(self.parentItem())
+        scene.removeItem(self.parentItem())
+        scene.update_view()
 
     @pyqtSlot()
     def on_remove_cond_action_triggered(self):
@@ -259,7 +260,7 @@ class ParticipantItem(QGraphicsItem):
     def paint(self, painter, option, widget):
         pass
 
-class MessageItem(QGraphicsItem):
+class MessageItem(QGraphicsObject):
     def __init__(self, source, destination, parent=None):
         super().__init__(parent)
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsPanel)
@@ -318,18 +319,47 @@ class MessageItem(QGraphicsItem):
             painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
             painter.drawRect(self.boundingRect())
 
-    def contextMenuEvent(self, event):
+    @pyqtSlot()
+    def on_del_action_triggered(self):
+        scene = self.scene()
+
+        if self.parentItem() is None:
+            scene.items.remove(self)
+        else:
+            self.parentItem().items.remove(self)
+
+        scene.removeItem(self)
+        scene.update_view()
+
+    @pyqtSlot()
+    def on_source_action_triggered(self):
+        self.source = self.source_actions[self.sender()]
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_destination_action_triggered(self):
+        self.destination = self.destination_actions[self.sender()]
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_swap_part_action_triggered(self):
+        tmp = self.source
+        self.source = self.destination
+        self.destination = tmp
+        self.scene().update_view()
+
+    def create_context_menu(self):
         menu = QMenu()
         scene = self.scene()
 
-        delAction = QAction("Delete message")
-        menu.addAction(delAction)
+        del_action = menu.addAction("Delete message")
+        del_action.triggered.connect(self.on_del_action_triggered)
 
         menu.addSeparator()
 
-        sourcegroup = QActionGroup(scene)
+        source_group = QActionGroup(scene)
         source_menu = menu.addMenu("Source")
-        source_actions = {}
+        self.source_actions = {}
 
         for particpnt in scene.participants:
             if self.destination == particpnt:
@@ -340,16 +370,17 @@ class MessageItem(QGraphicsItem):
 
             pa = source_menu.addAction(particpnt.text.toPlainText())
             pa.setCheckable(True)
-            pa.setActionGroup(sourcegroup)
+            pa.setActionGroup(source_group)
 
             if self.source == particpnt:
                 pa.setChecked(True)
 
-            source_actions[pa] = particpnt
+            self.source_actions[pa] = particpnt
+            pa.triggered.connect(self.on_source_action_triggered)
 
-        destinationgroup = QActionGroup(scene)
+        destination_group = QActionGroup(scene)
         destination_menu = menu.addMenu("Destination")
-        destination_actions = {}
+        self.destination_actions = {}
 
         for particpnt in scene.participants:
             if self.source == particpnt:
@@ -357,37 +388,23 @@ class MessageItem(QGraphicsItem):
 
             pa = destination_menu.addAction(particpnt.text.toPlainText())
             pa.setCheckable(True)
-            pa.setActionGroup(destinationgroup)
+            pa.setActionGroup(destination_group)
 
             if self.destination == particpnt:
                 pa.setChecked(True)
 
-            destination_actions[pa] = particpnt
-
-        swapPartAction = QAction("Swap source and destination")
+            self.destination_actions[pa] = particpnt
+            pa.triggered.connect(self.on_destination_action_triggered)
 
         if self.destination != scene.broadcast_part:
-            menu.addAction(swapPartAction)
+            swap_part_action = menu.addAction("Swap source and destination")
+            swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
 
+        return menu
+
+    def contextMenuEvent(self, event):
+        menu = self.create_context_menu()
         action = menu.exec_(event.screenPos())
-
-        if action == delAction:
-            if self.parentItem() is None:
-                scene.items.remove(self)
-            else:
-                self.parentItem().items.remove(self)
-
-            scene.removeItem(self)
-        elif action == swapPartAction:
-            tmp = self.source
-            self.source = self.destination
-            self.destination = tmp
-        elif action in source_actions:
-            self.source = source_actions[action]
-        elif action in destination_actions:
-            self.destination = destination_actions[action]
-
-        scene.update_view()
 
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):

@@ -37,7 +37,30 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 1)
         self.assertEqual(type(self.sim_frame.ui.gvSimulator.scene().items[0]), RuleItem)
 
-    def test_create_context_menu(self):
+    def test_message_context_menu(self):
+        self.sim_frame.ui.gvSimulator.scene().clear_all()
+        self.sim_frame.ui.gvSimulator.scene().add_message()
+        self.sim_frame.ui.gvSimulator.scene().add_rule()
+        rule = self.sim_frame.ui.gvSimulator.scene().items[1]
+        if_cond = rule.conditions[0]
+        menu = if_cond.create_context_menu()
+        add_message_action = next(action for action in menu.actions() if action.text().startswith("Add empty message"))
+        add_message_action.trigger()
+        self.assertEqual(len(rule.conditions), 1)
+        self.assertEqual(len(if_cond.items), 1)
+
+        menu = if_cond.items[0].create_context_menu()
+        del_action = next(action for action in menu.actions() if action.text().startswith("Delete message"))
+        del_action.trigger()
+        self.assertEqual(len(if_cond.items), 0)
+
+        menu = self.sim_frame.ui.gvSimulator.scene().items[0].create_context_menu()
+        del_action = next(action for action in menu.actions() if action.text().startswith("Delete message"))
+        del_action.trigger()
+
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 1)
+
+    def test_rule_context_menu(self):
         self.sim_frame.ui.gvSimulator.scene().clear_all()
         self.sim_frame.ui.gvSimulator.scene().add_rule()
         rule = self.sim_frame.ui.gvSimulator.scene().items[0]
@@ -89,9 +112,9 @@ class TestSimulator(unittest.TestCase):
         else_if_cond = rule.conditions[1]
         self.sim_frame.ui.gvSimulator.scene().add_message()
         self.sim_frame.ui.gvSimulator.scene().select_all_items()
-        self.assertEqual(if_cond.isSelected(), True)
-        self.assertEqual(else_if_cond.isSelected(), True)
-        self.assertEqual(self.sim_frame.ui.gvSimulator.scene().items[1].isSelected(), True)
+        self.assertTrue(if_cond.isSelected())
+        self.assertTrue(else_if_cond.isSelected())
+        self.assertTrue(self.sim_frame.ui.gvSimulator.scene().items[1].isSelected())
 
     def test_delete_selected_items(self):
         self.sim_frame.ui.gvSimulator.scene().clear_all()

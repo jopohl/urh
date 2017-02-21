@@ -12,6 +12,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 
 from tests.utils_testing import get_path_for_data_file
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 
 app = tests.utils_testing.app
@@ -29,6 +30,8 @@ class TestPlugins(unittest.TestCase):
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
+
+        self.signal = self.sframe.signal
 
     def tearDown(self):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
@@ -96,51 +99,61 @@ class TestPlugins(unittest.TestCase):
 
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
-        insert_sine_plugin.create_dialog_connects()
+        num_samples = 10000
+        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
+                                                           position=2000,
+                                                           sample_rate=self.signal.sample_rate,
+                                                           num_samples=num_samples)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
+
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
-        insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.setValue(0.1)
-        insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.editingFinished.emit()
+        self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
+        self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
+        self.assertEqual(insert_sine_plugin.insert_indicator.rect().x(), 2000)
+
+        dialog.doubleSpinBoxAmplitude.setValue(0.1)
+        dialog.doubleSpinBoxAmplitude.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.amplitude, 0.1)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
-        insert_sine_plugin.dialog_ui.doubleSpinBoxFrequency.setValue(1e6)
-        insert_sine_plugin.dialog_ui.doubleSpinBoxFrequency.editingFinished.emit()
+        dialog.doubleSpinBoxFrequency.setValue(1e6)
+        dialog.doubleSpinBoxFrequency.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.frequency, 1e6)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
-        insert_sine_plugin.dialog_ui.doubleSpinBoxPhase.setValue(100)
-        insert_sine_plugin.dialog_ui.doubleSpinBoxPhase.editingFinished.emit()
+        dialog.doubleSpinBoxPhase.setValue(100)
+        dialog.doubleSpinBoxPhase.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.phase, 100)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
-        insert_sine_plugin.dialog_ui.doubleSpinBoxSampleRate.setValue(2e6)
-        insert_sine_plugin.dialog_ui.doubleSpinBoxSampleRate.editingFinished.emit()
+        dialog.doubleSpinBoxSampleRate.setValue(2e6)
+        dialog.doubleSpinBoxSampleRate.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.sample_rate, 2e6)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
-        insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.setValue(0.5e6)
-        insert_sine_plugin.dialog_ui.doubleSpinBoxNSamples.editingFinished.emit()
+        dialog.doubleSpinBoxNSamples.setValue(0.5e6)
+        dialog.doubleSpinBoxNSamples.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.num_samples, 0.5e6)
 
-        while not insert_sine_plugin.dialog_ui.doubleSpinBoxAmplitude.isEnabled():
+        while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
             QTest.qWait(10)
 
         sep = Formatter.local_decimal_seperator()
-        self.assertEqual(insert_sine_plugin.dialog_ui.lineEditTime.text(), "250" + sep + "000m")
+        self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

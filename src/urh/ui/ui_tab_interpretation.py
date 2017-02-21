@@ -24,7 +24,7 @@ class Ui_Interpretation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrlAreaSignals = QtWidgets.QWidget()
-        self.scrlAreaSignals.setGeometry(QtCore.QRect(0, 0, 611, 513))
+        self.scrlAreaSignals.setGeometry(QtCore.QRect(0, 0, 613, 516))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -42,9 +42,6 @@ class Ui_Interpretation(object):
         self.horizontalLayout.addWidget(self.lLoadingFile)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.lCtrlStatus = QtWidgets.QLabel(Interpretation)
-        self.lCtrlStatus.setObjectName("lCtrlStatus")
-        self.horizontalLayout.addWidget(self.lCtrlStatus)
         self.lShiftStatus = QtWidgets.QLabel(Interpretation)
         self.lShiftStatus.setObjectName("lShiftStatus")
         self.horizontalLayout.addWidget(self.lShiftStatus)
@@ -57,7 +54,6 @@ class Ui_Interpretation(object):
         _translate = QtCore.QCoreApplication.translate
         Interpretation.setWindowTitle(_translate("Interpretation", "Form"))
         self.lLoadingFile.setText(_translate("Interpretation", "Loading file 1/42"))
-        self.lCtrlStatus.setText(_translate("Interpretation", "Ctrl Status"))
         self.lShiftStatus.setText(_translate("Interpretation", "Statusinformationen like a Bozz"))
 
 from urh.ui.ScrollArea import ScrollArea

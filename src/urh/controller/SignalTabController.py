@@ -82,7 +82,6 @@ class SignalTabController(QWidget):
         sig_frame.signal_created.connect(self.signal_created.emit)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
         sig_frame.ui.gvSignal.shift_state_changed.connect(self.set_shift_statuslabel)
-        sig_frame.ui.gvSignal.ctrl_state_changed.connect(self.set_ctrl_statuslabel)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
         sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
 
@@ -238,20 +237,11 @@ class SignalTabController(QWidget):
     def set_shift_statuslabel(self, shift_pressed):
         if shift_pressed and constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
             self.ui.lShiftStatus.setText("[SHIFT] Use Mouse to scroll signal.")
-            self.ui.lCtrlStatus.clear()
 
         elif shift_pressed and not constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
             self.ui.lShiftStatus.setText("[SHIFT] Use mouse to create a selection.")
-            self.ui.lCtrlStatus.clear()
         else:
             self.ui.lShiftStatus.clear()
-
-    @pyqtSlot(bool)
-    def set_ctrl_statuslabel(self, ctrl_pressed):
-        if ctrl_pressed and len(self.ui.lShiftStatus.text()) == 0:
-            self.ui.lCtrlStatus.setText("[CTRL] Zoom signal with mousclicks or arrow up/down.")
-        else:
-            self.ui.lCtrlStatus.clear()
 
     @pyqtSlot()
     def on_participant_changed(self):

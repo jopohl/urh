@@ -81,7 +81,9 @@ class BackendHandler(object):
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
         self.gnuradio_site_package_dir = constants.SETTINGS.value('custom_site_packages_gnuradio_path', self.__get_python2_site_package_dir())
+        self.use_custom_site_package_dir = constants.SETTINGS.value('use_custom_site_packages_gnuradio', os.name == "nt", bool)
         self.gnuradio_installed = False
+        self.set_gnuradio_installed_status()
 
         if self.testing_mode:
             self.gnuradio_installed = True
@@ -115,7 +117,7 @@ class BackendHandler(object):
     def set_gnuradio_installed_status(self):
         if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
             check_cmd = ""
-            if self.gnuradio_site_package_dir and os.path.isdir(self.gnuradio_site_package_dir):
+            if self.use_custom_site_package_dir and self.gnuradio_site_package_dir and os.path.isdir(self.gnuradio_site_package_dir):
                 check_cmd = "import sys; sys.path.append('{0}'); ".format(self.gnuradio_site_package_dir)
             self.gnuradio_installed = call([self.python2_exe, "-c", check_cmd+"import gnuradio"], stderr=DEVNULL) == 0
         else:

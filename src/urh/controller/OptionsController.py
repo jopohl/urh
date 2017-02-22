@@ -40,7 +40,7 @@ class OptionsController(QDialog):
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
-        self.ui.checkBoxCustomSitePackagePath.setChecked(constants.SETTINGS.value("use_custom_site_packages_gnuradio", os.name == "nt", bool))
+        self.ui.checkBoxCustomSitePackagePath.setChecked(self.backend_handler.use_custom_site_package_dir)
         self.ui.lineEditCustomSitePackagePath.setEnabled(self.ui.checkBoxCustomSitePackagePath.isChecked())
 
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
@@ -56,6 +56,7 @@ class OptionsController(QDialog):
         self.set_device_enabled_suffix()
 
         self.ui.listWidgetDevices.setCurrentRow(0)
+        self.set_gnuradio_status()
         self.refresh_device_tab()
 
         self.create_connects()
@@ -210,13 +211,14 @@ class OptionsController(QDialog):
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
             return
 
-        if os.path.isdir(site_package_dir):
-            self.backend_handler.gnuradio_site_package_dir = site_package_dir
-            self.backend_handler.gnuradio_site_package_dir = site_package_dir
-            constants.SETTINGS.setValue("custom_site_packages_gnuradio_path", site_package_dir)
-        else:
-            self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
-            return
+        if self.backend_handler.use_custom_site_package_dir:
+            if os.path.isdir(site_package_dir):
+                self.backend_handler.gnuradio_site_package_dir = site_package_dir
+                self.backend_handler.gnuradio_site_package_dir = site_package_dir
+                constants.SETTINGS.setValue("custom_site_packages_gnuradio_path", site_package_dir)
+            else:
+                self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
+                return
 
         self.backend_handler.set_gnuradio_installed_status()
         self.refresh_device_tab()
@@ -340,7 +342,9 @@ class OptionsController(QDialog):
     @pyqtSlot(bool)
     def on_checkbox_custom_site_package_clicked(self, checked: bool):
         constants.SETTINGS.setValue("use_custom_site_packages_gnuradio", checked)
+        self.backend_handler.use_custom_site_package_dir = checked
         self.ui.lineEditCustomSitePackagePath.setEnabled(checked)
+        self.set_gnuradio_status()
 
     @pyqtSlot()
     def on_gnuradio_site_package_path_edited(self):

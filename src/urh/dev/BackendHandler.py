@@ -80,15 +80,8 @@ class BackendHandler(object):
         self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
-        self.gnuradio_site_package_dir = constants.SETTINGS.value('custom_site_packages_gnuradio_path', "")
-
-        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-            check_cmd = ""
-            if self.gnuradio_site_package_dir:
-                check_cmd = "import sys; sys.path.append('{0}'); ".format(self.gnuradio_site_package_dir)
-            self.gnuradio_installed = call([self.python2_exe, "-c", check_cmd+"import gnuradio"], stderr=DEVNULL) == 0
-        else:
-            self.gnuradio_installed = False
+        self.gnuradio_site_package_dir = constants.SETTINGS.value('custom_site_packages_gnuradio_path', self.__get_python2_site_package_dir())
+        self.gnuradio_installed = False
 
         if self.testing_mode:
             self.gnuradio_installed = True
@@ -118,6 +111,15 @@ class BackendHandler(object):
             return True
         except ImportError:
             return False
+
+    def set_gnuradio_installed_status(self):
+        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
+            check_cmd = ""
+            if self.gnuradio_site_package_dir and os.path.isdir(self.gnuradio_site_package_dir):
+                check_cmd = "import sys; sys.path.append('{0}'); ".format(self.gnuradio_site_package_dir)
+            self.gnuradio_installed = call([self.python2_exe, "-c", check_cmd+"import gnuradio"], stderr=DEVNULL) == 0
+        else:
+            self.gnuradio_installed = False
 
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
@@ -158,6 +160,9 @@ class BackendHandler(object):
     def __get_python2_interpreter(self):
         paths = os.get_exec_path()
 
+        if os.name == "nt":
+            return "C:\Program Files\GNURadio-3.7\gr-python27\python.exe"
+
         for p in paths:
             for prog in ["python2", "python2.exe"]:
                 attempt = os.path.join(p, prog)
@@ -165,6 +170,12 @@ class BackendHandler(object):
                     return attempt
 
         return ""
+
+    def __get_python2_site_package_dir(self):
+        if os.name == "nt":
+            return "C:\Program Files\GNURadio-3.7\lib\site-packages"
+        else:
+            return ""
 
 
 if __name__ == "__main__":

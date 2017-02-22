@@ -41,7 +41,6 @@ class OptionsController(QDialog):
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
         self.ui.checkBoxCustomSitePackagePath.setChecked(constants.SETTINGS.value("use_custom_site_packages_gnuradio", False, bool))
-        self.ui.lineEditCustomSitePackagePath.setText(constants.SETTINGS.value("custom_site_packages_gnuradio_path", "", str))
         self.ui.lineEditCustomSitePackagePath.setEnabled(self.ui.checkBoxCustomSitePackagePath.isChecked())
 
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
@@ -113,6 +112,8 @@ class OptionsController(QDialog):
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+        self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
+
         if self.backend_handler.gnuradio_installed:
             self.ui.lGnuradioInstalled.setStyleSheet("")
             self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio interface is working."))
@@ -201,27 +202,24 @@ class OptionsController(QDialog):
 
     def set_gnuradio_status(self):
         python2_exe = self.ui.lineEditPython2Interpreter.text()
+        site_package_dir = self.ui.lineEditCustomSitePackagePath.text()
 
         if os.path.isfile(python2_exe) and os.access(python2_exe, os.X_OK):
-            self.backend_handler.python2_exe = python2_exe
-
-            check_cmd = ""
-            if self.ui.checkBoxCustomSitePackagePath.isChecked():
-                site_package_dir = self.ui.lineEditCustomSitePackagePath.text()
-                if os.path.isdir(site_package_dir):
-                    constants.SETTINGS.setValue("custom_site_packages_gnuradio_path", site_package_dir)
-                    self.backend_handler.gnuradio_site_package_dir = site_package_dir
-                    check_cmd += "import sys; sys.path.append('{0}'); ".format(site_package_dir)
-
-            check_cmd += "import gnuradio"
-            self.backend_handler.gnuradio_installed = call(" ".join([python2_exe, "-c", check_cmd]), stderr=DEVNULL, shell=True) == 0
             constants.SETTINGS.setValue("python2_exe", python2_exe)
-
-            self.refresh_device_tab()
         else:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
-            self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
+            return
 
+        if os.path.isdir(site_package_dir):
+            self.backend_handler.gnuradio_site_package_dir = site_package_dir
+            self.backend_handler.gnuradio_site_package_dir = site_package_dir
+            constants.SETTINGS.setValue("custom_site_packages_gnuradio_path", site_package_dir)
+        else:
+            self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
+            return
+
+        self.backend_handler.set_gnuradio_installed_status()
+        self.refresh_device_tab()
 
     @pyqtSlot()
     def on_btn_add_label_type_clicked(self):

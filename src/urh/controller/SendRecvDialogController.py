@@ -63,7 +63,7 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
-        ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
+        ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])|(\"\")"
         ip_regex = QRegExp("^" + ip_range
                            + "\\." + ip_range
                            + "\\." + ip_range

@@ -48,7 +48,6 @@ class OptionsController(QDialog):
         if self.backend_handler.python2_exe:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
 
-
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
@@ -214,7 +213,7 @@ class OptionsController(QDialog):
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
-        self.backend_handler.site_package_dir = self.ui.lineEditGnuradioDirectory.text()
+        self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
         self.backend_handler.use_gnuradio_install_dir = self.ui.radioButtonGnuradioDirectory.isChecked()
         self.backend_handler.set_gnuradio_installed_status()
         self.refresh_device_tab()

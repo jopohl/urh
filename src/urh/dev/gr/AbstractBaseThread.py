@@ -1,6 +1,7 @@
 import os
 import socket
 import sys
+import tempfile
 from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
@@ -32,11 +33,14 @@ class AbstractBaseThread(QThread):
         self.usrp_ip = "192.168.10.2"
         self.device = "USRP"
         self.current_index = 0
-        self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
-        if constants.SETTINGS.value("use_custom_site_packages_gnuradio", False):
-            self.python2_site_package_path = constants.SETTINGS.value("custom_site_packages_gnuradio_path", "")
+
+        if constants.SETTINGS.value("use_gnuradio_install_dir", False):
+            gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
+            with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")) as f:
+                f.write(gnuradio_dir)
+            self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "python.exe")
         else:
-            self.python2_site_package_path = ""
+            self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
 
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread
@@ -116,15 +120,10 @@ class AbstractBaseThread(QThread):
         if not self.python2_interpreter:
             raise Exception("Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
 
-        if os.name == "nt" and self.python2_site_package_path:
-            options = ["set", "PYTHONPATH="+self.python2_site_package_path]
-        else:
-            options = []
-
-        options.extend([self.python2_interpreter, os.path.join(rp, filename),
+        options = [self.python2_interpreter, os.path.join(rp, filename),
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
-                   "--port", str(self.port)])
+                   "--port", str(self.port)]
 
         if self.device.upper() == "USRP":
             options.extend(["--ip", self.usrp_ip])
@@ -169,7 +168,6 @@ class AbstractBaseThread(QThread):
 
         result = b"".join(result)
         return result.decode("utf-8")
-
 
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):

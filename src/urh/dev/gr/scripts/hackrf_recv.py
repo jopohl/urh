@@ -6,6 +6,18 @@
 ##################################################
 
 from optparse import OptionParser
+import tempfile
+import os
+import sys
+try:
+    with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")) as f:
+        gnuradio_path = f.read().strip()
+
+    os.environ["PATH"] += os.path.join(gnuradio_path, "bin") + ";"
+    sys.path.append(os.path.join(gnuradio_path, "lib", "site-packages"))
+
+except IOError:
+    pass
 
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
@@ -92,6 +104,7 @@ if __name__ == '__main__':
     parser.add_option("-g", "--gain", dest="gain", help="Gain", default=30)
     parser.add_option("-b", "--bandwidth", dest="bw", help="Bandwidth", default=200000)
     parser.add_option("-p", "--port", dest="port", help="Port", default=1337)
+    parser.add_option("-r", "--gnuradio-dir", dest="gnuradio_dir", help="Install Directory for Gnuradio (Windows only)", default=None)
     (options, args) = parser.parse_args()
     tb = top_block(float(options.samplerate), float(options.freq), int(options.gain),
                    float(options.bw), int(options.port))

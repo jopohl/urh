@@ -80,8 +80,9 @@ class BackendHandler(object):
         self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
-        self.gnuradio_site_package_dir = constants.SETTINGS.value('custom_site_packages_gnuradio_path', self.__get_python2_site_package_dir())
-        self.use_custom_site_package_dir = constants.SETTINGS.value('use_custom_site_packages_gnuradio', os.name == "nt", bool)
+        self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
+        self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
+
         self.gnuradio_installed = False
         self.set_gnuradio_installed_status()
 
@@ -115,13 +116,25 @@ class BackendHandler(object):
             return False
 
     def set_gnuradio_installed_status(self):
-        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-            check_cmd = ""
-            if self.use_custom_site_package_dir and self.gnuradio_site_package_dir and os.path.isdir(self.gnuradio_site_package_dir):
-                check_cmd = "import sys; sys.path.append('{0}'); ".format(self.gnuradio_site_package_dir)
-            self.gnuradio_installed = call([self.python2_exe, "-c", check_cmd+"import gnuradio"], stderr=DEVNULL) == 0
+        if self.use_gnuradio_install_dir:
+            # We are probably on windows with a bundled gnuradio installation
+            bin_dir = os.path.join(self.gnuradio_install_dir, "bin")
+            site_packages_dir = os.path.join(self.gnuradio_install_dir, "lib", "site-packages")
+            if all(os.path.isdir(dir) for dir in [self.gnuradio_install_dir, bin_dir, site_packages_dir]):
+                constants.SETTINGS.setValue("gnuradio_install_dir", self.gnuradio_install_dir)
+                self.gnuradio_installed = True
+                return
+            else:
+                self.gnuradio_installed = False
+                return
         else:
-            self.gnuradio_installed = False
+            # we are on a nice unix with gnuradio installed to default python path
+            if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
+                self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+                constants.SETTINGS.setValue("python2_exe", self.python2_exe)
+            else:
+                self.gnuradio_installed = False
+                return
 
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
@@ -162,9 +175,6 @@ class BackendHandler(object):
     def __get_python2_interpreter(self):
         paths = os.get_exec_path()
 
-        if os.name == "nt":
-            return "C:\Program Files\GNURadio-3.7\gr-python27\python.exe"
-
         for p in paths:
             for prog in ["python2", "python2.exe"]:
                 attempt = os.path.join(p, prog)
@@ -172,12 +182,6 @@ class BackendHandler(object):
                     return attempt
 
         return ""
-
-    def __get_python2_site_package_dir(self):
-        if os.name == "nt":
-            return "C:\Program Files\GNURadio-3.7\lib\site-packages"
-        else:
-            return ""
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>953</width>
-    <height>655</height>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -466,7 +466,7 @@
           <string>Gnuradio options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0" colspan="3">
+          <item row="0" column="0" colspan="2">
            <widget class="QLabel" name="label_11">
             <property name="font">
              <font>
@@ -478,27 +478,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Python2 interpreter:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="lineEditPython2Interpreter"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBoxCustomSitePackagePath">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditPython2Interpreter">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7\lib\site-packages&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-            <property name="text">
-             <string>Custom site package path:</string>
+            <property name="placeholderText">
+             <string>/usr/bin/python2</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="3">
+          <item row="3" column="0" colspan="2">
            <widget class="QLabel" name="lGnuradioInstalled">
             <property name="styleSheet">
              <string notr="true"/>
@@ -508,13 +498,36 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="lineEditCustomSitePackagePath">
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEditGnuradioDirectory">
             <property name="enabled">
              <bool>true</bool>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7\lib\site-packages&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="placeholderText">
+             <string>C:\Program Files\GNURadio-3.7</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButtonPython2Interpreter">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Python2 interpreter</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="radioButtonGnuradioDirectory">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Gnuradio Directory</string>
             </property>
            </widget>
           </item>

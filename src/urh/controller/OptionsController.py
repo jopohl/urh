@@ -216,6 +216,7 @@ class OptionsController(QDialog):
         self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
         self.backend_handler.use_gnuradio_install_dir = self.ui.radioButtonGnuradioDirectory.isChecked()
         self.backend_handler.set_gnuradio_installed_status()
+        constants.SETTINGS.setValue("use_gnuradio_install_dir", self.backend_handler.use_gnuradio_install_dir)
         self.refresh_device_tab()
 
     @pyqtSlot()
@@ -336,12 +337,10 @@ class OptionsController(QDialog):
 
     @pyqtSlot(bool)
     def on_radio_button_gnuradio_directory_clicked(self, checked: bool):
-        constants.SETTINGS.setValue("use_gnuradio_install_dir", checked)
         self.set_gnuradio_status()
 
     @pyqtSlot(bool)
     def on_radio_button_python2_interpreter_clicked(self, checked: bool):
-        constants.SETTINGS.setValue("use_gnuradio_install_dir", not checked)
         self.set_gnuradio_status()
 
     @pyqtSlot()

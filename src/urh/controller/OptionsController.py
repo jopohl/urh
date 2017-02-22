@@ -211,10 +211,10 @@ class OptionsController(QDialog):
                 if os.path.isdir(site_package_dir):
                     constants.SETTINGS.setValue("custom_site_packages_gnuradio_path", site_package_dir)
                     self.backend_handler.gnuradio_site_package_dir = site_package_dir
-                    check_cmd += "import sys; sys.path.append({0}); ".format(site_package_dir)
+                    check_cmd += "import sys; sys.path.append('{0}'); ".format(site_package_dir)
 
             check_cmd += "import gnuradio"
-            self.backend_handler.gnuradio_installed = call([python2_exe, "-c", check_cmd], stderr=DEVNULL) == 0
+            self.backend_handler.gnuradio_installed = call(" ".join([python2_exe, "-c", check_cmd]), stderr=DEVNULL, shell=True) == 0
             constants.SETTINGS.setValue("python2_exe", python2_exe)
 
             self.refresh_device_tab()

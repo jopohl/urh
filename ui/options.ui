@@ -507,7 +507,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="placeholderText">
-             <string>C:\Program Files\GNURadio-3.7</string>
+             <string>C:\...\Gnuradio</string>
             </property>
            </widget>
           </item>

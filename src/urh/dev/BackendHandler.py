@@ -85,7 +85,7 @@ class BackendHandler(object):
         if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
             check_cmd = ""
             if self.gnuradio_site_package_dir:
-                check_cmd = "import sys; sys.path.append({0}); ".format(self.gnuradio_site_package_dir)
+                check_cmd = "import sys; sys.path.append('{0}'); ".format(self.gnuradio_site_package_dir)
             self.gnuradio_installed = call([self.python2_exe, "-c", check_cmd+"import gnuradio"], stderr=DEVNULL) == 0
         else:
             self.gnuradio_installed = False

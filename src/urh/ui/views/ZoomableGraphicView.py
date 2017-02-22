@@ -1,9 +1,11 @@
-import time
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtGui import QWheelEvent
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.SceneManager import SceneManager
@@ -15,6 +17,20 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.zoom_in_action = QAction(self.tr("Zoom in"), self)
+        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
+        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
+        self.addAction(self.zoom_in_action)
+
+        self.zoom_out_action = QAction(self.tr("Zoom out"), self)
+        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
+        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
+        self.addAction(self.zoom_out_action)
 
         self.margin = 0.25
         self.min_width = 100
@@ -37,7 +53,7 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     @property
     def scene_type(self):
-        return 0   # gets overwritten in Epic Graphic View
+        return 0  # gets overwritten in Epic Graphic View
 
     def zoom(self, factor, suppress_signal=False, event: QWheelEvent = None):
         if factor > 1 and self.view_rect().width() / factor < 300:
@@ -63,13 +79,6 @@ class ZoomableGraphicView(SelectableGraphicView):
     def wheelEvent(self, event: QWheelEvent):
         zoom_factor = 1.001 ** event.angleDelta().y()
         self.zoom(zoom_factor, event=event)
-
-    def mousePressEvent(self, event: QMouseEvent):
-        super().mousePressEvent(event)
-        if self.ctrl_mode and event.buttons() == Qt.LeftButton:
-            self.zoom(1.1)
-        elif self.ctrl_mode and event.buttons() == Qt.RightButton:
-            self.zoom(0.9)
 
     def resizeEvent(self, event):
         if self.sceneRect().width() == 0:
@@ -97,6 +106,14 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.centerOn(0, self.y_center)
 
         self.redraw_view(reinitialize)
+
+    def zoom_to_selection(self, start: int, end: int):
+        if start == end:
+            return
+
+        x_factor = self.view_rect().width() / (end - start)
+        self.zoom(x_factor)
+        self.centerOn(start + (end - start) / 2, self.y_center)
 
     def setScene(self, scene: QGraphicsScene):
         super().setScene(scene)
@@ -131,3 +148,11 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_signal_scrolled(self):
         self.redraw_timer.start(0)
+
+    @pyqtSlot()
+    def on_zoom_in_action_triggered(self):
+        self.zoom(1.1)
+
+    @pyqtSlot()
+    def on_zoom_out_action_triggered(self):
+        self.zoom(0.9)

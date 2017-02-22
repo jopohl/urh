@@ -757,13 +757,16 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>10</number>
+            <number>1000</number>
            </property>
            <property name="value">
-            <number>5</number>
+            <number>1</number>
            </property>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
+           </property>
+           <property name="tickInterval">
+            <number>1</number>
            </property>
           </widget>
          </item>

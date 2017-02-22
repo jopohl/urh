@@ -93,7 +93,6 @@ class MainController(QMainWindow):
         self.ui.actionNone.setActionGroup(group)
         self.ui.actionPSK.setActionGroup(group)
 
-        self.signal_tab_controller.ui.lCtrlStatus.clear()
         self.signal_tab_controller.ui.lShiftStatus.clear()
 
         self.recentFileActionList = []

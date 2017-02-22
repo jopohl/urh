@@ -40,7 +40,7 @@ class OptionsController(QDialog):
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
-        self.ui.checkBoxCustomSitePackagePath.setChecked(constants.SETTINGS.value("use_custom_site_packages_gnuradio", False, bool))
+        self.ui.checkBoxCustomSitePackagePath.setChecked(constants.SETTINGS.value("use_custom_site_packages_gnuradio", os.name == "nt", bool))
         self.ui.lineEditCustomSitePackagePath.setEnabled(self.ui.checkBoxCustomSitePackagePath.isChecked())
 
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))

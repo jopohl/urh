@@ -501,12 +501,7 @@ class SimulatorScene(QGraphicsScene):
         self.arrange_items()
 
         # resize scrollbar
-        rect = self.itemsBoundingRect()
-
-        if rect is None:
-            self.setSceneRect(QRectF(0, 0, 1, 1))
-        else:
-            self.setSceneRect(rect)
+        self.setSceneRect(self.itemsBoundingRect())
 
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):
@@ -537,9 +532,6 @@ class SimulatorScene(QGraphicsScene):
         return messages
 
     def arrange_participants(self):
-        if len(self.participants) < 1:
-            return
-
         self.participants[0].update(x_pos = 0)
 
         for i in range(1, len(self.participants)):

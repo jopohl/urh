@@ -6,14 +6,15 @@
 ##################################################
 
 from optparse import OptionParser
+
 import tempfile
 import os
 import sys
 try:
-    with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")) as f:
+    with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "r") as f:
         gnuradio_path = f.read().strip()
 
-    os.environ["PATH"] += os.path.join(gnuradio_path, "bin") + ";"
+    os.environ["PATH"] = os.path.join(gnuradio_path, "bin")
     sys.path.append(os.path.join(gnuradio_path, "lib", "site-packages"))
 
 except IOError:

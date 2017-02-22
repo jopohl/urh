@@ -203,7 +203,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxGain.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
-        if self.ui.lineEditIP.isVisible():
+        if self.ui.cbDevice.currentText() == "USRP":
             self.ui.lineEditIP.editingFinished.emit()
 
     @pyqtSlot()

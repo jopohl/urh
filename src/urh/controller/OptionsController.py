@@ -41,7 +41,7 @@ class OptionsController(QDialog):
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
         self.ui.checkBoxCustomSitePackagePath.setChecked(constants.SETTINGS.value("use_custom_site_packages_gnuradio", False, bool))
-        self.ui.checkBoxCustomSitePackagePath.setText(constants.SETTINGS.value("custom_site_packages_gnuradio_path", "", str))
+        self.ui.lineEditCustomSitePackagePath.setText(constants.SETTINGS.value("custom_site_packages_gnuradio_path", "", str))
         self.ui.lineEditCustomSitePackagePath.setEnabled(self.ui.checkBoxCustomSitePackagePath.isChecked())
 
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
@@ -220,7 +220,7 @@ class OptionsController(QDialog):
             self.refresh_device_tab()
         else:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
-            self.ui.lineEditPython2Interpreter.setText(self.backend_handler.gnuradio_site_package_dir)
+            self.ui.lineEditCustomSitePackagePath.setText(self.backend_handler.gnuradio_site_package_dir)
 
 
     @pyqtSlot()

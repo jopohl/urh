@@ -7,6 +7,8 @@ from threading import Thread
 
 import time
 from PyQt5.QtCore import QThread, pyqtSignal
+
+from urh import constants
 from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
@@ -30,12 +32,16 @@ class AbstractBaseThread(QThread):
         self.usrp_ip = "192.168.10.2"
         self.device = "USRP"
         self.current_index = 0
-        self.python2_interpreter = self.get_python2_interpreter()
+        self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
+        if constants.SETTINGS.value("use_custom_site_packages_gnuradio", False):
+            self.python2_site_package_path = constants.SETTINGS.value("custom_site_packages_gnuradio_path", "")
+        else:
+            self.python2_site_package_path = ""
+
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread
         self.connection = None  # For SenderThread used to connect so GnuRadio Socket
         self.current_iteration = 0  # Counts number of Sendings in SenderThread
-
 
         self.tb_process = None
 
@@ -107,13 +113,18 @@ class AbstractBaseThread(QThread):
         suffix = "_recv.py" if self._receiving else "_send.py"
         filename = self.device.lower() + suffix
 
-        if self.python2_interpreter is None:
+        if not self.python2_interpreter:
             raise Exception("Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
 
-        options = [self.python2_interpreter, os.path.join(rp, filename),
+        if os.name == "nt" and self.python2_site_package_path:
+            options = ["set", "PYTHONPATH="+self.python2_site_package_path]
+        else:
+            options = []
+
+        options.extend([self.python2_interpreter, os.path.join(rp, filename),
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
-                   "--port", str(self.port)]
+                   "--port", str(self.port)])
 
         if self.device.upper() == "USRP":
             options.extend(["--ip", self.usrp_ip])
@@ -147,17 +158,6 @@ class AbstractBaseThread(QThread):
 
     def run(self):
         pass
-
-    def get_python2_interpreter(self):
-        paths = os.get_exec_path()
-
-        for p in paths:
-            for prog in ["python2", "python2.exe"]:
-                attempt = os.path.join(p, prog)
-                if os.path.isfile(attempt):
-                    return attempt
-
-        return None
 
     def read_errors(self):
         result = []

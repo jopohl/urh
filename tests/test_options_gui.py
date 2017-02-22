@@ -65,4 +65,17 @@ class TestOptionsGUI(unittest.TestCase):
             self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
 
 
+    def test_device_tab(self):
+        self.dialog.ui.tabWidget.setCurrentIndex(5)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(5), "Device")
+        use_custom_site_packages = self.dialog.ui.checkBoxCustomSitePackagePath.isChecked()
+        self.assertEqual(self.dialog.ui.lineEditCustomSitePackagePath.isEnabled(), use_custom_site_packages)
+        self.dialog.ui.checkBoxCustomSitePackagePath.click()
+        self.assertNotEqual(self.dialog.ui.checkBoxCustomSitePackagePath.isChecked(), use_custom_site_packages)
+        self.assertNotEqual(self.dialog.ui.lineEditCustomSitePackagePath.isEnabled(), use_custom_site_packages)
+
+        if not self.dialog.ui.checkBoxCustomSitePackagePath.isChecked():
+            self.dialog.ui.checkBoxCustomSitePackagePath.click()
+
+        self.assertTrue(self.dialog.ui.lineEditCustomSitePackagePath.isEnabled())
 

@@ -6,6 +6,7 @@ from urh.ui.SimulatorScene import RuleItem
 from urh.ui.SimulatorScene import ParticipantItem
 
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.Message import Message
 
 from PyQt5.QtWidgets import QMenu
 
@@ -189,3 +190,29 @@ class TestSimulator(unittest.TestCase):
         self.sim_frame.ui.gvSimulator.scene().update_participants(participants)
         self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().participants_dict), 1)
         self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().participants), 3)
+
+    def test_detect_source_destination(self):
+        participants = self.sim_frame.project_manager.participants
+        proto_analyzer = self.sframe.proto_analyzer
+
+        part_a = Participant("Device A", shortname="A", color_index=0)
+        participants.append(part_a)
+        self.sim_frame.ui.gvSimulator.scene().update_participants(participants)
+
+        msg = Message([True] * 100, pause=1000, message_type=proto_analyzer.default_message_type)
+        source, destination = self.sim_frame.ui.gvSimulator.scene().detect_source_destination(msg)
+        self.assertEqual(source, self.sim_frame.ui.gvSimulator.scene().participants_dict[part_a])
+        self.assertEqual(destination, self.sim_frame.ui.gvSimulator.scene().broadcast_part)
+
+        part_b = Participant("Device B", shortname="B", color_index=1)
+        participants.append(part_b)
+        self.sim_frame.ui.gvSimulator.scene().update_participants(participants)
+
+        source, destination = self.sim_frame.ui.gvSimulator.scene().detect_source_destination(msg)
+        self.assertEqual(source, self.sim_frame.ui.gvSimulator.scene().participants_dict[part_a])
+        self.assertEqual(destination, self.sim_frame.ui.gvSimulator.scene().participants_dict[part_b])
+
+        msg.participant = part_b
+        source, destination = self.sim_frame.ui.gvSimulator.scene().detect_source_destination(msg)
+        self.assertEqual(source, self.sim_frame.ui.gvSimulator.scene().participants_dict[part_b])
+        self.assertEqual(destination, self.sim_frame.ui.gvSimulator.scene().participants_dict[part_a])

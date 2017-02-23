@@ -644,11 +644,11 @@ class SimulatorScene(QGraphicsScene):
     def add_protocols(self, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:
-                source, destination = self.__detect_source_destination(message)
+                source, destination = self.detect_source_destination(message)
 
                 self.add_message(source, destination, message.message_type)
 
-    def __detect_source_destination(self, message: Message):
+    def detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels
         participants = self.controller.project_manager.participants
 

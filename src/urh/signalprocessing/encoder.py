@@ -848,4 +848,7 @@ class Encoder(object):
         return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
 
     def __eq__(self, other):
+        if other is None:
+            return False
+
         return self.get_chain() == other.get_chain()

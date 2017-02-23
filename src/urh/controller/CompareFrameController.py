@@ -612,7 +612,7 @@ class CompareFrameController(QFrame):
                     if indx < len(first_msg_indices) and first_msg_indices[indx] >= first_msg_indices[indx + 1]:
                         del first_msg_indices[indx]
                 except IndexError as e:  # https://github.com/jopohl/urh/issues/151
-                    logger.warning("Index Error:", str(e))
+                    logger.warning("Index Error: " + str(e))
 
         for line in first_msg_indices:
             self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)

@@ -132,7 +132,7 @@ def save_signal(signal):
     if filename.endswith(".wav"):
         data = signal.wave_data
     elif filename.endswith(".complex16u"):
-        data = ((127.5 * signal.data.view(np.float32)) + 127.5).astype(np.uint8)
+        data = (127.5 * (signal.data.view(np.float32) + 1.0)).astype(np.uint8)
     elif filename.endswith(".complex16s"):
         data = (127.5 * ((signal.data.view(np.float32)) - 0.5/127.5)).astype(np.int8)
     else:

@@ -62,7 +62,7 @@ cdef extern from "rtl-sdr.h":
     int rtlsdr_reset_buffer(rtlsdr_dev_t *dev)
     int rtlsdr_read_sync(rtlsdr_dev_t *dev, void *buf, int len, int *n_read)
 
-    ctypedef void(*rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len, void *ctx)
+    ctypedef void (*rtlsdr_read_async_cb_t)(unsigned char *buffer, uint32_t length, void *ctx)
 
     int rtlsdr_read_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx, uint32_t buf_num, uint32_t buf_len);
     int rtlsdr_cancel_async(rtlsdr_dev_t *dev)

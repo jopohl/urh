@@ -2,6 +2,8 @@
 
 cimport crtlsdr
 from libc.stdlib cimport malloc
+import numpy as np
+cimport numpy as np
 
 ctypedef unsigned char uint8_t
 ctypedef unsigned short uint16_t
@@ -9,6 +11,10 @@ ctypedef unsigned int  uint32_t
 ctypedef unsigned long long uint64_t
 
 cdef crtlsdr.rtlsdr_dev_t*_c_device
+
+cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
+    global f
+    (<object>f)(buffer[0:length])
 
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
@@ -59,6 +65,7 @@ cpdef int set_xtal_freq(uint32_t rtl_freq, uint32_t tuner_freq):
     frequency (and samplerate) error caused by the original (cheap) crystal.
 
     NOTE: Call this function only if you fully understand the implications.
+
     :param rtl_freq: frequency value used to clock the RTL2832 in Hz
     :param tuner_freq: frequency value used to clock the tuner IC in Hz
     :return: 0 on success
@@ -98,6 +105,7 @@ cpdef int set_center_freq(uint32_t freq):
 cpdef uint32_t get_center_freq():
     """
     Get actual frequency the device is tuned to.
+
     :return: 0 on error, frequency in Hz otherwise
     """
     return crtlsdr.rtlsdr_get_center_freq(_c_device)
@@ -105,6 +113,7 @@ cpdef uint32_t get_center_freq():
 cpdef int set_freq_correction(int ppm):
     """
     Set the frequency correction value for the device.
+
     :param ppm: ppm correction value in parts per million (ppm)
     :return: 0 on success
     """
@@ -113,6 +122,7 @@ cpdef int set_freq_correction(int ppm):
 cpdef int get_freq_correction():
     """
     Get actual frequency correction value of the device.
+
     :return: correction value in parts per million (ppm)
     """
     return crtlsdr.rtlsdr_get_freq_correction(_c_device)
@@ -120,6 +130,7 @@ cpdef int get_freq_correction():
 cpdef crtlsdr.rtlsdr_tuner get_tuner_type():
     """
     Get the tuner type.
+
     :return: RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise
     """
     return crtlsdr.rtlsdr_get_tuner_type(_c_device)
@@ -160,6 +171,7 @@ cpdef int set_tuner_gain(int gain):
 cpdef int get_tuner_gain():
     """
     Get actual gain the device is configured to.
+
     :return: 0 on error, gain in tenths of a dB, 115 means 11.5 dB.
     """
     return crtlsdr.rtlsdr_get_tuner_gain(_c_device)
@@ -178,7 +190,109 @@ cpdef int set_tuner_gain_mode(int manual):
     """
     Set the gain mode (automatic/manual) for the device.
     Manual gain mode must be enabled for the gain setter function to work.
+
     :param manual: 1 means manual gain mode shall be enabled.
     :return: 0 on success
     """
     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
+
+cpdef int set_sample_rate(uint32_t sample_rate):
+    """
+    Set the sample rate for the device, also selects the baseband filters
+    according to the requested sample rate for tuners where this is possible.
+
+    :param sample_rate: the sample rate to be set, possible values are:
+                225001 - 300000 Hz
+  		        900001 - 3200000 Hz
+  		        sample loss is to be expected for rates > 2400000
+    :return:
+    """
+    return crtlsdr.rtlsdr_set_sample_rate(_c_device, sample_rate)
+
+cpdef uint32_t get_sample_rate():
+    """
+    Get actual sample rate the device is configured to.
+    :return: 0 on error, sample rate in Hz otherwise
+    """
+    return crtlsdr.rtlsdr_get_sample_rate(_c_device)
+
+cpdef int set_agc_mode(int on):
+    """
+    Enable or disable the internal digital Automatic Gain Control of the RTL2832.
+
+    :param on: digital AGC mode, 1 means enabled, 0 disabled
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_agc_mode(_c_device, on)
+
+cpdef int set_direct_sampling(int on):
+    """
+    Enable or disable the direct sampling mode. When enabled, the IF mode
+    of the RTL2832 is activated, and rtlsdr_set_center_freq() will control
+    the IF-frequency of the DDC, which can be used to tune from 0 to 28.8 MHz
+    (xtal frequency of the RTL2832).
+
+    :param on: 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_direct_sampling(_c_device, on)
+
+cpdef int get_direct_sampling():
+    """
+    Get state of the direct sampling mode
+
+    :return: -1 on error, 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled
+    """
+    return crtlsdr.rtlsdr_get_direct_sampling(_c_device)
+
+cpdef int set_offset_tuning(int on):
+    """
+    Enable or disable offset tuning for zero-IF tuners, which allows to avoid
+    problems caused by the DC offset of the ADCs and 1/f noise.
+
+    :param on: 0 means disabled, 1 enabled
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_offset_tuning(_c_device, on)
+
+cpdef int get_offset_tuning():
+    """
+    Get state of the offset tuning mode
+
+    :return: -1 on error, 0 means disabled, 1 enabled
+    """
+    return crtlsdr.rtlsdr_get_offset_tuning(_c_device)
+
+cpdef int reset_buffer():
+    return crtlsdr.rtlsdr_reset_buffer(_c_device)
+
+cpdef bytes read_sync(int num_samples):
+    """
+    The raw, captured IQ data is 8 bit unsigned data.
+
+    :return:
+    """
+    cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
+    cdef int n_read = 0
+
+    crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
+
+    return bytes(samples[0:n_read])
+
+cpdef int read_async(callback):
+    """
+    Read samples from the device asynchronously. This function will block until
+    it is being canceled using rtlsdr_cancel_async()
+    :return: 0 on success
+    """
+    global f
+    f = callback
+    return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>0, 0, 0)
+
+cpdef int cancel_async():
+    """
+    Cancel all pending asynchronous operations on the device.
+
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_cancel_async(_c_device)

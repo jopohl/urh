@@ -1,6 +1,10 @@
 import os
 import sys
 
+if sys.version_info < (3, 4):
+    print("You need at least Python 3.4 for this application!")
+    sys.exit(1)
+
 try:
     from setuptools import setup, Extension
     from setuptools.command.build_ext import build_ext as _build_ext

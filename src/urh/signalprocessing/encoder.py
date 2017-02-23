@@ -464,7 +464,12 @@ class Encoder(object):
         return output, errors, self.ErrorState.SUCCESS
 
     def code_data_whitening(self, decoding, inpt):
-        # XOR Data Whitening
+        """
+        XOR Data Whitening
+        :param decoding:
+        :param inpt:
+        :return:
+        """
         return self.apply_data_whitening(decoding, inpt)
 
     def code_lsb_first(self, decoding, inpt):

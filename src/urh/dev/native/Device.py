@@ -250,7 +250,7 @@ class Device(QObject):
                                     nsamples = len(self.receive_buffer) - 1
 
                             else:
-                                self.stop_rx_mode("Receiving Buffer is full.")
+                                self.stop_rx_mode("Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples, len(self.receive_buffer)))
                                 return
 
                         end = nsamples*self.BYTES_PER_SAMPLE

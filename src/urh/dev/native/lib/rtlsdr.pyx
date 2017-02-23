@@ -8,7 +8,7 @@ ctypedef unsigned short uint16_t
 ctypedef unsigned int  uint32_t
 ctypedef unsigned long long uint64_t
 
-cdef crtlsdr.rtlsdr_dev_t* _c_device
+cdef crtlsdr.rtlsdr_dev_t*_c_device
 
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
@@ -22,9 +22,9 @@ cpdef tuple get_device_usb_strings(uint32_t index):
     :param index: index of the device
     :return: manufacturer name, product name, serial serial number on success else None, None, None
     """
-    cdef char *manufacturer = <char *>malloc(256 * sizeof(char))
-    cdef char *product = <char *>malloc(256 * sizeof(char))
-    cdef char *serial = <char *>malloc(256 * sizeof(char))
+    cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
+    cdef char *product = <char *> malloc(256 * sizeof(char))
+    cdef char *serial = <char *> malloc(256 * sizeof(char))
     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)
     if result == 0:
         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
@@ -42,7 +42,7 @@ cpdef int get_index_by_serial(str serial):
              -3 if devices were found, but none with matching name
     """
     serial_byte_string = serial.encode('UTF-8')
-    return crtlsdr.rtlsdr_get_index_by_serial(<char *>serial_byte_string)
+    return crtlsdr.rtlsdr_get_index_by_serial(<char *> serial_byte_string)
 
 cpdef int open(uint32_t index):
     return crtlsdr.rtlsdr_open(&_c_device, index)
@@ -83,9 +83,9 @@ cpdef tuple get_xtal_freq():
         return None, None
 
 cpdef tuple get_usb_strings():
-    cdef char *manufacturer = <char *>malloc(256 * sizeof(char))
-    cdef char *product = <char *>malloc(256 * sizeof(char))
-    cdef char *serial = <char *>malloc(256 * sizeof(char))
+    cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
+    cdef char *product = <char *> malloc(256 * sizeof(char))
+    cdef char *serial = <char *> malloc(256 * sizeof(char))
     result = crtlsdr.rtlsdr_get_usb_strings(_c_device, manufacturer, product, serial)
     if result == 0:
         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
@@ -116,3 +116,69 @@ cpdef int get_freq_correction():
     :return: correction value in parts per million (ppm)
     """
     return crtlsdr.rtlsdr_get_freq_correction(_c_device)
+
+cpdef crtlsdr.rtlsdr_tuner get_tuner_type():
+    """
+    Get the tuner type.
+    :return: RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise
+    """
+    return crtlsdr.rtlsdr_get_tuner_type(_c_device)
+
+cpdef list get_tuner_gains():
+    """
+    Get a list of gains supported by the tuner.
+    NOTE: The gains argument must be preallocated by the caller. If NULL is
+    being given instead, the number of available gain values will be returned.
+
+    :return: gains array of gain values. In tenths of a dB, 115 means 11.5 dB.
+    """
+    cdef int num_gains = crtlsdr.rtlsdr_get_tuner_gains(_c_device, NULL)
+    if num_gains < 0:
+        return None
+
+    cdef int*gains = <int *> malloc(num_gains * sizeof(int))
+    crtlsdr.rtlsdr_get_tuner_gains(_c_device, gains)
+
+    return [gains[i] for i in range(num_gains)]
+
+cpdef int set_tuner_gain(int gain):
+    """
+    Set the gain for the device.
+    Manual gain mode must be enabled for this to work.
+
+    Valid gain values (in tenths of a dB) for the E4000 tuner:
+    -10, 15, 40, 65, 90, 115, 140, 165, 190,
+    215, 240, 290, 340, 420, 430, 450, 470, 490
+
+    Valid gain values may be queried with rtlsdr_get_tuner_gains function.
+
+    :param gain: gain in tenths of a dB, 115 means 11.5 dB.
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_tuner_gain(_c_device, gain)
+
+cpdef int get_tuner_gain():
+    """
+    Get actual gain the device is configured to.
+    :return: 0 on error, gain in tenths of a dB, 115 means 11.5 dB.
+    """
+    return crtlsdr.rtlsdr_get_tuner_gain(_c_device)
+
+cpdef int set_tuner_if_gain(int stage, int gain):
+    """
+    Set the intermediate frequency gain for the device.
+
+    :param stage: intermediate frequency gain stage number (1 to 6 for E4000)
+    :param gain: in tenths of a dB, -30 means -3.0 dB.
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_tuner_if_gain(_c_device, stage, gain)
+
+cpdef int set_tuner_gain_mode(int manual):
+    """
+    Set the gain mode (automatic/manual) for the device.
+    Manual gain mode must be enabled for the gain setter function to work.
+    :param manual: 1 means manual gain mode shall be enabled.
+    :return: 0 on success
+    """
+    return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)

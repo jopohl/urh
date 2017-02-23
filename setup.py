@@ -101,7 +101,8 @@ def get_device_modules():
 
     extensions = []
     devices = {
-        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+        "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 
     scriptdir = os.path.realpath(os.path.dirname(__file__))

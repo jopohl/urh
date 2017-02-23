@@ -3,9 +3,10 @@ from PyQt5.QtCore import pyqtSlot, Qt
 
 from urh.models.SimulateListModel import SimulateListModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
+from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene
+from urh.ui.SimulatorScene import SimulatorScene, MessageItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -36,10 +37,12 @@ class SimulatorTabController(QWidget):
 
         self.simulator_scene = SimulatorScene(controller=self)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
-        #self.simulator_scene.setSceneRect(0, 0, 500, 500)
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
+
+        self.simulator_message_field_model = SimulatorMessageFieldModel()
+        self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
 
         self.create_connects(compare_frame_controller)
 
@@ -47,6 +50,17 @@ class SimulatorTabController(QWidget):
         self.project_manager.project_updated.connect(self.on_project_updated)
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
 
+        self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
+
+    @pyqtSlot()
+    def on_simulator_scene_selection_changed(self):
+        selected_items = self.simulator_scene.selectedItems()
+        selected_messages = [item for item in selected_items if type(item) == MessageItem]
+
+        first_message = None if len(selected_messages) == 0 else selected_messages[0]
+        self.simulator_message_field_model.message = first_message
+        self.simulator_message_field_model.update()
+        
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
         self.simulate_list_model.update()

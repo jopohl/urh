@@ -235,6 +235,14 @@ class LabelItem(QGraphicsTextItem):
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
+    @property
+    def name(self):
+        return self.toPlainText()
+
+    @property
+    def value(self):
+        return "1::seq + 1"
+
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):
         super().__init__(parent)

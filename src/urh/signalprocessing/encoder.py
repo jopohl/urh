@@ -464,7 +464,12 @@ class Encoder(object):
         return output, errors, self.ErrorState.SUCCESS
 
     def code_data_whitening(self, decoding, inpt):
-        # XOR Data Whitening
+        """
+        XOR Data Whitening
+        :param decoding:
+        :param inpt:
+        :return:
+        """
         return self.apply_data_whitening(decoding, inpt)
 
     def code_lsb_first(self, decoding, inpt):
@@ -848,4 +853,7 @@ class Encoder(object):
         return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
 
     def __eq__(self, other):
+        if other is None:
+            return False
+
         return self.get_chain() == other.get_chain()

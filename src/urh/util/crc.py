@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-__author__ = 'andreas.noack@fh-stralsund.de'
-
-
 class crc_generic:
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
@@ -93,8 +89,8 @@ class crc_generic:
 
     @staticmethod
     def __swap_bytes(array, pos1: int, pos2: int):
-        array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] =\
-            array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1*8 + 8]
+        array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] = \
+            array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1 * 8 + 8]
 
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Test all standard parameters and return true, if a valid CRC could be computed.
@@ -215,69 +211,3 @@ class crc_generic:
     def hex2str(inpt):
         bitstring = bin(int(inpt, base=16))[2:]
         return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
-
-
-if __name__ == "__main__":
-    c = crc_generic(polynomial="16_standard", start_value=False, final_xor=False,
-                    reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
-
-    # http://depa.usst.edu.cn/chenjq/www2/software/crc/CRC_Javascript/CRCcalculation.htm
-    # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False
-    # CRC-16-CCITT: polynomial="16_ccitt", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False
-
-    # http://www.lammertbies.nl/comm/info/crc-calculation.html <- Fehler
-    # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False
-
-    test = False
-    if test:
-        bitstring_a = "1110001111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010"
-        bitstring_b = "1110010011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010"
-        # bitstring_a="100000000000000000000000"
-        # bitstring_b="010000000000000000000000"
-        # bitstring_a="001000000000000000000000"
-        # bitstring_b="000100000000000000000000"
-        bits_a = c.str2bit(bitstring_a)
-        bits_b = c.str2bit(bitstring_b)
-        crc_a = c.crc(bits_a)
-        crc_b = c.crc(bits_b)
-
-        count = [0] * (2 ** 16)
-        for i in range(0, 2 ** 16):
-            c.start_value = []
-            for bits in range(0, 16):
-                if (i >> bits) & 1 == 1:
-                    c.start_value.append(True)
-                else:
-                    c.start_value.append(False)
-            num = int(c.bit2str(c.crc(bits_a)), 2) ^ int(c.bit2str(crc_a), 2)
-            count[num] += 1
-
-            if i % 1000 == 0:
-                print(i)
-
-        num = 4
-        for i in range(0, 2 ** 16):
-            # if count[i] > 1:
-            #    num += 2
-            # else:
-            #    num -= 2
-            print(">", hex(i), "Count =", hex(count[i]), "#" * num)
-
-    else:
-        bitstring_set = [
-            "1110001111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
-            "1110010011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
-            "1110010111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
-            "1110011011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010"]
-        bitset = []
-        crcset = []
-
-        for i in bitstring_set:
-            tmp = c.str2bit(i)
-            bitset.append(tmp)
-            crcset.append(c.crc(tmp))
-
-        # print(c.guess_standard_parameters(bitset[0], crcset[0]))
-        polynomial = c.reverse_engineer_polynomial(bitset, crcset)
-        if polynomial:
-            print("Polynomial =", c.bit2str(polynomial), c.bit2hex(polynomial))

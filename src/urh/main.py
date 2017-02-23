@@ -105,4 +105,9 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    if sys.version_info < (3, 4):
+        print("You need at least Python 3.4 for this application!")
+        sys.exit(1)
+
     main()

@@ -18,6 +18,8 @@ class SpectrumDialogController(SendRecvDialogController):
         self.hide_send_ui_items()
 
         self.setWindowTitle("Spectrum analyzer")
+        self.ui.btnStart.setToolTip(self.tr("Start"))
+        self.ui.btnStop.setToolTip(self.tr("Stop"))
 
         self.scene_manager = FFTSceneManager(parent=self, graphic_view=self.graphics_view)
 

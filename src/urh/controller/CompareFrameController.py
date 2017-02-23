@@ -603,13 +603,16 @@ class CompareFrameController(QFrame):
             except (KeyError, ValueError):
                 pass
 
-        # Hidden Rows berücksichtigen
+        # consider hidden rows
         for i in range(self.protocol_model.row_count):
             if self.ui.tblViewProtocol.isRowHidden(i) and i in first_msg_indices:
                 indx = first_msg_indices.index(i)
                 first_msg_indices[indx] += 1
-                if indx < len(first_msg_indices) and first_msg_indices[indx] >= first_msg_indices[indx + 1]:
-                    del first_msg_indices[indx]
+                try:
+                    if indx < len(first_msg_indices) and first_msg_indices[indx] >= first_msg_indices[indx + 1]:
+                        del first_msg_indices[indx]
+                except IndexError as e:  # https://github.com/jopohl/urh/issues/151
+                    logger.warning("Index Error: " + str(e))
 
         for line in first_msg_indices:
             self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)

@@ -14,3 +14,5 @@ if __name__ == "__main__":
     print("Product:", product)
     print("Serial", serial)
     print("Index by serial", rtlsdr.get_index_by_serial(serial))
+    print("Open:", rtlsdr.open(0))
+    print("Close:", rtlsdr.close())

@@ -6,6 +6,8 @@ ctypedef unsigned short uint16_t
 ctypedef unsigned int  uint32_t
 ctypedef unsigned long long uint64_t
 
+cdef crtlsdr.rtlsdr_dev_t* _c_device
+
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
 
@@ -39,3 +41,9 @@ cpdef int get_index_by_serial(str serial):
     """
     serial_byte_string = serial.encode('UTF-8')
     return crtlsdr.rtlsdr_get_index_by_serial(<char *>serial_byte_string)
+
+cpdef int open(uint32_t index):
+    return crtlsdr.rtlsdr_open(&_c_device, index)
+
+cpdef int close():
+    return crtlsdr.rtlsdr_close(_c_device)

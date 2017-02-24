@@ -20,12 +20,16 @@ class Device(QObject):
     def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
         super().__init__()
 
+        self.error_not_open = -4242
+
         self.__bandwidth = bw
         self.__frequency = freq
         self.__gain = gain
         self.__sample_rate = srate
 
         self.is_open = False
+
+        self.bandwidth_is_adjustable = True
 
         self._max_bandwidth = 1
         self._max_frequency = 1
@@ -79,6 +83,7 @@ class Device(QObject):
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
+        error_code_msg = self.error_codes[retcode] if retcode in self.error_codes else "Error Code: " + str(retcode)
         if retcode == self.success:
             if msg:
                 logger.info("{0}-{1} ({2}): Success".format(type(self).__name__, action, msg))
@@ -86,9 +91,9 @@ class Device(QObject):
                 logger.info("{0}-{1}: Success".format(type(self).__name__, action))
         else:
             if msg:
-                err = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, self.error_codes[retcode], retcode, msg)
+                err = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
             else:
-                err = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, self.error_codes[retcode], retcode)
+                err = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
             self.errors.add(err)
             logger.error(err)
 
@@ -112,6 +117,9 @@ class Device(QObject):
 
     @bandwidth.setter
     def bandwidth(self, value):
+        if not self.bandwidth_is_adjustable:
+            return
+
         if value > self._max_bandwidth:
             err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
                                                                          Formatter.big_value_with_suffix(value),

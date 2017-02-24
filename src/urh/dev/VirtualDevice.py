@@ -71,6 +71,9 @@ class VirtualDevice(QObject):
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
                     self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
+                elif name.replace("-", "") == "rtlsdr":
+                    from urh.dev.native.RTLSDR import RTLSDR
+                    self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:

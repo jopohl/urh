@@ -114,6 +114,14 @@ class BackendHandler(object):
         except ImportError:
             return False
 
+    @property
+    def __rtlsdr_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import rtlsdr
+            return True
+        except ImportError:
+            return False
+
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
         devname = devname.lower()
@@ -137,6 +145,9 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
+            backends.add(Backends.native)
+
+        if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
             backends.add(Backends.native)
 
         return backends, supports_rx, supports_tx

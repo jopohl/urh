@@ -35,8 +35,7 @@ class RTLSDR(Device):
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
-        self._max_gain = 40
-        # TODO: Consider get_tuner_gains for allowed gains
+        self._max_gain = 40  # Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
 

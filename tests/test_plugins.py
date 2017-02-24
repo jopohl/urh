@@ -109,7 +109,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
@@ -121,7 +121,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxFrequency.setValue(1e6)
         dialog.doubleSpinBoxFrequency.editingFinished.emit()
@@ -129,7 +129,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxPhase.setValue(100)
         dialog.doubleSpinBoxPhase.editingFinished.emit()
@@ -137,7 +137,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxSampleRate.setValue(2e6)
         dialog.doubleSpinBoxSampleRate.editingFinished.emit()
@@ -145,7 +145,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxNSamples.setValue(0.5e6)
         dialog.doubleSpinBoxNSamples.editingFinished.emit()
@@ -153,7 +153,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

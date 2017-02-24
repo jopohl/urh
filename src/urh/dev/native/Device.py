@@ -220,12 +220,12 @@ class Device(QObject):
     def stop_tx_mode(self, msg):
         pass
 
-    @abstractmethod
-    def unpack_complex(self, buffer, nvalues):
+    @staticmethod
+    def unpack_complex(buffer, nvalues):
         pass
 
-    @abstractmethod
-    def pack_complex(self, complex_samples: np.ndarray):
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
         pass
 
     def set_device_parameters(self):
@@ -250,7 +250,7 @@ class Device(QObject):
                                     nsamples = len(self.receive_buffer) - 1
 
                             else:
-                                self.stop_rx_mode("Receiving Buffer is full.")
+                                self.stop_rx_mode("Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples, len(self.receive_buffer)))
                                 return
 
                         end = nsamples*self.BYTES_PER_SAMPLE

@@ -41,17 +41,12 @@ class top_block(gr.top_block):
         self.uhd_usrp_source_0.set_center_freq(freq, 0)
         self.uhd_usrp_source_0.set_gain(gain, 0)
         self.uhd_usrp_source_0.set_bandwidth(bw, 0)
-        self.blks2_tcp_sink_0 = grc_blks2.tcp_sink(
-            itemsize=gr.sizeof_gr_complex * 1,
-            addr="",        # Vorher "127.0.0.1"
-            port=port,
-            server=True,
-        )
+        self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:'+str(port), 100, False, -1)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.uhd_usrp_source_0, 0), (self.blks2_tcp_sink_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.zeromq_push_sink_0, 0))
 
     def get_samp_rate(self):
         return self.samp_rate

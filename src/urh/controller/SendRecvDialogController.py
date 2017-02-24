@@ -63,13 +63,6 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
-        ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
-        ip_regex = QRegExp("^" + ip_range
-                           + "\\." + ip_range
-                           + "\\." + ip_range
-                           + "\\." + ip_range + "$")
-        self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
-
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
 
@@ -210,6 +203,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxGain.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
+        if self.ui.cbDevice.currentText() == "USRP":
+            self.ui.lineEditIP.editingFinished.emit()
 
     @pyqtSlot()
     def on_stop_clicked(self):

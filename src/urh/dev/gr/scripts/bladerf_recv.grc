@@ -209,11 +209,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(472, 126)</value>
+      <value>(504, 102)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -241,7 +241,7 @@
     </param>
   </block>
   <block>
-    <key>uhd_usrp_source</key>
+    <key>osmosdr_source</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -251,1156 +251,1280 @@
       <value></value>
     </param>
     <param>
+      <key>bb_gain0</key>
+      <value>gain</value>
+    </param>
+    <param>
       <key>bw0</key>
       <value>bw</value>
     </param>
     <param>
-      <key>center_freq0</key>
+      <key>dc_offset_mode0</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>corr0</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>freq0</key>
       <value>freq</value>
     </param>
     <param>
-      <key>dc_offs_enb0</key>
-      <value>""</value>
-    </param>
-    <param>
-      <key>iq_imbal_enb0</key>
-      <value>""</value>
-    </param>
-    <param>
-      <key>norm_gain0</key>
+      <key>gain_mode0</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain0</key>
+      <value>gain</value>
+    </param>
+    <param>
+      <key>iq_balance_mode0</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain0</key>
       <value>gain</value>
     </param>
     <param>
-      <key>lo_export0</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source0</key>
-      <value>internal</value>
-    </param>
-    <param>
       <key>ant10</key>
       <value></value>
+    </param>
+    <param>
+      <key>bb_gain10</key>
+      <value>20</value>
     </param>
     <param>
       <key>bw10</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq10</key>
+      <key>dc_offset_mode10</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb10</key>
-      <value>""</value>
+      <key>corr10</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb10</key>
-      <value>""</value>
+      <key>freq10</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain10</key>
+      <key>gain_mode10</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain10</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode10</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain10</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export10</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source10</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant11</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain11</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw11</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq11</key>
+      <key>dc_offset_mode11</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb11</key>
-      <value>""</value>
+      <key>corr11</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb11</key>
-      <value>""</value>
+      <key>freq11</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain11</key>
+      <key>gain_mode11</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain11</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode11</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain11</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export11</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source11</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant12</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain12</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw12</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq12</key>
+      <key>dc_offset_mode12</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb12</key>
-      <value>""</value>
+      <key>corr12</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb12</key>
-      <value>""</value>
+      <key>freq12</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain12</key>
+      <key>gain_mode12</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain12</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode12</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain12</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export12</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source12</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant13</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain13</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw13</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq13</key>
+      <key>dc_offset_mode13</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb13</key>
-      <value>""</value>
+      <key>corr13</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb13</key>
-      <value>""</value>
+      <key>freq13</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain13</key>
+      <key>gain_mode13</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain13</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode13</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain13</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export13</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source13</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant14</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain14</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw14</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq14</key>
+      <key>dc_offset_mode14</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb14</key>
-      <value>""</value>
+      <key>corr14</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb14</key>
-      <value>""</value>
+      <key>freq14</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain14</key>
+      <key>gain_mode14</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain14</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode14</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain14</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export14</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source14</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant15</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain15</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw15</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq15</key>
+      <key>dc_offset_mode15</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb15</key>
-      <value>""</value>
+      <key>corr15</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb15</key>
-      <value>""</value>
+      <key>freq15</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain15</key>
+      <key>gain_mode15</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain15</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode15</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain15</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export15</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source15</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant16</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain16</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw16</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq16</key>
+      <key>dc_offset_mode16</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb16</key>
-      <value>""</value>
+      <key>corr16</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb16</key>
-      <value>""</value>
+      <key>freq16</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain16</key>
+      <key>gain_mode16</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain16</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode16</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain16</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export16</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source16</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant17</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain17</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw17</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq17</key>
+      <key>dc_offset_mode17</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb17</key>
-      <value>""</value>
+      <key>corr17</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb17</key>
-      <value>""</value>
+      <key>freq17</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain17</key>
+      <key>gain_mode17</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain17</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode17</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain17</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export17</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source17</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant18</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain18</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw18</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq18</key>
+      <key>dc_offset_mode18</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb18</key>
-      <value>""</value>
+      <key>corr18</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb18</key>
-      <value>""</value>
+      <key>freq18</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain18</key>
+      <key>gain_mode18</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain18</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode18</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain18</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export18</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source18</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant19</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain19</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw19</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq19</key>
+      <key>dc_offset_mode19</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb19</key>
-      <value>""</value>
+      <key>corr19</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb19</key>
-      <value>""</value>
+      <key>freq19</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain19</key>
+      <key>gain_mode19</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain19</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode19</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain19</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export19</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source19</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant1</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain1</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw1</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq1</key>
+      <key>dc_offset_mode1</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb1</key>
-      <value>""</value>
+      <key>corr1</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb1</key>
-      <value>""</value>
+      <key>freq1</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain1</key>
+      <key>gain_mode1</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain1</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode1</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain1</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export1</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source1</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant20</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain20</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw20</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq20</key>
+      <key>dc_offset_mode20</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb20</key>
-      <value>""</value>
+      <key>corr20</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb20</key>
-      <value>""</value>
+      <key>freq20</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain20</key>
+      <key>gain_mode20</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain20</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode20</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain20</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export20</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source20</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant21</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain21</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw21</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq21</key>
+      <key>dc_offset_mode21</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb21</key>
-      <value>""</value>
+      <key>corr21</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb21</key>
-      <value>""</value>
+      <key>freq21</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain21</key>
+      <key>gain_mode21</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain21</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode21</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain21</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export21</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source21</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant22</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain22</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw22</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq22</key>
+      <key>dc_offset_mode22</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb22</key>
-      <value>""</value>
+      <key>corr22</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb22</key>
-      <value>""</value>
+      <key>freq22</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain22</key>
+      <key>gain_mode22</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain22</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode22</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain22</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export22</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source22</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant23</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain23</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw23</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq23</key>
+      <key>dc_offset_mode23</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb23</key>
-      <value>""</value>
+      <key>corr23</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb23</key>
-      <value>""</value>
+      <key>freq23</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain23</key>
+      <key>gain_mode23</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain23</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode23</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain23</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export23</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source23</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant24</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain24</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw24</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq24</key>
+      <key>dc_offset_mode24</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb24</key>
-      <value>""</value>
+      <key>corr24</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb24</key>
-      <value>""</value>
+      <key>freq24</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain24</key>
+      <key>gain_mode24</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain24</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode24</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain24</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export24</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source24</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant25</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain25</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw25</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq25</key>
+      <key>dc_offset_mode25</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb25</key>
-      <value>""</value>
+      <key>corr25</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb25</key>
-      <value>""</value>
+      <key>freq25</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain25</key>
+      <key>gain_mode25</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain25</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode25</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain25</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export25</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source25</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant26</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain26</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw26</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq26</key>
+      <key>dc_offset_mode26</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb26</key>
-      <value>""</value>
+      <key>corr26</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb26</key>
-      <value>""</value>
+      <key>freq26</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain26</key>
+      <key>gain_mode26</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain26</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode26</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain26</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export26</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source26</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant27</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain27</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw27</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq27</key>
+      <key>dc_offset_mode27</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb27</key>
-      <value>""</value>
+      <key>corr27</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb27</key>
-      <value>""</value>
+      <key>freq27</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain27</key>
+      <key>gain_mode27</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain27</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode27</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain27</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export27</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source27</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant28</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain28</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw28</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq28</key>
+      <key>dc_offset_mode28</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb28</key>
-      <value>""</value>
+      <key>corr28</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb28</key>
-      <value>""</value>
+      <key>freq28</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain28</key>
+      <key>gain_mode28</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain28</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode28</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain28</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export28</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source28</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant29</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain29</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw29</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq29</key>
+      <key>dc_offset_mode29</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb29</key>
-      <value>""</value>
+      <key>corr29</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb29</key>
-      <value>""</value>
+      <key>freq29</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain29</key>
+      <key>gain_mode29</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain29</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode29</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain29</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export29</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source29</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant2</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain2</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw2</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq2</key>
+      <key>dc_offset_mode2</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb2</key>
-      <value>""</value>
+      <key>corr2</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb2</key>
-      <value>""</value>
+      <key>freq2</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain2</key>
+      <key>gain_mode2</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain2</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode2</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain2</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export2</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source2</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant30</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain30</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw30</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq30</key>
+      <key>dc_offset_mode30</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb30</key>
-      <value>""</value>
+      <key>corr30</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb30</key>
-      <value>""</value>
+      <key>freq30</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain30</key>
+      <key>gain_mode30</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain30</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode30</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain30</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export30</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source30</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant31</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain31</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw31</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq31</key>
+      <key>dc_offset_mode31</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb31</key>
-      <value>""</value>
+      <key>corr31</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb31</key>
-      <value>""</value>
+      <key>freq31</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain31</key>
+      <key>gain_mode31</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain31</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode31</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain31</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export31</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source31</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant3</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain3</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw3</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq3</key>
+      <key>dc_offset_mode3</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb3</key>
-      <value>""</value>
+      <key>corr3</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb3</key>
-      <value>""</value>
+      <key>freq3</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain3</key>
+      <key>gain_mode3</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain3</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode3</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain3</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export3</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source3</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant4</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain4</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw4</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq4</key>
+      <key>dc_offset_mode4</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb4</key>
-      <value>""</value>
+      <key>corr4</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb4</key>
-      <value>""</value>
+      <key>freq4</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain4</key>
+      <key>gain_mode4</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain4</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode4</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain4</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export4</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source4</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant5</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain5</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw5</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq5</key>
+      <key>dc_offset_mode5</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb5</key>
-      <value>""</value>
+      <key>corr5</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb5</key>
-      <value>""</value>
+      <key>freq5</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain5</key>
+      <key>gain_mode5</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain5</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode5</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain5</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export5</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source5</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant6</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain6</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw6</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq6</key>
+      <key>dc_offset_mode6</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb6</key>
-      <value>""</value>
+      <key>corr6</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb6</key>
-      <value>""</value>
+      <key>freq6</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain6</key>
+      <key>gain_mode6</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain6</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode6</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain6</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export6</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source6</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant7</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain7</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw7</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq7</key>
+      <key>dc_offset_mode7</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb7</key>
-      <value>""</value>
+      <key>corr7</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb7</key>
-      <value>""</value>
+      <key>freq7</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain7</key>
+      <key>gain_mode7</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain7</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode7</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain7</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export7</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source7</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant8</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain8</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw8</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq8</key>
+      <key>dc_offset_mode8</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb8</key>
-      <value>""</value>
+      <key>corr8</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb8</key>
-      <value>""</value>
+      <key>freq8</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain8</key>
+      <key>gain_mode8</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain8</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode8</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain8</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export8</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source8</key>
-      <value>internal</value>
+      <value>10</value>
     </param>
     <param>
       <key>ant9</key>
       <value></value>
     </param>
     <param>
+      <key>bb_gain9</key>
+      <value>20</value>
+    </param>
+    <param>
       <key>bw9</key>
       <value>0</value>
     </param>
     <param>
-      <key>center_freq9</key>
+      <key>dc_offset_mode9</key>
       <value>0</value>
     </param>
     <param>
-      <key>dc_offs_enb9</key>
-      <value>""</value>
+      <key>corr9</key>
+      <value>0</value>
     </param>
     <param>
-      <key>iq_imbal_enb9</key>
-      <value>""</value>
+      <key>freq9</key>
+      <value>100e6</value>
     </param>
     <param>
-      <key>norm_gain9</key>
+      <key>gain_mode9</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>if_gain9</key>
+      <value>20</value>
+    </param>
+    <param>
+      <key>iq_balance_mode9</key>
+      <value>0</value>
     </param>
     <param>
       <key>gain9</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>lo_export9</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>lo_source9</key>
-      <value>internal</value>
-    </param>
-    <param>
-      <key>clock_rate</key>
-      <value>0.0</value>
+      <value>10</value>
     </param>
     <param>
       <key>comment</key>
@@ -1411,12 +1535,8 @@
       <value></value>
     </param>
     <param>
-      <key>dev_addr</key>
-      <value></value>
-    </param>
-    <param>
-      <key>dev_args</key>
-      <value>""</value>
+      <key>args</key>
+      <value>bladerf=0,fpga=/usr/share/Nuand/bladeRF/hostedx115.rbf</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1424,7 +1544,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(176, 126)</value>
+      <value>(208, 53)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1432,7 +1552,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>uhd_usrp_source_0</value>
+      <value>osmosdr_source_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1440,10 +1560,6 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
-    </param>
-    <param>
-      <key>sd_spec0</key>
       <value></value>
     </param>
     <param>
@@ -1455,19 +1571,11 @@
       <value></value>
     </param>
     <param>
-      <key>sd_spec1</key>
-      <value></value>
-    </param>
-    <param>
       <key>time_source1</key>
       <value></value>
     </param>
     <param>
       <key>clock_source2</key>
-      <value></value>
-    </param>
-    <param>
-      <key>sd_spec2</key>
       <value></value>
     </param>
     <param>
@@ -1479,19 +1587,11 @@
       <value></value>
     </param>
     <param>
-      <key>sd_spec3</key>
-      <value></value>
-    </param>
-    <param>
       <key>time_source3</key>
       <value></value>
     </param>
     <param>
       <key>clock_source4</key>
-      <value></value>
-    </param>
-    <param>
-      <key>sd_spec4</key>
       <value></value>
     </param>
     <param>
@@ -1503,10 +1603,6 @@
       <value></value>
     </param>
     <param>
-      <key>sd_spec5</key>
-      <value></value>
-    </param>
-    <param>
       <key>time_source5</key>
       <value></value>
     </param>
@@ -1515,19 +1611,11 @@
       <value></value>
     </param>
     <param>
-      <key>sd_spec6</key>
-      <value></value>
-    </param>
-    <param>
       <key>time_source6</key>
       <value></value>
     </param>
     <param>
       <key>clock_source7</key>
-      <value></value>
-    </param>
-    <param>
-      <key>sd_spec7</key>
       <value></value>
     </param>
     <param>
@@ -1551,98 +1639,17 @@
       <value>fc32</value>
     </param>
     <param>
-      <key>samp_rate</key>
+      <key>sample_rate</key>
       <value>samp_rate</value>
-    </param>
-    <param>
-      <key>hide_cmd_port</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>hide_lo_controls</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>stream_args</key>
-      <value></value>
-    </param>
-    <param>
-      <key>stream_chans</key>
-      <value>[]</value>
     </param>
     <param>
       <key>sync</key>
       <value></value>
     </param>
-    <param>
-      <key>otw</key>
-      <value></value>
-    </param>
-  </block>
-  <block>
-    <key>zeromq_push_sink</key>
-    <param>
-      <key>address</key>
-      <value>tcp://127.0.0.1:1338</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(472, 212)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>hwm</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>zeromq_push_sink_0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>pass_tags</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>timeout</key>
-      <value>100</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
   </block>
   <connection>
-    <source_block_id>uhd_usrp_source_0</source_block_id>
+    <source_block_id>osmosdr_source_0</source_block_id>
     <sink_block_id>blks2_tcp_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>uhd_usrp_source_0</source_block_id>
-    <sink_block_id>zeromq_push_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

@@ -17,7 +17,7 @@ if rc != 0:
     sys.exit(1)
 
 # -n for parallel with pytest-xdist
-rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+rc = pytest.main(["-v", "-s", "tests/TestInstallation.py"])
 
 if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
@@ -81,7 +81,7 @@ call(["git", "push"])
 os.remove("/tmp/urh_releasing")
 
 os.chdir(script_dir)
-rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+rc = pytest.main(["-v", "-s", "tests/TestInstallation.py"])
 
 if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed." + constants.color.END)

@@ -1,15 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.8'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Wed Aug 12 06:55:42 2015</timestamp>
   <block>
     <key>options</key>
     <param>
       <key>author</key>
-      <value></value>
-    </param>
-    <param>
-      <key>alias</key>
       <value></value>
     </param>
     <param>
@@ -45,6 +41,10 @@
       <value>no_gui</value>
     </param>
     <param>
+      <key>hier_block_src_path</key>
+      <value>.:</value>
+    </param>
+    <param>
       <key>id</key>
       <value>top_block</value>
     </param>
@@ -53,8 +53,16 @@
       <value>0</value>
     </param>
     <param>
+      <key>qt_qss_theme</key>
+      <value></value>
+    </param>
+    <param>
       <key>realtime_scheduling</key>
       <value></value>
+    </param>
+    <param>
+      <key>run_command</key>
+      <value>{python} -u {filename}</value>
     </param>
     <param>
       <key>run_options</key>
@@ -120,7 +128,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -206,9 +214,70 @@
       <value>1</value>
     </param>
   </block>
+  <block>
+    <key>zeromq_push_sink</key>
+    <param>
+      <key>address</key>
+      <value>tcp://127.0.0.1:1338</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(472, 220)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>hwm</key>
+      <value>-1</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>zeromq_push_sink_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>pass_tags</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>timeout</key>
+      <value>100</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>blocks_file_source_0</source_block_id>
     <sink_block_id>blks2_tcp_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_file_source_0</source_block_id>
+    <sink_block_id>zeromq_push_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

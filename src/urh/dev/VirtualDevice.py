@@ -8,7 +8,6 @@ from urh.dev.BackendHandler import Backends, BackendHandler
 from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
 from urh.dev.gr.SpectrumThread import SpectrumThread
-from urh.dev.native.RTLSDR import RTLSDR
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
@@ -72,7 +71,8 @@ class VirtualDevice(QObject):
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
                     self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
-                elif name.replace("-","") == "rtlsdr":
+                elif name.replace("-", "") == "rtlsdr":
+                    from urh.dev.native.RTLSDR import RTLSDR
                     self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))

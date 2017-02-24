@@ -20,7 +20,7 @@ Like to see things in action? Watch URH on YouTube!
 ## Installation
 ### Requirements
 - Python 3.4+
-- numpy / psutil
+- numpy / psutil / zmq
 - PyQt5
 - C++ Compiler
 

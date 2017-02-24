@@ -131,32 +131,6 @@ class TestHackRF(unittest.TestCase):
             print("Close time", time.time()-t)
             hfc.close()
 
-    def test_lookup(self):
-        # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127
-        lookup = np.empty(0xffff, dtype=np.complex64)
-        for i in range(0, 0xffff):
-            real = float(np.uint8(i >> 8)) * 1 / 128
-            imag = float(np.uint8(i & 0xff)) * 1 / 128
-            lookup[i] = complex(real, imag)
-
-        buffer = b"\x00\x01"
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        ru = unpacked['r'] / 128.0
-        iu = unpacked['i'] / 128.0
-
-        # seems to be the same
-
-        # Convert floated again???
-        # https://github.com/osmocom/gr-osmosdr/blob/master/lib/osmosdr/osmosdr_src_c.cc#L235
-
-        print(lookup[0x0001])
-        print(ru, iu)
-
-
-    def test_pack_complex(self):
-        hkrf = HackRF(1,1,1,1)
-        print(hkrf.pack_complex(np.array([complex(0.1, 0.1), complex(0.5, 0.1)], dtype=np.complex64)))
-
     def test_buffer_io(self):
         b = io.BytesIO(b"\x00\x01\x02\x03\x04\x05\x06")
         br = io.BufferedReader(b) # Buffered Reader is thread safe https://docs.python.org/3/library/io.html#multi-threading

@@ -161,14 +161,16 @@ class HackRF(Device):
 
         self.log_retcode(retcode, "set_sample_rate", sample_rate)
 
-    def unpack_complex(self, buffer, nvalues: int):
+    @staticmethod
+    def unpack_complex(buffer, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
         result.real = (unpacked['r'] + 0.5) / 127.5
         result.imag = (unpacked['i'] + 0.5) / 127.5
         return result
 
-    def pack_complex(self, complex_samples: np.ndarray):
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
         # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return (127.5 * (complex_samples - 0.5/127.5).view(np.float32)).astype(np.int8).tostring()
+        return (127.5 * ((complex_samples.view(np.float32)) - 0.5/127.5)).astype(np.int8).tostring()

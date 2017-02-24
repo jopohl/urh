@@ -35,6 +35,7 @@ class RTLSDR(Device):
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
+        self._max_gain = 40
         # TODO: Consider get_tuner_gains for allowed gains
 
         self.device_number = device_number
@@ -92,6 +93,37 @@ class RTLSDR(Device):
                     logger.info("RTLSDR: Terminated async read process")
                 else:
                     logger.warning("RTLSDR: Could not terminate async read process")
+
+    def set_device_frequency(self, frequency):
+        ret = rtlsdr.set_center_freq(int(frequency))
+        self.log_retcode(ret, "Set center freq")
+
+    def set_device_sample_rate(self, sample_rate):
+        ret = rtlsdr.set_sample_rate(int(sample_rate))
+        self.log_retcode(ret, "Set sample rate")
+
+    def set_freq_correction(self, ppm):
+        ret = rtlsdr.set_freq_correction(int(ppm))
+        self.log_retcode(ret, "Set frequency correction")
+
+    def set_offset_tuning(self, on: bool):
+        ret = rtlsdr.set_offset_tuning(on)
+        self.log_retcode(ret, "Set offset tuning")
+
+    def set_gain_mode(self, manual: bool):
+        ret = rtlsdr.set_tuner_gain_mode(manual)
+        self.log_retcode(ret, "Set gain mode manual")
+
+    def set_if_gain(self, gain):
+        ret = rtlsdr.set_tuner_if_gain(1, int(gain))
+        self.log_retcode(ret, "Set IF gain")
+
+    def set_gain(self, gain):
+        ret = rtlsdr.set_tuner_gain(int(gain))
+        self.log_retcode(ret, "Set gain")
+
+    def set_device_gain(self, gain):
+        self.set_gain(gain)
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

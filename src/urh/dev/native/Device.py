@@ -117,6 +117,9 @@ class Device(QObject):
 
     @bandwidth.setter
     def bandwidth(self, value):
+        if not self.bandwidth_is_adjustable:
+            return
+
         if value > self._max_bandwidth:
             err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
                                                                          Formatter.big_value_with_suffix(value),

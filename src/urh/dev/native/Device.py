@@ -220,12 +220,12 @@ class Device(QObject):
     def stop_tx_mode(self, msg):
         pass
 
-    @abstractmethod
-    def unpack_complex(self, buffer, nvalues):
+    @staticmethod
+    def unpack_complex(buffer, nvalues):
         pass
 
-    @abstractmethod
-    def pack_complex(self, complex_samples: np.ndarray):
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
         pass
 
     def set_device_parameters(self):

@@ -64,14 +64,14 @@ class Signal(QObject):
                         # two 8 bit unsigned integers
                         raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
                         self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-                        self._fulldata.real = (raw['r'] - 128).astype(np.int8) / 128.0
-                        self._fulldata.imag = (raw['i'] - 128).astype(np.int8) / 128.0
+                        self._fulldata.real = (raw['r'] / 127.5) - 1.0
+                        self._fulldata.imag = (raw['i'] / 127.5) - 1.0
                     elif filename.endswith(".complex16s"):
                         # two 8 bit signed integers
                         raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
                         self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-                        self._fulldata.real = raw['r'] / 128.0
-                        self._fulldata.imag = raw['i'] / 128.0
+                        self._fulldata.real = (raw['r'] + 0.5) / 127.5
+                        self._fulldata.imag = (raw['i'] + 0.5) / 127.5
                     else:
                         self._fulldata = np.fromfile(filename, dtype=np.complex64)  # Uncompressed
                 else:

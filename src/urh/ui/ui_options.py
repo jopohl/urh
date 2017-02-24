@@ -302,7 +302,7 @@ class Ui_DialogOptions(object):
         self.lineEditPython2Interpreter.setPlaceholderText(_translate("DialogOptions", "/usr/bin/python2"))
         self.lGnuradioInstalled.setText(_translate("DialogOptions", "Gnuradio installation found"))
         self.lineEditGnuradioDirectory.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like <span style=\" font-style:italic;\">C:\\Program Files\\GNURadio-3.7</span>.</p></body></html>"))
-        self.lineEditGnuradioDirectory.setPlaceholderText(_translate("DialogOptions", "C:\\Program Files\\GNURadio-3.7"))
+        self.lineEditGnuradioDirectory.setPlaceholderText(_translate("DialogOptions", "C:\\...\\Gnuradio"))
         self.radioButtonPython2Interpreter.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.</p></body></html>"))
         self.radioButtonPython2Interpreter.setText(_translate("DialogOptions", "Python2 interpreter"))
         self.radioButtonGnuradioDirectory.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like <span style=\" font-style:italic;\">C:\\Program Files\\GNURadio-3.7</span>.</p></body></html>"))

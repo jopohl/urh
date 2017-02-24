@@ -12,6 +12,7 @@ from gnuradio.eng_option import eng_option
 from grc_gnuradio import blks2 as grc_blks2
 import osmosdr
 from gnuradio import blocks
+from gnuradio import zeromq
 
 class top_block(gr.top_block):
     def __init__(self, samp_rate, freq, gain, bw, port):

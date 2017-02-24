@@ -11,7 +11,7 @@ from gnuradio import gr
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from grc_gnuradio import blks2 as grc_blks2
-
+from gnuradio import zeromq
 
 class top_block(gr.top_block):
     def __init__(self, samp_rate, freq, gain, bw, ip, port):

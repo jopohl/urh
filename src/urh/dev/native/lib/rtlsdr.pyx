@@ -2,8 +2,6 @@
 
 cimport crtlsdr
 from libc.stdlib cimport malloc
-import numpy as np
-cimport numpy as np
 
 ctypedef unsigned char uint8_t
 ctypedef unsigned short uint16_t
@@ -266,7 +264,7 @@ cpdef int get_offset_tuning():
 cpdef int reset_buffer():
     return crtlsdr.rtlsdr_reset_buffer(_c_device)
 
-cpdef bytes read_sync(int num_samples):
+cpdef bytes read_sync(int num_samples=8 * 32 * 512):
     """
     The raw, captured IQ data is 8 bit unsigned data.
 
@@ -283,6 +281,7 @@ cpdef int read_async(callback):
     """
     Read samples from the device asynchronously. This function will block until
     it is being canceled using rtlsdr_cancel_async()
+    read_bytes_async
     :return: 0 on success
     """
     global f

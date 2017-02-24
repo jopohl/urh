@@ -608,8 +608,11 @@ class CompareFrameController(QFrame):
             if self.ui.tblViewProtocol.isRowHidden(i) and i in first_msg_indices:
                 indx = first_msg_indices.index(i)
                 first_msg_indices[indx] += 1
-                if indx < (len(first_msg_indices) - 1) and first_msg_indices[indx] >= first_msg_indices[indx + 1]:
-                    del first_msg_indices[indx]
+                try:
+                    if first_msg_indices[indx] >= first_msg_indices[indx + 1]:
+                        del first_msg_indices[indx]
+                except IndexError:
+                    pass
 
         for line in first_msg_indices:
             self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)

@@ -9,8 +9,8 @@ from urh.util.Logger import logger
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1', parent=None):
         super().__init__(sample_rate, freq, gain, bandwidth, True, ip, parent)
-        buf_size = 10**5
-        self.data = np.zeros(buf_size, dtype=np.complex64)
+        self.buf_size = 10**5
+        self.data = np.zeros(self.buf_size, dtype=np.complex64)
         self.x = None
         self.y = None
 
@@ -41,6 +41,10 @@ class SpectrumThread(AbstractBaseThread):
                 tmp = np.fromstring(rcvd, dtype=np.complex64)
 
                 len_tmp = len(tmp)
+
+                if self.data is None:
+                    self.data = np.zeros(self.buf_size, dtype=np.complex64)  # type: np.ndarray
+
                 if self.current_index + len_tmp >= len(self.data):
                     self.data[self.current_index:] = tmp[:len(self.data) - self.current_index]
                     tmp = tmp[len(self.data) - self.current_index:]

@@ -17,13 +17,17 @@ class SpectrumThread(AbstractBaseThread):
         self.y = None
 
     def run(self):
+        logger.debug("Spectrum Thread: Init Process")
         self.initalize_process()
+        logger.debug("Spectrum Thread: Process Intialized")
         self.init_recv_socket()
+        logger.debug("Spectrum Thread: Socket initialized")
 
         recv = self.socket.recv
         rcvd = b""
 
         try:
+            logger.debug("Spectrum Thread: Enter main loop")
             while not self.isInterruptionRequested():
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
@@ -67,5 +71,5 @@ class SpectrumThread(AbstractBaseThread):
                     rcvd = b""
                 except ValueError:
                     self.stop("Could not receive data. Is your Hardware ok?")
-        except RuntimeError:
-            logger.error("Spectrum thread crashed")
+        except RuntimeError as e:
+            logger.error("Spectrum thread crashed", str(e.args))

@@ -24,7 +24,9 @@ class AbstractBaseThread(QThread):
 
     def __init__(self, sample_rate, freq, gain, bandwidth, receiving: bool,
                  ip='127.0.0.1', parent=None):
-        super().__init__(parent)
+        # setting parent to None here, as setting parent to Dialog may lead to crashes described in
+        # https://github.com/jopohl/urh/issues/163
+        super().__init__(None)
         self.ip = ip
         self.port = 1337
         self._sample_rate = sample_rate
@@ -143,14 +145,19 @@ class AbstractBaseThread(QThread):
         logger.info("Initalizing receive socket")
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
+        logger.info("Initalized receive socket")
 
         while not self.isInterruptionRequested():
             try:
                 time.sleep(0.1)
+                logger.info("Trying to get a connection to gnuradio...")
                 self.socket.connect("tcp://{0}:{1}".format(self.ip, self.port))
+                logger.info("Got connection")
                 break
             except (ConnectionRefusedError, ConnectionResetError):
                 continue
+            except Exception as e:
+                logger.error("Unexpected error", str(e))
 
     def run(self):
         pass

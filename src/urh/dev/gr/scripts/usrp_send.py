@@ -57,7 +57,7 @@ class top_block(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.uhd_usrp_sink_0, 0), (self.zeromq_pull_source_0, 0))
+        self.connect((self.zeromq_pull_source_0, 0), (self.uhd_usrp_sink_0, 0))
 
     def get_samp_rate(self):
         return self.samp_rate

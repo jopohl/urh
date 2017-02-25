@@ -16,15 +16,6 @@ GENERATE_UI = True
 
 
 def main():
-    if sys.platform == "win32":
-        urh_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
-            else os.path.dirname(os.path.realpath(os.readlink(__file__)))
-        assert os.path.isdir(urh_dir)
-
-        dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win"))
-        print("Using DLLs from:", dll_dir)
-        os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
-
     if sys.version_info < (3, 4):
         print("You need at least Python 3.4 for this application!")
         sys.exit(1)
@@ -56,6 +47,15 @@ def main():
         # Started locally, not installed
         print("Using modules from {0}".format(src_dir))
         sys.path.insert(0, src_dir)
+
+    if sys.platform == "win32":
+        urh_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+            else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+        assert os.path.isdir(urh_dir)
+
+        dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win"))
+        print("Using DLLs from:", dll_dir)
+        os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
 
     try:
         import urh.cythonext.signalFunctions

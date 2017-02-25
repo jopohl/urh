@@ -80,7 +80,6 @@ class RuleTextItem(QGraphicsTextItem):
         self.setPlainText(text)
 
     def paint(self, painter, option, widget):
-        #painter.setBrush(Qt.white)
         painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
@@ -128,6 +127,9 @@ class RuleConditionItem(QGraphicsObject):
         if self.hover_active or self.isSelected():
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)
+        else:
+            painter.setOpacity(0.8)
+            painter.setBrush(constants.LABEL_COLORS[-3])
 
         painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
         painter.drawRect(self.boundingRect())
@@ -154,6 +156,18 @@ class RuleConditionItem(QGraphicsObject):
             simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
 
         self.items.append(simulator_message)
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_add_goto_action_triggered(self):
+        action = ActionItem(ActionType.goto, self)
+        self.items.append(action)
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_add_external_program_action_triggered(self):
+        action = ActionItem(ActionType.external_program, self)
+        self.items.append(action)
         self.scene().update_view()
 
     @pyqtSlot()
@@ -193,6 +207,12 @@ class RuleConditionItem(QGraphicsObject):
             action = message_type_menu.addAction(message_type.name)
             self.message_type_actions[action] = message_type
             action.triggered.connect(self.on_add_message_action_triggered)
+
+        action_menu = menu.addMenu("Add action")
+        add_goto_action = action_menu.addAction("Goto")
+        add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
+        add_external_program_action = action_menu.addAction("External program")
+        add_external_program_action.triggered.connect(self.on_add_external_program_action_triggered)
 
         menu.addSeparator()
 
@@ -242,6 +262,54 @@ class LabelItem(QGraphicsTextItem):
     @property
     def value(self):
         return "1::seq + 1"
+
+class ActionType(Enum):
+    external_program = 0
+    goto = 1
+
+class ActionItem(QGraphicsItem):
+    def __init__(self, type, parent=None):
+        super().__init__(parent)
+        self.text = QGraphicsTextItem(self)
+        self.setFlags(QGraphicsItem.ItemIsSelectable)
+
+        self.type = type
+
+        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font.setPointSize(8)
+        font.setWeight(QFont.DemiBold)
+        self.text.setFont(font)
+
+        if type == ActionType.external_program:
+            self.text.setPlainText("Start program [/usr/bin/test]")
+        elif type == ActionType.goto:
+            self.text.setPlainText("goto 6")
+
+        self.setAcceptHoverEvents(True)
+        self.hover_active = False
+
+    def hoverEnterEvent(self, event):
+        self.hover_active = True
+        super().update()
+
+    def hoverLeaveEvent(self, event):
+        self.hover_active = False
+        super().update()
+
+    def update(self, y_pos):
+        x_pos = self.scene().participants[0].line.line().x1()
+        self.text.setPos(x_pos, y_pos)
+        super().update()
+
+    def boundingRect(self):
+        return self.childrenBoundingRect()
+
+    def paint(self, painter, option, widget):
+        if self.hover_active or self.isSelected():
+            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setBrush(constants.SELECTION_COLOR)
+            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.drawRect(self.boundingRect())
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):
@@ -616,6 +684,12 @@ class SimulatorScene(QGraphicsScene):
         rule = RuleItem()
         self.items.append(rule)
         self.addItem(rule)
+        self.update_view()
+
+    def add_action(self, type):
+        action = ActionItem(type)
+        self.items.append(action)
+        self.addItem(action)
         self.update_view()
 
     def add_message(self, source=None, destination=None, message_type=[]):

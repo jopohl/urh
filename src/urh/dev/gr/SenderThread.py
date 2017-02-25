@@ -46,7 +46,7 @@ class SenderThread(AbstractBaseThread):
         self.current_iteration = self.current_iteration if self.current_iteration is not None else 0
         time.sleep(1)
         while self.current_index < len_data and not self.isInterruptionRequested():
-            time.sleep(0.1)
+            time.sleep(0.1 * (self.samples_per_transmission / self.MAX_SAMPLES_PER_TRANSMISSION))
             self.socket.send(self.data[self.current_index:self.current_index + self.samples_per_transmission].tostring())
             self.current_index += self.samples_per_transmission
 

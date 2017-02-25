@@ -1,14 +1,21 @@
 import unittest
-
+import sys
 import time
 
 import numpy as np
+
+if sys.platform == "win32":
+    import os
+    cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+    dll_dir = os.path.realpath(os.path.join(cur_dir, "..", "src", "urh", "dev", "native", "lib", "win"))
+    os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
 
 from urh.dev.native.RTLSDR import RTLSDR
 from urh.dev.native.lib import rtlsdr
 
 class TestRTLSDR(unittest.TestCase):
     def test_cython_wrapper(self):
+
         print("Device count:", rtlsdr.get_device_count())
         print("Device name:", rtlsdr.get_device_name(0))
         manufact, product, serial = rtlsdr.get_device_usb_strings(0)

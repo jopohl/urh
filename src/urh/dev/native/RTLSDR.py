@@ -2,8 +2,10 @@ import time
 from multiprocessing import Process
 from multiprocessing import Queue
 from multiprocessing import Value
+from threading import Thread
 
 import numpy as np
+import sys
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import rtlsdr
@@ -12,7 +14,8 @@ from urh.util.Logger import logger
 
 def receive_sync(rcv_queue: Queue, is_receiving_p: Value):
     while is_receiving_p.value == 1:
-        rcv_queue.put(rtlsdr.read_sync(1024))
+        stuff = rtlsdr.read_sync(1024)
+        rcv_queue.put(stuff)
         time.sleep(0.01)
     return True
 
@@ -61,7 +64,12 @@ class RTLSDR(Device):
             self.is_receiving = True
 
             self.is_receiving_p = Value('i', 1)
-            self.receive_process = Process(target=receive_sync, args=(self.queue, self.is_receiving_p))
+            if sys.platform == "win32":
+                # Windows is not able to share resources between processes, so process would have to access to rtlsdr
+                # see: http://rhodesmill.org/brandon/2010/python-multiprocessing-linux-windows/
+                self.receive_process = Thread(target=receive_sync, args=(self.queue, self.is_receiving_p))
+            else:
+                self.receive_process = Process(target=receive_sync, args=(self.queue, self.is_receiving_p))
             self.receive_process.daemon = True
             self.receive_process.start()
 

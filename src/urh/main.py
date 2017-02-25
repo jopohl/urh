@@ -3,6 +3,8 @@
 import locale
 import re
 import time
+import os
+import sys
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QIcon
@@ -103,11 +105,7 @@ def main():
 
 
 if __name__ == "__main__":
-    import sys
-
     if sys.platform == "win32":
-        import os
-
         cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
         dll_dir = os.path.realpath(os.path.join(cur_dir, "dev", "native", "lib", "win"))
         os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']

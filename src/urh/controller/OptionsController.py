@@ -41,12 +41,20 @@ class OptionsController(QDialog):
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
+        self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
+        self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
+        if self.backend_handler.gnuradio_install_dir:
+            self.ui.lineEditGnuradioDirectory.setText(self.backend_handler.gnuradio_install_dir)
+        if self.backend_handler.python2_exe:
+            self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
+        self.ui.lineEditGnuradioDirectory.setCompleter(completer)
 
         for dev_name in self.backend_handler.DEVICE_NAMES:
             self.ui.listWidgetDevices.addItem(dev_name)
@@ -54,6 +62,7 @@ class OptionsController(QDialog):
         self.set_device_enabled_suffix()
 
         self.ui.listWidgetDevices.setCurrentRow(0)
+        self.set_gnuradio_status()
         self.refresh_device_tab()
 
         self.create_connects()
@@ -94,6 +103,7 @@ class OptionsController(QDialog):
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
         self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
+        self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
         self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
@@ -105,9 +115,13 @@ class OptionsController(QDialog):
         self.ui.checkBoxDefaultFuzzingPause.clicked.connect(self.on_checkbox_default_fuzzing_pause_clicked)
         self.ui.btnAddLabelType.clicked.connect(self.on_btn_add_label_type_clicked)
         self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
+        self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
+        self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+        self.ui.lineEditGnuradioDirectory.setText(self.backend_handler.gnuradio_install_dir)
+
         if self.backend_handler.gnuradio_installed:
             self.ui.lGnuradioInstalled.setStyleSheet("")
             self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio interface is working."))
@@ -173,6 +187,9 @@ class OptionsController(QDialog):
         self.show_selected_device_params()
         self.set_device_enabled_suffix()
 
+        self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
+        self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
+
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
         if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:
@@ -193,6 +210,14 @@ class OptionsController(QDialog):
         self.values_changed.emit(changed_values)
 
         event.accept()
+
+    def set_gnuradio_status(self):
+        self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
+        self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
+        self.backend_handler.use_gnuradio_install_dir = self.ui.radioButtonGnuradioDirectory.isChecked()
+        self.backend_handler.set_gnuradio_installed_status()
+        constants.SETTINGS.setValue("use_gnuradio_install_dir", self.backend_handler.use_gnuradio_install_dir)
+        self.refresh_device_tab()
 
     @pyqtSlot()
     def on_btn_add_label_type_clicked(self):
@@ -275,14 +300,7 @@ class OptionsController(QDialog):
 
     @pyqtSlot()
     def on_python2_exe_path_edited(self):
-        python2_exe = self.ui.lineEditPython2Interpreter.text()
-        if os.path.isfile(python2_exe) and os.access(python2_exe, os.X_OK):
-            self.backend_handler.python2_exe = python2_exe
-            self.backend_handler.gnuradio_installed = call([python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
-            constants.SETTINGS.setValue("python2_exe", python2_exe)
-            self.refresh_device_tab()
-        else:
-            self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+        self.set_gnuradio_status()
 
     @pyqtSlot()
     def on_chk_box_device_enabled_clicked(self):
@@ -316,6 +334,18 @@ class OptionsController(QDialog):
     @pyqtSlot(int)
     def on_list_widget_devices_current_row_changed(self, current_row: int):
         self.show_selected_device_params()
+
+    @pyqtSlot(bool)
+    def on_radio_button_gnuradio_directory_clicked(self, checked: bool):
+        self.set_gnuradio_status()
+
+    @pyqtSlot(bool)
+    def on_radio_button_python2_interpreter_clicked(self, checked: bool):
+        self.set_gnuradio_status()
+
+    @pyqtSlot()
+    def on_gnuradio_install_dir_edited(self):
+        self.set_gnuradio_status()
 
     @staticmethod
     def write_default_options():

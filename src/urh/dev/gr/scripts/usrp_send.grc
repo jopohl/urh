@@ -1,15 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.8'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Wed Aug 12 06:55:42 2015</timestamp>
   <block>
     <key>options</key>
     <param>
       <key>author</key>
-      <value></value>
-    </param>
-    <param>
-      <key>alias</key>
       <value></value>
     </param>
     <param>
@@ -45,6 +41,10 @@
       <value>no_gui</value>
     </param>
     <param>
+      <key>hier_block_src_path</key>
+      <value>.:</value>
+    </param>
+    <param>
       <key>id</key>
       <value>top_block</value>
     </param>
@@ -53,8 +53,16 @@
       <value>0</value>
     </param>
     <param>
+      <key>qt_qss_theme</key>
+      <value></value>
+    </param>
+    <param>
       <key>realtime_scheduling</key>
       <value></value>
+    </param>
+    <param>
+      <key>run_command</key>
+      <value>{python} -u {filename}</value>
     </param>
     <param>
       <key>run_options</key>
@@ -201,7 +209,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -927,10 +935,6 @@
       <value>fc32</value>
     </param>
     <param>
-      <key>len_tag_name</key>
-      <value></value>
-    </param>
-    <param>
       <key>clock_source0</key>
       <value></value>
     </param>
@@ -1039,6 +1043,14 @@
       <value>samp_rate</value>
     </param>
     <param>
+      <key>hide_cmd_port</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>hide_lo_controls</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>stream_args</key>
       <value></value>
     </param>
@@ -1051,12 +1063,85 @@
       <value></value>
     </param>
     <param>
+      <key>len_tag_name</key>
+      <value></value>
+    </param>
+    <param>
       <key>otw</key>
       <value></value>
     </param>
   </block>
+  <block>
+    <key>zeromq_pull_source</key>
+    <param>
+      <key>address</key>
+      <value>tcp://127.0.0.1:1338</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(272, 316)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>hwm</key>
+      <value>-1</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>zeromq_pull_source_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>pass_tags</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>timeout</key>
+      <value>100</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>blks2_tcp_source_0</source_block_id>
+    <sink_block_id>uhd_usrp_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>zeromq_pull_source_0</source_block_id>
     <sink_block_id>uhd_usrp_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>

@@ -1,12 +1,17 @@
 import os
 import socket
 import sys
+import tempfile
 from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
 
 import time
+
+import zmq
 from PyQt5.QtCore import QThread, pyqtSignal
+
+from urh import constants
 from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
@@ -30,12 +35,19 @@ class AbstractBaseThread(QThread):
         self.usrp_ip = "192.168.10.2"
         self.device = "USRP"
         self.current_index = 0
-        self.python2_interpreter = self.get_python2_interpreter()
+
+        if constants.SETTINGS.value("use_gnuradio_install_dir", False, bool):
+            gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
+            with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "w") as f:
+                f.write(gnuradio_dir)
+            self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "python.exe")
+        else:
+            self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
+
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread
         self.connection = None  # For SenderThread used to connect so GnuRadio Socket
         self.current_iteration = 0  # Counts number of Sendings in SenderThread
-
 
         self.tb_process = None
 
@@ -107,7 +119,7 @@ class AbstractBaseThread(QThread):
         suffix = "_recv.py" if self._receiving else "_send.py"
         filename = self.device.lower() + suffix
 
-        if self.python2_interpreter is None:
+        if not self.python2_interpreter:
             raise Exception("Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
 
         options = [self.python2_interpreter, os.path.join(rp, filename),
@@ -124,40 +136,30 @@ class AbstractBaseThread(QThread):
         t.start()
 
     def init_recv_socket(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PULL)
+#        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
         # SO_REUSEADDR is needed to prevent os error on OSX, see: https://github.com/jopohl/urh/issues/137
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+ #       self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         while not self.isInterruptionRequested():
             try:
                 time.sleep(0.1)
                 # Not reinitializing the socket may result in OS Error, see: https://github.com/jopohl/urh/issues/131
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+  #              self.socket = context.socket(zmq.PULL)
+   #             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
                 # SO_REUSEADDR is needed to prevent OS error on OSX, see: https://github.com/jopohl/urh/issues/137
-                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    #            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-                self.socket.connect((self.ip, self.port))
+                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.port))
                 break
             except (ConnectionRefusedError, ConnectionResetError):
                 continue
 
     def run(self):
         pass
-
-    def get_python2_interpreter(self):
-        paths = os.get_exec_path()
-
-        for p in paths:
-            for prog in ["python2", "python2.exe"]:
-                attempt = os.path.join(p, prog)
-                if os.path.isfile(attempt):
-                    return attempt
-
-        return None
 
     def read_errors(self):
         result = []
@@ -169,7 +171,6 @@ class AbstractBaseThread(QThread):
 
         result = b"".join(result)
         return result.decode("utf-8")
-
 
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):

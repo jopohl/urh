@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from PyQt5.QtCore import QModelIndex
@@ -64,5 +65,29 @@ class TestOptionsGUI(unittest.TestCase):
             list_view.setCurrentIndex(model.index(i, 0))
             self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
 
+    def test_device_tab(self):
+        self.dialog.ui.tabWidget.setCurrentIndex(5)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(5), "Device")
 
+        self.dialog.ui.listWidgetDevices.setCurrentRow(0)
+        dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()
+        for i in range(1, self.dialog.ui.listWidgetDevices.count()):
+            self.dialog.ui.listWidgetDevices.setCurrentRow(i)
+            self.assertNotEqual(dev_name, self.dialog.ui.listWidgetDevices.currentItem().text())
+            dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()
 
+        self.assertEqual(self.dialog.ui.radioButtonPython2Interpreter.isChecked(), os.name != "nt")
+        self.assertEqual(self.dialog.ui.radioButtonGnuradioDirectory.isChecked(), os.name == "nt")
+        self.dialog.ui.radioButtonPython2Interpreter.click()
+
+        self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
+        self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
+
+        self.dialog.ui.radioButtonGnuradioDirectory.click()
+        self.assertFalse(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
+        self.assertTrue(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
+
+        self.dialog.ui.radioButtonPython2Interpreter.click()
+        self.assertFalse(self.dialog.ui.radioButtonGnuradioDirectory.isChecked())
+        self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
+        self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())

@@ -36,8 +36,8 @@ class AbstractBaseThread(QThread):
         self.device = "USRP"
         self.current_index = 0
 
-        self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PULL)
+        self.context = None
+        self.socket = None
 
         if constants.SETTINGS.value("use_gnuradio_install_dir", False, bool):
             gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
@@ -49,7 +49,6 @@ class AbstractBaseThread(QThread):
 
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread
-        self.connection = None  # For SenderThread used to connect so GnuRadio Socket
         self.current_iteration = 0  # Counts number of Sendings in SenderThread
 
         self.tb_process = None
@@ -142,9 +141,6 @@ class AbstractBaseThread(QThread):
 
     def init_recv_socket(self):
         logger.info("Initalizing receive socket")
-        self.socket.close()
-        self.context.term()
-
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
 
@@ -179,24 +175,10 @@ class AbstractBaseThread(QThread):
         if msg and not msg.startswith("FIN"):
             self.requestInterruption()
 
-        if self._receiving:
-            # Close Socket for Receiver Threads
-            # No need to close for Sender Threads
-            try:
-                try:
-                    self.socket.shutdown(socket.SHUT_RDWR)
-                except OSError:
-                    pass
-
-                self.socket.close()
-            except AttributeError:
-                pass
-
-        if self.connection:
-            self.connection.close()
-
         if self.tb_process:
+            logger.info("Kill grc process")
             self.tb_process.kill()
+            logger.info("Term grc process")
             self.tb_process.terminate()
             self.tb_process = None
 

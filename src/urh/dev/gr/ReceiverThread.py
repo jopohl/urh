@@ -3,6 +3,8 @@ import socket
 import numpy as np
 import psutil
 import time
+
+import zmq
 from PyQt5.QtCore import pyqtSignal
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
@@ -30,6 +32,7 @@ class ReceiverThread(AbstractBaseThread):
             self.init_recv_buffer()
 
         self.initalize_process()
+        logger.info("Initialize receive socket")
         self.init_recv_socket()
 
         recv = self.socket.recv
@@ -40,7 +43,7 @@ class ReceiverThread(AbstractBaseThread):
 
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
-                except ConnectionResetError:
+                except (zmq.error.ContextTerminated, ConnectionResetError):
                     self.stop("Stopped receiving, because connection was reset.")
                     return
                 except OSError as e:   # https://github.com/jopohl/urh/issues/131

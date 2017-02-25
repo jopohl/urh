@@ -2,6 +2,8 @@ import socket
 import numpy as np
 import time
 
+import zmq
+
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
 
@@ -25,7 +27,7 @@ class SpectrumThread(AbstractBaseThread):
             while not self.isInterruptionRequested():
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
-                except ConnectionResetError:
+                except (zmq.error.ContextTerminated, ConnectionResetError):
                     self.stop("Stopped receiving, because connection was reset")
                     return
                 except OSError as e:  # https://github.com/jopohl/urh/issues/131

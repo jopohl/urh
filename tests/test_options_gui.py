@@ -1,7 +1,6 @@
 import os
 import unittest
 
-from PyQt5.QtCore import QModelIndex
 
 import tests.utils_testing
 from urh.controller.MainController import MainController
@@ -76,8 +75,6 @@ class TestOptionsGUI(unittest.TestCase):
             self.assertNotEqual(dev_name, self.dialog.ui.listWidgetDevices.currentItem().text())
             dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()
 
-        self.assertEqual(self.dialog.ui.radioButtonPython2Interpreter.isChecked(), os.name != "nt")
-        self.assertEqual(self.dialog.ui.radioButtonGnuradioDirectory.isChecked(), os.name == "nt")
         self.dialog.ui.radioButtonPython2Interpreter.click()
 
         self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())

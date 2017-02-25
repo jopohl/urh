@@ -4,11 +4,17 @@ import time
 
 import numpy as np
 
+import os
+
+os.environ['PATH'] = r'C:\Users\joe\Documents\urh\src\urh\dev\native\lib\win' + ';' + os.environ['PATH']
+
 from urh.dev.native.RTLSDR import RTLSDR
 from urh.dev.native.lib import rtlsdr
 
 class TestRTLSDR(unittest.TestCase):
     def test_cython_wrapper(self):
+
+
         print("Device count:", rtlsdr.get_device_count())
         print("Device name:", rtlsdr.get_device_name(0))
         manufact, product, serial = rtlsdr.get_device_usb_strings(0)

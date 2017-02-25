@@ -94,8 +94,19 @@ def get_ext_modules():
 
 def get_device_modules():
     if sys.platform == "win32":
-        # we use precompiled device backends on windows
-        return []
+        NATIVES = ["rtlsdr"]
+        result = []
+        include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
+        lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
+        for native in NATIVES:
+            result.append(Extension("urh.dev.native.lib."+native, ["src/urh/dev/native/lib/{}.cpp".format(native)],
+                          libraries=[native],
+                          library_dirs=[lib_dir],
+                          include_dirs=[include_dir],
+                          language="c++"))
+
+
+        return result
 
     compiler = ccompiler.new_compiler()
 

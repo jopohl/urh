@@ -839,6 +839,10 @@ class ProtocolAnalyzer(object):
                 message.decoder = fallback
 
     def auto_assign_labels(self):
+        if len(self.used_symbols) > 0:
+            logger.info("Format Finder not compatible with symbols yet.")
+            return
+
         format_finder = FormatFinder(self)
 
         # OPEN: Perform multiple iterations with varying priorities later

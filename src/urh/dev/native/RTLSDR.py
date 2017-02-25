@@ -16,7 +16,7 @@ def receive_sync(rcv_queue: Queue, is_receiving_p: Value):
     while is_receiving_p.value == 1:
         stuff = rtlsdr.read_sync(1024)
         rcv_queue.put(stuff)
-        time.sleep(0.01)
+        time.sleep(0.000000001)
     return True
 
 

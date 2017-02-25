@@ -56,6 +56,10 @@ class ReceiverThread(AbstractBaseThread):
                 tmp = np.fromstring(rcvd, dtype=np.complex64)
 
                 len_tmp = len(tmp)
+                if self.data is None:
+                    # seems to be sometimes None in rare cases
+                    self.init_recv_buffer()
+
                 if self.current_index + len_tmp >= len(self.data):
                     if self.is_ringbuffer:
                         self.current_index = 0

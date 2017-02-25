@@ -106,8 +106,17 @@ def main():
 
 if __name__ == "__main__":
     if sys.platform == "win32":
-        cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
-        dll_dir = os.path.realpath(os.path.join(cur_dir, "dev", "native", "lib", "win"))
+        try:
+            import urh
+            urh_dir = os.path.dirname(urh.__file__) if not os.path.islink(urh.__file__) else os.path.dirname(os.readlink(urh.__file__))
+            assert os.path.isdir(urh_dir)
+            print("Found URH install dir:", urh_dir)
+        except ImportError:
+            print("Could not import UHR, assuming running from source")
+            urh_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+            assert os.path.isdir(urh_dir)
+
+        dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win"))
         os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
 
     if sys.version_info < (3, 4):

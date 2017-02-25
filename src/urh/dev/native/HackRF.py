@@ -12,7 +12,6 @@ class HackRF(Device):
     def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
         super().__init__(bw, freq, gain, srate, is_ringbuffer)
         self.success = 0
-        self.error_not_open = -4242
 
         self._max_bandwidth = 28e6
         self._max_frequency = 6e9

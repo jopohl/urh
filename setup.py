@@ -76,7 +76,6 @@ def get_package_data():
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
-        package_data["urh.dev.native.lib"].append("hackrf.cp35-win_amd64.pyd")
         package_data["urh.dev.native.lib.win"] = ["*"]
         package_data["urh.dev.native.lib.win.libhackrf"] = ["*"]
 

@@ -130,14 +130,17 @@ class AbstractBaseThread(QThread):
         if self.device.upper() == "USRP":
             options.extend(["--ip", self.usrp_ip])
 
+        logger.info("Starting Gnuradio")
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
+        logger.info("Started Gnuradio")
         t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
         t.daemon = True  # thread dies with the program
         t.start()
 
     def init_recv_socket(self):
-        context = zmq.Context()
-        self.socket = context.socket(zmq.PULL)
+        logger.info("Initalizing receive socket")
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PULL)
 #        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
         # SO_REUSEADDR is needed to prevent os error on OSX, see: https://github.com/jopohl/urh/issues/137

@@ -16,7 +16,7 @@ GENERATE_UI = True
 
 
 def main():
-    if sys.platform == "win32" or True:
+    if sys.platform == "win32":
         urh_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
             else os.path.dirname(os.path.realpath(os.readlink(__file__)))
         assert os.path.isdir(urh_dir)

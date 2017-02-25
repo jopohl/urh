@@ -36,6 +36,9 @@ class AbstractBaseThread(QThread):
         self.device = "USRP"
         self.current_index = 0
 
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PULL)
+
         if constants.SETTINGS.value("use_gnuradio_install_dir", False, bool):
             gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
             with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "w") as f:
@@ -139,23 +142,15 @@ class AbstractBaseThread(QThread):
 
     def init_recv_socket(self):
         logger.info("Initalizing receive socket")
+        self.socket.close()
+        self.context.term()
+
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
-#        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-
-        # SO_REUSEADDR is needed to prevent os error on OSX, see: https://github.com/jopohl/urh/issues/137
- #       self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         while not self.isInterruptionRequested():
             try:
                 time.sleep(0.1)
-                # Not reinitializing the socket may result in OS Error, see: https://github.com/jopohl/urh/issues/131
-  #              self.socket = context.socket(zmq.PULL)
-   #             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-
-                # SO_REUSEADDR is needed to prevent OS error on OSX, see: https://github.com/jopohl/urh/issues/137
-    #            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
                 self.socket.connect("tcp://{0}:{1}".format(self.ip, self.port))
                 break
             except (ConnectionRefusedError, ConnectionResetError):

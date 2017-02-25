@@ -17,8 +17,8 @@ class SenderThread(AbstractBaseThread):
         super().__init__(sample_rate, freq, gain, bandwidth, False, ip, parent)
 
         self.data = numpy.empty(1, dtype=numpy.complex64)
-        context = zmq.Context()
-        self.socket = context.socket(zmq.PUSH)
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PUSH)
         self.port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
         self.max_repeats = 1  # How often shall we send the data?
 

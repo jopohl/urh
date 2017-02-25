@@ -77,6 +77,8 @@ def get_package_data():
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
         package_data["urh.dev.native.lib"].append("hackrf.cp35-win_amd64.pyd")
+        package_data["urh.dev.native.lib.win"] = ["*"]
+        package_data["urh.dev.native.lib.win.libhackrf"] = ["*"]
 
     return package_data
 
@@ -94,7 +96,7 @@ def get_ext_modules():
 
 def get_device_modules():
     if sys.platform == "win32":
-        NATIVES = ["rtlsdr"]
+        NATIVES = ["rtlsdr", "hackrf"]
         result = []
         include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
         lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))

@@ -17,6 +17,7 @@ GENERATE_UI = True
 
 def main():
     t = time.time()
+    # TODO SET PATH on WIN FOR DLLS
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
             urh_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))

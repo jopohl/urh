@@ -4,6 +4,10 @@ import unittest
 
 import numpy as np
 
+
+import os
+os.environ['PATH'] = r'C:\Users\joe\Documents\urh\src\urh\dev\native\lib\win' + ';' + os.environ['PATH']
+
 from urh.dev.native.HackRF import HackRF
 from urh.dev.native.lib import hackrf
 

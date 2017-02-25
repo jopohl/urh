@@ -16,7 +16,6 @@ class SenderThread(AbstractBaseThread):
         super().__init__(sample_rate, freq, gain, bandwidth, False, ip, parent)
 
         self.data = numpy.empty(1, dtype=numpy.complex64)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         context = zmq.Context()
         self.socket = context.socket(zmq.PUSH)
         self.port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))

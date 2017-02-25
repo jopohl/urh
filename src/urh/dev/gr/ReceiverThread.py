@@ -35,44 +35,47 @@ class ReceiverThread(AbstractBaseThread):
         recv = self.socket.recv
         rcvd = b""
 
-        while not self.isInterruptionRequested():
+        try:
+            while not self.isInterruptionRequested():
 
-            try:
-                rcvd += recv(32768)  # Receive Buffer = 32768 Byte
-            except ConnectionResetError:
-                self.stop("Stopped receiving, because connection was reset.")
-                return
-            except OSError as e:   # https://github.com/jopohl/urh/issues/131
-                logger.warning("Error occurred", str(e))
+                try:
+                    rcvd += recv(32768)  # Receive Buffer = 32768 Byte
+                except ConnectionResetError:
+                    self.stop("Stopped receiving, because connection was reset.")
+                    return
+                except OSError as e:   # https://github.com/jopohl/urh/issues/131
+                    logger.warning("Error occurred", str(e))
 
-            if len(rcvd) < 8:
-                self.stop("Stopped receiving: No data received anymore")
-                return
+                if len(rcvd) < 8:
+                    self.stop("Stopped receiving: No data received anymore")
+                    return
 
-            if len(rcvd) % 8 != 0:
-                continue
+                if len(rcvd) % 8 != 0:
+                    continue
 
-            try:
-                tmp = np.fromstring(rcvd, dtype=np.complex64)
+                try:
+                    tmp = np.fromstring(rcvd, dtype=np.complex64)
 
-                len_tmp = len(tmp)
-                if self.data is None:
-                    # seems to be sometimes None in rare cases
-                    self.init_recv_buffer()
+                    len_tmp = len(tmp)
+                    if self.data is None:
+                        # seems to be sometimes None in rare cases
+                        self.init_recv_buffer()
 
-                if self.current_index + len_tmp >= len(self.data):
-                    if self.is_ringbuffer:
-                        self.current_index = 0
-                        if len_tmp >= len(self.data):
-                            self.stop("Receiving buffer too small.")
-                    else:
-                        self.stop("Receiving Buffer is full.")
-                        return
-                self.data[self.current_index:self.current_index + len_tmp] = tmp
-                self.current_index += len_tmp
-                self.index_changed.emit(self.current_index - len_tmp,
-                                        self.current_index)
+                    if self.current_index + len_tmp >= len(self.data):
+                        if self.is_ringbuffer:
+                            self.current_index = 0
+                            if len_tmp >= len(self.data):
+                                self.stop("Receiving buffer too small.")
+                        else:
+                            self.stop("Receiving Buffer is full.")
+                            return
+                    self.data[self.current_index:self.current_index + len_tmp] = tmp
+                    self.current_index += len_tmp
+                    self.index_changed.emit(self.current_index - len_tmp,
+                                            self.current_index)
 
-                rcvd = b""
-            except ValueError:
-                self.stop("Could not receive data. Is your Hardware ok?")
+                    rcvd = b""
+                except ValueError:
+                    self.stop("Could not receive data. Is your Hardware ok?")
+        except RuntimeError:
+            logger.error("Receiver Thread crashed.")

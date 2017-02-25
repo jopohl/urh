@@ -7,6 +7,7 @@ import time
 import zmq
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
+from urh.util.Logger import logger
 
 
 class SenderThread(AbstractBaseThread):
@@ -45,20 +46,23 @@ class SenderThread(AbstractBaseThread):
         len_data = len(self.data)
         self.current_iteration = self.current_iteration if self.current_iteration is not None else 0
         time.sleep(1)
-        while self.current_index < len_data and not self.isInterruptionRequested():
-            time.sleep(0.1 * (self.samples_per_transmission / self.MAX_SAMPLES_PER_TRANSMISSION))
-            self.socket.send(self.data[self.current_index:self.current_index + self.samples_per_transmission].tostring())
-            self.current_index += self.samples_per_transmission
 
-            if self.current_index >= len_data:
-                self.current_iteration += 1
-            else:
-                continue
+        try:
+            while self.current_index < len_data and not self.isInterruptionRequested():
+                time.sleep(0.1 * (self.samples_per_transmission / self.MAX_SAMPLES_PER_TRANSMISSION))
+                self.socket.send(self.data[self.current_index:self.current_index + self.samples_per_transmission].tostring())
+                self.current_index += self.samples_per_transmission
 
-            if self.repeat_endless or self.current_iteration < self.max_repeats:
-                self.current_index = 0
+                if self.current_index >= len_data:
+                    self.current_iteration += 1
+                else:
+                    continue
 
-        self.current_index = len_data - 1
-        self.current_iteration = None
-        self.stop("FIN - All data was sent successfully")
+                if self.repeat_endless or self.current_iteration < self.max_repeats:
+                    self.current_index = 0
 
+            self.current_index = len_data - 1
+            self.current_iteration = None
+            self.stop("FIN - All data was sent successfully")
+        except RuntimeError:
+            logger.error("Sender thread crashed.")

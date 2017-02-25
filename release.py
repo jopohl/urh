@@ -16,7 +16,6 @@ if rc != 0:
     print(constants.color.RED + constants.color.BOLD + "Unittests failed. Abort release." + constants.color.END)
     sys.exit(1)
 
-# -n for parallel with pytest-xdist
 rc = pytest.main(["-v", "-s", "tests/TestInstallation.py"])
 
 if rc != 0:
@@ -36,7 +35,8 @@ with open(version_file, "w") as f:
 
 # Publish new version number
 os.chdir(script_dir)
-call(["git", "commit", "-am", "version" + cur_version])
+call(["git", "add", version_file])
+call(["git", "commit", "-m", "version" + cur_version])
 call(["git", "push"])
 
 # Publish to PyPi

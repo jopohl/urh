@@ -26,7 +26,6 @@ class SendRecvDialogController(QDialog):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.set_sniff_ui_items_visible(False)
 

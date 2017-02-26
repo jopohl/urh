@@ -389,6 +389,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             if self.mode == Mode.send:
                 self.__dev.socket.close()
+                time.sleep(0.1)
             self.__dev.quit()
             self.data = None
 

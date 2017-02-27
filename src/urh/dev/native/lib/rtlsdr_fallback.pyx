@@ -1,4 +1,5 @@
 # cython wrapper for RTL-SDR (https://github.com/pinkavaj/rtl-sdr)
+# this fallback does not include set_tuner_bandwidth , as it is not supported e.g. in Manjaro and Ubuntu packages
 
 cimport crtlsdr
 from libc.stdlib cimport malloc
@@ -196,14 +197,14 @@ cpdef int set_tuner_gain_mode(int manual):
     """
     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
 
-cpdef int set_tuner_bandwidth(uint32_t bw):
-    """
-    Set the bandwidth for the device.
-
-    :param bw: bandwidth in Hz. Zero means automatic BW selection.
-    :return 0 on success
-    """
-    crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
+# cpdef int set_tuner_bandwidth(uint32_t bw):
+#     """
+#     Set the bandwidth for the device.
+#
+#     :param bw: bandwidth in Hz. Zero means automatic BW selection.
+#     :return 0 on success
+#     """
+#     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
 
 cpdef int set_sample_rate(uint32_t sample_rate):
     """

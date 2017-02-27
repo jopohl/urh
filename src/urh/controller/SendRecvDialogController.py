@@ -117,6 +117,20 @@ class SendRecvDialogController(QDialog):
 
         return items
 
+    def set_bandwidth_status(self):
+        if self.device is not None:
+            self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
+            self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
+
+            if not self.device.bandwidth_is_adjustable:
+                self.bw_sr_are_locked = False
+                self.ui.spinBoxBandwidth.setToolTip(self.tr("Your driver of RTL-SDR does not support "
+                                                            "setting the bandwidth. "
+                                                            "If you need this feature, install a recent version."))
+            else:
+                self.ui.spinBoxBandwidth.setToolTip("")
+                self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
+
     def create_connects(self):
         self.ui.btnStart.clicked.connect(self.on_start_clicked)
         self.ui.btnStop.clicked.connect(self.on_stop_clicked)
@@ -195,9 +209,7 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
-        if self.device is not None:
-            self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
-            self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
+        self.set_bandwidth_status()
 
     @pyqtSlot()
     def on_start_clicked(self):

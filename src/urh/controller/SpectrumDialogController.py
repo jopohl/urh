@@ -33,8 +33,7 @@ class SpectrumDialogController(SendRecvDialogController):
             self.ui.cbDevice.removeItem(index)
 
         self.init_device()
-        self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
-        self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
+        self.set_bandwidth_status()
 
         self.create_connects()
 

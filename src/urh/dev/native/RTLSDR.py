@@ -5,7 +5,10 @@ import numpy as np
 from multiprocessing import Pipe
 
 from urh.dev.native.Device import Device
-from urh.dev.native.lib import rtlsdr
+try:
+    from urh.dev.native.lib import rtlsdr
+except ImportError:
+    import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
 from urh.util.Logger import logger
 
 
@@ -38,17 +41,20 @@ def process_command(command):
 
     tag, value = command.split(":")
     if tag == "center_freq":
-        logger.info("[RTLSDR] Set center freq to {0}".format(int(value)))
+        logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
         return rtlsdr.set_center_freq(int(value))
 
     elif tag == "tuner_gain":
-        logger.info("[RTLSDR] Set tuner gain to {0}".format(int(value)))
+        logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
         return rtlsdr.set_tuner_gain(int(value))
 
     elif tag == "sample_rate":
-        logger.info("[RTLSDR] Set sample_rate to {0}".format(int(value)))
+        logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
         return rtlsdr.set_sample_rate(int(value))
 
+    elif tag == "tuner_bandwidth":
+        logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
+        return rtlsdr.set_tuner_bandwidth(int(value))
 
 
 class RTLSDR(Device):
@@ -65,10 +71,11 @@ class RTLSDR(Device):
 
         """
 
-        self.bandwidth_is_adjustable = False   # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = hasattr(rtlsdr, "set_tuner_bandwidth")   # e.g. not in Manjaro Linux / Ubuntu 14.04
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
+        self._max_bandwidth = 3200000
         self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
@@ -141,6 +148,11 @@ class RTLSDR(Device):
     def set_device_gain(self, gain):
         self.set_gain(gain)
 
+    def set_device_bandwidth(self, bandwidth):
+        if hasattr(rtlsdr, "set_tuner_bandwidth"):
+            self.parent_conn.send("tuner_bandwidth:{}".format(int(bandwidth)))
+        else:
+            logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

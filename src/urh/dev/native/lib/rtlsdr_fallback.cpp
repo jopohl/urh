@@ -15,7 +15,7 @@
             "rtlsdr"
         ]
     },
-    "module_name": "urh.dev.native.lib.rtlsdr"
+    "module_name": "urh.dev.native.lib.rtlsdr_fallback"
 }
 END: Cython Metadata */
 
@@ -460,8 +460,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__src__urh__dev__native__lib__rtlsdr
-#define __PYX_HAVE_API__src__urh__dev__native__lib__rtlsdr
+#define __PYX_HAVE__src__urh__dev__native__lib__rtlsdr_fallback
+#define __PYX_HAVE_API__src__urh__dev__native__lib__rtlsdr_fallback
 #include "rtl-sdr.h"
 #include <string.h>
 #include <stdlib.h>
@@ -660,56 +660,56 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "src/urh/dev/native/lib/rtlsdr.pyx",
+  "src/urh/dev/native/lib/rtlsdr_fallback.pyx",
 };
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":6
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":7
  * from libc.stdlib cimport malloc
  * 
  * ctypedef unsigned char uint8_t             # <<<<<<<<<<<<<<
  * ctypedef unsigned short uint16_t
  * ctypedef unsigned int  uint32_t
  */
-typedef unsigned char __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint8_t;
+typedef unsigned char __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t;
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":7
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":8
  * 
  * ctypedef unsigned char uint8_t
  * ctypedef unsigned short uint16_t             # <<<<<<<<<<<<<<
  * ctypedef unsigned int  uint32_t
  * ctypedef unsigned long long uint64_t
  */
-typedef unsigned short __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint16_t;
+typedef unsigned short __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint16_t;
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":8
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":9
  * ctypedef unsigned char uint8_t
  * ctypedef unsigned short uint16_t
  * ctypedef unsigned int  uint32_t             # <<<<<<<<<<<<<<
  * ctypedef unsigned long long uint64_t
  * 
  */
-typedef unsigned int __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t;
+typedef unsigned int __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t;
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":9
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":10
  * ctypedef unsigned short uint16_t
  * ctypedef unsigned int  uint32_t
  * ctypedef unsigned long long uint64_t             # <<<<<<<<<<<<<<
  * 
  * cdef crtlsdr.rtlsdr_dev_t*_c_device
  */
-typedef unsigned PY_LONG_LONG __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint64_t;
+typedef unsigned PY_LONG_LONG __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint64_t;
 
 /*--- Type declarations ---*/
-struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync;
+struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync;
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":278
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":279
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)
  * 
  * cpdef bytes read_sync(int num_samples=8 * 32 * 512):             # <<<<<<<<<<<<<<
  *     """
  *     The raw, captured IQ data is 8 bit unsigned data.
  */
-struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync {
+struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync {
   int __pyx_n;
   int num_samples;
 };
@@ -957,44 +957,43 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from 'libc.stdlib' */
 
-/* Module declarations from 'src.urh.dev.native.lib.rtlsdr' */
-static rtlsdr_dev_t *__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device;
-static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigned char *, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, void *); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_strings(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObject *, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_open(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_close(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_xtal_freq(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_center_freq(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_center_freq(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_freq_correction(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_freq_correction(int __pyx_skip_dispatch); /*proto*/
-static rtlsdr_tuner __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_type(int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gain(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_if_gain(int, int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain_mode(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_bandwidth(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_sample_rate(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_sample_rate(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_agc_mode(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_direct_sampling(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_direct_sampling(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_offset_tuning(int, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_offset_tuning(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_reset_buffer(int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync *__pyx_optional_args); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_async(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_cancel_async(int __pyx_skip_dispatch); /*proto*/
-#define __Pyx_MODULE_NAME "src.urh.dev.native.lib.rtlsdr"
-int __pyx_module_is_main_src__urh__dev__native__lib__rtlsdr = 0;
+/* Module declarations from 'src.urh.dev.native.lib.rtlsdr_fallback' */
+static rtlsdr_dev_t *__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device;
+static void __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_callback_recv(unsigned char *, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, void *); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_name(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_usb_strings(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_index_by_serial(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_open(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_close(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_xtal_freq(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_xtal_freq(int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_usb_strings(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_center_freq(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_center_freq(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_freq_correction(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_freq_correction(int __pyx_skip_dispatch); /*proto*/
+static rtlsdr_tuner __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_type(int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gains(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gain(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_if_gain(int, int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain_mode(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_sample_rate(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_sample_rate(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_agc_mode(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_direct_sampling(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_direct_sampling(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_offset_tuning(int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_offset_tuning(int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_reset_buffer(int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync(int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync *__pyx_optional_args); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(int __pyx_skip_dispatch); /*proto*/
+#define __Pyx_MODULE_NAME "src.urh.dev.native.lib.rtlsdr_fallback"
+int __pyx_module_is_main_src__urh__dev__native__lib__rtlsdr_fallback = 0;
 
-/* Implementation of 'src.urh.dev.native.lib.rtlsdr' */
+/* Implementation of 'src.urh.dev.native.lib.rtlsdr_fallback' */
 static PyObject *__pyx_builtin_range;
 static const char __pyx_k_f[] = "f";
 static const char __pyx_k_gain[] = "gain";
@@ -1018,43 +1017,42 @@ static PyObject *__pyx_n_s_rtl_freq;
 static PyObject *__pyx_n_s_stage;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_tuner_freq;
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_strings(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_serial(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_serial); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_tuner_freq); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_freq); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correction(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ppm); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correction(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_stage, int __pyx_v_gain); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_manual); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_38set_tuner_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_bw); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_sample_rate); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_num_samples); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_callback, PyObject *__pyx_v_connection); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_2get_device_name(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_4get_device_usb_strings(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_6get_index_by_serial(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_serial); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_8open(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_10close(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_12set_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_tuner_freq); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_14get_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_16get_usb_strings(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_18set_center_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_freq); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_20get_center_freq(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_22set_freq_correction(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ppm); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_24get_freq_correction(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_26get_tuner_type(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_28get_tuner_gains(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_30set_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_32get_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_34set_tuner_if_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_stage, int __pyx_v_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_36set_tuner_gain_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_manual); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_38set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_sample_rate); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_40get_sample_rate(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_42set_agc_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_44set_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_46get_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_48set_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_50get_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_52reset_buffer(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_sync(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_num_samples); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_async(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_callback, PyObject *__pyx_v_connection); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel_async(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static int __pyx_k__4;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_tuple__3;
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":13
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":14
  * cdef crtlsdr.rtlsdr_dev_t*_c_device
  * 
  * cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):             # <<<<<<<<<<<<<<
@@ -1062,7 +1060,7 @@ static PyObject *__pyx_tuple__3;
  *     conn = <object> ctx
  */
 
-static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigned char *__pyx_v_buffer, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_length, void *__pyx_v_ctx) {
+static void __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_callback_recv(unsigned char *__pyx_v_buffer, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_length, void *__pyx_v_ctx) {
   CYTHON_UNUSED PyObject *__pyx_v_conn = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1072,7 +1070,7 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("_c_callback_recv", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":15
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":16
  * cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
  *     global f
  *     conn = <object> ctx             # <<<<<<<<<<<<<<
@@ -1084,16 +1082,16 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
   __pyx_v_conn = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":16
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":17
  *     global f
  *     conn = <object> ctx
  *     (<object>f)(buffer[0:length])             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_f); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_f); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_buffer) + 0, __pyx_v_length - 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_buffer) + 0, __pyx_v_length - 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(((PyObject *)__pyx_t_2));
   __pyx_t_4 = __pyx_t_2; __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -1108,14 +1106,14 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_3};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -1124,20 +1122,20 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_3};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 17, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2); __pyx_t_2 = NULL;
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_3);
       __pyx_t_3 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -1145,7 +1143,7 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":13
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":14
  * cdef crtlsdr.rtlsdr_dev_t*_c_device
  * 
  * cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):             # <<<<<<<<<<<<<<
@@ -1161,13 +1159,13 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr._c_callback_recv", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr_fallback._c_callback_recv", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_conn);
   __Pyx_RefNannyFinishContext();
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":19
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":20
  * 
  * 
  * cpdef uint32_t get_device_count():             # <<<<<<<<<<<<<<
@@ -1175,13 +1173,13 @@ static void __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv(unsigne
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(CYTHON_UNUSED int __pyx_skip_dispatch) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_r;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_device_count", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":20
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":21
  * 
  * cpdef uint32_t get_device_count():
  *     return crtlsdr.rtlsdr_get_device_count()             # <<<<<<<<<<<<<<
@@ -1191,7 +1189,7 @@ static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3d
   __pyx_r = rtlsdr_get_device_count();
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":19
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":20
  * 
  * 
  * cpdef uint32_t get_device_count():             # <<<<<<<<<<<<<<
@@ -1206,25 +1204,25 @@ static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3d
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_1get_device_count(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_device_count (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_device_count", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_count(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1233,7 +1231,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_count", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_count", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1241,7 +1239,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(C
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":22
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":23
  *     return crtlsdr.rtlsdr_get_device_count()
  * 
  * cpdef str get_device_name(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1249,15 +1247,15 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_count(C
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_name(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   char const *__pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("get_device_name", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":23
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":24
  * 
  * cpdef str get_device_name(uint32_t index):
  *     return crtlsdr.rtlsdr_get_device_name(index).decode('UTF-8')             # <<<<<<<<<<<<<<
@@ -1266,15 +1264,15 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__p
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = rtlsdr_get_device_name(__pyx_v_index);
-  __pyx_t_2 = __Pyx_decode_c_string(__pyx_t_1, 0, strlen(__pyx_t_1), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_decode_c_string(__pyx_t_1, 0, strlen(__pyx_t_1), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_INCREF(__pyx_t_2);
   __pyx_r = ((PyObject*)__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":22
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":23
  *     return crtlsdr.rtlsdr_get_device_count()
  * 
  * cpdef str get_device_name(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1285,7 +1283,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__p
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1294,35 +1292,35 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_3get_device_name(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_device_name (wrapper)", 0);
   assert(__pyx_arg_index); {
-    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 22, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 23, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_index));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_2get_device_name(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t)__pyx_v_index));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_2get_device_name(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_device_name", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_name(__pyx_v_index, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_name(__pyx_v_index, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1331,7 +1329,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_name", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1339,7 +1337,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(C
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":25
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":26
  *     return crtlsdr.rtlsdr_get_device_name(index).decode('UTF-8')
  * 
  * cpdef tuple get_device_usb_strings(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1347,8 +1345,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_2get_device_name(C
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_strings(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_usb_strings(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
   char *__pyx_v_manufacturer;
   char *__pyx_v_product;
   char *__pyx_v_serial;
@@ -1362,7 +1360,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("get_device_usb_strings", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":31
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":32
  *     :return: manufacturer name, product name, serial serial number on success else None, None, None
  *     """
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -1371,7 +1369,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  */
   __pyx_v_manufacturer = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":32
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":33
  *     """
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
  *     cdef char *product = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -1380,7 +1378,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  */
   __pyx_v_product = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":33
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":34
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
  *     cdef char *product = <char *> malloc(256 * sizeof(char))
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -1389,7 +1387,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  */
   __pyx_v_serial = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":34
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":35
  *     cdef char *product = <char *> malloc(256 * sizeof(char))
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)             # <<<<<<<<<<<<<<
@@ -1398,7 +1396,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  */
   __pyx_v_result = rtlsdr_get_device_usb_strings(__pyx_v_index, __pyx_v_manufacturer, __pyx_v_product, __pyx_v_serial);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":35
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":36
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -1408,7 +1406,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
   __pyx_t_1 = ((__pyx_v_result == 0) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":36
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":37
  *     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)
  *     if result == 0:
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')             # <<<<<<<<<<<<<<
@@ -1416,13 +1414,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  *         return None, None, None
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_manufacturer, 0, strlen(__pyx_v_manufacturer), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_manufacturer, 0, strlen(__pyx_v_manufacturer), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_decode_c_string(__pyx_v_product, 0, strlen(__pyx_v_product), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_decode_c_string(__pyx_v_product, 0, strlen(__pyx_v_product), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_decode_c_string(__pyx_v_serial, 0, strlen(__pyx_v_serial), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_decode_c_string(__pyx_v_serial, 0, strlen(__pyx_v_serial), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2);
@@ -1437,7 +1435,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
     __pyx_t_5 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":35
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":36
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -1446,7 +1444,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
  */
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":38
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":39
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
  *     else:
  *         return None, None, None             # <<<<<<<<<<<<<<
@@ -1460,7 +1458,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":25
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":26
  *     return crtlsdr.rtlsdr_get_device_name(index).decode('UTF-8')
  * 
  * cpdef tuple get_device_usb_strings(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1474,7 +1472,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1483,36 +1481,36 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_stri
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_strings[] = "\n\n    :param index: index of the device\n    :return: manufacturer name, product name, serial serial number on success else None, None, None\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_4get_device_usb_strings[] = "\n\n    :param index: index of the device\n    :return: manufacturer name, product name, serial serial number on success else None, None, None\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_5get_device_usb_strings(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_device_usb_strings (wrapper)", 0);
   assert(__pyx_arg_index); {
-    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 25, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_strings(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_index));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_4get_device_usb_strings(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t)__pyx_v_index));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_strings(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_4get_device_usb_strings(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_device_usb_strings", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_device_usb_strings(__pyx_v_index, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_device_usb_strings(__pyx_v_index, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1521,7 +1519,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_st
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_device_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1529,7 +1527,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_st
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":40
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":41
  *         return None, None, None
  * 
  * cpdef int get_index_by_serial(str serial):             # <<<<<<<<<<<<<<
@@ -1537,8 +1535,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_st
  *     Get device index by USB serial string descriptor.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObject *__pyx_v_serial, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_index_by_serial(PyObject *__pyx_v_serial, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_v_serial_byte_string = NULL;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -1546,7 +1544,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObj
   char *__pyx_t_2;
   __Pyx_RefNannySetupContext("get_index_by_serial", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":50
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":51
  *              -3 if devices were found, but none with matching name
  *     """
  *     serial_byte_string = serial.encode('UTF-8')             # <<<<<<<<<<<<<<
@@ -1555,25 +1553,25 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObj
  */
   if (unlikely(__pyx_v_serial == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "encode");
-    __PYX_ERR(0, 50, __pyx_L1_error)
+    __PYX_ERR(0, 51, __pyx_L1_error)
   }
-  __pyx_t_1 = PyUnicode_AsUTF8String(__pyx_v_serial); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_1 = PyUnicode_AsUTF8String(__pyx_v_serial); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_serial_byte_string = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":51
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":52
  *     """
  *     serial_byte_string = serial.encode('UTF-8')
  *     return crtlsdr.rtlsdr_get_index_by_serial(<char *> serial_byte_string)             # <<<<<<<<<<<<<<
  * 
  * cpdef int open(uint32_t index):
  */
-  __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_v_serial_byte_string); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_v_serial_byte_string); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
   __pyx_r = rtlsdr_get_index_by_serial(((char *)__pyx_t_2));
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":40
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":41
  *         return None, None, None
  * 
  * cpdef int get_index_by_serial(str serial):             # <<<<<<<<<<<<<<
@@ -1584,7 +1582,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObj
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr.get_index_by_serial", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr_fallback.get_index_by_serial", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_serial_byte_string);
@@ -1593,14 +1591,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(PyObj
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_serial[] = "\n    Get device index by USB serial string descriptor.\n\n    :param serial: serial string of the device\n    :return: device index of first device where the name matched\n             -1 if name is NULL\n             -2 if no devices were found at all\n             -3 if devices were found, but none with matching name\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_6get_index_by_serial[] = "\n    Get device index by USB serial string descriptor.\n\n    :param serial: serial string of the device\n    :return: device index of first device where the name matched\n             -1 if name is NULL\n             -2 if no devices were found at all\n             -3 if devices were found, but none with matching name\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_7get_index_by_serial(PyObject *__pyx_self, PyObject *__pyx_v_serial) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_index_by_serial (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_serial), (&PyUnicode_Type), 1, "serial", 1))) __PYX_ERR(0, 40, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_serial(__pyx_self, ((PyObject*)__pyx_v_serial));
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_serial), (&PyUnicode_Type), 1, "serial", 1))) __PYX_ERR(0, 41, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_6get_index_by_serial(__pyx_self, ((PyObject*)__pyx_v_serial));
 
   /* function exit code */
   goto __pyx_L0;
@@ -1611,13 +1609,13 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_7get_index_by_seri
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_serial(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_serial) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_6get_index_by_serial(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_serial) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_index_by_serial", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_index_by_serial(__pyx_v_serial, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_index_by_serial(__pyx_v_serial, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1626,7 +1624,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_seri
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_index_by_serial", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_index_by_serial", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1634,7 +1632,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_seri
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":53
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":54
  *     return crtlsdr.rtlsdr_get_index_by_serial(<char *> serial_byte_string)
  * 
  * cpdef int open(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1642,23 +1640,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_seri
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_open(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_open(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("open", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":54
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":55
  * 
  * cpdef int open(uint32_t index):
  *     return crtlsdr.rtlsdr_open(&_c_device, index)             # <<<<<<<<<<<<<<
  * 
  * cpdef int close():
  */
-  __pyx_r = rtlsdr_open((&__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device), __pyx_v_index);
+  __pyx_r = rtlsdr_open((&__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device), __pyx_v_index);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":53
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":54
  *     return crtlsdr.rtlsdr_get_index_by_serial(<char *> serial_byte_string)
  * 
  * cpdef int open(uint32_t index):             # <<<<<<<<<<<<<<
@@ -1673,35 +1671,35 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_open(__pyx_t_3src_3urh_3d
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_9open(PyObject *__pyx_self, PyObject *__pyx_arg_index) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("open (wrapper)", 0);
   assert(__pyx_arg_index); {
-    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 53, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyInt_As_unsigned_int(__pyx_arg_index); if (unlikely((__pyx_v_index == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.open", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.open", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_index));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_8open(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t)__pyx_v_index));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_index) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_8open(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_index) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("open", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_open(__pyx_v_index, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_open(__pyx_v_index, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1710,7 +1708,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.open", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.open", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1718,7 +1716,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":56
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":57
  *     return crtlsdr.rtlsdr_open(&_c_device, index)
  * 
  * cpdef int close():             # <<<<<<<<<<<<<<
@@ -1726,23 +1724,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_8open(CYTHON_UNUSE
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_close(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_close(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":57
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":58
  * 
  * cpdef int close():
  *     return crtlsdr.rtlsdr_close(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_xtal_freq(uint32_t rtl_freq, uint32_t tuner_freq):
  */
-  __pyx_r = rtlsdr_close(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_close(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":56
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":57
  *     return crtlsdr.rtlsdr_open(&_c_device, index)
  * 
  * cpdef int close():             # <<<<<<<<<<<<<<
@@ -1757,25 +1755,25 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_close(CYTHON_UNUSED int _
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_11close(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_10close(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_10close(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("close", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_close(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_close(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1784,7 +1782,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(CYTHON_UNU
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.close", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.close", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1792,7 +1790,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":59
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":60
  *     return crtlsdr.rtlsdr_close(_c_device)
  * 
  * cpdef int set_xtal_freq(uint32_t rtl_freq, uint32_t tuner_freq):             # <<<<<<<<<<<<<<
@@ -1800,23 +1798,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_10close(CYTHON_UNU
  *      Set crystal oscillator frequencies used for the RTL2832 and the tuner IC.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_xtal_freq(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_tuner_freq, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_xtal_freq(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_tuner_freq, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_xtal_freq", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":73
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":74
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_xtal_freq(_c_device, rtl_freq, tuner_freq)             # <<<<<<<<<<<<<<
  * 
  * cpdef tuple get_xtal_freq():
  */
-  __pyx_r = rtlsdr_set_xtal_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_rtl_freq, __pyx_v_tuner_freq);
+  __pyx_r = rtlsdr_set_xtal_freq(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_rtl_freq, __pyx_v_tuner_freq);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":59
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":60
  *     return crtlsdr.rtlsdr_close(_c_device)
  * 
  * cpdef int set_xtal_freq(uint32_t rtl_freq, uint32_t tuner_freq):             # <<<<<<<<<<<<<<
@@ -1831,11 +1829,11 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_xtal_freq(__pyx_t_3sr
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq[] = "\n     Set crystal oscillator frequencies used for the RTL2832 and the tuner IC.\n\n    Usually both ICs use the same clock. Changing the clock may make sense if\n    you are applying an external clock to the tuner or to compensate the\n    frequency (and samplerate) error caused by the original (cheap) crystal.\n\n    NOTE: Call this function only if you fully understand the implications.\n\n    :param rtl_freq: frequency value used to clock the RTL2832 in Hz\n    :param tuner_freq: frequency value used to clock the tuner IC in Hz\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_rtl_freq;
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_tuner_freq;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_12set_xtal_freq[] = "\n     Set crystal oscillator frequencies used for the RTL2832 and the tuner IC.\n\n    Usually both ICs use the same clock. Changing the clock may make sense if\n    you are applying an external clock to the tuner or to compensate the\n    frequency (and samplerate) error caused by the original (cheap) crystal.\n\n    NOTE: Call this function only if you fully understand the implications.\n\n    :param rtl_freq: frequency value used to clock the RTL2832 in Hz\n    :param tuner_freq: frequency value used to clock the tuner IC in Hz\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_13set_xtal_freq(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_rtl_freq;
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_tuner_freq;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_xtal_freq (wrapper)", 0);
@@ -1859,11 +1857,11 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq(Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_tuner_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("set_xtal_freq", 1, 2, 2, 1); __PYX_ERR(0, 59, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("set_xtal_freq", 1, 2, 2, 1); __PYX_ERR(0, 60, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_xtal_freq") < 0)) __PYX_ERR(0, 59, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_xtal_freq") < 0)) __PYX_ERR(0, 60, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1871,31 +1869,31 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq(Py
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_rtl_freq = __Pyx_PyInt_As_unsigned_int(values[0]); if (unlikely((__pyx_v_rtl_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 59, __pyx_L3_error)
-    __pyx_v_tuner_freq = __Pyx_PyInt_As_unsigned_int(values[1]); if (unlikely((__pyx_v_tuner_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 59, __pyx_L3_error)
+    __pyx_v_rtl_freq = __Pyx_PyInt_As_unsigned_int(values[0]); if (unlikely((__pyx_v_rtl_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
+    __pyx_v_tuner_freq = __Pyx_PyInt_As_unsigned_int(values[1]); if (unlikely((__pyx_v_tuner_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_xtal_freq", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 59, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_xtal_freq", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 60, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(__pyx_self, __pyx_v_rtl_freq, __pyx_v_tuner_freq);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_12set_xtal_freq(__pyx_self, __pyx_v_rtl_freq, __pyx_v_tuner_freq);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_tuner_freq) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_12set_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_rtl_freq, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_tuner_freq) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_xtal_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_xtal_freq(__pyx_v_rtl_freq, __pyx_v_tuner_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_xtal_freq(__pyx_v_rtl_freq, __pyx_v_tuner_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1904,7 +1902,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(CY
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1912,7 +1910,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":75
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":76
  *     return crtlsdr.rtlsdr_set_xtal_freq(_c_device, rtl_freq, tuner_freq)
  * 
  * cpdef tuple get_xtal_freq():             # <<<<<<<<<<<<<<
@@ -1920,10 +1918,10 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq(CY
  *     Get crystal oscillator frequencies used for the RTL2832 and the tuner IC.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHON_UNUSED int __pyx_skip_dispatch) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_rtl_freq;
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_tuner_freq;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_xtal_freq(CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_rtl_freq;
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_tuner_freq;
   int __pyx_v_result;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -1933,7 +1931,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("get_xtal_freq", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":83
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":84
  *              tuner_freq frequency value used to clock the tuner IC in Hz
  *     """
  *     cdef uint32_t rtl_freq = 0             # <<<<<<<<<<<<<<
@@ -1942,7 +1940,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
  */
   __pyx_v_rtl_freq = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":84
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":85
  *     """
  *     cdef uint32_t rtl_freq = 0
  *     cdef uint32_t tuner_freq = 0             # <<<<<<<<<<<<<<
@@ -1951,16 +1949,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
  */
   __pyx_v_tuner_freq = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":85
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":86
  *     cdef uint32_t rtl_freq = 0
  *     cdef uint32_t tuner_freq = 0
  *     result = crtlsdr.rtlsdr_get_xtal_freq(_c_device, &rtl_freq, &tuner_freq)             # <<<<<<<<<<<<<<
  * 
  *     if result == 0:
  */
-  __pyx_v_result = rtlsdr_get_xtal_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, (&__pyx_v_rtl_freq), (&__pyx_v_tuner_freq));
+  __pyx_v_result = rtlsdr_get_xtal_freq(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, (&__pyx_v_rtl_freq), (&__pyx_v_tuner_freq));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":87
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":88
  *     result = crtlsdr.rtlsdr_get_xtal_freq(_c_device, &rtl_freq, &tuner_freq)
  * 
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -1970,7 +1968,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
   __pyx_t_1 = ((__pyx_v_result == 0) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":88
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":89
  * 
  *     if result == 0:
  *         return rtl_freq, tuner_freq             # <<<<<<<<<<<<<<
@@ -1978,11 +1976,11 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
  *         return None, None
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_unsigned_int(__pyx_v_rtl_freq); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_unsigned_int(__pyx_v_rtl_freq); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_tuner_freq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_tuner_freq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
@@ -1994,7 +1992,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":87
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":88
  *     result = crtlsdr.rtlsdr_get_xtal_freq(_c_device, &rtl_freq, &tuner_freq)
  * 
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -2003,7 +2001,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
  */
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":90
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":91
  *         return rtl_freq, tuner_freq
  *     else:
  *         return None, None             # <<<<<<<<<<<<<<
@@ -2017,7 +2015,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":75
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":76
  *     return crtlsdr.rtlsdr_set_xtal_freq(_c_device, rtl_freq, tuner_freq)
  * 
  * cpdef tuple get_xtal_freq():             # <<<<<<<<<<<<<<
@@ -2030,7 +2028,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2039,26 +2037,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(CYTHO
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq[] = "\n    Get crystal oscillator frequencies used for the RTL2832 and the tuner IC.\n    Usually both ICs use the same clock.\n\n    :return: rtl_freq frequency value used to clock the RTL2832 in Hz,\n             tuner_freq frequency value used to clock the tuner IC in Hz\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_14get_xtal_freq[] = "\n    Get crystal oscillator frequencies used for the RTL2832 and the tuner IC.\n    Usually both ICs use the same clock.\n\n    :return: rtl_freq frequency value used to clock the RTL2832 in Hz,\n             tuner_freq frequency value used to clock the tuner IC in Hz\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_15get_xtal_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_xtal_freq (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_14get_xtal_freq(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_14get_xtal_freq(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_xtal_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_xtal_freq(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_xtal_freq(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2067,7 +2065,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(CY
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_xtal_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2075,7 +2073,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":92
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":93
  *         return None, None
  * 
  * cpdef tuple get_usb_strings():             # <<<<<<<<<<<<<<
@@ -2083,8 +2081,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq(CY
  *     cdef char *product = <char *> malloc(256 * sizeof(char))
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_usb_strings(CYTHON_UNUSED int __pyx_skip_dispatch) {
   char *__pyx_v_manufacturer;
   char *__pyx_v_product;
   char *__pyx_v_serial;
@@ -2098,7 +2096,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("get_usb_strings", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":93
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":94
  * 
  * cpdef tuple get_usb_strings():
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -2107,7 +2105,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
  */
   __pyx_v_manufacturer = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":94
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":95
  * cpdef tuple get_usb_strings():
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
  *     cdef char *product = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -2116,7 +2114,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
  */
   __pyx_v_product = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":95
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":96
  *     cdef char *manufacturer = <char *> malloc(256 * sizeof(char))
  *     cdef char *product = <char *> malloc(256 * sizeof(char))
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -2125,16 +2123,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
  */
   __pyx_v_serial = ((char *)malloc((0x100 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":96
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":97
  *     cdef char *product = <char *> malloc(256 * sizeof(char))
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_usb_strings(_c_device, manufacturer, product, serial)             # <<<<<<<<<<<<<<
  *     if result == 0:
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
  */
-  __pyx_v_result = rtlsdr_get_usb_strings(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_manufacturer, __pyx_v_product, __pyx_v_serial);
+  __pyx_v_result = rtlsdr_get_usb_strings(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_manufacturer, __pyx_v_product, __pyx_v_serial);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":97
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":98
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_usb_strings(_c_device, manufacturer, product, serial)
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -2144,7 +2142,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
   __pyx_t_1 = ((__pyx_v_result == 0) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":98
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":99
  *     result = crtlsdr.rtlsdr_get_usb_strings(_c_device, manufacturer, product, serial)
  *     if result == 0:
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')             # <<<<<<<<<<<<<<
@@ -2152,13 +2150,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
  *         return None, None, None
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_manufacturer, 0, strlen(__pyx_v_manufacturer), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_manufacturer, 0, strlen(__pyx_v_manufacturer), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_decode_c_string(__pyx_v_product, 0, strlen(__pyx_v_product), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_decode_c_string(__pyx_v_product, 0, strlen(__pyx_v_product), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_decode_c_string(__pyx_v_serial, 0, strlen(__pyx_v_serial), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_decode_c_string(__pyx_v_serial, 0, strlen(__pyx_v_serial), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2);
@@ -2173,7 +2171,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
     __pyx_t_5 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":97
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":98
  *     cdef char *serial = <char *> malloc(256 * sizeof(char))
  *     result = crtlsdr.rtlsdr_get_usb_strings(_c_device, manufacturer, product, serial)
  *     if result == 0:             # <<<<<<<<<<<<<<
@@ -2182,7 +2180,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
  */
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":100
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":101
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
  *     else:
  *         return None, None, None             # <<<<<<<<<<<<<<
@@ -2196,7 +2194,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":92
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":93
  *         return None, None
  * 
  * cpdef tuple get_usb_strings():             # <<<<<<<<<<<<<<
@@ -2210,7 +2208,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2219,25 +2217,25 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(CYT
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_17get_usb_strings(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_usb_strings (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_16get_usb_strings(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_16get_usb_strings(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_usb_strings", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_usb_strings(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_usb_strings(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2246,7 +2244,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_usb_strings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2254,7 +2252,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":102
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":103
  *         return None, None, None
  * 
  * cpdef int set_center_freq(uint32_t freq):             # <<<<<<<<<<<<<<
@@ -2262,23 +2260,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_16get_usb_strings(
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_center_freq(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_freq, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_center_freq(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_freq, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_center_freq", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":103
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":104
  * 
  * cpdef int set_center_freq(uint32_t freq):
  *     return crtlsdr.rtlsdr_set_center_freq(_c_device, freq)             # <<<<<<<<<<<<<<
  * 
  * cpdef uint32_t get_center_freq():
  */
-  __pyx_r = rtlsdr_set_center_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_freq);
+  __pyx_r = rtlsdr_set_center_freq(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_freq);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":102
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":103
  *         return None, None, None
  * 
  * cpdef int set_center_freq(uint32_t freq):             # <<<<<<<<<<<<<<
@@ -2293,35 +2291,35 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_center_freq(__pyx_t_3
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_freq;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_19set_center_freq(PyObject *__pyx_self, PyObject *__pyx_arg_freq) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_freq;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_center_freq (wrapper)", 0);
   assert(__pyx_arg_freq); {
-    __pyx_v_freq = __Pyx_PyInt_As_unsigned_int(__pyx_arg_freq); if (unlikely((__pyx_v_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 102, __pyx_L3_error)
+    __pyx_v_freq = __Pyx_PyInt_As_unsigned_int(__pyx_arg_freq); if (unlikely((__pyx_v_freq == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_freq));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_18set_center_freq(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t)__pyx_v_freq));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_freq) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_18set_center_freq(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_freq) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_center_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_center_freq(__pyx_v_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_center_freq(__pyx_v_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2330,7 +2328,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2338,7 +2336,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":105
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":106
  *     return crtlsdr.rtlsdr_set_center_freq(_c_device, freq)
  * 
  * cpdef uint32_t get_center_freq():             # <<<<<<<<<<<<<<
@@ -2346,23 +2344,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_18set_center_freq(
  *     Get actual frequency the device is tuned to.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_center_freq(CYTHON_UNUSED int __pyx_skip_dispatch) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_r;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_center_freq(CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_center_freq", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":111
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":112
  *     :return: 0 on error, frequency in Hz otherwise
  *     """
  *     return crtlsdr.rtlsdr_get_center_freq(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_freq_correction(int ppm):
  */
-  __pyx_r = rtlsdr_get_center_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_center_freq(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":105
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":106
  *     return crtlsdr.rtlsdr_set_center_freq(_c_device, freq)
  * 
  * cpdef uint32_t get_center_freq():             # <<<<<<<<<<<<<<
@@ -2377,26 +2375,26 @@ static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3d
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq[] = "\n    Get actual frequency the device is tuned to.\n\n    :return: 0 on error, frequency in Hz otherwise\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_20get_center_freq[] = "\n    Get actual frequency the device is tuned to.\n\n    :return: 0 on error, frequency in Hz otherwise\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_21get_center_freq(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_center_freq (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_20get_center_freq(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_20get_center_freq(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_center_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_center_freq(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_center_freq(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2405,7 +2403,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_center_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2413,7 +2411,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":113
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":114
  *     return crtlsdr.rtlsdr_get_center_freq(_c_device)
  * 
  * cpdef int set_freq_correction(int ppm):             # <<<<<<<<<<<<<<
@@ -2421,23 +2419,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq(
  *     Set the frequency correction value for the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_freq_correction(int __pyx_v_ppm, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_freq_correction(int __pyx_v_ppm, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_freq_correction", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":120
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":121
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_freq_correction(_c_device, ppm)             # <<<<<<<<<<<<<<
  * 
  * cpdef int get_freq_correction():
  */
-  __pyx_r = rtlsdr_set_freq_correction(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_ppm);
+  __pyx_r = rtlsdr_set_freq_correction(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_ppm);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":113
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":114
  *     return crtlsdr.rtlsdr_get_center_freq(_c_device)
  * 
  * cpdef int set_freq_correction(int ppm):             # <<<<<<<<<<<<<<
@@ -2452,36 +2450,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_freq_correction(int _
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correction[] = "\n    Set the frequency correction value for the device.\n\n    :param ppm: ppm correction value in parts per million (ppm)\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_22set_freq_correction[] = "\n    Set the frequency correction value for the device.\n\n    :param ppm: ppm correction value in parts per million (ppm)\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_23set_freq_correction(PyObject *__pyx_self, PyObject *__pyx_arg_ppm) {
   int __pyx_v_ppm;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_freq_correction (wrapper)", 0);
   assert(__pyx_arg_ppm); {
-    __pyx_v_ppm = __Pyx_PyInt_As_int(__pyx_arg_ppm); if (unlikely((__pyx_v_ppm == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 113, __pyx_L3_error)
+    __pyx_v_ppm = __Pyx_PyInt_As_int(__pyx_arg_ppm); if (unlikely((__pyx_v_ppm == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correction(__pyx_self, ((int)__pyx_v_ppm));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_22set_freq_correction(__pyx_self, ((int)__pyx_v_ppm));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correction(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ppm) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_22set_freq_correction(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ppm) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_freq_correction", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_freq_correction(__pyx_v_ppm, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_freq_correction(__pyx_v_ppm, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2490,7 +2488,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correct
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2498,7 +2496,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correct
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":122
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":123
  *     return crtlsdr.rtlsdr_set_freq_correction(_c_device, ppm)
  * 
  * cpdef int get_freq_correction():             # <<<<<<<<<<<<<<
@@ -2506,23 +2504,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correct
  *     Get actual frequency correction value of the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_freq_correction(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_freq_correction(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_freq_correction", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":128
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":129
  *     :return: correction value in parts per million (ppm)
  *     """
  *     return crtlsdr.rtlsdr_get_freq_correction(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef crtlsdr.rtlsdr_tuner get_tuner_type():
  */
-  __pyx_r = rtlsdr_get_freq_correction(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_freq_correction(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":122
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":123
  *     return crtlsdr.rtlsdr_set_freq_correction(_c_device, ppm)
  * 
  * cpdef int get_freq_correction():             # <<<<<<<<<<<<<<
@@ -2537,26 +2535,26 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_freq_correction(CYTHO
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correction[] = "\n    Get actual frequency correction value of the device.\n\n    :return: correction value in parts per million (ppm)\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_24get_freq_correction[] = "\n    Get actual frequency correction value of the device.\n\n    :return: correction value in parts per million (ppm)\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_25get_freq_correction(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_freq_correction (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correction(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_24get_freq_correction(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correction(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_24get_freq_correction(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_freq_correction", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_freq_correction(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_freq_correction(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2565,7 +2563,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correct
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_freq_correction", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2573,7 +2571,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correct
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":130
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":131
  *     return crtlsdr.rtlsdr_get_freq_correction(_c_device)
  * 
  * cpdef crtlsdr.rtlsdr_tuner get_tuner_type():             # <<<<<<<<<<<<<<
@@ -2581,23 +2579,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correct
  *     Get the tuner type.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static rtlsdr_tuner __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_type(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static rtlsdr_tuner __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_type(CYTHON_UNUSED int __pyx_skip_dispatch) {
   rtlsdr_tuner __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_tuner_type", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":136
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":137
  *     :return: RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise
  *     """
  *     return crtlsdr.rtlsdr_get_tuner_type(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef list get_tuner_gains():
  */
-  __pyx_r = rtlsdr_get_tuner_type(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_tuner_type(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":130
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":131
  *     return crtlsdr.rtlsdr_get_freq_correction(_c_device)
  * 
  * cpdef crtlsdr.rtlsdr_tuner get_tuner_type():             # <<<<<<<<<<<<<<
@@ -2612,26 +2610,26 @@ static rtlsdr_tuner __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_type(C
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type[] = "\n    Get the tuner type.\n\n    :return: RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_26get_tuner_type[] = "\n    Get the tuner type.\n\n    :return: RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_27get_tuner_type(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_tuner_type (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_26get_tuner_type(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_26get_tuner_type(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_tuner_type", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_rtlsdr_tuner(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_type(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_rtlsdr_tuner(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_type(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2640,7 +2638,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_tuner_type", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_tuner_type", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2648,7 +2646,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(C
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":138
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":139
  *     return crtlsdr.rtlsdr_get_tuner_type(_c_device)
  * 
  * cpdef list get_tuner_gains():             # <<<<<<<<<<<<<<
@@ -2656,8 +2654,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type(C
  *     Get a list of gains supported by the tuner.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gains(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_num_gains;
   int *__pyx_v_gains;
   PyObject *__pyx_r = NULL;
@@ -2669,16 +2667,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("get_tuner_gains", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":146
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":147
  *     :return: gains array of gain values. In tenths of a dB, 115 means 11.5 dB.
  *     """
  *     cdef int num_gains = crtlsdr.rtlsdr_get_tuner_gains(_c_device, NULL)             # <<<<<<<<<<<<<<
  *     if num_gains < 0:
  *         return None
  */
-  __pyx_v_num_gains = rtlsdr_get_tuner_gains(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, NULL);
+  __pyx_v_num_gains = rtlsdr_get_tuner_gains(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, NULL);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":147
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":148
  *     """
  *     cdef int num_gains = crtlsdr.rtlsdr_get_tuner_gains(_c_device, NULL)
  *     if num_gains < 0:             # <<<<<<<<<<<<<<
@@ -2688,7 +2686,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
   __pyx_t_1 = ((__pyx_v_num_gains < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":148
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":149
  *     cdef int num_gains = crtlsdr.rtlsdr_get_tuner_gains(_c_device, NULL)
  *     if num_gains < 0:
  *         return None             # <<<<<<<<<<<<<<
@@ -2700,7 +2698,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
     __pyx_r = ((PyObject*)Py_None);
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/rtlsdr.pyx":147
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":148
  *     """
  *     cdef int num_gains = crtlsdr.rtlsdr_get_tuner_gains(_c_device, NULL)
  *     if num_gains < 0:             # <<<<<<<<<<<<<<
@@ -2709,7 +2707,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
  */
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":150
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":151
  *         return None
  * 
  *     cdef int*gains = <int *> malloc(num_gains * sizeof(int))             # <<<<<<<<<<<<<<
@@ -2718,16 +2716,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
  */
   __pyx_v_gains = ((int *)malloc((__pyx_v_num_gains * (sizeof(int)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":151
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":152
  * 
  *     cdef int*gains = <int *> malloc(num_gains * sizeof(int))
  *     crtlsdr.rtlsdr_get_tuner_gains(_c_device, gains)             # <<<<<<<<<<<<<<
  * 
  *     return [gains[i] for i in range(num_gains)]
  */
-  rtlsdr_get_tuner_gains(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_gains);
+  rtlsdr_get_tuner_gains(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_gains);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":153
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":154
  *     crtlsdr.rtlsdr_get_tuner_gains(_c_device, gains)
  * 
  *     return [gains[i] for i in range(num_gains)]             # <<<<<<<<<<<<<<
@@ -2737,14 +2735,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
   __Pyx_XDECREF(__pyx_r);
   { /* enter inner scope */
     int __pyx_7genexpr__pyx_v_i;
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = __pyx_v_num_gains;
     for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
       __pyx_7genexpr__pyx_v_i = __pyx_t_4;
-      __pyx_t_5 = __Pyx_PyInt_From_int((__pyx_v_gains[__pyx_7genexpr__pyx_v_i])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int((__pyx_v_gains[__pyx_7genexpr__pyx_v_i])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 153, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 154, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
   } /* exit inner scope */
@@ -2752,7 +2750,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":138
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":139
  *     return crtlsdr.rtlsdr_get_tuner_type(_c_device)
  * 
  * cpdef list get_tuner_gains():             # <<<<<<<<<<<<<<
@@ -2764,7 +2762,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_tuner_gains", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_tuner_gains", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2773,26 +2771,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(CYT
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains[] = "\n    Get a list of gains supported by the tuner.\n    NOTE: The gains argument must be preallocated by the caller. If NULL is\n    being given instead, the number of available gain values will be returned.\n\n    :return: gains array of gain values. In tenths of a dB, 115 means 11.5 dB.\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_28get_tuner_gains[] = "\n    Get a list of gains supported by the tuner.\n    NOTE: The gains argument must be preallocated by the caller. If NULL is\n    being given instead, the number of available gain values will be returned.\n\n    :return: gains array of gain values. In tenths of a dB, 115 means 11.5 dB.\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_29get_tuner_gains(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_tuner_gains (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_28get_tuner_gains(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_28get_tuner_gains(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_tuner_gains", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gains(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gains(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2801,7 +2799,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_tuner_gains", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_tuner_gains", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2809,7 +2807,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":155
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":156
  *     return [gains[i] for i in range(num_gains)]
  * 
  * cpdef int set_tuner_gain(int gain):             # <<<<<<<<<<<<<<
@@ -2817,23 +2815,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains(
  *     Set the gain for the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain(int __pyx_v_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain(int __pyx_v_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_tuner_gain", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":169
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":170
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_tuner_gain(_c_device, gain)             # <<<<<<<<<<<<<<
  * 
  * cpdef int get_tuner_gain():
  */
-  __pyx_r = rtlsdr_set_tuner_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_gain);
+  __pyx_r = rtlsdr_set_tuner_gain(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_gain);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":155
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":156
  *     return [gains[i] for i in range(num_gains)]
  * 
  * cpdef int set_tuner_gain(int gain):             # <<<<<<<<<<<<<<
@@ -2848,36 +2846,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain(int __pyx_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain[] = "\n    Set the gain for the device.\n    Manual gain mode must be enabled for this to work.\n\n    Valid gain values (in tenths of a dB) for the E4000 tuner:\n    -10, 15, 40, 65, 90, 115, 140, 165, 190,\n    215, 240, 290, 340, 420, 430, 450, 470, 490\n\n    Valid gain values may be queried with rtlsdr_get_tuner_gains function.\n\n    :param gain: gain in tenths of a dB, 115 means 11.5 dB.\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_30set_tuner_gain[] = "\n    Set the gain for the device.\n    Manual gain mode must be enabled for this to work.\n\n    Valid gain values (in tenths of a dB) for the E4000 tuner:\n    -10, 15, 40, 65, 90, 115, 140, 165, 190,\n    215, 240, 290, 340, 420, 430, 450, 470, 490\n\n    Valid gain values may be queried with rtlsdr_get_tuner_gains function.\n\n    :param gain: gain in tenths of a dB, 115 means 11.5 dB.\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_31set_tuner_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain) {
   int __pyx_v_gain;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_tuner_gain (wrapper)", 0);
   assert(__pyx_arg_gain); {
-    __pyx_v_gain = __Pyx_PyInt_As_int(__pyx_arg_gain); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L3_error)
+    __pyx_v_gain = __Pyx_PyInt_As_int(__pyx_arg_gain); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 156, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(__pyx_self, ((int)__pyx_v_gain));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_30set_tuner_gain(__pyx_self, ((int)__pyx_v_gain));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_30set_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_tuner_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain(__pyx_v_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain(__pyx_v_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2886,7 +2884,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2894,7 +2892,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(C
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":171
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":172
  *     return crtlsdr.rtlsdr_set_tuner_gain(_c_device, gain)
  * 
  * cpdef int get_tuner_gain():             # <<<<<<<<<<<<<<
@@ -2902,23 +2900,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain(C
  *     Get actual gain the device is configured to.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gain(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gain(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_tuner_gain", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":177
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":178
  *     :return: 0 on error, gain in tenths of a dB, 115 means 11.5 dB.
  *     """
  *     return crtlsdr.rtlsdr_get_tuner_gain(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_tuner_if_gain(int stage, int gain):
  */
-  __pyx_r = rtlsdr_get_tuner_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_tuner_gain(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":171
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":172
  *     return crtlsdr.rtlsdr_set_tuner_gain(_c_device, gain)
  * 
  * cpdef int get_tuner_gain():             # <<<<<<<<<<<<<<
@@ -2933,26 +2931,26 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gain(CYTHON_UNU
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain[] = "\n    Get actual gain the device is configured to.\n\n    :return: 0 on error, gain in tenths of a dB, 115 means 11.5 dB.\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_32get_tuner_gain[] = "\n    Get actual gain the device is configured to.\n\n    :return: 0 on error, gain in tenths of a dB, 115 means 11.5 dB.\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_33get_tuner_gain(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_tuner_gain (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_32get_tuner_gain(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_32get_tuner_gain(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_tuner_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_tuner_gain(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_tuner_gain(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2961,7 +2959,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_tuner_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2969,7 +2967,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(C
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":179
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":180
  *     return crtlsdr.rtlsdr_get_tuner_gain(_c_device)
  * 
  * cpdef int set_tuner_if_gain(int stage, int gain):             # <<<<<<<<<<<<<<
@@ -2977,23 +2975,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain(C
  *     Set the intermediate frequency gain for the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_if_gain(int __pyx_v_stage, int __pyx_v_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_if_gain(int __pyx_v_stage, int __pyx_v_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_tuner_if_gain", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":187
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":188
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_tuner_if_gain(_c_device, stage, gain)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_tuner_gain_mode(int manual):
  */
-  __pyx_r = rtlsdr_set_tuner_if_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_stage, __pyx_v_gain);
+  __pyx_r = rtlsdr_set_tuner_if_gain(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_stage, __pyx_v_gain);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":179
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":180
  *     return crtlsdr.rtlsdr_get_tuner_gain(_c_device)
  * 
  * cpdef int set_tuner_if_gain(int stage, int gain):             # <<<<<<<<<<<<<<
@@ -3008,9 +3006,9 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_if_gain(int __p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gain[] = "\n    Set the intermediate frequency gain for the device.\n\n    :param stage: intermediate frequency gain stage number (1 to 6 for E4000)\n    :param gain: in tenths of a dB, -30 means -3.0 dB.\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_34set_tuner_if_gain[] = "\n    Set the intermediate frequency gain for the device.\n\n    :param stage: intermediate frequency gain stage number (1 to 6 for E4000)\n    :param gain: in tenths of a dB, -30 means -3.0 dB.\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_35set_tuner_if_gain(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_stage;
   int __pyx_v_gain;
   PyObject *__pyx_r = 0;
@@ -3036,11 +3034,11 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gai
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gain)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("set_tuner_if_gain", 1, 2, 2, 1); __PYX_ERR(0, 179, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("set_tuner_if_gain", 1, 2, 2, 1); __PYX_ERR(0, 180, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_tuner_if_gain") < 0)) __PYX_ERR(0, 179, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_tuner_if_gain") < 0)) __PYX_ERR(0, 180, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3048,31 +3046,31 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gai
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_stage = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_stage == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 179, __pyx_L3_error)
-    __pyx_v_gain = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 179, __pyx_L3_error)
+    __pyx_v_stage = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_stage == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L3_error)
+    __pyx_v_gain = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_tuner_if_gain", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 179, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_tuner_if_gain", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 180, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gain(__pyx_self, __pyx_v_stage, __pyx_v_gain);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_34set_tuner_if_gain(__pyx_self, __pyx_v_stage, __pyx_v_gain);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_stage, int __pyx_v_gain) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_34set_tuner_if_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_stage, int __pyx_v_gain) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_tuner_if_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_if_gain(__pyx_v_stage, __pyx_v_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_if_gain(__pyx_v_stage, __pyx_v_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3081,7 +3079,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gai
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3089,7 +3087,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gai
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":189
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":190
  *     return crtlsdr.rtlsdr_set_tuner_if_gain(_c_device, stage, gain)
  * 
  * cpdef int set_tuner_gain_mode(int manual):             # <<<<<<<<<<<<<<
@@ -3097,23 +3095,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gai
  *     Set the gain mode (automatic/manual) for the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain_mode(int __pyx_v_manual, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain_mode(int __pyx_v_manual, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_tuner_gain_mode", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":197
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":198
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)             # <<<<<<<<<<<<<<
  * 
- * cpdef int set_tuner_bandwidth(uint32_t bw):
+ * # cpdef int set_tuner_bandwidth(uint32_t bw):
  */
-  __pyx_r = rtlsdr_set_tuner_gain_mode(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_manual);
+  __pyx_r = rtlsdr_set_tuner_gain_mode(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_manual);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":189
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":190
  *     return crtlsdr.rtlsdr_set_tuner_if_gain(_c_device, stage, gain)
  * 
  * cpdef int set_tuner_gain_mode(int manual):             # <<<<<<<<<<<<<<
@@ -3128,36 +3126,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain_mode(int _
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_mode[] = "\n    Set the gain mode (automatic/manual) for the device.\n    Manual gain mode must be enabled for the gain setter function to work.\n\n    :param manual: 1 means manual gain mode shall be enabled.\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_36set_tuner_gain_mode[] = "\n    Set the gain mode (automatic/manual) for the device.\n    Manual gain mode must be enabled for the gain setter function to work.\n\n    :param manual: 1 means manual gain mode shall be enabled.\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_37set_tuner_gain_mode(PyObject *__pyx_self, PyObject *__pyx_arg_manual) {
   int __pyx_v_manual;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_tuner_gain_mode (wrapper)", 0);
   assert(__pyx_arg_manual); {
-    __pyx_v_manual = __Pyx_PyInt_As_int(__pyx_arg_manual); if (unlikely((__pyx_v_manual == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 189, __pyx_L3_error)
+    __pyx_v_manual = __Pyx_PyInt_As_int(__pyx_arg_manual); if (unlikely((__pyx_v_manual == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_gain_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_gain_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_mode(__pyx_self, ((int)__pyx_v_manual));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_36set_tuner_gain_mode(__pyx_self, ((int)__pyx_v_manual));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_manual) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_36set_tuner_gain_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_manual) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_tuner_gain_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_gain_mode(__pyx_v_manual, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_tuner_gain_mode(__pyx_v_manual, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3166,7 +3164,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_m
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_gain_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_tuner_gain_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3174,116 +3172,32 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_m
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":199
- *     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
- * 
- * cpdef int set_tuner_bandwidth(uint32_t bw):             # <<<<<<<<<<<<<<
- *     """
- *     Set the bandwidth for the device.
- */
-
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_39set_tuner_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bw); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_bandwidth(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_bw, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_tuner_bandwidth", 0);
-
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":206
- *     :return 0 on success
- *     """
- *     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)             # <<<<<<<<<<<<<<
- * 
- * cpdef int set_sample_rate(uint32_t sample_rate):
- */
-  rtlsdr_set_tuner_bandwidth(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_bw);
-
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":199
- *     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
- * 
- * cpdef int set_tuner_bandwidth(uint32_t bw):             # <<<<<<<<<<<<<<
- *     """
- *     Set the bandwidth for the device.
- */
-
-  /* function exit code */
-  __pyx_r = 0;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_39set_tuner_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bw); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_38set_tuner_bandwidth[] = "\n    Set the bandwidth for the device.\n\n    :param bw: bandwidth in Hz. Zero means automatic BW selection.\n    :return 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_39set_tuner_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bw) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_bw;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_tuner_bandwidth (wrapper)", 0);
-  assert(__pyx_arg_bw); {
-    __pyx_v_bw = __Pyx_PyInt_As_unsigned_int(__pyx_arg_bw); if (unlikely((__pyx_v_bw == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 199, __pyx_L3_error)
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_38set_tuner_bandwidth(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_bw));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_38set_tuner_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_bw) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_tuner_bandwidth", 0);
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_bandwidth(__pyx_v_bw, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_tuner_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "src/urh/dev/native/lib/rtlsdr.pyx":208
- *     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":209
+ * #     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
  * 
  * cpdef int set_sample_rate(uint32_t sample_rate):             # <<<<<<<<<<<<<<
  *     """
  *     Set the sample rate for the device, also selects the baseband filters
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_41set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_sample_rate(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_sample_rate, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_39set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_sample_rate(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_sample_rate, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_sample_rate", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":219
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":220
  *     :return:
  *     """
  *     return crtlsdr.rtlsdr_set_sample_rate(_c_device, sample_rate)             # <<<<<<<<<<<<<<
  * 
  * cpdef uint32_t get_sample_rate():
  */
-  __pyx_r = rtlsdr_set_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_sample_rate);
+  __pyx_r = rtlsdr_set_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_sample_rate);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":208
- *     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":209
+ * #     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
  * 
  * cpdef int set_sample_rate(uint32_t sample_rate):             # <<<<<<<<<<<<<<
  *     """
@@ -3297,36 +3211,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_sample_rate(__pyx_t_3
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_41set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate[] = "\n    Set the sample rate for the device, also selects the baseband filters\n    according to the requested sample rate for tuners where this is possible.\n\n    :param sample_rate: the sample rate to be set, possible values are:\n                225001 - 300000 Hz\n  \t\t        900001 - 3200000 Hz\n  \t\t        sample loss is to be expected for rates > 2400000\n    :return:\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_41set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_sample_rate;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_39set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_38set_sample_rate[] = "\n    Set the sample rate for the device, also selects the baseband filters\n    according to the requested sample rate for tuners where this is possible.\n\n    :param sample_rate: the sample rate to be set, possible values are:\n                225001 - 300000 Hz\n  \t\t        900001 - 3200000 Hz\n  \t\t        sample loss is to be expected for rates > 2400000\n    :return:\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_39set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_sample_rate;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_sample_rate (wrapper)", 0);
   assert(__pyx_arg_sample_rate); {
-    __pyx_v_sample_rate = __Pyx_PyInt_As_unsigned_int(__pyx_arg_sample_rate); if (unlikely((__pyx_v_sample_rate == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 208, __pyx_L3_error)
+    __pyx_v_sample_rate = __Pyx_PyInt_As_unsigned_int(__pyx_arg_sample_rate); if (unlikely((__pyx_v_sample_rate == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 209, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t)__pyx_v_sample_rate));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_38set_sample_rate(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t)__pyx_v_sample_rate));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_v_sample_rate) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_38set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_v_sample_rate) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_sample_rate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_sample_rate(__pyx_v_sample_rate, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_sample_rate(__pyx_v_sample_rate, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3335,7 +3249,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3343,7 +3257,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":221
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":222
  *     return crtlsdr.rtlsdr_set_sample_rate(_c_device, sample_rate)
  * 
  * cpdef uint32_t get_sample_rate():             # <<<<<<<<<<<<<<
@@ -3351,23 +3265,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate(
  *     Get actual sample rate the device is configured to.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_43get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_sample_rate(CYTHON_UNUSED int __pyx_skip_dispatch) {
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_r;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_41get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_sample_rate(CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint32_t __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_sample_rate", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":226
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":227
  *     :return: 0 on error, sample rate in Hz otherwise
  *     """
  *     return crtlsdr.rtlsdr_get_sample_rate(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_agc_mode(int on):
  */
-  __pyx_r = rtlsdr_get_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":221
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":222
  *     return crtlsdr.rtlsdr_set_sample_rate(_c_device, sample_rate)
  * 
  * cpdef uint32_t get_sample_rate():             # <<<<<<<<<<<<<<
@@ -3382,26 +3296,26 @@ static __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint32_t __pyx_f_3src_3urh_3d
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_43get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate[] = "\n    Get actual sample rate the device is configured to.\n    :return: 0 on error, sample rate in Hz otherwise\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_43get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_41get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_40get_sample_rate[] = "\n    Get actual sample rate the device is configured to.\n    :return: 0 on error, sample rate in Hz otherwise\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_41get_sample_rate(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_sample_rate (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_40get_sample_rate(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_40get_sample_rate(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_sample_rate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_sample_rate(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_unsigned_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_sample_rate(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3410,7 +3324,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3418,7 +3332,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":228
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":229
  *     return crtlsdr.rtlsdr_get_sample_rate(_c_device)
  * 
  * cpdef int set_agc_mode(int on):             # <<<<<<<<<<<<<<
@@ -3426,23 +3340,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate(
  *     Enable or disable the internal digital Automatic Gain Control of the RTL2832.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_45set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_agc_mode(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_43set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_agc_mode(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_agc_mode", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":235
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":236
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_agc_mode(_c_device, on)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_direct_sampling(int on):
  */
-  __pyx_r = rtlsdr_set_agc_mode(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_on);
+  __pyx_r = rtlsdr_set_agc_mode(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_on);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":228
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":229
  *     return crtlsdr.rtlsdr_get_sample_rate(_c_device)
  * 
  * cpdef int set_agc_mode(int on):             # <<<<<<<<<<<<<<
@@ -3457,36 +3371,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_agc_mode(int __pyx_v_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_45set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode[] = "\n    Enable or disable the internal digital Automatic Gain Control of the RTL2832.\n\n    :param on: digital AGC mode, 1 means enabled, 0 disabled\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_45set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_43set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_42set_agc_mode[] = "\n    Enable or disable the internal digital Automatic Gain Control of the RTL2832.\n\n    :param on: digital AGC mode, 1 means enabled, 0 disabled\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_43set_agc_mode(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
   int __pyx_v_on;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_agc_mode (wrapper)", 0);
   assert(__pyx_arg_on); {
-    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 228, __pyx_L3_error)
+    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_agc_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_agc_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(__pyx_self, ((int)__pyx_v_on));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_42set_agc_mode(__pyx_self, ((int)__pyx_v_on));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_42set_agc_mode(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_agc_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_agc_mode(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_agc_mode(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3495,7 +3409,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_agc_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_agc_mode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3503,7 +3417,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(CYT
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":237
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":238
  *     return crtlsdr.rtlsdr_set_agc_mode(_c_device, on)
  * 
  * cpdef int set_direct_sampling(int on):             # <<<<<<<<<<<<<<
@@ -3511,23 +3425,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode(CYT
  *     Enable or disable the direct sampling mode. When enabled, the IF mode
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_47set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_direct_sampling(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_45set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_direct_sampling(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_direct_sampling", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":247
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":248
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_direct_sampling(_c_device, on)             # <<<<<<<<<<<<<<
  * 
  * cpdef int get_direct_sampling():
  */
-  __pyx_r = rtlsdr_set_direct_sampling(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_on);
+  __pyx_r = rtlsdr_set_direct_sampling(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_on);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":237
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":238
  *     return crtlsdr.rtlsdr_set_agc_mode(_c_device, on)
  * 
  * cpdef int set_direct_sampling(int on):             # <<<<<<<<<<<<<<
@@ -3542,36 +3456,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_direct_sampling(int _
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_47set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampling[] = "\n    Enable or disable the direct sampling mode. When enabled, the IF mode\n    of the RTL2832 is activated, and rtlsdr_set_center_freq() will control\n    the IF-frequency of the DDC, which can be used to tune from 0 to 28.8 MHz\n    (xtal frequency of the RTL2832).\n\n    :param on: 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_47set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_45set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_44set_direct_sampling[] = "\n    Enable or disable the direct sampling mode. When enabled, the IF mode\n    of the RTL2832 is activated, and rtlsdr_set_center_freq() will control\n    the IF-frequency of the DDC, which can be used to tune from 0 to 28.8 MHz\n    (xtal frequency of the RTL2832).\n\n    :param on: 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_45set_direct_sampling(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
   int __pyx_v_on;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_direct_sampling (wrapper)", 0);
   assert(__pyx_arg_on); {
-    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L3_error)
+    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 238, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampling(__pyx_self, ((int)__pyx_v_on));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_44set_direct_sampling(__pyx_self, ((int)__pyx_v_on));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_44set_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_direct_sampling", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_direct_sampling(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_direct_sampling(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3580,7 +3494,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampl
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3588,7 +3502,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampl
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":249
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":250
  *     return crtlsdr.rtlsdr_set_direct_sampling(_c_device, on)
  * 
  * cpdef int get_direct_sampling():             # <<<<<<<<<<<<<<
@@ -3596,23 +3510,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampl
  *     Get state of the direct sampling mode
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_49get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_direct_sampling(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_47get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_direct_sampling(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_direct_sampling", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":255
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":256
  *     :return: -1 on error, 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled
  *     """
  *     return crtlsdr.rtlsdr_get_direct_sampling(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_offset_tuning(int on):
  */
-  __pyx_r = rtlsdr_get_direct_sampling(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_direct_sampling(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":249
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":250
  *     return crtlsdr.rtlsdr_set_direct_sampling(_c_device, on)
  * 
  * cpdef int get_direct_sampling():             # <<<<<<<<<<<<<<
@@ -3627,26 +3541,26 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_direct_sampling(CYTHO
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_49get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampling[] = "\n    Get state of the direct sampling mode\n\n    :return: -1 on error, 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_49get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_47get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_46get_direct_sampling[] = "\n    Get state of the direct sampling mode\n\n    :return: -1 on error, 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_47get_direct_sampling(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_direct_sampling (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampling(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_46get_direct_sampling(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_46get_direct_sampling(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_direct_sampling", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_direct_sampling(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_direct_sampling(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3655,7 +3569,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampl
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_direct_sampling", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3663,7 +3577,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampl
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":257
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":258
  *     return crtlsdr.rtlsdr_get_direct_sampling(_c_device)
  * 
  * cpdef int set_offset_tuning(int on):             # <<<<<<<<<<<<<<
@@ -3671,23 +3585,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampl
  *     Enable or disable offset tuning for zero-IF tuners, which allows to avoid
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_51set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_offset_tuning(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_49set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_offset_tuning(int __pyx_v_on, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_offset_tuning", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":265
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":266
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_set_offset_tuning(_c_device, on)             # <<<<<<<<<<<<<<
  * 
  * cpdef int get_offset_tuning():
  */
-  __pyx_r = rtlsdr_set_offset_tuning(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_on);
+  __pyx_r = rtlsdr_set_offset_tuning(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_v_on);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":257
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":258
  *     return crtlsdr.rtlsdr_get_direct_sampling(_c_device)
  * 
  * cpdef int set_offset_tuning(int on):             # <<<<<<<<<<<<<<
@@ -3702,36 +3616,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_offset_tuning(int __p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_51set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tuning[] = "\n    Enable or disable offset tuning for zero-IF tuners, which allows to avoid\n    problems caused by the DC offset of the ADCs and 1/f noise.\n\n    :param on: 0 means disabled, 1 enabled\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_51set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_49set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_48set_offset_tuning[] = "\n    Enable or disable offset tuning for zero-IF tuners, which allows to avoid\n    problems caused by the DC offset of the ADCs and 1/f noise.\n\n    :param on: 0 means disabled, 1 enabled\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_49set_offset_tuning(PyObject *__pyx_self, PyObject *__pyx_arg_on) {
   int __pyx_v_on;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_offset_tuning (wrapper)", 0);
   assert(__pyx_arg_on); {
-    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L3_error)
+    __pyx_v_on = __Pyx_PyInt_As_int(__pyx_arg_on); if (unlikely((__pyx_v_on == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tuning(__pyx_self, ((int)__pyx_v_on));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_48set_offset_tuning(__pyx_self, ((int)__pyx_v_on));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_48set_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_on) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_offset_tuning", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_set_offset_tuning(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_set_offset_tuning(__pyx_v_on, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3740,7 +3654,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tunin
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.set_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.set_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3748,7 +3662,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tunin
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":267
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":268
  *     return crtlsdr.rtlsdr_set_offset_tuning(_c_device, on)
  * 
  * cpdef int get_offset_tuning():             # <<<<<<<<<<<<<<
@@ -3756,23 +3670,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tunin
  *     Get state of the offset tuning mode
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_53get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_offset_tuning(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_51get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_offset_tuning(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_offset_tuning", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":273
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":274
  *     :return: -1 on error, 0 means disabled, 1 enabled
  *     """
  *     return crtlsdr.rtlsdr_get_offset_tuning(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef int reset_buffer():
  */
-  __pyx_r = rtlsdr_get_offset_tuning(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_get_offset_tuning(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":267
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":268
  *     return crtlsdr.rtlsdr_set_offset_tuning(_c_device, on)
  * 
  * cpdef int get_offset_tuning():             # <<<<<<<<<<<<<<
@@ -3787,26 +3701,26 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_offset_tuning(CYTHON_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_53get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tuning[] = "\n    Get state of the offset tuning mode\n\n    :return: -1 on error, 0 means disabled, 1 enabled\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_53get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_51get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_50get_offset_tuning[] = "\n    Get state of the offset tuning mode\n\n    :return: -1 on error, 0 means disabled, 1 enabled\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_51get_offset_tuning(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_offset_tuning (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tuning(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_50get_offset_tuning(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_50get_offset_tuning(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_offset_tuning", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_get_offset_tuning(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_get_offset_tuning(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3815,7 +3729,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tunin
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.get_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.get_offset_tuning", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3823,7 +3737,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tunin
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":275
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":276
  *     return crtlsdr.rtlsdr_get_offset_tuning(_c_device)
  * 
  * cpdef int reset_buffer():             # <<<<<<<<<<<<<<
@@ -3831,23 +3745,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tunin
  * 
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_55reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_reset_buffer(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_53reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_reset_buffer(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("reset_buffer", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":276
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":277
  * 
  * cpdef int reset_buffer():
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef bytes read_sync(int num_samples=8 * 32 * 512):
  */
-  __pyx_r = rtlsdr_reset_buffer(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_reset_buffer(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":275
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":276
  *     return crtlsdr.rtlsdr_get_offset_tuning(_c_device)
  * 
  * cpdef int reset_buffer():             # <<<<<<<<<<<<<<
@@ -3862,25 +3776,25 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_reset_buffer(CYTHON_UNUSE
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_55reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_55reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_53reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_53reset_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("reset_buffer (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_52reset_buffer(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_52reset_buffer(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("reset_buffer", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_reset_buffer(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_reset_buffer(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3889,7 +3803,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.reset_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.reset_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3897,7 +3811,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(CYT
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":278
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":279
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)
  * 
  * cpdef bytes read_sync(int num_samples=8 * 32 * 512):             # <<<<<<<<<<<<<<
@@ -3905,10 +3819,10 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_54reset_buffer(CYT
  *     The raw, captured IQ data is 8 bit unsigned data.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync *__pyx_optional_args) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_55read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync(CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync *__pyx_optional_args) {
   int __pyx_v_num_samples = __pyx_k__4;
-  __pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint8_t *__pyx_v_samples;
+  __pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t *__pyx_v_samples;
   int __pyx_v_n_read;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -3921,16 +3835,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UN
     }
   }
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":284
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":285
  *     :return:
  *     """
  *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))             # <<<<<<<<<<<<<<
  *     cdef int n_read = 0
  * 
  */
-  __pyx_v_samples = ((__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint8_t *)malloc(((2 * __pyx_v_num_samples) * (sizeof(__pyx_t_3src_3urh_3dev_6native_3lib_6rtlsdr_uint8_t)))));
+  __pyx_v_samples = ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t *)malloc(((2 * __pyx_v_num_samples) * (sizeof(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t)))));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":285
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":286
  *     """
  *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
  *     cdef int n_read = 0             # <<<<<<<<<<<<<<
@@ -3939,16 +3853,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UN
  */
   __pyx_v_n_read = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":287
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":288
  *     cdef int n_read = 0
  * 
  *     crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)             # <<<<<<<<<<<<<<
  * 
  *     return bytes(samples[0:n_read])
  */
-  rtlsdr_read_sync(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, ((void *)__pyx_v_samples), __pyx_v_num_samples, (&__pyx_v_n_read));
+  rtlsdr_read_sync(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, ((void *)__pyx_v_samples), __pyx_v_num_samples, (&__pyx_v_n_read));
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":289
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":290
  *     crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
  * 
  *     return bytes(samples[0:n_read])             # <<<<<<<<<<<<<<
@@ -3956,21 +3870,21 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UN
  * cpdef int read_async(callback, connection):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_samples) + 0, __pyx_v_n_read - 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_samples) + 0, __pyx_v_n_read - 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":278
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":279
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)
  * 
  * cpdef bytes read_sync(int num_samples=8 * 32 * 512):             # <<<<<<<<<<<<<<
@@ -3982,7 +3896,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UN
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3991,9 +3905,9 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(CYTHON_UN
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync[] = "\n    The raw, captured IQ data is 8 bit unsigned data.\n\n    :return:\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_55read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_sync[] = "\n    The raw, captured IQ data is 8 bit unsigned data.\n\n    :return:\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_55read_sync(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_num_samples;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
@@ -4018,7 +3932,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync(PyObje
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_sync") < 0)) __PYX_ERR(0, 278, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_sync") < 0)) __PYX_ERR(0, 279, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4028,36 +3942,36 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync(PyObje
       }
     }
     if (values[0]) {
-      __pyx_v_num_samples = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_samples == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L3_error)
+      __pyx_v_num_samples = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_samples == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 279, __pyx_L3_error)
     } else {
       __pyx_v_num_samples = __pyx_k__4;
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("read_sync", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 278, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("read_sync", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 279, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(__pyx_self, __pyx_v_num_samples);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_sync(__pyx_self, __pyx_v_num_samples);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_num_samples) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_sync(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_num_samples) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync __pyx_t_2;
+  struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync __pyx_t_2;
   __Pyx_RefNannySetupContext("read_sync", 0);
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.num_samples = __pyx_v_num_samples;
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_sync(0, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync(0, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4066,7 +3980,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(CYTHON
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -4074,7 +3988,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(CYTHON
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":291
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":292
  *     return bytes(samples[0:n_read])
  * 
  * cpdef int read_async(callback, connection):             # <<<<<<<<<<<<<<
@@ -4082,32 +3996,32 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync(CYTHON
  *     Read samples from the device asynchronously. This function will block until
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_async(PyObject *__pyx_v_callback, PyObject *__pyx_v_connection, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(PyObject *__pyx_v_callback, PyObject *__pyx_v_connection, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("read_async", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":299
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":300
  *     """
  *     global f
  *     f = callback             # <<<<<<<<<<<<<<
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_f, __pyx_v_callback) < 0) __PYX_ERR(0, 299, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_f, __pyx_v_callback) < 0) __PYX_ERR(0, 300, __pyx_L1_error)
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":300
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":301
  *     global f
  *     f = callback
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)             # <<<<<<<<<<<<<<
  * 
  * cpdef int cancel_async():
  */
-  __pyx_r = rtlsdr_read_async(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr__c_callback_recv, ((void *)__pyx_v_connection), 0, 0);
+  __pyx_r = rtlsdr_read_async(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_callback_recv, ((void *)__pyx_v_connection), 0, 0);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":291
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":292
  *     return bytes(samples[0:n_read])
  * 
  * cpdef int read_async(callback, connection):             # <<<<<<<<<<<<<<
@@ -4117,7 +4031,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_async(PyObject *__py
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.rtlsdr_fallback.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -4125,9 +4039,9 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_async(PyObject *__py
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async[] = "\n    Read samples from the device asynchronously. This function will block until\n    it is being canceled using rtlsdr_cancel_async()\n    read_bytes_async\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_async[] = "\n    Read samples from the device asynchronously. This function will block until\n    it is being canceled using rtlsdr_cancel_async()\n    read_bytes_async\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_async(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_callback = 0;
   PyObject *__pyx_v_connection = 0;
   PyObject *__pyx_r = 0;
@@ -4153,11 +4067,11 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async(PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_connection)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, 1); __PYX_ERR(0, 291, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, 1); __PYX_ERR(0, 292, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_async") < 0)) __PYX_ERR(0, 291, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_async") < 0)) __PYX_ERR(0, 292, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4170,26 +4084,26 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async(PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 291, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 292, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(__pyx_self, __pyx_v_callback, __pyx_v_connection);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_async(__pyx_self, __pyx_v_callback, __pyx_v_connection);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_callback, PyObject *__pyx_v_connection) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_async(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_callback, PyObject *__pyx_v_connection) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("read_async", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_read_async(__pyx_v_callback, __pyx_v_connection, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(__pyx_v_callback, __pyx_v_connection, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4198,7 +4112,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(CYTHO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -4206,7 +4120,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(CYTHO
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr.pyx":302
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":303
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  * cpdef int cancel_async():             # <<<<<<<<<<<<<<
@@ -4214,21 +4128,21 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async(CYTHO
  *     Cancel all pending asynchronous operations on the device.
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_61cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_cancel_async(CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_59cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("cancel_async", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":308
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":309
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_cancel_async(_c_device)             # <<<<<<<<<<<<<<
  */
-  __pyx_r = rtlsdr_cancel_async(__pyx_v_3src_3urh_3dev_6native_3lib_6rtlsdr__c_device);
+  __pyx_r = rtlsdr_cancel_async(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":302
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":303
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  * cpdef int cancel_async():             # <<<<<<<<<<<<<<
@@ -4243,26 +4157,26 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_cancel_async(CYTHON_UNUSE
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_61cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async[] = "\n    Cancel all pending asynchronous operations on the device.\n\n    :return: 0 on success\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_61cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_59cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel_async[] = "\n    Cancel all pending asynchronous operations on the device.\n\n    :return: 0 on success\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_59cancel_async(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("cancel_async (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel_async(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel_async(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("cancel_async", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6rtlsdr_cancel_async(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4271,7 +4185,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr.cancel_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.cancel_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -4280,37 +4194,36 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async(CYT
 }
 
 static PyMethodDef __pyx_methods[] = {
-  {"get_device_count", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_1get_device_count, METH_NOARGS, 0},
-  {"get_device_name", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_3get_device_name, METH_O, 0},
-  {"get_device_usb_strings", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_5get_device_usb_strings, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_4get_device_usb_strings},
-  {"get_index_by_serial", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_7get_index_by_serial, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_6get_index_by_serial},
-  {"open", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_9open, METH_O, 0},
-  {"close", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_11close, METH_NOARGS, 0},
-  {"set_xtal_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_13set_xtal_freq, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_12set_xtal_freq},
-  {"get_xtal_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_15get_xtal_freq, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_14get_xtal_freq},
-  {"get_usb_strings", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_17get_usb_strings, METH_NOARGS, 0},
-  {"set_center_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_19set_center_freq, METH_O, 0},
-  {"get_center_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_21get_center_freq, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_20get_center_freq},
-  {"set_freq_correction", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_23set_freq_correction, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_22set_freq_correction},
-  {"get_freq_correction", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_25get_freq_correction, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_24get_freq_correction},
-  {"get_tuner_type", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_27get_tuner_type, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_26get_tuner_type},
-  {"get_tuner_gains", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_29get_tuner_gains, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_28get_tuner_gains},
-  {"set_tuner_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_31set_tuner_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_30set_tuner_gain},
-  {"get_tuner_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_33get_tuner_gain, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_32get_tuner_gain},
-  {"set_tuner_if_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_35set_tuner_if_gain, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_34set_tuner_if_gain},
-  {"set_tuner_gain_mode", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_37set_tuner_gain_mode, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_36set_tuner_gain_mode},
-  {"set_tuner_bandwidth", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_39set_tuner_bandwidth, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_38set_tuner_bandwidth},
-  {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_41set_sample_rate, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_40set_sample_rate},
-  {"get_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_43get_sample_rate, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_42get_sample_rate},
-  {"set_agc_mode", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_45set_agc_mode, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_44set_agc_mode},
-  {"set_direct_sampling", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_47set_direct_sampling, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_46set_direct_sampling},
-  {"get_direct_sampling", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_49get_direct_sampling, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_48get_direct_sampling},
-  {"set_offset_tuning", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_51set_offset_tuning, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_50set_offset_tuning},
-  {"get_offset_tuning", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_53get_offset_tuning, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_52get_offset_tuning},
-  {"reset_buffer", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_55reset_buffer, METH_NOARGS, 0},
-  {"read_sync", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_57read_sync, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_56read_sync},
-  {"read_async", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_59read_async, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_58read_async},
-  {"cancel_async", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6rtlsdr_61cancel_async, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_6rtlsdr_60cancel_async},
+  {"get_device_count", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_1get_device_count, METH_NOARGS, 0},
+  {"get_device_name", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_3get_device_name, METH_O, 0},
+  {"get_device_usb_strings", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_5get_device_usb_strings, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_4get_device_usb_strings},
+  {"get_index_by_serial", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_7get_index_by_serial, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_6get_index_by_serial},
+  {"open", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_9open, METH_O, 0},
+  {"close", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_11close, METH_NOARGS, 0},
+  {"set_xtal_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_13set_xtal_freq, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_12set_xtal_freq},
+  {"get_xtal_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_15get_xtal_freq, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_14get_xtal_freq},
+  {"get_usb_strings", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_17get_usb_strings, METH_NOARGS, 0},
+  {"set_center_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_19set_center_freq, METH_O, 0},
+  {"get_center_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_21get_center_freq, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_20get_center_freq},
+  {"set_freq_correction", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_23set_freq_correction, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_22set_freq_correction},
+  {"get_freq_correction", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_25get_freq_correction, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_24get_freq_correction},
+  {"get_tuner_type", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_27get_tuner_type, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_26get_tuner_type},
+  {"get_tuner_gains", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_29get_tuner_gains, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_28get_tuner_gains},
+  {"set_tuner_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_31set_tuner_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_30set_tuner_gain},
+  {"get_tuner_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_33get_tuner_gain, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_32get_tuner_gain},
+  {"set_tuner_if_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_35set_tuner_if_gain, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_34set_tuner_if_gain},
+  {"set_tuner_gain_mode", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_37set_tuner_gain_mode, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_36set_tuner_gain_mode},
+  {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_39set_sample_rate, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_38set_sample_rate},
+  {"get_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_41get_sample_rate, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_40get_sample_rate},
+  {"set_agc_mode", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_43set_agc_mode, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_42set_agc_mode},
+  {"set_direct_sampling", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_45set_direct_sampling, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_44set_direct_sampling},
+  {"get_direct_sampling", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_47get_direct_sampling, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_46get_direct_sampling},
+  {"set_offset_tuning", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_49set_offset_tuning, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_48set_offset_tuning},
+  {"get_offset_tuning", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_51get_offset_tuning, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_50get_offset_tuning},
+  {"reset_buffer", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_53reset_buffer, METH_NOARGS, 0},
+  {"read_sync", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_55read_sync, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_sync},
+  {"read_async", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_async, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_async},
+  {"cancel_async", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_59cancel_async, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel_async},
   {0, 0, 0, 0}
 };
 
@@ -4321,7 +4234,7 @@ static struct PyModuleDef __pyx_moduledef = {
   #else
     PyModuleDef_HEAD_INIT,
   #endif
-    "rtlsdr",
+    "rtlsdr_fallback",
     0, /* m_doc */
     -1, /* m_size */
     __pyx_methods /* m_methods */,
@@ -4347,7 +4260,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 154, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -4357,36 +4270,36 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":38
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":39
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
  *     else:
  *         return None, None, None             # <<<<<<<<<<<<<<
  * 
  * cpdef int get_index_by_serial(str serial):
  */
-  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":90
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":91
  *         return rtl_freq, tuner_freq
  *     else:
  *         return None, None             # <<<<<<<<<<<<<<
  * 
  * cpdef tuple get_usb_strings():
  */
-  __pyx_tuple__2 = PyTuple_Pack(2, Py_None, Py_None); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(2, Py_None, Py_None); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":100
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":101
  *         return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
  *     else:
  *         return None, None, None             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_center_freq(uint32_t freq):
  */
-  __pyx_tuple__3 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 101, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
   __Pyx_RefNannyFinishContext();
@@ -4404,11 +4317,11 @@ static int __Pyx_InitGlobals(void) {
 }
 
 #if PY_MAJOR_VERSION < 3
-PyMODINIT_FUNC initrtlsdr(void); /*proto*/
-PyMODINIT_FUNC initrtlsdr(void)
+PyMODINIT_FUNC initrtlsdr_fallback(void); /*proto*/
+PyMODINIT_FUNC initrtlsdr_fallback(void)
 #else
-PyMODINIT_FUNC PyInit_rtlsdr(void); /*proto*/
-PyMODINIT_FUNC PyInit_rtlsdr(void)
+PyMODINIT_FUNC PyInit_rtlsdr_fallback(void); /*proto*/
+PyMODINIT_FUNC PyInit_rtlsdr_fallback(void)
 #endif
 {
   PyObject *__pyx_t_1 = NULL;
@@ -4422,7 +4335,7 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
           Py_FatalError("failed to import 'refnanny' module");
   }
   #endif
-  __Pyx_RefNannySetupContext("PyMODINIT_FUNC PyInit_rtlsdr(void)", 0);
+  __Pyx_RefNannySetupContext("PyMODINIT_FUNC PyInit_rtlsdr_fallback(void)", 0);
   if (__Pyx_check_binary_version() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_empty_tuple = PyTuple_New(0); if (unlikely(!__pyx_empty_tuple)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_empty_bytes = PyBytes_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_bytes)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -4451,7 +4364,7 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
   #endif
   /*--- Module creation code ---*/
   #if PY_MAJOR_VERSION < 3
-  __pyx_m = Py_InitModule4("rtlsdr", __pyx_methods, 0, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
+  __pyx_m = Py_InitModule4("rtlsdr_fallback", __pyx_methods, 0, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
   #else
   __pyx_m = PyModule_Create(&__pyx_moduledef);
   #endif
@@ -4468,14 +4381,14 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_src__urh__dev__native__lib__rtlsdr) {
+  if (__pyx_module_is_main_src__urh__dev__native__lib__rtlsdr_fallback) {
     if (PyObject_SetAttrString(__pyx_m, "__name__", __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "src.urh.dev.native.lib.rtlsdr")) {
-      if (unlikely(PyDict_SetItemString(modules, "src.urh.dev.native.lib.rtlsdr", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "src.urh.dev.native.lib.rtlsdr_fallback")) {
+      if (unlikely(PyDict_SetItemString(modules, "src.urh.dev.native.lib.rtlsdr_fallback", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -4495,7 +4408,7 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":278
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":279
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)
  * 
  * cpdef bytes read_sync(int num_samples=8 * 32 * 512):             # <<<<<<<<<<<<<<
@@ -4505,10 +4418,10 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
   __pyx_k__4 = ((8 * 32) * 0x200);
   __pyx_k__4 = ((8 * 32) * 0x200);
 
-  /* "src/urh/dev/native/lib/rtlsdr.pyx":1
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":1
  * # cython wrapper for RTL-SDR (https://github.com/pinkavaj/rtl-sdr)             # <<<<<<<<<<<<<<
+ * # this fallback does not include set_tuner_bandwidth , as it is not supported e.g. in Manjaro and Ubuntu packages
  * 
- * cimport crtlsdr
  */
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4522,11 +4435,11 @@ PyMODINIT_FUNC PyInit_rtlsdr(void)
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init src.urh.dev.native.lib.rtlsdr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init src.urh.dev.native.lib.rtlsdr_fallback", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_DECREF(__pyx_m); __pyx_m = 0;
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init src.urh.dev.native.lib.rtlsdr");
+    PyErr_SetString(PyExc_ImportError, "init src.urh.dev.native.lib.rtlsdr_fallback");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

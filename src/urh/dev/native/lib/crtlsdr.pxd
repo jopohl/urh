@@ -30,7 +30,7 @@ cdef extern from "rtl-sdr.h":
     int rtlsdr_set_freq_correction(rtlsdr_dev_t *dev, int ppm);
     int rtlsdr_get_freq_correction(rtlsdr_dev_t *dev);
 
-    #int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw);
+    int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw);
 
     ctypedef enum rtlsdr_tuner:
         RTLSDR_TUNER_UNKNOWN = 0,

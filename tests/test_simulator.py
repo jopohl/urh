@@ -32,24 +32,24 @@ class TestSimulator(unittest.TestCase):
         constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
 
     def test_add_signal(self):
-        self.sim_frame.ui.gvSimulator.scene().add_protocols([self.sframe.proto_analyzer])
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), len(self.sframe.proto_analyzer.messages))
+        self.sim_frame.ui.gvSimulator.scene().add_protocols(None, 0, [self.sframe.proto_analyzer])
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), len(self.sframe.proto_analyzer.messages))
 
     def test_add_rule(self):
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 1)
-        self.assertEqual(type(self.sim_frame.ui.gvSimulator.scene().items[0]), RuleItem)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 1)
+        self.assertEqual(type(self.sim_frame.ui.gvSimulator.scene().sim_items[0]), RuleItem)
 
     def test_message_context_menu(self):
-        self.sim_frame.ui.gvSimulator.scene().add_message()
+        self.sim_frame.ui.gvSimulator.scene().add_message(None, 0)
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        rule = self.sim_frame.ui.gvSimulator.scene().items[1]
+        rule = self.sim_frame.ui.gvSimulator.scene().sim_items[1]
         if_cond = rule.conditions[0]
         menu = if_cond.create_context_menu()
         add_message_action = next(action for action in menu.actions() if action.text() == "Add empty message")
         add_message_action.trigger()
         self.assertEqual(len(rule.conditions), 1)
-        self.assertEqual(len(if_cond.items), 1)
+        self.assertEqual(len(if_cond.sim_items), 1)
 
         part_a = ParticipantItem("A")
         self.sim_frame.ui.gvSimulator.scene().participants.append(part_a)
@@ -59,7 +59,7 @@ class TestSimulator(unittest.TestCase):
         self.sim_frame.ui.gvSimulator.scene().participants.append(part_b)
         self.sim_frame.ui.gvSimulator.scene().addItem(part_b)
 
-        message = self.sim_frame.ui.gvSimulator.scene().items[0]
+        message = self.sim_frame.ui.gvSimulator.scene().sim_items[0]
         menu = message.create_context_menu()
         source_menu = menu.findChildren(QMenu)[0]
         a_part_action = next(action for action in source_menu.actions() if action.text() == "A")
@@ -78,20 +78,20 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(message.source, part_b)
         self.assertEqual(message.destination, part_a)
 
-        menu = if_cond.items[0].create_context_menu()
+        menu = if_cond.sim_items[0].create_context_menu()
         del_action = next(action for action in menu.actions() if action.text() == "Delete message")
         del_action.trigger()
-        self.assertEqual(len(if_cond.items), 0)
+        self.assertEqual(len(if_cond.sim_items), 0)
 
-        menu = self.sim_frame.ui.gvSimulator.scene().items[0].create_context_menu()
+        menu = self.sim_frame.ui.gvSimulator.scene().sim_items[0].create_context_menu()
         del_action = next(action for action in menu.actions() if action.text() == "Delete message")
         del_action.trigger()
 
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 1)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 1)
 
     def test_rule_context_menu(self):
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        rule = self.sim_frame.ui.gvSimulator.scene().items[0]
+        rule = self.sim_frame.ui.gvSimulator.scene().sim_items[0]
         if_cond = rule.conditions[0]
 
         menu = if_cond.create_context_menu()
@@ -100,7 +100,7 @@ class TestSimulator(unittest.TestCase):
         message_type_menu = menu.findChildren(QMenu)[0]
         default_msg_type_action = next(action for action in message_type_menu.actions() if action.text() == "default")
         default_msg_type_action.trigger()
-        self.assertEqual(len(if_cond.items), 1)
+        self.assertEqual(len(if_cond.sim_items), 1)
 
         menu = if_cond.create_context_menu()
         add_else_if_cond_action = next(action for action in menu.actions() if action.text() == "Add else if block")
@@ -127,49 +127,49 @@ class TestSimulator(unittest.TestCase):
         menu = if_cond.create_context_menu()
         remove_rule_action = next(action for action in menu.actions() if action.text() == "Remove rule")
         remove_rule_action.trigger()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 0)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 0)
 
     def test_select_all(self):
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        rule = self.sim_frame.ui.gvSimulator.scene().items[0]
+        rule = self.sim_frame.ui.gvSimulator.scene().sim_items[0]
         if_cond = rule.conditions[0]
         menu = if_cond.create_context_menu()
         add_else_if_cond_action = next(action for action in menu.actions() if action.text() == "Add else if block")
         add_else_if_cond_action.trigger()
         else_if_cond = rule.conditions[1]
-        self.sim_frame.ui.gvSimulator.scene().add_message()
+        self.sim_frame.ui.gvSimulator.scene().add_message(None, 1)
         self.sim_frame.ui.gvSimulator.scene().select_all_items()
         self.assertTrue(if_cond.isSelected())
         self.assertTrue(else_if_cond.isSelected())
-        self.assertTrue(self.sim_frame.ui.gvSimulator.scene().items[1].isSelected())
+        self.assertTrue(self.sim_frame.ui.gvSimulator.scene().sim_items[1].isSelected())
 
     def test_delete_selected_items(self):
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        rule = self.sim_frame.ui.gvSimulator.scene().items[0]
+        rule = self.sim_frame.ui.gvSimulator.scene().sim_items[0]
         if_cond = rule.conditions[0]
         if_cond.on_add_else_cond_action_triggered()
         menu = if_cond.create_context_menu()
         add_message_action = next(action for action in menu.actions() if action.text() == "Add empty message")
         add_message_action.trigger()
-        if_cond.items[0].setSelected(True)
+        if_cond.sim_items[0].setSelected(True)
         else_cond = rule.conditions[1]
         else_cond.setSelected(True)
-        self.sim_frame.ui.gvSimulator.scene().add_message()
-        self.sim_frame.ui.gvSimulator.scene().items[1].setSelected(True)
+        self.sim_frame.ui.gvSimulator.scene().add_message(None, 1)
+        self.sim_frame.ui.gvSimulator.scene().sim_items[1].setSelected(True)
         self.sim_frame.ui.gvSimulator.scene().delete_selected_items()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 1)
-        self.assertEqual(len(if_cond.items), 0)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 1)
+        self.assertEqual(len(if_cond.sim_items), 0)
         self.assertEqual(len(rule.conditions), 1)
         if_cond.setSelected(True)
         self.sim_frame.ui.gvSimulator.scene().delete_selected_items()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 0)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 0)
 
     def test_clear_all(self):
         self.sim_frame.ui.gvSimulator.scene().add_rule()
-        self.sim_frame.ui.gvSimulator.scene().add_message()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 2)
+        self.sim_frame.ui.gvSimulator.scene().add_message(None, 0)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 2)
         self.sim_frame.ui.gvSimulator.scene().clear_all()
-        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().items), 0)
+        self.assertEqual(len(self.sim_frame.ui.gvSimulator.scene().sim_items), 0)
 
     def test_update_participants(self):
         participants = self.sim_frame.project_manager.participants

@@ -245,6 +245,7 @@ class Device(QObject):
     def read_receiving_queue(self):
         while self.is_receiving:
             try:
+                # TODO: Do not use queue, but ctx in callback and just recv from Pipe?
                 while not self.queue.empty():
                     byte_buffer = self.queue.get()
 

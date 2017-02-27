@@ -2,9 +2,12 @@ import unittest
 from multiprocessing import Pipe
 
 from multiprocessing import Process
+from threading import Thread
 
 from urh.dev.native.lib import rtlsdr
 import time
+
+from urh.util.Logger import logger
 
 
 def callback_recv(buffer):
@@ -21,6 +24,45 @@ def receive_async(callback, connection):
     rtlsdr.read_async(callback, connection)
     connection.close()
 
+def receive_sync(connection):
+    rtlsdr.open(0)
+    rtlsdr.reset_buffer()
+    exit_requested = False
+
+    while not exit_requested:
+        while connection.poll():
+            result = process_command(connection.recv())
+            if result == "stop":
+                exit_requested = True
+                break
+
+        if not exit_requested:
+            connection.send_bytes(rtlsdr.read_sync())
+
+    connection.close()
+
+def process_command(command):
+    if command == "stop":
+        return "stop"
+
+    tag, value = command.split(":")
+    if tag == "center_freq":
+        logger.info("[RTLSDR] setting center freq to {}".format(int(value)))
+        rtlsdr.set_center_freq(int(value))
+    elif tag == "tuner_gain":
+        logger.info("[RTLSDR] setting tuner_gain to {}".format(int(value)))
+        rtlsdr.set_tuner_gain(int(value))
+    elif tag == "sample_rate":
+        logger.info("[RTLSDR] setting sample rate to {}".format(int(value)))
+        rtlsdr.set_sample_rate(int(value))
+
+def read_connection(connection):
+    while True:
+        try:
+            received_bytes = connection.recv_bytes()
+            print(received_bytes[0:100])
+        except EOFError:
+            break
 
 def f(child_conn):
     ctrl_command = b""
@@ -51,10 +93,20 @@ class TestPipe(unittest.TestCase):
 
     def test_rtl_sdr_with_pipe(self):
         parent_conn, child_conn = Pipe()
-        p = Process(target=receive_async, args=(callback_recv, child_conn))
+        p = Process(target=receive_sync, args=(child_conn, ))
+        t = Thread(target=read_connection, args=(parent_conn, ))
+        t.daemon = True
+        p.daemon = True
+        t.start()
         p.start()
         time.sleep(2)
+        print("Sending set freq command")
+        parent_conn.send("center_freq:{}".format(int(433.92e6)))
+        time.sleep(1)
+        parent_conn.send("tuner_gain:{}".format(int(20)))
+        time.sleep(1)
+        parent_conn.send("sample_rate:{}".format(int(2e6)))
         print("Sending stop command")
-        parent_conn.send_bytes(b"stop")
+        parent_conn.send("stop")
         p.join()
         time.sleep(2)

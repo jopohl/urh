@@ -13,11 +13,8 @@ cdef crtlsdr.rtlsdr_dev_t*_c_device
 cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
     global f
     conn = <object> ctx
-    if conn.poll() and conn.recv_bytes() == b"stop":
-        print("Received stop")
-        cancel_async()
-    else:
-        (<object>f)(buffer[0:length])
+    (<object>f)(buffer[0:length])
+
 
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
@@ -198,6 +195,15 @@ cpdef int set_tuner_gain_mode(int manual):
     :return: 0 on success
     """
     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
+
+# cpdef int set_tuner_bandwidth(uint32_t bw):
+#     """
+#     Set the bandwidth for the device.
+#
+#     :param bw: bandwidth in Hz. Zero means automatic BW selection.
+#     :return 0 on success
+#     """
+#     crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
 
 cpdef int set_sample_rate(uint32_t sample_rate):
     """

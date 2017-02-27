@@ -2,6 +2,7 @@ from multiprocessing import Process
 from multiprocessing import Value
 
 import numpy as np
+from multiprocessing import Pipe
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import rtlsdr
@@ -26,10 +27,12 @@ def receive_sync(connection, device_number: int, center_freq: int, sample_rate: 
         if not exit_requested:
             connection.send_bytes(rtlsdr.read_sync())
 
+    logger.debug("RTLSDR: closing device")
     rtlsdr.close()
     connection.close()
 
 def process_command(command):
+    logger.debug("RTLSDR: {}".format(command))
     if command == "stop":
         return "stop"
 
@@ -95,7 +98,12 @@ class RTLSDR(Device):
         logger.info("RTLSDR: Stopping RX Mode: " + msg)
 
         if hasattr(self, "receive_process"):
-            self.receive_process.join()
+            self.receive_process.join(0.3)
+            if self.receive_process.is_alive():
+                logger.warning("RTLSDR: Receive process is still alive, terminating it")
+                self.receive_process.terminate()
+                self.receive_process.join()
+                self.parent_conn, self.child_conn = Pipe()
 
         if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:

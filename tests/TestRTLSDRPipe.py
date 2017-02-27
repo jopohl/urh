@@ -1,15 +1,24 @@
 import unittest
 from multiprocessing import Pipe
+import sys
 
 from multiprocessing import Process
 
-from urh.dev.native.lib import rtlsdr
+
 import time
 
+if sys.platform == "win32":
+    import os
+    cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+    dll_dir = os.path.realpath(os.path.join(cur_dir, "..", "src", "urh", "dev", "native", "lib", "win"))
+    os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
+
+
+from urh.dev.native.lib import rtlsdr
 
 def callback_recv(buffer):
     try:
-        print(len(buffer))
+        print(buffer)
     except BrokenPipeError:
         pass
     return 0

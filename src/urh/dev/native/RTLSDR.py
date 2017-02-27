@@ -35,7 +35,7 @@ class RTLSDR(Device):
 
         """
 
-        self.bandwidth_is_adjustable = False
+        self.bandwidth_is_adjustable = False   # e.g. not in Manjaro Linux / Ubuntu 14.04
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
@@ -76,7 +76,7 @@ class RTLSDR(Device):
 
             if self.is_receiving:
                 logger.info("RTLSDR: Starting receiving thread")
-                self._start_readqueue_thread()
+                self._start_read_rcv_buffer_thread()
 
         else:
             self.log_retcode(self.error_not_open, "start_rx_mode")
@@ -87,9 +87,9 @@ class RTLSDR(Device):
 
         logger.info("RTLSDR: Stopping RX Mode: " + msg)
 
-        if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
+        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:
-                self.read_queue_thread.join(0.001)
+                self.read_recv_buffer_thread.join(0.001)
                 logger.info("RTLSDR: Joined read_queue_thread")
             except RuntimeError:
                 logger.error("RTLSDR: Could not join read_queue_thread")

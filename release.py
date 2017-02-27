@@ -16,8 +16,7 @@ if rc != 0:
     print(constants.color.RED + constants.color.BOLD + "Unittests failed. Abort release." + constants.color.END)
     sys.exit(1)
 
-# -n for parallel with pytest-xdist
-rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+rc = pytest.main(["-v", "-s", "tests/TestInstallation.py"])
 
 if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
@@ -36,13 +35,19 @@ with open(version_file, "w") as f:
 
 # Publish new version number
 os.chdir(script_dir)
-call(["git", "commit", "-am", "version" + cur_version])
+call(["git", "add", version_file])
+call(["git", "commit", "-m", "version" + cur_version])
 call(["git", "push"])
 
 # Publish to PyPi
 os.chdir(script_dir)
+
+# Remove local tags
+call("git tag -l | xargs git tag -d", shell=True)
+call(["git", "fetch", "--tags"])
+
 call(["git", "tag", "v"+cur_version, "-m", "version "+cur_version])
-call(["git", "push", "origin", "--tags"]) # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
+call(["git", "push", "origin", "--tags"])  # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
 call(["python", "setup.py", "register", "-r", "pypi"])
 call(["python", "setup.py", "sdist", "upload", "-r", "pypi"])
 
@@ -81,7 +86,7 @@ call(["git", "push"])
 os.remove("/tmp/urh_releasing")
 
 os.chdir(script_dir)
-rc = pytest.main(["-v", "-n", "3", "tests/TestInstallation.py"])
+rc = pytest.main(["-v", "-s", "tests/TestInstallation.py"])
 
 if rc != 0:
     print(constants.color.BOLD + constants.color.RED + "Installation Test failed." + constants.color.END)

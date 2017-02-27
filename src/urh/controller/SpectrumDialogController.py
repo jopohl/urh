@@ -33,6 +33,7 @@ class SpectrumDialogController(SendRecvDialogController):
             self.ui.cbDevice.removeItem(index)
 
         self.init_device()
+        self.set_bandwidth_status()
 
         self.create_connects()
 
@@ -53,11 +54,6 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
-        if self.device:
-            self.device.free_data()
-        # Can't perform gc.collect() here, because the dialog itself would be deleted
-        # see https://github.com/jopohl/urh/issues/83
-        # gc.collect()
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum, bw=1e6,
                                     freq=433.92e6, gain=40, samp_rate=1e6,
                                     device_ip="192.168.10.2", parent=self)

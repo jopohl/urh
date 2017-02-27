@@ -71,11 +71,7 @@ class SendDialogController(SendRecvDialogController):
         device_name = self.ui.cbDevice.currentText()
         num_repeats = self.ui.spinBoxNRepeat.value()
         sts = self.scene_manager.signal._fulldata
-        if self.device:
-            self.device.free_data()
-        # Can't perform gc.collect() here, because the dialog itself would be deleted
-        # see https://github.com/jopohl/urh/issues/83
-        # gc.collect()
+
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, bw=1e6,
                                     freq=433.92e6, gain=40, samp_rate=1e6, samples_to_send=sts,
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)

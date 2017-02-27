@@ -71,6 +71,9 @@ class VirtualDevice(QObject):
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
                     self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
+                elif name.replace("-", "") == "rtlsdr":
+                    from urh.dev.native.RTLSDR import RTLSDR
+                    self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:
@@ -95,6 +98,17 @@ class VirtualDevice(QObject):
     @bandwidth.setter
     def bandwidth(self, value):
         self.__dev.bandwidth = value
+
+    @property
+    def bandwidth_is_adjustable(self):
+        if self.backend == Backends.grc:
+            return True
+        elif self.backend == Backends.native:
+            return self.__dev.bandwidth_is_adjustable
+        elif self.backend == Backends.network:
+            return True
+        else:
+            raise ValueError("Unsupported Backend")
 
     @property
     def frequency(self):
@@ -386,6 +400,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             if self.mode == Mode.send:
                 self.__dev.socket.close()
+                time.sleep(0.1)
             self.__dev.quit()
             self.data = None
 

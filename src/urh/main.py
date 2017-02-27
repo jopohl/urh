@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import locale
-import os
 import re
-import sys
 import time
+import os
+import sys
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QIcon
@@ -16,6 +16,19 @@ GENERATE_UI = True
 
 
 def main():
+    if sys.version_info < (3, 4):
+        print("You need at least Python 3.4 for this application!")
+        sys.exit(1)
+
+    if sys.platform == "win32":
+        urh_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+            else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+        assert os.path.isdir(urh_dir)
+
+        dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win"))
+        print("Using DLLs from:", dll_dir)
+        os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
+
     t = time.time()
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
@@ -27,10 +40,9 @@ def main():
 
             generate_ui.gen()
 
-            print("Time for generating UI: %.2f seconds" % (time.time() - t), file=sys.stderr)
+            print("Time for generating UI: %.2f seconds" % (time.time() - t))
         except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script cant be found. This is okay in "
-                  "release.", file=sys.stderr)
+            print("Will not regenerate UI, because script cant be found. This is okay in release.")
 
     urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
@@ -42,7 +54,7 @@ def main():
     if os.path.exists(src_dir) and not prefix.startswith("/usr") \
             and not re.match(r"(?i)c:\\program", prefix):
         # Started locally, not installed
-        print("Using modules from {0}".format(src_dir), file=sys.stderr)
+        print("Using modules from {0}".format(src_dir))
         sys.path.insert(0, src_dir)
 
     try:
@@ -50,7 +62,7 @@ def main():
         import urh.cythonext.path_creator
         import urh.cythonext.util
     except ImportError:
-        print("Could not find C++ extensions, trying to build them.", file=sys.stderr)
+        print("Could not find C++ extensions, trying to build them.")
         old_dir = os.curdir
         os.chdir(os.path.join(src_dir, "urh", "cythonext"))
 
@@ -105,9 +117,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import sys
-    if sys.version_info < (3, 4):
-        print("You need at least Python 3.4 for this application!")
-        sys.exit(1)
-
     main()

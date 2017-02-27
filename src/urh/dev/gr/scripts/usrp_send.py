@@ -7,11 +7,24 @@
 
 from optparse import OptionParser
 
+import tempfile
+import os
+import sys
+try:
+    with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "r") as f:
+        gnuradio_path = f.read().strip()
+
+    os.environ["PATH"] = os.path.join(gnuradio_path, "bin")
+    sys.path.append(os.path.join(gnuradio_path, "lib", "site-packages"))
+
+except IOError:
+    pass
+
 from gnuradio import gr
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from grc_gnuradio import blks2 as grc_blks2
-
+from gnuradio import zeromq
 
 class top_block(gr.top_block):
     def __init__(self, samp_rate, freq, gain, bw, ip, port):
@@ -39,17 +52,12 @@ class top_block(gr.top_block):
         self.uhd_usrp_sink_0.set_center_freq(freq, 0)
         self.uhd_usrp_sink_0.set_gain(gain, 0)
         self.uhd_usrp_sink_0.set_bandwidth(bw, 0)
-        self.blks2_tcp_source_0 = grc_blks2.tcp_source(
-            itemsize=gr.sizeof_gr_complex * 1,
-            addr="",  # Vorher 127.0.0.1
-            port=port,
-            server=False,
-        )
+        self.zeromq_pull_source_0 = zeromq.pull_source(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:'+str(port), 100, False)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blks2_tcp_source_0, 0), (self.uhd_usrp_sink_0, 0))
+        self.connect((self.zeromq_pull_source_0, 0), (self.uhd_usrp_sink_0, 0))
 
     def get_samp_rate(self):
         return self.samp_rate

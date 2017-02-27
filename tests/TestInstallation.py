@@ -30,6 +30,8 @@ class VMHelper(object):
             print("Waiting for {} to come up.".format(self.vm_name))
             while self.__send_command("echo", hide_output=True, print_command=False) != 0:
                 time.sleep(1)
+
+            time.sleep(3)  # sleep another 3 seconds to ensure everything is up under windows
             self.__vm_is_up = True
 
     def send_command(self, command: str) -> int:

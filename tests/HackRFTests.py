@@ -3,6 +3,14 @@ import time
 import unittest
 
 import numpy as np
+import sys
+
+if sys.platform == "win32":
+    import os
+    cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+    dll_dir = os.path.realpath(os.path.join(cur_dir, "..", "src", "urh", "dev", "native", "lib", "win"))
+    os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
+
 
 from urh.dev.native.HackRF import HackRF
 from urh.dev.native.lib import hackrf
@@ -131,32 +139,6 @@ class TestHackRF(unittest.TestCase):
             print("Close time", time.time()-t)
             hfc.close()
 
-    def test_lookup(self):
-        # https://github.com/osmocom/gr-osmosdr/blob/master/lib/hackrf/hackrf_source_c.cc#L127
-        lookup = np.empty(0xffff, dtype=np.complex64)
-        for i in range(0, 0xffff):
-            real = float(np.uint8(i >> 8)) * 1 / 128
-            imag = float(np.uint8(i & 0xff)) * 1 / 128
-            lookup[i] = complex(real, imag)
-
-        buffer = b"\x00\x01"
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        ru = unpacked['r'] / 128.0
-        iu = unpacked['i'] / 128.0
-
-        # seems to be the same
-
-        # Convert floated again???
-        # https://github.com/osmocom/gr-osmosdr/blob/master/lib/osmosdr/osmosdr_src_c.cc#L235
-
-        print(lookup[0x0001])
-        print(ru, iu)
-
-
-    def test_pack_complex(self):
-        hkrf = HackRF(1,1,1,1)
-        print(hkrf.pack_complex(np.array([complex(0.1, 0.1), complex(0.5, 0.1)], dtype=np.complex64)))
-
     def test_buffer_io(self):
         b = io.BytesIO(b"\x00\x01\x02\x03\x04\x05\x06")
         br = io.BufferedReader(b) # Buffered Reader is thread safe https://docs.python.org/3/library/io.html#multi-threading
@@ -173,3 +155,22 @@ class TestHackRF(unittest.TestCase):
         br.close()
         b.close()
         br.close()
+
+    def test_hackrf_pack_unpack(self):
+        arr = np.array([-128, -128, -0.5, -0.5, -3, -3, 127, 127], dtype=np.int8)
+        self.assertEqual(arr[0], -128)
+        self.assertEqual(arr[1], -128)
+        self.assertEqual(arr[-1], 127)
+
+        received = arr.tostring()
+        self.assertEqual(len(received), len(arr))
+        self.assertEqual(np.int8(received[0]), -128)
+        self.assertEqual(np.int8(received[1]), -128)
+        unpacked = HackRF.unpack_complex(received, len(received) // 2)
+        self.assertEqual(unpacked[0], complex(-1, -1))
+        self.assertAlmostEqual(unpacked[1], complex(0, 0), places=1)
+        self.assertAlmostEqual(unpacked[2], complex(0, 0), places=1)
+        self.assertEqual(unpacked[3], complex(1, 1))
+
+        packed = HackRF.pack_complex(unpacked)
+        self.assertEqual(received, packed)

@@ -26,7 +26,6 @@ class SendRecvDialogController(QDialog):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.set_sniff_ui_items_visible(False)
 
@@ -99,10 +98,10 @@ class SendRecvDialogController(QDialog):
             getattr(self.ui, object).setVisible(visible)
 
     def set_device_ui_items_enabled(self, enabled: bool):
-        self.ui.spinBoxSampleRate.setEnabled(enabled)
         self.ui.spinBoxFreq.setEnabled(enabled)
         self.ui.spinBoxGain.setEnabled(enabled)
         self.ui.spinBoxBandwidth.setEnabled(enabled)
+        self.ui.spinBoxSampleRate.setEnabled(enabled)
 
     def get_devices_for_combobox(self):
         items = []
@@ -117,6 +116,20 @@ class SendRecvDialogController(QDialog):
             items.append(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         return items
+
+    def set_bandwidth_status(self):
+        if self.device is not None:
+            self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
+            self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
+
+            if not self.device.bandwidth_is_adjustable:
+                self.bw_sr_are_locked = False
+                self.ui.spinBoxBandwidth.setToolTip(self.tr("Your driver of RTL-SDR does not support "
+                                                            "setting the bandwidth. "
+                                                            "If you need this feature, install a recent version."))
+            else:
+                self.ui.spinBoxBandwidth.setToolTip("")
+                self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
 
     def create_connects(self):
         self.ui.btnStart.clicked.connect(self.on_start_clicked)
@@ -195,6 +208,8 @@ class SendRecvDialogController(QDialog):
         self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
+
+        self.set_bandwidth_status()
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -277,7 +292,7 @@ class SendRecvDialogController(QDialog):
         self.ui.progressBar.setValue(self.device.current_index)
 
         self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
-        self.ui.lSignalSize.setText("{0:n}".format((8 * self.device.current_index) / (1024 ** 2)))
+        self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 
         if self.device.current_index == 0:
@@ -305,6 +320,7 @@ class SendRecvDialogController(QDialog):
             return
 
         self.device.stop("Dialog closed. Killing recording process.")
+        logger.debug("Device stopped successfully.")
         if not self.save_before_close():
             event.ignore()
             return
@@ -312,7 +328,9 @@ class SendRecvDialogController(QDialog):
         time.sleep(0.1)
         if self.device.backend != Backends.none:
             # Backend none is selected, when no device is available
+            logger.debug("Cleaning up device")
             self.device.cleanup()
+            logger.debug("Successfully cleaned up device")
             self.recording_parameters.emit(str(self.device.frequency),
                                            str(self.device.sample_rate),
                                            str(self.device.bandwidth),
@@ -327,6 +345,8 @@ class SendRecvDialogController(QDialog):
         constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
+            self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
+            self.ui.spinBoxBandwidth.editingFinished.emit()
         else:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 

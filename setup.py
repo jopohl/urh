@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
@@ -76,7 +77,8 @@ def get_package_data():
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
-        package_data["urh.dev.native.lib"].append("hackrf.cp35-win_amd64.pyd")
+        package_data["urh.dev.native.lib.win"] = ["*"]
+        package_data["urh.dev.native.lib.win.libhackrf"] = ["*"]
 
     return package_data
 
@@ -94,32 +96,67 @@ def get_ext_modules():
 
 def get_device_modules():
     if sys.platform == "win32":
-        # we use precompiled device backends on windows
-        return []
+        if platform.architecture()[0] != "64bit":
+            return []  # only 64 bit python supported for native device backends
+
+        NATIVES = ["rtlsdr", "hackrf"]
+        result = []
+        include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
+        lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
+        for native in NATIVES:
+            result.append(Extension("urh.dev.native.lib."+native, ["src/urh/dev/native/lib/{}.cpp".format(native)],
+                          libraries=[native],
+                          library_dirs=[lib_dir],
+                          include_dirs=[include_dir],
+                          language="c++"))
+
+
+        return result
 
     compiler = ccompiler.new_compiler()
 
     extensions = []
     devices = {
-        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"}
+        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+        "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
+    }
+
+    fallbacks = {
+        "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 
     scriptdir = os.path.realpath(os.path.dirname(__file__))
     sys.path.append(os.path.realpath(os.path.join(scriptdir, "src", "urh", "dev", "native", "lib")))
     for dev_name, params in devices.items():
         if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
-            print("\n\n\nFound {0}.h - will compile with native {1} support\n\n\n".format(params["lib"], dev_name))
-            e = Extension("urh.dev.native.lib." + dev_name, ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
+            print("\nWill compile with native {0} support\n".format(params["lib"], dev_name))
+            e = Extension("urh.dev.native.lib." + dev_name,
+                          ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
                           extra_compile_args=[OPEN_MP_FLAG],
-                          extra_link_args=[OPEN_MP_FLAG], language="c++",
+                          extra_link_args=[OPEN_MP_FLAG],
+                          language="c++",
                           libraries=[params["lib"]])
             extensions.append(e)
+        elif dev_name in fallbacks:
+            print("Trying fallback for {0}".format(dev_name))
+            params = fallbacks[dev_name]
+            dev_name += "_fallback"
+            if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+                print("\nWill compile with native {0} support\n".format(dev_name))
+                e = Extension("urh.dev.native.lib." + dev_name,
+                              ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
+                              extra_compile_args=[OPEN_MP_FLAG],
+                              extra_link_args=[OPEN_MP_FLAG],
+                              language="c++",
+                              libraries=[params["lib"]])
+                extensions.append(e)
         else:
-            print("\n\n\nCould not find {0}.h - skipping native support for {1}\n\n\n".format(params["lib"], dev_name))
+            print("\n Skipping native support for {1}\n".format(params["lib"], dev_name))
         try:
             os.remove("a.out")  # Temp file for checking
         except OSError:
             pass
+
     return extensions
 
 
@@ -127,13 +164,13 @@ def read_long_description():
     try:
         import pypandoc
         return pypandoc.convert('README.md', 'rst')
-    except(IOError, ImportError):
+    except(IOError, ImportError, RuntimeError):
         return ""
 
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
-install_requires = ["numpy", "psutil"]
+install_requires = ["numpy", "psutil", "pyzmq"]
 try:
     import PyQt5
 except ImportError:

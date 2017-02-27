@@ -74,16 +74,17 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("Bladerf" , "HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle")
+    DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle", "SDRPlay", "AirSpy")
 
     def __init__(self, testing_mode=False):
         self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
-        if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-            self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
-        else:
-            self.gnuradio_installed = False
+        self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
+        self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
+
+        self.gnuradio_installed = False
+        self.set_gnuradio_installed_status()
 
         if self.testing_mode:
             self.gnuradio_installed = True
@@ -114,6 +115,38 @@ class BackendHandler(object):
         except ImportError:
             return False
 
+    @property
+    def __rtlsdr_native_enabled(self) -> bool:
+        try:
+            try:
+                from urh.dev.native.lib import rtlsdr
+            except ImportError:
+                from urh.dev.native.lib import rtlsdr_fallback
+            return True
+        except ImportError:
+            return False
+
+    def set_gnuradio_installed_status(self):
+        if self.use_gnuradio_install_dir:
+            # We are probably on windows with a bundled gnuradio installation
+            bin_dir = os.path.join(self.gnuradio_install_dir, "bin")
+            site_packages_dir = os.path.join(self.gnuradio_install_dir, "lib", "site-packages")
+            if all(os.path.isdir(dir) for dir in [self.gnuradio_install_dir, bin_dir, site_packages_dir]):
+                constants.SETTINGS.setValue("gnuradio_install_dir", self.gnuradio_install_dir)
+                self.gnuradio_installed = True
+                return
+            else:
+                self.gnuradio_installed = False
+                return
+        else:
+            # we are on a nice unix with gnuradio installed to default python path
+            if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
+                self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+                constants.SETTINGS.setValue("python2_exe", self.python2_exe)
+            else:
+                self.gnuradio_installed = False
+                return
+
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
         devname = devname.lower()
@@ -137,6 +170,9 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
+            backends.add(Backends.native)
+
+        if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
             backends.add(Backends.native)
 
         return backends, supports_rx, supports_tx

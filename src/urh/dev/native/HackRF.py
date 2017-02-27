@@ -12,7 +12,6 @@ class HackRF(Device):
     def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
         super().__init__(bw, freq, gain, srate, is_ringbuffer)
         self.success = 0
-        self.error_not_open = -4242
 
         self._max_bandwidth = 28e6
         self._max_frequency = 6e9
@@ -78,7 +77,7 @@ class HackRF(Device):
 
             if self.is_receiving:
                 logger.info("HackRF: Starting receiving thread")
-                self._start_readqueue_thread()
+                self._start_read_rcv_buffer_thread()
 
             self.log_retcode(ret, "start_rx_mode")
         else:
@@ -89,9 +88,9 @@ class HackRF(Device):
 
         logger.info("HackRF: Stopping RX Mode: " + msg)
 
-        if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
+        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:
-                self.read_queue_thread.join(0.001)
+                self.read_recv_buffer_thread.join(0.001)
                 logger.info("HackRF: Joined read_queue_thread")
             except RuntimeError:
                 logger.error("HackRF: Could not join read_queue_thread")
@@ -161,14 +160,16 @@ class HackRF(Device):
 
         self.log_retcode(retcode, "set_sample_rate", sample_rate)
 
-    def unpack_complex(self, buffer, nvalues: int):
+    @staticmethod
+    def unpack_complex(buffer, nvalues: int):
         result = np.empty(nvalues, dtype=np.complex64)
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
         result.real = (unpacked['r'] + 0.5) / 127.5
         result.imag = (unpacked['i'] + 0.5) / 127.5
         return result
 
-    def pack_complex(self, complex_samples: np.ndarray):
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
         # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return (127.5 * (complex_samples - 0.5/127.5).view(np.float32)).astype(np.int8).tostring()
+        return (127.5 * ((complex_samples.view(np.float32)) - 0.5/127.5)).astype(np.int8).tostring()

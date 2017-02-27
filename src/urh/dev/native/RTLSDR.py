@@ -34,14 +34,17 @@ def process_command(command):
 
     tag, value = command.split(":")
     if tag == "center_freq":
-        logger.info("[RTLSDR] setting center freq to {}".format(int(value)))
-        rtlsdr.set_center_freq(int(value))
+        logger.info("[RTLSDR] Set center freq to {0}".format(int(value)))
+        return rtlsdr.set_center_freq(int(value))
+
     elif tag == "tuner_gain":
-        logger.info("[RTLSDR] setting tuner_gain to {}".format(int(value)))
-        rtlsdr.set_tuner_gain(int(value))
+        logger.info("[RTLSDR] Set tuner gain to {0}".format(int(value)))
+        return rtlsdr.set_tuner_gain(int(value))
+
     elif tag == "sample_rate":
-        logger.info("[RTLSDR] setting sample rate to {}".format(int(value)))
-        rtlsdr.set_sample_rate(int(value))
+        logger.info("[RTLSDR] Set sample_rate to {0}".format(int(value)))
+        return rtlsdr.set_sample_rate(int(value))
+
 
 
 class RTLSDR(Device):
@@ -62,7 +65,7 @@ class RTLSDR(Device):
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
-        self._max_gain = 40  # Consider get_tuner_gains for allowed gains here
+        self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
 
@@ -75,6 +78,7 @@ class RTLSDR(Device):
     def start_rx_mode(self):
         self.init_recv_buffer()
 
+        self.is_open = True
         self.is_receiving = True
         self.receive_process = Process(target=receive_sync, args=(self.child_conn, self.device_number,
                                                                   self.frequency, self.sample_rate, self.gain
@@ -89,7 +93,8 @@ class RTLSDR(Device):
 
         logger.info("RTLSDR: Stopping RX Mode: " + msg)
 
-        self.receive_process.join()
+        if hasattr(self, "receive_process"):
+            self.receive_process.join()
 
         if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:

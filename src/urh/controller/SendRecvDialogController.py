@@ -98,10 +98,10 @@ class SendRecvDialogController(QDialog):
             getattr(self.ui, object).setVisible(visible)
 
     def set_device_ui_items_enabled(self, enabled: bool):
-        self.ui.spinBoxSampleRate.setEnabled(enabled)
         self.ui.spinBoxFreq.setEnabled(enabled)
         self.ui.spinBoxGain.setEnabled(enabled)
         self.ui.spinBoxBandwidth.setEnabled(enabled)
+        self.ui.spinBoxSampleRate.setEnabled(enabled)
 
     def get_devices_for_combobox(self):
         items = []
@@ -329,6 +329,8 @@ class SendRecvDialogController(QDialog):
         constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
+            self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
+            self.ui.spinBoxBandwidth.editingFinished.emit()
         else:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
 

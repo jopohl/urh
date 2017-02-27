@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
@@ -95,6 +96,9 @@ def get_ext_modules():
 
 def get_device_modules():
     if sys.platform == "win32":
+        if platform.architecture()[0] != "64bit":
+            return []  # only 64 bit python supported for native device backends
+
         NATIVES = ["rtlsdr", "hackrf"]
         result = []
         include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
@@ -146,7 +150,7 @@ def read_long_description():
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
 
-install_requires = ["numpy", "psutil", "zmq"]
+install_requires = ["numpy", "psutil", "pyzmq"]
 try:
     import PyQt5
 except ImportError:

@@ -24,9 +24,7 @@ class AbstractBaseThread(QThread):
 
     def __init__(self, sample_rate, freq, gain, bandwidth, receiving: bool,
                  ip='127.0.0.1', parent=None):
-        # setting parent to None here, as setting parent to Dialog may lead to crashes described in
-        # https://github.com/jopohl/urh/issues/163
-        super().__init__(None)
+        super().__init__(parent)
         self.ip = ip
         self.port = 1337
         self._sample_rate = sample_rate

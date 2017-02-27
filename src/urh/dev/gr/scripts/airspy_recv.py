@@ -2,7 +2,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Fri Aug 21 17:31:13 2015
+# Generated: Fri Aug 21 15:56:13 2015
 ##################################################
 
 from optparse import OptionParser
@@ -23,8 +23,8 @@ except IOError:
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from grc_gnuradio import blks2 as grc_blks2
+from InputHandlerThread import InputHandlerThread
 import osmosdr
-from gnuradio import blocks
 from gnuradio import zeromq
 
 class top_block(gr.top_block):
@@ -42,57 +42,55 @@ class top_block(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        #self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex * 1, "/tmp/send_test.complex", False)
-        #self.blocks_file_sink_0.set_unbuffered(True)
+        self.osmosdr_source_0 = osmosdr.source(args="numchan=" + str(1) + " " + "airspy")
+        self.osmosdr_source_0.set_sample_rate(samp_rate)
+        self.osmosdr_source_0.set_center_freq(freq, 0)
+        self.osmosdr_source_0.set_freq_corr(0, 0)
+        self.osmosdr_source_0.set_dc_offset_mode(0, 0)
+        self.osmosdr_source_0.set_iq_balance_mode(0, 0)
+        self.osmosdr_source_0.set_gain_mode(False, 0)
+        self.osmosdr_source_0.set_gain(gain, 0)
+        self.osmosdr_source_0.set_if_gain(gain, 0)
+        self.osmosdr_source_0.set_bb_gain(gain, 0)
+        self.osmosdr_source_0.set_antenna("", 0)
+        self.osmosdr_source_0.set_bandwidth(bw, 0)
 
-        # self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate, True)
-        self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + "bladerf")
-        self.osmosdr_sink_0.set_sample_rate(samp_rate)
-        self.osmosdr_sink_0.set_center_freq(freq, 0)
-        self.osmosdr_sink_0.set_freq_corr(0, 0)
-        self.osmosdr_sink_0.set_gain(gain, 0)
-       # self.osmosdr_sink_0.set_if_gain(gain, 0)
-       # self.osmosdr_sink_0.set_bb_gain(gain, 0)
-        self.osmosdr_sink_0.set_antenna("", 0)
-        self.osmosdr_sink_0.set_bandwidth(bw, 0)
-
-        self.zeromq_pull_source_0 = zeromq.pull_source(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:' + str(port), 100,
-                                                       False)
+        self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:' + str(port), 100, False)
 
         ##################################################
         # Connections
         ##################################################
-        #self.connect((self.blks2_tcp_source_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.zeromq_pull_source_0, 0), (self.osmosdr_sink_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.zeromq_push_sink_0, 0))
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.osmosdr_sink_0.set_sample_rate(self.samp_rate)
+        self.osmosdr_source_0.set_sample_rate(self.samp_rate)
 
     def get_gain(self):
         return self.gain
+
     def set_gain(self, gain):
         self.gain = gain
-        self.osmosdr_sink_0.set_gain(self.gain, 0)
-        #self.osmosdr_sink_0.set_if_gain(self.gain, 0)
-        #self.osmosdr_sink_0.set_bb_gain(self.gain, 0)
+        self.osmosdr_source_0.set_gain(self.gain, 0)
+        self.osmosdr_source_0.set_if_gain(self.gain, 0)
+        self.osmosdr_source_0.set_bb_gain(self.gain, 0)
 
     def get_freq(self):
         return self.freq
 
     def set_freq(self, freq):
         self.freq = freq
-        self.osmosdr_sink_0.set_center_freq(self.freq, 0)
+        self.osmosdr_source_0.set_center_freq(self.freq, 0)
 
     def get_bw(self):
         return self.bw
 
     def set_bw(self, bw):
         self.bw = bw
-        self.osmosdr_sink_0.set_bandwidth(self.bw, 0)
+        self.osmosdr_source_0.set_bandwidth(self.bw, 0)
 
 
 if __name__ == '__main__':
@@ -105,5 +103,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     tb = top_block(float(options.samplerate), float(options.freq), int(options.gain),
                    float(options.bw), int(options.port))
+    iht = InputHandlerThread(tb)
+    iht.start()
     tb.start()
     tb.wait()

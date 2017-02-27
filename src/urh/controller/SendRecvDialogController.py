@@ -26,7 +26,6 @@ class SendRecvDialogController(QDialog):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.set_sniff_ui_items_visible(False)
 
@@ -305,6 +304,7 @@ class SendRecvDialogController(QDialog):
             return
 
         self.device.stop("Dialog closed. Killing recording process.")
+        logger.debug("Device stopped successfully.")
         if not self.save_before_close():
             event.ignore()
             return
@@ -312,7 +312,9 @@ class SendRecvDialogController(QDialog):
         time.sleep(0.1)
         if self.device.backend != Backends.none:
             # Backend none is selected, when no device is available
+            logger.debug("Cleaning up device")
             self.device.cleanup()
+            logger.debug("Successfully cleaned up device")
             self.recording_parameters.emit(str(self.device.frequency),
                                            str(self.device.sample_rate),
                                            str(self.device.bandwidth),

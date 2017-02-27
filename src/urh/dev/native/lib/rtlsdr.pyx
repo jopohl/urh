@@ -12,7 +12,12 @@ cdef crtlsdr.rtlsdr_dev_t*_c_device
 
 cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
     global f
-    (<object>f)(buffer[0:length])
+    conn = <object> ctx
+    if conn.poll() and conn.recv_bytes() == b"stop":
+        print("Received stop")
+        cancel_async()
+    else:
+        (<object>f)(buffer[0:length])
 
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
@@ -277,7 +282,7 @@ cpdef bytes read_sync(int num_samples=8 * 32 * 512):
 
     return bytes(samples[0:n_read])
 
-cpdef int read_async(callback):
+cpdef int read_async(callback, connection):
     """
     Read samples from the device asynchronously. This function will block until
     it is being canceled using rtlsdr_cancel_async()
@@ -286,7 +291,7 @@ cpdef int read_async(callback):
     """
     global f
     f = callback
-    return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>0, 0, 0)
+    return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
 
 cpdef int cancel_async():
     """

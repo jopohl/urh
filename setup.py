@@ -117,7 +117,7 @@ def get_device_modules():
 
     extensions = []
     devices = {
-        "hackrf": {"lib": "libhackrf", "test_function": "hackrf_init"},
+        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
         "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 

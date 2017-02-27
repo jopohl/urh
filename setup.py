@@ -117,7 +117,7 @@ def get_device_modules():
 
     extensions = []
     devices = {
-        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+        "hackrf": {"lib": "libhackrf", "test_function": "hackrf_init"},
         "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 
@@ -144,7 +144,7 @@ def read_long_description():
     try:
         import pypandoc
         return pypandoc.convert('README.md', 'rst')
-    except(IOError, ImportError):
+    except(IOError, ImportError, RuntimeError):
         return ""
 
 # import generate_ui

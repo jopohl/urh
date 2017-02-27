@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
@@ -95,6 +96,9 @@ def get_ext_modules():
 
 def get_device_modules():
     if sys.platform == "win32":
+        if platform.architecture()[0] != "64bit":
+            return []  # only 64 bit python supported for native device backends
+
         NATIVES = ["rtlsdr", "hackrf"]
         result = []
         include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))

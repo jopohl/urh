@@ -1,9 +1,11 @@
 import os
+import sys
+import platform
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
-from subprocess import call, DEVNULL
+
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
@@ -34,6 +36,8 @@ class OptionsController(QDialog):
         self.plugin_controller = PluginController(installed_plugins, highlighted_plugins, parent=self)
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
+
+        self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
 
         self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))

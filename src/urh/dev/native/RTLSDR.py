@@ -1,24 +1,47 @@
-import time
 from multiprocessing import Process
-from multiprocessing import Queue
 from multiprocessing import Value
-from threading import Thread
 
 import numpy as np
-import sys
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import rtlsdr
 from urh.util.Logger import logger
 
 
-def receive_sync(rcv_queue: Queue, is_receiving_p: Value, sample_rate):
-    while is_receiving_p.value == 1:
-        read_samples = 1024
-        stuff = rtlsdr.read_sync(read_samples)
-        rcv_queue.put(stuff)
-        time.sleep(read_samples / sample_rate)
-    return True
+def receive_sync(connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
+    rtlsdr.open(device_number)
+    rtlsdr.set_center_freq(center_freq)
+    rtlsdr.set_sample_rate(sample_rate)
+    rtlsdr.set_tuner_gain(gain)
+    rtlsdr.reset_buffer()
+    exit_requested = False
+
+    while not exit_requested:
+        while connection.poll():
+            result = process_command(connection.recv())
+            if result == "stop":
+                exit_requested = True
+                break
+
+        if not exit_requested:
+            connection.send_bytes(rtlsdr.read_sync())
+
+    connection.close()
+
+def process_command(command):
+    if command == "stop":
+        return "stop"
+
+    tag, value = command.split(":")
+    if tag == "center_freq":
+        logger.info("[RTLSDR] setting center freq to {}".format(int(value)))
+        rtlsdr.set_center_freq(int(value))
+    elif tag == "tuner_gain":
+        logger.info("[RTLSDR] setting tuner_gain to {}".format(int(value)))
+        rtlsdr.set_tuner_gain(int(value))
+    elif tag == "sample_rate":
+        logger.info("[RTLSDR] setting sample rate to {}".format(int(value)))
+        rtlsdr.set_sample_rate(int(value))
 
 
 class RTLSDR(Device):
@@ -44,48 +67,29 @@ class RTLSDR(Device):
         self.device_number = device_number
 
     def open(self):
-        if not self.is_open:
-            ret = rtlsdr.open(self.device_number)
-            self.log_retcode(ret, "open")
-
-            ret = rtlsdr.reset_buffer()
-            self.log_retcode(ret, "reset_buffer")
-
-            self.is_open = ret == self.success
-            self.log_retcode(ret, "open")
+        pass # happens in start rx mode
 
     def close(self):
         rtlsdr.close()
 
     def start_rx_mode(self):
-        if self.is_open:
-            self.init_recv_buffer()
-            self.set_device_parameters()
+        self.init_recv_buffer()
 
-            self.is_receiving = True
-
-            self.is_receiving_p = Value('i', 1)
-            if sys.platform == "win32":
-                # Windows is not able to share resources between processes, so process would have to access to rtlsdr
-                # see: http://rhodesmill.org/brandon/2010/python-multiprocessing-linux-windows/
-                self.receive_process = Thread(target=receive_sync, args=(self.queue, self.is_receiving_p, self.sample_rate))
-            else:
-                self.receive_process = Process(target=receive_sync, args=(self.queue, self.is_receiving_p, self.sample_rate))
-            self.receive_process.daemon = True
-            self.receive_process.start()
-
-            if self.is_receiving:
-                logger.info("RTLSDR: Starting receiving thread")
-                self._start_read_rcv_buffer_thread()
-
-        else:
-            self.log_retcode(self.error_not_open, "start_rx_mode")
+        self.is_receiving = True
+        self.receive_process = Process(target=receive_sync, args=(self.child_conn, self.device_number,
+                                                                  self.frequency, self.sample_rate, self.gain
+                                                                  ))
+        self.receive_process.daemon = True
+        self._start_read_rcv_buffer_thread()
+        self.receive_process.start()
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        self.is_receiving_p.value = 0
+        self.parent_conn.send("stop")
 
         logger.info("RTLSDR: Stopping RX Mode: " + msg)
+
+        self.receive_process.join()
 
         if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:
@@ -94,21 +98,12 @@ class RTLSDR(Device):
             except RuntimeError:
                 logger.error("RTLSDR: Could not join read_queue_thread")
 
-        if hasattr(self, "receive_process") and self.receive_process.is_alive():
-            if self.receive_process.is_alive():
-                self.receive_process.join()
-                if not self.receive_process.is_alive():
-                    logger.info("RTLSDR: Terminated async read process")
-                else:
-                    logger.warning("RTLSDR: Could not terminate async read process")
 
     def set_device_frequency(self, frequency):
-        ret = rtlsdr.set_center_freq(int(frequency))
-        self.log_retcode(ret, "Set center freq")
+        self.parent_conn.send("center_freq:{}".format(int(frequency)))
 
     def set_device_sample_rate(self, sample_rate):
-        ret = rtlsdr.set_sample_rate(int(sample_rate))
-        self.log_retcode(ret, "Set sample rate")
+        self.parent_conn.send("sample_rate:{}".format(int(sample_rate)))
 
     def set_freq_correction(self, ppm):
         ret = rtlsdr.set_freq_correction(int(ppm))
@@ -127,11 +122,11 @@ class RTLSDR(Device):
         self.log_retcode(ret, "Set IF gain")
 
     def set_gain(self, gain):
-        ret = rtlsdr.set_tuner_gain(int(gain))
-        self.log_retcode(ret, "Set gain")
+        self.parent_conn.send("tuner_gain:{}".format(int(gain)))
 
     def set_device_gain(self, gain):
         self.set_gain(gain)
+
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

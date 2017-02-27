@@ -276,7 +276,7 @@ class SendRecvDialogController(QDialog):
         self.ui.progressBar.setValue(self.device.current_index)
 
         self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
-        self.ui.lSignalSize.setText("{0:n}".format((8 * self.device.current_index) / (1024 ** 2)))
+        self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 
         if self.device.current_index == 0:

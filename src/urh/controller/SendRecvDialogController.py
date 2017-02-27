@@ -195,6 +195,10 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.setVisible(dev_name == "USRP")
         self.ui.labelIP.setVisible(dev_name == "USRP")
 
+        if self.device is not None:
+            self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
+            self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
+
     @pyqtSlot()
     def on_start_clicked(self):
         self.ui.spinBoxFreq.editingFinished.emit()

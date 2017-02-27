@@ -33,33 +33,34 @@ class InputHandlerThread(Thread):
 
     def run(self):
         while True:
-            i = self.read_input()
+            input_commands = self.read_input().split("\n")
 
-            if len(i) > 0:
-                if i.startswith("SR:"):
-                    try:
-                        v = float(i.replace("SR:", "").split(" ")[-1])
-                    except ValueError:
-                        v = 1
-                    self.device.set_samp_rate(v)
-                elif i.startswith("G:"):
-                    try:
-                        v = int(i.replace("G:", "").split(" ")[-1])
-                    except ValueError:
-                        v = 1
-                    self.device.set_gain(v)
-                elif i.startswith("BW:"):
-                    try:
-                        v = float(i.replace("BW:", "").split(" ")[-1])
-                    except ValueError:
-                        v = 1
-                    self.device.set_bw(v)
-                elif i.startswith("F:"):
-                    try:
-                        v = float(i.replace("F:", "").split(" ")[-1])
-                    except ValueError:
-                        v = 1
-                    self.device.set_freq(v)
+            for i in input_commands:
+                if len(i) > 0:
+                    if i.startswith("SR:"):
+                        try:
+                            v = float(i.replace("SR:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_samp_rate(v)
+                    elif i.startswith("G:"):
+                        try:
+                            v = int(i.replace("G:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_gain(v)
+                    elif i.startswith("BW:"):
+                        try:
+                            v = float(i.replace("BW:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_bw(v)
+                    elif i.startswith("F:"):
+                        try:
+                            v = float(i.replace("F:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_freq(v)
 
             time.sleep(0.1)
 

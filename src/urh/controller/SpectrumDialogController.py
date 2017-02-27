@@ -33,6 +33,7 @@ class SpectrumDialogController(SendRecvDialogController):
             self.ui.cbDevice.removeItem(index)
 
         self.init_device()
+        self.set_bandwidth_status()
 
         self.create_connects()
 

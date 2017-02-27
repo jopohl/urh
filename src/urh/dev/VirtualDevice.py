@@ -100,6 +100,17 @@ class VirtualDevice(QObject):
         self.__dev.bandwidth = value
 
     @property
+    def bandwidth_is_adjustable(self):
+        if self.backend == Backends.grc:
+            return True
+        elif self.backend == Backends.native:
+            return self.__dev.bandwidth_is_adjustable
+        elif self.backend == Backends.network:
+            return True
+        else:
+            raise ValueError("Unsupported Backend")
+
+    @property
     def frequency(self):
         if self.backend == Backends.grc:
             return self.__dev.freq

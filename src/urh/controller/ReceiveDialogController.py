@@ -32,6 +32,7 @@ class ReceiveDialogController(SendRecvDialogController):
         self.scene_manager = None  # type: LiveSceneManager
 
         self.init_device()
+        self.set_bandwidth_status()
 
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager

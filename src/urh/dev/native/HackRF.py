@@ -77,7 +77,7 @@ class HackRF(Device):
 
             if self.is_receiving:
                 logger.info("HackRF: Starting receiving thread")
-                self._start_readqueue_thread()
+                self._start_read_rcv_buffer_thread()
 
             self.log_retcode(ret, "start_rx_mode")
         else:
@@ -88,9 +88,9 @@ class HackRF(Device):
 
         logger.info("HackRF: Stopping RX Mode: " + msg)
 
-        if hasattr(self, "read_queue_thread") and self.read_queue_thread.is_alive():
+        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:
-                self.read_queue_thread.join(0.001)
+                self.read_recv_buffer_thread.join(0.001)
                 logger.info("HackRF: Joined read_queue_thread")
             except RuntimeError:
                 logger.error("HackRF: Could not join read_queue_thread")

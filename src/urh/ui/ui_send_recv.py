@@ -30,6 +30,7 @@ class Ui_SendRecvDialog(object):
         self.gridLayout.addWidget(self.lineEditIP, 1, 1, 1, 1)
         self.spinBoxGain = QtWidgets.QSpinBox(SendRecvDialog)
         self.spinBoxGain.setMinimum(1)
+        self.spinBoxGain.setMaximum(500)
         self.spinBoxGain.setProperty("value", 40)
         self.spinBoxGain.setObjectName("spinBoxGain")
         self.gridLayout.addWidget(self.spinBoxGain, 5, 1, 1, 1)

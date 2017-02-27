@@ -26,6 +26,7 @@ def receive_sync(connection, device_number: int, center_freq: int, sample_rate: 
         if not exit_requested:
             connection.send_bytes(rtlsdr.read_sync())
 
+    rtlsdr.close()
     connection.close()
 
 def process_command(command):
@@ -73,7 +74,7 @@ class RTLSDR(Device):
         pass # happens in start rx mode
 
     def close(self):
-        rtlsdr.close()
+        pass  # happens in stop tx mode
 
     def start_rx_mode(self):
         self.init_recv_buffer()

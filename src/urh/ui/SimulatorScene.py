@@ -1,11 +1,84 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup, QGraphicsObject
-from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform
-from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup, QGraphicsObject, QAbstractItemView
+from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform, QBrush
+from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF, pyqtSignal, pyqtSlot, QLineF
 import math
 from enum import Enum
 
 from urh import constants
 from urh.signalprocessing.Message import Message
+
+class SimulatorItem(QGraphicsObject):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFlags(QGraphicsItem.ItemIsSelectable)
+        self.hover_active = False
+        self.drag_over = False
+        self.setAcceptHoverEvents(True)
+        self.setAcceptDrops(True)
+        self.drop_indicator_line = QLineF()
+
+    def hoverEnterEvent(self, event):
+        self.hover_active = True
+        super().update()
+
+    def hoverLeaveEvent(self, event):
+        self.hover_active = False
+        super().update()
+
+    def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
+        self.drag_over = True
+        super().update()
+
+    def dragLeaveEvent(self, event: QGraphicsSceneDragDropEvent):
+        self.drag_over = False
+        super().update()
+
+    def dropEvent(self, event: QDropEvent):
+        self.drag_over = False
+        super().update()
+
+    def dragMoveEvent(self, event: QDropEvent):
+        rect = self.boundingRect()
+        self.drop_indicator_position = self.position(event.pos(), rect)
+
+        x1 = self.scene().participants[0].line.line().x1()
+        x2 = self.scene().participants[-1].line.line().x1()
+
+        if self.drop_indicator_position == QAbstractItemView.AboveItem:
+            self.drop_indicator_line = QLineF(x1, rect.top(), x2, rect.top())
+        else:
+            self.drop_indicator_line = QLineF(x1, rect.bottom(), x2, rect.bottom())
+
+        super().update()
+        
+    @staticmethod
+    def position(pos, rect):
+        if pos.y() - rect.top() < rect.height() / 2:
+            return QAbstractItemView.AboveItem
+        else:
+            return QAbstractItemView.BelowItem
+
+    def paint(self, painter, option, widget):
+        if self.hover_active or self.isSelected():
+            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setBrush(constants.SELECTION_COLOR)
+            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.drawRect(self.boundingRect())
+
+        if self.drag_over:
+            self.paint_drop_indicator(painter)
+
+    def paint_drop_indicator(self, painter):
+        brush = QBrush(QColor(Qt.darkRed))
+        pen = QPen(brush, 2, Qt.SolidLine)
+        painter.setPen(pen)
+        painter.drawLine(self.drop_indicator_line)
+
+    def boundingRect(self):
+        rect = self.childrenBoundingRect()
+        x = self.scene().participants[0].line.line().x1()
+        width = self.scene().participants[-1].line.line().x1() - x
+        return QRectF(x, rect.y(), width, rect.height())
 
 class ConditionType(Enum):
     IF = "if ..."
@@ -26,7 +99,7 @@ class RuleItem(QGraphicsItem):
         messages = []
 
         for cond in self.conditions:
-            messages.extend([item for item in cond.items if type(item) is MessageItem])
+            messages.extend([item for item in cond.sim_items if type(item) is MessageItem])
 
         return messages
 
@@ -37,7 +110,7 @@ class RuleItem(QGraphicsItem):
     def delete_items(self, items):
         for condition in self.conditions[:]:
             if condition in items and condition.type == ConditionType.IF:
-                self.scene().items.remove(self)
+                self.scene().sim_items.remove(self)
                 self.scene().removeItem(self)
                 return
             elif condition in items:
@@ -84,25 +157,14 @@ class RuleTextItem(QGraphicsTextItem):
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
-class RuleConditionItem(QGraphicsObject):
+class RuleConditionItem(SimulatorItem):
     def __init__(self, type, parent):
         super().__init__(parent)
         self.type = type
         self.text = RuleTextItem(type.value, QColor.fromRgb(139,148,148), self)
         self.setFlags(QGraphicsItem.ItemIsSelectable)
-        self.items = []
+        self.sim_items = []
         self.rect = QRectF()
-
-        self.setAcceptHoverEvents(True)
-        self.hover_active = False
-
-    def hoverEnterEvent(self, event):
-        self.hover_active = True
-        super().update()
-
-    def hoverLeaveEvent(self, event):
-        self.hover_active = False
-        super().update()
 
     def update(self, y_pos):
         x = self.scene().participants[0].line.line().x1()
@@ -113,7 +175,7 @@ class RuleConditionItem(QGraphicsObject):
         self.text.setPos(-20, tmp_y)
         tmp_y += round(self.text.boundingRect().height())
 
-        for item in self.items:
+        for item in self.sim_items:
             item.update(tmp_y)
             tmp_y += round(item.boundingRect().height())
 
@@ -134,10 +196,13 @@ class RuleConditionItem(QGraphicsObject):
         painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
         painter.drawRect(self.boundingRect())
 
+        if self.drag_over:
+            self.paint_drop_indicator(painter)
+
     def delete_items(self, items):
-        for item in self.items[:]:
+        for item in self.sim_items[:]:
             if item in items:
-                self.items.remove(item)
+                self.sim_items.remove(item)
                 self.scene().removeItem(item)
 
     @pyqtSlot()
@@ -155,19 +220,19 @@ class RuleConditionItem(QGraphicsObject):
         for label in message_type:
             simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
 
-        self.items.append(simulator_message)
+        self.sim_items.append(simulator_message)
         self.scene().update_view()
 
     @pyqtSlot()
     def on_add_goto_action_triggered(self):
         action = ActionItem(ActionType.goto, self)
-        self.items.append(action)
+        self.sim_items.append(action)
         self.scene().update_view()
 
     @pyqtSlot()
     def on_add_external_program_action_triggered(self):
         action = ActionItem(ActionType.external_program, self)
-        self.items.append(action)
+        self.sim_items.append(action)
         self.scene().update_view()
 
     @pyqtSlot()
@@ -183,7 +248,7 @@ class RuleConditionItem(QGraphicsObject):
     @pyqtSlot()
     def on_remove_rule_action_triggered(self):
         scene = self.scene()
-        scene.items.remove(self.parentItem())
+        scene.sim_items.remove(self.parentItem())
         scene.removeItem(self.parentItem())
         scene.update_view()
 
@@ -239,6 +304,7 @@ class RuleConditionItem(QGraphicsObject):
 
     def contextMenuEvent(self, event):
         menu = self.create_context_menu()
+        self.setSelected(True)
         action = menu.exec_(event.screenPos())
 
 class LabelItem(QGraphicsTextItem):
@@ -267,11 +333,10 @@ class ActionType(Enum):
     external_program = 0
     goto = 1
 
-class ActionItem(QGraphicsItem):
+class ActionItem(SimulatorItem):
     def __init__(self, type, parent=None):
         super().__init__(parent)
         self.text = QGraphicsTextItem(self)
-        self.setFlags(QGraphicsItem.ItemIsSelectable)
 
         self.type = type
 
@@ -285,31 +350,10 @@ class ActionItem(QGraphicsItem):
         elif type == ActionType.goto:
             self.text.setPlainText("goto 6")
 
-        self.setAcceptHoverEvents(True)
-        self.hover_active = False
-
-    def hoverEnterEvent(self, event):
-        self.hover_active = True
-        super().update()
-
-    def hoverLeaveEvent(self, event):
-        self.hover_active = False
-        super().update()
-
     def update(self, y_pos):
         x_pos = self.scene().participants[0].line.line().x1()
         self.text.setPos(x_pos, y_pos)
         super().update()
-
-    def boundingRect(self):
-        return self.childrenBoundingRect()
-
-    def paint(self, painter, option, widget):
-        if self.hover_active or self.isSelected():
-            painter.setOpacity(constants.SELECTION_OPACITY)
-            painter.setBrush(constants.SELECTION_COLOR)
-            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
-            painter.drawRect(self.boundingRect())
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):
@@ -336,24 +380,14 @@ class ParticipantItem(QGraphicsItem):
     def paint(self, painter, option, widget):
         pass
 
-class MessageItem(QGraphicsObject):
+class MessageItem(SimulatorItem):
     def __init__(self, source, destination, parent=None):
         super().__init__(parent)
-        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsPanel)
+        self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
         self.source = source
         self.destination = destination
         self.labels = []
-        self.hover_active = False
-        self.setAcceptHoverEvents(True)
-
-    def hoverEnterEvent(self, event):
-        self.hover_active = True
-        super().update()
-
-    def hoverLeaveEvent(self, event):
-        self.hover_active = False
-        super().update()
 
     def labels_width(self):
         width = sum([lbl.boundingRect().width() for lbl in self.labels])
@@ -385,24 +419,14 @@ class MessageItem(QGraphicsObject):
         
         super().update()
 
-    def boundingRect(self):
-        return self.childrenBoundingRect()
-
-    def paint(self, painter, option, widget):
-        if self.hover_active or self.isSelected():
-            painter.setOpacity(constants.SELECTION_OPACITY)
-            painter.setBrush(constants.SELECTION_COLOR)
-            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
-            painter.drawRect(self.boundingRect())
-
     @pyqtSlot()
     def on_del_action_triggered(self):
         scene = self.scene()
 
         if self.parentItem() is None:
-            scene.items.remove(self)
+            scene.sim_items.remove(self)
         else:
-            self.parentItem().items.remove(self)
+            self.parentItem().sim_items.remove(self)
 
         scene.removeItem(self)
         scene.update_view()
@@ -480,6 +504,7 @@ class MessageItem(QGraphicsObject):
 
     def contextMenuEvent(self, event):
         menu = self.create_context_menu()
+        self.setSelected(True)
         action = menu.exec_(event.screenPos())
 
 class MessageArrowItem(QGraphicsLineItem):
@@ -488,11 +513,6 @@ class MessageArrowItem(QGraphicsLineItem):
         self.setPen(QPen(Qt.black, 1, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):
-        extra = (self.pen().width() + 20) / 2.0
-
-#        return QRectF(self.line().p1(), QSizeF(self.line().p2().x() - self.line().p1().x(),
-#                    self.line().p2().y() - self.line().p1().y())).normalized().adjusted(-extra, -extra, extra, extra)
-
         return super().boundingRect().adjusted(0, -7, 0, 7)
 
     def paint(self, painter, option, widget):
@@ -541,28 +561,21 @@ class SimulatorScene(QGraphicsScene):
         self.participants.append(self.broadcast_part)
         self.addItem(self.broadcast_part)
 
-        self.items = []
+        self.sim_items = []
         self.update_view()
-
-    def mousePressEvent(self, event):
-        if event.button() != Qt.LeftButton:
-            event.accept()
-            return
-
-        super().mousePressEvent(event)
 
     def delete_selected_items(self):
         self.delete_items(self.selectedItems())
         self.update_view()
 
     def select_all_items(self):
-        for item in self.items:
+        for item in self.sim_items:
             item.setSelected(True)
 
     def delete_items(self, items):
-        for item in self.items[:]:
+        for item in self.sim_items[:]:
             if item in items:
-                self.items.remove(item)
+                self.sim_items.remove(item)
                 self.removeItem(item)
             elif type(item) == RuleItem:
                 item.delete_items(items)
@@ -594,12 +607,12 @@ class SimulatorScene(QGraphicsScene):
                 participant_item = ParticipantItem(participant.shortname)
                 self.addItem(participant_item)
                 self.participants_dict[participant] = participant_item
-                self.participants.append(participant_item)
+                self.participants.insert(-2, participant_item)
 
     def get_all_messages(self):
         messages = []
 
-        for item in self.items:
+        for item in self.sim_items:
             if type(item) is MessageItem:
                 messages.append(item)
             elif type(item) is RuleItem:
@@ -632,20 +645,40 @@ class SimulatorScene(QGraphicsScene):
     def arrange_items(self):
         y_pos = 30
 
-        for item in self.items:
+        for item in self.sim_items:
             item.update(y_pos)
             y_pos += round(item.boundingRect().height())
 
         for participant in self.participants:
             participant.update(y_pos = max(y_pos, 50))
 
-    def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
+    def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
+        super().dragMoveEvent(event)
         event.setAccepted(True)
 
-    def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
-        pass
-
     def dropEvent(self, event: QDropEvent):
+        items = [item for item in self.items(event.scenePos()) if isinstance(item, SimulatorItem)]
+        item = None if len(items) == 0 else items[0]
+
+        if item == None:
+            parent_item = None
+            position = len(self.sim_items)
+        elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)) and item.parentItem() is None:
+            parent_item = None
+            position = self.sim_items.index(item)
+
+            if item.drop_indicator_position == QAbstractItemView.BelowItem:
+                position += 1
+        elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)):
+            parent_item = item.parentItem()
+            position = parent_item.sim_items.index(item)
+
+            if item.drop_indicator_position == QAbstractItemView.BelowItem:
+                position += 1
+        elif isinstance(item, RuleConditionItem):
+            parent_item = item
+            position = len(parent_item.sim_items)
+
         indexes = list(event.mimeData().text().split("/")[:-1])
 
         group_nodes = []
@@ -673,54 +706,56 @@ class SimulatorScene(QGraphicsScene):
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
         protocols_to_add = [node.protocol for node in nodes_to_add]
 
-
-        self.add_protocols(protocols_to_add)
-
+        self.add_protocols(parent_item, position, protocols_to_add)
         self.update_view()
-
         super().dropEvent(event)
 
     def add_rule(self):
         rule = RuleItem()
-        self.items.append(rule)
+        self.sim_items.append(rule)
         self.addItem(rule)
         self.update_view()
 
     def add_action(self, type):
         action = ActionItem(type)
-        self.items.append(action)
+        self.sim_items.append(action)
         self.addItem(action)
         self.update_view()
 
-    def add_message(self, source=None, destination=None, message_type=[]):
+    def add_message(self, parent_item, position, source=None, destination=None, message_type=[]):
         if source == None:
             source = self.not_assigned_part
 
         if destination == None:
             destination = self.broadcast_part
 
-        simulator_message = MessageItem(source, destination)
+        target_list = self.sim_items if parent_item is None else parent_item.sim_items
+
+        simulator_message = MessageItem(source, destination, parent_item)
 
         for label in message_type:
             simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
 
-        self.items.append(simulator_message)
-        self.addItem(simulator_message)
+        target_list.insert(position, simulator_message)
+
+        if parent_item is None:
+            self.addItem(simulator_message)
+
         self.update_view()
 
     def clear_all(self):
-        for item in self.items[:]:
-            self.items.remove(item)
+        for item in self.sim_items[:]:
+            self.sim_items.remove(item)
             self.removeItem(item)
 
         self.update_view()
 
-    def add_protocols(self, protocols_to_add: list):
+    def add_protocols(self, parent_item, position, protocols_to_add: list):
         for protocol in protocols_to_add:
             for message in protocol.messages:
                 source, destination = self.detect_source_destination(message)
 
-                self.add_message(source, destination, message.message_type)
+                self.add_message(parent_item, position, source, destination, message.message_type)
 
     def detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels

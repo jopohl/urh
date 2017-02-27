@@ -33,7 +33,7 @@ class SimulatorGraphicsView(QGraphicsView):
         else:
             message_type = []
 
-        self.scene().add_message(message_type=message_type)
+        self.scene().add_message(None, len(self.scene().sim_items), message_type=message_type)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):
@@ -87,7 +87,7 @@ class SimulatorGraphicsView(QGraphicsView):
         if len(self.scene().selectedItems()) > 0:
             menu.addAction(self.delete_action)
 
-        if len(self.scene().items) > 0:
+        if len(self.scene().sim_items) > 0:
             menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)

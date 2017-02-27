@@ -590,7 +590,7 @@ class SimulatorScene(QGraphicsScene):
         self.arrange_items()
 
         # resize scrollbar
-        self.setSceneRect(self.itemsBoundingRect())
+        self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0 , 0, 0))
 
     def update_participants(self, participants):
         for key in list(self.participants_dict.keys()):

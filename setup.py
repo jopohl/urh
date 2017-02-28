@@ -95,13 +95,14 @@ def get_ext_modules():
 
 
 def get_device_modules():
+    include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/includes"))
+
     if sys.platform == "win32":
         if platform.architecture()[0] != "64bit":
             return []  # only 64 bit python supported for native device backends
 
         NATIVES = ["rtlsdr", "hackrf"]
         result = []
-        include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
         lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
         for native in NATIVES:
             result.append(Extension("urh.dev.native.lib."+native, ["src/urh/dev/native/lib/{}.cpp".format(native)],
@@ -109,7 +110,6 @@ def get_device_modules():
                           library_dirs=[lib_dir],
                           include_dirs=[include_dir],
                           language="c++"))
-
 
         return result
 
@@ -128,23 +128,25 @@ def get_device_modules():
     scriptdir = os.path.realpath(os.path.dirname(__file__))
     sys.path.append(os.path.realpath(os.path.join(scriptdir, "src", "urh", "dev", "native", "lib")))
     for dev_name, params in devices.items():
-        if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+        if compiler.has_function(params["test_function"], libraries=(params["lib"], ), include_dirs=[include_dir]):
             print("\nWill compile with native {0} support\n".format(params["lib"], dev_name))
             e = Extension("urh.dev.native.lib." + dev_name,
                           ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
                           extra_compile_args=[OPEN_MP_FLAG],
                           extra_link_args=[OPEN_MP_FLAG],
                           language="c++",
+                          include_dirs=[include_dir],
                           libraries=[params["lib"]])
             extensions.append(e)
         elif dev_name in fallbacks:
             print("Trying fallback for {0}".format(dev_name))
             params = fallbacks[dev_name]
             dev_name += "_fallback"
-            if compiler.has_function(params["test_function"], libraries=(params["lib"],)):
+            if compiler.has_function(params["test_function"], libraries=(params["lib"],), include_dirs=[include_dir],):
                 print("\nWill compile with native {0} support\n".format(dev_name))
                 e = Extension("urh.dev.native.lib." + dev_name,
                               ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
+                              include_dirs=[include_dir],
                               extra_compile_args=[OPEN_MP_FLAG],
                               extra_link_args=[OPEN_MP_FLAG],
                               language="c++",

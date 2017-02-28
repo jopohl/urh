@@ -167,18 +167,6 @@ class TestSignalTabGUI(unittest.TestCase):
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
 
     def test_selection_sync(self):
-        # Move selection methods to TextEditProtocolView
-        # Interesting Methods:
-        #
-        #  int QTextCursor::positionInBlock() const
-        #   Returns the relative position of the cursor within the block. The cursor is positioned between characters.
-        #   This is equivalent to position() - block().position().
-        #   This function was introduced in Qt 4.7.
-        #
-        # void QTextCursor::setPosition(int pos, MoveMode m = MoveAnchor)
-        #       QTextCursor::MoveAnchor	0	Moves the anchor to the same position as the cursor itself.
-        #       QTextCursor::KeepAnchor	1	Keeps the anchor where it is.
-        #
         self.frame.ui.gvSignal.selection_area.end = 128440
         self.frame.ui.gvSignal.selection_area.start = 89383
         self.frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)

@@ -1295,24 +1295,14 @@ class CompareFrameController(QFrame):
         active_group_ids = set()
         sel = QItemSelection()
 
-        col_count = self.protocol_model.col_count
         for item in selected_items:
             if item.is_group:
                 active_group_ids.add(self.proto_tree_model.rootItem.index_of(item))
             elif item.show:
                 active_group_ids.add(self.proto_tree_model.rootItem.index_of(item.parent()))
 
-                # rows_for_proto = self.rows_for_protocols[item.protocol]
-                # if len(rows_for_proto) > 0:
-                #     startindex = self.protocol_model.index(rows_for_proto[0], 0)
-                #     endindex = self.protocol_model.index(rows_for_proto[-1], col_count - 1)
-                #     sel.select(startindex, endindex)
-
         if len(active_group_ids) == 0:
             active_group_ids.add(0)
-            show_decoding = False
-        else:
-            show_decoding = True
 
         if active_group_ids == set(self.active_group_ids):
             ignore_table_model_on_update = True

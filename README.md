@@ -30,20 +30,22 @@ yaourt -S urh
 ```
 
 ### Ubuntu/Debian
-```bash
-sudo apt-get update
-sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
-sudo pip3 install urh
-```
-
-__Note__: If you want to use native backends for _RTL-SDR_ or _HackRF_ and installed these drivers using your packet manager, 
+If you want to use native backends for _RTL-SDR_ or _HackRF_ and installed these drivers using your packet manager, 
 you need to create the appropriate symlink:
 ```bash
 sudo ln -s /usr/lib/x86_64-linux-gnu/librtlsdr.so.0 /usr/lib/x86_64-linux-gnu/librtlsdr.so
 sudo ln -s /usr/lib/x86_64-linux-gnu/libhackrf.so.0 /usr/lib/x86_64-linux-gnu/libhackrf.so
 ```
 
-__before__ installing URH.
+__before__ installing URH, with:.
+
+```bash
+sudo apt-get update
+sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
+sudo pip3 install urh
+```
+
+
 
 ### Windows
 1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools).

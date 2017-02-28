@@ -37,7 +37,7 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/librtlsdr.so.0 /usr/lib/x86_64-linux-gnu/li
 sudo ln -s /usr/lib/x86_64-linux-gnu/libhackrf.so.0 /usr/lib/x86_64-linux-gnu/libhackrf.so
 ```
 
-__before__ installing URH, with:.
+__before__ installing URH, using:
 
 ```bash
 sudo apt-get update

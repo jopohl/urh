@@ -19,6 +19,9 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.frame = self.form.signal_tab_controller.signal_frames[0]
+        self.frame.signal.noise_threshold = 0.0023
+        self.frame.signal.qad_center = 0.3817
+        #self.frame.bit
 
     def test_close_all(self):
         self.form.close_all()
@@ -162,3 +165,26 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
+
+    def test_selection_sync(self):
+        # Move selection methods to TextEditProtocolView
+        # Interesting Methods:
+        #
+        #  int QTextCursor::positionInBlock() const
+        #   Returns the relative position of the cursor within the block. The cursor is positioned between characters.
+        #   This is equivalent to position() - block().position().
+        #   This function was introduced in Qt 4.7.
+        #
+        # void QTextCursor::setPosition(int pos, MoveMode m = MoveAnchor)
+        #       QTextCursor::MoveAnchor	0	Moves the anchor to the same position as the cursor itself.
+        #       QTextCursor::KeepAnchor	1	Keeps the anchor where it is.
+        # QString QTextCursor::selectedText() const
+        #   Returns the current selection's text (which may be empty).
+        #   This only returns the text, with no rich text formatting information.
+        #   If you want a document fragment (i.e. formatted rich text) use selection() instead.
+        #   Note: If the selection obtained from an editor spans a line break,
+        #   the text will contain a Unicode U+2029 paragraph separator character instead of a newline \n character.
+        #   Use QString::replace() to replace these characters with newlines.
+        #
+        # Todo: Test with and without Line break mode
+        pass

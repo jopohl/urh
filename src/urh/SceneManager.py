@@ -54,7 +54,7 @@ class SceneManager(QObject):
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)
 
-    def init_scene(self):
+    def init_scene(self, apply_padding=True):
         self.set_text("")
 
         if self.num_samples == 0:
@@ -65,12 +65,14 @@ class SceneManager(QObject):
         else:
             minimum, maximum = self.minimum, self.maximum
 
+        padding = self.padding if apply_padding else 1
+
         if abs(minimum) > abs(maximum):
-            minimum = -self.padding * abs(minimum)
-            maximum = -self.padding * minimum
+            minimum = -padding * abs(minimum)
+            maximum = -padding * minimum
         else:
-            maximum = self.padding*abs(maximum)
-            minimum = -self.padding*maximum
+            maximum = padding * abs(maximum)
+            minimum = -padding * maximum
 
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
         self.scene.setBackgroundBrush(constants.BGCOLOR)

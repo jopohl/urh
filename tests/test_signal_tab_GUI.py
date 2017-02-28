@@ -21,7 +21,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame = self.form.signal_tab_controller.signal_frames[0]
         self.frame.signal.noise_threshold = 0.0023
         self.frame.signal.qad_center = 0.3817
-        #self.frame.bit
+        self.frame.signal.bit_len = 84
 
     def test_close_all(self):
         self.form.close_all()

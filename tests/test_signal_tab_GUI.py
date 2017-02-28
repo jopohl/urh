@@ -187,4 +187,11 @@ class TestSignalTabGUI(unittest.TestCase):
         #   Use QString::replace() to replace these characters with newlines.
         #
         # Todo: Test with and without Line break mode
-        pass
+        self.frame.ui.gvSignal.selection_area.end = self.frame.signal.num_samples
+        self.frame.ui.gvSignal.selection_area.start = 89383
+        self.frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, self.frame.signal.num_samples)
+        QTest.qWait(100)
+
+        self.assertEqual(self.frame.proto_analyzer.messages[0].plain_bits_str, self.frame.ui.txtEdProto.selected_text)
+
+

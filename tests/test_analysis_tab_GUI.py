@@ -130,6 +130,7 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
     def test_show_in_interpretation(self):
         self.form.ui.tabWidget.setCurrentIndex(1)
+        self.assertEqual(self.form.ui.tabWidget.currentIndex(), 1)
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
 
         self.cfc.ui.tblViewProtocol.selectRow(1)

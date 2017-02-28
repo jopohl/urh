@@ -16,7 +16,7 @@ class SceneManager(QObject):
         self.scene = ZoomableScene()
         self.plot_data = np.array([0] * 100)
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
-        self.text_item = self.scene.addText("", QFont("Helvetica", 20))
+        self.text_item = self.scene.addText("", QFont("Helvetica"))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
 

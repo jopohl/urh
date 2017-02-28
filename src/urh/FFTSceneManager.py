@@ -22,7 +22,7 @@ class FFTSceneManager(SceneManager):
         self.peak_item = self.scene.addPath(QPainterPath(), QPen(constants.PEAK_COLOR, Qt.FlatCap))
         """:type: QGraphicsPathItem """
 
-        font = QFont("Helvetica", 20)
+        font = QFont("Helvetica")
         font.setStyleHint(QFont.SansSerif, QFont.OpenGLCompatible)
         self.text_item = self.scene.addText("", font)
 

@@ -75,10 +75,13 @@ def get_package_data():
 
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.pyx", "*.pxd"]
 
+    # Bundle headers
+    package_data["urh.dev.native.includes"] = ["*.h"]
+    package_data["urh.dev.native.includes.libhackrf"] = ["*.h"]
+
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows
         package_data["urh.dev.native.lib.win"] = ["*"]
-        package_data["urh.dev.native.lib.win.libhackrf"] = ["*"]
 
     return package_data
 

@@ -127,3 +127,12 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
         create_label_action = next(a for a in menu.actions() if a.text() == "Add protocol label")
         self.assertFalse(create_label_action.isEnabled())
+
+    def test_show_in_interpretation(self):
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
+
+        self.cfc.ui.tblViewProtocol.selectRow(1)
+        min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
+        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, max_row, start, end - 1)
+        self.assertEqual(self.form.ui.tabWidget.currentIndex(), 0)

@@ -14,11 +14,12 @@ class TextEditProtocolView(QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.cur_view = 0
-        self.participants = None
-        """:type: list of Participant """
+        self.participants = None  # type: list[Participant]
+        self.messages = None  # type: list[Message]
 
-        self.messages = None
-        """:type: list of Message """
+    @property
+    def selected_text(self):
+        return self.textCursor().selectedText().replace('\u2028', '\n')
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:

@@ -36,6 +36,15 @@ sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ 
 sudo pip3 install urh
 ```
 
+__Note__: If you want to use native backends for _RTL-SDR_ or _HackRF_ and installed these drivers using your packet manager, 
+you need to create the appropriate symlink:
+```bash
+sudo ln -s /usr/lib/x86_64-linux-gnu/librtlsdr.so.0 /usr/lib/x86_64-linux-gnu/librtlsdr.so
+sudo ln -s /usr/lib/x86_64-linux-gnu/libhackrf.so.0 /usr/lib/x86_64-linux-gnu/libhackrf.so
+```
+
+__before__ installing URH.
+
 ### Windows
 1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools).
 2. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ version!

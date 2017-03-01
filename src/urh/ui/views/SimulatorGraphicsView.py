@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QGraphicsView, QAction, QMenu
+from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from urh.ui.SimulatorScene import ParticipantItem, ActionType
+from urh.ui.SimulatorScene import MessageItem, RuleConditionItem, ParticipantItem, ActionItem, ActionType, SimulatorItem
 
 class SimulatorGraphicsView(QGraphicsView):
 
@@ -28,24 +28,55 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        if self.sender() in self.message_type_actions:
-            message_type = self.message_type_actions[self.sender()]
-        else:
-            message_type = []
+        parent_item = None
 
-        self.scene().add_message(None, len(self.scene().sim_items), message_type=message_type)
+        if self.context_menu_item == None:
+            position = len(self.scene().sim_items)
+        elif (isinstance(self.context_menu_item, MessageItem) or
+                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
+            position = self.scene().sim_items.index(self.context_menu_item)
+        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
+            parent_item = self.context_menu_item.parentItem()
+            position = parent_item.sim_items.index(self.context_menu_item)
+        elif isinstance(self.context_menu_item, RuleConditionItem):
+            parent_item = self.context_menu_item
+            position = len(parent_item.sim_items)
+
+        message_type = [] if not self.sender().data() else self.sender().data()
+
+        self.scene().add_message(parent_item, position, message_type=message_type)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):
-        self.scene().add_rule()
+        if self.context_menu_item == None:
+            position = len(self.scene().sim_items)
+        elif (isinstance(self.context_menu_item, MessageItem) or
+                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
+            position = self.scene().sim_items.index(self.context_menu_item)
+        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
+            position = self.scene().sim_items.index(self.context_menu_item.parentItem().parentItem())
+        elif isinstance(self.context_menu_item, RuleConditionItem):
+            position = self.scene().sim_items.index(self.context_menu_item.parentItem())
+        
+        self.scene().add_rule(position)
 
     @pyqtSlot()
-    def on_add_goto_action_triggered(self):
-        self.scene().add_action(ActionType.goto)
+    def on_add_action_triggered(self):
+        parent_item = None
 
-    @pyqtSlot()
-    def on_add_external_program_action_triggered(self):
-        self.scene().add_action(ActionType.external_program)
+        if self.context_menu_item == None:
+            position = len(self.scene().sim_items)
+        elif (isinstance(self.context_menu_item, MessageItem) or
+                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
+            position = self.scene().sim_items.index(self.context_menu_item)
+        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
+            parent_item = self.context_menu_item.parentItem()
+            position = parent_item.sim_items.index(self.context_menu_item)
+        elif isinstance(self.context_menu_item, RuleConditionItem):
+            parent_item = self.context_menu_item
+            position = len(parent_item.sim_items)
+
+        self.scene().add_action(parent_item, position, type=self.sender().data())
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
@@ -59,6 +90,33 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_clear_all_action_triggered(self):
         self.scene().clear_all()
 
+    @pyqtSlot()
+    def on_add_else_if_cond_action_triggered(self):
+        self.context_menu_item.parentItem().add_else_if_cond()
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_add_else_cond_action_triggered(self):
+        self.context_menu_item.parentItem().add_else_cond()
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_source_action_triggered(self):
+        self.context_menu_item.source = self.sender().data()
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_destination_action_triggered(self):
+        self.context_menu_item.destination = self.sender().data()
+        self.scene().update_view()
+
+    @pyqtSlot()
+    def on_swap_part_action_triggered(self):
+        tmp = self.context_menu_item.source
+        self.context_menu_item.source = self.context_menu_item.destination
+        self.context_menu_item.destination = tmp
+        self.scene().update_view()
+
     def create_context_menu(self):
         menu = QMenu()
 
@@ -66,40 +124,92 @@ class SimulatorGraphicsView(QGraphicsView):
         add_message_action.triggered.connect(self.on_add_message_action_triggered)
 
         message_type_menu = menu.addMenu("Add message with message type ...")
-        self.message_type_actions = {}
 
         for message_type in self.proto_analyzer.message_types:
             action = message_type_menu.addAction(message_type.name)
+            action.setData(message_type)
             action.triggered.connect(self.on_add_message_action_triggered)
-            self.message_type_actions[action] = message_type
 
         add_rule_action = menu.addAction("Add rule")
         add_rule_action.triggered.connect(self.on_add_rule_action_triggered)
 
         action_menu = menu.addMenu("Add action")
         add_goto_action = action_menu.addAction("Goto")
-        add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
+        add_goto_action.triggered.connect(self.on_add_action_triggered)
+        add_goto_action.setData(ActionType.goto)
         add_external_program_action = action_menu.addAction("External program")
-        add_external_program_action.triggered.connect(self.on_add_external_program_action_triggered)
+        add_external_program_action.setData(ActionType.external_program)
+        add_external_program_action.triggered.connect(self.on_add_action_triggered)
+
+        if isinstance(self.context_menu_item, RuleConditionItem):
+            menu.addSeparator()
+
+            add_else_if_cond_action = menu.addAction("Add else if block")
+            add_else_if_cond_action.triggered.connect(self.on_add_else_if_cond_action_triggered)
+
+            if not self.context_menu_item.parentItem().has_else_condition():
+                add_else_cond_action = menu.addAction("Add else block")
+                add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
+
+        if isinstance(self.context_menu_item, MessageItem):
+            menu.addSeparator()
+
+            source_group = QActionGroup(self.scene())
+            source_menu = menu.addMenu("Source")
+
+            for particpnt in self.scene().participants:
+                if self.context_menu_item.destination == particpnt:
+                    continue
+
+                if particpnt == self.scene().broadcast_part:
+                    continue
+
+                pa = source_menu.addAction(particpnt.text.toPlainText())
+                pa.setCheckable(True)
+                pa.setActionGroup(source_group)
+
+                if self.context_menu_item.source == particpnt:
+                    pa.setChecked(True)
+
+                pa.setData(particpnt)
+                pa.triggered.connect(self.on_source_action_triggered)
+
+            destination_group = QActionGroup(self.scene())
+            destination_menu = menu.addMenu("Destination")
+
+            for particpnt in self.scene().participants:
+                if self.context_menu_item.source == particpnt:
+                    continue
+
+                pa = destination_menu.addAction(particpnt.text.toPlainText())
+                pa.setCheckable(True)
+                pa.setActionGroup(destination_group)
+
+                if self.context_menu_item.destination == particpnt:
+                    pa.setChecked(True)
+
+                pa.setData(particpnt)
+                pa.triggered.connect(self.on_destination_action_triggered)
+
+            if self.context_menu_item.destination != self.scene().broadcast_part:
+                swap_part_action = menu.addAction("Swap source and destination")
+                swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
 
         menu.addSeparator()
 
-        if len(self.scene().selectedItems()) > 0:
-            menu.addAction(self.delete_action)
-
         if len(self.scene().sim_items) > 0:
-            menu.addAction(self.select_all_action)
+            #menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
 
         return menu
 
     def contextMenuEvent(self, event):
-        item = self.itemAt(event.pos())
+        items = [item for item in self.items(event.pos()) if isinstance(item, SimulatorItem)]
+        self.context_menu_item = None if len(items) == 0 else items[0]
 
-        if type(item) is not ParticipantItem and item is not None:
-            super().contextMenuEvent(event)
-            return
+        if self.context_menu_item:
+            self.context_menu_item.setSelected(True)
 
         menu = self.create_context_menu()
         action = menu.exec_(event.globalPos())

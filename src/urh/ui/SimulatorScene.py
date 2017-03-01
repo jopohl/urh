@@ -103,6 +103,12 @@ class RuleItem(QGraphicsItem):
 
         return messages
 
+    def add_else_cond(self):
+        self.conditions.append(RuleConditionItem(ConditionType.ELSE, self))
+
+    def add_else_if_cond(self):
+        self.conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self))
+
     def setSelected(self, selected):
         for condition in self.conditions:
             condition.setSelected(selected)
@@ -204,108 +210,6 @@ class RuleConditionItem(SimulatorItem):
             if item in items:
                 self.sim_items.remove(item)
                 self.scene().removeItem(item)
-
-    @pyqtSlot()
-    def on_add_message_action_triggered(self):
-        source = self.scene().not_assigned_part
-        destination = self.scene().broadcast_part
-
-        if self.sender() in self.message_type_actions:
-            message_type = self.message_type_actions[self.sender()]
-        else:
-            message_type = []
-            
-        simulator_message = MessageItem(source, destination, self)
-
-        for label in message_type:
-            simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
-
-        self.sim_items.append(simulator_message)
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_add_goto_action_triggered(self):
-        action = ActionItem(ActionType.goto, self)
-        self.sim_items.append(action)
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_add_external_program_action_triggered(self):
-        action = ActionItem(ActionType.external_program, self)
-        self.sim_items.append(action)
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_add_else_if_cond_action_triggered(self):
-        self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self.parentItem()))
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_add_else_cond_action_triggered(self):
-        self.parentItem().conditions.append(RuleConditionItem(ConditionType.ELSE, self.parentItem()))
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_remove_rule_action_triggered(self):
-        scene = self.scene()
-        scene.sim_items.remove(self.parentItem())
-        scene.removeItem(self.parentItem())
-        scene.update_view()
-
-    @pyqtSlot()
-    def on_remove_cond_action_triggered(self):
-        scene = self.scene()
-        self.parentItem().conditions.remove(self)
-        scene.removeItem(self)
-        scene.update_view()
-
-    def create_context_menu(self):
-        menu = QMenu()
-
-        add_message_action = menu.addAction("Add empty message")
-        add_message_action.triggered.connect(self.on_add_message_action_triggered)
-
-        message_type_menu = menu.addMenu("Add message with message type ...")
-        self.message_type_actions = {}
-
-        for message_type in self.scene().controller.proto_analyzer.message_types:
-            action = message_type_menu.addAction(message_type.name)
-            self.message_type_actions[action] = message_type
-            action.triggered.connect(self.on_add_message_action_triggered)
-
-        action_menu = menu.addMenu("Add action")
-        add_goto_action = action_menu.addAction("Goto")
-        add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
-        add_external_program_action = action_menu.addAction("External program")
-        add_external_program_action.triggered.connect(self.on_add_external_program_action_triggered)
-
-        menu.addSeparator()
-
-        add_else_if_cond_action = menu.addAction("Add else if block")
-        add_else_if_cond_action.triggered.connect(self.on_add_else_if_cond_action_triggered)
-
-        if not self.parentItem().has_else_condition():
-            add_else_cond_action = menu.addAction("Add else block")
-            add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
-
-        menu.addSeparator()
-
-        remove_rule_action = menu.addAction("Remove rule")
-        remove_rule_action.triggered.connect(self.on_remove_rule_action_triggered)
-
-        if self.type == ConditionType.ELSE_IF:
-            remove_else_if_cond_action = menu.addAction("Remove else if block")
-            remove_else_if_cond_action.triggered.connect(self.on_remove_cond_action_triggered)
-        elif self.type == ConditionType.ELSE:
-            remove_else_cond_action = menu.addAction("Remove else block")
-            remove_else_cond_action.triggered.connect(self.on_remove_cond_action_triggered)
-
-        return menu
-
-    def contextMenuEvent(self, event):
-        menu = self.create_context_menu()
-        self.setSelected(True)
-        action = menu.exec_(event.screenPos())
 
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
@@ -418,94 +322,6 @@ class MessageItem(SimulatorItem):
         self.arrow.setLine(self.source.line.line().x1(), y_pos, self.destination.line.line().x1(), y_pos)
         
         super().update()
-
-    @pyqtSlot()
-    def on_del_action_triggered(self):
-        scene = self.scene()
-
-        if self.parentItem() is None:
-            scene.sim_items.remove(self)
-        else:
-            self.parentItem().sim_items.remove(self)
-
-        scene.removeItem(self)
-        scene.update_view()
-
-    @pyqtSlot()
-    def on_source_action_triggered(self):
-        self.source = self.source_actions[self.sender()]
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_destination_action_triggered(self):
-        self.destination = self.destination_actions[self.sender()]
-        self.scene().update_view()
-
-    @pyqtSlot()
-    def on_swap_part_action_triggered(self):
-        tmp = self.source
-        self.source = self.destination
-        self.destination = tmp
-        self.scene().update_view()
-
-    def create_context_menu(self):
-        menu = QMenu()
-        scene = self.scene()
-
-        del_action = menu.addAction("Delete message")
-        del_action.triggered.connect(self.on_del_action_triggered)
-
-        menu.addSeparator()
-
-        source_group = QActionGroup(scene)
-        source_menu = menu.addMenu("Source")
-        self.source_actions = {}
-
-        for particpnt in scene.participants:
-            if self.destination == particpnt:
-                continue
-
-            if particpnt == scene.broadcast_part:
-                continue
-
-            pa = source_menu.addAction(particpnt.text.toPlainText())
-            pa.setCheckable(True)
-            pa.setActionGroup(source_group)
-
-            if self.source == particpnt:
-                pa.setChecked(True)
-
-            self.source_actions[pa] = particpnt
-            pa.triggered.connect(self.on_source_action_triggered)
-
-        destination_group = QActionGroup(scene)
-        destination_menu = menu.addMenu("Destination")
-        self.destination_actions = {}
-
-        for particpnt in scene.participants:
-            if self.source == particpnt:
-                continue
-
-            pa = destination_menu.addAction(particpnt.text.toPlainText())
-            pa.setCheckable(True)
-            pa.setActionGroup(destination_group)
-
-            if self.destination == particpnt:
-                pa.setChecked(True)
-
-            self.destination_actions[pa] = particpnt
-            pa.triggered.connect(self.on_destination_action_triggered)
-
-        if self.destination != scene.broadcast_part:
-            swap_part_action = menu.addAction("Swap source and destination")
-            swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
-
-        return menu
-
-    def contextMenuEvent(self, event):
-        menu = self.create_context_menu()
-        self.setSelected(True)
-        action = menu.exec_(event.screenPos())
 
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
@@ -666,18 +482,15 @@ class SimulatorScene(QGraphicsScene):
         elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)) and item.parentItem() is None:
             parent_item = None
             position = self.sim_items.index(item)
-
-            if item.drop_indicator_position == QAbstractItemView.BelowItem:
-                position += 1
         elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)):
             parent_item = item.parentItem()
             position = parent_item.sim_items.index(item)
-
-            if item.drop_indicator_position == QAbstractItemView.BelowItem:
-                position += 1
         elif isinstance(item, RuleConditionItem):
             parent_item = item
             position = len(parent_item.sim_items)
+
+        if item and item.drop_indicator_position == QAbstractItemView.BelowItem:
+            position += 1
 
         indexes = list(event.mimeData().text().split("/")[:-1])
 
@@ -710,16 +523,20 @@ class SimulatorScene(QGraphicsScene):
         self.update_view()
         super().dropEvent(event)
 
-    def add_rule(self):
+    def add_rule(self, position):
         rule = RuleItem()
-        self.sim_items.append(rule)
+        self.sim_items.insert(position, rule)
         self.addItem(rule)
         self.update_view()
 
-    def add_action(self, type):
-        action = ActionItem(type)
-        self.sim_items.append(action)
-        self.addItem(action)
+    def add_action(self, parent_item, position, type):
+        target_list = self.sim_items if parent_item is None else parent_item.sim_items
+        action = ActionItem(type, parent_item)
+        target_list.insert(position, action)
+
+        if parent_item is None:
+            self.addItem(action)
+
         self.update_view()
 
     def add_message(self, parent_item, position, source=None, destination=None, message_type=[]):

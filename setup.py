@@ -1,6 +1,7 @@
 import os
 import sys
 import platform
+from collections import defaultdict
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
@@ -135,9 +136,44 @@ def get_device_modules():
         "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 
+    # None = automatic (depending on lib is installed)
+    # True = install extension always
+    # False = Do not install extension
+    BUILD_DEVICE_EXTENSIONS = defaultdict(lambda: None)
+
+    for dev_name in devices:
+        with_option = "--with-"+dev_name
+        without_option = "--without-"+dev_name
+
+        if with_option in sys.argv and without_option in sys.argv:
+            print("ambiguous options for "+dev_name)
+            sys.exit(1)
+        elif with_option in sys.argv:
+            BUILD_DEVICE_EXTENSIONS[dev_name] = True
+            sys.argv.remove(with_option)
+        elif without_option in sys.argv:
+            BUILD_DEVICE_EXTENSIONS[dev_name] = False
+            sys.argv.remove(without_option)
+
     scriptdir = os.path.realpath(os.path.dirname(__file__))
     sys.path.append(os.path.realpath(os.path.join(scriptdir, "src", "urh", "dev", "native", "lib")))
     for dev_name, params in devices.items():
+        if BUILD_DEVICE_EXTENSIONS[dev_name] == False:
+            print("Skipping native {0} support".format(dev_name))
+            continue
+        if BUILD_DEVICE_EXTENSIONS[dev_name] == True:
+            print("\nEnforcing native {0} support\n".format(params["lib"], dev_name))
+            e = Extension("urh.dev.native.lib." + dev_name,
+                          ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
+                          extra_compile_args=[OPEN_MP_FLAG],
+                          extra_link_args=[OPEN_MP_FLAG],
+                          language="c++",
+                          include_dirs=[include_dir],
+                          library_dirs=library_dirs,
+                          libraries=[params["lib"]])
+            extensions.append(e)
+            continue
+
         if compiler.has_function(params["test_function"],
                                  libraries=(params["lib"], ),
                                  library_dirs=library_dirs,

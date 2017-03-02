@@ -15,7 +15,6 @@ from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoder import Encoder
-from urh.ui.CustomDialog import CustomDialog
 from urh.ui.ui_decoding import Ui_Decoder
 from urh.util.ProjectManager import ProjectManager
 

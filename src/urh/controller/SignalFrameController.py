@@ -4,7 +4,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
-    QApplication
+    QApplication, QCheckBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -300,13 +300,22 @@ class SignalFrameController(QFrame):
 
     def my_close(self):
         settings = constants.SETTINGS
-        not_show = settings.value('not_show_close_dialog', False)
+        not_show = settings.value('not_show_close_dialog', False, type=bool)
 
         if not not_show:
-            ok, not_show_again = CustomDialog.dialog(self, "Do you want to close?", "close")
+            cb = QCheckBox("Do not show this again.")
+            msgbox = QMessageBox(QMessageBox.Question, "Confirm close", "Are you sure you want to close?")
+            msgbox.addButton(QMessageBox.Yes)
+            msgbox.addButton(QMessageBox.No)
+            msgbox.setDefaultButton(QMessageBox.No)
+            msgbox.setCheckBox(cb)
+
+            reply = msgbox.exec()
+
+            not_show_again = bool(cb.isChecked())
             settings.setValue("not_show_close_dialog", not_show_again)
             self.not_show_again_changed.emit()
-            if not ok:
+            if reply != QMessageBox.Yes:
                 return
 
         self.closed.emit(self)

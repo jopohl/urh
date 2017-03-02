@@ -4,7 +4,7 @@ import os
 import sys
 
 from urh import constants
-from urh.plugins.Plugin import Plugin, ProtocolPlugin, LabelAssignPlugin
+from urh.plugins.Plugin import Plugin, ProtocolPlugin
 from urh.util.Logger import logger
 
 
@@ -23,10 +23,6 @@ class PluginManager(object):
     @property
     def protocol_plugins(self):
         return [p for p in self.installed_plugins if isinstance(p, ProtocolPlugin)]
-
-    @property
-    def label_assign_plugins(self):
-        return [p for p in self.installed_plugins if isinstance(p, LabelAssignPlugin)]
 
     def load_installed_plugins(self):
         """ :rtype: list of Plugin """

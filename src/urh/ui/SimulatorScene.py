@@ -233,6 +233,43 @@ class LabelItem(QGraphicsTextItem):
     def value(self):
         return "1::seq + 1"
 
+class DataItem(QGraphicsTextItem):
+    def __init__(self, plain_bits, parent=None):
+        super().__init__(parent)
+        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font.setPointSize(8)
+        self.setFont(font)
+        self.setPlainText("...")
+
+        self.__plain_bits = plain_bits
+
+    @property
+    def plain_bits(self):
+        """
+
+        :rtype: list[bool]
+        """
+        return self.__plain_bits
+
+    def __str__(self):
+        return self.bits2string(self.plain_bits)
+
+    def bits2string(self, bits) -> str:
+        """
+
+        :type bits: list[bool]
+        """
+        return "".join("1" if bit else "0" for bit in bits)
+
+    @property
+    def name(self):
+        return "[Unlabeled data]"
+
+    @property
+    def value(self):
+        return str(self)
+
+
 class ActionType(Enum):
     external_program = 0
     goto = 1
@@ -298,9 +335,9 @@ class MessageItem(SimulatorItem):
         width += 5 * (len(self.labels) - 1)
         return width
 
-    def add_label(self, label: LabelItem):
-        label.setParentItem(self)
-        self.labels.append(label)
+    def add_item(self, item):
+        item.setParentItem(self)
+        self.labels.append(item)
 
     def update(self, y_pos):
         arrow_width = abs(self.source.line.line().x1() - self.destination.line.line().x1())
@@ -551,7 +588,37 @@ class SimulatorScene(QGraphicsScene):
         simulator_message = MessageItem(source, destination, parent_item)
 
         for label in message_type:
-            simulator_message.add_label(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            simulator_message.add_item(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+
+        target_list.insert(position, simulator_message)
+
+        if parent_item is None:
+            self.addItem(simulator_message)
+
+        self.update_view()
+
+    def add_message_from_message(self, parent_item, position, message, source=None, destination=None):
+        if source == None:
+            source = self.not_assigned_part
+
+        if destination == None:
+            destination = self.broadcast_part
+
+        target_list = self.sim_items if parent_item is None else parent_item.sim_items
+
+        simulator_message = MessageItem(source, destination, parent_item)
+
+        start = 0
+
+        for label in message.message_type:
+            if label.start > start:
+                simulator_message.add_item(DataItem(message.plain_bits[start:label.start]))
+
+            simulator_message.add_item(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            start = label.end
+
+        if start < len(message) - 1:
+            simulator_message.add_item(DataItem(message.plain_bits[start:len(message)]))
 
         target_list.insert(position, simulator_message)
 
@@ -572,19 +639,17 @@ class SimulatorScene(QGraphicsScene):
             for message in protocol.messages:
                 source, destination = self.detect_source_destination(message)
 
-                self.add_message(parent_item, position, source, destination, message.message_type)
+                self.add_message_from_message(parent_item, position, message, source, destination)
+                position += 1
 
     def detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels
         participants = self.controller.project_manager.participants
 
-        source = None
-        destination = None
+        source = self.not_assigned_part
+        destination = self.broadcast_part
 
-        if len(participants) == 0:
-            source = self.not_assigned_part
-            destination = self.broadcast_part
-        elif len(participants) == 1:
+        if len(participants) == 1:
             source = self.participants_dict[participants[0]]
             destination = self.broadcast_part
         else:

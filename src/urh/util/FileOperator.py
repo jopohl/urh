@@ -54,7 +54,7 @@ def uncompress_archives(filenames, temp_dir):
     return fileNames
 
 
-def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="Save signal"):
+def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal"):
     global RECENT_PATH
     if caption == "Save signal":
         filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) (*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
@@ -62,6 +62,8 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
             filter = "wav files (*.wav);;all files (*)"
     elif caption == "Save fuzz profile":
         filter = "Fuzzfiles (*.fuzz);;All files (*)"
+    elif caption == "Save encoding":
+        filter = ""
     else:
         filter = "Protocols (*.proto);;All files (*)"
 
@@ -86,7 +88,7 @@ def get_save_file_name(initial_name: str, wav_only=False, parent=None, caption="
 
 
 def save_data_dialog(signalname: str, data, wav_only=False, parent=None) -> str:
-    filename = get_save_file_name(signalname, wav_only, parent)
+    filename = get_save_file_name(signalname, wav_only)
 
     if filename:
         try:

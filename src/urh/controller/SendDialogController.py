@@ -79,7 +79,7 @@ class SendDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_graphics_view_save_as_clicked(self):
-        filename = FileOperator.get_save_file_name("signal.complex", parent=self)
+        filename = FileOperator.get_save_file_name("signal.complex")
         if filename:
             try:
                 self.scene_manager.signal.save_as(filename)

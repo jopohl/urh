@@ -836,7 +836,7 @@ class CompareFrameController(QFrame):
                     break
 
         text = "protocol"
-        filename = FileOperator.get_save_file_name("{0}.proto".format(text), parent=self, caption="Save protocol")
+        filename = FileOperator.get_save_file_name("{0}.proto".format(text), caption="Save protocol")
 
         if not filename:
             return

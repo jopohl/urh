@@ -93,6 +93,8 @@ def main():
     if sys.platform == "darwin":
         menu_bar = main_window.menuBar()
         menu_bar.setNativeMenuBar(False)
+        import multiprocessing as mp
+        mp.set_start_method("spawn")  # prevent errors with forking in native RTL-SDR backend
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube

@@ -19,6 +19,9 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.frame = self.form.signal_tab_controller.signal_frames[0]
+        self.frame.signal.noise_threshold = 0.0023
+        self.frame.signal.qad_center = 0.3817
+        self.frame.signal.bit_len = 84
 
     def test_close_all(self):
         self.form.close_all()
@@ -162,3 +165,16 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
+
+    def test_selection_sync(self):
+        self.frame.ui.gvSignal.selection_area.end = 128440
+        self.frame.ui.gvSignal.selection_area.start = 89383
+        self.frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
+        QTest.qWait(100)
+        self.assertEqual(self.frame.proto_analyzer.messages[0].plain_bits_str, self.frame.ui.txtEdProto.selected_text)
+        self.frame.ui.txtEdProto.show_proto_clicked.emit()
+        QTest.qWait(100)
+        self.assertAlmostEqual((128440 - 89383) / 1000000,
+                               (self.frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
+
+

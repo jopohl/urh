@@ -942,8 +942,7 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
-        font = self.ui.lineEditSignalName.font()
-        """:type: QFont """
+        font = self.ui.lineEditSignalName.font()  # type: QFont
         if self.signal.changed:
             font.setBold(True)
             self.ui.btnSaveSignal.show()

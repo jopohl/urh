@@ -1,10 +1,10 @@
 import os
-import shutil
 import sys
 import tempfile
 from subprocess import call
 
 build_dir = os.path.join(tempfile.gettempdir(), "build")
+
 
 def main():
     cur_dir = os.path.realpath(__file__)

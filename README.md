@@ -18,11 +18,17 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 ## Installation
-### Requirements
+### Dependencies
+#### Required
 - Python 3.4+
 - numpy / psutil / zmq
 - PyQt5
 - C++ Compiler
+
+#### Optional
+- librtlsdr (for native RTL-SDR device backend)
+- libhackrf (for native HackRF device backend)
+- gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
 ### Arch Linux
 ```bash
@@ -30,11 +36,22 @@ yaourt -S urh
 ```
 
 ### Ubuntu/Debian
+If you want to use native backends for _RTL-SDR_ or _HackRF_ and installed these drivers using your packet manager, 
+you need to create the appropriate symlink:
+```bash
+sudo ln -s /usr/lib/x86_64-linux-gnu/librtlsdr.so.0 /usr/lib/x86_64-linux-gnu/librtlsdr.so
+sudo ln -s /usr/lib/x86_64-linux-gnu/libhackrf.so.0 /usr/lib/x86_64-linux-gnu/libhackrf.so
+```
+
+__before__ installing URH, using:
+
 ```bash
 sudo apt-get update
 sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
 ```
+
+
 
 ### Windows
 1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools).

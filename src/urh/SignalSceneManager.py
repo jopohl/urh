@@ -13,7 +13,7 @@ class SignalSceneManager(SceneManager):
     def __init__(self, signal: Signal, parent):
         super().__init__(parent)
         self.signal = signal
-        self.text_item = self.scene.addText("Loading...", QFont("Helvetica", 72))
+        self.text_item = self.scene.addText("Loading...", QFont("Helvetica"))
         self.scene_type = 0  # 0 = Analog Signal, 1 = QuadDemodView
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
@@ -34,9 +34,10 @@ class SignalSceneManager(SceneManager):
                 self.minimum, self.maximum = 0, self.padding * np.max(self.signal.qad)
             else:
                 self.minimum, self.maximum = 0, self.padding * noise_val
+
             self.plot_data = self.signal.qad
 
-        super().init_scene()
+        super().init_scene(apply_padding=self.scene_type == 0)
         self.minimum, self.maximum = stored_minimum, stored_maximum
 
         self.line_item.setLine(0, 0, 0, 0)  # Hide Axis

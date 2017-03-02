@@ -1,7 +1,5 @@
 import unittest
 
-from PyQt5.QtTest import QTest
-
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from tests.utils_testing import get_path_for_data_file

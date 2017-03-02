@@ -25,7 +25,6 @@ elif sys.platform == "darwin":
 else:
     OPEN_MP_FLAG = "-fopenmp"
 
-
 COMPILER_DIRECTIVES = {'language_level': 3,
                        'cdivision': True,
                        'wraparound': False,
@@ -98,35 +97,15 @@ def get_ext_modules():
     return extensions
 
 
+def __get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list, use_cython=False):
+    file_ext = "pyx" if use_cython else "cpp"
+    return Extension("urh.dev.native.lib." + dev_name, ["src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)],
+                     libraries=libraries, library_dirs=library_dirs,
+                     include_dirs=include_dirs, language="c++")
+
+
 def get_device_modules():
     include_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/includes"))
-
-    if sys.platform == "win32":
-        if platform.architecture()[0] != "64bit":
-            return []  # only 64 bit python supported for native device backends
-
-        NATIVES = ["rtlsdr", "hackrf"]
-        result = []
-        lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
-        for native in NATIVES:
-            result.append(Extension("urh.dev.native.lib."+native, ["src/urh/dev/native/lib/{}.cpp".format(native)],
-                          libraries=[native],
-                          library_dirs=[lib_dir],
-                          include_dirs=[include_dir],
-                          language="c++"))
-
-        return result
-
-    compiler = ccompiler.new_compiler()
-
-    if sys.platform == "darwin":
-        # On Mac OS X clang is by default not smart enough to search in the lib dir
-        # see: https://github.com/jopohl/urh/issues/173
-        library_dirs = ["/usr/local/lib"]
-    else:
-        library_dirs = []
-
-    extensions = []
     devices = {
         "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
         "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
@@ -136,84 +115,79 @@ def get_device_modules():
         "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
     }
 
+    if sys.platform == "win32":
+        if platform.architecture()[0] != "64bit":
+            return []  # only 64 bit python supported for native device backends
+
+        result = []
+        lib_dir = os.path.realpath(os.path.join(os.curdir, "src/urh/dev/native/lib/win"))
+        for dev_name, params in devices.items():
+            result.append(__get_device_extension(dev_name, [params["lib"]], [lib_dir], [include_dir]))
+
+        return result
+
+    if sys.platform == "darwin":
+        # On Mac OS X clang is by default not smart enough to search in the lib dir
+        # see: https://github.com/jopohl/urh/issues/173
+        library_dirs = ["/usr/local/lib"]
+    else:
+        library_dirs = []
+
+    result = []
+
     # None = automatic (depending on lib is installed)
-    # True = install extension always
-    # False = Do not install extension
-    BUILD_DEVICE_EXTENSIONS = defaultdict(lambda: None)
+    # 1 = install extension always
+    # 0 = Do not install extension
+    build_device_extensions = defaultdict(lambda: None)
 
     for dev_name in devices:
-        with_option = "--with-"+dev_name
-        without_option = "--without-"+dev_name
+        with_option = "--with-" + dev_name
+        without_option = "--without-" + dev_name
 
         if with_option in sys.argv and without_option in sys.argv:
-            print("ambiguous options for "+dev_name)
+            print("ambiguous options for " + dev_name)
             sys.exit(1)
-        elif with_option in sys.argv:
-            BUILD_DEVICE_EXTENSIONS[dev_name] = True
-            sys.argv.remove(with_option)
         elif without_option in sys.argv:
-            BUILD_DEVICE_EXTENSIONS[dev_name] = False
+            build_device_extensions[dev_name] = 0
             sys.argv.remove(without_option)
+        elif with_option in sys.argv:
+            build_device_extensions[dev_name] = 1
+            sys.argv.remove(with_option)
 
-    scriptdir = os.path.realpath(os.path.dirname(__file__))
-    sys.path.append(os.path.realpath(os.path.join(scriptdir, "src", "urh", "dev", "native", "lib")))
+    script_dir = os.path.realpath(os.path.dirname(__file__))
+    sys.path.append(os.path.realpath(os.path.join(script_dir, "src", "urh", "dev", "native", "lib")))
+
+    compiler = ccompiler.new_compiler()
     for dev_name, params in devices.items():
-        if BUILD_DEVICE_EXTENSIONS[dev_name] == False:
-            print("Skipping native {0} support".format(dev_name))
+        if build_device_extensions[dev_name] == 0:
+            print("\nSkipping native {0} support\n".format(dev_name))
             continue
-        if BUILD_DEVICE_EXTENSIONS[dev_name] == True:
-            print("\nEnforcing native {0} support\n".format(params["lib"], dev_name))
-            e = Extension("urh.dev.native.lib." + dev_name,
-                          ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
-                          extra_compile_args=[OPEN_MP_FLAG],
-                          extra_link_args=[OPEN_MP_FLAG],
-                          language="c++",
-                          include_dirs=[include_dir],
-                          library_dirs=library_dirs,
-                          libraries=[params["lib"]])
-            extensions.append(e)
+        if build_device_extensions[dev_name] == 1:
+            print("\nEnforcing native {0} support\n".format(dev_name))
+            result.append(__get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], USE_CYTHON))
             continue
 
-        if compiler.has_function(params["test_function"],
-                                 libraries=(params["lib"], ),
-                                 library_dirs=library_dirs,
+        if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
                                  include_dirs=[include_dir]):
-            print("\nWill compile with native {0} support\n".format(params["lib"], dev_name))
-            e = Extension("urh.dev.native.lib." + dev_name,
-                          ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
-                          extra_compile_args=[OPEN_MP_FLAG],
-                          extra_link_args=[OPEN_MP_FLAG],
-                          language="c++",
-                          include_dirs=[include_dir],
-                          library_dirs=library_dirs,
-                          libraries=[params["lib"]])
-            extensions.append(e)
+            print("\nFound {0} lib. Will compile with native {1} support\n".format(params["lib"], dev_name))
+            result.append(__get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], USE_CYTHON))
         elif dev_name in fallbacks:
             print("Trying fallback for {0}".format(dev_name))
             params = fallbacks[dev_name]
             dev_name += "_fallback"
-            if compiler.has_function(params["test_function"],
-                                     libraries=(params["lib"],),
-                                     library_dirs=library_dirs,
-                                     include_dirs=[include_dir],):
-                print("\nWill compile with native {0} support\n".format(dev_name))
-                e = Extension("urh.dev.native.lib." + dev_name,
-                              ["src/urh/dev/native/lib/{0}{1}".format(dev_name, EXT)],
-                              include_dirs=[include_dir],
-                              extra_compile_args=[OPEN_MP_FLAG],
-                              extra_link_args=[OPEN_MP_FLAG],
-                              language="c++",
-                              library_dirs=library_dirs,
-                              libraries=[params["lib"]])
-                extensions.append(e)
+            if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
+                                     include_dirs=[include_dir]):
+                print("\nFound fallback. Will compile with native {0} support\n".format(dev_name))
+                result.append(
+                    __get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], USE_CYTHON))
         else:
-            print("\n Skipping native support for {1}\n".format(params["lib"], dev_name))
+            print("\nSkipping native support for {1}\n".format(params["lib"], dev_name))
         try:
             os.remove("a.out")  # Temp file for checking
         except OSError:
             pass
 
-    return extensions
+    return result
 
 
 def read_long_description():
@@ -222,6 +196,7 @@ def read_long_description():
         return pypandoc.convert('README.md', 'rst')
     except(IOError, ImportError, RuntimeError):
         return ""
+
 
 # import generate_ui
 # generate_ui.gen # pyuic5 is not included in all python3-pyqt5 packages (e.g. ubuntu), therefore do not regenerate UI here
@@ -239,6 +214,7 @@ extensions = get_ext_modules() + get_device_modules()
 
 if USE_CYTHON:
     from Cython.Build import cythonize
+
     extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES)
 
 setup(

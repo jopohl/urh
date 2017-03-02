@@ -158,6 +158,7 @@ class MainController(QMainWindow):
         self.ui.actionSpectrum_Analyzer.triggered.connect(self.on_show_spectrum_dialog_action_triggered)
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
+        self.ui.actionAbout_Qt.triggered.connect(QApplication.aboutQt)
 
         self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
         self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)

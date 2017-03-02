@@ -26,8 +26,8 @@ class SimulatorTabController(QWidget):
 
         self.ui.splitter_2.setSizes([self.width() / 0.7, self.width() / 0.3])
 
-        self.simulate_list_model = SimulateListModel(self.project_manager.participants)
-        self.ui.listViewSimulate.setModel(self.simulate_list_model)
+        #self.simulate_list_model = SimulateListModel(self.project_manager.participants)
+        #self.ui.listViewSimulate.setModel(self.simulate_list_model)
 
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
@@ -62,8 +62,8 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model.update()
         
     def on_project_updated(self):
-        self.simulate_list_model.participants = self.project_manager.participants
-        self.simulate_list_model.update()
+        #self.simulate_list_model.participants = self.project_manager.participants
+        #self.simulate_list_model.update()
 
         self.simulator_scene.update_view()
 

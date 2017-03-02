@@ -20,7 +20,6 @@ src/urh/dev/gr/scripts/InputHandlerThread.pyc
 src/urh/dev/native/__pycache__/
 src/urh/dev/native/lib/__pycache__/
 src/urh/models/__pycache__/
-src/urh/plugins/AmbleAnalyzer/__pycache__/
 src/urh/plugins/MessageBreak/__pycache__/
 src/urh/plugins/ZeroHide/__pycache__/
 src/urh/plugins/__pycache__/

@@ -1,4 +1,0 @@
-This plugin enables you to detect Preamble/Midamble/Postamble in a protocol and auto assign a protocol label to these sequences.
-You can specify the Amble-Pattern and minimum amble length use for detection.
-
-Note: If the preamble pattern matches from the second bit of a message, the first bit of the message will also be assigned to the preamble

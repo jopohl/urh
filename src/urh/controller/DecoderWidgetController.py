@@ -6,6 +6,8 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QInputDialog
+from PyQt5.QtWidgets import QLineEdit
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -157,8 +159,8 @@ class DecoderWidgetController(QDialog):
 
     def saveas(self):
         # Ask for a name
-        txt = ["Please enter a name:", self.e.chain[0]]
-        ok, name = CustomDialog.dialog(self, txt, "input")
+        name, ok = QInputDialog.getText(self, self.tr("Save decoding"),
+                                          self.tr("Please enter a name:"), QLineEdit.Normal, self.e.chain[0])
 
         if ok and name != "":
             self.e.chain[0] = name

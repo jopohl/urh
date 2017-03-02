@@ -19,10 +19,16 @@ Like to see things in action? Watch URH on YouTube!
 
 ## Installation
 ### Requirements
+#### Required
 - Python 3.4+
 - numpy / psutil / zmq
 - PyQt5
 - C++ Compiler
+
+#### Optional
+- librtlsdr (for native RTL-SDR device backend)
+- libhackrf (for native HackRF device backend)
+- gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
 ### Arch Linux
 ```bash

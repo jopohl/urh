@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplicat
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QInputDialog
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -185,11 +186,11 @@ class DecoderWidgetController(QDialog):
     def delete_decoding(self):
         num = self.ui.combobox_decodings.currentIndex()
         if num >= 0:
-            # Ask for acknowledgement
-            txt = "Do you really want to delete '" + self.decodings[num].name + "'?"
-            ok, _ = CustomDialog.dialog(self, txt, "yesno")
+            reply = QMessageBox.question(self, self.tr("Delete Decoding?"),
+                                         self.tr("Do you really want to delete " + "'{}'?".format(self.decodings[num].name)),
+                                         QMessageBox.Yes | QMessageBox.No)
 
-            if ok:
+            if reply == QMessageBox.Yes:
                 self.decodings.pop(num)
                 self.ui.combobox_decodings.removeItem(num)
                 self.save_to_file()

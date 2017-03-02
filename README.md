@@ -18,7 +18,7 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 ## Installation
-### Requirements
+### Dependencies
 #### Required
 - Python 3.4+
 - numpy / psutil / zmq

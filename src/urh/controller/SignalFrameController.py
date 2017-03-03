@@ -2,6 +2,7 @@ import locale
 import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
     QApplication, QCheckBox
@@ -16,7 +17,6 @@ from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
-from urh.util import FontHelper
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 
@@ -47,7 +47,7 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
-        self.ui.txtEdProto.setFont(FontHelper.getMonospaceFont())
+        self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.messages = proto_analyzer.messages
 

@@ -81,7 +81,7 @@ class RTLSDR(Device):
         self.device_number = device_number
 
     def open(self):
-        pass # happens in start rx mode
+        pass  # happens in start rx mode
 
     def close(self):
         pass  # happens in stop tx mode

@@ -8,75 +8,75 @@ except ImportError:
     import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
 from urh.util.Logger import logger
 
-
-def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
-    ret = rtlsdr.open(device_number)
-    ctrl_connection.send("open:" + str(ret))
-
-    ret = rtlsdr.set_center_freq(center_freq)
-    ctrl_connection.send("set_center_freq:" + str(ret))
-
-    ret = rtlsdr.set_sample_rate(sample_rate)
-    ctrl_connection.send("set_sample_rate:" + str(ret))
-
-    ret = rtlsdr.set_tuner_gain(gain)
-    ctrl_connection.send("set_tuner_gain:" + str(ret))
-
-    ret = rtlsdr.reset_buffer()
-    ctrl_connection.send("reset_buffer:" + str(ret))
-
-    exit_requested = False
-
-    while not exit_requested:
-        while ctrl_connection.poll():
-            result = process_command(ctrl_connection.recv())
-            if result == "stop":
-                exit_requested = True
-                break
-
-        if not exit_requested:
-            data_connection.send_bytes(rtlsdr.read_sync())
-
-    logger.debug("RTLSDR: closing device")
-    ret = rtlsdr.close()
-    ctrl_connection.send("close:" + str(ret))
-
-    data_connection.close()
-    ctrl_connection.close()
-
-
-def process_command(command):
-    logger.debug("RTLSDR: {}".format(command))
-    if command == "stop":
-        return "stop"
-
-    tag, value = command.split(":")
-    if tag == "center_freq":
-        logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
-        return rtlsdr.set_center_freq(int(value))
-
-    elif tag == "tuner_gain":
-        logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
-        return rtlsdr.set_tuner_gain(int(value))
-
-    elif tag == "sample_rate":
-        logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
-        return rtlsdr.set_sample_rate(int(value))
-
-    elif tag == "tuner_bandwidth":
-        logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
-        return rtlsdr.set_tuner_bandwidth(int(value))
-
-
 class RTLSDR(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
+
+    @staticmethod
+    def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
+                     gain: int):
+        ret = rtlsdr.open(device_number)
+        ctrl_connection.send("open:" + str(ret))
+
+        ret = rtlsdr.set_center_freq(center_freq)
+        ctrl_connection.send("set_center_freq:" + str(ret))
+
+        ret = rtlsdr.set_sample_rate(sample_rate)
+        ctrl_connection.send("set_sample_rate:" + str(ret))
+
+        ret = rtlsdr.set_tuner_gain(gain)
+        ctrl_connection.send("set_tuner_gain:" + str(ret))
+
+        ret = rtlsdr.reset_buffer()
+        ctrl_connection.send("reset_buffer:" + str(ret))
+
+        exit_requested = False
+
+        while not exit_requested:
+            while ctrl_connection.poll():
+                result = RTLSDR.process_command(ctrl_connection.recv())
+                if result == "stop":
+                    exit_requested = True
+                    break
+
+            if not exit_requested:
+                data_connection.send_bytes(rtlsdr.read_sync())
+
+        logger.debug("RTLSDR: closing device")
+        ret = rtlsdr.close()
+        ctrl_connection.send("close:" + str(ret))
+
+        data_connection.close()
+        ctrl_connection.close()
+
+    @staticmethod
+    def process_command(command):
+        logger.debug("RTLSDR: {}".format(command))
+        if command == "stop":
+            return "stop"
+
+        tag, value = command.split(":")
+        if tag == "center_freq":
+            logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
+            return rtlsdr.set_center_freq(int(value))
+
+        elif tag == "tuner_gain":
+            logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
+            return rtlsdr.set_tuner_gain(int(value))
+
+        elif tag == "sample_rate":
+            logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
+            return rtlsdr.set_sample_rate(int(value))
+
+        elif tag == "tuner_bandwidth":
+            logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
+            return rtlsdr.set_tuner_bandwidth(int(value))
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
 
         self.success = 0
 
-        self.receive_process_function = receive_sync
+        self.receive_process_function = RTLSDR.receive_sync
 
         self.bandwidth_is_adjustable = hasattr(rtlsdr,
                                                "set_tuner_bandwidth")  # e.g. not in Manjaro Linux / Ubuntu 14.04

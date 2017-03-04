@@ -39,8 +39,7 @@ class Device(QObject):
         self.error_codes = {}
         self.errors = set()
 
-        self.parent_data_conn, self.child_data_conn = Pipe()
-        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+        self.parent_conn, self.child_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
 
@@ -238,7 +237,7 @@ class Device(QObject):
     def read_receiving_queue(self):
         while self.is_receiving:
             try:
-                byte_buffer = self.parent_data_conn.recv_bytes()
+                byte_buffer = self.parent_conn.recv_bytes()
 
                 nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:

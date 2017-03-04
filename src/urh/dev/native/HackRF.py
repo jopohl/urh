@@ -11,23 +11,51 @@ from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
 
-def hackrf_run(connection, mode, freq, sample_rate, gain, bw,
-               send_buffer=None, current_sent_index=None, current_sending_repeat=None, sending_repeats=None):
 
-    # todo: split method into send and receive
+def initialize_hackrf(freq, sample_rate, gain, bw):
+    hackrf.setup()
+    hackrf.open()
+    hackrf.set_freq(freq)
+    hackrf.set_sample_rate(sample_rate)
+    hackrf.set_lna_gain(gain)
+    hackrf.set_vga_gain(gain)
+    hackrf.set_txvga_gain(gain)
+    hackrf.set_baseband_filter_bandwidth(bw)
 
-    def sending_is_finished():
-        if mode == 0:
-            return False
-        else:
-            return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
+def shutdown_hackrf():
+    logger.debug("HackRF: closing device")
+    hackrf.close()
+    logger.debug("HackRF: closed device")
+    hackrf.exit()
 
+def hackrf_receive(connection, freq, sample_rate, gain, bw):
     def callback_recv(buffer):
         try:
             connection.send_bytes(buffer)
         except (BrokenPipeError, EOFError):
             pass
         return 0
+
+    initialize_hackrf(freq, sample_rate, gain, bw)
+    hackrf.start_rx_mode(callback_recv)
+
+    exit_requested = False
+
+    while not exit_requested:
+        while connection.poll():
+            result = process_command(connection.recv())
+            if result == "stop":
+                exit_requested = True
+                break
+
+    shutdown_hackrf()
+    connection.close()
+
+def hackrf_send(connection, freq, sample_rate, gain, bw,
+               send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
+
+    def sending_is_finished():
+        return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
 
     def callback_send(buffer_length):
         try:
@@ -47,19 +75,8 @@ def hackrf_run(connection, mode, freq, sample_rate, gain, bw,
         except (BrokenPipeError, EOFError):
             return b""
 
-    hackrf.setup()
-    hackrf.open()
-    hackrf.set_freq(freq)
-    hackrf.set_sample_rate(sample_rate)
-    hackrf.set_lna_gain(gain)
-    hackrf.set_vga_gain(gain)
-    hackrf.set_txvga_gain(gain)
-    hackrf.set_baseband_filter_bandwidth(bw)
-
-    if mode == 0:
-        hackrf.start_rx_mode(callback_recv)
-    else:
-        hackrf.start_tx_mode(callback_send)
+    initialize_hackrf(freq, sample_rate, gain, bw)
+    hackrf.start_tx_mode(callback_send)
 
     exit_requested = False
 
@@ -70,10 +87,7 @@ def hackrf_run(connection, mode, freq, sample_rate, gain, bw,
                 exit_requested = True
                 break
 
-    logger.debug("HackRF: closing device")
-    hackrf.close()
-    logger.debug("HackRF: closed device")
-    hackrf.exit()
+    shutdown_hackrf()
     connection.close()
 
 
@@ -157,7 +171,7 @@ class HackRF(Device):
 
         self.is_open = True
         self.is_receiving = True
-        self.receive_process = Process(target=hackrf_run, args=(self.child_conn, 0, self.frequency,
+        self.receive_process = Process(target=hackrf_receive, args=(self.child_conn, self.frequency,
                                                                 self.sample_rate, self.gain, self.bandwidth
                                                                   ))
         self.receive_process.daemon = True
@@ -194,7 +208,7 @@ class HackRF(Device):
         self.__current_sent_sample = Value("L", 0)
         self.__current_sending_repeat = Value("L", 0)
         t = time.time()
-        self.transmit_process = Process(target=hackrf_run, args=(self.child_conn, 1, self.frequency,
+        self.transmit_process = Process(target=hackrf_send, args=(self.child_conn, self.frequency,
                                                                 self.sample_rate, self.gain, self.bandwidth, self.send_buffer,
                                                                  self.__current_sent_sample, self.__current_sending_repeat, self.sending_repeats
                                                                   ))

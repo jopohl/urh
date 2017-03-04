@@ -1,10 +1,7 @@
-from multiprocessing import Process
-from multiprocessing import Value
-
 import numpy as np
-from multiprocessing import Pipe
 
 from urh.dev.native.Device import Device
+
 try:
     from urh.dev.native.lib import rtlsdr
 except ImportError:
@@ -14,7 +11,7 @@ from urh.util.Logger import logger
 
 def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
     ret = rtlsdr.open(device_number)
-    ctrl_connection.send("open:"+str(ret))
+    ctrl_connection.send("open:" + str(ret))
 
     ret = rtlsdr.set_center_freq(center_freq)
     ctrl_connection.send("set_center_freq:" + str(ret))
@@ -47,6 +44,7 @@ def receive_sync(data_connection, ctrl_connection, device_number: int, center_fr
     data_connection.close()
     ctrl_connection.close()
 
+
 def process_command(command):
     logger.debug("RTLSDR: {}".format(command))
     if command == "stop":
@@ -78,13 +76,10 @@ class RTLSDR(Device):
 
         self.success = 0
 
-        self.is_receiving_p = Value('i', 0)
-        """
-        Shared Value to communicate with the receiving process.
+        self.receive_process_function = receive_sync
 
-        """
-
-        self.bandwidth_is_adjustable = hasattr(rtlsdr, "set_tuner_bandwidth")   # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = hasattr(rtlsdr,
+                                               "set_tuner_bandwidth")  # e.g. not in Manjaro Linux / Ubuntu 14.04
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
@@ -92,34 +87,6 @@ class RTLSDR(Device):
         self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
-
-    def start_rx_mode(self):
-        self.init_recv_buffer()
-
-        self.is_receiving = True
-        self.receive_process = Process(target=receive_sync, args=(self.child_data_conn, self.child_ctrl_conn,
-                                                                  self.device_number, self.frequency,
-                                                                  self.sample_rate, self.gain
-                                                                  ))
-        self.receive_process.daemon = True
-        self._start_read_rcv_buffer_thread()
-        self._start_read_error_thread()
-        self.receive_process.start()
-
-    def stop_rx_mode(self, msg):
-        self.is_receiving = False
-        self.parent_ctrl_conn.send("stop")
-
-        logger.info("RTLSDR: Stopping RX Mode: " + msg)
-
-        if hasattr(self, "receive_process"):
-            self.receive_process.join(0.3)
-            if self.receive_process.is_alive():
-                logger.warning("RTLSDR: Receive process is still alive, terminating it")
-                self.receive_process.terminate()
-                self.receive_process.join()
-                self.parent_data_conn, self.child_data_conn = Pipe()
-                self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     def set_freq_correction(self, ppm):
         ret = rtlsdr.set_freq_correction(int(ppm))

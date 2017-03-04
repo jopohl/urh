@@ -1,8 +1,4 @@
 import numpy as np
-from multiprocessing import Process
-
-from multiprocessing import Pipe
-
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
@@ -44,6 +40,7 @@ def shutdown_hackrf(ctrl_conn):
     ctrl_conn.send("exit:" + str(ret))
 
     return True
+
 
 def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw):
     def callback_recv(buffer):
@@ -148,6 +145,9 @@ class HackRF(Device):
         super().__init__(bw, freq, gain, srate, is_ringbuffer)
         self.success = 0
 
+        self.receive_process_function = hackrf_receive
+        self.send_process_function = hackrf_send
+
         self._max_bandwidth = 28e6
         self._max_frequency = 6e9
         self._max_sample_rate = 20e6
@@ -169,67 +169,6 @@ class HackRF(Device):
             -4242: "HACKRF NOT OPEN",
             -9999: "HACKRF_ERROR_OTHER"
         }
-
-    @property
-    def is_sending(self):
-        return hasattr(self, "transmit_process") and self.transmit_process.is_alive()
-
-    def start_rx_mode(self):
-        self.init_recv_buffer()
-
-        self.is_receiving = True
-        self.receive_process = Process(target=hackrf_receive,
-                                       args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
-                                             self.sample_rate, self.gain, self.bandwidth
-                                             ))
-        self.receive_process.daemon = True
-        self._start_read_rcv_buffer_thread()
-        self._start_read_error_thread()
-        self.receive_process.start()
-
-    def stop_rx_mode(self, msg):
-        self.is_receiving = False
-        self.parent_ctrl_conn.send("stop")
-
-        logger.info("HackRF: Stopping RX Mode: " + msg)
-
-        if hasattr(self, "receive_process"):
-            self.receive_process.join(0.5)
-            if self.receive_process.is_alive():
-                logger.warning("HackRF: Receive process is still alive, terminating it")
-                self.receive_process.terminate()
-                self.receive_process.join()
-            self.parent_data_conn, self.child_data_conn = Pipe()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
-    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
-        self.init_send_parameters(samples_to_send, repeats, resume=resume)
-        self.is_transmitting = True
-
-        self.transmit_process = Process(target=hackrf_send, args=(self.child_ctrl_conn, self.frequency,
-                                                                  self.sample_rate, self.gain, self.bandwidth,
-                                                                  self.send_buffer,
-                                                                  self._current_sent_sample,
-                                                                  self._current_sending_repeat, self.sending_repeats
-                                                                  ))
-
-        self.transmit_process.daemon = True
-        self._start_read_error_thread()
-        self.transmit_process.start()
-
-    def stop_tx_mode(self, msg):
-        self.is_transmitting = False
-        self.parent_ctrl_conn.send("stop")
-
-        logger.info("HackRF: Stopping TX Mode: " + msg)
-
-        if hasattr(self, "transmit_process"):
-            self.transmit_process.join(0.5)
-            if self.transmit_process.is_alive():
-                logger.warning("HackRF: Transmit process is still alive, terminating it")
-                self.transmit_process.terminate()
-                self.transmit_process.join()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     def set_device_gain(self, gain):
         self.parent_ctrl_conn.send("gain:" + str(int(gain)))

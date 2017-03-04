@@ -9,7 +9,7 @@ import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 from multiprocessing import Pipe
 
-from multiprocessing import Value
+from multiprocessing import Value, Process
 
 from pickle import UnpicklingError
 
@@ -44,6 +44,9 @@ class Device(QObject):
         self.success = 0
         self.error_codes = {}
         self.errors = set()
+
+        self.receive_process_function = None
+        self.send_process_function = None
 
         self.parent_data_conn, self.child_data_conn = Pipe()
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
@@ -127,8 +130,6 @@ class Device(QObject):
 
     @property
     def sending_finished(self):
-        # todo: needs refactoring, see HackRF is_sending
-        # current_sent_sample is only set in method check_send_buffer
         return self.current_sent_sample == len(self.samples_to_send)
 
     @property
@@ -218,21 +219,62 @@ class Device(QObject):
     def set_device_sample_rate(self, sample_rate):
         self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
 
-    @abstractmethod
     def start_rx_mode(self):
-        pass
+        self.init_recv_buffer()
 
-    @abstractmethod
+        self.is_receiving = True
+        self.receive_process = Process(target=self.receive_process_function,
+                                       args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
+                                             self.sample_rate, self.gain, self.bandwidth
+                                             ))
+        self.receive_process.daemon = True
+        self._start_read_rcv_buffer_thread()
+        self._start_read_error_thread()
+        self.receive_process.start()
+
     def stop_rx_mode(self, msg):
-        pass
+        self.is_receiving = False
+        self.parent_ctrl_conn.send("stop")
 
-    @abstractmethod
+        logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
+
+        if hasattr(self, "receive_process"):
+            self.receive_process.join(0.5)
+            if self.receive_process.is_alive():
+                logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
+                self.receive_process.terminate()
+                self.receive_process.join()
+            self.parent_data_conn, self.child_data_conn = Pipe()
+            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
-        pass
+        self.init_send_parameters(samples_to_send, repeats, resume=resume)
+        self.is_transmitting = True
 
-    @abstractmethod
+        self.transmit_process = Process(target=self.send_process_function, args=(self.child_ctrl_conn, self.frequency,
+                                                                  self.sample_rate, self.gain, self.bandwidth,
+                                                                  self.send_buffer,
+                                                                  self._current_sent_sample,
+                                                                  self._current_sending_repeat, self.sending_repeats
+                                                                  ))
+
+        self.transmit_process.daemon = True
+        self._start_read_error_thread()
+        self.transmit_process.start()
+
     def stop_tx_mode(self, msg):
-        pass
+        self.is_transmitting = False
+        self.parent_ctrl_conn.send("stop")
+
+        logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
+
+        if hasattr(self, "transmit_process"):
+            self.transmit_process.join(0.5)
+            if self.transmit_process.is_alive():
+                logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
+                self.transmit_process.terminate()
+                self.transmit_process.join()
+            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):

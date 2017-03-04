@@ -51,7 +51,7 @@ class Device(QObject):
         self.is_receiving = False
         self.is_transmitting = False
 
-        self.device_ip = "192.168.10.2" # For USRP
+        self.device_ip = "192.168.10.2"  # For USRP
 
         self.receive_buffer = None
 

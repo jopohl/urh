@@ -218,20 +218,6 @@ class HackRF(Device):
                 self.parent_data_conn, self.child_data_conn = Pipe()
                 self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
-        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
-            try:
-                self.read_recv_buffer_thread.join(0.001)
-                logger.info("HackRF: Joined read_queue_thread")
-            except RuntimeError:
-                logger.error("HackRF: Could not join read_queue_thread")
-
-        if hasattr(self, "read_dev_error_thread") and self.read_dev_error_thread.is_alive():
-            try:
-                self.read_dev_error_thread.join(0.001)
-                logger.info("HackRF: Joined read_dev_error_thread")
-            except RuntimeError:
-                logger.error("HackRF: Could not join read_dev_error_thread")
-
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.init_send_parameters(samples_to_send, repeats, resume=resume)  # TODO: See what we need here
 
@@ -264,13 +250,6 @@ class HackRF(Device):
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
-        if hasattr(self, "read_dev_error_thread") and self.read_dev_error_thread.is_alive():
-            try:
-                self.read_dev_error_thread.join(0.001)
-                logger.info("HackRF: Joined read_dev_error_thread")
-            except RuntimeError:
-                logger.error("HackRF: Could not join read_dev_error_thread")
 
     def set_device_bandwidth(self, bw):
         self.parent_ctrl_conn.send("bandwidth:"+str(int(bw)))

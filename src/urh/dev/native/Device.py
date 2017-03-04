@@ -245,6 +245,7 @@ class Device(QObject):
             error = self.parent_ctrl_conn.recv()
             action, error_code = error.split(":")
             self.log_retcode(int(error_code), action)
+        logger.debug("Exiting read device errors thread")
 
     def read_receiving_queue(self):
         while self.is_receiving:
@@ -279,6 +280,8 @@ class Device(QObject):
                 break
 
             time.sleep(0.01)
+
+        logger.debug("Exiting read_receive_queue thread.")
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None,
                              skip_device_parameters=False, resume=False):

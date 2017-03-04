@@ -51,7 +51,6 @@ class TestRTLSDR(unittest.TestCase):
 
     def test_receive(self):
         rtlsdr_class = RTLSDR(0, 0, 0, device_number=0)
-        rtlsdr_class.open()
         self.assertEqual(rtlsdr_class.current_recv_index, 0)
         rtlsdr_class.start_rx_mode()
         time.sleep(2)

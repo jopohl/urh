@@ -110,6 +110,7 @@ class RTLSDR(Device):
                                                                   ))
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
+        self._start_read_error_thread()
         self.receive_process.start()
 
     def stop_rx_mode(self, msg):
@@ -126,14 +127,6 @@ class RTLSDR(Device):
                 self.receive_process.join()
                 self.parent_data_conn, self.child_data_conn = Pipe()
                 self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
-        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
-            try:
-                self.read_recv_buffer_thread.join(0.001)
-                logger.info("RTLSDR: Joined read_queue_thread")
-            except RuntimeError:
-                logger.error("RTLSDR: Could not join read_queue_thread")
-
 
     def set_device_frequency(self, frequency):
         self.parent_ctrl_conn.send("center_freq:{}".format(int(frequency)))

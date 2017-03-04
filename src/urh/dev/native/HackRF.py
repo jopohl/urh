@@ -174,15 +174,6 @@ class HackRF(Device):
     def is_sending(self):
         return hasattr(self, "transmit_process") and self.transmit_process.is_alive()
 
-    def open(self, init=True):
-        pass  # happens in process
-
-    def close(self, exit=True):
-        pass  # happens in process
-
-    def exit(self):
-        pass  # happens in process
-
     def start_rx_mode(self):
         self.init_recv_buffer()
 

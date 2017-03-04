@@ -16,6 +16,7 @@ from pickle import UnpicklingError
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
+
 class Device(QObject):
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
@@ -226,14 +227,6 @@ class Device(QObject):
         pass
 
     @abstractmethod
-    def open(self):
-        pass
-
-    @abstractmethod
-    def close(self):
-        pass
-
-    @abstractmethod
     def start_rx_mode(self):
         pass
 
@@ -311,7 +304,6 @@ class Device(QObject):
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None,
                              skip_device_parameters=False, resume=False):
-        # todo: needs refactoring
         if not skip_device_parameters:
             self.set_device_parameters()
 
@@ -322,7 +314,7 @@ class Device(QObject):
         if self.send_buffer is None:
             self.send_buffer = self.pack_complex(self.samples_to_send)
         elif not resume:
-            self.current_sending_repeat = 0  # todo: in process now
+            self.current_sending_repeat = 0
 
         if repeats is not None:
             self.sending_repeats = repeats

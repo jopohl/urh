@@ -350,9 +350,6 @@ class VirtualDevice(QObject):
             time.sleep(0.1)
             self.__dev.start()  # Already connected to started signal in constructor
         elif self.backend == Backends.native:
-            if not self.__dev.is_open:
-                self.__dev.open()
-
             if self.mode == Mode.send:
                 self.__dev.start_tx_mode(resume=True)
             else:
@@ -406,7 +403,6 @@ class VirtualDevice(QObject):
             self.data = None
 
         elif self.backend == Backends.native:
-            self.__dev.close()
             self.data = None
 
         elif self.backend == Backends.none:

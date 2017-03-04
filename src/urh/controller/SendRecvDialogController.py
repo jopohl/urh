@@ -283,6 +283,10 @@ class SendRecvDialogController(QDialog):
             Errors.gnuradio_not_installed()
             self.on_clear_clicked()
 
+        elif "RTLSDR-open: Error Code: -1" in new_errors:
+            self.device.stop_on_error("Could not open a RTL-SDR device.")
+            self.on_clear_clicked()
+
         elif "Address already in use" in new_errors:
             self._restart_device_thread()
 

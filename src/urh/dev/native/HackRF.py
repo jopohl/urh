@@ -14,11 +14,6 @@ def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
     if ret != 0:
         return False
 
-    ret = hackrf.open()
-    ctrl_conn.send("open:" + str(ret))
-    if ret != 0:
-        return False
-
     ret = hackrf.set_freq(freq)
     ctrl_conn.send("set_freq:" + str(ret))
 

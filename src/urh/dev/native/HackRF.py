@@ -14,7 +14,7 @@ from urh.util.Logger import logger
 
 def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
     ret = hackrf.setup()
-    ctrl_conn.send("setup:"+str(ret))
+    ctrl_conn.send("setup:" + str(ret))
 
     ret = hackrf.open()
     ctrl_conn.send("open:" + str(ret))
@@ -41,7 +41,7 @@ def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
 def shutdown_hackrf(ctrl_conn):
     logger.debug("HackRF: closing device")
     ret = hackrf.close()
-    ctrl_conn.send("close:"+str(ret))
+    ctrl_conn.send("close:" + str(ret))
 
     ret = hackrf.exit()
     ctrl_conn.send("exit:" + str(ret))
@@ -74,7 +74,6 @@ def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw
 
 def hackrf_send(ctrl_connection, freq, sample_rate, gain, bw,
                 send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
-
     def sending_is_finished():
         if sending_repeats == 0:  # 0 = infinity
             return False
@@ -139,6 +138,7 @@ def process_command(command):
         logger.info("HackRF: Set bandwidth to {0}".format(int(value)))
         return hackrf.set_baseband_filter_bandwidth(int(value))
 
+
 class HackRF(Device):
     BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
 
@@ -169,14 +169,6 @@ class HackRF(Device):
         }
 
     @property
-    def current_sent_sample(self):
-        return self.__current_sent_sample.value
-
-    @property
-    def current_sending_repeat(self):
-        return self.__current_sending_repeat.value
-
-    @property
     def is_sending(self):
         return hasattr(self, "transmit_process") and self.transmit_process.is_alive()
 
@@ -189,15 +181,15 @@ class HackRF(Device):
     def exit(self):
         pass  # happens in process
 
-
     def start_rx_mode(self):
         self.init_recv_buffer()
 
         self.is_open = True
         self.is_receiving = True
-        self.receive_process = Process(target=hackrf_receive, args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
-                                                                self.sample_rate, self.gain, self.bandwidth
-                                                                  ))
+        self.receive_process = Process(target=hackrf_receive,
+                                       args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
+                                             self.sample_rate, self.gain, self.bandwidth
+                                             ))
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
         self._start_read_error_thread()
@@ -215,8 +207,8 @@ class HackRF(Device):
                 logger.warning("HackRF: Receive process is still alive, terminating it")
                 self.receive_process.terminate()
                 self.receive_process.join()
-                self.parent_data_conn, self.child_data_conn = Pipe()
-                self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+            self.parent_data_conn, self.child_data_conn = Pipe()
+            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.init_send_parameters(samples_to_send, repeats, resume=resume)  # TODO: See what we need here
@@ -224,18 +216,16 @@ class HackRF(Device):
         self.is_open = True  # todo: do we need this param in base class?
         self.is_transmitting = True  # todo: do we need this param in base class?
 
-        self.__current_sent_sample = Value("L", 0)
-        self.__current_sending_repeat = Value("L", 0)
-        t = time.time()
         self.transmit_process = Process(target=hackrf_send, args=(self.child_ctrl_conn, self.frequency,
-                                                                self.sample_rate, self.gain, self.bandwidth, self.send_buffer,
-                                                                 self.__current_sent_sample, self.__current_sending_repeat, self.sending_repeats
+                                                                  self.sample_rate, self.gain, self.bandwidth,
+                                                                  self.send_buffer,
+                                                                  self._current_sent_sample,
+                                                                  self._current_sending_repeat, self.sending_repeats
                                                                   ))
 
         self.transmit_process.daemon = True
         self._start_read_error_thread()
         self.transmit_process.start()
-        logger.debug("Time for process init: {:.2f}".format(time.time() - t))
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
@@ -249,19 +239,19 @@ class HackRF(Device):
                 logger.warning("HackRF: Transmit process is still alive, terminating it")
                 self.transmit_process.terminate()
                 self.transmit_process.join()
-                self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     def set_device_bandwidth(self, bw):
-        self.parent_ctrl_conn.send("bandwidth:"+str(int(bw)))
+        self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
 
     def set_device_frequency(self, value):
-        self.parent_ctrl_conn.send("center_freq:"+str(int(value)))
+        self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
 
     def set_device_gain(self, gain):
-        self.parent_ctrl_conn.send("gain:"+str(int(gain)))
+        self.parent_ctrl_conn.send("gain:" + str(int(gain)))
 
     def set_device_sample_rate(self, sample_rate):
-        self.parent_ctrl_conn.send("sample_rate:"+str(int(sample_rate)))
+        self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):
@@ -275,4 +265,4 @@ class HackRF(Device):
     def pack_complex(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
         # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return (127.5 * ((complex_samples.view(np.float32)) - 0.5/127.5)).astype(np.int8).tostring()
+        return (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8).tostring()

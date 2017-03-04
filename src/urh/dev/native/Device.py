@@ -9,6 +9,10 @@ import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 from multiprocessing import Pipe
 
+from multiprocessing import Value
+
+from pickle import UnpicklingError
+
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
@@ -29,6 +33,9 @@ class Device(QObject):
         self.is_open = False
 
         self.bandwidth_is_adjustable = True
+
+        self._current_sent_sample = Value("L", 0)
+        self._current_sending_repeat = Value("L", 0)
 
         self._max_bandwidth = 1
         self._max_frequency = 1
@@ -68,6 +75,22 @@ class Device(QObject):
         self.read_dev_error_thread = threading.Thread(target=self.read_device_errors)
         self.read_dev_error_thread.daemon = True
         self.read_dev_error_thread.start()
+
+    @property
+    def current_sent_sample(self):
+        return self._current_sent_sample.value
+
+    @current_sent_sample.setter
+    def current_sent_sample(self, value: int):
+        self._current_sent_sample.value = value
+
+    @property
+    def current_sending_repeat(self):
+        return self._current_sending_repeat.value
+
+    @current_sending_repeat.setter
+    def current_sending_repeat(self, value: int):
+        self._current_sending_repeat.value = value
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
@@ -242,9 +265,12 @@ class Device(QObject):
 
     def read_device_errors(self):
         while self.is_receiving or self.is_transmitting:
-            error = self.parent_ctrl_conn.recv()
-            action, error_code = error.split(":")
-            self.log_retcode(int(error_code), action)
+            try:
+                error = self.parent_ctrl_conn.recv()
+                action, error_code = error.split(":")
+                self.log_retcode(int(error_code), action)
+            except (EOFError, UnpicklingError, ConnectionResetError):
+                break
         logger.debug("Exiting read device errors thread")
 
     def read_receiving_queue(self):

@@ -390,8 +390,9 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
-            self.__dev.close()
             self.read_errors()  # Clear errors
+            self.__dev.stop_rx_mode("Stop on error")
+            self.__dev.stop_tx_mode("Stop on error")
             self.emit_stopped_signal()
         else:
             raise ValueError("Unsupported Backend")

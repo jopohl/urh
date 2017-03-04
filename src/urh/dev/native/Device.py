@@ -31,8 +31,6 @@ class Device(QObject):
         self.__gain = gain
         self.__sample_rate = srate
 
-        self.is_open = False
-
         self.bandwidth_is_adjustable = True
 
         self._current_sent_sample = Value("L", 0)
@@ -152,12 +150,10 @@ class Device(QObject):
 
         if value != self.__bandwidth:
             self.__bandwidth = value
-            if self.is_open:
-                self.set_device_bandwidth(value)
+            self.set_device_bandwidth(value)
 
-    @abstractmethod
-    def set_device_bandwidth(self, bandwidth):
-        pass
+    def set_device_bandwidth(self, bw):
+        self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
 
     @property
     def frequency(self):
@@ -175,12 +171,10 @@ class Device(QObject):
 
         if value != self.__frequency:
             self.__frequency = value
-            if self.is_open:
-                self.set_device_frequency(value)
+            self.set_device_frequency(value)
 
-    @abstractmethod
-    def set_device_frequency(self, frequency):
-        pass
+    def set_device_frequency(self, value):
+        self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
 
     @property
     def gain(self):
@@ -196,11 +190,11 @@ class Device(QObject):
 
         if value != self.__gain:
             self.__gain = value
-            if self.is_open:
-                self.set_device_gain(value)
+            self.set_device_gain(value)
 
     @abstractmethod
     def set_device_gain(self, gain):
+        # todo: split to if gain etc
         pass
 
     @property
@@ -219,12 +213,10 @@ class Device(QObject):
 
         if value != self.__sample_rate:
             self.__sample_rate = value
-            if self.is_open:
-                self.set_device_sample_rate(value)
+            self.set_device_sample_rate(value)
 
-    @abstractmethod
     def set_device_sample_rate(self, sample_rate):
-        pass
+        self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
 
     @abstractmethod
     def start_rx_mode(self):
@@ -264,6 +256,8 @@ class Device(QObject):
                 self.log_retcode(int(error_code), action)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
+        self.is_transmitting = False
+        self.is_receiving = False
         logger.debug("Exiting read device errors thread")
 
     def read_receiving_queue(self):

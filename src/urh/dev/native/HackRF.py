@@ -177,7 +177,6 @@ class HackRF(Device):
     def start_rx_mode(self):
         self.init_recv_buffer()
 
-        self.is_open = True
         self.is_receiving = True
         self.receive_process = Process(target=hackrf_receive,
                                        args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
@@ -204,10 +203,8 @@ class HackRF(Device):
             self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
-        self.init_send_parameters(samples_to_send, repeats, resume=resume)  # TODO: See what we need here
-
-        self.is_open = True  # todo: do we need this param in base class?
-        self.is_transmitting = True  # todo: do we need this param in base class?
+        self.init_send_parameters(samples_to_send, repeats, resume=resume)
+        self.is_transmitting = True
 
         self.transmit_process = Process(target=hackrf_send, args=(self.child_ctrl_conn, self.frequency,
                                                                   self.sample_rate, self.gain, self.bandwidth,
@@ -234,17 +231,8 @@ class HackRF(Device):
                 self.transmit_process.join()
             self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
-    def set_device_bandwidth(self, bw):
-        self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
-
-    def set_device_frequency(self, value):
-        self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
-
     def set_device_gain(self, gain):
         self.parent_ctrl_conn.send("gain:" + str(int(gain)))
-
-    def set_device_sample_rate(self, sample_rate):
-        self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

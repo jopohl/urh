@@ -96,7 +96,6 @@ class RTLSDR(Device):
     def start_rx_mode(self):
         self.init_recv_buffer()
 
-        self.is_open = True
         self.is_receiving = True
         self.receive_process = Process(target=receive_sync, args=(self.child_data_conn, self.child_ctrl_conn,
                                                                   self.device_number, self.frequency,
@@ -121,12 +120,6 @@ class RTLSDR(Device):
                 self.receive_process.join()
                 self.parent_data_conn, self.child_data_conn = Pipe()
                 self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
-    def set_device_frequency(self, frequency):
-        self.parent_ctrl_conn.send("center_freq:{}".format(int(frequency)))
-
-    def set_device_sample_rate(self, sample_rate):
-        self.parent_ctrl_conn.send("sample_rate:{}".format(int(sample_rate)))
 
     def set_freq_correction(self, ppm):
         ret = rtlsdr.set_freq_correction(int(ppm))

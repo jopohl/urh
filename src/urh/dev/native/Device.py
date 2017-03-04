@@ -39,7 +39,8 @@ class Device(QObject):
         self.error_codes = {}
         self.errors = set()
 
-        self.parent_conn, self.child_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
 
@@ -62,6 +63,11 @@ class Device(QObject):
         self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
         self.read_recv_buffer_thread.daemon = True
         self.read_recv_buffer_thread.start()
+
+    def _start_read_error_thread(self):
+        self.read_dev_error_thread = threading.Thread(target=self.read_device_errors)
+        self.read_dev_error_thread.daemon = True
+        self.read_dev_error_thread.start()
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
@@ -234,10 +240,16 @@ class Device(QObject):
         self.set_device_gain(self.gain)
         self.set_device_sample_rate(self.sample_rate)
 
+    def read_device_errors(self):
+        while self.is_receiving or self.is_transmitting:
+            error = self.parent_ctrl_conn.recv()
+            action, error_code = error.split(":")
+            self.log_retcode(int(error_code), action)
+
     def read_receiving_queue(self):
         while self.is_receiving:
             try:
-                byte_buffer = self.parent_conn.recv_bytes()
+                byte_buffer = self.parent_data_conn.recv_bytes()
 
                 nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:

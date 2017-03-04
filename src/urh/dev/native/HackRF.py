@@ -12,48 +12,67 @@ from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
 
 
-def initialize_hackrf(freq, sample_rate, gain, bw):
-    hackrf.setup()
-    hackrf.open()
-    hackrf.set_freq(freq)
-    hackrf.set_sample_rate(sample_rate)
-    hackrf.set_lna_gain(gain)
-    hackrf.set_vga_gain(gain)
-    hackrf.set_txvga_gain(gain)
-    hackrf.set_baseband_filter_bandwidth(bw)
+def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
+    ret = hackrf.setup()
+    ctrl_conn.send("setup:"+str(ret))
 
-def shutdown_hackrf():
+    ret = hackrf.open()
+    ctrl_conn.send("open:" + str(ret))
+
+    ret = hackrf.set_freq(freq)
+    ctrl_conn.send("set_freq:" + str(ret))
+
+    ret = hackrf.set_sample_rate(sample_rate)
+    ctrl_conn.send("set_sample_rate:" + str(ret))
+
+    ret = hackrf.set_lna_gain(gain)
+    ctrl_conn.send("set_lna_gain:" + str(ret))
+
+    ret = hackrf.set_vga_gain(gain)
+    ctrl_conn.send("set_vga_gain:" + str(ret))
+
+    ret = hackrf.set_txvga_gain(gain)
+    ctrl_conn.send("set_txvga_gain:" + str(ret))
+
+    ret = hackrf.set_baseband_filter_bandwidth(bw)
+    ctrl_conn.send("set_bandwidth:" + str(ret))
+
+
+def shutdown_hackrf(ctrl_conn):
     logger.debug("HackRF: closing device")
-    hackrf.close()
-    logger.debug("HackRF: closed device")
-    hackrf.exit()
+    ret = hackrf.close()
+    ctrl_conn.send("close:"+str(ret))
+
+    ret = hackrf.exit()
+    ctrl_conn.send("exit:" + str(ret))
 
 
-def hackrf_receive(connection, freq, sample_rate, gain, bw):
+def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw):
     def callback_recv(buffer):
         try:
-            connection.send_bytes(buffer)
+            data_connection.send_bytes(buffer)
         except (BrokenPipeError, EOFError):
             pass
         return 0
 
-    initialize_hackrf(freq, sample_rate, gain, bw)
+    initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection)
     hackrf.start_rx_mode(callback_recv)
 
     exit_requested = False
 
     while not exit_requested:
-        while connection.poll():
-            result = process_command(connection.recv())
+        while ctrl_connection.poll():
+            result = process_command(ctrl_connection.recv())
             if result == "stop":
                 exit_requested = True
                 break
 
-    shutdown_hackrf()
-    connection.close()
+    shutdown_hackrf(ctrl_connection)
+    data_connection.close()
+    ctrl_connection.close()
 
 
-def hackrf_send(connection, freq, sample_rate, gain, bw,
+def hackrf_send(ctrl_connection, freq, sample_rate, gain, bw,
                 send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
 
     def sending_is_finished():
@@ -80,20 +99,20 @@ def hackrf_send(connection, freq, sample_rate, gain, bw,
         except (BrokenPipeError, EOFError):
             return b""
 
-    initialize_hackrf(freq, sample_rate, gain, bw)
+    initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection)
     hackrf.start_tx_mode(callback_send)
 
     exit_requested = False
 
     while not exit_requested and not sending_is_finished():
-        while connection.poll():
-            result = process_command(connection.recv())
+        while ctrl_connection.poll():
+            result = process_command(ctrl_connection.recv())
             if result == "stop":
                 exit_requested = True
                 break
 
-    shutdown_hackrf()
-    connection.close()
+    shutdown_hackrf(ctrl_connection)
+    ctrl_connection.close()
 
 
 def process_command(command):
@@ -176,16 +195,17 @@ class HackRF(Device):
 
         self.is_open = True
         self.is_receiving = True
-        self.receive_process = Process(target=hackrf_receive, args=(self.child_conn, self.frequency,
+        self.receive_process = Process(target=hackrf_receive, args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
                                                                 self.sample_rate, self.gain, self.bandwidth
                                                                   ))
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
+        self._start_read_error_thread()
         self.receive_process.start()
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        self.parent_conn.send("stop")
+        self.parent_ctrl_conn.send("stop")
 
         logger.info("HackRF: Stopping RX Mode: " + msg)
 
@@ -195,7 +215,8 @@ class HackRF(Device):
                 logger.warning("HackRF: Receive process is still alive, terminating it")
                 self.receive_process.terminate()
                 self.receive_process.join()
-                self.parent_conn, self.child_conn = Pipe()
+                self.parent_data_conn, self.child_data_conn = Pipe()
+                self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
         if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
             try:
@@ -203,6 +224,13 @@ class HackRF(Device):
                 logger.info("HackRF: Joined read_queue_thread")
             except RuntimeError:
                 logger.error("HackRF: Could not join read_queue_thread")
+
+        if hasattr(self, "read_dev_error_thread") and self.read_dev_error_thread.is_alive():
+            try:
+                self.read_dev_error_thread.join(0.001)
+                logger.info("HackRF: Joined read_dev_error_thread")
+            except RuntimeError:
+                logger.error("HackRF: Could not join read_dev_error_thread")
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.init_send_parameters(samples_to_send, repeats, resume=resume)  # TODO: See what we need here
@@ -213,20 +241,21 @@ class HackRF(Device):
         self.__current_sent_sample = Value("L", 0)
         self.__current_sending_repeat = Value("L", 0)
         t = time.time()
-        self.transmit_process = Process(target=hackrf_send, args=(self.child_conn, self.frequency,
+        self.transmit_process = Process(target=hackrf_send, args=(self.child_ctrl_conn, self.frequency,
                                                                 self.sample_rate, self.gain, self.bandwidth, self.send_buffer,
                                                                  self.__current_sent_sample, self.__current_sending_repeat, self.sending_repeats
                                                                   ))
 
         self.transmit_process.daemon = True
+        self._start_read_error_thread()
         self.transmit_process.start()
         logger.debug("Time for process init: {:.2f}".format(time.time() - t))
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        self.parent_conn.send("stop")
+        self.parent_ctrl_conn.send("stop")
 
-        logger.info("HackRF: Stopping tX Mode: " + msg)
+        logger.info("HackRF: Stopping TX Mode: " + msg)
 
         if hasattr(self, "transmit_process"):
             self.transmit_process.join(0.5)
@@ -234,26 +263,26 @@ class HackRF(Device):
                 logger.warning("HackRF: Transmit process is still alive, terminating it")
                 self.transmit_process.terminate()
                 self.transmit_process.join()
-                self.parent_conn, self.child_conn = Pipe()
+                self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
-        if hasattr(self, "sendbuffer_thread") and self.sendbuffer_thread.is_alive():
+        if hasattr(self, "read_dev_error_thread") and self.read_dev_error_thread.is_alive():
             try:
-                self.sendbuffer_thread.join(0.001)
-                logger.info("HackRF: Joined sendbuffer_thread")
+                self.read_dev_error_thread.join(0.001)
+                logger.info("HackRF: Joined read_dev_error_thread")
             except RuntimeError:
-                logger.error("HackRF: Could not join sendbuffer_thread")
+                logger.error("HackRF: Could not join read_dev_error_thread")
 
     def set_device_bandwidth(self, bw):
-        self.parent_conn.send("bandwidth:"+str(int(bw)))
+        self.parent_ctrl_conn.send("bandwidth:"+str(int(bw)))
 
     def set_device_frequency(self, value):
-        self.parent_conn.send("center_freq:"+str(int(value)))
+        self.parent_ctrl_conn.send("center_freq:"+str(int(value)))
 
     def set_device_gain(self, gain):
-        self.parent_conn.send("gain:"+str(int(gain)))
+        self.parent_ctrl_conn.send("gain:"+str(int(gain)))
 
     def set_device_sample_rate(self, sample_rate):
-        self.parent_conn.send("sample_rate:"+str(int(sample_rate)))
+        self.parent_ctrl_conn.send("sample_rate:"+str(int(sample_rate)))
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

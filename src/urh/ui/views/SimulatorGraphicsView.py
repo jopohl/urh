@@ -209,6 +209,7 @@ class SimulatorGraphicsView(QGraphicsView):
         self.context_menu_item = None if len(items) == 0 else items[0]
 
         if self.context_menu_item:
+            self.scene().clearSelection()
             self.context_menu_item.setSelected(True)
 
         menu = self.create_context_menu()

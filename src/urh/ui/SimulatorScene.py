@@ -16,40 +16,38 @@ class SimulatorItem(QGraphicsObject):
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
         self.drop_indicator_line = QLineF()
+        self.bounding_rect = QRectF()
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
-        super().update()
+        self.update()
 
     def hoverLeaveEvent(self, event):
         self.hover_active = False
-        super().update()
+        self.update()
 
     def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
         self.drag_over = True
-        super().update()
+        self.update()
 
     def dragLeaveEvent(self, event: QGraphicsSceneDragDropEvent):
         self.drag_over = False
-        super().update()
+        self.update()
 
     def dropEvent(self, event: QDropEvent):
         self.drag_over = False
-        super().update()
+        self.update()
 
     def dragMoveEvent(self, event: QDropEvent):
         rect = self.boundingRect()
         self.drop_indicator_position = self.position(event.pos(), rect)
 
-        x1 = self.scene().participants[0].line.line().x1()
-        x2 = self.scene().participants[-1].line.line().x1()
-
         if self.drop_indicator_position == QAbstractItemView.AboveItem:
-            self.drop_indicator_line = QLineF(x1, rect.top(), x2, rect.top())
+            self.drop_indicator_line = QLineF(rect.topLeft(), rect.topRight())
         else:
-            self.drop_indicator_line = QLineF(x1, rect.bottom(), x2, rect.bottom())
+            self.drop_indicator_line = QLineF(rect.bottomLeft(), rect.bottomRight())
 
-        super().update()
+        self.update()
         
     @staticmethod
     def position(pos, rect):
@@ -74,11 +72,14 @@ class SimulatorItem(QGraphicsObject):
         painter.setPen(pen)
         painter.drawLine(self.drop_indicator_line)
 
+    def refresh(self, x_pos, y_pos):
+        width = self.scene().participants[-1].line.line().x1()
+        width -= self.scene().participants[0].line.line().x1()
+        self.prepareGeometryChange()
+        self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height())
+
     def boundingRect(self):
-        rect = self.childrenBoundingRect()
-        x = self.scene().participants[0].line.line().x1()
-        width = self.scene().participants[-1].line.line().x1() - x
-        return QRectF(x, rect.y(), width, rect.height())
+        return self.bounding_rect
 
 class ConditionType(Enum):
     IF = "if ..."
@@ -90,6 +91,7 @@ class RuleItem(QGraphicsItem):
         super().__init__(parent)
 
         self.conditions = []
+        self.bounding_rect = QRectF()
         self.conditions.append(RuleConditionItem(ConditionType.IF, self))
 
     def has_else_condition(self):
@@ -125,25 +127,29 @@ class RuleItem(QGraphicsItem):
             else:
                 condition.delete_items(items)
 
-    def update(self, y_pos):
+    def refresh(self, x_pos, y_pos):
+        self.setPos(x_pos - 20, y_pos)
+
         if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
 
-        if_cond.update(y_pos)
-        y_pos += round(if_cond.boundingRect().height())
+        start_y = 0
+        if_cond.refresh(0, start_y)
+        start_y += round(if_cond.boundingRect().height())
 
         for cond in [cond for cond in self.conditions if cond.type is ConditionType.ELSE_IF]:
-            cond.update(y_pos)
-            y_pos += round(cond.boundingRect().height())
+            cond.refresh(0, start_y)
+            start_y += round(cond.boundingRect().height())
 
         else_cond = [cond for cond in self.conditions if cond.type is ConditionType.ELSE]
 
         if len(else_cond) == 1:
-            else_cond[0].update(y_pos)
+            else_cond[0].refresh(0, start_y)
 
-        super().update()
+        self.prepareGeometryChange()
+        self.bounding_rect = self.childrenBoundingRect()
 
     def boundingRect(self):
-        return self.childrenBoundingRect()
+        return self.bounding_rect
 
     def paint(self, painter, option, widget):
         pass
@@ -170,26 +176,22 @@ class RuleConditionItem(SimulatorItem):
         self.text = RuleTextItem(type.value, QColor.fromRgb(139,148,148), self)
         self.setFlags(QGraphicsItem.ItemIsSelectable)
         self.sim_items = []
-        self.rect = QRectF()
 
-    def update(self, y_pos):
-        x = self.scene().participants[0].line.line().x1()
-        tmp_y = y_pos
+    def refresh(self, x_pos, y_pos):
+        self.setPos(x_pos, y_pos)
 
-        width = self.scene().participants[-1].line.line().x1() - x
-        self.prepareGeometryChange()
-        self.text.setPos(-20, tmp_y)
-        tmp_y += round(self.text.boundingRect().height())
+        start_y = 0
+        self.text.setPos(0, start_y)
+        start_y += round(self.text.boundingRect().height())
 
         for item in self.sim_items:
-            item.update(tmp_y)
-            tmp_y += round(item.boundingRect().height())
+            item.refresh(20, start_y)
+            start_y += round(item.boundingRect().height())
 
-        self.rect.setRect(x - 20, y_pos, width + 40, tmp_y - y_pos)
-        super().update()
-
-    def boundingRect(self):
-        return self.rect
+        width = self.scene().participants[-1].line.line().x1()
+        width -= self.scene().participants[0].line.line().x1()
+        self.prepareGeometryChange()
+        self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height())
 
     def paint(self, painter, option, widget):
         if self.hover_active or self.isSelected():
@@ -269,7 +271,6 @@ class DataItem(QGraphicsTextItem):
     def value(self):
         return str(self)
 
-
 class ActionType(Enum):
     external_program = 0
     goto = 1
@@ -291,10 +292,10 @@ class ActionItem(SimulatorItem):
         elif type == ActionType.goto:
             self.text.setPlainText("goto 6")
 
-    def update(self, y_pos):
-        x_pos = self.scene().participants[0].line.line().x1()
-        self.text.setPos(x_pos, y_pos)
-        super().update()
+    def refresh(self, x_pos, y_pos):
+        self.setPos(x_pos, y_pos)
+        self.text.setPos(0, 0)
+        super().refresh(x_pos, y_pos)
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):
@@ -310,7 +311,7 @@ class ParticipantItem(QGraphicsItem):
         if y_pos == -1:
             y_pos = self.line.line().y2()
 
-        self.prepareGeometryChange()
+        #self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, y_pos)
         super().update()
@@ -325,6 +326,7 @@ class MessageItem(SimulatorItem):
     def __init__(self, source, destination, parent=None):
         super().__init__(parent)
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
         self.arrow = MessageArrowItem(self)
         self.source = source
         self.destination = destination
@@ -339,26 +341,29 @@ class MessageItem(SimulatorItem):
         item.setParentItem(self)
         self.labels.append(item)
 
-    def update(self, y_pos):
-        arrow_width = abs(self.source.line.line().x1() - self.destination.line.line().x1())
+    def refresh(self, x_pos, y_pos):
+        self.setPos(QPointF(x_pos, y_pos))
 
-        start_x = min(self.source.line.line().x1(), self.destination.line.line().x1())
+        p_source = self.mapFromItem(self.source.line, self.source.line.line().p1())
+        p_destination = self.mapFromItem(self.destination.line, self.destination.line.line().p1())
+
+        arrow_width = abs(p_source.x() - p_destination.x())
+
+        start_x = min(p_source.x(), p_destination.x())
         start_x += (arrow_width - self.labels_width()) / 2
-
-        self.prepareGeometryChange()
+        start_y = 0
 
         for label in self.labels:
-            label.setPos(start_x, y_pos)
+            label.setPos(start_x, start_y)
             start_x += label.boundingRect().width() + 5
 
         if len(self.labels) > 0:
-            y_pos += self.labels[0].boundingRect().height() + 5
+            start_y += self.labels[0].boundingRect().height() + 5
         else:
-            y_pos += 7
+            start_y += 7
 
-        self.arrow.setLine(self.source.line.line().x1(), y_pos, self.destination.line.line().x1(), y_pos)
-        
-        super().update()
+        self.arrow.setLine(p_source.x(), start_y, p_destination.x(), start_y)
+        super().refresh(x_pos, y_pos)
 
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
@@ -496,10 +501,11 @@ class SimulatorScene(QGraphicsScene):
             curr_participant.update(x_pos = x_max)
 
     def arrange_items(self):
+        x_pos = self.participants[0].line.line().x1()
         y_pos = 30
 
         for item in self.sim_items:
-            item.update(y_pos)
+            item.refresh(x_pos, y_pos)
             y_pos += round(item.boundingRect().height())
 
         for participant in self.participants:

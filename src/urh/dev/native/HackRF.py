@@ -28,6 +28,7 @@ def shutdown_hackrf():
     logger.debug("HackRF: closed device")
     hackrf.exit()
 
+
 def hackrf_receive(connection, freq, sample_rate, gain, bw):
     def callback_recv(buffer):
         try:
@@ -51,10 +52,14 @@ def hackrf_receive(connection, freq, sample_rate, gain, bw):
     shutdown_hackrf()
     connection.close()
 
+
 def hackrf_send(connection, freq, sample_rate, gain, bw,
-               send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
+                send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
 
     def sending_is_finished():
+        if sending_repeats == 0:  # 0 = infinity
+            return False
+
         return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
 
     def callback_send(buffer_length):
@@ -66,7 +71,7 @@ def hackrf_send(connection, freq, sample_rate, gain, bw,
             current_sent_index.value += buffer_length
             if current_sent_index.value >= len(send_buffer) - 1:
                 current_sending_repeat.value += 1
-                if current_sending_repeat.value < sending_repeats or sending_repeats == -1:
+                if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
                     current_sent_index.value = 0
                 else:
                     current_sent_index.value = len(send_buffer)

@@ -263,7 +263,7 @@ class VirtualDevice(QObject):
                     self.__dev.max_repeats = value
                     self.__dev.current_iteration = 0
             elif self.backend in (Backends.native, Backends.network):
-                self.__dev.sending_repeats = value if value != 0 else -1
+                self.__dev.sending_repeats = value
             else:
                 raise ValueError("Unsupported Backend")
 

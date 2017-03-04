@@ -44,7 +44,7 @@ class Device(QObject):
         self.send_buffer_reader = None
 
         self.samples_to_send = np.array([], dtype=np.complex64)
-        self.sending_repeats = 1 # How often shall the sending sequence be repeated? -1 = forever
+        self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Spectrum Analyzer or Protocol Sniffing
         self.current_recv_index = 0

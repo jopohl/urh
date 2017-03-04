@@ -78,11 +78,11 @@ class Device(QObject):
 
     @property
     def current_sent_sample(self):
-        return self._current_sent_sample.value
+        return self._current_sent_sample.value // self.BYTES_PER_SAMPLE
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
-        self._current_sent_sample.value = value
+        self._current_sent_sample.value = value * self.BYTES_PER_SAMPLE
 
     @property
     def current_sending_repeat(self):

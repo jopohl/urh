@@ -1,8 +1,4 @@
 import numpy as np
-import time
-
-from multiprocessing import Value
-
 from multiprocessing import Process
 
 from multiprocessing import Pipe
@@ -15,9 +11,13 @@ from urh.util.Logger import logger
 def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
     ret = hackrf.setup()
     ctrl_conn.send("setup:" + str(ret))
+    if ret != 0:
+        return False
 
     ret = hackrf.open()
     ctrl_conn.send("open:" + str(ret))
+    if ret != 0:
+        return False
 
     ret = hackrf.set_freq(freq)
     ctrl_conn.send("set_freq:" + str(ret))
@@ -37,6 +37,8 @@ def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
     ret = hackrf.set_baseband_filter_bandwidth(bw)
     ctrl_conn.send("set_bandwidth:" + str(ret))
 
+    return True
+
 
 def shutdown_hackrf(ctrl_conn):
     logger.debug("HackRF: closing device")
@@ -46,6 +48,7 @@ def shutdown_hackrf(ctrl_conn):
     ret = hackrf.exit()
     ctrl_conn.send("exit:" + str(ret))
 
+    return True
 
 def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw):
     def callback_recv(buffer):
@@ -55,7 +58,9 @@ def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw
             pass
         return 0
 
-    initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection)
+    if not initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection):
+        return False
+
     hackrf.start_rx_mode(callback_recv)
 
     exit_requested = False
@@ -98,7 +103,9 @@ def hackrf_send(ctrl_connection, freq, sample_rate, gain, bw,
         except (BrokenPipeError, EOFError):
             return b""
 
-    initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection)
+    if not initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection):
+        return False
+
     hackrf.start_tx_mode(callback_send)
 
     exit_requested = False

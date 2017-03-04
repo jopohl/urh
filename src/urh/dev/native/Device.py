@@ -1,6 +1,4 @@
-import io
 import threading
-from multiprocessing import Queue
 
 import numpy as np
 from abc import abstractmethod
@@ -41,17 +39,16 @@ class Device(QObject):
         self.error_codes = {}
         self.errors = set()
 
-        self.parent_conn, self.child_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
 
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1 # How often shall the sending sequence be repeated? -1 = forever
-        self.current_sending_repeat = 0
 
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Spectrum Analyzer or Protocol Sniffing
         self.current_recv_index = 0
-        self.current_sent_sample = 0
         self.is_receiving = False
         self.is_transmitting = False
 
@@ -61,11 +58,6 @@ class Device(QObject):
 
         self.spectrum_x = None
         self.spectrum_y = None
-
-    def _start_sendbuffer_thread(self):
-        self.sendbuffer_thread = threading.Thread(target=self.check_send_buffer)
-        self.sendbuffer_thread.daemon = True
-        self.sendbuffer_thread.start()
 
     def _start_read_rcv_buffer_thread(self):
         self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
@@ -108,6 +100,7 @@ class Device(QObject):
 
     @property
     def sending_finished(self):
+        # todo: needs refactoring, see HackRF is_sending
         # current_sent_sample is only set in method check_send_buffer
         return self.current_sent_sample == len(self.samples_to_send)
 
@@ -245,7 +238,7 @@ class Device(QObject):
     def read_receiving_queue(self):
         while self.is_receiving:
             try:
-                byte_buffer = self.parent_conn.recv_bytes()
+                byte_buffer = self.parent_data_conn.recv_bytes()
 
                 nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
                 if nsamples > 0:
@@ -278,73 +271,18 @@ class Device(QObject):
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None,
                              skip_device_parameters=False, resume=False):
+        # todo: needs refactoring
         if not skip_device_parameters:
             self.set_device_parameters()
 
         if samples_to_send is not None:
-            try:
-                self.send_buffer_reader.close()
-                self.send_buffer.close()
-            except AttributeError:
-                pass
-
             self.samples_to_send = samples_to_send
+            self.send_buffer = None
 
-        if self.send_buffer is None or self.send_buffer.closed:
-            self.send_buffer = io.BytesIO(self.pack_complex(self.samples_to_send))
-            self.send_buffer_reader = io.BufferedReader(self.send_buffer)
+        if self.send_buffer is None:
+            self.send_buffer = self.pack_complex(self.samples_to_send)
         elif not resume:
-            self.reset_send_buffer()
-            self.current_sending_repeat = 0
+            self.current_sending_repeat = 0  # todo: in process now
 
         if repeats is not None:
             self.sending_repeats = repeats
-
-    def reset_send_buffer(self):
-        try:
-            self.send_buffer_reader.seek(0)
-            self.current_sent_sample = 0
-        except ValueError:
-            logger.info("Send buffer was already closed. Cant reset it.")
-
-    def check_send_buffer(self):
-        def sending_iteration_remaining(current_sending_repeat: int, sending_repeats: int):
-            return current_sending_repeat < sending_repeats or sending_repeats == -1 # sending_repeats -1 = forever
-
-        assert len(self.samples_to_send) == len(self.send_buffer_reader.read()) // self.BYTES_PER_SAMPLE
-        self.send_buffer.seek(self.current_sent_sample * self.BYTES_PER_SAMPLE)
-
-        while sending_iteration_remaining(self.current_sending_repeat, self.sending_repeats) and self.is_transmitting:
-            while self.is_transmitting and self.send_buffer_reader.peek():
-                try:
-                    self.current_sent_sample = self.send_buffer_reader.tell() // self.BYTES_PER_SAMPLE
-                except ValueError:
-                    # I/O operation on closed file. --> Buffer was closed
-                    break
-                time.sleep(0.01)
-
-            self.current_sending_repeat += 1
-
-            if sending_iteration_remaining(self.current_sending_repeat, self.sending_repeats):
-                self.reset_send_buffer()
-
-        if self.current_sent_sample >= len(self.samples_to_send) - 1:
-            self.current_sent_sample = len(self.samples_to_send)  # Mark transmission as finished
-        else:
-            logger.info("Skipped {0:d} samples in sending".format(len(self.samples_to_send) - self.current_sent_sample))
-
-    def callback_recv(self, buffer):
-        try:
-            self.child_conn.send_bytes(buffer)
-        except BrokenPipeError:
-            pass
-        return 0
-
-    def callback_send(self, buffer_length):
-        try:
-            return self.send_buffer_reader.read(buffer_length)
-        except BrokenPipeError:
-            return b""
-        except ValueError:
-            logger.info("Receiving Thread was closed. Callback cant read queue.")
-            return b""

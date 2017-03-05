@@ -271,6 +271,10 @@ class SendRecvDialogController(QDialog):
 
             self.on_clear_clicked()
 
+        elif "OSError" in new_errors:
+            self.device.stop_on_error("OSError")
+            self.on_clear_clicked()
+
         elif "FATAL: No supported devices found" in new_errors or \
                         "HACKRF_ERROR_NOT_FOUND" in new_errors or \
                         "HACKRF_ERROR_LIBUSB" in new_errors:
@@ -281,6 +285,10 @@ class SendRecvDialogController(QDialog):
         elif "No module named gnuradio" in new_errors:
             self.device.stop_on_error("Did not find gnuradio.")
             Errors.gnuradio_not_installed()
+            self.on_clear_clicked()
+
+        elif "RTLSDR-open: Error Code: -1" in new_errors:
+            self.device.stop_on_error("Could not open a RTL-SDR device.")
             self.on_clear_clicked()
 
         elif "Address already in use" in new_errors:

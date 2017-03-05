@@ -263,7 +263,7 @@ class VirtualDevice(QObject):
                     self.__dev.max_repeats = value
                     self.__dev.current_iteration = 0
             elif self.backend in (Backends.native, Backends.network):
-                self.__dev.sending_repeats = value if value != 0 else -1
+                self.__dev.sending_repeats = value
             else:
                 raise ValueError("Unsupported Backend")
 
@@ -350,9 +350,6 @@ class VirtualDevice(QObject):
             time.sleep(0.1)
             self.__dev.start()  # Already connected to started signal in constructor
         elif self.backend == Backends.native:
-            if not self.__dev.is_open:
-                self.__dev.open()
-
             if self.mode == Mode.send:
                 self.__dev.start_tx_mode(resume=True)
             else:
@@ -390,8 +387,9 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
-            self.__dev.close()
             self.read_errors()  # Clear errors
+            self.__dev.stop_rx_mode("Stop on error")
+            self.__dev.stop_tx_mode("Stop on error")
             self.emit_stopped_signal()
         else:
             raise ValueError("Unsupported Backend")
@@ -405,7 +403,6 @@ class VirtualDevice(QObject):
             self.data = None
 
         elif self.backend == Backends.native:
-            self.__dev.close()
             self.data = None
 
         elif self.backend == Backends.none:

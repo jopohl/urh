@@ -6,13 +6,15 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QInputDialog
+from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoder import Encoder
-from urh.ui.CustomDialog import CustomDialog
 from urh.ui.ui_decoding import Ui_Decoder
 from urh.util.ProjectManager import ProjectManager
 
@@ -157,8 +159,8 @@ class DecoderWidgetController(QDialog):
 
     def saveas(self):
         # Ask for a name
-        txt = ["Please enter a name:", self.e.chain[0]]
-        ok, name = CustomDialog.dialog(self, txt, "input")
+        name, ok = QInputDialog.getText(self, self.tr("Save decoding"),
+                                          self.tr("Please enter a name:"), QLineEdit.Normal, self.e.chain[0])
 
         if ok and name != "":
             self.e.chain[0] = name
@@ -183,11 +185,11 @@ class DecoderWidgetController(QDialog):
     def delete_decoding(self):
         num = self.ui.combobox_decodings.currentIndex()
         if num >= 0:
-            # Ask for acknowledgement
-            txt = "Do you really want to delete '" + self.decodings[num].name + "'?"
-            ok, _ = CustomDialog.dialog(self, txt, "yesno")
+            reply = QMessageBox.question(self, self.tr("Delete Decoding?"),
+                                         self.tr("Do you really want to delete " + "'{}'?".format(self.decodings[num].name)),
+                                         QMessageBox.Yes | QMessageBox.No)
 
-            if ok:
+            if reply == QMessageBox.Yes:
                 self.decodings.pop(num)
                 self.ui.combobox_decodings.removeItem(num)
                 self.save_to_file()

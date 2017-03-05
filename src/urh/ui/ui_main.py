@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1017, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -259,6 +259,8 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon.fromTheme("folder-open")
         self.actionOpen_directory.setIcon(icon)
         self.actionOpen_directory.setObjectName("actionOpen_directory")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionSave_project)
@@ -281,6 +283,7 @@ class Ui_MainWindow(object):
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionFullscreen_mode)
         self.menuHelp.addAction(self.actionAbout_AutomaticHacker)
+        self.menuHelp.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -341,6 +344,7 @@ class Ui_MainWindow(object):
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
         self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
         self.actionOpen_directory.setText(_translate("MainWindow", "Open &directory..."))
+        self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

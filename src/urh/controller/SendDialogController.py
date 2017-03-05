@@ -79,7 +79,7 @@ class SendDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_graphics_view_save_as_clicked(self):
-        filename = FileOperator.get_save_file_name("signal.complex", parent=self)
+        filename = FileOperator.get_save_file_name("signal.complex")
         if filename:
             try:
                 self.scene_manager.signal.save_as(filename)
@@ -121,6 +121,9 @@ class SendDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_device_started(self):
         super().on_device_started()
+        self.device_is_sending = True
+        self.ui.btnStart.setEnabled(True)
+        self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-pause"))
         self.set_device_ui_items_enabled(False)
 
     @pyqtSlot()

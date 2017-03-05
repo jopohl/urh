@@ -35,17 +35,18 @@ class DirectoryTreeView(QTreeView):
             QMessageBox.information(self, self.tr("Remove"),
                                     self.tr("Failed to remove {0}".format(model.fileName(index))))
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
+    def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
         new_dir_action = menu.addAction("New Directory")
         new_dir_action.setIcon(QIcon.fromTheme("folder"))
+        new_dir_action.triggered.connect(self.create_directory)
+
         del_action = menu.addAction("Delete")
         del_action.setIcon(QIcon.fromTheme("edit-delete"))
+        del_action.triggered.connect(self.remove)
 
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+        return menu
 
-        if action == new_dir_action:
-            self.create_directory()
-
-        elif action == del_action:
-            self.remove()
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        menu = self.create_context_menu()
+        menu.exec_(self.mapToGlobal(event.pos()))

@@ -181,7 +181,7 @@
      <x>0</x>
      <y>0</y>
      <width>1017</width>
-     <height>30</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -220,6 +220,7 @@
      <string>Hel&amp;p</string>
     </property>
     <addaction name="actionAbout_AutomaticHacker"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -547,6 +548,11 @@
    </property>
    <property name="text">
     <string>Open &amp;directory...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>

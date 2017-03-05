@@ -2,9 +2,10 @@ import locale
 import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
-    QApplication
+    QApplication, QCheckBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -12,14 +13,13 @@ from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.ui.CustomDialog import CustomDialog
 from urh.ui.LegendScene import LegendScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
-from urh.util import FontHelper
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -48,7 +48,7 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
-        self.ui.txtEdProto.setFont(FontHelper.getMonospaceFont())
+        self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.messages = proto_analyzer.messages
 
@@ -300,13 +300,22 @@ class SignalFrameController(QFrame):
 
     def my_close(self):
         settings = constants.SETTINGS
-        not_show = settings.value('not_show_close_dialog', False)
+        not_show = settings.value('not_show_close_dialog', False, type=bool)
 
         if not not_show:
-            ok, not_show_again = CustomDialog.dialog(self, "Do you want to close?", "close")
+            cb = QCheckBox("Do not show this again.")
+            msgbox = QMessageBox(QMessageBox.Question, "Confirm close", "Are you sure you want to close?")
+            msgbox.addButton(QMessageBox.Yes)
+            msgbox.addButton(QMessageBox.No)
+            msgbox.setDefaultButton(QMessageBox.No)
+            msgbox.setCheckBox(cb)
+
+            reply = msgbox.exec()
+
+            not_show_again = bool(cb.isChecked())
             settings.setValue("not_show_close_dialog", not_show_again)
             self.not_show_again_changed.emit()
-            if not ok:
+            if reply != QMessageBox.Yes:
                 return
 
         self.closed.emit(self)
@@ -318,7 +327,7 @@ class SignalFrameController(QFrame):
             self.save_signal_as()
 
     def save_signal_as(self):
-        filename = FileOperator.get_save_file_name(self.signal.filename, wav_only=self.signal.wav_mode, parent=self)
+        filename = FileOperator.get_save_file_name(self.signal.filename, wav_only=self.signal.wav_mode)
         if filename:
             try:
                 self.signal.save_as(filename)
@@ -586,9 +595,14 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
-        dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
-                                      project_manager.bandwidth, project_manager.gain, project_manager.device,
-                                      modulated_data=self.signal.data, parent=self)
+        try:
+            dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
+                                          project_manager.bandwidth, project_manager.gain, project_manager.device,
+                                          modulated_data=self.signal.data, parent=self)
+        except OSError as e:
+            logger.error(repr(e))
+            return
+
         if dialog.has_empty_device_list:
             Errors.no_device()
             dialog.close()

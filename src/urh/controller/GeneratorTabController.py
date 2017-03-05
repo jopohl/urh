@@ -483,13 +483,17 @@ class GeneratorTabController(QWidget):
     def on_btn_send_clicked(self):
         try:
             modulated_data = self.modulate_data()
-            dialog = SendDialogController(self.project_manager.frequency,
-                                          self.project_manager.sample_rate,
-                                          self.project_manager.bandwidth,
-                                          self.project_manager.gain,
-                                          self.project_manager.device,
-                                          modulated_data=modulated_data,
-                                          parent=self)
+            try:
+                dialog = SendDialogController(self.project_manager.frequency,
+                                              self.project_manager.sample_rate,
+                                              self.project_manager.bandwidth,
+                                              self.project_manager.gain,
+                                              self.project_manager.device,
+                                              modulated_data=modulated_data,
+                                              parent=self)
+            except OSError as e:
+                logger.error(repr(e))
+                return
             if dialog.has_empty_device_list:
                 Errors.no_device()
                 dialog.close()
@@ -504,7 +508,7 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_btn_save_clicked(self):
-        filename = FileOperator.get_save_file_name("profile", parent=self, caption="Save fuzz profile")
+        filename = FileOperator.get_save_file_name("profile.fuzz", caption="Save fuzz profile")
         if filename:
             self.table_model.protocol.to_xml_file(filename)
 

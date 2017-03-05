@@ -78,7 +78,6 @@ class TestHackRF(unittest.TestCase):
 
     def test_hackrf_class_recv(self):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
-        hfc.open()
         hfc.start_rx_mode()
         i = 0
         TIME_TOTAL = 5
@@ -87,22 +86,19 @@ class TestHackRF(unittest.TestCase):
             time.sleep(1)
             i+=1
         print("{0:,}".format(hfc.current_recv_index))
-        #print(hfc.received_data)
-        #hfc.unpack_complex(len(hfc.byte_buffer)//2).tofile("/tmp/hackrf.complex")
         hfc.received_data.tofile("/tmp/hackrf.complex")
         print("Wrote Data")
         hfc.stop_rx_mode("Finished test")
-        hfc.close()
 
     def test_hackrf_class_send(self):
         hfc = HackRF(1e6, 433.92e6, 20, 1e6)
-        hfc.open()
-        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex",dtype=np.complex64), repeats=1)
+        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex", dtype=np.complex64), repeats=1)
         while not hfc.sending_finished:
-            print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat+1, hfc.current_sent_sample))
+            print("Repeat: {0} Current Sample: {1}/{2}".format(hfc.current_sending_repeat+1,
+                                                               hfc.current_sent_sample,
+                                                               len(hfc.samples_to_send)))
             time.sleep(1)
         hfc.stop_tx_mode("Test finished")
-        hfc.close()
 
     def test_hackrf_class_send_recv(self):
         while True:

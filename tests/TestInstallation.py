@@ -99,6 +99,7 @@ class TestInstallation(unittest.TestCase):
         target_dir = r"C:\urh"
         vm_helper = VMHelper("Windows 10", shell="cmd.exe /c")
         vm_helper.start_vm()
+        vm_helper.send_command("pip uninstall urh")
         vm_helper.send_command("rd /s /q {0}".format(target_dir))
         vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
         rc = vm_helper.send_command(r"python C:\urh\src\urh\cythonext\build.py")
@@ -108,6 +109,7 @@ class TestInstallation(unittest.TestCase):
         self.assertEqual(rc, 0)
 
         vm_helper.send_command("pip install urh")
+        time.sleep(0.5)
         rc = vm_helper.send_command("urh autoclose")
         self.assertEqual(rc, 0)
         vm_helper.send_command("pip uninstall urh")

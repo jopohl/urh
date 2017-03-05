@@ -4,9 +4,6 @@ from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
 from PyQt5.QtWidgets import QUndoCommand, QUndoStack
 
-from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
 
 class Plugin(QObject):
     enabled_changed = pyqtSignal()
@@ -60,14 +57,6 @@ class ProtocolPlugin(Plugin):
         raise NotImplementedError("Abstract Method.")
 
 
-class LabelAssignPlugin(Plugin):
-    def __init__(self, name: str):
-        Plugin.__init__(self, name)
-
-    def get_action(self, protocol_analyzer: ProtocolAnalyzer, message_type: MessageType):
-        raise NotImplementedError("Abstract Method.")
-
-
 class SDRPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
@@ -76,4 +65,3 @@ class SDRPlugin(Plugin):
 class SignalEditorPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
-

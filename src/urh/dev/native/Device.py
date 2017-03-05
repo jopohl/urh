@@ -223,6 +223,7 @@ class Device(QObject):
         self.init_recv_buffer()
 
         self.is_receiving = True
+        logger.info("{0}: Starting RX Mode".format(self.__class__.__name__))
         self.receive_process = Process(target=self.receive_process_function,
                                        args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
                                              self.sample_rate, self.gain, self.bandwidth

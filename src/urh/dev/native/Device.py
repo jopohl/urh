@@ -94,15 +94,25 @@ class Device(QObject):
     def current_sending_repeat(self, value: int):
         self._current_sending_repeat.value = value
 
+    @property
+    def receive_process_arguments(self):
+        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth
+
+    @property
+    def send_process_arguments(self):
+        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth, self.send_buffer, \
+               self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+
     def init_recv_buffer(self):
         if self.receive_buffer is None:
             if self.is_ringbuffer:
-                nsamples = 10**5
+                nsamples = 10 ** 5
             else:
                 # Take 60% of avail memory
-                nsamples = 0.6*(psutil.virtual_memory().free / 8)
+                nsamples = 0.6 * (psutil.virtual_memory().free / 8)
             self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
-            logger.info("Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
+            logger.info(
+                "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -143,8 +153,9 @@ class Device(QObject):
 
         if value > self._max_bandwidth:
             err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
-                                                                         Formatter.big_value_with_suffix(value),
-                                                                         Formatter.big_value_with_suffix(self._max_bandwidth))
+                                                                             Formatter.big_value_with_suffix(value),
+                                                                             Formatter.big_value_with_suffix(
+                                                                                 self._max_bandwidth))
             self.errors.add(err)
             logger.warning(err)
             value = self._max_bandwidth
@@ -165,7 +176,8 @@ class Device(QObject):
         if value > self._max_frequency:
             err = "{0} frequency {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
                                                                              Formatter.big_value_with_suffix(value),
-                                                                             Formatter.big_value_with_suffix(self._max_frequency))
+                                                                             Formatter.big_value_with_suffix(
+                                                                                 self._max_frequency))
             self.errors.add(err)
             logger.warning(err)
             value = self._max_frequency
@@ -207,7 +219,8 @@ class Device(QObject):
         if value > self._max_sample_rate:
             err = "{0} sample rate {1}Sps too high. Correcting to {2}Sps".format(type(self).__name__,
                                                                                  Formatter.big_value_with_suffix(value),
-                                                                                 Formatter.big_value_with_suffix(self._max_sample_rate))
+                                                                                 Formatter.big_value_with_suffix(
+                                                                                     self._max_sample_rate))
             self.errors.add(err)
             logger.warning(err)
             value = self._max_sample_rate
@@ -225,9 +238,7 @@ class Device(QObject):
         self.is_receiving = True
         logger.info("{0}: Starting RX Mode".format(self.__class__.__name__))
         self.receive_process = Process(target=self.receive_process_function,
-                                       args=(self.child_data_conn, self.child_ctrl_conn, self.frequency,
-                                             self.sample_rate, self.gain, self.bandwidth
-                                             ))
+                                       args=self.receive_process_arguments)
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
         self._start_read_error_thread()
@@ -252,12 +263,8 @@ class Device(QObject):
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
         self.is_transmitting = True
 
-        self.transmit_process = Process(target=self.send_process_function, args=(self.child_ctrl_conn, self.frequency,
-                                                                  self.sample_rate, self.gain, self.bandwidth,
-                                                                  self.send_buffer,
-                                                                  self._current_sent_sample,
-                                                                  self._current_sending_repeat, self.sending_repeats
-                                                                  ))
+        self.transmit_process = Process(target=self.send_process_function,
+                                        args=self.send_process_arguments)
 
         self.transmit_process.daemon = True
         self._start_read_error_thread()
@@ -314,14 +321,17 @@ class Device(QObject):
                         if self.is_ringbuffer:
                             self.current_recv_index = 0
                             if nsamples >= len(self.receive_buffer):
-                                logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples-len(self.receive_buffer)))
+                                logger.warning("Receive buffer too small, skipping {0:d} samples".format(
+                                    nsamples - len(self.receive_buffer)))
                                 nsamples = len(self.receive_buffer) - 1
 
                         else:
-                            self.stop_rx_mode("Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples, len(self.receive_buffer)))
+                            self.stop_rx_mode(
+                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples,
+                                                                          len(self.receive_buffer)))
                             return
 
-                    end = nsamples*self.BYTES_PER_SAMPLE
+                    end = nsamples * self.BYTES_PER_SAMPLE
                     self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
                         self.unpack_complex(byte_buffer[:end], nsamples)
 

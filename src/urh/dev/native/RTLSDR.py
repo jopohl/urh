@@ -88,6 +88,10 @@ class RTLSDR(Device):
 
         self.device_number = device_number
 
+    @property
+    def receive_process_arguments(self):
+        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, self.gain
+
     def set_freq_correction(self, ppm):
         ret = rtlsdr.set_freq_correction(int(ppm))
         self.log_retcode(ret, "Set frequency correction")

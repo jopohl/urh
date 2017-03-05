@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup, QGraphicsObject, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItemGroup, QGraphicsSceneDragDropEvent, QGraphicsItem, QMenu, QAction, QActionGroup, QGraphicsObject, QAbstractItemView, QApplication
 from PyQt5.QtGui import QPen, QDragEnterEvent, QDropEvent, QPolygonF, QColor, QFont, QFontDatabase, QTransform, QBrush
 from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF, pyqtSignal, pyqtSlot, QLineF
 import math
@@ -17,6 +17,7 @@ class SimulatorItem(QGraphicsObject):
         self.setAcceptDrops(True)
         self.drop_indicator_line = QLineF()
         self.bounding_rect = QRectF()
+        self.item_under_mouse = None
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
@@ -39,22 +40,25 @@ class SimulatorItem(QGraphicsObject):
         self.update()
 
     def dragMoveEvent(self, event: QDropEvent):
-        rect = self.boundingRect()
-        self.drop_indicator_position = self.position(event.pos(), rect)
+        self.update_drop_indicator(event.pos())
 
-        if self.drop_indicator_position == QAbstractItemView.AboveItem:
+    def parent_item(self):
+        if isinstance(self, RuleConditionItem):
+            return self
+        else:
+            return self.parentItem()
+
+    def update_drop_indicator(self, pos):
+        rect = self.boundingRect()
+
+        if pos.y() - rect.top() < rect.height() / 2:
+            self.drop_indicator_position = QAbstractItemView.AboveItem
             self.drop_indicator_line = QLineF(rect.topLeft(), rect.topRight())
         else:
+            self.drop_indicator_position = QAbstractItemView.BelowItem
             self.drop_indicator_line = QLineF(rect.bottomLeft(), rect.bottomRight())
 
         self.update()
-        
-    @staticmethod
-    def position(pos, rect):
-        if pos.y() - rect.top() < rect.height() / 2:
-            return QAbstractItemView.AboveItem
-        else:
-            return QAbstractItemView.BelowItem
 
     def paint(self, painter, option, widget):
         if self.hover_active or self.isSelected():
@@ -81,6 +85,55 @@ class SimulatorItem(QGraphicsObject):
     def boundingRect(self):
         return self.bounding_rect
 
+    def mouseMoveEvent(self, event):
+        items = [item for item in self.scene().items(event.scenePos()) if isinstance(item, SimulatorItem) and item != self]
+        item = None if len(items) == 0 else items[0]
+
+        if self.item_under_mouse and self.item_under_mouse != item:
+            self.item_under_mouse.dragLeaveEvent(None)
+            self.item_under_mouse = None
+
+            if item:
+                self.item_under_mouse = item
+                self.item_under_mouse.dragEnterEvent(None)
+        elif self.item_under_mouse and self.item_under_mouse == item:
+            self.item_under_mouse.update_drop_indicator(self.mapToItem(self.item_under_mouse, event.pos()))
+        elif item:
+            self.item_under_mouse = item
+            self.item_under_mouse.dragEnterEvent(None)          
+
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self.item_under_mouse:
+            self.item_under_mouse.dragLeaveEvent(None)
+            selected_items = self.scene().cut_selected_messages()
+            parent_item = self.item_under_mouse.parent_item()
+
+            if parent_item == None:
+                position = self.scene().sim_items.index(self.item_under_mouse)
+            elif isinstance(self.item_under_mouse, RuleConditionItem):
+                position = len(parent_item.sim_items)
+            else:
+                position = parent_item.sim_items.index(self.item_under_mouse)
+
+            if self.item_under_mouse.drop_indicator_position == QAbstractItemView.BelowItem:
+                position += 1
+
+            for item in selected_items:
+                if parent_item:
+                    parent_item.sim_items.insert(position, item)
+                else:
+                    self.scene().sim_items.insert(position, item)
+
+                item.setParentItem(parent_item)
+                position += 1
+                
+            self.item_under_mouse = None
+
+        super().mouseReleaseEvent(event)
+        self.scene().update_view()
+
 class ConditionType(Enum):
     IF = "if ..."
     ELSE_IF = "else if ..."
@@ -102,6 +155,17 @@ class RuleItem(QGraphicsItem):
 
         for cond in self.conditions:
             messages.extend([item for item in cond.sim_items if type(item) is MessageItem])
+
+        return messages
+
+    def cut_selected_messages(self):
+        messages = []
+
+        for cond in self.conditions:
+            for item in cond.sim_items[:]:
+                if item.isSelected():
+                    messages.append(item)
+                    cond.sim_items.remove(item)
 
         return messages
 
@@ -286,6 +350,7 @@ class ActionItem(SimulatorItem):
         font.setPointSize(8)
         font.setWeight(QFont.DemiBold)
         self.text.setFont(font)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
 
         if type == ActionType.external_program:
             self.text.setPlainText("Start program [/usr/bin/test]")
@@ -311,7 +376,6 @@ class ParticipantItem(QGraphicsItem):
         if y_pos == -1:
             y_pos = self.line.line().y2()
 
-        #self.prepareGeometryChange()
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, y_pos)
         super().update()
@@ -521,16 +585,17 @@ class SimulatorScene(QGraphicsScene):
 
         if item == None:
             parent_item = None
+        else:
+            parent_item = item.parent_item()
+
+        if item == None:
             position = len(self.sim_items)
-        elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)) and item.parentItem() is None:
-            parent_item = None
+        elif parent_item == None:
             position = self.sim_items.index(item)
-        elif (isinstance(item, MessageItem) or isinstance(item, ActionItem)):
-            parent_item = item.parentItem()
-            position = parent_item.sim_items.index(item)
         elif isinstance(item, RuleConditionItem):
-            parent_item = item
             position = len(parent_item.sim_items)
+        else:
+            position = parent_item.sim_items.index(item)
 
         if item and item.drop_indicator_position == QAbstractItemView.BelowItem:
             position += 1
@@ -647,6 +712,18 @@ class SimulatorScene(QGraphicsScene):
 
                 self.add_message_from_message(parent_item, position, message, source, destination)
                 position += 1
+
+    def cut_selected_messages(self):
+        messages = []
+
+        for item in self.sim_items[:]:
+            if type(item) is RuleItem:
+                messages.extend(item.cut_selected_messages())
+            elif item.isSelected():
+                messages.append(item)
+                self.sim_items.remove(item)
+
+        return messages
 
     def detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels

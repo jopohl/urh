@@ -271,6 +271,10 @@ class SendRecvDialogController(QDialog):
 
             self.on_clear_clicked()
 
+        elif "OSError" in new_errors:
+            self.device.stop_on_error("OSError")
+            self.on_clear_clicked()
+
         elif "FATAL: No supported devices found" in new_errors or \
                         "HACKRF_ERROR_NOT_FOUND" in new_errors or \
                         "HACKRF_ERROR_LIBUSB" in new_errors:

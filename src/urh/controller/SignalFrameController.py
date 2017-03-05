@@ -19,6 +19,7 @@ from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -594,9 +595,14 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
-        dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
-                                      project_manager.bandwidth, project_manager.gain, project_manager.device,
-                                      modulated_data=self.signal.data, parent=self)
+        try:
+            dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
+                                          project_manager.bandwidth, project_manager.gain, project_manager.device,
+                                          modulated_data=self.signal.data, parent=self)
+        except OSError as e:
+            logger.error(repr(e))
+            return
+
         if dialog.has_empty_device_list:
             Errors.no_device()
             dialog.close()

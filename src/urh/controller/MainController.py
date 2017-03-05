@@ -577,9 +577,14 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
-        r = ReceiveDialogController(pm.frequency, pm.sample_rate,
-                                    pm.bandwidth, pm.gain,
-                                    pm.device, parent=self)
+        try:
+            r = ReceiveDialogController(pm.frequency, pm.sample_rate,
+                                        pm.bandwidth, pm.gain,
+                                        pm.device, parent=self)
+        except OSError as e:
+            logger.error(repr(e))
+            return
+
         if r.has_empty_device_list:
             Errors.no_device()
             r.close()

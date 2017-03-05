@@ -242,7 +242,11 @@ class Device(QObject):
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
         self._start_read_error_thread()
-        self.receive_process.start()
+        try:
+            self.receive_process.start()
+        except OSError as e:
+            logger.error(repr(e))
+            self.errors.add(repr(e))
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
@@ -250,7 +254,7 @@ class Device(QObject):
 
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
-        if hasattr(self, "receive_process"):
+        if hasattr(self, "receive_process") and self.receive_process.is_alive():
             self.receive_process.join(0.5)
             if self.receive_process.is_alive():
                 logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
@@ -276,7 +280,7 @@ class Device(QObject):
 
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 
-        if hasattr(self, "transmit_process"):
+        if hasattr(self, "transmit_process") and self.transmit_process.is_alive():
             self.transmit_process.join(0.5)
             if self.transmit_process.is_alive():
                 logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))

@@ -174,6 +174,7 @@ class RTLSDRTCP(Device):
                 logger.error("RTLSDRTCP: Could not join read_queue_thread")
 
     def read_sync(self):
+        # returns data directly, unpack?
         return self.sock.recv(self.MAXDATASIZE)
 
     def set_device_frequency(self, frequency):

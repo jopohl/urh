@@ -206,8 +206,8 @@ class SendRecvDialogController(QDialog):
         self.graphics_view.scene_manager = self.scene_manager
         self.graphics_view.setScene(self.scene_manager.scene)
         self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.ui.lineEditIP.setVisible(dev_name == "USRP")
-        self.ui.labelIP.setVisible(dev_name == "USRP")
+        self.ui.lineEditIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
+        self.ui.labelIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
 
         self.set_bandwidth_status()
 
@@ -218,7 +218,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxGain.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
-        if self.ui.cbDevice.currentText() == "USRP":
+        if self.ui.cbDevice.currentText() in ("USRP", "RTL-TCP"):
             self.ui.lineEditIP.editingFinished.emit()
 
     @pyqtSlot()

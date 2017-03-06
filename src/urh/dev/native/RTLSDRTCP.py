@@ -6,7 +6,6 @@ from urh.util.Logger import logger
 import socket
 import select
 
-
 class RTLSDRTCP(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
     MAXDATASIZE = 65536
@@ -19,25 +18,28 @@ class RTLSDRTCP(Device):
                      gain: int):
         # connect and initialize rtl_tcp
         self.open(self.hostname, self.port)
-        self.device_number = device_number
-        self.set_parameter("centerFreq", int(center_freq))
-        self.set_parameter("sampleRate", int(sample_rate))
-        self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
-        self.set_parameter("tunerGain", int(gain))
-        exit_requested = False
+        if self.socket_is_open:
+            self.device_number = device_number
+            self.set_parameter("centerFreq", int(center_freq))
+            self.set_parameter("sampleRate", int(sample_rate))
+            self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
+            self.set_parameter("tunerGain", int(gain))
+            exit_requested = False
 
-        while not exit_requested:
-            while ctrl_connection.poll():
-                result = self.process_command(ctrl_connection.recv())
-                if result == "stop":
-                    exit_requested = True
-                    break
+            while not exit_requested:
+                while ctrl_connection.poll():
+                    result = self.process_command(ctrl_connection.recv())
+                    if result == "stop":
+                        exit_requested = True
+                        break
 
-            if not exit_requested:
-                data_connection.send_bytes(self.read_sync())
+                if not exit_requested:
+                    data_connection.send_bytes(self.read_sync())
 
-        logger.debug("RTLSDRTCP: closing device")
-        self.close()
+            logger.debug("RTLSDRTCP: closing device")
+            self.close()
+        else:
+            ctrl_connection.send("Could not connect to rtl_tcp:404")
         ctrl_connection.send("close:0")
         data_connection.close()
         ctrl_connection.close()
@@ -95,7 +97,12 @@ class RTLSDRTCP(Device):
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
                 self.sock.settimeout(1.0)  # Timeout 1s
                 self.sock.connect((hostname, port))
+            except Exception as e:
+                self.socket_is_open = False
+                logger.info("Could not connect to rtl_tcp", hostname, port, "(", str(e), ")")
+                return
 
+            try:
                 # Receive rtl_tcp initial data
                 init_data = self.sock.recv(self.MAXDATASIZE)
 
@@ -126,9 +133,9 @@ class RTLSDRTCP(Device):
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
                 self.socket_is_open = True
-            except OSError as e:
+            except Exception as e:
                 self.socket_is_open = False
-                logger.info("Could not connect to rtl_tcp", hostname, port, "(", str(e), ")")
+                logger.info("This is not a valid rtl_tcp server", hostname, port, "(", str(e), ")")
 
     def close(self):
         if self.socket_is_open:

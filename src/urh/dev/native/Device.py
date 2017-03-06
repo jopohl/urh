@@ -208,6 +208,7 @@ class Device(QObject):
     @abstractmethod
     def set_device_gain(self, gain):
         # todo: split to if gain etc
+        self.parent_ctrl_conn.send("tuner_gain:" + str(int(gain)))
         pass
 
     @property

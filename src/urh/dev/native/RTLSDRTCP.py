@@ -22,6 +22,7 @@ class RTLSDRTCP(Device):
         self.device_number = device_number
         self.set_parameter("centerFreq", int(center_freq))
         self.set_parameter("sampleRate", int(sample_rate))
+        self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
         self.set_parameter("tunerGain", int(gain))
         exit_requested = False
 
@@ -66,21 +67,22 @@ class RTLSDRTCP(Device):
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
 
+        # default class parameters
+        self.receive_process_function = self.receive_sync
+        self.device_number = device_number
+        self.socket_is_open = False
+        self.success = 0
+
         # default parameters for rtl_tcp
         self.hostname="127.0.0.1"
         self.port=1234
 
-        self.socket_is_open = False
-        self.success = 0
-        self.receive_process_function = self.receive_sync
-
+        # maximum device parameters
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
         self._max_bandwidth = 3200000
         self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
-
-        self.device_number = device_number
 
     @property
     def receive_process_arguments(self):
@@ -151,46 +153,6 @@ class RTLSDRTCP(Device):
             return self.sock.recv(self.MAXDATASIZE)
         else:
             return b''
-
-    def set_device_frequency(self, frequency):
-        error = self.set_parameter("centerFreq", int(frequency))
-        self.log_retcode(int(error), "Set center frequency")
-        return error
-
-    def set_device_sample_rate(self, sample_rate):
-        error = self.set_parameter("sampleRate", int(sample_rate))
-        self.log_retcode(int(error), "Set sample rate")
-        return error
-
-    def set_freq_correction(self, ppm):
-        error = self.set_parameter("freqCorrection", int(ppm))
-        self.log_retcode(int(error), "Set frequency correction")
-        return error
-
-    def set_offset_tuning(self, on: bool):
-        error = self.set_parameter("offsetTuning", on)
-        self.log_retcode(int(error), "Set offset tuning")
-        return error
-
-    def set_gain_mode(self, manual: bool):
-        error = self.set_parameter("tunerGainMode", manual)
-        self.log_retcode(int(error), "Set gain mode manual")
-        return error
-
-    def set_if_gain(self, gain):
-        error = self.set_parameter("tunerIFGain", int(gain))
-        self.log_retcode(int(error), "Set IF gain")
-        return error
-
-    def set_gain(self, gain):
-        error = self.set_parameter("tunerGain", int(gain))
-        self.log_retcode(int(error), "Set tuner gain")
-        return error
-
-    def set_bandwidth(self, bandwidth):
-        error = self.set_parameter("bandwidth", int(bandwidth))
-        self.log_retcode(int(error), "Set tuner bandwidth")
-        return error
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

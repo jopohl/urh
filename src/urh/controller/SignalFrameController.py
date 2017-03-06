@@ -334,14 +334,6 @@ class SignalFrameController(QFrame):
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
 
-    def show_autocrop_range(self):
-        start = self.signal.get_signal_start()
-        end = self.signal.get_signal_end()
-
-        self.ui.gvSignal.set_selection_area(start, end - start)
-        self.ui.gvSignal.selection_area.finished = True
-        self.ui.gvSignal.emit_sel_area_width_changed()
-
     def draw_signal(self, full_signal=False):
         gvs = self.ui.gvSignal
         gv_legend = self.ui.gvLegend

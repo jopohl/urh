@@ -17,7 +17,8 @@ class RTLSDRTCP(Device):
 
     def receive_sync(self, data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
                      gain: int):
-        self.open("127.0.0.1", 1234)
+        # connect and initialize rtl_tcp
+        self.open(self.hostname, self.port)
         self.device_number = device_number
         self.set_parameter("centerFreq", int(center_freq))
         self.set_parameter("sampleRate", int(sample_rate))
@@ -32,15 +33,11 @@ class RTLSDRTCP(Device):
                     break
 
             if not exit_requested:
-                data = self.read_sync()
-                # if not isinstance(data, bytes):
-                print(data)
-                data_connection.send_bytes(data)
+                data_connection.send_bytes(self.read_sync())
 
         logger.debug("RTLSDRTCP: closing device")
-        ret = self.close()
-        ret = 0   #  Close returns None
-        ctrl_connection.send("close:" + str(ret))
+        self.close()
+        ctrl_connection.send("close:0")
         data_connection.close()
         ctrl_connection.close()
 
@@ -69,6 +66,10 @@ class RTLSDRTCP(Device):
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
 
+        # default parameters for rtl_tcp
+        self.hostname="127.0.0.1"
+        self.port=1234
+
         self.socket_is_open = False
         self.success = 0
         self.receive_process_function = self.receive_sync
@@ -91,7 +92,7 @@ class RTLSDRTCP(Device):
                 # Create socket and connect
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
                 self.sock.settimeout(1.0)  # Timeout 1s
-                self.sock.connect((hostname, port))
+                self.sock.connect((self.hostname, self.port))
 
                 # Receive rtl_tcp initial data
                 init_data = self.sock.recv(self.MAXDATASIZE)
@@ -134,10 +135,10 @@ class RTLSDRTCP(Device):
 
     def set_parameter(self, param: str, value: int):  # returns error (True/False)
         if self.socket_is_open:
-            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)  # Set param at bits 0-7
-            msg += value.to_bytes(4, self.ENDIAN)  # Set value at bits 8-39
+            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
+            msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
             try:
-                self.sock.sendall(msg)  # Send data to rtl_tcp
+                self.sock.sendall(msg)                                          # Send data to rtl_tcp
             except OSError as e:
                 self.sock.close()
                 logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
@@ -191,15 +192,15 @@ class RTLSDRTCP(Device):
         self.log_retcode(int(error), "Set tuner bandwidth")
         return error
 
-        # @staticmethod
-        # def unpack_complex(buffer, nvalues: int):
-        #     """
-        #     The raw, captured IQ data is 8 bit unsigned data.
-        #
-        #     :return:
-        #     """
-        #     result = np.empty(nvalues, dtype=np.complex64)
-        #     unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        #     result.real = (unpacked['r'] / 127.5) - 1.0
-        #     result.imag = (unpacked['i'] / 127.5) - 1.0
-        #     return result
+    @staticmethod
+    def unpack_complex(buffer, nvalues: int):
+        """
+        The raw, captured IQ data is 8 bit unsigned data.
+
+        :return:
+        """
+        result = np.empty(nvalues, dtype=np.complex64)
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
+        result.real = (unpacked['r'] / 127.5) - 1.0
+        result.imag = (unpacked['i'] / 127.5) - 1.0
+        return result

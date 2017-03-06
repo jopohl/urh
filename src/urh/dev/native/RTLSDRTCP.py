@@ -32,6 +32,7 @@ class RTLSDRTCP(Device):
 
             if not exit_requested:
                 data = self.read_sync()
+                #if not isinstance(data, bytes):
                 print(data)
                 data_connection.send_bytes(data)
 
@@ -146,7 +147,7 @@ class RTLSDRTCP(Device):
         if self.sock in s_read:
             return self.sock.recv(self.MAXDATASIZE)
         else:
-            return 0
+            return b''
 
     def set_device_frequency(self, frequency):
         error = self.set_parameter("centerFreq", int(frequency))

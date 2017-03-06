@@ -10,6 +10,7 @@ class TestRTLSDRTCP(unittest.TestCase):
 
     def test_device_communication(self):
         sdr = RTLSDRTCP(0, 0, 0, device_number=0)
+        sdr.open()
         error = 0
 
         if sdr.set_device_frequency(926000000):

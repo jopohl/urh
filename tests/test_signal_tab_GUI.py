@@ -184,3 +184,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertTrue(self.frame.ui.gvLegend.isHidden())
         self.frame.ui.cbSignalView.setCurrentIndex(1)
         self.assertFalse(self.frame.ui.gvLegend.isHidden())
+
+    def test_auto_detect_button(self):
+        self.assertTrue(self.frame.ui.btnAutoDetect.isChecked())
+        self.frame.ui.btnAutoDetect.click()
+        self.assertFalse(self.frame.ui.btnAutoDetect.isChecked())

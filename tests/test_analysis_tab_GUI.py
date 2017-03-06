@@ -137,3 +137,30 @@ class TestAnalysisTabGUI(unittest.TestCase):
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
         self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, max_row, start, end - 1)
         self.assertEqual(self.form.ui.tabWidget.currentIndex(), 0)
+
+    def test_hide_row(self):
+        num_messages = len(self.cfc.proto_analyzer.messages)
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        self.assertGreater(num_messages, 0)
+        self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
+        self.cfc.ui.tblViewProtocol.hide_row(0)
+        self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
+        self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
+
+        for msg in range(1, num_messages):
+            self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
+
+        self.form.ui.tabWidget.setCurrentIndex(2)
+        app.processEvents()
+        QTest.qWait(100)
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        app.processEvents()
+        QTest.qWait(100)
+        self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
+        self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
+
+        for msg in range(1, num_messages):
+            self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
+
+        self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
+

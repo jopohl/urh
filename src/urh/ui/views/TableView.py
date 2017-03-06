@@ -68,13 +68,16 @@ class TableView(QTableView):
                 QApplication.processEvents()
 
     def resize_vertical_header(self):
-        nrows = self.model().rowCount()
-        if self.isVisible() and nrows > 0:
+        num_rows = self.model().rowCount()
+        if self.isVisible() and num_rows > 0:
             hd = self.model().headerData
-            max_len = np.max([len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(nrows)])
+            max_len = np.max([len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(num_rows)])
             w = (self.font().pointSize() + 2) * max_len
-            rh = self.rowHeight(0)
-            for i in range(nrows):
+
+            # https://github.com/jopohl/urh/issues/182
+            rh = self.verticalHeader().defaultSectionSize()
+
+            for i in range(num_rows):
                 self.verticalHeader().resizeSection(i, w)
                 self.setRowHeight(i, rh)
                 if i % 10 == 0:

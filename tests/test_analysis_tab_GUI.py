@@ -137,8 +137,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
         self.cfc.ui.tblViewProtocol.selectRow(1)
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
-        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, max_row, start, end - 1)
+        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
         self.assertEqual(self.form.ui.tabWidget.currentIndex(), 0)
+        self.assertFalse(self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.selection_area.is_empty)
 
     def test_hide_row(self):
         num_messages = len(self.cfc.proto_analyzer.messages)

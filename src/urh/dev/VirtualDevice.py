@@ -194,14 +194,14 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             return self.__dev.port
         else:
-            raise ValueError("Port only for gnnuradio socket (grc backend)")
+            raise ValueError("Port only for gnuradio socket (grc backend)")
 
     @port.setter
     def port(self, value):
         if self.backend == Backends.grc:
             self.__dev.port = value
         else:
-            raise ValueError("Port only for gnnuradio socket (grc backend)")
+            raise ValueError("Port only for gnuradio socket (grc backend)")
 
     @property
     def data(self):

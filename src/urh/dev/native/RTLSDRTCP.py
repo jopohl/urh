@@ -62,7 +62,8 @@ class RTLSDRTCP(Device):
     MAXDATASIZE = 65536
     ENDIAN = "big"
     RTL_TCP_CONSTS = ["NULL", "centerFreq", "sampleRate", "tunerGainMode", "tunerGain", "freqCorrection", "tunerIFGain",
-                      "testMode", "agcMode", "directSampling", "offsetTuning", "rtlXtalFreq", "tunerXtalFreq", "gainByIndex"]
+                      "testMode", "agcMode", "directSampling", "offsetTuning", "rtlXtalFreq", "tunerXtalFreq",
+                      "gainByIndex", "bandwidth", "biasTee"]
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
@@ -140,18 +141,6 @@ class RTLSDRTCP(Device):
 
         return False
 
-    # def get_parameter(self, param):
-    #     msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)  # Set param at bits 0-7
-    #     value = 0
-    #     msg += value.to_bytes(4, self.ENDIAN)  # Set value to zero
-    #
-    #     self.sock.sendall(msg)  # Send data to rtl_tcp
-    #     info = self.sock.recv(self.MAXDATASIZE)  # Await ACK
-    #     if len(info) > 0:
-    #         return info
-    #     else:
-    #         return False
-
     def start_rx_mode(self):
         self.init_recv_buffer()
 
@@ -187,19 +176,17 @@ class RTLSDRTCP(Device):
 
 
     def set_device_frequency(self, frequency):
-        #self.parent_conn.send("center_freq:{}".format(int(frequency)))
         ret = self.set_parameter("centerFreq", int(frequency))
         self.log_retcode(ret, "Set center frequency")
         return ret
 
     def set_device_sample_rate(self, sample_rate):
-        #self.parent_conn.send("sample_rate:{}".format(int(sample_rate)))
         ret = self.set_parameter("sampleRate", int(sample_rate))
         self.log_retcode(ret, "Set sample rate")
         return ret
 
     def set_freq_correction(self, ppm):
-        ret = self.set_parameter("freqCorrection", int(ppm))    # True/False
+        ret = self.set_parameter("freqCorrection", int(ppm))
         self.log_retcode(ret, "Set frequency correction")
         return ret
 
@@ -219,22 +206,14 @@ class RTLSDRTCP(Device):
         return ret
 
     def set_gain(self, gain):
-        #self.parent_conn.send("tuner_gain:{}".format(int(gain)))
         ret = self.set_parameter("tunerGain", int(gain))
         self.log_retcode(ret, "Set tuner gain")
         return ret
 
-    # def set_device_gain(self, gain):
-    #     self.set_gain(gain)
-
-    # def set_device_bandwidth(self, bandwidth):
-    #     if hasattr(rtlsdr, "set_tuner_bandwidth"):
-    #         #self.parent_conn.send("tuner_bandwidth:{}".format(int(bandwidth)))
-    #         #self.set_parameter("bandwidth", int(bandwidth))    # Currently not supported
-    #         pass
-    #     else:
-    #         logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")
-    #     pass
+    def set_bandwidth(self, bandwidth):
+        ret = self.set_parameter("bandwidth", int(bandwidth))
+        self.log_retcode(ret, "Set tuner bandwidth")
+        return ret
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

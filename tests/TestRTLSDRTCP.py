@@ -18,6 +18,9 @@ class TestRTLSDRTCP(unittest.TestCase):
         if sdr.set_device_sample_rate(2000000):
             error += 1
 
+        if sdr.set_bandwidth(2000000):
+            error += 1
+
         if sdr.set_device_gain(30):
             error += 1
 

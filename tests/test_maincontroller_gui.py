@@ -26,3 +26,8 @@ class TestMaincontrollerGUI(unittest.TestCase):
     def test_update_decodings(self):
         self.form.update_decodings()
         self.assertTrue(True)
+
+    def test_options_changed(self):
+        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
+        self.form.on_options_changed({"rel_symbol_length": 0, "show_pause_as_time": True, "default_view": 0})
+        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 0)

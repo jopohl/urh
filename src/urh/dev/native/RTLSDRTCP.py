@@ -92,7 +92,7 @@ class RTLSDRTCP(Device):
                 # Create socket and connect
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
                 self.sock.settimeout(1.0)  # Timeout 1s
-                self.sock.connect((self.hostname, self.port))
+                self.sock.connect((hostname, port))
 
                 # Receive rtl_tcp initial data
                 init_data = self.sock.recv(self.MAXDATASIZE)

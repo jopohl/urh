@@ -180,4 +180,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertAlmostEqual((128440 - 89383) / 1000000,
                                (self.frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
 
-
+    def test_show_demod_view(self):
+        self.assertTrue(self.frame.ui.gvLegend.isHidden())
+        self.frame.ui.cbSignalView.setCurrentIndex(1)
+        self.assertFalse(self.frame.ui.gvLegend.isHidden())

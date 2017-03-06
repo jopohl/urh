@@ -25,7 +25,8 @@ class TestSignalTabGUI(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         # Add a bunch of signals
@@ -36,7 +37,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_signals, num_signals)
 
         self.form.close_all()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)
@@ -161,7 +163,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertFalse(os.path.isfile(self.frame.signal.filename))
         self.frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(self.frame)
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))

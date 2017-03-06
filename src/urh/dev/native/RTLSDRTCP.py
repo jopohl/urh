@@ -1,11 +1,10 @@
-from multiprocessing import Value
-
 import numpy as np
 
 from urh.dev.native.Device import Device
 from urh.util.Logger import logger
 
 import socket
+import select
 
 class RTLSDRTCP(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
@@ -19,9 +18,9 @@ class RTLSDRTCP(Device):
                      gain: int):
         self.open("127.0.0.1", 1234)
         self.device_number = device_number
-        self.set_parameter("centerFreq", center_freq)
-        self.set_parameter("sampleRate", sample_rate)
-        self.set_parameter("tunerGain", gain)
+        self.set_parameter("centerFreq", int(center_freq))
+        self.set_parameter("sampleRate", int(sample_rate))
+        self.set_parameter("tunerGain", int(gain))
         exit_requested = False
 
         while not exit_requested:
@@ -32,7 +31,9 @@ class RTLSDRTCP(Device):
                     break
 
             if not exit_requested:
-                data_connection.send_bytes(self.read_sync())
+                data = self.read_sync()
+                print(data)
+                data_connection.send_bytes(data)
 
         logger.debug("RTLSDRTCP: closing device")
         ret = self.close()
@@ -66,13 +67,9 @@ class RTLSDRTCP(Device):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
 
         self.socket_is_open = False
-        self.open("127.0.0.1", 1234)
         self.success = 0
-        self.is_receiving_p = Value('i', 0)
-        """
-        Shared Value to communicate with the receiving process.
+        self.receive_process_function = self.receive_sync
 
-        """
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
@@ -132,24 +129,24 @@ class RTLSDRTCP(Device):
             self.socket_is_open = False
         return self.sock.close()
 
-    def set_parameter(self, param, value):  # returns error (True/False)
-        msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
-        msg += value.to_bytes(4, self.ENDIAN)   # Set value at bits 8-39
-
-        print("set:", param, value)
-
-        try:
-            self.sock.sendall(msg)  # Send data to rtl_tcp
-        except OSError as e:
-            self.sock.close()
-            logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
-            return True
-
+    def set_parameter(self, param:int, value:int):  # returns error (True/False)
+        if self.socket_is_open:
+            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
+            msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
+            try:
+                self.sock.sendall(msg)                                          # Send data to rtl_tcp
+            except OSError as e:
+                self.sock.close()
+                logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
+                return True
         return False
 
     def read_sync(self):
-        # returns data directly, unpack?
-        return self.sock.recv(self.MAXDATASIZE)
+        s_read, _, _ = select.select([self.sock], [], [], .1)
+        if self.sock in s_read:
+            return self.sock.recv(self.MAXDATASIZE)
+        else:
+            return 0
 
     def set_device_frequency(self, frequency):
         error = self.set_parameter("centerFreq", int(frequency))
@@ -191,19 +188,15 @@ class RTLSDRTCP(Device):
         self.log_retcode(error, "Set tuner bandwidth")
         return error
 
-    @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        """
-        The raw, captured IQ data is 8 bit unsigned data.
-
-        :return:
-        """
-        result = np.empty(nvalues, dtype=np.complex64)
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        result.real = (unpacked['r'] / 127.5) - 1.0
-        result.imag = (unpacked['i'] / 127.5) - 1.0
-        return result
-
-    @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        return (127.5 * (complex_samples.view(np.float32) + 1.0)).astype(np.uint8).tostring()
+    # @staticmethod
+    # def unpack_complex(buffer, nvalues: int):
+    #     """
+    #     The raw, captured IQ data is 8 bit unsigned data.
+    #
+    #     :return:
+    #     """
+    #     result = np.empty(nvalues, dtype=np.complex64)
+    #     unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
+    #     result.real = (unpacked['r'] / 127.5) - 1.0
+    #     result.imag = (unpacked['i'] / 127.5) - 1.0
+    #     return result

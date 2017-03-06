@@ -9,52 +9,51 @@ from urh.util.Logger import logger
 
 import socket
 
-# def receive_sync(connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
-#     rtlsdrtcp = RTLSDRTCP(center_freq, gain, sample_rate, device_number)
-#
-#     rtlsdrtcp.open("127.0.0.1", 1234)
-#     rtlsdrtcp.set_parameter("centerFreq", center_freq)
-#     rtlsdrtcp.set_parameter("sampleRate", sample_rate)
-#     rtlsdrtcp.set_parameter("tunerGain", gain)
-#     #rtlsdrtcp.reset_buffer()
-#     exit_requested = False
-#
-#     while not exit_requested:
-#         while connection.poll():
-#             result = process_command(connection.recv())
-#             if result == "stop":
-#                 exit_requested = True
-#                 break
-#
-#         if not exit_requested:
-#             connection.send_bytes(rtlsdrtcp.read_sync())
-#
-#     logger.debug("RTLSDRTCP: closing device")
-#     rtlsdrtcp.close()
-#     connection.close()
-#     pass
+def receive_sync(connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
+    rtlsdrtcp = RTLSDRTCP(center_freq, gain, sample_rate, device_number)
 
-# def process_command(command):
-#     logger.debug("RTLSDRTCP: {}".format(command))
-#     if command == "stop":
-#         return "stop"
-#
-#     tag, value = command.split(":")
-#     if tag == "center_freq":
-#         logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
-#         return rtlsdrtcp.set_parameter("centerFreq", int(value))
-#
-#     elif tag == "tuner_gain":
-#         logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
-#         return rtlsdrtcp.set_parameter("tunerGain", int(value))
-#
-#     elif tag == "sample_rate":
-#         logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
-#         return rtlsdrtcp.set_parameter("sampleRate", int(value))
-#
-#     # elif tag == "tuner_bandwidth":
-#     #     logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
-#     #     return rtlsdrtcp.set_parameter("bandwidth", int(value))
+    rtlsdrtcp.open("127.0.0.1", 1234)
+    rtlsdrtcp.set_parameter("centerFreq", center_freq)
+    rtlsdrtcp.set_parameter("sampleRate", sample_rate)
+    rtlsdrtcp.set_parameter("tunerGain", gain)
+    exit_requested = False
+
+    while not exit_requested:
+        while connection.poll():
+            result = process_command(rtlsdrtcp, connection.recv())
+            if result == "stop":
+                exit_requested = True
+                break
+
+        if not exit_requested:
+            connection.send_bytes(rtlsdrtcp.read_sync())
+
+    logger.debug("RTLSDRTCP: closing device")
+    rtlsdrtcp.close()
+    connection.close()
+    pass
+
+def process_command(rtlsdrtcp, command):
+    logger.debug("RTLSDRTCP: {}".format(command))
+    if command == "stop":
+        return "stop"
+
+    tag, value = command.split(":")
+    if tag == "center_freq":
+        logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
+        return rtlsdrtcp.set_parameter("centerFreq", int(value))
+
+    elif tag == "tuner_gain":
+        logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
+        return rtlsdrtcp.set_parameter("tunerGain", int(value))
+
+    elif tag == "sample_rate":
+        logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
+        return rtlsdrtcp.set_parameter("sampleRate", int(value))
+
+    elif tag == "tuner_bandwidth":
+        logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
+        return rtlsdrtcp.set_parameter("bandwidth", int(value))
 
 
 class RTLSDRTCP(Device):
@@ -129,7 +128,7 @@ class RTLSDRTCP(Device):
     def close(self):
         self.sock.close()
 
-    def set_parameter(self, param, value):  # returns False (no error) on Succes and True on error
+    def set_parameter(self, param, value):  # returns error (True/False)
         msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
         msg += value.to_bytes(4, self.ENDIAN)   # Set value at bits 8-39
 
@@ -174,46 +173,48 @@ class RTLSDRTCP(Device):
             except RuntimeError:
                 logger.error("RTLSDRTCP: Could not join read_queue_thread")
 
+    def read_sync(self):
+        return self.sock.recv(self.MAXDATASIZE)
 
     def set_device_frequency(self, frequency):
-        ret = self.set_parameter("centerFreq", int(frequency))
-        self.log_retcode(ret, "Set center frequency")
-        return ret
+        error = self.set_parameter("centerFreq", int(frequency))
+        self.log_retcode(error, "Set center frequency")
+        return error
 
     def set_device_sample_rate(self, sample_rate):
-        ret = self.set_parameter("sampleRate", int(sample_rate))
-        self.log_retcode(ret, "Set sample rate")
-        return ret
+        error = self.set_parameter("sampleRate", int(sample_rate))
+        self.log_retcode(error, "Set sample rate")
+        return error
 
     def set_freq_correction(self, ppm):
-        ret = self.set_parameter("freqCorrection", int(ppm))
-        self.log_retcode(ret, "Set frequency correction")
-        return ret
+        error = self.set_parameter("freqCorrection", int(ppm))
+        self.log_retcode(error, "Set frequency correction")
+        return error
 
     def set_offset_tuning(self, on: bool):
-        ret = self.set_parameter("offsetTuning", on)
-        self.log_retcode(ret, "Set offset tuning")
-        return ret
+        error = self.set_parameter("offsetTuning", on)
+        self.log_retcode(error, "Set offset tuning")
+        return error
 
     def set_gain_mode(self, manual: bool):
-        ret = self.set_parameter("tunerGainMode", manual)
-        self.log_retcode(ret, "Set gain mode manual")
-        return ret
+        error = self.set_parameter("tunerGainMode", manual)
+        self.log_retcode(error, "Set gain mode manual")
+        return error
 
     def set_if_gain(self, gain):
-        ret = self.set_parameter("tunerIFGain", int(gain))
-        self.log_retcode(ret, "Set IF gain")
-        return ret
+        error = self.set_parameter("tunerIFGain", int(gain))
+        self.log_retcode(error, "Set IF gain")
+        return error
 
     def set_gain(self, gain):
-        ret = self.set_parameter("tunerGain", int(gain))
-        self.log_retcode(ret, "Set tuner gain")
-        return ret
+        error = self.set_parameter("tunerGain", int(gain))
+        self.log_retcode(error, "Set tuner gain")
+        return error
 
     def set_bandwidth(self, bandwidth):
-        ret = self.set_parameter("bandwidth", int(bandwidth))
-        self.log_retcode(ret, "Set tuner bandwidth")
-        return ret
+        error = self.set_parameter("bandwidth", int(bandwidth))
+        self.log_retcode(error, "Set tuner bandwidth")
+        return error
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

@@ -3,7 +3,6 @@ import socket
 import unittest
 
 import numpy as np
-import time
 from PyQt5.QtCore import QDir
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
@@ -56,6 +55,8 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
 
+        QTest.qWait(250)
+
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
@@ -80,7 +81,7 @@ class TestSendRecvDialog(unittest.TestCase):
         sock.close()
 
         app.processEvents()
-        time.sleep(0.1)
+        QTest.qWait(100)
 
         self.assertEqual(self.receive_dialog.device.current_index, 3)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
@@ -100,7 +101,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.send_dialog.ui.spinBoxNRepeat.setValue(2)
         self.send_dialog.ui.btnStart.click()
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(100)
 
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
@@ -134,8 +135,7 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
 
-        QTest.qWait(400)
-        time.sleep(0.1)
+        QTest.qWait(300)
         received_msgs = self.sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = gframe.table_model.protocol.plain_bits_str
 
@@ -157,8 +157,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
-        QTest.qWait(400)
-        time.sleep(0.1)
+        QTest.qWait(300)
 
         with open(target_file, "r") as f:
             for i, line in enumerate(f):
@@ -172,8 +171,8 @@ class TestSendRecvDialog(unittest.TestCase):
         view_width = self.send_dialog.graphics_view.view_rect().width()
         self.send_dialog.graphics_view.zoom(1.1)
         self.assertLess(self.send_dialog.graphics_view.view_rect().width(), view_width)
-        self.send_dialog.graphics_view.zoom(0.5)
-        self.assertGreater(self.send_dialog.graphics_view.view_rect().width(), view_width)
+        self.send_dialog.graphics_view.zoom(0.8)
+        self.assertLessEqual(self.send_dialog.graphics_view.view_rect().width(), view_width)
 
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
@@ -229,3 +228,5 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertEqual(dialog.device.num_sending_repeats, 10)
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
+
+            QTest.qWait(100)

@@ -74,7 +74,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle", "SDRPlay", "AirSpy")
+    DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "RTL-TCP", "FUNcube-Dongle", "SDRPlay", "AirSpy")
 
     def __init__(self, testing_mode=False):
         self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
@@ -173,6 +173,10 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
+            backends.add(Backends.native)
+
+        if devname.lower().replace("-", "") == "rtltcp":
+            supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
         return backends, supports_rx, supports_tx

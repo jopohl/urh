@@ -6,6 +6,7 @@ from urh.util.Logger import logger
 import socket
 import select
 
+
 class RTLSDRTCP(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
     MAXDATASIZE = 65536
@@ -32,12 +33,13 @@ class RTLSDRTCP(Device):
 
             if not exit_requested:
                 data = self.read_sync()
-                #if not isinstance(data, bytes):
+                # if not isinstance(data, bytes):
                 print(data)
                 data_connection.send_bytes(data)
 
         logger.debug("RTLSDRTCP: closing device")
         ret = self.close()
+        ret = 0   #  Close returns None
         ctrl_connection.send("close:" + str(ret))
         data_connection.close()
         ctrl_connection.close()
@@ -88,7 +90,7 @@ class RTLSDRTCP(Device):
             try:
                 # Create socket and connect
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-                self.sock.settimeout(1.0)   # Timeout 1s
+                self.sock.settimeout(1.0)  # Timeout 1s
                 self.sock.connect((hostname, port))
 
                 # Receive rtl_tcp initial data
@@ -130,12 +132,12 @@ class RTLSDRTCP(Device):
             self.socket_is_open = False
         return self.sock.close()
 
-    def set_parameter(self, param:int, value:int):  # returns error (True/False)
+    def set_parameter(self, param: str, value: int):  # returns error (True/False)
         if self.socket_is_open:
-            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
-            msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
+            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)  # Set param at bits 0-7
+            msg += value.to_bytes(4, self.ENDIAN)  # Set value at bits 8-39
             try:
-                self.sock.sendall(msg)                                          # Send data to rtl_tcp
+                self.sock.sendall(msg)  # Send data to rtl_tcp
             except OSError as e:
                 self.sock.close()
                 logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
@@ -151,53 +153,53 @@ class RTLSDRTCP(Device):
 
     def set_device_frequency(self, frequency):
         error = self.set_parameter("centerFreq", int(frequency))
-        self.log_retcode(error, "Set center frequency")
+        self.log_retcode(int(error), "Set center frequency")
         return error
 
     def set_device_sample_rate(self, sample_rate):
         error = self.set_parameter("sampleRate", int(sample_rate))
-        self.log_retcode(error, "Set sample rate")
+        self.log_retcode(int(error), "Set sample rate")
         return error
 
     def set_freq_correction(self, ppm):
         error = self.set_parameter("freqCorrection", int(ppm))
-        self.log_retcode(error, "Set frequency correction")
+        self.log_retcode(int(error), "Set frequency correction")
         return error
 
     def set_offset_tuning(self, on: bool):
         error = self.set_parameter("offsetTuning", on)
-        self.log_retcode(error, "Set offset tuning")
+        self.log_retcode(int(error), "Set offset tuning")
         return error
 
     def set_gain_mode(self, manual: bool):
         error = self.set_parameter("tunerGainMode", manual)
-        self.log_retcode(error, "Set gain mode manual")
+        self.log_retcode(int(error), "Set gain mode manual")
         return error
 
     def set_if_gain(self, gain):
         error = self.set_parameter("tunerIFGain", int(gain))
-        self.log_retcode(error, "Set IF gain")
+        self.log_retcode(int(error), "Set IF gain")
         return error
 
     def set_gain(self, gain):
         error = self.set_parameter("tunerGain", int(gain))
-        self.log_retcode(error, "Set tuner gain")
+        self.log_retcode(int(error), "Set tuner gain")
         return error
 
     def set_bandwidth(self, bandwidth):
         error = self.set_parameter("bandwidth", int(bandwidth))
-        self.log_retcode(error, "Set tuner bandwidth")
+        self.log_retcode(int(error), "Set tuner bandwidth")
         return error
 
-    # @staticmethod
-    # def unpack_complex(buffer, nvalues: int):
-    #     """
-    #     The raw, captured IQ data is 8 bit unsigned data.
-    #
-    #     :return:
-    #     """
-    #     result = np.empty(nvalues, dtype=np.complex64)
-    #     unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-    #     result.real = (unpacked['r'] / 127.5) - 1.0
-    #     result.imag = (unpacked['i'] / 127.5) - 1.0
-    #     return result
+        # @staticmethod
+        # def unpack_complex(buffer, nvalues: int):
+        #     """
+        #     The raw, captured IQ data is 8 bit unsigned data.
+        #
+        #     :return:
+        #     """
+        #     result = np.empty(nvalues, dtype=np.complex64)
+        #     unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
+        #     result.real = (unpacked['r'] / 127.5) - 1.0
+        #     result.imag = (unpacked['i'] / 127.5) - 1.0
+        #     return result

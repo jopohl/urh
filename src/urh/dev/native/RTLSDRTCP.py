@@ -91,7 +91,7 @@ class RTLSDRTCP(Device):
             try:
                 # Create socket and connect
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-                self.sock.settimeout(1.0)  # Timeout 1s
+                #self.sock.settimeout(1.0)  # Timeout 1s
                 self.sock.connect((hostname, port))
             except Exception as e:
                 self.socket_is_open = False

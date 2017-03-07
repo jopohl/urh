@@ -61,6 +61,9 @@ PROJECT_FILE = "URHProject.xml"
 DECODINGS_FILE = "decodings.txt"
 FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(SETTINGS.fileName(), "..", "fieldtypes.xml"))
 
+# DEVICE SETTINGS
+DEFAULT_IP_USRP = "192.168.10.2"
+DEFAULT_IP_RTLSDRTCP = "127.0.0.1"
 
 # DECODING NAMES
 DECODING_INVERT = "Invert"

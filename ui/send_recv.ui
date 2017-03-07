@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>817</height>
+    <height>886</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -26,7 +26,7 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="9" column="1">
+         <item row="10" column="1">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
            <property name="decimals">
             <number>4</number>
@@ -43,7 +43,7 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="QSpinBox" name="spinBoxGain">
            <property name="minimum">
             <number>1</number>
@@ -56,14 +56,14 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="labelGain">
            <property name="text">
             <string>Gain:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="labelBandWidth">
            <property name="text">
             <string>Bandwidth (Hz):</string>
@@ -91,7 +91,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="labelSampleRate">
            <property name="text">
             <string>Sample rate (Sps):</string>
@@ -105,7 +105,27 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelPort">
+           <property name="text">
+            <string>Port number:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBoxPort">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>1234</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
           <widget class="QSpinBox" name="spinBoxNRepeat">
            <property name="specialValueText">
             <string>Infinite</string>
@@ -115,21 +135,21 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="labelFreq">
            <property name="text">
             <string>Frequency (Hz):</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="labelNRepeat">
            <property name="text">
             <string>Repeat:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
            <property name="decimals">
             <number>3</number>
@@ -142,7 +162,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
            <property name="decimals">
             <number>3</number>
@@ -155,7 +175,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
            <property name="decimals">
             <number>3</number>
@@ -168,7 +188,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="2" rowspan="2">
+         <item row="4" column="2" rowspan="2">
           <widget class="QToolButton" name="btnLockBWSR">
            <property name="text">
             <string>...</string>
@@ -185,7 +205,7 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="9" column="1">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
            <property name="decimals">
             <number>4</number>
@@ -198,28 +218,28 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="label_sniff_Noise">
            <property name="text">
             <string>Noise:</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="label_sniff_Center">
            <property name="text">
             <string>Center:</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="0">
+         <item row="12" column="0">
           <widget class="QLabel" name="label_sniff_Modulation">
            <property name="text">
             <string>Modulation:</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="1">
+         <item row="12" column="1">
           <widget class="QComboBox" name="combox_sniff_Modulation">
            <item>
             <property name="text">
@@ -238,14 +258,14 @@
            </item>
           </widget>
          </item>
-         <item row="13" column="0">
+         <item row="14" column="0">
           <widget class="QLabel" name="label_sniff_OutputFile">
            <property name="text">
             <string>Output file:</string>
            </property>
           </widget>
          </item>
-         <item row="13" column="1">
+         <item row="14" column="1">
           <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
            <property name="readOnly">
             <bool>false</bool>
@@ -253,19 +273,19 @@
            <property name="placeholderText">
             <string>None</string>
            </property>
-           <property name="clearButtonEnabled">
+           <property name="clearButtonEnabled" stdset="0">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="label_sniff_BitLength">
            <property name="text">
             <string>Bit Length:</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="8" column="1">
           <widget class="QSpinBox" name="spinbox_sniff_BitLen">
            <property name="minimum">
             <number>1</number>
@@ -275,14 +295,14 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="label_sniff_Tolerance">
            <property name="text">
             <string>Error Tolerance:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="11" column="1">
           <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
            <property name="maximum">
             <number>999999</number>
@@ -431,7 +451,8 @@
               </property>
               <property name="icon">
                <iconset theme="media-record">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -463,7 +484,8 @@
               </property>
               <property name="icon">
                <iconset theme="media-playback-stop">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -492,7 +514,8 @@
               </property>
               <property name="icon">
                <iconset theme="document-save">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -524,7 +547,8 @@
               </property>
               <property name="icon">
                <iconset theme="view-refresh">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>

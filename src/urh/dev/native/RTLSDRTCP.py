@@ -24,6 +24,7 @@ class RTLSDRTCP(Device):
             self.set_parameter("sampleRate", int(sample_rate))
             self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
             self.set_parameter("tunerGain", int(gain))
+            #self.set_parameter("freqCorrection", int(freq_correction_in_ppm)) # TODO: add ppm value as parameter to this function
             exit_requested = False
 
             while not exit_requested:
@@ -65,6 +66,10 @@ class RTLSDRTCP(Device):
         elif tag == "tuner_bandwidth":
             logger.info("RTLSDRTCP: Set bandwidth to {0}".format(int(value)))
             return self.set_parameter("bandwidth", int(value))
+
+        elif tag == "freq_correction":
+            logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
+            return self.set_parameter("freqCorrection", int(value))
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)

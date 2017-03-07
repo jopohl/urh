@@ -198,7 +198,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_port_changed(self):
-        self.device.portnumber = self.ui.spinBoxPort.value()
+        self.device.port = self.ui.spinBoxPort.value()
 
     @pyqtSlot()
     def on_gain_changed(self):

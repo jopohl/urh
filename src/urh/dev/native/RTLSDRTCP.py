@@ -17,7 +17,7 @@ class RTLSDRTCP(Device):
     def receive_sync(self, data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
                      gain: int):
         # connect and initialize rtl_tcp
-        self.open(self.hostname, self.port)
+        self.open(self.device_ip, self.port)
         if self.socket_is_open:
             self.device_number = device_number
             self.set_parameter("centerFreq", int(center_freq))
@@ -74,10 +74,6 @@ class RTLSDRTCP(Device):
         self.device_number = device_number
         self.socket_is_open = False
         self.success = 0
-
-        # default parameters for rtl_tcp
-        self.hostname=self.device_ip
-        self.port=self.portnumber
 
         # maximum device parameters
         self._max_frequency = 6e9

@@ -62,7 +62,6 @@ class Device(QObject):
         self.is_transmitting = False
 
         self.device_ip = "192.168.10.2"     # For USRP and RTLSDRTCP
-        self.portnumber = 1234              # For RTLSDRTCP
 
         self.receive_buffer = None
 

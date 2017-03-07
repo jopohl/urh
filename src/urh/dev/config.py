@@ -24,3 +24,11 @@ DEVICE_CONFIG["USRP"] = {
     "rf_gain": (0, 100),
     "antenna": [0, 1],
 }
+
+
+DEVICE_CONFIG["Fallback"] = {
+    "center_freq": (10**6, 6*10**9),
+    "sample_rate": (2*10**6, 20*10**6),
+    "bandwidth": (2*10**6, 20*10**6),
+    "rf_gain": (0, 50),
+}

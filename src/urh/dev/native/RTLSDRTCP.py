@@ -95,8 +95,8 @@ class RTLSDRTCP(Device):
                 self.sock.connect((hostname, port))
             except Exception as e:
                 self.socket_is_open = False
-                logger.info("Could not connect to rtl_tcp", hostname, port, "(", str(e), ")")
-                return
+                logger.info("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
+                return False
 
             try:
                 # Receive rtl_tcp initial data
@@ -128,10 +128,13 @@ class RTLSDRTCP(Device):
                 self.if_gain = int.from_bytes(init_data[8:10], self.ENDIAN)
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
-                self.socket_is_open = True
+                logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
             except Exception as e:
                 self.socket_is_open = False
-                logger.info("This is not a valid rtl_tcp server", hostname, port, "(", str(e), ")")
+                logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))
+                return False
+
+            self.socket_is_open = True
 
     def close(self):
         if self.socket_is_open:
@@ -146,7 +149,7 @@ class RTLSDRTCP(Device):
                 self.sock.sendall(msg)                                          # Send data to rtl_tcp
             except OSError as e:
                 self.sock.close()
-                logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
+                logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))
                 return True
         return False
 

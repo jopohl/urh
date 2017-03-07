@@ -112,7 +112,7 @@ class SimulatorItem(QGraphicsObject):
             for item in selected_items:
                 self.scene().insert_at(ref_item, position, item)
                 ref_item = item
-                position = QAbstractItemView.AboveItem
+                position = QAbstractItemView.BelowItem
                 
             self.item_under_mouse = None
 
@@ -730,7 +730,7 @@ class SimulatorScene(QGraphicsScene):
                 source, destination = self.detect_source_destination(message)
 
                 ref_item = self.add_message_from_message(ref_item, position, message, source, destination)
-                position = QAbstractItemView.AboveItem
+                position = QAbstractItemView.BelowItem
 
     def cut_selected_messages(self):
         messages = []

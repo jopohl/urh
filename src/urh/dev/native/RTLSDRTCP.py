@@ -130,7 +130,8 @@ class RTLSDRTCP(Device):
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
                 logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
-                self.errors.add("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+                # Show this in error message box after refactoring:
+                #self.errors.add("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))

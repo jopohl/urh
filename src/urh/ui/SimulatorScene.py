@@ -659,7 +659,9 @@ class SimulatorScene(QGraphicsScene):
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
         protocols_to_add = [node.protocol for node in nodes_to_add]
 
-        self.add_protocols(item, item.drop_indicator_position, protocols_to_add)
+        ref_item = item
+        position = None if ref_item == None else item.drop_indicator_position
+        self.add_protocols(ref_item, position, protocols_to_add)
         super().dropEvent(event)
 
     def add_rule(self, ref_item, position):
@@ -687,6 +689,7 @@ class SimulatorScene(QGraphicsScene):
         self.insert_at(ref_item, position, simulator_message, True)
 
         self.update_view()
+        return simulator_message
 
     def add_message_from_message(self, ref_item, position, message, source=None, destination=None):
         if source == None:
@@ -712,6 +715,7 @@ class SimulatorScene(QGraphicsScene):
         self.insert_at(ref_item, position, simulator_message, True)
 
         self.update_view()
+        return simulator_message
 
     def clear_all(self):
         for item in self.sim_items[:]:
@@ -725,8 +729,7 @@ class SimulatorScene(QGraphicsScene):
             for message in protocol.messages:
                 source, destination = self.detect_source_destination(message)
 
-                self.add_message_from_message(ref_item, position, message, source, destination)
-                ref_item = message
+                ref_item = self.add_message_from_message(ref_item, position, message, source, destination)
                 position = QAbstractItemView.AboveItem
 
     def cut_selected_messages(self):

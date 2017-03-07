@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtWidgets import QGraphicsView
 
 from urh import constants
+from urh.dev import config
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -58,11 +59,7 @@ class SendRecvDialogController(QDialog):
         self.timer = QTimer(self)
 
         dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.ui.lineEditIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
-        self.ui.labelIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
-        self.ui.spinBoxPort.setVisible(dev_name == "RTL-TCP")
-        self.ui.labelPort.setVisible(dev_name == "RTL-TCP")
+        self.set_device_ui_items_visibility(dev_name)
 
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
@@ -94,10 +91,21 @@ class SendRecvDialogController(QDialog):
             if "_sniff_" in item:
                 getattr(self.ui, item).setVisible(visible)
 
-    def set_device_ui_items_visible(self, visible: bool):
-        for object in ("spinBoxFreq", "spinBoxSampleRate", "spinBoxBandwidth", "spinBoxGain",
-                       "btnLockBWSR", "labelFreq", "labelSampleRate", "labelBandWidth", "labelGain"):
-            getattr(self.ui, object).setVisible(visible)
+    def set_device_ui_items_visibility(self, device_name: str):
+        key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
+        conf = config.DEVICE_CONFIG[key]
+        self.ui.spinBoxFreq.setVisible("center_freq" in conf)
+        self.ui.labelFreq.setVisible("center_freq" in conf)
+        self.ui.spinBoxSampleRate.setVisible("sample_rate" in conf)
+        self.ui.labelSampleRate.setVisible("sample_rate" in conf)
+        self.ui.spinBoxBandwidth.setVisible("bandwidth" in conf)
+        self.ui.labelBandWidth.setVisible("bandwidth" in conf)
+        self.ui.spinBoxGain.setVisible("rf_gain" in conf)
+        self.ui.labelGain.setVisible("rf_gain" in conf)
+        self.ui.lineEditIP.setVisible("ip" in conf)
+        self.ui.labelIP.setVisible("ip" in conf)
+        self.ui.spinBoxPort.setVisible("port" in conf)
+        self.ui.labelPort.setVisible("port" in conf)
 
     def set_device_ui_items_enabled(self, enabled: bool):
         self.ui.spinBoxFreq.setEnabled(enabled)
@@ -212,11 +220,7 @@ class SendRecvDialogController(QDialog):
 
         self.graphics_view.scene_manager = self.scene_manager
         self.graphics_view.setScene(self.scene_manager.scene)
-        self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.ui.lineEditIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
-        self.ui.labelIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
-        self.ui.labelPort.setVisible(dev_name == "RTL-TCP")
-        self.ui.spinBoxPort.setVisible(dev_name == "RTL-TCP")
+        self.set_device_ui_items_visibility(dev_name)
 
         # Set default IPs for USRP and RTLSDRTCP
         if dev_name == "USRP":

@@ -34,7 +34,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
                                        gain, bw, device, testing_mode=testing_mode)
 
         self.set_sniff_ui_items_visible(True)
-        self.set_device_ui_items_visible(device != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.set_device_ui_items_visibility(device)
 
         # Auto Complete like a Boss
         completer = QCompleter()
@@ -60,8 +60,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.lineEdit_sniff_OutputFile.textChanged.connect(self.on_line_edit_output_file_text_changed)
 
-    def set_device_ui_items_visible(self, visible: bool):
-        super().set_device_ui_items_visible(visible)
+    def set_device_ui_items_visibility(self, device_name: str):
+        super().set_device_ui_items_visibility(device_name)
+        visible = device_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         for item in ("spinbox_sniff_Noise", "combox_sniff_Modulation", "label_sniff_Modulation",
                      "spinbox_sniff_Center", "spinbox_sniff_BitLen", "spinbox_sniff_ErrorTolerance",
                      "label_sniff_Noise", "label_sniff_Center", "label_sniff_BitLength", "label_sniff_Tolerance"):
@@ -114,9 +115,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def on_selected_device_changed(self):
         dev_name = self.ui.cbDevice.currentText()
         self.sniffer.device_name = dev_name
-        self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.ui.lineEditIP.setVisible(dev_name == "USRP")
-        self.ui.labelIP.setVisible(dev_name == "USRP")
+        self.set_device_ui_items_visibility(dev_name)
 
     @pyqtSlot()
     def on_start_clicked(self):

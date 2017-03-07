@@ -121,6 +121,8 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
         self.form.close_all()
+        app.processEvents()
+        QTest.qWait(300)
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
@@ -135,5 +137,33 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
         self.cfc.ui.tblViewProtocol.selectRow(1)
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
-        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, max_row, start, end - 1)
+        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
         self.assertEqual(self.form.ui.tabWidget.currentIndex(), 0)
+        self.assertFalse(self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.selection_area.is_empty)
+
+    def test_hide_row(self):
+        num_messages = len(self.cfc.proto_analyzer.messages)
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        self.assertGreater(num_messages, 0)
+        self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
+        self.cfc.ui.tblViewProtocol.hide_row(0)
+        self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
+        self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
+
+        for msg in range(1, num_messages):
+            self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
+
+        self.form.ui.tabWidget.setCurrentIndex(2)
+        app.processEvents()
+        QTest.qWait(100)
+        self.form.ui.tabWidget.setCurrentIndex(1)
+        app.processEvents()
+        QTest.qWait(100)
+        self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
+        self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
+
+        for msg in range(1, num_messages):
+            self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
+
+        self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
+

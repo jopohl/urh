@@ -55,6 +55,8 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
 
+        QTest.qWait(250)
+
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
@@ -71,11 +73,15 @@ class TestSendRecvDialog(unittest.TestCase):
         data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         sock.connect(("127.0.0.1", 2222))
         sock.sendall(data.tostring())
+        sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
 
         self.assertEqual(self.receive_dialog.device.current_index, 3)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
@@ -94,7 +100,8 @@ class TestSendRecvDialog(unittest.TestCase):
         self.send_dialog.device.set_client_port(3333)
         self.send_dialog.ui.spinBoxNRepeat.setValue(2)
         self.send_dialog.ui.btnStart.click()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
 
         self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
@@ -124,9 +131,11 @@ class TestSendRecvDialog(unittest.TestCase):
         self.sniff_dialog.device.set_server_port(4444)
         gframe.network_sdr_plugin.client_port = 4444
         self.sniff_dialog.ui.btnStart.click()
+        app.processEvents()
         gframe.ui.btnNetworkSDRSend.click()
+        app.processEvents()
 
-        QTest.qWait(1500)
+        QTest.qWait(500)
         received_msgs = self.sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = gframe.table_model.protocol.plain_bits_str
 
@@ -140,12 +149,15 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertFalse(os.path.isfile(target_file))
 
         self.sniff_dialog.ui.btnClear.click()
+        app.processEvents()
         self.sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
         self.sniff_dialog.ui.btnStart.click()
+        app.processEvents()
         self.assertFalse(self.sniff_dialog.ui.btnAccept.isEnabled())
 
         gframe.ui.btnNetworkSDRSend.click()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(500)
 
         with open(target_file, "r") as f:
             for i, line in enumerate(f):
@@ -159,8 +171,8 @@ class TestSendRecvDialog(unittest.TestCase):
         view_width = self.send_dialog.graphics_view.view_rect().width()
         self.send_dialog.graphics_view.zoom(1.1)
         self.assertLess(self.send_dialog.graphics_view.view_rect().width(), view_width)
-        self.send_dialog.graphics_view.zoom(0.5)
-        self.assertGreater(self.send_dialog.graphics_view.view_rect().width(), view_width)
+        self.send_dialog.graphics_view.zoom(0.8)
+        self.assertLessEqual(self.send_dialog.graphics_view.view_rect().width(), view_width)
 
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
@@ -216,3 +228,5 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertEqual(dialog.device.num_sending_repeats, 10)
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
+
+            QTest.qWait(100)

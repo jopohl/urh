@@ -59,8 +59,10 @@ class SendRecvDialogController(QDialog):
 
         dev_name = self.ui.cbDevice.currentText()
         self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.ui.lineEditIP.setVisible(dev_name == "USRP")
-        self.ui.labelIP.setVisible(dev_name == "USRP")
+        self.ui.lineEditIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
+        self.ui.labelIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
+        self.ui.spinBoxPort.setVisible(dev_name == "RTL-TCP")
+        self.ui.labelPort.setVisible(dev_name == "RTL-TCP")
 
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
@@ -141,7 +143,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxGain.editingFinished.connect(self.on_gain_changed)
         self.ui.spinBoxFreq.editingFinished.connect(self.on_freq_changed)
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_bw_changed)
-        self.ui.lineEditIP.editingFinished.connect(self.on_usrp_ip_changed)
+        self.ui.spinBoxPort.editingFinished.connect(self.on_port_changed)
+        self.ui.lineEditIP.editingFinished.connect(self.on_ip_changed)
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
 
@@ -190,8 +193,12 @@ class SendRecvDialogController(QDialog):
             self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
-    def on_usrp_ip_changed(self):
+    def on_ip_changed(self):
         self.device.ip = self.ui.lineEditIP.text()
+
+    @pyqtSlot()
+    def on_port_changed(self):
+        self.device.portnumber = self.ui.spinBoxPort.value()
 
     @pyqtSlot()
     def on_gain_changed(self):
@@ -208,6 +215,16 @@ class SendRecvDialogController(QDialog):
         self.set_device_ui_items_visible(dev_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.ui.lineEditIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
         self.ui.labelIP.setVisible(dev_name == "USRP" or dev_name == "RTL-TCP")
+        self.ui.labelPort.setVisible(dev_name == "RTL-TCP")
+        self.ui.spinBoxPort.setVisible(dev_name == "RTL-TCP")
+
+        # Set default IPs for USRP and RTLSDRTCP
+        if dev_name == "USRP":
+            if self.ui.lineEditIP.text() == constants.DEFAULT_IP_RTLSDRTCP:
+                self.ui.lineEditIP.setText(constants.DEFAULT_IP_USRP)
+        elif dev_name == "RTL-TCP":
+            if self.ui.lineEditIP.text() == constants.DEFAULT_IP_USRP:
+                self.ui.lineEditIP.setText(constants.DEFAULT_IP_RTLSDRTCP)
 
         self.set_bandwidth_status()
 
@@ -220,6 +237,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxSampleRate.editingFinished.emit()
         if self.ui.cbDevice.currentText() in ("USRP", "RTL-TCP"):
             self.ui.lineEditIP.editingFinished.emit()
+        if self.ui.cbDevice.currentText() == "RTL-TCP":
+            self.ui.spinBoxPort.editingFinished.emit()
 
     @pyqtSlot()
     def on_stop_clicked(self):
@@ -237,6 +256,7 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.setEnabled(True)
         self.ui.spinBoxBandwidth.setEnabled(True)
         self.ui.spinBoxGain.setEnabled(True)
+        self.ui.spinBoxPort.setEnabled(True)
         self.ui.cbDevice.setEnabled(True)
         self.ui.spinBoxNRepeat.setEnabled(True)
         self.timer.stop()
@@ -256,6 +276,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnStop.setEnabled(True)
 
         self.ui.lineEditIP.setDisabled(True)
+        self.ui.spinBoxPort.setDisabled(True)
         self.ui.cbDevice.setDisabled(True)
         self.timer.start(self.update_interval)
 

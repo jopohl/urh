@@ -29,7 +29,7 @@ class VirtualDevice(QObject):
     sender_needs_restart = pyqtSignal()
 
     def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
-                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True):
+                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
         self.mode = mode
@@ -81,6 +81,7 @@ class VirtualDevice(QObject):
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:
                 raise ValueError("Unknown device name {0}".format(name))
+            self.__dev.portnumber = portnumber
             self.__dev.device_ip = device_ip
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:

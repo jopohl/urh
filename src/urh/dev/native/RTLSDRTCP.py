@@ -76,8 +76,8 @@ class RTLSDRTCP(Device):
         self.success = 0
 
         # default parameters for rtl_tcp
-        self.hostname="127.0.0.1"
-        self.port=1234
+        self.hostname=self.device_ip
+        self.port=self.portnumber
 
         # maximum device parameters
         self._max_frequency = 6e9

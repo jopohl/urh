@@ -25,6 +25,15 @@ DEVICE_CONFIG["USRP"] = {
     "antenna": [0, 1],
 }
 
+# http://osmocom.org/projects/sdr/wiki/rtl-sdr
+DEVICE_CONFIG["RTLSDR"] = {
+    "center_freq": (22*10**6, 2200*10**6),
+    "sample_rate": (1, int(3.2*10**6)),
+    "bandwidth": (1, int(3.2*10**6)),
+    "rf_gain": (0, 50),  # CAUTION: API is *10 so e.g. 1 needs to be given as 10 to API
+    "direct_sampling": [0, 1, 2],  # 0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled
+    "freq_correction": (-1*10**3, 1*10**3)
+}
 
 DEVICE_CONFIG["Fallback"] = {
     "center_freq": (10**6, 6*10**9),

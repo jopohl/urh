@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu
+from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
@@ -28,55 +28,21 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        parent_item = None
-
-        if self.context_menu_item == None:
-            position = len(self.scene().sim_items)
-        elif (isinstance(self.context_menu_item, MessageItem) or
-                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
-            position = self.scene().sim_items.index(self.context_menu_item)
-        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
-            parent_item = self.context_menu_item.parentItem()
-            position = parent_item.sim_items.index(self.context_menu_item)
-        elif isinstance(self.context_menu_item, RuleConditionItem):
-            parent_item = self.context_menu_item
-            position = len(parent_item.sim_items)
-
         message_type = [] if not self.sender().data() else self.sender().data()
 
-        self.scene().add_message(parent_item, position, message_type=message_type)
+        ref_item = self.context_menu_item
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem 
+        self.scene().add_message(ref_item, position, message_type=message_type)
 
     @pyqtSlot()
-    def on_add_rule_action_triggered(self):
-        if self.context_menu_item == None:
-            position = len(self.scene().sim_items)
-        elif (isinstance(self.context_menu_item, MessageItem) or
-                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
-            position = self.scene().sim_items.index(self.context_menu_item)
-        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
-            position = self.scene().sim_items.index(self.context_menu_item.parentItem().parentItem())
-        elif isinstance(self.context_menu_item, RuleConditionItem):
-            position = self.scene().sim_items.index(self.context_menu_item.parentItem())
-        
-        self.scene().add_rule(position)
+    def on_add_rule_action_triggered(self):        
+        self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
 
     @pyqtSlot()
     def on_add_action_triggered(self):
-        parent_item = None
-
-        if self.context_menu_item == None:
-            position = len(self.scene().sim_items)
-        elif (isinstance(self.context_menu_item, MessageItem) or
-                isinstance(self.context_menu_item, ActionItem)) and not self.context_menu_item.parentItem():
-            position = self.scene().sim_items.index(self.context_menu_item)
-        elif (isinstance(self.context_menu_item, MessageItem) or isinstance(self.context_menu_item, ActionItem)):
-            parent_item = self.context_menu_item.parentItem()
-            position = parent_item.sim_items.index(self.context_menu_item)
-        elif isinstance(self.context_menu_item, RuleConditionItem):
-            parent_item = self.context_menu_item
-            position = len(parent_item.sim_items)
-
-        self.scene().add_action(parent_item, position, type=self.sender().data())
+        ref_item = self.context_menu_item
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+        self.scene().add_action(ref_item, position, type=self.sender().data())
 
     @pyqtSlot()
     def on_delete_action_triggered(self):

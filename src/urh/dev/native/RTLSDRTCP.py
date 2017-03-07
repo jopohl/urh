@@ -96,6 +96,7 @@ class RTLSDRTCP(Device):
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
+                self.errors.add("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
                 return False
 
             try:
@@ -151,6 +152,7 @@ class RTLSDRTCP(Device):
             except OSError as e:
                 self.sock.close()
                 logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))
+                self.errors.add("Could not set parameter {0}:{1} ({2})".format(param, value, e))
                 return True
         return False
 

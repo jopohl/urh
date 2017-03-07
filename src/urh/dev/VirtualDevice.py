@@ -29,7 +29,7 @@ class VirtualDevice(QObject):
     sender_needs_restart = pyqtSignal()
 
     def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
-                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True):
+                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
         self.mode = mode
@@ -74,10 +74,14 @@ class VirtualDevice(QObject):
                 elif name.replace("-", "") == "rtlsdr":
                     from urh.dev.native.RTLSDR import RTLSDR
                     self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                elif name.replace("-", "") == "rtltcp":
+                    from urh.dev.native.RTLSDRTCP import RTLSDRTCP
+                    self.__dev = RTLSDRTCP(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:
                 raise ValueError("Unknown device name {0}".format(name))
+            self.__dev.portnumber = portnumber
             self.__dev.device_ip = device_ip
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
@@ -188,17 +192,17 @@ class VirtualDevice(QObject):
 
     @property
     def port(self):
-        if self.backend == Backends.grc:
+        if self.backend in (Backends.grc, Backends.native):
             return self.__dev.port
         else:
-            raise ValueError("Port only for gnnuradio socket (grc backend)")
+            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
 
     @port.setter
     def port(self, value):
-        if self.backend == Backends.grc:
+        if self.backend in (Backends.grc, Backends.native):
             self.__dev.port = value
         else:
-            raise ValueError("Port only for gnnuradio socket (grc backend)")
+            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
 
     @property
     def data(self):

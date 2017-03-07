@@ -61,7 +61,7 @@ class Device(QObject):
         self.is_receiving = False
         self.is_transmitting = False
 
-        self.device_ip = "192.168.10.2"  # For USRP
+        self.device_ip = "192.168.10.2"     # For USRP and RTLSDRTCP
 
         self.receive_buffer = None
 
@@ -208,6 +208,7 @@ class Device(QObject):
     @abstractmethod
     def set_device_gain(self, gain):
         # todo: split to if gain etc
+        self.parent_ctrl_conn.send("tuner_gain:" + str(int(gain)))
         pass
 
     @property
@@ -260,6 +261,10 @@ class Device(QObject):
                 logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
                 self.receive_process.terminate()
                 self.receive_process.join()
+                self.child_ctrl_conn.close()
+                self.child_data_conn.close()
+
+            time.sleep(0.1)
             self.parent_data_conn, self.child_data_conn = Pipe()
             self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 

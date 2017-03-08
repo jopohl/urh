@@ -20,12 +20,13 @@ from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
+from urh.util.ProjectManager import ProjectManager
 
 
 class SendRecvDialogController(QDialog):
-    recording_parameters = pyqtSignal(str, str, str, str, str)
+    recording_parameters = pyqtSignal(str, str, str, str, str, str, str)
 
-    def __init__(self, freq, samp_rate, bw, gain, device: str, parent=None, testing_mode=False):
+    def __init__(self, project_manager: ProjectManager, parent=None, testing_mode=False):
         super().__init__(parent)
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
@@ -45,11 +46,14 @@ class SendRecvDialogController(QDialog):
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
 
-        self.ui.spinBoxFreq.setValue(freq)
-        self.ui.spinBoxSampleRate.setValue(samp_rate)
-        self.ui.spinBoxBandwidth.setValue(bw)
-        self.ui.spinBoxGain.setValue(gain)
+        self.ui.spinBoxFreq.setValue(project_manager.frequency)
+        self.ui.spinBoxSampleRate.setValue(project_manager.sample_rate)
+        self.ui.spinBoxBandwidth.setValue(project_manager.bandwidth)
+        self.ui.spinBoxGain.setValue(project_manager.gain)
+        self.ui.spinBoxIFGain.setValue(project_manager.if_gain)
+        self.ui.spinBoxBasebandGain.setValue(project_manager.baseband_gain)
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+        device = project_manager.device
 
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox()
@@ -100,9 +104,20 @@ class SendRecvDialogController(QDialog):
         return conf
 
     def sync_gain_sliders(self):
-        self.ui.spinBoxGain.valueChanged.emit(self.ui.spinBoxGain.value())
-        self.ui.spinBoxIFGain.valueChanged.emit(self.ui.spinBoxIFGain.value())
-        self.ui.spinBoxBasebandGain.valueChanged.emit(self.ui.spinBoxBasebandGain.value())
+        conf = self.get_config_for_selected_device()
+
+        if "rf_gain" in conf:
+            gain = min(conf["rf_gain"], key=lambda x: abs(x-self.ui.spinBoxGain.value()))
+            self.ui.spinBoxGain.setValue(gain)
+            self.ui.spinBoxGain.valueChanged.emit(gain)
+        if "if_gain" in conf:
+            if_gain = min(conf["if_gain"], key=lambda x: abs(x-self.ui.spinBoxIFGain.value()))
+            self.ui.spinBoxIFGain.setValue(if_gain)
+            self.ui.spinBoxIFGain.valueChanged.emit(if_gain)
+        if "baseband_gain" in conf:
+            baseband_gain = min(conf["baseband_gain"], key=lambda x: abs(x-self.ui.spinBoxBasebandGain.value()))
+            self.ui.spinBoxBasebandGain.setValue(baseband_gain)
+            self.ui.spinBoxBasebandGain.valueChanged.emit(baseband_gain)
 
     def set_device_ui_items_visibility(self, device_name: str):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
@@ -275,6 +290,7 @@ class SendRecvDialogController(QDialog):
     def on_slider_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         self.ui.spinBoxGain.setValue(dev_conf["rf_gain"][value])
+        self.ui.spinBoxGain.editingFinished.emit()
 
     @pyqtSlot()
     def on_spinbox_if_gain_editing_finished(self):
@@ -284,6 +300,7 @@ class SendRecvDialogController(QDialog):
     def on_slider_if_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         self.ui.spinBoxIFGain.setValue(dev_conf["if_gain"][value])
+        self.ui.spinBoxIFGain.editingFinished.emit()
 
     @pyqtSlot(int)
     def on_spinbox_if_gain_value_changed(self, value: int):
@@ -301,6 +318,7 @@ class SendRecvDialogController(QDialog):
     def on_slider_baseband_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         self.ui.spinBoxBasebandGain.setValue(dev_conf["baseband_gain"][value])
+        self.ui.spinBoxBasebandGain.editingFinished.emit()
 
     @pyqtSlot(int)
     def on_spinbox_baseband_gain_value_changed(self, value: int):
@@ -475,6 +493,8 @@ class SendRecvDialogController(QDialog):
                                            str(self.device.sample_rate),
                                            str(self.device.bandwidth),
                                            str(self.device.gain),
+                                           str(self.device.if_gain),
+                                           str(self.device.baseband_gain),
                                            str(self.device.name))
 
         event.accept()

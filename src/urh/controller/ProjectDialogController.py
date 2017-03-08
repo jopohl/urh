@@ -263,9 +263,9 @@ class ProjectDialogController(QDialog):
         if directory:
             self.set_path(directory)
 
-    @pyqtSlot(str, str, str, str, str)
+    @pyqtSlot(str, str, str, str, str, str, str)
     def set_recording_params_from_spectrum_analyzer_link(self, freq: str, sample_rate: str, bw: str, gain: str,
-                                                         dev_name: str):
+                                                         if_gain: str, baseband_gain:str, dev_name: str):
         self.ui.spinBoxFreq.setValue(float(freq))
         self.ui.spinBoxSampleRate.setValue(float(sample_rate))
         self.ui.spinBoxBandwidth.setValue(float(bw))
@@ -274,8 +274,7 @@ class ProjectDialogController(QDialog):
     @pyqtSlot(str)
     def on_spectrum_analyzer_link_activated(self, link: str):
         if link == "open_spectrum_analyzer":
-            r = SpectrumDialogController(freq=self.freq, bw=self.bandwidth, samp_rate=self.sample_rate,
-                                         gain=self.gain, device="", parent=self)
+            r = SpectrumDialogController(ProjectManager(None), parent=self)
             if r.has_empty_device_list:
                 Errors.no_device()
                 r.close()

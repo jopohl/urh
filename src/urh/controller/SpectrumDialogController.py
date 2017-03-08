@@ -7,9 +7,9 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 
 
 class SpectrumDialogController(SendRecvDialogController):
-    def __init__(self, freq, samp_rate, bw, gain, device: str, parent=None, testing_mode=False):
+    def __init__(self, project_manager, parent=None, testing_mode=False):
         self.is_rx = True
-        super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+        super().__init__(project_manager, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewReceive
         self.update_interval = 1
@@ -54,8 +54,8 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum, bw=1e6,
-                                    freq=433.92e6, gain=40, samp_rate=1e6,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum, bandwidth=1e6,
+                                    freq=433.92e6, gain=40, if_gain=20, baseband_gain=20, sample_rate=1e6,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 

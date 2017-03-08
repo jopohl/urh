@@ -22,7 +22,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, sample_rate: float, freq: float, gain: int,
+                 modulation_type: int, sample_rate: float, freq: float, gain: int, if_gain: int, baseband_gain: int,
                  bandwidth: float, device: str, usrp_ip="192.168.10.2", testing_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
@@ -34,8 +34,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         QObject.__init__(self, None)
 
         self.backend_handler = BackendHandler(testing_mode=testing_mode)
-        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, bandwidth, freq, gain,
-                                        sample_rate, device_ip=usrp_ip, is_ringbuffer=False, raw_mode=False)
+        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, freq, sample_rate, bandwidth,
+                                        gain, if_gain, baseband_gain,
+                                        device_ip=usrp_ip, is_ringbuffer=False, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
@@ -80,8 +81,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, bw=1e6,
-                                            freq=433.92e6, gain=20, samp_rate=1e6,
+            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, bandwidth=1e6,
+                                            freq=433.92e6, gain=20, if_gain=20, baseband_gain=20, sample_rate=1e6,
                                             device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)

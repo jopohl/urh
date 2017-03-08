@@ -31,23 +31,14 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
         project_manager = self.form.project_manager
-        self.receive_dialog = ReceiveDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                      project_manager.bandwidth, project_manager.gain,
-                                                      project_manager.device, testing_mode=True)
+        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True)
 
-        self.send_dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                project_manager.bandwidth, project_manager.gain,
-                                                project_manager.device,
-                                                modulated_data=self.signal.data, testing_mode=True)
+        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
 
-        self.spectrum_dialog = SpectrumDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                        project_manager.bandwidth, project_manager.gain,
-                                                        project_manager.device, testing_mode=True)
+        self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True)
 
-        self.sniff_dialog = ProtocolSniffDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                          project_manager.bandwidth, project_manager.gain,
-                                                          project_manager.device, self.signal.noise_threshold,
+        self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
                                                           self.signal.qad_center,
                                                           self.signal.bit_len, self.signal.tolerance,
                                                           self.signal.modulation_type,

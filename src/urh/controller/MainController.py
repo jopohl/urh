@@ -578,9 +578,7 @@ class MainController(QMainWindow):
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
         try:
-            r = ReceiveDialogController(pm.frequency, pm.sample_rate,
-                                        pm.bandwidth, pm.gain,
-                                        pm.device, parent=self)
+            r = ReceiveDialogController(pm, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -616,11 +614,7 @@ class MainController(QMainWindow):
             noise = 0.001
             center = 0.02
 
-        psd = ProtocolSniffDialogController(pm.frequency, pm.sample_rate,
-                                            pm.bandwidth, pm.gain,
-                                            pm.device, noise, center,
-                                            bit_len, tolerance, mod_type,
-                                            parent=self)
+        psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type, parent=self)
         if psd.has_empty_device_list:
             Errors.no_device()
             psd.close()
@@ -631,9 +625,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_spectrum_dialog_action_triggered(self):
         pm = self.project_manager
-        r = SpectrumDialogController(pm.frequency, pm.sample_rate,
-                                     pm.bandwidth, pm.gain, pm.device,
-                                     parent=self)
+        r = SpectrumDialogController(pm, parent=self)
         if r.has_empty_device_list:
             Errors.no_device()
             r.close()

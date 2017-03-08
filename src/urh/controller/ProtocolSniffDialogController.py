@@ -10,11 +10,11 @@ from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 class ProtocolSniffDialogController(SendRecvDialogController):
     protocol_accepted = pyqtSignal(list)
 
-    def __init__(self, freq, samp_rate, bw, gain, device, noise,
+    def __init__(self, project_manager, noise,
                  center, bit_length, tolerance, modulation_type_index,
                  parent=None, testing_mode=False):
         self.is_rx = True
-        super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+        super().__init__(project_manager, parent=parent, testing_mode=testing_mode)
 
         self.ui.stackedWidget.setCurrentIndex(2)
         self.hide_send_ui_items()
@@ -30,8 +30,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         device = self.ui.cbDevice.currentText()
         self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
-                                       modulation_type_index, samp_rate, freq,
-                                       gain, bw, device, testing_mode=testing_mode)
+                                       modulation_type_index, project_manager.sample_rate, project_manager.frequency,
+                                       project_manager.gain, project_manager.if_gain, project_manager.baseband_gain,
+                                       project_manager.bandwidth, device, testing_mode=testing_mode)
 
         self.set_sniff_ui_items_visible(True)
         self.set_device_ui_items_visibility(device)

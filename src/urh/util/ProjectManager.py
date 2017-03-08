@@ -29,6 +29,8 @@ class ProjectManager(QObject):
         self.bandwidth = 1e6
         self.frequency = 43392e4
         self.gain = 20
+        self.if_gain = 20
+        self.baseband_gain = 20
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
@@ -59,11 +61,13 @@ class ProjectManager(QObject):
             self.__sample_rate = val
             self.sample_rate_changed.emit(val)
 
-    def set_recording_parameters(self, freq, sample_rate, bandwidth, gain, device):
+    def set_recording_parameters(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, device):
         self.frequency = float(freq)
         self.sample_rate = float(sample_rate)
         self.bandwidth = float(bandwidth)
         self.gain = int(gain)
+        self.if_gain = int(if_gain)
+        self.baseband_gain = int(baseband_gain)
         self.device = device
 
     def read_parameters(self, root):

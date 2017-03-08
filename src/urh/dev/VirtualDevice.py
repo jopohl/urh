@@ -28,7 +28,9 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
+    def __init__(self, backend_handler, name: str, mode: Mode, freq, sample_rate, bandwidth,
+                 gain, if_gain, baseband_gain,
+                 samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
@@ -48,14 +50,14 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
-                self.__dev = ReceiverThread(samp_rate, freq, gain, bw, parent=parent, is_ringbuffer=is_ringbuffer)
+                self.__dev = ReceiverThread(sample_rate, freq, gain, bandwidth, parent=parent, is_ringbuffer=is_ringbuffer)
                 self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
-                self.__dev = SenderThread(samp_rate, freq, gain, bw, parent=parent)
+                self.__dev = SenderThread(sample_rate, freq, gain, bandwidth, parent=parent)
                 self.__dev.data = samples_to_send
                 self.__dev.samples_per_transmission = len(samples_to_send)
             elif mode == Mode.spectrum:
-                self.__dev = SpectrumThread(samp_rate, freq, gain, bw, parent=parent)
+                self.__dev = SpectrumThread(sample_rate, freq, gain, bandwidth, parent=parent)
             else:
                 raise ValueError("Unknown mode")
             self.__dev.usrp_ip = device_ip
@@ -70,13 +72,13 @@ class VirtualDevice(QObject):
 
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
-                    self.__dev = HackRF(freq, samp_rate, bw, gain, is_ringbuffer=is_ringbuffer)
+                    self.__dev = HackRF(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
                 elif name.replace("-", "") == "rtlsdr":
                     from urh.dev.native.RTLSDR import RTLSDR
-                    self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                    self.__dev = RTLSDR(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
-                    self.__dev = RTLSDRTCP(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                    self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:

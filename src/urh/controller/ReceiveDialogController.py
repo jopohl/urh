@@ -14,9 +14,8 @@ class ReceiveDialogController(SendRecvDialogController):
     files_recorded = pyqtSignal(list)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):
-        self.is_rx = True
         try:
-            super().__init__(project_manager, parent=parent, testing_mode=testing_mode)
+            super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
         except ValueError:
             return
 

@@ -8,8 +8,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 
 class SpectrumDialogController(SendRecvDialogController):
     def __init__(self, project_manager, parent=None, testing_mode=False):
-        self.is_rx = True
-        super().__init__(project_manager, parent=parent, testing_mode=testing_mode)
+        super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewReceive
         self.update_interval = 1

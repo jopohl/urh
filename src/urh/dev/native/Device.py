@@ -91,7 +91,8 @@ class Device(QObject):
 
     @property
     def send_process_arguments(self):
-        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth, self.send_buffer, \
+        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, \
+               self.gain, self.if_gain, self.baseband_gain, self.send_buffer, \
                self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
 
     def init_recv_buffer(self):

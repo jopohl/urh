@@ -15,7 +15,7 @@ try:
         gnuradio_path = f.read().strip()
 
     os.environ["PATH"] = os.path.join(gnuradio_path, "bin")
-    sys.path.append(os.path.join(gnuradio_path, "lib", "site-packages"))
+    sys.path.insert(0, os.path.join(gnuradio_path, "lib", "site-packages"))
 
 except IOError:
     pass

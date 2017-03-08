@@ -143,6 +143,22 @@ class VirtualDevice(QObject):
         self.__dev.gain = value
 
     @property
+    def if_gain(self):
+        return self.__dev.if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        self.__dev.if_gain = value
+
+    @property
+    def baseband_gain(self):
+        return self.__dev.baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        self.__dev.baseband_gain = value
+
+    @property
     def sample_rate(self):
         return self.__dev.sample_rate
 

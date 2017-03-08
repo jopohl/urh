@@ -211,7 +211,7 @@
             <number>0</number>
            </property>
            <property name="maximum">
-            <number>500</number>
+            <number>99</number>
            </property>
            <property name="value">
             <number>40</number>

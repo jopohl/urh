@@ -1,60 +1,10 @@
-from multiprocessing import Process
-from multiprocessing import Value
-
 import numpy as np
-from multiprocessing import Pipe
 
 from urh.dev.native.Device import Device
 from urh.util.Logger import logger
 
 import socket
-
-def receive_sync(connection, device_number: int, center_freq: int, sample_rate: int, gain: int):
-    rtlsdrtcp = RTLSDRTCP(center_freq, gain, sample_rate, device_number)
-
-    rtlsdrtcp.open("127.0.0.1", 1234)
-    rtlsdrtcp.set_parameter("centerFreq", center_freq)
-    rtlsdrtcp.set_parameter("sampleRate", sample_rate)
-    rtlsdrtcp.set_parameter("tunerGain", gain)
-    exit_requested = False
-
-    while not exit_requested:
-        while connection.poll():
-            result = process_command(rtlsdrtcp, connection.recv())
-            if result == "stop":
-                exit_requested = True
-                break
-
-        if not exit_requested:
-            connection.send_bytes(rtlsdrtcp.read_sync())
-
-    logger.debug("RTLSDRTCP: closing device")
-    rtlsdrtcp.close()
-    connection.close()
-    pass
-
-def process_command(rtlsdrtcp, command):
-    logger.debug("RTLSDRTCP: {}".format(command))
-    if command == "stop":
-        return "stop"
-
-    tag, value = command.split(":")
-    if tag == "center_freq":
-        logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
-        return rtlsdrtcp.set_parameter("centerFreq", int(value))
-
-    elif tag == "tuner_gain":
-        logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
-        return rtlsdrtcp.set_parameter("tunerGain", int(value))
-
-    elif tag == "sample_rate":
-        logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
-        return rtlsdrtcp.set_parameter("sampleRate", int(value))
-
-    elif tag == "tuner_bandwidth":
-        logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
-        return rtlsdrtcp.set_parameter("bandwidth", int(value))
-
+import select
 
 class RTLSDRTCP(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
@@ -64,157 +14,160 @@ class RTLSDRTCP(Device):
                       "testMode", "agcMode", "directSampling", "offsetTuning", "rtlXtalFreq", "tunerXtalFreq",
                       "gainByIndex", "bandwidth", "biasTee"]
 
+    def receive_sync(self, data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
+                     gain: int):
+        # connect and initialize rtl_tcp
+        self.open(self.device_ip, self.port)
+        if self.socket_is_open:
+            self.device_number = device_number
+            self.set_parameter("centerFreq", int(center_freq))
+            self.set_parameter("sampleRate", int(sample_rate))
+            self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
+            self.set_parameter("tunerGain", int(gain))
+            #self.set_parameter("freqCorrection", int(freq_correction_in_ppm)) # TODO: add ppm value as parameter to this function
+            exit_requested = False
+
+            while not exit_requested:
+                while ctrl_connection.poll():
+                    result = self.process_command(ctrl_connection.recv())
+                    if result == "stop":
+                        exit_requested = True
+                        break
+
+                if not exit_requested:
+                    data_connection.send_bytes(self.read_sync())
+
+            logger.debug("RTLSDRTCP: closing device")
+            self.close()
+        else:
+            ctrl_connection.send("Could not connect to rtl_tcp:404")
+        ctrl_connection.send("close:0")
+        data_connection.close()
+        ctrl_connection.close()
+
+    def process_command(self, command):
+        logger.debug("RTLSDRTCP: {}".format(command))
+        if command == "stop":
+            return "stop"
+
+        tag, value = command.split(":")
+        if tag == "center_freq":
+            logger.info("RTLSDRTCP: Set center freq to {0}".format(int(value)))
+            return self.set_parameter("centerFreq", int(value))
+
+        elif tag == "tuner_gain":
+            logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
+            return self.set_parameter("tunerGain", int(value))
+
+        elif tag == "sample_rate":
+            logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))
+            return self.set_parameter("sampleRate", int(value))
+
+        elif tag == "tuner_bandwidth":
+            logger.info("RTLSDRTCP: Set bandwidth to {0}".format(int(value)))
+            return self.set_parameter("bandwidth", int(value))
+
+        elif tag == "freq_correction":
+            logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
+            return self.set_parameter("freqCorrection", int(value))
+
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(0, freq, gain, srate, is_ringbuffer)
 
-        self.open() #open("127.0.0.1", 1234)
-
+        # default class parameters
+        self.receive_process_function = self.receive_sync
+        self.device_number = device_number
+        self.socket_is_open = False
         self.success = 0
 
-        self.is_receiving_p = Value('i', 0)
-        """
-        Shared Value to communicate with the receiving process.
-
-        """
-
-        #self.bandwidth_is_adjustable = hasattr(rtlsdr, "set_tuner_bandwidth")   # e.g. not in Manjaro Linux / Ubuntu 14.04
+        # maximum device parameters
         self._max_frequency = 6e9
         self._max_sample_rate = 3200000
         self._max_frequency = 6e9
         self._max_bandwidth = 3200000
         self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
-        self.device_number = device_number
+    @property
+    def receive_process_arguments(self):
+        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, self.gain
 
     def open(self, hostname="127.0.0.1", port=1234):
-        try:
-            # Create socket and connect
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-            self.sock.settimeout(1.0)   # Timeout 1s
-            self.sock.connect((hostname, port))
-
-            # Receive rtl_tcp initial data
-            init_data = self.sock.recv(self.MAXDATASIZE)
-
-            if len(init_data) != 12:
-                return False
-            if init_data[0:4] != b'RTL0':
+        if not self.socket_is_open:
+            try:
+                # Create socket and connect
+                self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+                #self.sock.settimeout(1.0)  # Timeout 1s
+                self.sock.connect((hostname, port))
+            except Exception as e:
+                self.socket_is_open = False
+                logger.info("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
+                self.errors.add("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
                 return False
 
-            # Extract tuner name
-            tuner_number = int.from_bytes(init_data[4:8], self.ENDIAN)
-            if tuner_number == 1:
-                self.tuner = "E4000"
-            elif tuner_number == 2:
-                self.tuner = "FC0012"
-            elif tuner_number == 3:
-                self.tuner = "FC0013"
-            elif tuner_number == 4:
-                self.tuner = "FC2580"
-            elif tuner_number == 5:
-                self.tuner = "R820T"
-            elif tuner_number == 6:
-                self.tuner = "R828D"
-            else:
-                self.tuner = "Unknown"
+            try:
+                # Receive rtl_tcp initial data
+                init_data = self.sock.recv(self.MAXDATASIZE)
 
-            # Extract IF and RF gain
-            self.if_gain = int.from_bytes(init_data[8:10], self.ENDIAN)
-            self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
+                if len(init_data) != 12:
+                    return False
+                if init_data[0:4] != b'RTL0':
+                    return False
 
-        except OSError as e:
-            logger.info("Could not connect to rtl_tcp", hostname, port, "(", str(e), ")")
+                # Extract tuner name
+                tuner_number = int.from_bytes(init_data[4:8], self.ENDIAN)
+                if tuner_number == 1:
+                    self.tuner = "E4000"
+                elif tuner_number == 2:
+                    self.tuner = "FC0012"
+                elif tuner_number == 3:
+                    self.tuner = "FC0013"
+                elif tuner_number == 4:
+                    self.tuner = "FC2580"
+                elif tuner_number == 5:
+                    self.tuner = "R820T"
+                elif tuner_number == 6:
+                    self.tuner = "R828D"
+                else:
+                    self.tuner = "Unknown"
+
+                # Extract IF and RF gain
+                self.if_gain = int.from_bytes(init_data[8:10], self.ENDIAN)
+                self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
+
+                logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+                # Show this in error message box after refactoring:
+                #self.errors.add("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+            except Exception as e:
+                self.socket_is_open = False
+                logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))
+                return False
+
+            self.socket_is_open = True
 
     def close(self):
-        self.sock.close()
+        if self.socket_is_open:
+            self.socket_is_open = False
+        return self.sock.close()
 
-    def set_parameter(self, param, value):  # returns error (True/False)
-        msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
-        msg += value.to_bytes(4, self.ENDIAN)   # Set value at bits 8-39
-
-        try:
-            self.sock.sendall(msg)  # Send data to rtl_tcp
-        except OSError as e:
-            logger.info("Could not set parameter", param, value, msg, "(", str(e), ")")
-            return True
-
+    def set_parameter(self, param: str, value: int):  # returns error (True/False)
+        if self.socket_is_open:
+            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
+            msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
+            try:
+                self.sock.sendall(msg)                                          # Send data to rtl_tcp
+            except OSError as e:
+                self.sock.close()
+                logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))
+                self.errors.add("Could not set parameter {0}:{1} ({2})".format(param, value, e))
+                return True
         return False
 
-    def start_rx_mode(self):
-        self.init_recv_buffer()
-
-        self.is_open = True
-        self.is_receiving = True
-        self.receive_process = Process(target=receive_sync, args=(self.child_conn, self.device_number,
-                                                                  self.frequency, self.sample_rate, self.gain
-                                                                  ))
-        self.receive_process.daemon = True
-        self._start_read_rcv_buffer_thread()
-        self.receive_process.start()
-
-    def stop_rx_mode(self, msg):
-        self.is_receiving = False
-        self.parent_conn.send("stop")
-
-        logger.info("RTLSDRTCP: Stopping RX Mode: " + msg)
-
-        if hasattr(self, "receive_process"):
-            self.receive_process.join(0.3)
-            if self.receive_process.is_alive():
-                logger.warning("RTLSDRTCP: Receive process is still alive, terminating it")
-                self.receive_process.terminate()
-                self.receive_process.join()
-                self.parent_conn, self.child_conn = Pipe()
-
-        if hasattr(self, "read_queue_thread") and self.read_recv_buffer_thread.is_alive():
-            try:
-                self.read_recv_buffer_thread.join(0.001)
-                logger.info("RTLSDRTCP: Joined read_queue_thread")
-            except RuntimeError:
-                logger.error("RTLSDRTCP: Could not join read_queue_thread")
-
     def read_sync(self):
-        return self.sock.recv(self.MAXDATASIZE)
-
-    def set_device_frequency(self, frequency):
-        error = self.set_parameter("centerFreq", int(frequency))
-        self.log_retcode(error, "Set center frequency")
-        return error
-
-    def set_device_sample_rate(self, sample_rate):
-        error = self.set_parameter("sampleRate", int(sample_rate))
-        self.log_retcode(error, "Set sample rate")
-        return error
-
-    def set_freq_correction(self, ppm):
-        error = self.set_parameter("freqCorrection", int(ppm))
-        self.log_retcode(error, "Set frequency correction")
-        return error
-
-    def set_offset_tuning(self, on: bool):
-        error = self.set_parameter("offsetTuning", on)
-        self.log_retcode(error, "Set offset tuning")
-        return error
-
-    def set_gain_mode(self, manual: bool):
-        error = self.set_parameter("tunerGainMode", manual)
-        self.log_retcode(error, "Set gain mode manual")
-        return error
-
-    def set_if_gain(self, gain):
-        error = self.set_parameter("tunerIFGain", int(gain))
-        self.log_retcode(error, "Set IF gain")
-        return error
-
-    def set_gain(self, gain):
-        error = self.set_parameter("tunerGain", int(gain))
-        self.log_retcode(error, "Set tuner gain")
-        return error
-
-    def set_bandwidth(self, bandwidth):
-        error = self.set_parameter("bandwidth", int(bandwidth))
-        self.log_retcode(error, "Set tuner bandwidth")
-        return error
+        s_read, _, _ = select.select([self.sock], [], [], .1)
+        if self.sock in s_read:
+            return self.sock.recv(self.MAXDATASIZE)
+        else:
+            return b''
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):
@@ -228,7 +181,3 @@ class RTLSDRTCP(Device):
         result.real = (unpacked['r'] / 127.5) - 1.0
         result.imag = (unpacked['i'] / 127.5) - 1.0
         return result
-
-    @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        return (127.5 * (complex_samples.view(np.float32) + 1.0)).astype(np.uint8).tostring()

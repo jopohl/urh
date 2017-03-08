@@ -117,6 +117,11 @@ class HackRF(Device):
                     exit_requested = True
                     break
 
+        if exit_requested:
+            logger.debug("HackRF: exit requested. Stopping sending")
+        if sending_is_finished():
+            logger.debug("HackRF: sending is finished.")
+
         HackRF.shutdown_hackrf(ctrl_connection)
         ctrl_connection.close()
 

@@ -217,6 +217,8 @@ class Device(QObject):
 
     def start_rx_mode(self):
         self.init_recv_buffer()
+        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
         self.is_receiving = True
         logger.info("{0}: Starting RX Mode".format(self.__class__.__name__))
@@ -246,13 +248,12 @@ class Device(QObject):
                 self.child_ctrl_conn.close()
                 self.child_data_conn.close()
 
-            time.sleep(0.1)
-            self.parent_data_conn, self.child_data_conn = Pipe()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
         self.is_transmitting = True
+
+        logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
 
         self.transmit_process = Process(target=self.send_process_function,
                                         args=self.send_process_arguments)
@@ -273,7 +274,7 @@ class Device(QObject):
                 logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
                 self.transmit_process.terminate()
                 self.transmit_process.join()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+                self.child_ctrl_conn.close()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):

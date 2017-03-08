@@ -8,6 +8,8 @@ from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QSlider
+from PyQt5.QtWidgets import QSpinBox
 
 from urh import constants
 from urh.dev import config
@@ -91,6 +93,12 @@ class SendRecvDialogController(QDialog):
             if "_sniff_" in item:
                 getattr(self.ui, item).setVisible(visible)
 
+    def get_config_for_selected_device(self):
+        device_name = self.ui.cbDevice.currentText()
+        key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
+        conf = config.DEVICE_CONFIG[key]
+        return conf
+
     def set_device_ui_items_visibility(self, device_name: str):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
         conf = config.DEVICE_CONFIG[key]
@@ -100,8 +108,28 @@ class SendRecvDialogController(QDialog):
         self.ui.labelSampleRate.setVisible("sample_rate" in conf)
         self.ui.spinBoxBandwidth.setVisible("bandwidth" in conf)
         self.ui.labelBandWidth.setVisible("bandwidth" in conf)
-        self.ui.spinBoxGain.setVisible("rf_gain" in conf)
-        self.ui.labelGain.setVisible("rf_gain" in conf)
+
+        key_ui_gain_map = {"rf_gain": "Gain", "if_gain": "IFGain", "baseband_gain": "BasebandGain"}
+        for conf_key, ui_element in key_ui_gain_map.items():
+            getattr(self.ui, "label" + ui_element).setVisible(conf_key in conf)
+
+            spinbox = getattr(self.ui, "spinBox" + ui_element)  # type: QSpinBox
+            slider = getattr(self.ui, "slider" + ui_element)  # type: QSlider
+
+            if conf_key in conf:
+                gain_values = conf[conf_key]
+                assert len(gain_values) >= 2
+                spinbox.setMinimum(gain_values[0])
+                spinbox.setMaximum(gain_values[-1])
+                spinbox.setSingleStep(gain_values[1] - gain_values[0])
+                spinbox.setVisible(True)
+
+                slider.setMaximum(len(gain_values) - 1)
+            else:
+                spinbox.setVisible(False)
+                slider.setVisible(False)
+            getattr(self.ui, "slider" + ui_element).setVisible(conf_key in conf)
+
         self.ui.lineEditIP.setVisible("ip" in conf)
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
@@ -147,12 +175,23 @@ class SendRecvDialogController(QDialog):
         self.ui.btnClear.clicked.connect(self.on_clear_clicked)
 
         self.timer.timeout.connect(self.update_view)
-        self.ui.spinBoxSampleRate.editingFinished.connect(self.on_sample_rate_changed)
-        self.ui.spinBoxGain.editingFinished.connect(self.on_gain_changed)
-        self.ui.spinBoxFreq.editingFinished.connect(self.on_freq_changed)
-        self.ui.spinBoxBandwidth.editingFinished.connect(self.on_bw_changed)
-        self.ui.spinBoxPort.editingFinished.connect(self.on_port_changed)
-        self.ui.lineEditIP.editingFinished.connect(self.on_ip_changed)
+        self.ui.spinBoxSampleRate.editingFinished.connect(self.on_spinbox_sample_rate_editing_finished)
+
+        self.ui.spinBoxGain.editingFinished.connect(self.on_spinbox_gain_editing_finished)
+        self.ui.spinBoxGain.valueChanged.connect(self.on_spinbox_gain_value_changed)
+        self.ui.sliderGain.valueChanged.connect(self.on_slider_gain_value_changed)
+        self.ui.spinBoxIFGain.editingFinished.connect(self.on_spinbox_if_gain_editing_finished)
+        self.ui.spinBoxIFGain.valueChanged.connect(self.on_spinbox_if_gain_value_changed)
+        self.ui.sliderIFGain.valueChanged.connect(self.on_slider_if_gain_value_changed)
+        self.ui.spinBoxBasebandGain.editingFinished.connect(self.on_spinbox_baseband_gain_editing_finished)
+        self.ui.spinBoxBasebandGain.valueChanged.connect(self.on_spinbox_baseband_gain_value_changed)
+        self.ui.sliderBasebandGain.valueChanged.connect(self.on_slider_baseband_gain_value_changed)
+
+        self.ui.spinBoxFreq.editingFinished.connect(self.on_spinbox_frequency_editing_finished)
+        self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
+        self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
+        self.ui.lineEditIP.editingFinished.connect(self.on_spinbox_ip_editing_finished)
+
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
 
@@ -183,34 +222,81 @@ class SendRecvDialogController(QDialog):
         return True
 
     @pyqtSlot()
-    def on_sample_rate_changed(self):
+    def on_spinbox_sample_rate_editing_finished(self):
         self.device.sample_rate = self.ui.spinBoxSampleRate.value()
         if self.bw_sr_are_locked:
             self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
             self.device.bandwidth = self.ui.spinBoxBandwidth.value()
 
     @pyqtSlot()
-    def on_freq_changed(self):
+    def on_spinbox_frequency_editing_finished(self):
         self.device.frequency = self.ui.spinBoxFreq.value()
 
     @pyqtSlot()
-    def on_bw_changed(self):
+    def on_spinbox_bandwidth_editing_finished(self):
         self.device.bandwidth = self.ui.spinBoxBandwidth.value()
         if self.bw_sr_are_locked:
             self.ui.spinBoxSampleRate.setValue(self.ui.spinBoxBandwidth.value())
             self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
-    def on_ip_changed(self):
+    def on_spinbox_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
 
     @pyqtSlot()
-    def on_port_changed(self):
+    def on_spinbox_port_editing_finished(self):
         self.device.port = self.ui.spinBoxPort.value()
 
     @pyqtSlot()
-    def on_gain_changed(self):
-        self.device.gain = self.ui.spinBoxGain.value()
+    def on_spinbox_gain_editing_finished(self):
+        self.device.gain = self.ui.spinBoxGain.value()   # TODO: Only set rf_gain in virtual device here
+
+    @pyqtSlot(int)
+    def on_spinbox_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        try:
+            self.ui.sliderGain.setValue(dev_conf["rf_gain"].index(value))
+        except ValueError:
+            pass
+
+    @pyqtSlot(int)
+    def on_slider_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        self.ui.spinBoxGain.setValue(dev_conf["rf_gain"][value])
+
+    @pyqtSlot()
+    def on_spinbox_if_gain_editing_finished(self):
+        self.device.if_gain = self.ui.spinBoxIFGain.value()   # TODO: Add if_gain to virtual device
+
+    @pyqtSlot(int)
+    def on_slider_if_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        self.ui.spinBoxIFGain.setValue(dev_conf["if_gain"][value])
+
+    @pyqtSlot(int)
+    def on_spinbox_if_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        try:
+            self.ui.sliderIFGain.setValue(dev_conf["if_gain"].index(value))
+        except ValueError:
+            pass
+
+    @pyqtSlot()
+    def on_spinbox_baseband_gain_editing_finished(self):
+        self.device.baseband_gain = self.ui.spinBoxBasebandGain.value()  # TODO: Add baseband_gain to virtual device
+
+    @pyqtSlot(int)
+    def on_slider_baseband_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        self.ui.spinBoxBasebandGain.setValue(dev_conf["baseband_gain"][value])
+
+    @pyqtSlot(int)
+    def on_spinbox_baseband_gain_value_changed(self, value: int):
+        dev_conf = self.get_config_for_selected_device()
+        try:
+            self.ui.sliderBasebandGain.setValue(dev_conf["baseband_gain"].index(value))
+        except ValueError:
+            pass
 
     @pyqtSlot()
     def on_selected_device_changed(self):

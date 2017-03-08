@@ -65,7 +65,7 @@ class SpectrumDialogController(SendRecvDialogController):
         self.ui.spinBoxFreq.editingFinished.emit()
 
     @pyqtSlot()
-    def on_freq_changed(self):
+    def on_spinbox_frequency_editing_finished(self):
         self.device.frequency = self.ui.spinBoxFreq.value()
         self.scene_manager.scene.center_freq = self.ui.spinBoxFreq.value()
         self.scene_manager.clear_path()

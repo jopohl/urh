@@ -123,7 +123,6 @@ class HackRF(Device):
     @staticmethod
     def process_command(command, is_tx: bool):
         is_rx = not is_tx
-        logger.debug("HackRF: {}".format(command))
         if command == "stop":
             return "stop"
 

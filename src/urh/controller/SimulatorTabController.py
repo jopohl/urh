@@ -60,6 +60,11 @@ class SimulatorTabController(QWidget):
         first_message = None if len(selected_messages) == 0 else selected_messages[0]
         self.simulator_message_field_model.message = first_message
         self.simulator_message_field_model.update()
+
+        if first_message:
+            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage #") + first_message.index)
+        else:
+            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
         
     def on_project_updated(self):
         #self.simulate_list_model.participants = self.project_manager.participants

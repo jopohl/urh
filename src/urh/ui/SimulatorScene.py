@@ -18,6 +18,12 @@ class SimulatorItem(QGraphicsObject):
         self.bounding_rect = QRectF()
         self.drop_indicator_position = None
         self.item_under_mouse = None
+        self.number = QGraphicsTextItem(self)
+        self.index = None
+        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font.setPointSize(8)
+        font.setWeight(QFont.DemiBold)
+        self.number.setFont(font)
 
     def hoverEnterEvent(self, event):
         self.hover_active = True
@@ -81,6 +87,10 @@ class SimulatorItem(QGraphicsObject):
 
     def boundingRect(self):
         return self.bounding_rect
+
+    def update_numbering(self, index):
+        self.index = index
+        self.number.setPlainText(self.index)
 
     def mouseMoveEvent(self, event):
         items = [item for item in self.scene().items(event.scenePos()) if isinstance(item, SimulatorItem) and item != self]
@@ -153,6 +163,25 @@ class RuleItem(QGraphicsItem):
                     cond.sim_items.remove(item)
 
         return messages
+
+    def update_numbering(self, index):
+        if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
+        if_cond.index = index
+        if_cond.number.setPlainText(index)
+
+        sub_index = 1
+
+        if_cond.update_numbering(index, sub_index)
+        sub_index += len(if_cond.sim_items)
+
+        for cond in [cond for cond in self.conditions if cond.type is ConditionType.ELSE_IF]:
+            cond.update_numbering(index, sub_index)
+            sub_index += len(cond.sim_items)
+
+        else_cond = [cond for cond in self.conditions if cond.type is ConditionType.ELSE]
+
+        if len(else_cond) == 1:
+            else_cond[0].update_numbering(index, sub_index)
 
     def add_else_cond(self):
         self.conditions.append(RuleConditionItem(ConditionType.ELSE, self))
@@ -230,7 +259,8 @@ class RuleConditionItem(SimulatorItem):
         self.setPos(x_pos, y_pos)
 
         start_y = 0
-        self.text.setPos(0, start_y)
+        self.number.setPos(0, start_y)
+        self.text.setPos(self.number.boundingRect().width(), start_y)
         start_y += round(self.text.boundingRect().height())
 
         for item in self.sim_items:
@@ -253,6 +283,11 @@ class RuleConditionItem(SimulatorItem):
             self.drop_indicator_position = QAbstractItemView.OnItem
 
         self.update()
+
+    def update_numbering(self, index, sub_index):
+        for item in self.sim_items:
+            item.update_numbering(index + "." + str(sub_index))
+            sub_index += 1
 
     def paint(self, painter, option, widget):
         if self.hover_active or self.isSelected():
@@ -368,7 +403,8 @@ class ActionItem(SimulatorItem):
 
     def refresh(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
-        self.text.setPos(0, 0)
+        self.number.setPos(0, 0)
+        self.text.setPos(self.number.boundingRect().width(), 0)
         super().refresh(x_pos, y_pos)
 
 class ParticipantItem(QGraphicsItem):
@@ -406,7 +442,9 @@ class MessageItem(SimulatorItem):
         self.labels = []
 
     def labels_width(self):
-        width = sum([lbl.boundingRect().width() for lbl in self.labels])
+        width = self.number.boundingRect().width()
+        #width += 5
+        width += sum([lbl.boundingRect().width() for lbl in self.labels])
         width += 5 * (len(self.labels) - 1)
         return width
 
@@ -426,6 +464,9 @@ class MessageItem(SimulatorItem):
         start_x += (arrow_width - self.labels_width()) / 2
         start_y = 0
 
+        self.number.setPos(start_x, start_y)
+        start_x += self.number.boundingRect().width()
+
         for label in self.labels:
             label.setPos(start_x, start_y)
             start_x += label.boundingRect().width() + 5
@@ -433,7 +474,7 @@ class MessageItem(SimulatorItem):
         if len(self.labels) > 0:
             start_y += self.labels[0].boundingRect().height() + 5
         else:
-            start_y += 7
+            start_y += 26
 
         self.arrow.setLine(p_source.x(), start_y, p_destination.x(), start_y)
         super().refresh(x_pos, y_pos)
@@ -511,12 +552,17 @@ class SimulatorScene(QGraphicsScene):
             elif type(item) == RuleItem:
                 item.delete_items(items)
 
+    def update_numbering(self):
+        for i, item in enumerate(self.sim_items):
+            item.update_numbering(str(i + 1))
+
     def update_view(self):
         self.update_participants(self.controller.project_manager.participants)
 
         items = [msg for msg in self.get_all_messages() if (msg.source not in self.participants) or (msg.destination not in self.participants)]
         self.delete_items(items)
 
+        self.update_numbering()
         self.arrange_participants()
         self.arrange_items()
 

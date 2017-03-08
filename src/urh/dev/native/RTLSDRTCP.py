@@ -80,13 +80,6 @@ class RTLSDRTCP(Device):
         self.socket_is_open = False
         self.success = 0
 
-        # maximum device parameters
-        self._max_frequency = 6e9
-        self._max_sample_rate = 3200000
-        self._max_frequency = 6e9
-        self._max_bandwidth = 3200000
-        self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
-
     @property
     def receive_process_arguments(self):
         return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, self.gain

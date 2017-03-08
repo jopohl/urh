@@ -148,11 +148,6 @@ class HackRF(Device):
         self.receive_process_function = HackRF.hackrf_receive
         self.send_process_function = HackRF.hackrf_send
 
-        self._max_bandwidth = 28e6
-        self._max_frequency = 6e9
-        self._max_sample_rate = 20e6
-        self._max_gain = 40
-
         self.error_codes = {
             0: "HACKRF_SUCCESS",
             1: "HACKRF_TRUE",

@@ -261,7 +261,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_spinbox_gain_editing_finished(self):
-        self.device.gain = self.ui.spinBoxGain.value()   # TODO: Only set rf_gain in virtual device here
+        self.device.gain = self.ui.spinBoxGain.value()
 
     @pyqtSlot(int)
     def on_spinbox_gain_value_changed(self, value: int):
@@ -278,7 +278,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_spinbox_if_gain_editing_finished(self):
-        self.device.if_gain = self.ui.spinBoxIFGain.value()   # TODO: Add if_gain to virtual device
+        self.device.if_gain = self.ui.spinBoxIFGain.value()
 
     @pyqtSlot(int)
     def on_slider_if_gain_value_changed(self, value: int):
@@ -295,7 +295,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_spinbox_baseband_gain_editing_finished(self):
-        self.device.baseband_gain = self.ui.spinBoxBasebandGain.value()  # TODO: Add baseband_gain to virtual device
+        self.device.baseband_gain = self.ui.spinBoxBasebandGain.value()
 
     @pyqtSlot(int)
     def on_slider_baseband_gain_value_changed(self, value: int):

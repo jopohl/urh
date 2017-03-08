@@ -80,11 +80,6 @@ class RTLSDR(Device):
 
         self.bandwidth_is_adjustable = hasattr(rtlsdr,
                                                "set_tuner_bandwidth")  # e.g. not in Manjaro Linux / Ubuntu 14.04
-        self._max_frequency = 6e9
-        self._max_sample_rate = 3200000
-        self._max_frequency = 6e9
-        self._max_bandwidth = 3200000
-        self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
 

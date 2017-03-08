@@ -36,11 +36,6 @@ class Device(QObject):
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
-        self._max_bandwidth = 1
-        self._max_frequency = 1
-        self._max_sample_rate = 1
-        self._max_gain = 1
-
         self.success = 0
         self.error_codes = {}
         self.errors = set()
@@ -151,15 +146,6 @@ class Device(QObject):
         if not self.bandwidth_is_adjustable:
             return
 
-        if value > self._max_bandwidth:
-            err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
-                                                                             Formatter.big_value_with_suffix(value),
-                                                                             Formatter.big_value_with_suffix(
-                                                                                 self._max_bandwidth))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_bandwidth
-
         if value != self.__bandwidth:
             self.__bandwidth = value
             self.set_device_bandwidth(value)
@@ -173,15 +159,6 @@ class Device(QObject):
 
     @frequency.setter
     def frequency(self, value):
-        if value > self._max_frequency:
-            err = "{0} frequency {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
-                                                                             Formatter.big_value_with_suffix(value),
-                                                                             Formatter.big_value_with_suffix(
-                                                                                 self._max_frequency))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_frequency
-
         if value != self.__frequency:
             self.__frequency = value
             self.set_device_frequency(value)
@@ -195,12 +172,6 @@ class Device(QObject):
 
     @gain.setter
     def gain(self, value):
-        if value > self._max_gain:
-            err = "{0} gain {1} too high. Correcting to {2}".format(type(self).__name__, value, self._max_gain)
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_gain
-
         if value != self.__gain:
             self.__gain = value
             self.set_device_gain(value)
@@ -217,15 +188,6 @@ class Device(QObject):
 
     @sample_rate.setter
     def sample_rate(self, value):
-        if value > self._max_sample_rate:
-            err = "{0} sample rate {1}Sps too high. Correcting to {2}Sps".format(type(self).__name__,
-                                                                                 Formatter.big_value_with_suffix(value),
-                                                                                 Formatter.big_value_with_suffix(
-                                                                                     self._max_sample_rate))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_sample_rate
-
         if value != self.__sample_rate:
             self.__sample_rate = value
             self.set_device_sample_rate(value)

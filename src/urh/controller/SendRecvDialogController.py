@@ -99,6 +99,11 @@ class SendRecvDialogController(QDialog):
         conf = config.DEVICE_CONFIG[key]
         return conf
 
+    def sync_gain_sliders(self):
+        self.ui.spinBoxGain.valueChanged.emit(self.ui.spinBoxGain.value())
+        self.ui.spinBoxIFGain.valueChanged.emit(self.ui.spinBoxIFGain.value())
+        self.ui.spinBoxBasebandGain.valueChanged.emit(self.ui.spinBoxBasebandGain.value())
+
     def set_device_ui_items_visibility(self, device_name: str):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
         conf = config.DEVICE_CONFIG[key]
@@ -197,6 +202,8 @@ class SendRecvDialogController(QDialog):
 
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
+        self.sync_gain_sliders()
+
     def _create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
         self.device.started.connect(self.on_device_started)
@@ -256,7 +263,7 @@ class SendRecvDialogController(QDialog):
         dev_conf = self.get_config_for_selected_device()
         try:
             self.ui.sliderGain.setValue(dev_conf["rf_gain"].index(value))
-        except ValueError:
+        except (ValueError, KeyError):
             pass
 
     @pyqtSlot(int)
@@ -278,7 +285,7 @@ class SendRecvDialogController(QDialog):
         dev_conf = self.get_config_for_selected_device()
         try:
             self.ui.sliderIFGain.setValue(dev_conf["if_gain"].index(value))
-        except ValueError:
+        except (ValueError, KeyError):
             pass
 
     @pyqtSlot()
@@ -295,7 +302,7 @@ class SendRecvDialogController(QDialog):
         dev_conf = self.get_config_for_selected_device()
         try:
             self.ui.sliderBasebandGain.setValue(dev_conf["baseband_gain"].index(value))
-        except ValueError:
+        except (ValueError, KeyError):
             pass
 
     @pyqtSlot()

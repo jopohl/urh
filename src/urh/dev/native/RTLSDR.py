@@ -23,8 +23,8 @@ class RTLSDR(Device):
         ret = rtlsdr.set_sample_rate(sample_rate)
         ctrl_connection.send("set_sample_rate:" + str(ret))
 
-        ret = rtlsdr.set_tuner_gain(gain)
-        ctrl_connection.send("set_tuner_gain:" + str(ret))
+        ret = rtlsdr.set_tuner_gain(10*gain)
+        ctrl_connection.send("set_tuner_gain to {0}:{1}".format(gain, ret))
 
         ret = rtlsdr.reset_buffer()
         ctrl_connection.send("reset_buffer:" + str(ret))
@@ -59,7 +59,7 @@ class RTLSDR(Device):
             logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
             return rtlsdr.set_center_freq(int(value))
 
-        elif tag == "tuner_gain":
+        elif tag == "rf_gain":
             logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
             return rtlsdr.set_tuner_gain(10*int(value))  # calculate *10 for API
 
@@ -106,9 +106,6 @@ class RTLSDR(Device):
 
     def set_gain(self, gain):
         self.parent_ctrl_conn.send("tuner_gain:{}".format(int(gain)))
-
-    def set_device_gain(self, gain):
-        self.set_gain(gain)
 
     def set_device_bandwidth(self, bandwidth):
         if hasattr(rtlsdr, "set_tuner_bandwidth"):

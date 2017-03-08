@@ -57,7 +57,7 @@ class RTLSDRTCP(Device):
 
         elif tag == "tuner_gain":
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
-            return self.set_parameter("tunerGain", int(value))
+            return self.set_parameter("tunerGain", 10*int(value))  # calculate *10 for API
 
         elif tag == "sample_rate":
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))

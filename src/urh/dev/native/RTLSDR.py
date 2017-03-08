@@ -61,7 +61,7 @@ class RTLSDR(Device):
 
         elif tag == "tuner_gain":
             logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
-            return rtlsdr.set_tuner_gain(int(value))
+            return rtlsdr.set_tuner_gain(10*int(value))  # calculate *10 for API
 
         elif tag == "sample_rate":
             logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))

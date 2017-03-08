@@ -72,7 +72,8 @@ class RTLSDRTCP(Device):
             return self.set_parameter("freqCorrection", int(value))
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
-        super().__init__(0, freq, gain, srate, is_ringbuffer)
+        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
+                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
 
         # default class parameters
         self.receive_process_function = self.receive_sync

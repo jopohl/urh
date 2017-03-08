@@ -1,19 +1,13 @@
 import threading
-
-import numpy as np
-from abc import abstractmethod
-
 import time
-
-import psutil
-from PyQt5.QtCore import QObject, pyqtSignal
 from multiprocessing import Pipe
-
 from multiprocessing import Value, Process
-
 from pickle import UnpicklingError
 
-from urh.util.Formatter import Formatter
+import numpy as np
+import psutil
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from urh.util.Logger import logger
 
 
@@ -21,15 +15,17 @@ class Device(QObject):
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
 
-    def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__()
 
         self.error_not_open = -4242
 
-        self.__bandwidth = bw
-        self.__frequency = freq
-        self.__gain = gain
-        self.__sample_rate = srate
+        self.__bandwidth = bandwidth
+        self.__frequency = center_freq
+        self.__gain = gain  # = rf_gain
+        self.__if_gain = if_gain
+        self.__baseband_gain = baseband_gain
+        self.__sample_rate = sample_rate
 
         self.bandwidth_is_adjustable = True
 
@@ -56,7 +52,7 @@ class Device(QObject):
         self.is_receiving = False
         self.is_transmitting = False
 
-        self.device_ip = "192.168.10.2"     # For USRP and RTLSDRTCP
+        self.device_ip = "192.168.10.2"  # For USRP and RTLSDRTCP
 
         self.receive_buffer = None
 
@@ -91,7 +87,7 @@ class Device(QObject):
 
     @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth
+        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, self.if_gain, self.baseband_gain
 
     @property
     def send_process_arguments(self):
@@ -176,11 +172,34 @@ class Device(QObject):
             self.__gain = value
             self.set_device_gain(value)
 
-    @abstractmethod
     def set_device_gain(self, gain):
-        # todo: split to if gain etc
-        self.parent_ctrl_conn.send("tuner_gain:" + str(int(gain)))
-        pass
+        self.parent_ctrl_conn.send("rf_gain:" + str(int(gain)))
+
+    @property
+    def if_gain(self):
+        return self.__if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        if value != self.__if_gain:
+            self.__if_gain = value
+            self.set_device_if_gain(value)
+
+    def set_device_if_gain(self, if_gain):
+        self.parent_ctrl_conn.send("if_gain:" + str(int(if_gain)))
+
+    @property
+    def baseband_gain(self):
+        return self.__baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        if value != self.__baseband_gain:
+            self.__baseband_gain = value
+            self.set_device_baseband_gain(value)
+
+    def set_device_baseband_gain(self, baseband_gain):
+        self.parent_ctrl_conn.send("baseband_gain:" + str(int(baseband_gain)))
 
     @property
     def sample_rate(self):
@@ -292,8 +311,7 @@ class Device(QObject):
                         if self.is_ringbuffer:
                             self.current_recv_index = 0
                             if nsamples >= len(self.receive_buffer):
-                                logger.warning("Receive buffer too small, skipping {0:d} samples".format(
-                                    nsamples - len(self.receive_buffer)))
+                                #logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples - len(self.receive_buffer)))
                                 nsamples = len(self.receive_buffer) - 1
 
                         else:

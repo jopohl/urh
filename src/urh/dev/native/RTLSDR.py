@@ -72,7 +72,8 @@ class RTLSDR(Device):
             return rtlsdr.set_tuner_bandwidth(int(value))
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
-        super().__init__(0, freq, gain, srate, is_ringbuffer)
+        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
+                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
 
         self.success = 0
 

@@ -336,6 +336,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxFreq.editingFinished.emit()
         self.ui.spinBoxBandwidth.editingFinished.emit()
         self.ui.spinBoxGain.editingFinished.emit()
+        self.ui.spinBoxIFGain.editingFinished.emit()
+        self.ui.spinBoxBasebandGain.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
         if self.ui.cbDevice.currentText() in ("USRP", "RTL-TCP"):

@@ -143,6 +143,11 @@ class SendRecvDialogController(QDialog):
     def set_device_ui_items_enabled(self, enabled: bool):
         self.ui.spinBoxFreq.setEnabled(enabled)
         self.ui.spinBoxGain.setEnabled(enabled)
+        self.ui.sliderGain.setEnabled(enabled)
+        self.ui.spinBoxIFGain.setEnabled(enabled)
+        self.ui.sliderIFGain.setEnabled(enabled)
+        self.ui.spinBoxBasebandGain.setEnabled(enabled)
+        self.ui.sliderBasebandGain.setEnabled(enabled)
         self.ui.spinBoxBandwidth.setEnabled(enabled)
         self.ui.spinBoxSampleRate.setEnabled(enabled)
 
@@ -353,7 +358,13 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxFreq.setEnabled(True)
         self.ui.lineEditIP.setEnabled(True)
         self.ui.spinBoxBandwidth.setEnabled(True)
+
         self.ui.spinBoxGain.setEnabled(True)
+        self.ui.sliderGain.setEnabled(True)
+        self.ui.spinBoxIFGain.setEnabled(True)
+        self.ui.sliderIFGain.setEnabled(True)
+        self.ui.spinBoxBasebandGain.setEnabled(True)
+        self.ui.sliderBasebandGain.setEnabled(True)
         self.ui.spinBoxPort.setEnabled(True)
         self.ui.cbDevice.setEnabled(True)
         self.ui.spinBoxNRepeat.setEnabled(True)

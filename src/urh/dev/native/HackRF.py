@@ -24,13 +24,13 @@ class HackRF(Device):
         ctrl_conn.send("set_rf_gain to {0}:{1}".format(gain, ret))
 
         if is_tx:
-            ret = hackrf.set_if_tx_gain(gain)
+            ret = hackrf.set_if_tx_gain(if_gain)
             ctrl_conn.send("set_if_gain to {0}:{1}".format(if_gain, ret))
         else:
-            ret = hackrf.set_if_rx_gain(gain)
+            ret = hackrf.set_if_rx_gain(if_gain)
             ctrl_conn.send("set_if_gain to {0}:{1}".format(if_gain, ret))
 
-            ret = hackrf.set_baseband_gain(gain)
+            ret = hackrf.set_baseband_gain(baseband_gain)
             ctrl_conn.send("set_baseband_gain to {0}:{1}".format(baseband_gain, ret))
 
         ret = hackrf.set_baseband_filter_bandwidth(bandwidth)

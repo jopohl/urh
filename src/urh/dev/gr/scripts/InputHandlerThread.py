@@ -49,6 +49,18 @@ class InputHandlerThread(Thread):
                         except ValueError:
                             v = 1
                         self.device.set_gain(v)
+                    elif i.startswith("IFG:"):
+                        try:
+                            v = int(i.replace("IFG:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_if_gain(v)
+                    elif i.startswith("BBG:"):
+                        try:
+                            v = int(i.replace("BBG:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_baseband_gain(v)
                     elif i.startswith("BW:"):
                         try:
                             v = float(i.replace("BW:", "").split(" ")[-1])

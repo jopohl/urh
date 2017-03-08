@@ -85,3 +85,19 @@ class SpectrumDialogController(SendRecvDialogController):
     def on_clear_clicked(self):
         self.scene_manager.clear_path()
         self.scene_manager.clear_peak()
+
+    @pyqtSlot(int)
+    def on_slider_gain_value_changed(self, value: int):
+        super().on_slider_gain_value_changed(value)
+        self.ui.spinBoxGain.editingFinished.emit()
+
+    @pyqtSlot(int)
+    def on_slider_if_gain_value_changed(self, value: int):
+        super().on_slider_if_gain_value_changed(value)
+        self.ui.spinBoxIFGain.editingFinished.emit()
+
+    @pyqtSlot(int)
+    def on_slider_baseband_gain_value_changed(self, value: int):
+        super().on_slider_baseband_gain_value_changed(value)
+        self.ui.spinBoxBasebandGain.editingFinished.emit()
+

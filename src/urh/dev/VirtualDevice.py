@@ -50,14 +50,17 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
-                self.__dev = ReceiverThread(sample_rate, freq, gain, bandwidth, parent=parent, is_ringbuffer=is_ringbuffer)
+                self.__dev = ReceiverThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                            parent=parent, is_ringbuffer=is_ringbuffer)
                 self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
-                self.__dev = SenderThread(sample_rate, freq, gain, bandwidth, parent=parent)
+                self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                          parent=parent)
                 self.__dev.data = samples_to_send
                 self.__dev.samples_per_transmission = len(samples_to_send)
             elif mode == Mode.spectrum:
-                self.__dev = SpectrumThread(sample_rate, freq, gain, bandwidth, parent=parent)
+                self.__dev = SpectrumThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                            parent=parent)
             else:
                 raise ValueError("Unknown mode")
             self.__dev.usrp_ip = device_ip

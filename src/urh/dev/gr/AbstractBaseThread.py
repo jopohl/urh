@@ -22,7 +22,7 @@ class AbstractBaseThread(QThread):
     stopped = pyqtSignal()
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, sample_rate, freq, gain, bandwidth, receiving: bool,
+    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
                  ip='127.0.0.1', parent=None):
         super().__init__(parent)
         self.ip = ip
@@ -30,6 +30,8 @@ class AbstractBaseThread(QThread):
         self._sample_rate = sample_rate
         self._freq = freq
         self._gain = gain
+        self._if_gain = if_gain
+        self._baseband_gain = baseband_gain
         self._bandwidth = bandwidth
         self._receiving = receiving  # False for Sender-Thread
         self.usrp_ip = "192.168.10.2"
@@ -96,6 +98,34 @@ class AbstractBaseThread(QThread):
                 pass
 
     @property
+    def if_gain(self):
+        return self._if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        self._if_gain = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'IFG:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
+    def baseband_gain(self):
+        return self._baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        self._baseband_gain = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'BBG:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
     def bandwidth(self):
         return self._bandwidth
 
@@ -109,7 +139,7 @@ class AbstractBaseThread(QThread):
             except BrokenPipeError:
                 pass
 
-    def initalize_process(self):
+    def initialize_process(self):
         self.started.emit()
 
         if not hasattr(sys, 'frozen'):
@@ -131,6 +161,9 @@ class AbstractBaseThread(QThread):
 
         if self.device.upper() == "USRP":
             options.extend(["--ip", self.usrp_ip])
+
+        if self.device.upper() == "HACKRF":
+            options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
 
         logger.info("Starting Gnuradio")
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)

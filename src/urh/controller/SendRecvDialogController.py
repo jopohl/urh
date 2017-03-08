@@ -314,6 +314,7 @@ class SendRecvDialogController(QDialog):
         self.graphics_view.scene_manager = self.scene_manager
         self.graphics_view.setScene(self.scene_manager.scene)
         self.set_device_ui_items_visibility(dev_name)
+        self.sync_gain_sliders()
 
         # Set default IPs for USRP and RTLSDRTCP
         if dev_name == "USRP":

@@ -128,6 +128,7 @@ class MainController(QMainWindow):
         self.apply_default_view()
         self.project_save_timer.start(ProjectManager.AUTOSAVE_INTERVAL_MINUTES * 60 * 1000)
 
+        # Testkommentar ...
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
 

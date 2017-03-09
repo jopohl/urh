@@ -48,16 +48,19 @@ class SimulatorItem(QGraphicsObject):
     def dragMoveEvent(self, event: QDropEvent):
         self.update_drop_indicator(event.pos())
 
-    #def is_last_item(self):
-    #   is_last_item = True
-    #    sim_items = self.scene().sim_items
+    def is_last_item(self):
+        is_last_item = True
+        sim_items = self.scene().sim_items
+    
+        if self.parentItem() == None:
+            if sim_items.index(self) != len(sim_items) - 1:
+                return False
+        elif isinstance(self, RuleConditionItem):
+            if sim_items.index(self.parentItem()) != len(sim_items) - 1:
+                return False
 
-    #    if self.parentItem() == None:
-    #        if sim_items.index(self) != len(sim_items) - 1:
-    #            is_last_item = False
-    #    elif isinstance(self, RuleConditionItem):
-    #        sim_items.index(self.parentItem()) != len(sim_items) - 1 or
-    #        len([cond for cond in self.conditions if len(cond.sim_items) > 0]) > 0:
+            if len(self.sim_items) > 0:
+                return False
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -176,29 +179,20 @@ class RuleItem(QGraphicsItem):
         return messages
 
     def update_numbering(self, index):
-        if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
-        if_cond.index = index
-        if_cond.number.setPlainText(index)
-
         sub_index = 1
 
-        if_cond.update_numbering(index, sub_index)
-        sub_index += len(if_cond.sim_items)
-
-        for cond in [cond for cond in self.conditions if cond.type is ConditionType.ELSE_IF]:
-            cond.update_numbering(index, sub_index)
-            sub_index += len(cond.sim_items)
-
-        else_cond = [cond for cond in self.conditions if cond.type is ConditionType.ELSE]
-
-        if len(else_cond) == 1:
-            else_cond[0].update_numbering(index, sub_index)
+        for cond in self.conditions:
+            cond.update_numbering(index + "." + str(sub_index))
+            sub_index += 1
 
     def add_else_cond(self):
         self.conditions.append(RuleConditionItem(ConditionType.ELSE, self))
 
     def add_else_if_cond(self):
-        self.conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self))
+        if self.has_else_condition():
+            self.conditions.insert(-1, RuleConditionItem(ConditionType.ELSE_IF, self))
+        else:
+            self.conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self))
 
     def setSelected(self, selected):
         for condition in self.conditions:
@@ -219,20 +213,11 @@ class RuleItem(QGraphicsItem):
     def refresh(self, x_pos, y_pos):
         self.setPos(x_pos - 20, y_pos)
 
-        if_cond = [cond for cond in self.conditions if cond.type is ConditionType.IF][0]
-
         start_y = 0
-        if_cond.refresh(0, start_y)
-        start_y += round(if_cond.boundingRect().height())
 
-        for cond in [cond for cond in self.conditions if cond.type is ConditionType.ELSE_IF]:
+        for cond in self.conditions:
             cond.refresh(0, start_y)
             start_y += round(cond.boundingRect().height())
-
-        else_cond = [cond for cond in self.conditions if cond.type is ConditionType.ELSE]
-
-        if len(else_cond) == 1:
-            else_cond[0].refresh(0, start_y)
 
         self.prepareGeometryChange()
         self.bounding_rect = self.childrenBoundingRect()
@@ -295,7 +280,11 @@ class RuleConditionItem(SimulatorItem):
 
         self.update()
 
-    def update_numbering(self, index, sub_index):
+    def update_numbering(self, index):
+        super().update_numbering(index)
+
+        sub_index = 1
+
         for item in self.sim_items:
             item.update_numbering(index + "." + str(sub_index))
             sub_index += 1

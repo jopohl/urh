@@ -48,6 +48,17 @@ class SimulatorItem(QGraphicsObject):
     def dragMoveEvent(self, event: QDropEvent):
         self.update_drop_indicator(event.pos())
 
+    #def is_last_item(self):
+    #   is_last_item = True
+    #    sim_items = self.scene().sim_items
+
+    #    if self.parentItem() == None:
+    #        if sim_items.index(self) != len(sim_items) - 1:
+    #            is_last_item = False
+    #    elif isinstance(self, RuleConditionItem):
+    #        sim_items.index(self.parentItem()) != len(sim_items) - 1 or
+    #        len([cond for cond in self.conditions if len(cond.sim_items) > 0]) > 0:
+
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
 

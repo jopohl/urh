@@ -10,6 +10,7 @@ from urh.ui.SimulatorScene import SimulatorScene, MessageItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
+from urh.controller.SimulateDialogController import SimulateDialogController
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -52,6 +53,8 @@ class SimulatorTabController(QWidget):
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
 
+        self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
+
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
         selected_items = self.simulator_scene.selectedItems()
@@ -65,6 +68,16 @@ class SimulatorTabController(QWidget):
             self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage #") + first_message.index)
         else:
             self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
+
+        if len(selected_items) > 0:
+            self.ui.navLineEdit.setText(selected_items[0].index)
+        else:
+            self.ui.navLineEdit.clear()
+
+    @pyqtSlot()
+    def on_show_simulate_dialog_action_triggered(self):
+        s = SimulateDialogController(parent=self)
+        s.show()
         
     def on_project_updated(self):
         #self.simulate_list_model.participants = self.project_manager.participants

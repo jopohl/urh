@@ -59,8 +59,16 @@ class SimulatorItem(QGraphicsObject):
             if sim_items.index(self.parentItem()) != len(sim_items) - 1:
                 return False
 
+            if self.parentItem().conditions.index(self) != len(self.parentItem().conditions) - 1:
+                return False
+
             if len(self.sim_items) > 0:
                 return False
+        else:
+            if sim_items.index(self.parentItem().parentItem()) != len(sim_items) - 1:
+                return False
+            
+            #if sim
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -128,6 +136,7 @@ class SimulatorItem(QGraphicsObject):
     def mouseReleaseEvent(self, event):
         if self.item_under_mouse:
             self.item_under_mouse.dragLeaveEvent(None)
+            self.item_under_mouse.setSelected(False)
             selected_items = self.scene().cut_selected_messages()
 
             ref_item = self.item_under_mouse
@@ -800,7 +809,7 @@ class SimulatorScene(QGraphicsScene):
         if len(participants) == 1:
             source = self.participants_dict[participants[0]]
             destination = self.broadcast_part
-        else:
+        elif len(participants) > 1:
             if message.participant:
                 source = self.participants_dict[message.participant]
                 destination = self.participants_dict[participants[0]] if message.participant == participants[1] else self.participants_dict[participants[1]]

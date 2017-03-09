@@ -72,6 +72,7 @@ class BackendHandler(object):
     1) List available backends for devices
     2) List available devices (atleast one backend)
     3) Manage the selection of devices backend
+    
 
     """
     DEVICE_NAMES = ("Bladerf" , "HackRF", "USRP", "RTL-SDR", "FUNcube-Dongle")

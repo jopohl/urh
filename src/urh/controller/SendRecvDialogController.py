@@ -62,8 +62,14 @@ class SendRecvDialogController(QDialog):
             baseband_gain = project_manager.device_conf["baseband_gain"]
         except KeyError:
             baseband_gain = config.DEFAULT_BB_GAIN
-
         self.ui.spinBoxBasebandGain.setValue(baseband_gain)
+
+        try:
+            freq_correction = project_manager.device_conf["freq_correction"]
+        except KeyError:
+            freq_correction = config.DEFAULT_FREQ_CORRECTION
+        self.ui.spinBoxFreqCorrection.setValue(freq_correction)
+
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
         device = project_manager.device
 
@@ -541,6 +547,7 @@ class SendRecvDialogController(QDialog):
                                            sample_rate=self.device.sample_rate, bandwidth=self.device.bandwidth,
                                            gain=self.device.gain, if_gain=self.device.if_gain,
                                            baseband_gain=self.device.baseband_gain,
+                                           freq_correction=self.device.freq_correction
                                            ))
 
         event.accept()

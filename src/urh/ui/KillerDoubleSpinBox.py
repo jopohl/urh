@@ -1,3 +1,5 @@
+import locale
+
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
 from PyQt5.QtWidgets import QDoubleSpinBox
@@ -9,6 +11,9 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.auto_update_step_size = True
+        self.allowed_values = None  # set a list to restrict allowed values
+
         self.lineEdit().setValidator(None)
 
         # Cant connect to value changed, as it would delete the number when changing a digit
@@ -17,10 +22,16 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         self.auto_suffix = True
 
     def setValue(self, value: float):
+        if isinstance(self.allowed_values, list) and value not in self.allowed_values:
+            return
+
         super().setValue(value)
         self.adjust_step()
 
     def adjust_step(self):
+        if not self.auto_update_step_size:
+            return
+
         value = abs(self.value())
         if value >= 1e9:
             self.setSingleStep(10 ** (9 - self.decimals()))
@@ -43,13 +54,13 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def valueFromText(self, text: str):
         if text.endswith("G") or text.endswith("g"):
-            return super().valueFromText(text[:-1]) * 10 ** 9
+            return locale.atof(text[:-1]) * 10 ** 9
         elif text.endswith("M") or text.endswith("m"):
-            return super().valueFromText(text[:-1]) * 10 ** 6
+            return locale.atof(text[:-1]) * 10 ** 6
         elif text.endswith("K") or text.endswith("k"):
-            return super().valueFromText(text[:-1]) * 10 ** 3
+            return locale.atof(text[:-1]) * 10 ** 3
         else:
-            return super().valueFromText(text)
+            return locale.atof(text)
 
     def validate(self, inpt: str, pos: int):
         rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")

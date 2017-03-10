@@ -152,7 +152,10 @@ class Device(QObject):
             self.set_device_bandwidth(value)
 
     def set_device_bandwidth(self, bw):
-        self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
+        try:
+            self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
+        except BrokenPipeError:
+            pass
 
     @property
     def frequency(self):
@@ -165,7 +168,10 @@ class Device(QObject):
             self.set_device_frequency(value)
 
     def set_device_frequency(self, value):
-        self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
+        try:
+            self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
+        except BrokenPipeError:
+            pass
 
     @property
     def gain(self):
@@ -178,7 +184,10 @@ class Device(QObject):
             self.set_device_gain(value)
 
     def set_device_gain(self, gain):
-        self.parent_ctrl_conn.send("rf_gain:" + str(int(gain)))
+        try:
+            self.parent_ctrl_conn.send("rf_gain:" + str(int(gain)))
+        except BrokenPipeError:
+            pass
 
     @property
     def if_gain(self):
@@ -191,7 +200,10 @@ class Device(QObject):
             self.set_device_if_gain(value)
 
     def set_device_if_gain(self, if_gain):
-        self.parent_ctrl_conn.send("if_gain:" + str(int(if_gain)))
+        try:
+            self.parent_ctrl_conn.send("if_gain:" + str(int(if_gain)))
+        except BrokenPipeError:
+            pass
 
     @property
     def baseband_gain(self):
@@ -204,7 +216,10 @@ class Device(QObject):
             self.set_device_baseband_gain(value)
 
     def set_device_baseband_gain(self, baseband_gain):
-        self.parent_ctrl_conn.send("baseband_gain:" + str(int(baseband_gain)))
+        try:
+            self.parent_ctrl_conn.send("baseband_gain:" + str(int(baseband_gain)))
+        except BrokenPipeError:
+            pass
 
     @property
     def sample_rate(self):
@@ -217,7 +232,10 @@ class Device(QObject):
             self.set_device_sample_rate(value)
 
     def set_device_sample_rate(self, sample_rate):
-        self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+        try:
+            self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+        except BrokenPipeError:
+            pass
 
     @property
     def freq_correction(self):
@@ -230,7 +248,10 @@ class Device(QObject):
             self.set_device_freq_correction(value)
 
     def set_device_freq_correction(self, value):
-        self.parent_ctrl_conn.send("freq_correction:" + str(int(value)))
+        try:
+            self.parent_ctrl_conn.send("freq_correction:" + str(int(value)))
+        except BrokenPipeError:
+            pass
 
     @property
     def direct_sampling_mode(self):
@@ -243,7 +264,10 @@ class Device(QObject):
             self.set_device_direct_sampling_mode(value)
 
     def set_device_direct_sampling_mode(self, value):
-        self.parent_ctrl_conn.send("direct_sampling_mode:" + str(int(value)))
+        try:
+            self.parent_ctrl_conn.send("direct_sampling_mode:" + str(int(value)))
+        except BrokenPipeError:
+            pass
 
     def start_rx_mode(self):
         self.init_recv_buffer()
@@ -265,7 +289,10 @@ class Device(QObject):
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        self.parent_ctrl_conn.send("stop")
+        try:
+            self.parent_ctrl_conn.send("stop")
+        except BrokenPipeError:
+            pass
 
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -294,7 +321,10 @@ class Device(QObject):
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        self.parent_ctrl_conn.send("stop")
+        try:
+            self.parent_ctrl_conn.send("stop")
+        except BrokenPipeError:
+            pass
 
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 

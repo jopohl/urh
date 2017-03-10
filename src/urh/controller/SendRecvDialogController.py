@@ -9,6 +9,7 @@ from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QSlider
 from PyQt5.QtWidgets import QSpinBox
 
@@ -151,12 +152,31 @@ class SendRecvDialogController(QDialog):
     def set_device_ui_items_visibility(self, device_name: str):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
         conf = config.DEVICE_CONFIG[key]
-        self.ui.spinBoxFreq.setVisible("center_freq" in conf)
-        self.ui.labelFreq.setVisible("center_freq" in conf)
-        self.ui.spinBoxSampleRate.setVisible("sample_rate" in conf)
-        self.ui.labelSampleRate.setVisible("sample_rate" in conf)
-        self.ui.spinBoxBandwidth.setVisible("bandwidth" in conf)
-        self.ui.labelBandWidth.setVisible("bandwidth" in conf)
+        key_ui_dev_param_map = {"center_freq": "Freq", "sample_rate": "SampleRate", "bandwidth": "Bandwidth"}
+
+        for key, ui_item in key_ui_dev_param_map.items():
+            spinbox = getattr(self.ui, "spinBox"+ui_item)  # type: QSpinBox
+            label = getattr(self.ui, "label"+ui_item)  # type: QLabel
+            if key in conf:
+                spinbox.setVisible(True)
+                label.setVisible(True)
+
+                if isinstance(conf[key], list):
+                    spinbox.allowed_values = conf[key]
+                    spinbox.setMinimum(min(conf[key]))
+                    spinbox.setMaximum(max(conf[key]))
+                    spinbox.setSingleStep(conf[key][1] - conf[key][0])
+                    spinbox.auto_update_step_size = False
+                else:
+                    spinbox.setMinimum(conf[key].start)
+                    spinbox.setMaximum(conf[key].stop)
+                    spinbox.auto_update_step_size = True
+                    spinbox.allowed_values = "all"
+                    spinbox.adjust_step()
+            else:
+                spinbox.setVisible(False)
+                label.setVisible(False)
+
         self.ui.btnLockBWSR.setVisible("sample_rate" in conf and "bandwidth" in conf)
 
         if "freq_correction" in conf:
@@ -509,7 +529,7 @@ class SendRecvDialogController(QDialog):
         self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 
-        if self.is_rx:
+        if self.is_rx and self.device.data is not None:
             self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index /
                                                                      len(self.device.data))))
 

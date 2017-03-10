@@ -60,6 +60,14 @@ DEVICE_CONFIG["RTL-TCP"]["port"] = ""
 
 DEVICE_CONFIG[NetworkSDRInterfacePlugin.NETWORK_SDR_NAME] = {}
 
+# http://www.rtl-sdr.com/review-airspy-vs-sdrplay-rsp-vs-hackrf/
+DEVICE_CONFIG["AirSpy"] = {
+    "center_freq": dev_range(start=0, stop=1800 * M, step=1),
+    "sample_rate": [2.5*M, 10*M],
+    "bandwidth": [2.5*M, 10*M],
+    "rx_rf_gain":  list(range(0, 41)),
+}
+
 DEVICE_CONFIG["Fallback"] = {
     "center_freq": dev_range(start=1*M, stop=6 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=20 * M, step=1),

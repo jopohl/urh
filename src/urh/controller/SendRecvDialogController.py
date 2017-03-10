@@ -509,7 +509,9 @@ class SendRecvDialogController(QDialog):
         self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 
-        self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index / len(self.device.data))))
+        if self.is_rx:
+            self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index /
+                                                                     len(self.device.data))))
 
         if self.device.current_index == 0:
             return False

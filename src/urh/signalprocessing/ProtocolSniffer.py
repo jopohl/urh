@@ -22,8 +22,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, sample_rate: float, freq: float, gain: int, if_gain: int, baseband_gain: int,
-                 bandwidth: float, device: str, usrp_ip="192.168.10.2", testing_mode=False):
+                 modulation_type: int, device: str, usrp_ip="192.168.10.2", testing_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -34,8 +33,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         QObject.__init__(self, None)
 
         self.backend_handler = BackendHandler(testing_mode=testing_mode)
-        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive, freq, sample_rate, bandwidth,
-                                        gain, if_gain, baseband_gain,
+        self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         device_ip=usrp_ip, is_ringbuffer=False, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)

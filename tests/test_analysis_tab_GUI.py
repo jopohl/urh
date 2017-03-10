@@ -122,7 +122,7 @@ class TestAnalysisTabGUI(unittest.TestCase):
         # Add protocol label should be disabled if table is empty
         self.form.close_all()
         app.processEvents()
-        QTest.qWait(300)
+        QTest.qWait(500)
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()

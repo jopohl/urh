@@ -2,6 +2,7 @@ import locale
 import random
 import time
 
+import psutil
 from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
@@ -48,6 +49,7 @@ class SendRecvDialogController(QDialog):
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
 
+
         self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
         self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
@@ -81,6 +83,9 @@ class SendRecvDialogController(QDialog):
             self.ui.cbDevice.setCurrentIndex(items.index(device))
 
         self.timer = QTimer(self)
+        self.ram_timer = QTimer(self)
+        self.ram_timer.timeout.connect(self.show_available_ram)
+        self.ram_timer.start(1000)
 
         dev_name = self.ui.cbDevice.currentText()
         self.set_device_ui_items_visibility(dev_name)
@@ -322,6 +327,9 @@ class SendRecvDialogController(QDialog):
 
     def save_before_close(self):
         return True
+
+    def show_available_ram(self):
+        self.ui.labelRAMAvail.setText("{0}".format(int(psutil.virtual_memory().available / (1024 * 1024))))
 
     @pyqtSlot()
     def on_spinbox_sample_rate_editing_finished(self):

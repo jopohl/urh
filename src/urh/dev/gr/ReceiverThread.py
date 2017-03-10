@@ -23,7 +23,7 @@ class ReceiverThread(AbstractBaseThread):
 
     def init_recv_buffer(self):
         # Take 60% of free memory
-        nsamples = int(0.6 * (psutil.virtual_memory().free / 8))
+        nsamples = int(0.6 * (psutil.virtual_memory().available / 8))
         self.data = np.zeros(nsamples, dtype=np.complex64)
 
     def run(self):

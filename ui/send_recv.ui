@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>886</height>
+    <height>1001</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -483,7 +483,7 @@
           <property name="topMargin">
            <number>0</number>
           </property>
-          <item row="14" column="0">
+          <item row="16" column="0">
            <widget class="QProgressBar" name="progressBar">
             <property name="value">
              <number>0</number>
@@ -493,7 +493,7 @@
             </property>
            </widget>
           </item>
-          <item row="13" column="0">
+          <item row="15" column="0">
            <widget class="QLabel" name="lSamplesSentText">
             <property name="text">
              <string>Samples sent:</string>
@@ -516,7 +516,7 @@
             </property>
            </spacer>
           </item>
-          <item row="7" column="0">
+          <item row="9" column="0">
            <widget class="QLabel" name="lTimeText">
             <property name="font">
              <font>
@@ -529,7 +529,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="lSamplesCapturedText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -703,7 +703,7 @@
             </item>
            </layout>
           </item>
-          <item row="5" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="lSignalSizeText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -722,7 +722,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="6" column="0" colspan="2">
            <widget class="QLabel" name="lSamplesCaptured">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -744,7 +744,7 @@
             </property>
            </widget>
           </item>
-          <item row="10" column="0" colspan="2">
+          <item row="12" column="0" colspan="2">
            <widget class="QLabel" name="lTime">
             <property name="font">
              <font>
@@ -760,7 +760,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0" colspan="2">
+          <item row="8" column="0" colspan="2">
            <widget class="QLabel" name="lSignalSize">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -782,14 +782,14 @@
             </property>
            </widget>
           </item>
-          <item row="11" column="0">
+          <item row="13" column="0">
            <widget class="QLabel" name="lblRepeatText">
             <property name="text">
              <string>Current iteration:</string>
             </property>
            </widget>
           </item>
-          <item row="12" column="0">
+          <item row="14" column="0">
            <widget class="QLabel" name="lblCurrentRepeatValue">
             <property name="font">
              <font>
@@ -799,6 +799,35 @@
             </property>
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="lRAMAvailText">
+            <property name="text">
+             <string>RAM available (in MiB):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelRAMAvail">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>10000</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

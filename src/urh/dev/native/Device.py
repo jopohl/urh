@@ -104,7 +104,7 @@ class Device(QObject):
                 nsamples = 10 ** 5
             else:
                 # Take 60% of avail memory
-                nsamples = 0.6 * (psutil.virtual_memory().free / 8)
+                nsamples = 0.6 * (psutil.virtual_memory().available / 8)
             self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
             logger.info(
                 "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))

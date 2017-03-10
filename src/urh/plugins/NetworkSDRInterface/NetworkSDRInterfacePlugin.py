@@ -66,8 +66,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.raw_mode = raw_mode
         if self.raw_mode:
-            # Take 60% of avail memory
-            num_samples = 0.6*(psutil.virtual_memory().free / 8)
+            # Take 60% of avail memory>
+            num_samples = 0.6*(psutil.virtual_memory().available / 8)
             self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
         else:
             self.received_bits = []

@@ -151,6 +151,17 @@ class SendRecvDialogController(QDialog):
             self.ui.labelFreqCorrection.setVisible(False)
             self.ui.spinBoxFreqCorrection.setVisible(False)
 
+        if "direct_sampling" in conf:
+            self.ui.labelDirectSampling.setVisible(True)
+            self.ui.comboBoxDirectSampling.setVisible(True)
+            items = [self.ui.comboBoxDirectSampling.itemText(i) for i in range(self.ui.comboBoxDirectSampling.count())]
+            if items != conf["direct_sampling"]:
+                self.ui.comboBoxDirectSampling.clear()
+                self.ui.comboBoxDirectSampling.addItems(conf["direct_sampling"])
+        else:
+            self.ui.labelDirectSampling.setVisible(False)
+            self.ui.comboBoxDirectSampling.setVisible(False)
+
         prefix = self.rx_tx_prefix
         key_ui_gain_map = {prefix+"rf_gain": "Gain", prefix+"if_gain": "IFGain", prefix+"baseband_gain": "BasebandGain"}
         for conf_key, ui_element in key_ui_gain_map.items():

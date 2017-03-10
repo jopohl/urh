@@ -26,7 +26,7 @@ from urh.util.ProjectManager import ProjectManager
 class SendRecvDialogController(QDialog):
     recording_parameters = pyqtSignal(str, dict)
 
-    def __init__(self, project_manager: ProjectManager, is_tx:bool, parent=None, testing_mode=False):
+    def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
         super().__init__(parent)
         self.is_tx = is_tx
 
@@ -133,16 +133,17 @@ class SendRecvDialogController(QDialog):
         conf = self.get_config_for_selected_device()
         prefix = self.rx_tx_prefix
 
-        if prefix+"rf_gain" in conf:
-            gain = min(conf[prefix+"rf_gain"], key=lambda x: abs(x-self.ui.spinBoxGain.value()))
+        if prefix + "rf_gain" in conf:
+            gain = min(conf[prefix + "rf_gain"], key=lambda x: abs(x - self.ui.spinBoxGain.value()))
             self.ui.spinBoxGain.setValue(gain)
             self.ui.spinBoxGain.valueChanged.emit(gain)
-        if prefix+"if_gain" in conf:
-            if_gain = min(conf[prefix+"if_gain"], key=lambda x: abs(x-self.ui.spinBoxIFGain.value()))
+        if prefix + "if_gain" in conf:
+            if_gain = min(conf[prefix + "if_gain"], key=lambda x: abs(x - self.ui.spinBoxIFGain.value()))
             self.ui.spinBoxIFGain.setValue(if_gain)
             self.ui.spinBoxIFGain.valueChanged.emit(if_gain)
-        if prefix+"baseband_gain" in conf:
-            baseband_gain = min(conf[prefix+"baseband_gain"], key=lambda x: abs(x-self.ui.spinBoxBasebandGain.value()))
+        if prefix + "baseband_gain" in conf:
+            baseband_gain = min(conf[prefix + "baseband_gain"],
+                                key=lambda x: abs(x - self.ui.spinBoxBasebandGain.value()))
             self.ui.spinBoxBasebandGain.setValue(baseband_gain)
             self.ui.spinBoxBasebandGain.valueChanged.emit(baseband_gain)
 
@@ -179,7 +180,8 @@ class SendRecvDialogController(QDialog):
             self.ui.comboBoxDirectSampling.setVisible(False)
 
         prefix = self.rx_tx_prefix
-        key_ui_gain_map = {prefix+"rf_gain": "Gain", prefix+"if_gain": "IFGain", prefix+"baseband_gain": "BasebandGain"}
+        key_ui_gain_map = {prefix + "rf_gain": "Gain", prefix + "if_gain": "IFGain",
+                           prefix + "baseband_gain": "BasebandGain"}
         for conf_key, ui_element in key_ui_gain_map.items():
             getattr(self.ui, "label" + ui_element).setVisible(conf_key in conf)
 
@@ -363,14 +365,14 @@ class SendRecvDialogController(QDialog):
     def on_spinbox_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         try:
-            self.ui.sliderGain.setValue(dev_conf[self.rx_tx_prefix+"rf_gain"].index(value))
+            self.ui.sliderGain.setValue(dev_conf[self.rx_tx_prefix + "rf_gain"].index(value))
         except (ValueError, KeyError):
             pass
 
     @pyqtSlot(int)
     def on_slider_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
-        self.ui.spinBoxGain.setValue(dev_conf[self.rx_tx_prefix+"rf_gain"][value])
+        self.ui.spinBoxGain.setValue(dev_conf[self.rx_tx_prefix + "rf_gain"][value])
 
     @pyqtSlot()
     def on_spinbox_if_gain_editing_finished(self):
@@ -379,13 +381,13 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot(int)
     def on_slider_if_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
-        self.ui.spinBoxIFGain.setValue(dev_conf[self.rx_tx_prefix+"if_gain"][value])
+        self.ui.spinBoxIFGain.setValue(dev_conf[self.rx_tx_prefix + "if_gain"][value])
 
     @pyqtSlot(int)
     def on_spinbox_if_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         try:
-            self.ui.sliderIFGain.setValue(dev_conf[self.rx_tx_prefix+"if_gain"].index(value))
+            self.ui.sliderIFGain.setValue(dev_conf[self.rx_tx_prefix + "if_gain"].index(value))
         except (ValueError, KeyError):
             pass
 
@@ -396,13 +398,13 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot(int)
     def on_slider_baseband_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
-        self.ui.spinBoxBasebandGain.setValue(dev_conf[self.rx_tx_prefix+"baseband_gain"][value])
+        self.ui.spinBoxBasebandGain.setValue(dev_conf[self.rx_tx_prefix + "baseband_gain"][value])
 
     @pyqtSlot(int)
     def on_spinbox_baseband_gain_value_changed(self, value: int):
         dev_conf = self.get_config_for_selected_device()
         try:
-            self.ui.sliderBasebandGain.setValue(dev_conf[self.rx_tx_prefix+"baseband_gain"].index(value))
+            self.ui.sliderBasebandGain.setValue(dev_conf[self.rx_tx_prefix + "baseband_gain"].index(value))
         except (ValueError, KeyError):
             pass
 
@@ -544,11 +546,13 @@ class SendRecvDialogController(QDialog):
             self.device.cleanup()
             logger.debug("Successfully cleaned up device")
             self.recording_parameters.emit(str(self.device.name), dict(frequency=self.device.frequency,
-                                           sample_rate=self.device.sample_rate, bandwidth=self.device.bandwidth,
-                                           gain=self.device.gain, if_gain=self.device.if_gain,
-                                           baseband_gain=self.device.baseband_gain,
-                                           freq_correction=self.device.freq_correction
-                                           ))
+                                                                       sample_rate=self.device.sample_rate,
+                                                                       bandwidth=self.device.bandwidth,
+                                                                       gain=self.device.gain,
+                                                                       if_gain=self.device.if_gain,
+                                                                       baseband_gain=self.device.baseband_gain,
+                                                                       freq_correction=self.device.freq_correction
+                                                                       ))
 
         event.accept()
 

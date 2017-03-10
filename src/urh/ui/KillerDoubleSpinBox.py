@@ -1,5 +1,4 @@
-import locale
-
+from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
 from PyQt5.QtWidgets import QDoubleSpinBox
@@ -54,13 +53,13 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def valueFromText(self, text: str):
         if text.endswith("G") or text.endswith("g"):
-            return locale.atof(text[:-1]) * 10 ** 9
+            return QLocale().toDouble(text[:-1])[0] * 10 ** 9
         elif text.endswith("M") or text.endswith("m"):
-            return locale.atof(text[:-1]) * 10 ** 6
+            return QLocale().toDouble(text[:-1])[0] * 10 ** 6
         elif text.endswith("K") or text.endswith("k"):
-            return locale.atof(text[:-1]) * 10 ** 3
+            return QLocale().toDouble(text[:-1])[0] * 10 ** 3
         else:
-            return locale.atof(text)
+            return QLocale().toDouble(text[:-1])[0]
 
     def validate(self, inpt: str, pos: int):
         rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")

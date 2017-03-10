@@ -194,15 +194,15 @@ class TestSendRecvDialog(unittest.TestCase):
             dialog.ui.lineEditIP.editingFinished.emit()
             self.assertEqual(dialog.device.ip, "1.3.3.7", msg=type(dialog))
 
-            dialog.ui.spinBoxFreq.setValue(10e9)
+            dialog.ui.spinBoxFreq.setValue(2e9)
             dialog.ui.spinBoxFreq.editingFinished.emit()
             self.assertEqual(dialog.ui.spinBoxFreq.text()[-1], "G")
-            self.assertEqual(dialog.device.frequency, 10e9)
+            self.assertEqual(dialog.device.frequency, 2e9)
 
-            dialog.ui.spinBoxSampleRate.setValue(10e9)
+            dialog.ui.spinBoxSampleRate.setValue(10e6)
             dialog.ui.spinBoxSampleRate.editingFinished.emit()
-            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "G")
-            self.assertEqual(dialog.device.sample_rate, 10e9)
+            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "M")
+            self.assertEqual(dialog.device.sample_rate, 10e6)
 
             dialog.ui.spinBoxBandwidth.setValue(1e3)
             dialog.ui.spinBoxBandwidth.editingFinished.emit()

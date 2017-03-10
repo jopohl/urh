@@ -38,7 +38,7 @@ class Device(QObject):
 
         self.success = 0
         self.error_codes = {}
-        self.errors = set()
+        self.device_messages = []
 
         self.receive_process_function = None
         self.send_process_function = None
@@ -68,10 +68,10 @@ class Device(QObject):
         self.read_recv_buffer_thread.daemon = True
         self.read_recv_buffer_thread.start()
 
-    def _start_read_error_thread(self):
-        self.read_dev_error_thread = threading.Thread(target=self.read_device_errors)
-        self.read_dev_error_thread.daemon = True
-        self.read_dev_error_thread.start()
+    def _start_read_message_thread(self):
+        self.read_dev_msg_thread = threading.Thread(target=self.read_device_messages)
+        self.read_dev_msg_thread.daemon = True
+        self.read_dev_msg_thread.start()
 
     @property
     def current_sent_sample(self):
@@ -113,18 +113,21 @@ class Device(QObject):
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
         error_code_msg = self.error_codes[retcode] if retcode in self.error_codes else "Error Code: " + str(retcode)
+
         if retcode == self.success:
             if msg:
-                logger.info("{0}-{1} ({2}): Success".format(type(self).__name__, action, msg))
+                formatted_message = "{0}-{1} ({2}): Success".format(type(self).__name__, action, msg)
             else:
-                logger.info("{0}-{1}: Success".format(type(self).__name__, action))
+                formatted_message = "{0}-{1}: Success".format(type(self).__name__, action)
+            logger.info(formatted_message)
         else:
             if msg:
-                err = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
+                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
             else:
-                err = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
-            self.errors.add(err)
-            logger.error(err)
+                formatted_message = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
+            logger.error(formatted_message)
+
+        self.device_messages.append(formatted_message)
 
     @property
     def received_data(self):
@@ -280,12 +283,12 @@ class Device(QObject):
                                        args=self.receive_process_arguments)
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
-        self._start_read_error_thread()
+        self._start_read_message_thread()
         try:
             self.receive_process.start()
         except OSError as e:
             logger.error(repr(e))
-            self.errors.add(repr(e))
+            self.device_messages.add(repr(e))
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
@@ -316,7 +319,7 @@ class Device(QObject):
                                         args=self.send_process_arguments)
 
         self.transmit_process.daemon = True
-        self._start_read_error_thread()
+        self._start_read_message_thread()
         self.transmit_process.start()
 
     def stop_tx_mode(self, msg):
@@ -350,12 +353,12 @@ class Device(QObject):
         self.set_device_gain(self.gain)
         self.set_device_sample_rate(self.sample_rate)
 
-    def read_device_errors(self):
+    def read_device_messages(self):
         while self.is_receiving or self.is_transmitting:
             try:
-                error = self.parent_ctrl_conn.recv()
-                action, error_code = error.split(":")
-                self.log_retcode(int(error_code), action)
+                message = self.parent_ctrl_conn.recv()
+                action, return_code = message.split(":")
+                self.log_retcode(int(return_code), action)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False

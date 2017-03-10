@@ -436,7 +436,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
-            self.read_errors()  # Clear errors
+            self.read_messages()  # Clear errors
             self.__dev.stop_rx_mode("Stop on error")
             self.__dev.stop_tx_mode("Stop on error")
             self.emit_stopped_signal()
@@ -472,13 +472,15 @@ class VirtualDevice(QObject):
     def emit_index_changed(self, old, new):
         self.index_changed.emit(old, new)
 
-    def read_errors(self):
+    def read_messages(self):
         if self.backend == Backends.grc:
             return self.__dev.read_errors()
         elif self.backend == Backends.native:
-            errors = "\n\n".join(self.__dev.errors)
-            self.__dev.errors.clear()
-            return errors
+            messages = "\n".join(self.__dev.device_messages)
+            if messages and not messages.endswith("\n"):
+                messages += "\n"
+            self.__dev.device_messages.clear()
+            return messages
         elif self.backend == Backends.network:
             return ""
         else:

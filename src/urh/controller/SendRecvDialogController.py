@@ -489,39 +489,39 @@ class SendRecvDialogController(QDialog):
         self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
 
         txt = self.ui.txtEditErrors.toPlainText()
-        new_errors = self.device.read_errors()
+        new_messages = self.device.read_messages()
 
-        if "No devices found for" in new_errors:
+        if "No devices found for" in new_messages:
             self.device.stop_on_error("Could not establish connection to USRP")
             Errors.usrp_ip_not_found()
 
             self.on_clear_clicked()
 
-        elif "OSError" in new_errors:
+        elif "OSError" in new_messages:
             self.device.stop_on_error("OSError")
             self.on_clear_clicked()
 
-        elif "FATAL: No supported devices found" in new_errors or \
-                        "HACKRF_ERROR_NOT_FOUND" in new_errors or \
-                        "HACKRF_ERROR_LIBUSB" in new_errors:
+        elif "FATAL: No supported devices found" in new_messages or \
+                        "HACKRF_ERROR_NOT_FOUND" in new_messages or \
+                        "HACKRF_ERROR_LIBUSB" in new_messages:
             self.device.stop_on_error("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()
 
-        elif "No module named gnuradio" in new_errors:
+        elif "No module named gnuradio" in new_messages:
             self.device.stop_on_error("Did not find gnuradio.")
             Errors.gnuradio_not_installed()
             self.on_clear_clicked()
 
-        elif "RTLSDR-open: Error Code: -1" in new_errors:
+        elif "RTLSDR-open: Error Code: -1" in new_messages:
             self.device.stop_on_error("Could not open a RTL-SDR device.")
             self.on_clear_clicked()
 
-        elif "Address already in use" in new_errors:
+        elif "Address already in use" in new_messages:
             self._restart_device_thread()
 
-        if len(new_errors) > 1:
-            self.ui.txtEditErrors.setPlainText(txt + new_errors)
+        if len(new_messages) > 1:
+            self.ui.txtEditErrors.setPlainText(txt + new_messages)
 
         self.ui.progressBar.setValue(self.device.current_index)
 

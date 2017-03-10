@@ -26,7 +26,26 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="17" column="2">
+         <item row="15" column="2">
+          <widget class="QComboBox" name="combox_sniff_Modulation">
+           <item>
+            <property name="text">
+             <string>ASK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>FSK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>PSK</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="18" column="2">
           <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
            <property name="readOnly">
             <bool>false</bool>
@@ -39,7 +58,7 @@
            </property>
           </widget>
          </item>
-         <item row="16" column="2">
+         <item row="17" column="2">
           <widget class="QComboBox" name="comboBox_sniff_viewtype">
            <item>
             <property name="text">
@@ -99,7 +118,7 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="2">
+         <item row="10" column="2">
           <widget class="QSpinBox" name="spinBoxNRepeat">
            <property name="specialValueText">
             <string>Infinite</string>
@@ -116,7 +135,7 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="labelNRepeat">
            <property name="text">
             <string>Repeat:</string>
@@ -179,7 +198,7 @@
            </property>
           </widget>
          </item>
-         <item row="11" column="2">
+         <item row="12" column="2">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
            <property name="decimals">
             <number>4</number>
@@ -223,7 +242,7 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="2">
+         <item row="13" column="2">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
            <property name="decimals">
             <number>4</number>
@@ -272,35 +291,35 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="0">
+         <item row="13" column="0">
           <widget class="QLabel" name="label_sniff_Noise">
            <property name="text">
             <string>Noise:</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="0">
+         <item row="12" column="0">
           <widget class="QLabel" name="label_sniff_Center">
            <property name="text">
             <string>Center:</string>
            </property>
           </widget>
          </item>
-         <item row="17" column="0">
+         <item row="18" column="0">
           <widget class="QLabel" name="label_sniff_OutputFile">
            <property name="text">
             <string>Output file:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="label_sniff_BitLength">
            <property name="text">
-            <string>Bit Length:</string>
+            <string>Bit length:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="2">
+         <item row="11" column="2">
           <widget class="QSpinBox" name="spinbox_sniff_BitLen">
            <property name="minimum">
             <number>1</number>
@@ -310,14 +329,14 @@
            </property>
           </widget>
          </item>
-         <item row="13" column="0">
+         <item row="14" column="0">
           <widget class="QLabel" name="label_sniff_Tolerance">
            <property name="text">
             <string>Error Tolerance:</string>
            </property>
           </widget>
          </item>
-         <item row="13" column="2">
+         <item row="14" column="2">
           <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
            <property name="maximum">
             <number>999999</number>
@@ -357,7 +376,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Baseband Gain:</string>
+            <string>Baseband gain:</string>
            </property>
           </widget>
          </item>
@@ -396,37 +415,41 @@
            </property>
           </widget>
          </item>
-         <item row="16" column="0">
-          <widget class="QLabel" name="label_sniff_viewtype">
-           <property name="text">
-            <string>View:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="0">
+         <item row="15" column="0">
           <widget class="QLabel" name="label_sniff_Modulation">
            <property name="text">
             <string>Modulation:</string>
            </property>
           </widget>
          </item>
-         <item row="14" column="2">
-          <widget class="QComboBox" name="combox_sniff_Modulation">
-           <item>
-            <property name="text">
-             <string>ASK</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>FSK</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>PSK</string>
-            </property>
-           </item>
+         <item row="17" column="0">
+          <widget class="QLabel" name="label_sniff_viewtype">
+           <property name="text">
+            <string>View:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="labelFreqCorrection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to zero.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Frequency correction:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QSpinBox" name="spinBoxFreqCorrection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to zero.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="minimum">
+            <number>-1000</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
           </widget>
          </item>
         </layout>

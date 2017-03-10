@@ -73,6 +73,14 @@ class InputHandlerThread(Thread):
                         except ValueError:
                             v = 1
                         self.device.set_freq(v)
+                    elif i.startswith("FC:"):
+                        try:
+                            v = float(i.replace("FC:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_freq_correction(v)
+                    elif i.startswith("DSM:"):
+                        print("Gnuradio does not support setting direct sampling mode live.")
 
             time.sleep(0.1)
 

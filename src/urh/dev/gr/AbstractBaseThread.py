@@ -33,6 +33,8 @@ class AbstractBaseThread(QThread):
         self._if_gain = if_gain
         self._baseband_gain = baseband_gain
         self._bandwidth = bandwidth
+        self._freq_correction = 1
+        self._direct_sampling_mode = 0
         self._receiving = receiving  # False for Sender-Thread
         self.usrp_ip = "192.168.10.2"
         self.device = "USRP"
@@ -139,6 +141,34 @@ class AbstractBaseThread(QThread):
             except BrokenPipeError:
                 pass
 
+    @property
+    def freq_correction(self):
+        return self._freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        self._freq_correction = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'FC:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
+    def direct_sampling_mode(self):
+        return self._direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        self._direct_sampling_mode = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'DSM:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
     def initialize_process(self):
         self.started.emit()
 
@@ -164,6 +194,10 @@ class AbstractBaseThread(QThread):
 
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
+
+        if self.device.upper() == "RTL-SDR":
+            options.extend(["--freq-correction", str(self.freq_correction),
+                            "--direct-sampling", str(self.direct_sampling_mode)])
 
         logger.info("Starting Gnuradio")
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)

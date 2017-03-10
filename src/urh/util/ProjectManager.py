@@ -15,15 +15,15 @@ from urh.util import FileOperator
 
 
 class ProjectManager(QObject):
-    NEWLINE_CODE = "###~~~***~~~###_--:;;-__***~~~###" # Newlines dont get loaded from xml properly
+    NEWLINE_CODE = "###~~~***~~~###_--:;;-__***~~~###"  # Newlines don't get loaded from xml properly
     AUTOSAVE_INTERVAL_MINUTES = 5
 
     project_loaded_status_changed = pyqtSignal(bool)
     project_updated = pyqtSignal()
 
-    def __init__(self, maincontroller):
+    def __init__(self, main_controller):
         super().__init__()
-        self.maincontroller = maincontroller
+        self.main_controller = main_controller
         self.sample_rate = 1e6
         self.bandwidth = 1e6
         self.frequency = 43392e4
@@ -74,25 +74,26 @@ class ProjectManager(QObject):
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         try:
-            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in root.find("protocol").find("message_types").findall("message_type")]
+            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in
+                    root.find("protocol").find("message_types").findall("message_type")]
         except AttributeError:
             return []
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
-            self.maincontroller.close_all()
+            self.main_controller.close_all()
         self.project_path = path
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         collapse_project_tabs = False
         if not os.path.isfile(self.project_file):
             if ask_for_new_project:
-                reply = QMessageBox.question(self.maincontroller, "Project File",
+                reply = QMessageBox.question(self.main_controller, "Project File",
                                              "Do you want to create a Project File for this folder?\n"
                                              "If you chose No, you can do it later via File->Convert Folder to Project.",
                                              QMessageBox.Yes | QMessageBox.No)
 
                 if reply == QMessageBox.Yes:
-                    self.maincontroller.show_project_settings()
+                    self.main_controller.show_project_settings()
                 else:
                     self.project_file = None
 
@@ -105,10 +106,10 @@ class ProjectManager(QObject):
             root = tree.getroot()
 
             collapse_project_tabs = bool(int(root.get("collapse_project_tabs", 0)))
-            cfc = self.maincontroller.compare_frame_controller
+            cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
             self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
-            self.maincontroller.add_files(self.read_opened_filenames())
+            self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
             decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
             if decodings:
@@ -117,39 +118,39 @@ class ProjectManager(QObject):
 
             cfc.proto_analyzer.message_types = self.read_message_types()
             cfc.fill_message_type_combobox()
-            cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants, decodings=cfc.decodings)
+            cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants,
+                                            decodings=cfc.decodings)
 
             cfc.updateUI()
             modulators = self.read_modulators_from_project_file()
-            self.maincontroller.generator_tab_controller.modulators = modulators if modulators else [
+            self.main_controller.generator_tab_controller.modulators = modulators if modulators else [
                 Modulator("Modulation")]
-            self.maincontroller.generator_tab_controller.refresh_modulators()
+            self.main_controller.generator_tab_controller.refresh_modulators()
 
         if len(self.project_path) > 0 and self.project_file is None:
-            self.maincontroller.ui.actionConvert_Folder_to_Project.setEnabled(True)
+            self.main_controller.ui.actionConvert_Folder_to_Project.setEnabled(True)
         else:
-            self.maincontroller.ui.actionConvert_Folder_to_Project.setEnabled(False)
+            self.main_controller.ui.actionConvert_Folder_to_Project.setEnabled(False)
 
-        self.maincontroller.adjust_for_current_file(path)
-        self.maincontroller.filemodel.setRootPath(path)
-        self.maincontroller.ui.fileTree.setRootIndex(
-            self.maincontroller.file_proxy_model.mapFromSource(self.maincontroller.filemodel.index(path)))
-        self.maincontroller.ui.fileTree.setToolTip(path)
-        self.maincontroller.ui.splitter.setSizes([1, 1])
+        self.main_controller.adjust_for_current_file(path)
+        self.main_controller.filemodel.setRootPath(path)
+        self.main_controller.ui.fileTree.setRootIndex(
+            self.main_controller.file_proxy_model.mapFromSource(self.main_controller.filemodel.index(path)))
+        self.main_controller.ui.fileTree.setToolTip(path)
+        self.main_controller.ui.splitter.setSizes([1, 1])
         if collapse_project_tabs:
-            self.maincontroller.collapse_project_tab_bar()
+            self.main_controller.collapse_project_tab_bar()
         else:
-            self.maincontroller.expand_project_tab_bar()
+            self.main_controller.expand_project_tab_bar()
 
-
-        self.maincontroller.setWindowTitle("Universal Radio Hacker [" + path + "]")
+        self.main_controller.setWindowTitle("Universal Radio Hacker [" + path + "]")
 
         self.project_loaded_status_changed.emit(self.project_loaded)
         self.project_updated.emit()
 
     def convert_folder_to_project(self):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
-        self.maincontroller.show_project_settings()
+        self.main_controller.show_project_settings()
 
     def write_signal_information_to_project_file(self, signal: Signal, messages, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
@@ -236,8 +237,8 @@ class ProjectManager(QObject):
         tree = ET.ElementTree(root)
         tree.write(self.project_file)
 
-        #self.write_labels(self.maincontroller.compare_frame_controller.proto_analyzer)
-        self.write_modulators_to_project_file(self.maincontroller.generator_tab_controller.modulators, tree=tree)
+        # self.write_labels(self.maincontroller.compare_frame_controller.proto_analyzer)
+        self.write_modulators_to_project_file(self.main_controller.generator_tab_controller.modulators, tree=tree)
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
@@ -245,15 +246,15 @@ class ProjectManager(QObject):
         root.set("sample_rate", str(self.sample_rate))
         root.set("bandwidth", str(self.bandwidth))
         root.set("gain", str(self.gain))
-        root.set("description", str(self.description).replace("\n",self.NEWLINE_CODE))
-        root.set("collapse_project_tabs", str(int(not self.maincontroller.ui.tabParticipants.isVisible())))
+        root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
+        root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
         root.set("broadcast_address_hex", str(self.broadcast_address_hex))
 
         open_files = []
-        for i, sf in enumerate(self.maincontroller.signal_tab_controller.signal_frames):
+        for i, sf in enumerate(self.main_controller.signal_tab_controller.signal_frames):
             self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.messages, tree=tree)
             try:
-                pf = self.maincontroller.signal_protocol_dict[sf]
+                pf = self.main_controller.signal_protocol_dict[sf]
                 filename = pf.filename
 
                 if filename in FileOperator.archives.keys():
@@ -274,7 +275,7 @@ class ProjectManager(QObject):
         for group_tag in root.findall("group"):
             root.remove(group_tag)
 
-        cfc = self.maincontroller.compare_frame_controller
+        cfc = self.main_controller.compare_frame_controller
 
         for i, group in enumerate(cfc.groups):
             group_tag = ET.SubElement(root, "group")
@@ -294,7 +295,7 @@ class ProjectManager(QObject):
         with open(self.project_file, "w") as f:
             for line in xmlstr.split("\n"):
                 if line.strip():
-                    f.write(line+"\n")
+                    f.write(line + "\n")
 
     def read_participants_for_signal(self, signal: Signal, messages):
         if self.project_file is None or len(signal.filename) == 0:
@@ -331,8 +332,8 @@ class ProjectManager(QObject):
                 signal.qad_center = float(sig_tag.get("qad_center", 0))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
                 signal.auto_detect_on_modulation_changed = False if \
-                sig_tag.attrib[
-                                                                        "auto_detect_on_modulation_changed"] == 'False' else True
+                    sig_tag.attrib[
+                        "auto_detect_on_modulation_changed"] == 'False' else True
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
@@ -358,7 +359,7 @@ class ProjectManager(QObject):
         return []
 
     def read_compare_frame_groups(self, root):
-        proto_tree_model = self.maincontroller.compare_frame_controller.proto_tree_model
+        proto_tree_model = self.main_controller.compare_frame_controller.proto_tree_model
         tree_root = proto_tree_model.rootItem
         pfi = proto_tree_model.protocol_tree_items
         proto_frame_items = [item for item in pfi[0]]
@@ -387,9 +388,9 @@ class ProjectManager(QObject):
                     group.appendChild(proto_frame_item)
                     proto_frame_item.show_in_compare_frame = Qt.Checked if show == "1" else Qt.Unchecked
 
-            self.maincontroller.compare_frame_controller.expand_group_node(int(id))
+            self.main_controller.compare_frame_controller.expand_group_node(int(id))
 
-        self.maincontroller.compare_frame_controller.refresh()
+        self.main_controller.compare_frame_controller.refresh()
 
     def from_dialog(self, dialog):
         if dialog.committed:

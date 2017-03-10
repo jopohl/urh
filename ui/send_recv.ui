@@ -483,7 +483,14 @@
           <property name="topMargin">
            <number>0</number>
           </property>
-          <item row="16" column="0">
+          <item row="7" column="0">
+           <widget class="QLabel" name="lReceiveBufferFullText">
+            <property name="text">
+             <string>Receive buffer full:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="0">
            <widget class="QProgressBar" name="progressBar">
             <property name="value">
              <number>0</number>
@@ -493,7 +500,7 @@
             </property>
            </widget>
           </item>
-          <item row="15" column="0">
+          <item row="18" column="0">
            <widget class="QLabel" name="lSamplesSentText">
             <property name="text">
              <string>Samples sent:</string>
@@ -516,7 +523,7 @@
             </property>
            </spacer>
           </item>
-          <item row="9" column="0">
+          <item row="12" column="0">
            <widget class="QLabel" name="lTimeText">
             <property name="font">
              <font>
@@ -703,7 +710,7 @@
             </item>
            </layout>
           </item>
-          <item row="7" column="0">
+          <item row="9" column="0">
            <widget class="QLabel" name="lSignalSizeText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -744,7 +751,7 @@
             </property>
            </widget>
           </item>
-          <item row="12" column="0" colspan="2">
+          <item row="15" column="0" colspan="2">
            <widget class="QLabel" name="lTime">
             <property name="font">
              <font>
@@ -760,7 +767,7 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0" colspan="2">
+          <item row="11" column="0" colspan="2">
            <widget class="QLabel" name="lSignalSize">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -782,14 +789,14 @@
             </property>
            </widget>
           </item>
-          <item row="13" column="0">
+          <item row="16" column="0">
            <widget class="QLabel" name="lblRepeatText">
             <property name="text">
              <string>Current iteration:</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="0">
+          <item row="17" column="0">
            <widget class="QLabel" name="lblCurrentRepeatValue">
             <property name="font">
              <font>
@@ -805,15 +812,8 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lRAMAvailText">
-            <property name="text">
-             <string>RAM available (in MiB):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelRAMAvail">
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelReceiveBufferFull">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -827,7 +827,7 @@
              </font>
             </property>
             <property name="text">
-             <string>10000</string>
+             <string>0%</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

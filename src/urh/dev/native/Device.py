@@ -8,6 +8,7 @@ import numpy as np
 import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from urh import constants
 from urh.util.Logger import logger
 
 
@@ -104,7 +105,7 @@ class Device(QObject):
                 nsamples = 10 ** 5
             else:
                 # Take 60% of avail memory
-                nsamples = 0.6 * (psutil.virtual_memory().available / 8)
+                nsamples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().free / 8)
             self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
             logger.info(
                 "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))

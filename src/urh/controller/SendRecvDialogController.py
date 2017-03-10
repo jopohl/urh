@@ -49,7 +49,6 @@ class SendRecvDialogController(QDialog):
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
 
-
         self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
         self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
@@ -83,9 +82,6 @@ class SendRecvDialogController(QDialog):
             self.ui.cbDevice.setCurrentIndex(items.index(device))
 
         self.timer = QTimer(self)
-        self.ram_timer = QTimer(self)
-        self.ram_timer.timeout.connect(self.show_available_ram)
-        self.ram_timer.start(1000)
 
         dev_name = self.ui.cbDevice.currentText()
         self.set_device_ui_items_visibility(dev_name)
@@ -120,7 +116,7 @@ class SendRecvDialogController(QDialog):
 
     def hide_receive_ui_items(self):
         for item in ("lSamplesCaptured", "lSamplesCapturedText", "lSignalSize", "lSignalSizeText",
-                     "lTime", "lTimeText", "btnSave"):
+                     "lTime", "lTimeText", "btnSave", "labelReceiveBufferFull", "lReceiveBufferFullText"):
             getattr(self.ui, item).hide()
 
     def set_sniff_ui_items_visible(self, visible: bool):
@@ -328,10 +324,6 @@ class SendRecvDialogController(QDialog):
     def save_before_close(self):
         return True
 
-    def show_available_ram(self):
-        self.ui.labelRAMAvail.setText("{0}%".format(int(100*psutil.virtual_memory().available /
-                                                        psutil.virtual_memory().total)))
-
     @pyqtSlot()
     def on_spinbox_sample_rate_editing_finished(self):
         self.device.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -516,6 +508,8 @@ class SendRecvDialogController(QDialog):
         self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
         self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
+
+        self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index / len(self.device.data))))
 
         if self.device.current_index == 0:
             return False

@@ -1,9 +1,7 @@
-import socket
 
 import numpy as np
 import psutil
-import time
-
+from urh import constants
 import zmq
 from PyQt5.QtCore import pyqtSignal
 
@@ -23,7 +21,7 @@ class ReceiverThread(AbstractBaseThread):
 
     def init_recv_buffer(self):
         # Take 60% of free memory
-        nsamples = int(0.6 * (psutil.virtual_memory().available / 8))
+        nsamples = int(constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().available / 8))
         self.data = np.zeros(nsamples, dtype=np.complex64)
 
     def run(self):

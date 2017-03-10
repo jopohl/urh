@@ -26,6 +26,38 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="17" column="2">
+          <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="placeholderText">
+            <string>None</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="2">
+          <widget class="QComboBox" name="comboBox_sniff_viewtype">
+           <item>
+            <property name="text">
+             <string>Bit</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Hex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ASCII</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
@@ -160,6 +192,20 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="2">
+          <widget class="QComboBox" name="cbDevice">
+           <item>
+            <property name="text">
+             <string>USRP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HackRF</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item row="6" column="0">
           <widget class="QLabel" name="labelGain">
            <property name="toolTip">
@@ -175,20 +221,6 @@
            <property name="text">
             <string>Bandwidth (Hz):</string>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QComboBox" name="cbDevice">
-           <item>
-            <property name="text">
-             <string>USRP</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>HackRF</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="12" column="2">
@@ -254,49 +286,10 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="0">
-          <widget class="QLabel" name="label_sniff_Modulation">
-           <property name="text">
-            <string>Modulation:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="2">
-          <widget class="QComboBox" name="combox_sniff_Modulation">
-           <item>
-            <property name="text">
-             <string>ASK</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>FSK</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>PSK</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="16" column="0">
+         <item row="17" column="0">
           <widget class="QLabel" name="label_sniff_OutputFile">
            <property name="text">
             <string>Output file:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="16" column="2">
-          <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-           <property name="placeholderText">
-            <string>None</string>
-           </property>
-           <property name="clearButtonEnabled">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -334,29 +327,10 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="2">
-          <widget class="QComboBox" name="comboBox_sniff_viewtype">
-           <item>
-            <property name="text">
-             <string>Bit</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Hex</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>ASCII</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="14" column="0">
-          <widget class="QLabel" name="label_sniff_viewtype">
-           <property name="text">
-            <string>View:</string>
+         <item row="7" column="3">
+          <widget class="QSpinBox" name="spinBoxIFGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -370,6 +344,13 @@
            </property>
           </widget>
          </item>
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="spinBoxBasebandGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
          <item row="8" column="0">
           <widget class="QLabel" name="labelBasebandGain">
            <property name="toolTip">
@@ -377,20 +358,6 @@
            </property>
            <property name="text">
             <string>Baseband Gain:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="3">
-          <widget class="QSpinBox" name="spinBoxIFGain">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="3">
-          <widget class="QSpinBox" name="spinBoxBasebandGain">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -427,6 +394,39 @@
            <property name="tickInterval">
             <number>0</number>
            </property>
+          </widget>
+         </item>
+         <item row="16" column="0">
+          <widget class="QLabel" name="label_sniff_viewtype">
+           <property name="text">
+            <string>View:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="label_sniff_Modulation">
+           <property name="text">
+            <string>Modulation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="2">
+          <widget class="QComboBox" name="combox_sniff_Modulation">
+           <item>
+            <property name="text">
+             <string>ASK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>FSK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>PSK</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>

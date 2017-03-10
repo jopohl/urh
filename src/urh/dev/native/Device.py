@@ -27,6 +27,9 @@ class Device(QObject):
         self.__baseband_gain = baseband_gain
         self.__sample_rate = sample_rate
 
+        self.__freq_correction = 0
+        self.__direct_sampling_mode = 0
+
         self.bandwidth_is_adjustable = True
 
         self._current_sent_sample = Value("L", 0)
@@ -214,6 +217,32 @@ class Device(QObject):
 
     def set_device_sample_rate(self, sample_rate):
         self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+
+    @property
+    def freq_correction(self):
+        return self.__freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        if value != self.__freq_correction:
+            self.__freq_correction = value
+            self.set_device_freq_correction(value)
+
+    def set_device_freq_correction(self, value):
+        self.parent_ctrl_conn.send("freq_correction:" + str(int(value)))
+
+    @property
+    def direct_sampling_mode(self):
+        return self.__direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        if value != self.__freq_correction:
+            self.__direct_sampling_mode = value
+            self.set_device_direct_sampling_mode(value)
+
+    def set_device_direct_sampling_mode(self, value):
+        self.parent_ctrl_conn.send("direct_sampling_mode:" + str(int(value)))
 
     def start_rx_mode(self):
         self.init_recv_buffer()

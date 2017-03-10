@@ -172,6 +172,22 @@ class VirtualDevice(QObject):
         self.__dev.sample_rate = value
 
     @property
+    def freq_correction(self):
+        return self.__dev.freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        self.__dev.freq_correction = value
+
+    @property
+    def direct_sampling_mode(self) -> int:
+        return self.__dev.direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        self.__dev.direct_sampling_mode = value
+
+    @property
     def samples_to_send(self):
         if self.backend == Backends.grc:
             return self.__dev.data

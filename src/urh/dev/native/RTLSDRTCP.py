@@ -15,7 +15,7 @@ class RTLSDRTCP(Device):
                       "gainByIndex", "bandwidth", "biasTee"]
 
     def receive_sync(self, data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     gain: int):
+                     gain: int, freq_correction: int, direct_sampling_mode: int):
         # connect and initialize rtl_tcp
         self.open(self.device_ip, self.port)
         if self.socket_is_open:
@@ -24,7 +24,8 @@ class RTLSDRTCP(Device):
             self.set_parameter("sampleRate", int(sample_rate))
             self.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
             self.set_parameter("tunerGain", int(gain))
-            #self.set_parameter("freqCorrection", int(freq_correction_in_ppm)) # TODO: add ppm value as parameter to this function
+            self.set_parameter("freqCorrection", freq_correction)
+            self.set_parameter("directSampling", direct_sampling_mode)
             exit_requested = False
 
             while not exit_requested:
@@ -71,6 +72,10 @@ class RTLSDRTCP(Device):
             logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
             return self.set_parameter("freqCorrection", int(value))
 
+        elif tag == "direct_sampling_mode":
+            logger.info("RTLSDRTCP: Set direct sampling mode to {0}".format(int(value)))
+            return self.set_parameter("directSampling", int(value))
+
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
                          gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
@@ -83,7 +88,8 @@ class RTLSDRTCP(Device):
 
     @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, self.gain
+        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
+               self.gain, self.freq_correction, self.direct_sampling_mode
 
     def open(self, hostname="127.0.0.1", port=1234):
         if not self.socket_is_open:

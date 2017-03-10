@@ -199,6 +199,12 @@ class SendRecvDialogController(QDialog):
         self.ui.sliderBasebandGain.setEnabled(enabled)
         self.ui.spinBoxBandwidth.setEnabled(enabled)
         self.ui.spinBoxSampleRate.setEnabled(enabled)
+        self.ui.spinBoxFreqCorrection.setEnabled(enabled)
+        self.ui.comboBoxDirectSampling.setEnabled(enabled)
+        self.ui.lineEditIP.setEnabled(enabled)
+        self.ui.spinBoxNRepeat.setEnabled(enabled)
+        self.ui.cbDevice.setEnabled(enabled)
+        self.ui.spinBoxPort.setEnabled(enabled)
 
     def emit_editing_finished_signals(self):
         self.ui.spinBoxFreq.editingFinished.emit()
@@ -208,6 +214,7 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxBasebandGain.editingFinished.emit()
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
+        self.ui.spinBoxFreqCorrection.editingFinished.emit()
         if self.ui.cbDevice.currentText() in ("USRP", "RTL-TCP"):
             self.ui.lineEditIP.editingFinished.emit()
         if self.ui.cbDevice.currentText() == "RTL-TCP":
@@ -263,6 +270,9 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
         self.ui.lineEditIP.editingFinished.connect(self.on_spinbox_ip_editing_finished)
+
+        self.ui.spinBoxFreqCorrection.editingFinished.connect(self.on_spinbox_freq_correction_editing_finished)
+        self.ui.comboBoxDirectSampling.currentIndexChanged.connect(self.on_combobox_direct_sampling_index_changed)
 
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
@@ -320,6 +330,14 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):
         self.device.port = self.ui.spinBoxPort.value()
+
+    @pyqtSlot()
+    def on_spinbox_freq_correction_editing_finished(self):
+        self.device.freq_correction = self.ui.spinBoxFreqCorrection.value()
+
+    @pyqtSlot(int)
+    def on_combobox_direct_sampling_index_changed(self, index: int):
+        self.device.direct_sampling_mode = index
 
     @pyqtSlot()
     def on_spinbox_gain_editing_finished(self):
@@ -404,24 +422,12 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_device_stopped(self):
         self.graphics_view.capturing_data = False
+        self.set_device_ui_items_enabled(True)
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(True)
         self.ui.btnSave.setEnabled(self.device.current_index > 0)
-        self.ui.spinBoxSampleRate.setEnabled(True)
-        self.ui.spinBoxFreq.setEnabled(True)
-        self.ui.lineEditIP.setEnabled(True)
-        self.ui.spinBoxBandwidth.setEnabled(True)
 
-        self.ui.spinBoxGain.setEnabled(True)
-        self.ui.sliderGain.setEnabled(True)
-        self.ui.spinBoxIFGain.setEnabled(True)
-        self.ui.sliderIFGain.setEnabled(True)
-        self.ui.spinBoxBasebandGain.setEnabled(True)
-        self.ui.sliderBasebandGain.setEnabled(True)
-        self.ui.spinBoxPort.setEnabled(True)
-        self.ui.cbDevice.setEnabled(True)
-        self.ui.spinBoxNRepeat.setEnabled(True)
         self.timer.stop()
         self.scene_manager.set_text("")
         self.update_view()
@@ -438,9 +444,6 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxNRepeat.setEnabled(False)
         self.ui.btnStop.setEnabled(True)
 
-        self.ui.lineEditIP.setDisabled(True)
-        self.ui.spinBoxPort.setDisabled(True)
-        self.ui.cbDevice.setDisabled(True)
         self.timer.start(self.update_interval)
 
     def update_view(self):

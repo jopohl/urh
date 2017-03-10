@@ -140,6 +140,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxBandwidth.setVisible("bandwidth" in conf)
         self.ui.labelBandWidth.setVisible("bandwidth" in conf)
         self.ui.btnLockBWSR.setVisible("sample_rate" in conf and "bandwidth" in conf)
+        self.ui.labelFreqCorrection.setVisible("freq_correction" in conf)
+        self.ui.spinBoxFreqCorrection.setVisible("freq_correction" in conf)
 
         prefix = self.rx_tx_prefix
         key_ui_gain_map = {prefix+"rf_gain": "Gain", prefix+"if_gain": "IFGain", prefix+"baseband_gain": "BasebandGain"}

@@ -18,14 +18,13 @@ class ProjectManager(QObject):
     NEWLINE_CODE = "###~~~***~~~###_--:;;-__***~~~###" # Newlines dont get loaded from xml properly
     AUTOSAVE_INTERVAL_MINUTES = 5
 
-    sample_rate_changed = pyqtSignal(float)
     project_loaded_status_changed = pyqtSignal(bool)
     project_updated = pyqtSignal()
 
     def __init__(self, maincontroller):
         super().__init__()
         self.maincontroller = maincontroller
-        self.__sample_rate = 1e6
+        self.sample_rate = 1e6
         self.bandwidth = 1e6
         self.frequency = 43392e4
         self.gain = 20
@@ -50,16 +49,6 @@ class ProjectManager(QObject):
     def project_file(self, value):
         self.__project_file = value
         self.project_loaded_status_changed.emit(self.project_loaded)
-
-    @property
-    def sample_rate(self):
-        return self.__sample_rate
-
-    @sample_rate.setter
-    def sample_rate(self, val: float):
-        if val != self.sample_rate:
-            self.__sample_rate = val
-            self.sample_rate_changed.emit(val)
 
     def set_recording_parameters(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, device):
         self.frequency = float(freq)

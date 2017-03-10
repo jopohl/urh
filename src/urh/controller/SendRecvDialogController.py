@@ -329,7 +329,8 @@ class SendRecvDialogController(QDialog):
         return True
 
     def show_available_ram(self):
-        self.ui.labelRAMAvail.setText("{0}".format(int(psutil.virtual_memory().available / (1024 * 1024))))
+        self.ui.labelRAMAvail.setText("{0}%".format(int(100*psutil.virtual_memory().available /
+                                                        psutil.virtual_memory().total)))
 
     @pyqtSlot()
     def on_spinbox_sample_rate_editing_finished(self):

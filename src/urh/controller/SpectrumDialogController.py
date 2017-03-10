@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 
 from urh.FFTSceneManager import FFTSceneManager
@@ -33,6 +34,18 @@ class SpectrumDialogController(SendRecvDialogController):
 
         self.init_device()
         self.set_bandwidth_status()
+
+        self.gain_timer = QTimer()
+        self.gain_timer.setSingleShot(True)
+        self.gain_timer.timeout.connect(self.ui.spinBoxGain.editingFinished.emit)
+
+        self.if_gain_timer = QTimer()
+        self.if_gain_timer.setSingleShot(True)
+        self.if_gain_timer.timeout.connect(self.ui.spinBoxIFGain.editingFinished.emit)
+
+        self.bb_gain_timer = QTimer()
+        self.bb_gain_timer.setSingleShot(True)
+        self.bb_gain_timer.timeout.connect(self.ui.spinBoxBasebandGain.editingFinished.emit)
 
         self.create_connects()
 
@@ -89,15 +102,15 @@ class SpectrumDialogController(SendRecvDialogController):
     @pyqtSlot(int)
     def on_slider_gain_value_changed(self, value: int):
         super().on_slider_gain_value_changed(value)
-        self.ui.spinBoxGain.editingFinished.emit()
+        self.gain_timer.start(250)
 
     @pyqtSlot(int)
     def on_slider_if_gain_value_changed(self, value: int):
         super().on_slider_if_gain_value_changed(value)
-        self.ui.spinBoxIFGain.editingFinished.emit()
+        self.if_gain_timer.start(250)
 
     @pyqtSlot(int)
     def on_slider_baseband_gain_value_changed(self, value: int):
         super().on_slider_baseband_gain_value_changed(value)
-        self.ui.spinBoxBasebandGain.editingFinished.emit()
+        self.bb_gain_timer.start(250)
 

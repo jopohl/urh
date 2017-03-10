@@ -4,6 +4,7 @@ from enum import Enum
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
+from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
 from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
@@ -28,14 +29,21 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, backend_handler, name: str, mode: Mode, freq, sample_rate, bandwidth,
-                 gain, if_gain, baseband_gain,
+    def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
+                 gain=None, if_gain=None, baseband_gain=None,
                  samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
+
+        freq = config.DEFAULT_FREQUENCY if freq is None else freq
+        sample_rate = config.DEFAULT_SAMPLE_RATE if sample_rate is None else sample_rate
+        bandwidth = config.DEFAULT_BANDWIDTH if bandwidth is None else bandwidth
+        gain = config.DEFAULT_GAIN if gain is None else gain
+        if_gain = config.DEFAULT_IF_GAIN if if_gain is None else if_gain
+        baseband_gain = config.DEFAULT_BB_GAIN if baseband_gain is None else baseband_gain
 
         if self.name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
             self.backend = Backends.network

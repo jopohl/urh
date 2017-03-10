@@ -4,6 +4,14 @@ import copy
 
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 
+
+DEFAULT_FREQUENCY = 433.92e6
+DEFAULT_SAMPLE_RATE = 1e6
+DEFAULT_BANDWIDTH = 1e6
+DEFAULT_GAIN = 20
+DEFAULT_IF_GAIN = 20
+DEFAULT_BB_GAIN = 20
+
 DEVICE_CONFIG = OrderedDict()
 
 dev_range = namedtuple("dev_range", ["start", "stop", "step"])

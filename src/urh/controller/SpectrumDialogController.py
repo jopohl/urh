@@ -66,8 +66,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum, bandwidth=1e6,
-                                    freq=433.92e6, gain=40, if_gain=20, baseband_gain=20, sample_rate=1e6,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 

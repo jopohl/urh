@@ -72,9 +72,7 @@ class SendDialogController(SendRecvDialogController):
         num_repeats = self.ui.spinBoxNRepeat.value()
         sts = self.scene_manager.signal._fulldata
 
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, bandwidth=1e6,
-                                    freq=433.92e6, gain=40, if_gain=20, baseband_gain=20,
-                                    sample_rate=1e6, samples_to_send=sts,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, samples_to_send=sts,
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)
         self._create_device_connects()
 

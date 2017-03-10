@@ -24,7 +24,7 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SendRecvDialogController(QDialog):
-    recording_parameters = pyqtSignal(str, str, str, str, str, str, str)
+    recording_parameters = pyqtSignal(str, dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx:bool, parent=None, testing_mode=False):
         super().__init__(parent)
@@ -48,12 +48,22 @@ class SendRecvDialogController(QDialog):
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
 
-        self.ui.spinBoxFreq.setValue(project_manager.frequency)
-        self.ui.spinBoxSampleRate.setValue(project_manager.sample_rate)
-        self.ui.spinBoxBandwidth.setValue(project_manager.bandwidth)
-        self.ui.spinBoxGain.setValue(project_manager.gain)
-        self.ui.spinBoxIFGain.setValue(project_manager.if_gain)
-        self.ui.spinBoxBasebandGain.setValue(project_manager.baseband_gain)
+        self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
+        self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
+        self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
+        self.ui.spinBoxGain.setValue(project_manager.device_conf["gain"])
+        try:
+            if_gain = project_manager.device_conf["if_gain"]
+        except KeyError:
+            if_gain = config.DEFAULT_IF_GAIN
+        self.ui.spinBoxIFGain.setValue(if_gain)
+
+        try:
+            baseband_gain = project_manager.device_conf["baseband_gain"]
+        except KeyError:
+            baseband_gain = config.DEFAULT_BB_GAIN
+
+        self.ui.spinBoxBasebandGain.setValue(baseband_gain)
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
         device = project_manager.device
 
@@ -527,13 +537,11 @@ class SendRecvDialogController(QDialog):
             logger.debug("Cleaning up device")
             self.device.cleanup()
             logger.debug("Successfully cleaned up device")
-            self.recording_parameters.emit(str(self.device.frequency),
-                                           str(self.device.sample_rate),
-                                           str(self.device.bandwidth),
-                                           str(self.device.gain),
-                                           str(self.device.if_gain),
-                                           str(self.device.baseband_gain),
-                                           str(self.device.name))
+            self.recording_parameters.emit(str(self.device.name), dict(frequency=self.device.frequency,
+                                           sample_rate=self.device.sample_rate, bandwidth=self.device.bandwidth,
+                                           gain=self.device.gain, if_gain=self.device.if_gain,
+                                           baseband_gain=self.device.baseband_gain,
+                                           ))
 
         event.accept()
 

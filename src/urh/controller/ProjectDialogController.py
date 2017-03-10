@@ -103,10 +103,10 @@ class ProjectDialogController(QDialog):
         else:
             self.participant_table_model = self.ProtocolParticipantModel(project_manager.participants)
 
-            self.ui.spinBoxSampleRate.setValue(project_manager.sample_rate)
-            self.ui.spinBoxFreq.setValue(project_manager.frequency)
-            self.ui.spinBoxBandwidth.setValue(project_manager.bandwidth)
-            self.ui.spinBoxGain.setValue(project_manager.gain)
+            self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
+            self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
+            self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
+            self.ui.spinBoxGain.setValue(project_manager.device_conf["gain"])
             self.ui.txtEdDescription.setPlainText(project_manager.description)
             self.ui.lineEdit_Path.setText(project_manager.project_path)
             self.ui.lineEditBroadcastAddress.setText(project_manager.broadcast_address_hex)
@@ -263,13 +263,12 @@ class ProjectDialogController(QDialog):
         if directory:
             self.set_path(directory)
 
-    @pyqtSlot(str, str, str, str, str, str, str)
-    def set_recording_params_from_spectrum_analyzer_link(self, freq: str, sample_rate: str, bw: str, gain: str,
-                                                         if_gain: str, baseband_gain:str, dev_name: str):
-        self.ui.spinBoxFreq.setValue(float(freq))
-        self.ui.spinBoxSampleRate.setValue(float(sample_rate))
-        self.ui.spinBoxBandwidth.setValue(float(bw))
-        self.ui.spinBoxGain.setValue(int(gain))
+    @pyqtSlot(str, dict)
+    def set_recording_params_from_spectrum_analyzer_link(self, dev_name, args: dict):
+        self.ui.spinBoxFreq.setValue(args["frequency"])
+        self.ui.spinBoxSampleRate.setValue(args["sample_rate"])
+        self.ui.spinBoxBandwidth.setValue(args["bandwidth"])
+        self.ui.spinBoxGain.setValue(args["gain"])
 
     @pyqtSlot(str)
     def on_spectrum_analyzer_link_activated(self, link: str):

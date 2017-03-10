@@ -5,6 +5,7 @@ from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
+from urh.dev import config
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
@@ -24,12 +25,11 @@ class ProjectManager(QObject):
     def __init__(self, main_controller):
         super().__init__()
         self.main_controller = main_controller
-        self.sample_rate = 1e6
-        self.bandwidth = 1e6
-        self.frequency = 43392e4
-        self.gain = 20
-        self.if_gain = 20
-        self.baseband_gain = 20
+        self.device_conf = dict(frequency=config.DEFAULT_FREQUENCY,
+                                sample_rate=config.DEFAULT_SAMPLE_RATE,
+                                bandwidth=config.DEFAULT_BANDWIDTH,
+                                gain=config.DEFAULT_GAIN)
+
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
@@ -50,20 +50,17 @@ class ProjectManager(QObject):
         self.__project_file = value
         self.project_loaded_status_changed.emit(self.project_loaded)
 
-    def set_recording_parameters(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, device):
-        self.frequency = float(freq)
-        self.sample_rate = float(sample_rate)
-        self.bandwidth = float(bandwidth)
-        self.gain = int(gain)
-        self.if_gain = int(if_gain)
-        self.baseband_gain = int(baseband_gain)
+    def set_recording_parameters(self, device: str, kwargs: dict):
+        for key, value in kwargs.items():
+            self.device_conf[key] = value
         self.device = device
 
     def read_parameters(self, root):
-        self.frequency = float(root.get("frequency", 433.92e6))
-        self.sample_rate = float(root.get("sample_rate", 1e6))
-        self.bandwidth = float(root.get("bandwidth", 1e6))
-        self.gain = int(root.get("gain", 20))
+        device_conf_tag = root.find("device_conf")
+        if device_conf_tag is not None:
+            for dev_tag in device_conf_tag:
+                self.device_conf[dev_tag.tag] = float(dev_tag.text)
+
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
 
@@ -242,10 +239,10 @@ class ProjectManager(QObject):
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
-        root.set("frequency", str(self.frequency))
-        root.set("sample_rate", str(self.sample_rate))
-        root.set("bandwidth", str(self.bandwidth))
-        root.set("gain", str(self.gain))
+        device_conf_tag = ET.SubElement(root, "device_conf")
+        for key in sorted(self.device_conf):
+            device_val_tag = ET.SubElement(device_conf_tag, key)
+            device_val_tag.text = str(self.device_conf[key])
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
         root.set("broadcast_address_hex", str(self.broadcast_address_hex))
@@ -396,10 +393,10 @@ class ProjectManager(QObject):
         if dialog.committed:
             if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, constants.PROJECT_FILE)):
                 self.set_project_folder(dialog.path, ask_for_new_project=False)
-            self.frequency = dialog.freq
-            self.sample_rate = dialog.sample_rate
-            self.gain = dialog.gain
-            self.bandwidth = dialog.bandwidth
+            self.device_conf["frequency"] = dialog.freq
+            self.device_conf["sample_rate"] = dialog.sample_rate
+            self.device_conf["gain"] = dialog.gain
+            self.device_conf["bandwidth"] = dialog.bandwidth
             self.description = dialog.description
             self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(" ", "")
             if dialog.new_project:

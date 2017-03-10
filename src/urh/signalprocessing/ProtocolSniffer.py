@@ -81,8 +81,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, bandwidth=1e6,
-                                            freq=433.92e6, gain=20, if_gain=20, baseband_gain=20, sample_rate=1e6,
+            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive,
                                             device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)

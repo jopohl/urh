@@ -281,10 +281,7 @@ class CompareFrameController(QFrame):
         self.proto_tree_model.group_added.connect(self.on_group_added)
 
     def get_message_type_for_label(self, lbl: ProtocolLabel) -> MessageType:
-        for msg_type in self.proto_analyzer.message_types:
-            if lbl in msg_type:
-                return msg_type
-        return None
+        return next((msg_type for msg_type in self.proto_analyzer.message_types if lbl in msg_type), None)
 
     def update_field_type_combobox(self):
         field_types = [ft.caption for ft in self.field_types]

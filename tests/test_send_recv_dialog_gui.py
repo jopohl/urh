@@ -220,4 +220,5 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
+            app.processEvents()
             QTest.qWait(250)

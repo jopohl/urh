@@ -80,8 +80,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>320</width>
-                <height>514</height>
+                <width>322</width>
+                <height>497</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
@@ -150,6 +150,15 @@
                  </property>
                  <property name="defaultDropAction">
                   <enum>Qt::IgnoreAction</enum>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectItems</enum>
+                 </property>
+                 <property name="animated">
+                  <bool>true</bool>
                  </property>
                  <attribute name="headerVisible">
                   <bool>false</bool>

@@ -632,7 +632,7 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
 
         self.protocol_label_list_model.update()
-        self.proto_tree_model.update()
+        self.proto_tree_model.layoutChanged.emit()  # no not call update, as it prevents editing
         self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()

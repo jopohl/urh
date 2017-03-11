@@ -231,8 +231,8 @@ class SendRecvDialogController(QDialog):
                 slider.setVisible(False)
             getattr(self.ui, "slider" + ui_element).setVisible(conf_key in conf)
 
-        self.ui.lineEditDeviceArgs.setVisibile("device_args" in conf)
-        self.ui.labelDeviceArgs.setVisibile("device_args" in conf)
+        self.ui.lineEditDeviceArgs.setVisible("device_args" in conf)
+        self.ui.labelDeviceArgs.setVisible("device_args" in conf)
         self.ui.lineEditIP.setVisible("ip" in conf)
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
@@ -499,7 +499,7 @@ class SendRecvDialogController(QDialog):
 
         if "No devices found for" in new_messages:
             self.device.stop_on_error("Could not establish connection to USRP")
-            Errors.usrp_ip_not_found()
+            Errors.usrp_found()
 
             self.on_clear_clicked()
 

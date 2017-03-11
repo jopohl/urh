@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>1001</height>
+    <height>1033</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -475,7 +475,13 @@
          <item row="1" column="0">
           <widget class="QLabel" name="labelDeviceArgs">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here. You can find a list of supported identifiers &lt;a href=&quot;http://files.ettus.com/manual/page_identification.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here. You can lookup these values &lt;a href=&quot;http://files.ettus.com/manual/page_configuration.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>-1</number>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <property name="text">
             <string>Device arguments:</string>
@@ -485,7 +491,7 @@
          <item row="1" column="2">
           <widget class="QLineEdit" name="lineEditDeviceArgs">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here. You can find a list of supported identifiers &lt;a href=&quot;http://files.ettus.com/manual/page_identification.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here. You can lookup these values &lt;a href=&quot;http://files.ettus.com/manual/page_configuration.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>

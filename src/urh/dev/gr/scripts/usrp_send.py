@@ -27,7 +27,7 @@ from grc_gnuradio import blks2 as grc_blks2
 from gnuradio import zeromq
 
 class top_block(gr.top_block):
-    def __init__(self, samp_rate, freq, gain, bw, ip, port):
+    def __init__(self, samp_rate, freq, gain, bw, device_args, port):
         gr.top_block.__init__(self, "Top Block")
 
         ##################################################
@@ -41,8 +41,7 @@ class top_block(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.uhd_usrp_sink_0 = uhd.usrp_sink(
-            ",".join(("addr=" + ip, "")),
+        self.uhd_usrp_sink_0 = uhd.usrp_sink(device_args,
             uhd.stream_args(
                 cpu_format="fc32",
                 channels=range(1),
@@ -94,10 +93,10 @@ if __name__ == '__main__':
     parser.add_option("-f", "--freq", dest="freq", help="Frequency", default=433000)
     parser.add_option("-g", "--gain", dest="gain", help="Gain", default=30)
     parser.add_option("-b", "--bandwidth", dest="bw", help="Bandwidth", default=200000)
-    parser.add_option("-i", "--ip", dest="ip", help="IP", default="192.168.10.2")
+    parser.add_option("-d", "--device-args", dest="device_args", help="Device Args e.g. addr=192.168.10.2", default="")
     parser.add_option("-p", "--port", dest="port", help="Port", default=1337)
     (options, args) = parser.parse_args()
     tb = top_block(float(options.samplerate), float(options.freq), int(options.gain),
-                   float(options.bw), str(options.ip), int(options.port))
+                   float(options.bw), str(options.device_args), int(options.port))
     tb.start()
     tb.wait()

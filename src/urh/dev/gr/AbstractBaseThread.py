@@ -190,7 +190,7 @@ class AbstractBaseThread(QThread):
                    "--port", str(self.port)]
 
         if self.device.upper() == "USRP":
-            options.extend(["--ip", self.device_args])
+            options.extend(["--device-args", self.device_args])
 
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])

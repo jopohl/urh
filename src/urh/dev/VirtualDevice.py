@@ -225,7 +225,7 @@ class VirtualDevice(QObject):
     @property
     def ip(self):
         if self.backend == Backends.grc:
-            raise ValueError("Unsupported Backend")
+            return self.__dev.device_ip
         elif self.backend == Backends.native:
             return self.__dev.device_ip
         else:
@@ -234,7 +234,7 @@ class VirtualDevice(QObject):
     @ip.setter
     def ip(self, value):
         if self.backend == Backends.grc:
-            raise ValueError("Unsupported Backend")
+            self.__dev.device_ip = value
         elif self.backend == Backends.native:
             self.__dev.device_ip = value
         elif self.backend in (Backends.none, Backends.network):
@@ -244,17 +244,17 @@ class VirtualDevice(QObject):
 
     @property
     def port(self):
-        if self.backend in (Backends.grc, Backends.native):
+        if self.backend in (Backends.grc, Backends.native, Backends.network):
             return self.__dev.port
         else:
-            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
+            raise ValueError("Unsupported Backend")
 
     @port.setter
     def port(self, value):
-        if self.backend in (Backends.grc, Backends.native):
+        if self.backend in (Backends.grc, Backends.native, Backends.network):
             self.__dev.port = value
         else:
-            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
+            raise ValueError("Unsupported Backend")
 
     @property
     def data(self):

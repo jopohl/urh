@@ -116,7 +116,6 @@ class CompareFrameController(QFrame):
 
         self.min_height = self.minimumHeight()
         self.max_height = self.maximumHeight()
-        self.__show_protocol_separation = True
 
         self.__set_decoding_error_label(None)
 
@@ -204,21 +203,6 @@ class CompareFrameController(QFrame):
         for group in self.groups:
             result.extend(group.protocols)
         return result
-
-    @property
-    def show_protocol_separation(self):
-        return self.__show_protocol_separation
-
-    @show_protocol_separation.setter
-    def show_protocol_separation(self, value: bool):
-        self.__show_protocol_separation = value
-
-        if not value:
-            for line in self.protocol_model.first_messages:
-                self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)
-
-        self.set_shown_protocols()
-
     # endregion
 
     def __set_decoding_error_label(self, message: Message):
@@ -585,11 +569,6 @@ class CompareFrameController(QFrame):
                 prev_line = line
                 if line != 0:
                     first_msg_indices.append(line)
-
-        if not self.show_protocol_separation:
-            self.protocol_model.first_messages[:] = []
-            self.updateUI()
-            return
 
         # Hidden Rows auf neue Reihenfolge übertragen
         [self.ui.tblViewProtocol.showRow(i) for i in range(self.protocol_model.row_count)]

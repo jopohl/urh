@@ -503,10 +503,6 @@ class SendRecvDialogController(QDialog):
 
             self.on_clear_clicked()
 
-        elif "OSError" in new_messages:
-            self.device.stop_on_error("OSError")
-            self.on_clear_clicked()
-
         elif "FATAL: No supported devices found" in new_messages or \
                         "HACKRF_ERROR_NOT_FOUND" in new_messages or \
                         "HACKRF_ERROR_LIBUSB" in new_messages:
@@ -548,8 +544,9 @@ class SendRecvDialogController(QDialog):
         self.device.stop("Restarting with new port")
         QApplication.processEvents()
 
-        self.device.port = random.randint(1024, 65536)
-        logger.info("Retry with port " + str(self.device.port))
+        if self.device.backend == Backends.grc:
+            self.device.increase_gr_port()
+
 
         self.device.start()
         QApplication.processEvents()

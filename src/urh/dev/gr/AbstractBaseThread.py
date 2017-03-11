@@ -1,5 +1,4 @@
 import os
-import socket
 import sys
 import tempfile
 from queue import Queue, Empty
@@ -26,7 +25,7 @@ class AbstractBaseThread(QThread):
                  ip='127.0.0.1', parent=None):
         super().__init__(parent)
         self.ip = ip
-        self.port = 1337
+        self.gr_port = 1337
         self._sample_rate = sample_rate
         self._freq = freq
         self._gain = gain
@@ -187,10 +186,11 @@ class AbstractBaseThread(QThread):
         options = [self.python2_interpreter, os.path.join(rp, filename),
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
-                   "--port", str(self.port)]
+                   "--port", str(self.gr_port)]
 
         if self.device.upper() == "USRP":
-            options.extend(["--device-args", self.device_args])
+            if self.device_args:
+                options.extend(["--device-args", self.device_args])
 
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
@@ -200,6 +200,7 @@ class AbstractBaseThread(QThread):
                             "--direct-sampling", str(self.direct_sampling_mode)])
 
         logger.info("Starting Gnuradio")
+        logger.debug(" ".join(options))
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
         logger.info("Started Gnuradio")
         t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
@@ -216,7 +217,7 @@ class AbstractBaseThread(QThread):
             try:
                 time.sleep(0.1)
                 logger.info("Trying to get a connection to gnuradio...")
-                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.port))
+                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.gr_port))
                 logger.info("Got connection")
                 break
             except (ConnectionRefusedError, ConnectionResetError):

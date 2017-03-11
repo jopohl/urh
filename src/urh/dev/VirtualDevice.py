@@ -504,3 +504,10 @@ class VirtualDevice(QObject):
             self.__dev.client_port = port
         else:
             raise ValueError("Setting port only supported for NetworkSDR Plugin")
+
+    def increase_gr_port(self):
+        if self.backend == Backends.grc:
+            self.__dev.gr_port += 1
+            logger.info("Retry with port " + str(self.__dev.gr_port))
+        else:
+            raise ValueError("Only for GR backend")

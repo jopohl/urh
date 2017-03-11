@@ -19,7 +19,7 @@ class SenderThread(AbstractBaseThread):
         self.data = numpy.empty(1, dtype=numpy.complex64)
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUSH)
-        self.port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
+        self.gr_port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
         self.max_repeats = 1  # How often shall we send the data?
 
         self.__samples_per_transmission = self.MAX_SAMPLES_PER_TRANSMISSION

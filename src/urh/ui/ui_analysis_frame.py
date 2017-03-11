@@ -86,7 +86,7 @@ class Ui_FAnalysis(object):
         self.treeViewProtocols.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.treeViewProtocols.setDefaultDropAction(QtCore.Qt.IgnoreAction)
         self.treeViewProtocols.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.treeViewProtocols.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self.treeViewProtocols.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.treeViewProtocols.setAnimated(True)
         self.treeViewProtocols.setObjectName("treeViewProtocols")
         self.treeViewProtocols.header().setVisible(False)

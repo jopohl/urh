@@ -278,7 +278,6 @@ class CompareFrameController(QFrame):
 
         self.proto_tree_model.group_deleted.connect(self.on_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.on_proto_to_group_added)
-        self.proto_tree_model.group_added.connect(self.on_group_added)
 
     def get_message_type_for_label(self, lbl: ProtocolLabel) -> MessageType:
         return next((msg_type for msg_type in self.proto_analyzer.message_types if lbl in msg_type), None)
@@ -1291,10 +1290,6 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.blockSignals(False)
 
         self.updateUI(ignore_table_model=ignore_table_model_on_update)
-
-    @pyqtSlot(QModelIndex)
-    def on_group_added(self, index):
-        self.ui.treeViewProtocols.edit(index)
 
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):

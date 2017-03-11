@@ -1,5 +1,6 @@
 import unittest
 
+import copy
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
@@ -167,3 +168,31 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
         self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
 
+    def test_refresh_existing_decodings(self):
+        self.assertEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+        decoder = copy.deepcopy(self.cfc.proto_analyzer.messages[0].decoder)
+        decoder.chain.append(decoder.code_invert)
+        self.cfc.proto_analyzer.messages[0].decoder = decoder
+        self.assertNotEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+
+        self.cfc.refresh_existing_encodings()
+        self.assertEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+
+    def test_get_labels_from_selection(self):
+        self.cfc.ui.tblViewProtocol.selectRow(1)
+        self.assertEqual(len(self.cfc.get_labels_from_selection(*self.cfc.ui.tblViewProtocol.selection_range())), 0)
+
+    def test_refresh_field_types_for_labels(self):
+        self.cfc.add_protocol_label(0, 10, 0, 0, edit_label_name=False)
+        n = len(self.cfc.field_types)
+        self.cfc.refresh_field_types_for_labels()
+        self.assertEqual(len(self.cfc.field_types), n)
+
+    def test_tree_view_selection_changed(self):
+        self.cfc.proto_tree_model.addGroup()
+        self.cfc.proto_tree_model.addGroup()
+        app.processEvents()
+        self.assertEqual(len(self.cfc.active_group_ids), 1)
+        self.cfc.ui.treeViewProtocols.selectAll()
+        app.processEvents()
+        self.assertEqual(len(self.cfc.active_group_ids), 1)

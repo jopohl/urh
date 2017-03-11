@@ -38,7 +38,6 @@ DEVICE_CONFIG["USRP"] = {
     "sample_rate": dev_range(start=1, stop=200 * M, step=1),
     "bandwidth": dev_range(start=1, stop=120 * M, step=1),
     "device_args": "",
-    "ip": "",
     "rx_rf_gain": list(range(0, 101)),
     "tx_rf_gain": list(range(0, 101)),
     "antenna": [0, 1]

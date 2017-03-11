@@ -26,7 +26,20 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="16" column="2">
+         <item row="20" column="2">
+          <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="placeholderText">
+            <string>None</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="2">
           <widget class="QComboBox" name="combox_sniff_Modulation">
            <item>
             <property name="text">
@@ -45,7 +58,7 @@
            </item>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="labelFreqCorrection">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -55,20 +68,7 @@
            </property>
           </widget>
          </item>
-         <item row="19" column="2">
-          <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-           <property name="placeholderText">
-            <string>None</string>
-           </property>
-           <property name="clearButtonEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="2">
+         <item row="10" column="2">
           <widget class="QSpinBox" name="spinBoxFreqCorrection">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -84,7 +84,7 @@
            </property>
           </widget>
          </item>
-         <item row="18" column="2">
+         <item row="19" column="2">
           <widget class="QComboBox" name="comboBox_sniff_viewtype">
            <item>
             <property name="text">
@@ -110,28 +110,28 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="labelSampleRate">
            <property name="text">
             <string>Sample rate (Sps):</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="labelIP">
            <property name="text">
             <string>IP address:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="labelPort">
            <property name="text">
             <string>Port number:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="3" column="2">
           <widget class="QSpinBox" name="spinBoxPort">
            <property name="minimum">
             <number>1</number>
@@ -144,7 +144,7 @@
            </property>
           </widget>
          </item>
-         <item row="11" column="2">
+         <item row="12" column="2">
           <widget class="QSpinBox" name="spinBoxNRepeat">
            <property name="specialValueText">
             <string>Infinite</string>
@@ -154,21 +154,21 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="labelFreq">
            <property name="text">
             <string>Frequency (Hz):</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="0">
+         <item row="12" column="0">
           <widget class="QLabel" name="labelNRepeat">
            <property name="text">
             <string>Repeat:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="4" column="2">
           <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
            <property name="decimals">
             <number>3</number>
@@ -181,7 +181,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
+         <item row="5" column="2">
           <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
            <property name="decimals">
             <number>3</number>
@@ -194,7 +194,7 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="2">
+         <item row="6" column="2">
           <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
            <property name="decimals">
             <number>3</number>
@@ -207,7 +207,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="3" rowspan="2">
+         <item row="5" column="3" rowspan="2">
           <widget class="QToolButton" name="btnLockBWSR">
            <property name="text">
             <string>...</string>
@@ -224,7 +224,7 @@
            </property>
           </widget>
          </item>
-         <item row="13" column="2">
+         <item row="14" column="2">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
            <property name="decimals">
             <number>4</number>
@@ -251,7 +251,7 @@
            </item>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="labelGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -261,14 +261,14 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="labelBandwidth">
            <property name="text">
             <string>Bandwidth (Hz):</string>
            </property>
           </widget>
          </item>
-         <item row="14" column="2">
+         <item row="15" column="2">
           <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
            <property name="decimals">
             <number>4</number>
@@ -278,14 +278,14 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="2" column="2">
           <widget class="QLineEdit" name="lineEditIP">
            <property name="text">
-            <string>192.168.10.2</string>
+            <string>127.0.0.1</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="3">
+         <item row="7" column="3">
           <widget class="QSpinBox" name="spinBoxGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -301,7 +301,7 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="2">
+         <item row="7" column="2">
           <widget class="QSlider" name="sliderGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -317,35 +317,35 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="0">
+         <item row="15" column="0">
           <widget class="QLabel" name="label_sniff_Noise">
            <property name="text">
             <string>Noise:</string>
            </property>
           </widget>
          </item>
-         <item row="13" column="0">
+         <item row="14" column="0">
           <widget class="QLabel" name="label_sniff_Center">
            <property name="text">
             <string>Center:</string>
            </property>
           </widget>
          </item>
-         <item row="19" column="0">
+         <item row="20" column="0">
           <widget class="QLabel" name="label_sniff_OutputFile">
            <property name="text">
             <string>Output file:</string>
            </property>
           </widget>
          </item>
-         <item row="12" column="0">
+         <item row="13" column="0">
           <widget class="QLabel" name="label_sniff_BitLength">
            <property name="text">
             <string>Bit length:</string>
            </property>
           </widget>
          </item>
-         <item row="12" column="2">
+         <item row="13" column="2">
           <widget class="QSpinBox" name="spinbox_sniff_BitLen">
            <property name="minimum">
             <number>1</number>
@@ -355,14 +355,21 @@
            </property>
           </widget>
          </item>
-         <item row="15" column="0">
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="spinBoxIFGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="0">
           <widget class="QLabel" name="label_sniff_Tolerance">
            <property name="text">
             <string>Error Tolerance:</string>
            </property>
           </widget>
          </item>
-         <item row="15" column="2">
+         <item row="16" column="2">
           <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
            <property name="maximum">
             <number>999999</number>
@@ -372,14 +379,14 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="3">
-          <widget class="QSpinBox" name="spinBoxIFGain">
+         <item row="9" column="3">
+          <widget class="QSpinBox" name="spinBoxBasebandGain">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="labelIFGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -389,14 +396,7 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="3">
-          <widget class="QSpinBox" name="spinBoxBasebandGain">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="labelBasebandGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -406,7 +406,7 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="2">
+         <item row="8" column="2">
           <widget class="QSlider" name="sliderIFGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -416,7 +416,7 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="2">
+         <item row="9" column="2">
           <widget class="QSlider" name="sliderBasebandGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -441,21 +441,28 @@
            </property>
           </widget>
          </item>
-         <item row="16" column="0">
+         <item row="17" column="0">
           <widget class="QLabel" name="label_sniff_Modulation">
            <property name="text">
             <string>Modulation:</string>
            </property>
           </widget>
          </item>
-         <item row="18" column="0">
+         <item row="11" column="2">
+          <widget class="QComboBox" name="comboBoxDirectSampling">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="19" column="0">
           <widget class="QLabel" name="label_sniff_viewtype">
            <property name="text">
             <string>View:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="labelDirectSampling">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -465,10 +472,20 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="2">
-          <widget class="QComboBox" name="comboBoxDirectSampling">
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelDeviceArgs">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here. You can find a list of supported identifiers &lt;a href=&quot;http://files.ettus.com/manual/page_identification.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here. You can lookup these values &lt;a href=&quot;http://files.ettus.com/manual/page_configuration.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Device arguments:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLineEdit" name="lineEditDeviceArgs">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here. You can find a list of supported identifiers &lt;a href=&quot;http://files.ettus.com/manual/page_identification.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here. You can lookup these values &lt;a href=&quot;http://files.ettus.com/manual/page_configuration.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>

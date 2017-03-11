@@ -71,7 +71,6 @@ class VirtualDevice(QObject):
                                             parent=parent)
             else:
                 raise ValueError("Unknown mode")
-            self.__dev.usrp_ip = device_ip
             self.__dev.device = name
             self.__dev.started.connect(self.emit_started_signal)
             self.__dev.stopped.connect(self.emit_stopped_signal)
@@ -216,9 +215,17 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
+    def device_args(self):
+        return self.__dev.device_args
+
+    @device_args.setter
+    def device_args(self, value):
+        self.__dev.device_args = value
+
+    @property
     def ip(self):
         if self.backend == Backends.grc:
-            return self.__dev.usrp_ip
+            raise ValueError("Unsupported Backend")
         elif self.backend == Backends.native:
             return self.__dev.device_ip
         else:
@@ -227,7 +234,7 @@ class VirtualDevice(QObject):
     @ip.setter
     def ip(self, value):
         if self.backend == Backends.grc:
-            self.__dev.usrp_ip = value
+            raise ValueError("Unsupported Backend")
         elif self.backend == Backends.native:
             self.__dev.device_ip = value
         elif self.backend in (Backends.none, Backends.network):

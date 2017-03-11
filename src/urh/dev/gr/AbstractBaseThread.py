@@ -36,7 +36,7 @@ class AbstractBaseThread(QThread):
         self._freq_correction = 1
         self._direct_sampling_mode = 0
         self._receiving = receiving  # False for Sender-Thread
-        self.usrp_ip = "192.168.10.2"
+        self.device_args = ""  # e.g. addr=192.168.10.2
         self.device = "USRP"
         self.current_index = 0
 
@@ -190,7 +190,7 @@ class AbstractBaseThread(QThread):
                    "--port", str(self.port)]
 
         if self.device.upper() == "USRP":
-            options.extend(["--ip", self.usrp_ip])
+            options.extend(["--ip", self.device_args])
 
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])

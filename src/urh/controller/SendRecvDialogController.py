@@ -90,6 +90,14 @@ class SendRecvDialogController(QDialog):
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
 
+        ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
+        ip_regex = QRegExp("^" + ip_range
+                          + "\\." + ip_range
+                          + "\\." + ip_range
+                          + "\\." + ip_range + "$")
+        self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
+
+
     @property
     def is_rx(self) -> bool:
         return not self.is_tx
@@ -223,6 +231,8 @@ class SendRecvDialogController(QDialog):
                 slider.setVisible(False)
             getattr(self.ui, "slider" + ui_element).setVisible(conf_key in conf)
 
+        self.ui.lineEditDeviceArgs.setVisibile("device_args" in conf)
+        self.ui.labelDeviceArgs.setVisibile("device_args" in conf)
         self.ui.lineEditIP.setVisible("ip" in conf)
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
@@ -254,10 +264,9 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxNRepeat.editingFinished.emit()
         self.ui.spinBoxSampleRate.editingFinished.emit()
         self.ui.spinBoxFreqCorrection.editingFinished.emit()
-        if self.ui.cbDevice.currentText() in ("USRP", "RTL-TCP"):
-            self.ui.lineEditIP.editingFinished.emit()
-        if self.ui.cbDevice.currentText() == "RTL-TCP":
-            self.ui.spinBoxPort.editingFinished.emit()
+        self.ui.lineEditIP.editingFinished.emit()
+        self.ui.spinBoxPort.editingFinished.emit()
+        self.ui.lineEditDeviceArgs.editingFinished.emit()
 
     def get_devices_for_combobox(self):
         items = []
@@ -308,7 +317,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxFreq.editingFinished.connect(self.on_spinbox_frequency_editing_finished)
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
-        self.ui.lineEditIP.editingFinished.connect(self.on_spinbox_ip_editing_finished)
+        self.ui.lineEditIP.editingFinished.connect(self.on_line_edit_ip_editing_finished)
+        self.ui.lineEditDeviceArgs.editingFinished.connect(self.on_line_edit_device_args_editing_finished)
 
         self.ui.spinBoxFreqCorrection.editingFinished.connect(self.on_spinbox_freq_correction_editing_finished)
         self.ui.comboBoxDirectSampling.currentIndexChanged.connect(self.on_combobox_direct_sampling_index_changed)
@@ -363,8 +373,12 @@ class SendRecvDialogController(QDialog):
             self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
     @pyqtSlot()
-    def on_spinbox_ip_editing_finished(self):
+    def on_line_edit_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
+
+    @pyqtSlot()
+    def on_line_edit_device_args_editing_finished(self):
+        self.device.device_args = self.ui.lineEditDeviceArgs.text()
 
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):
@@ -439,14 +453,6 @@ class SendRecvDialogController(QDialog):
         self.graphics_view.setScene(self.scene_manager.scene)
         self.set_device_ui_items_visibility(dev_name)
         self.sync_gain_sliders()
-
-        # Set default IPs for USRP and RTLSDRTCP
-        if dev_name == "USRP":
-            if self.ui.lineEditIP.text() == constants.DEFAULT_IP_RTLSDRTCP:
-                self.ui.lineEditIP.setText(constants.DEFAULT_IP_USRP)
-        elif dev_name == "RTL-TCP":
-            if self.ui.lineEditIP.text() == constants.DEFAULT_IP_USRP:
-                self.ui.lineEditIP.setText(constants.DEFAULT_IP_RTLSDRTCP)
 
         self.set_bandwidth_status()
 

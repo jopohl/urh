@@ -262,7 +262,7 @@ class Device(QObject):
 
     @direct_sampling_mode.setter
     def direct_sampling_mode(self, value):
-        if value != self.__freq_correction:
+        if value != self.__direct_sampling_mode:
             self.__direct_sampling_mode = value
             self.set_device_direct_sampling_mode(value)
 

@@ -1049,7 +1049,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_antenna_enab
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_amp_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_40set_baseband_filter_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /* proto */
-static PyObject *__pyx_float_0_25;
+static PyObject *__pyx_float_0_15;
 
 /* "src/urh/dev/native/lib/hackrf.pyx":11
  * from cpython cimport PyBytes_GET_SIZE
@@ -4136,7 +4136,7 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_25 = PyFloat_FromDouble(0.25); if (unlikely(!__pyx_float_0_25)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_float_0_15 = PyFloat_FromDouble(0.15); if (unlikely(!__pyx_float_0_15)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -4249,7 +4249,7 @@ PyMODINIT_FUNC PyInit_hackrf(void)
  * from libc.string cimport memcpy
  * import time             # <<<<<<<<<<<<<<
  * 
- * TIMEOUT = 0.25
+ * TIMEOUT = 0.15
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_time, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4259,11 +4259,11 @@ PyMODINIT_FUNC PyInit_hackrf(void)
   /* "src/urh/dev/native/lib/hackrf.pyx":6
  * import time
  * 
- * TIMEOUT = 0.25             # <<<<<<<<<<<<<<
+ * TIMEOUT = 0.15             # <<<<<<<<<<<<<<
  * 
  * cdef object f
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TIMEOUT, __pyx_float_0_25) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TIMEOUT, __pyx_float_0_15) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
 
   /* "src/urh/dev/native/lib/hackrf.pyx":23
  * 

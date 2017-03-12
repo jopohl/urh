@@ -3,7 +3,7 @@ from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
 
-TIMEOUT = 0.25
+TIMEOUT = 0.15
 
 cdef object f
 from cpython cimport PyBytes_GET_SIZE

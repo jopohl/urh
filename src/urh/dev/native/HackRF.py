@@ -67,7 +67,7 @@ class HackRF(Device):
 
         while not exit_requested:
             while ctrl_connection.poll():
-                result = HackRF.process_command(ctrl_connection.recv(), is_tx=False)
+                result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
                 if result == "stop":
                     exit_requested = True
                     break
@@ -112,7 +112,7 @@ class HackRF(Device):
 
         while not exit_requested and not sending_is_finished():
             while ctrl_connection.poll():
-                result = HackRF.process_command(ctrl_connection.recv(), is_tx=True)
+                result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
                 if result == "stop":
                     exit_requested = True
                     break
@@ -126,39 +126,39 @@ class HackRF(Device):
         ctrl_connection.close()
 
     @staticmethod
-    def process_command(command, is_tx: bool):
+    def process_command(command, ctrl_connection, is_tx: bool):
         is_rx = not is_tx
         if command == "stop":
             return "stop"
 
         tag, value = command.split(":")
         if tag == "center_freq":
-            logger.info("HackRF: Set center freq to {0}".format(int(value)))
-            return hackrf.set_freq(int(value))
+            ret = hackrf.set_freq(int(value))
+            ctrl_connection.send("set_center_freq to {0}:{1}".format(value, ret))
 
         elif tag == "rf_gain":
-            logger.info("HackRF: Set gain to {0}".format(int(value)))
-            hackrf.set_rf_gain(int(value))
+            ret = hackrf.set_rf_gain(int(value))
+            ctrl_connection.send("set_rf_gain to {0}:{1}".format(value, ret))
 
         elif tag == "if_gain" and is_rx:
-            logger.info("HackRF: Set if gain to {0}".format(int(value)))
-            hackrf.set_if_rx_gain(int(value))
+            ret = hackrf.set_if_rx_gain(int(value))
+            ctrl_connection.send("set_if_gain to {0}:{1}".format(value, ret))
 
         elif tag == "if_gain" and is_tx:
-            logger.info("HackRF: Set if gain to {0}".format(int(value)))
-            hackrf.set_if_tx_gain(int(value))
+            ret = hackrf.set_if_tx_gain(int(value))
+            ctrl_connection.send("set_if_gain to {0}:{1}".format(value, ret))
 
         elif tag == "baseband_gain" and is_rx:
-            logger.info("HackRF: Set baseband gain to {0}".format(int(value)))
-            hackrf.set_baseband_gain(int(value))
+            ret = hackrf.set_baseband_gain(int(value))
+            ctrl_connection.send("set_baseband_gain to {0}:{1}".format(value, ret))
 
         elif tag == "sample_rate":
-            logger.info("HackRF: Set sample_rate to {0}".format(int(value)))
-            return hackrf.set_sample_rate(int(value))
+            ret = hackrf.set_sample_rate(int(value))
+            ctrl_connection.send("set_sample_rate to {0}:{1}".format(value, ret))
 
         elif tag == "bandwidth":
-            logger.info("HackRF: Set bandwidth to {0}".format(int(value)))
-            return hackrf.set_baseband_filter_bandwidth(int(value))
+            ret = hackrf.set_baseband_filter_bandwidth(int(value))
+            ctrl_connection.send("set_bandwidth to {0}:{1}".format(value, ret))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,

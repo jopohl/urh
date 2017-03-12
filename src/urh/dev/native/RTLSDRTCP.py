@@ -19,20 +19,20 @@ class RTLSDRTCP(Device):
                      gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str, port: int):
         # connect and initialize rtl_tcp
         sdr = RTLSDRTCP(center_freq, gain, sample_rate, device_number)
-        sdr.open(device_ip, port)
+        sdr.open(ctrl_connection, device_ip, port)
         if sdr.socket_is_open:
             sdr.device_number = device_number
-            sdr.set_parameter("centerFreq", int(center_freq))
-            sdr.set_parameter("sampleRate", int(sample_rate))
-            sdr.set_parameter("bandwidth", int(sample_rate)) # set bandwidth equal to sample_rate
-            sdr.set_parameter("tunerGain", int(gain))
-            sdr.set_parameter("freqCorrection", int(freq_correction))
-            sdr.set_parameter("directSampling", int(direct_sampling_mode))
+            sdr.set_parameter("centerFreq", int(center_freq), ctrl_connection)
+            sdr.set_parameter("sampleRate", int(sample_rate), ctrl_connection)
+            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection) # set bandwidth equal to sample_rate
+            sdr.set_parameter("tunerGain", int(gain), ctrl_connection)
+            sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
+            sdr.set_parameter("directSampling", int(direct_sampling_mode), ctrl_connection)
             exit_requested = False
 
             while not exit_requested:
                 while ctrl_connection.poll():
-                    result = sdr.process_command(ctrl_connection.recv())
+                    result = sdr.process_command(ctrl_connection.recv(), ctrl_connection)
                     if result == "stop":
                         exit_requested = True
                         break
@@ -48,7 +48,7 @@ class RTLSDRTCP(Device):
         data_connection.close()
         ctrl_connection.close()
 
-    def process_command(self, command):
+    def process_command(self, command, ctrl_connection):
         logger.debug("RTLSDRTCP: {}".format(command))
         if command == "stop":
             return "stop"
@@ -56,31 +56,31 @@ class RTLSDRTCP(Device):
         tag, value = command.split(":")
         if tag == "center_freq":
             logger.info("RTLSDRTCP: Set center freq to {0}".format(int(value)))
-            return self.set_parameter("centerFreq", int(value))
+            return self.set_parameter("centerFreq", int(value), ctrl_connection)
 
         elif tag == "rf_gain":
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
-            return self.set_parameter("tunerGain", 10*int(value))  # calculate *10 for API
+            return self.set_parameter("tunerGain", 10*int(value), ctrl_connection)  # calculate *10 for API
 
         elif tag == "if_gain":
             logger.info("RTLSDRTCP: Set if gain to {0}".format(int(value)))
-            return self.set_parameter("tunerIFGain", 10*int(value))  # calculate *10 for API
+            return self.set_parameter("tunerIFGain", 10*int(value), ctrl_connection)  # calculate *10 for API
 
         elif tag == "sample_rate":
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))
-            return self.set_parameter("sampleRate", int(value))
+            return self.set_parameter("sampleRate", int(value), ctrl_connection)
 
         elif tag == "tuner_bandwidth":
             logger.info("RTLSDRTCP: Set bandwidth to {0}".format(int(value)))
-            return self.set_parameter("bandwidth", int(value))
+            return self.set_parameter("bandwidth", int(value), ctrl_connection)
 
         elif tag == "freq_correction":
             logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
-            return self.set_parameter("freqCorrection", int(value))
+            return self.set_parameter("freqCorrection", int(value), ctrl_connection)
 
         elif tag == "direct_sampling_mode":
             logger.info("RTLSDRTCP: Set direct sampling mode to {0}".format(int(value)))
-            return self.set_parameter("directSampling", int(value))
+            return self.set_parameter("directSampling", int(value), ctrl_connection)
 
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
         super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
@@ -97,7 +97,7 @@ class RTLSDRTCP(Device):
         return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
                self.gain, self.freq_correction, self.direct_sampling_mode, self.device_ip, self.port
 
-    def open(self, hostname="127.0.0.1", port=1234):
+    def open(self, ctrl_connection, hostname="127.0.0.1", port=1234):
         if not self.socket_is_open:
             try:
                 # Create socket and connect
@@ -107,7 +107,8 @@ class RTLSDRTCP(Device):
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
-                #self.device_messages.append("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
+                ctrl_connection.send("Could not connect to rtl_tcp at {0} {1} ({2}):1".format(hostname, port, e))
+                #self.device_messages.add("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))    # TODO: List has no method 'add'
                 return False
 
             try:
@@ -141,7 +142,8 @@ class RTLSDRTCP(Device):
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
                 logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
-                #self.device_messages.append("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+                # Show this in error message box after refactoring:
+                #self.errors.add("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))
@@ -154,7 +156,7 @@ class RTLSDRTCP(Device):
             self.socket_is_open = False
         return self.sock.close()
 
-    def set_parameter(self, param: str, value: int):  # returns error (True/False)
+    def set_parameter(self, param: str, value: int, ctrl_connection):  # returns error (True/False)
         if self.socket_is_open:
             msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
             msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
@@ -163,7 +165,8 @@ class RTLSDRTCP(Device):
             except OSError as e:
                 self.sock.close()
                 logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))
-                #self.device_messages.append("Could not set parameter {0}:{1} ({2})".format(param, value, e))
+                ctrl_connection.send("Could not set parameter {0} {1} ({2}):1".format(param, value, e))
+                #self.device_messages.add("Could not set parameter {0}:{1} ({2})".format(param, value, e))
                 return True
         return False
 

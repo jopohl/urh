@@ -1,5 +1,4 @@
 import os
-import socket
 import sys
 import tempfile
 from queue import Queue, Empty
@@ -22,17 +21,21 @@ class AbstractBaseThread(QThread):
     stopped = pyqtSignal()
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, sample_rate, freq, gain, bandwidth, receiving: bool,
+    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
                  ip='127.0.0.1', parent=None):
         super().__init__(parent)
         self.ip = ip
-        self.port = 1337
+        self.gr_port = 1337
         self._sample_rate = sample_rate
         self._freq = freq
         self._gain = gain
+        self._if_gain = if_gain
+        self._baseband_gain = baseband_gain
         self._bandwidth = bandwidth
+        self._freq_correction = 1
+        self._direct_sampling_mode = 0
         self._receiving = receiving  # False for Sender-Thread
-        self.usrp_ip = "192.168.10.2"
+        self.device_args = ""  # e.g. addr=192.168.10.2
         self.device = "USRP"
         self.current_index = 0
 
@@ -96,6 +99,34 @@ class AbstractBaseThread(QThread):
                 pass
 
     @property
+    def if_gain(self):
+        return self._if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        self._if_gain = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'IFG:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
+    def baseband_gain(self):
+        return self._baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        self._baseband_gain = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'BBG:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
     def bandwidth(self):
         return self._bandwidth
 
@@ -109,7 +140,35 @@ class AbstractBaseThread(QThread):
             except BrokenPipeError:
                 pass
 
-    def initalize_process(self):
+    @property
+    def freq_correction(self):
+        return self._freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        self._freq_correction = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'FC:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    @property
+    def direct_sampling_mode(self):
+        return self._direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        self._direct_sampling_mode = value
+        if self.tb_process:
+            try:
+                self.tb_process.stdin.write(b'DSM:' + bytes(str(value), "utf8") + b'\n')
+                self.tb_process.stdin.flush()
+            except BrokenPipeError:
+                pass
+
+    def initialize_process(self):
         self.started.emit()
 
         if not hasattr(sys, 'frozen'):
@@ -127,12 +186,21 @@ class AbstractBaseThread(QThread):
         options = [self.python2_interpreter, os.path.join(rp, filename),
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
-                   "--port", str(self.port)]
+                   "--port", str(self.gr_port)]
 
         if self.device.upper() == "USRP":
-            options.extend(["--ip", self.usrp_ip])
+            if self.device_args:
+                options.extend(["--device-args", self.device_args])
+
+        if self.device.upper() == "HACKRF":
+            options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
+
+        if self.device.upper() == "RTL-SDR":
+            options.extend(["--freq-correction", str(self.freq_correction),
+                            "--direct-sampling", str(self.direct_sampling_mode)])
 
         logger.info("Starting Gnuradio")
+        logger.debug(" ".join(options))
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
         logger.info("Started Gnuradio")
         t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
@@ -149,7 +217,7 @@ class AbstractBaseThread(QThread):
             try:
                 time.sleep(0.1)
                 logger.info("Trying to get a connection to gnuradio...")
-                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.port))
+                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.gr_port))
                 logger.info("Got connection")
                 break
             except (ConnectionRefusedError, ConnectionResetError):

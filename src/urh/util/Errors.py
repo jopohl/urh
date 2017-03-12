@@ -31,7 +31,7 @@ class Errors:
                              w.tr("There was a error writing this file! {0}".format(msg)))
 
     @staticmethod
-    def usrp_ip_not_found():
+    def usrp_found():
         w = QWidget()
         QMessageBox.critical(w, w.tr("USRP not found"),
                              w.tr("USRP could not be found . Is the IP "

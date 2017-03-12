@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 
 from urh.FFTSceneManager import FFTSceneManager
@@ -7,9 +8,8 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 
 
 class SpectrumDialogController(SendRecvDialogController):
-    def __init__(self, freq, samp_rate, bw, gain, device: str, parent=None, testing_mode=False):
-        self.is_rx = True
-        super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+    def __init__(self, project_manager, parent=None, testing_mode=False):
+        super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewReceive
         self.update_interval = 1
@@ -35,6 +35,18 @@ class SpectrumDialogController(SendRecvDialogController):
         self.init_device()
         self.set_bandwidth_status()
 
+        self.gain_timer = QTimer()
+        self.gain_timer.setSingleShot(True)
+        self.gain_timer.timeout.connect(self.ui.spinBoxGain.editingFinished.emit)
+
+        self.if_gain_timer = QTimer()
+        self.if_gain_timer.setSingleShot(True)
+        self.if_gain_timer.timeout.connect(self.ui.spinBoxIFGain.editingFinished.emit)
+
+        self.bb_gain_timer = QTimer()
+        self.bb_gain_timer.setSingleShot(True)
+        self.bb_gain_timer.timeout.connect(self.ui.spinBoxBasebandGain.editingFinished.emit)
+
         self.create_connects()
 
     def create_connects(self):
@@ -54,8 +66,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum, bw=1e6,
-                                    freq=433.92e6, gain=40, samp_rate=1e6,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 
@@ -65,7 +76,7 @@ class SpectrumDialogController(SendRecvDialogController):
         self.ui.spinBoxFreq.editingFinished.emit()
 
     @pyqtSlot()
-    def on_freq_changed(self):
+    def on_spinbox_frequency_editing_finished(self):
         self.device.frequency = self.ui.spinBoxFreq.value()
         self.scene_manager.scene.center_freq = self.ui.spinBoxFreq.value()
         self.scene_manager.clear_path()
@@ -79,6 +90,8 @@ class SpectrumDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_device_started(self):
         super().on_device_started()
+        self.ui.spinBoxPort.setEnabled(False)
+        self.ui.lineEditIP.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
 
@@ -86,3 +99,19 @@ class SpectrumDialogController(SendRecvDialogController):
     def on_clear_clicked(self):
         self.scene_manager.clear_path()
         self.scene_manager.clear_peak()
+
+    @pyqtSlot(int)
+    def on_slider_gain_value_changed(self, value: int):
+        super().on_slider_gain_value_changed(value)
+        self.gain_timer.start(250)
+
+    @pyqtSlot(int)
+    def on_slider_if_gain_value_changed(self, value: int):
+        super().on_slider_if_gain_value_changed(value)
+        self.if_gain_timer.start(250)
+
+    @pyqtSlot(int)
+    def on_slider_baseband_gain_value_changed(self, value: int):
+        super().on_slider_baseband_gain_value_changed(value)
+        self.bb_gain_timer.start(250)
+

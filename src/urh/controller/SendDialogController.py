@@ -14,9 +14,8 @@ from urh.util import FileOperator
 
 
 class SendDialogController(SendRecvDialogController):
-    def __init__(self, freq, samp_rate, bw, gain, device: str, modulated_data, parent=None, testing_mode=False):
-        self.is_tx = True
-        super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+    def __init__(self, project_manager, modulated_data, parent=None, testing_mode=False):
+        super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 
         self.update_interval = 25
         self.graphics_view = self.ui.graphicsViewSend
@@ -31,6 +30,7 @@ class SendDialogController(SendRecvDialogController):
 
         self.device_is_sending = False
 
+        samp_rate = self.ui.spinBoxSampleRate.value()
         signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
         self.scene_manager = SignalSceneManager(signal, parent=self)
         self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
@@ -72,8 +72,7 @@ class SendDialogController(SendRecvDialogController):
         num_repeats = self.ui.spinBoxNRepeat.value()
         sts = self.scene_manager.signal._fulldata
 
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, bw=1e6,
-                                    freq=433.92e6, gain=40, samp_rate=1e6, samples_to_send=sts,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, samples_to_send=sts,
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)
         self._create_device_connects()
 

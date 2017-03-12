@@ -116,7 +116,6 @@ class CompareFrameController(QFrame):
 
         self.min_height = self.minimumHeight()
         self.max_height = self.maximumHeight()
-        self.__show_protocol_separation = True
 
         self.__set_decoding_error_label(None)
 
@@ -204,21 +203,6 @@ class CompareFrameController(QFrame):
         for group in self.groups:
             result.extend(group.protocols)
         return result
-
-    @property
-    def show_protocol_separation(self):
-        return self.__show_protocol_separation
-
-    @show_protocol_separation.setter
-    def show_protocol_separation(self, value: bool):
-        self.__show_protocol_separation = value
-
-        if not value:
-            for line in self.protocol_model.first_messages:
-                self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)
-
-        self.set_shown_protocols()
-
     # endregion
 
     def __set_decoding_error_label(self, message: Message):
@@ -294,13 +278,9 @@ class CompareFrameController(QFrame):
 
         self.proto_tree_model.group_deleted.connect(self.on_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.on_proto_to_group_added)
-        self.proto_tree_model.group_added.connect(self.on_group_added)
 
     def get_message_type_for_label(self, lbl: ProtocolLabel) -> MessageType:
-        for msg_type in self.proto_analyzer.message_types:
-            if lbl in msg_type:
-                return msg_type
-        return None
+        return next((msg_type for msg_type in self.proto_analyzer.message_types if lbl in msg_type), None)
 
     def update_field_type_combobox(self):
         field_types = [ft.caption for ft in self.field_types]
@@ -586,11 +566,6 @@ class CompareFrameController(QFrame):
                 if line != 0:
                     first_msg_indices.append(line)
 
-        if not self.show_protocol_separation:
-            self.protocol_model.first_messages[:] = []
-            self.updateUI()
-            return
-
         # Hidden Rows auf neue Reihenfolge übertragen
         [self.ui.tblViewProtocol.showRow(i) for i in range(self.protocol_model.row_count)]
         self.protocol_model.hidden_rows.clear()
@@ -656,7 +631,7 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
 
         self.protocol_label_list_model.update()
-        self.proto_tree_model.update()
+        self.proto_tree_model.layoutChanged.emit()  # no not call update, as it prevents editing
         self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()
@@ -1315,10 +1290,6 @@ class CompareFrameController(QFrame):
         self.ui.tblViewProtocol.blockSignals(False)
 
         self.updateUI(ignore_table_model=ignore_table_model_on_update)
-
-    @pyqtSlot(QModelIndex)
-    def on_group_added(self, index):
-        self.ui.treeViewProtocols.edit(index)
 
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):

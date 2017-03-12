@@ -13,7 +13,7 @@ class RTLSDR(Device):
 
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     gain: int):
+                     gain: int, freq_correction: int, direct_sampling_mode: int):
         ret = rtlsdr.open(device_number)
         ctrl_connection.send("open:" + str(ret))
 
@@ -23,8 +23,14 @@ class RTLSDR(Device):
         ret = rtlsdr.set_sample_rate(sample_rate)
         ctrl_connection.send("set_sample_rate:" + str(ret))
 
-        ret = rtlsdr.set_tuner_gain(gain)
-        ctrl_connection.send("set_tuner_gain:" + str(ret))
+        ret = rtlsdr.set_tuner_gain(10*gain)
+        ctrl_connection.send("set_tuner_gain to {0}:{1}".format(gain, ret))
+
+        ret = rtlsdr.set_freq_correction(freq_correction)
+        ctrl_connection.send("set_freq_correction to {0}:{1}".format(freq_correction, ret))
+
+        ret = rtlsdr.set_direct_sampling(direct_sampling_mode)
+        ctrl_connection.send("set_direct_sampling_mode to {0}:{1}".format(direct_sampling_mode, ret))
 
         ret = rtlsdr.reset_buffer()
         ctrl_connection.send("reset_buffer:" + str(ret))
@@ -59,9 +65,9 @@ class RTLSDR(Device):
             logger.info("RTLSDR: Set center freq to {0}".format(int(value)))
             return rtlsdr.set_center_freq(int(value))
 
-        elif tag == "tuner_gain":
+        elif tag == "rf_gain":
             logger.info("RTLSDR: Set tuner gain to {0}".format(int(value)))
-            return rtlsdr.set_tuner_gain(int(value))
+            return rtlsdr.set_tuner_gain(10*int(value))  # calculate *10 for API
 
         elif tag == "sample_rate":
             logger.info("RTLSDR: Set sample_rate to {0}".format(int(value)))
@@ -71,8 +77,17 @@ class RTLSDR(Device):
             logger.info("RTLSDR: Set bandwidth to {0}".format(int(value)))
             return rtlsdr.set_tuner_bandwidth(int(value))
 
+        elif tag == "freq_correction":
+            logger.info("RTLSDR: Set freq_correction to {0}".format(int(value)))
+            return rtlsdr.set_freq_correction(int(value))
+
+        elif tag == "direct_sampling_mode":
+            logger.info("RTLSDR: Set direct_sampling_mode to {0}".format(int(value)))
+            return rtlsdr.set_direct_sampling(int(value))
+
     def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
-        super().__init__(0, freq, gain, srate, is_ringbuffer)
+        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
+                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
 
         self.success = 0
 
@@ -80,39 +95,13 @@ class RTLSDR(Device):
 
         self.bandwidth_is_adjustable = hasattr(rtlsdr,
                                                "set_tuner_bandwidth")  # e.g. not in Manjaro Linux / Ubuntu 14.04
-        self._max_frequency = 6e9
-        self._max_sample_rate = 3200000
-        self._max_frequency = 6e9
-        self._max_bandwidth = 3200000
-        self._max_gain = 500  # Todo: Consider get_tuner_gains for allowed gains here
 
         self.device_number = device_number
 
     @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, self.gain
-
-    def set_freq_correction(self, ppm):
-        ret = rtlsdr.set_freq_correction(int(ppm))
-        self.log_retcode(ret, "Set frequency correction")
-
-    def set_offset_tuning(self, on: bool):
-        ret = rtlsdr.set_offset_tuning(on)
-        self.log_retcode(ret, "Set offset tuning")
-
-    def set_gain_mode(self, manual: bool):
-        ret = rtlsdr.set_tuner_gain_mode(manual)
-        self.log_retcode(ret, "Set gain mode manual")
-
-    def set_if_gain(self, gain):
-        ret = rtlsdr.set_tuner_if_gain(1, int(gain))
-        self.log_retcode(ret, "Set IF gain")
-
-    def set_gain(self, gain):
-        self.parent_ctrl_conn.send("tuner_gain:{}".format(int(gain)))
-
-    def set_device_gain(self, gain):
-        self.set_gain(gain)
+        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
+               self.gain, self.freq_correction, self.direct_sampling_mode
 
     def set_device_bandwidth(self, bandwidth):
         if hasattr(rtlsdr, "set_tuner_bandwidth"):

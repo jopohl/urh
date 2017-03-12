@@ -226,7 +226,7 @@ class GeneratorTabController(QWidget):
                 selected_message.bit_len = self.table_model.protocol.messages[0].bit_len
 
         for m in self.modulators:
-            m.default_sample_rate = self.project_manager.sample_rate
+            m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
         modulator_dialog = ModulatorDialogController(self.modulators, parent=self)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
@@ -484,13 +484,7 @@ class GeneratorTabController(QWidget):
         try:
             modulated_data = self.modulate_data()
             try:
-                dialog = SendDialogController(self.project_manager.frequency,
-                                              self.project_manager.sample_rate,
-                                              self.project_manager.bandwidth,
-                                              self.project_manager.gain,
-                                              self.project_manager.device,
-                                              modulated_data=modulated_data,
-                                              parent=self)
+                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
             except OSError as e:
                 logger.error(repr(e))
                 return

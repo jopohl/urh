@@ -45,6 +45,8 @@ class OptionsController(QDialog):
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
+        self.ui.doubleSpinBoxRAMThreshold.setValue(100*constants.SETTINGS.value('ram_threshold', 0.6, float))
+
         self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
         self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
         if self.backend_handler.gnuradio_install_dir:
@@ -121,6 +123,7 @@ class OptionsController(QDialog):
         self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
+        self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -276,6 +279,11 @@ class OptionsController(QDialog):
                     int((1 + rel_val) * bit_len), int((1 + rel_val) * bit_len + rel_symbol_len * bit_len),
                     int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
         self.ui.lExplanation.setText(txt)
+
+    @pyqtSlot()
+    def on_double_spinbox_ram_threshold_value_changed(self):
+        val = self.ui.doubleSpinBoxRAMThreshold.value()
+        constants.SETTINGS.setValue("ram_threshold", val / 100)
 
     @pyqtSlot(bool)
     def on_checkbox_fallback_theme_clicked(self, use_fallback: bool):

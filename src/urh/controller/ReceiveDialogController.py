@@ -13,10 +13,9 @@ from urh.util.Formatter import Formatter
 class ReceiveDialogController(SendRecvDialogController):
     files_recorded = pyqtSignal(list)
 
-    def __init__(self, freq, samp_rate, bw, gain, device: str, parent=None, testing_mode=False):
-        self.is_rx = True
+    def __init__(self, project_manager, parent=None, testing_mode=False):
         try:
-            super().__init__(freq, samp_rate, bw, gain, device, parent=parent, testing_mode=testing_mode)
+            super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
         except ValueError:
             return
 
@@ -65,8 +64,7 @@ class ReceiveDialogController(SendRecvDialogController):
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.receive, bw=1e6,
-                                    freq=433.92e6, gain=40, samp_rate=1e6,
+        self.device = VirtualDevice(self.backend_handler, device_name, Mode.receive,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 

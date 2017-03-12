@@ -8,29 +8,33 @@ class HackRF(Device):
     BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
 
     @staticmethod
-    def initialize_hackrf(freq, sample_rate, gain, bw, ctrl_conn):
+    def initialize_hackrf(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ctrl_conn, is_tx):
         ret = hackrf.setup()
         ctrl_conn.send("setup:" + str(ret))
         if ret != 0:
             return False
 
         ret = hackrf.set_freq(freq)
-        ctrl_conn.send("set_freq:" + str(ret))
+        ctrl_conn.send("set_center_freq to {0}:{1}".format(freq, ret))
 
         ret = hackrf.set_sample_rate(sample_rate)
-        ctrl_conn.send("set_sample_rate:" + str(ret))
+        ctrl_conn.send("set_sample_rate to {0}:{1}".format(sample_rate, ret))
 
-        ret = hackrf.set_lna_gain(gain)
-        ctrl_conn.send("set_lna_gain:" + str(ret))
+        ret = hackrf.set_rf_gain(gain)
+        ctrl_conn.send("set_rf_gain to {0}:{1}".format(gain, ret))
 
-        ret = hackrf.set_vga_gain(gain)
-        ctrl_conn.send("set_vga_gain:" + str(ret))
+        if is_tx:
+            ret = hackrf.set_if_tx_gain(if_gain)
+            ctrl_conn.send("set_if_gain to {0}:{1}".format(if_gain, ret))
+        else:
+            ret = hackrf.set_if_rx_gain(if_gain)
+            ctrl_conn.send("set_if_gain to {0}:{1}".format(if_gain, ret))
 
-        ret = hackrf.set_txvga_gain(gain)
-        ctrl_conn.send("set_txvga_gain:" + str(ret))
+            ret = hackrf.set_baseband_gain(baseband_gain)
+            ctrl_conn.send("set_baseband_gain to {0}:{1}".format(baseband_gain, ret))
 
-        ret = hackrf.set_baseband_filter_bandwidth(bw)
-        ctrl_conn.send("set_bandwidth:" + str(ret))
+        ret = hackrf.set_baseband_filter_bandwidth(bandwidth)
+        ctrl_conn.send("set_bandwidth to {0}:{1}".format(bandwidth, ret))
 
         return True
 
@@ -46,7 +50,7 @@ class HackRF(Device):
         return True
 
     @staticmethod
-    def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, gain, bw):
+    def hackrf_receive(data_connection, ctrl_connection, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain):
         def callback_recv(buffer):
             try:
                 data_connection.send_bytes(buffer)
@@ -54,7 +58,7 @@ class HackRF(Device):
                 pass
             return 0
 
-        if not HackRF.initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection):
+        if not HackRF.initialize_hackrf(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ctrl_connection, is_tx=False):
             return False
 
         hackrf.start_rx_mode(callback_recv)
@@ -63,7 +67,7 @@ class HackRF(Device):
 
         while not exit_requested:
             while ctrl_connection.poll():
-                result = HackRF.process_command(ctrl_connection.recv())
+                result = HackRF.process_command(ctrl_connection.recv(), is_tx=False)
                 if result == "stop":
                     exit_requested = True
                     break
@@ -73,7 +77,7 @@ class HackRF(Device):
         ctrl_connection.close()
 
     @staticmethod
-    def hackrf_send(ctrl_connection, freq, sample_rate, gain, bw,
+    def hackrf_send(ctrl_connection, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                     send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
         def sending_is_finished():
             if sending_repeats == 0:  # 0 = infinity
@@ -99,7 +103,7 @@ class HackRF(Device):
             except (BrokenPipeError, EOFError):
                 return b""
 
-        if not HackRF.initialize_hackrf(freq, sample_rate, gain, bw, ctrl_connection):
+        if not HackRF.initialize_hackrf(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ctrl_connection, is_tx=True):
             return False
 
         hackrf.start_tx_mode(callback_send)
@@ -108,17 +112,22 @@ class HackRF(Device):
 
         while not exit_requested and not sending_is_finished():
             while ctrl_connection.poll():
-                result = HackRF.process_command(ctrl_connection.recv())
+                result = HackRF.process_command(ctrl_connection.recv(), is_tx=True)
                 if result == "stop":
                     exit_requested = True
                     break
+
+        if exit_requested:
+            logger.debug("HackRF: exit requested. Stopping sending")
+        if sending_is_finished():
+            logger.debug("HackRF: sending is finished.")
 
         HackRF.shutdown_hackrf(ctrl_connection)
         ctrl_connection.close()
 
     @staticmethod
-    def process_command(command):
-        logger.debug("HackRF: {}".format(command))
+    def process_command(command, is_tx: bool):
+        is_rx = not is_tx
         if command == "stop":
             return "stop"
 
@@ -127,11 +136,21 @@ class HackRF(Device):
             logger.info("HackRF: Set center freq to {0}".format(int(value)))
             return hackrf.set_freq(int(value))
 
-        elif tag == "gain":
+        elif tag == "rf_gain":
             logger.info("HackRF: Set gain to {0}".format(int(value)))
-            hackrf.set_lna_gain(int(value))
-            hackrf.set_vga_gain(int(value))
-            hackrf.set_txvga_gain(int(value))
+            hackrf.set_rf_gain(int(value))
+
+        elif tag == "if_gain" and is_rx:
+            logger.info("HackRF: Set if gain to {0}".format(int(value)))
+            hackrf.set_if_rx_gain(int(value))
+
+        elif tag == "if_gain" and is_tx:
+            logger.info("HackRF: Set if gain to {0}".format(int(value)))
+            hackrf.set_if_tx_gain(int(value))
+
+        elif tag == "baseband_gain" and is_rx:
+            logger.info("HackRF: Set baseband gain to {0}".format(int(value)))
+            hackrf.set_baseband_gain(int(value))
 
         elif tag == "sample_rate":
             logger.info("HackRF: Set sample_rate to {0}".format(int(value)))
@@ -141,17 +160,13 @@ class HackRF(Device):
             logger.info("HackRF: Set bandwidth to {0}".format(int(value)))
             return hackrf.set_baseband_filter_bandwidth(int(value))
 
-    def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
-        super().__init__(bw, freq, gain, srate, is_ringbuffer)
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
+        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
+                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain, is_ringbuffer=is_ringbuffer)
         self.success = 0
 
         self.receive_process_function = HackRF.hackrf_receive
         self.send_process_function = HackRF.hackrf_send
-
-        self._max_bandwidth = 28e6
-        self._max_frequency = 6e9
-        self._max_sample_rate = 20e6
-        self._max_gain = 40
 
         self.error_codes = {
             0: "HACKRF_SUCCESS",
@@ -169,9 +184,6 @@ class HackRF(Device):
             -4242: "HACKRF NOT OPEN",
             -9999: "HACKRF_ERROR_OTHER"
         }
-
-    def set_device_gain(self, gain):
-        self.parent_ctrl_conn.send("gain:" + str(int(gain)))
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

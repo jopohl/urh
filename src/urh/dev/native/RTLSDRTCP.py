@@ -6,6 +6,7 @@ from urh.util.Logger import logger
 import socket
 import select
 
+
 class RTLSDRTCP(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
     MAXDATASIZE = 65536
@@ -24,7 +25,7 @@ class RTLSDRTCP(Device):
             sdr.device_number = device_number
             sdr.set_parameter("centerFreq", int(center_freq), ctrl_connection)
             sdr.set_parameter("sampleRate", int(sample_rate), ctrl_connection)
-            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection) # set bandwidth equal to sample_rate
+            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection)  # set bandwidth equal to sample_rate
             sdr.set_parameter("tunerGain", int(gain), ctrl_connection)
             sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
             sdr.set_parameter("directSampling", int(direct_sampling_mode), ctrl_connection)
@@ -60,11 +61,11 @@ class RTLSDRTCP(Device):
 
         elif tag == "rf_gain":
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
-            return self.set_parameter("tunerGain", 10*int(value), ctrl_connection)  # calculate *10 for API
+            return self.set_parameter("tunerGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
         elif tag == "if_gain":
             logger.info("RTLSDRTCP: Set if gain to {0}".format(int(value)))
-            return self.set_parameter("tunerIFGain", 10*int(value), ctrl_connection)  # calculate *10 for API
+            return self.set_parameter("tunerIFGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
         elif tag == "sample_rate":
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))
@@ -102,7 +103,7 @@ class RTLSDRTCP(Device):
             try:
                 # Create socket and connect
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-                #self.sock.settimeout(1.0)  # Timeout 1s
+                # self.sock.settimeout(1.0)  # Timeout 1s
                 self.sock.connect((hostname, port))
             except Exception as e:
                 self.socket_is_open = False
@@ -140,8 +141,16 @@ class RTLSDRTCP(Device):
                 self.if_gain = int.from_bytes(init_data[8:10], self.ENDIAN)
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
-                logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
-                ctrl_connection.send("Connected to rtl_tcp at {0}[{1}] (Tuner={2}, RF-Gain={3}, IF-Gain={4}):0".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+                logger.info(
+                    "Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port,
+                                                                                                      self.tuner,
+                                                                                                      self.rf_gain,
+                                                                                                      self.if_gain))
+                ctrl_connection.send(
+                    "Connected to rtl_tcp at {0}[{1}] (Tuner={2}, RF-Gain={3}, IF-Gain={4}):0".format(hostname, port,
+                                                                                                      self.tuner,
+                                                                                                      self.rf_gain,
+                                                                                                      self.if_gain))
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))
@@ -156,10 +165,10 @@ class RTLSDRTCP(Device):
 
     def set_parameter(self, param: str, value: int, ctrl_connection):  # returns error (True/False)
         if self.socket_is_open:
-            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)     # Set param at bits 0-7
-            msg += value.to_bytes(4, self.ENDIAN)                               # Set value at bits 8-39
+            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(1, self.ENDIAN)  # Set param at bits 0-7
+            msg += value.to_bytes(4, self.ENDIAN)  # Set value at bits 8-39
             try:
-                self.sock.sendall(msg)                                          # Send data to rtl_tcp
+                self.sock.sendall(msg)  # Send data to rtl_tcp
             except OSError as e:
                 self.sock.close()
                 logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))

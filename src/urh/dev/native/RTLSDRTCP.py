@@ -107,8 +107,7 @@ class RTLSDRTCP(Device):
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))
-                ctrl_connection.send("Could not connect to rtl_tcp at {0} {1} ({2}):1".format(hostname, port, e))
-                #self.device_messages.add("Could not connect to rtl_tcp at {0}:{1} ({2})".format(hostname, port, e))    # TODO: List has no method 'add'
+                ctrl_connection.send("Could not connect to rtl_tcp at {0} [{1}] ({2}):1".format(hostname, port, e))
                 return False
 
             try:
@@ -142,8 +141,7 @@ class RTLSDRTCP(Device):
                 self.rf_gain = int.from_bytes(init_data[10:12], self.ENDIAN)
 
                 logger.info("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
-                # Show this in error message box after refactoring:
-                #self.errors.add("Connected to rtl_tcp at {0}:{1} (Tuner: {2}, RF-Gain: {3}, IF-Gain: {4})".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
+                ctrl_connection.send("Connected to rtl_tcp at {0}[{1}] (Tuner={2}, RF-Gain={3}, IF-Gain={4}):0".format(hostname, port, self.tuner, self.rf_gain, self.if_gain))
             except Exception as e:
                 self.socket_is_open = False
                 logger.info("This is not a valid rtl_tcp server at {0}:{1} ({2})".format(hostname, port, e))
@@ -166,7 +164,6 @@ class RTLSDRTCP(Device):
                 self.sock.close()
                 logger.info("Could not set parameter {0}:{1} ({2})".format(param, value, e))
                 ctrl_connection.send("Could not set parameter {0} {1} ({2}):1".format(param, value, e))
-                #self.device_messages.add("Could not set parameter {0}:{1} ({2})".format(param, value, e))
                 return True
         return False
 

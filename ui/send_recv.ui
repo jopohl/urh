@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>1033</height>
+    <height>1138</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -34,7 +34,7 @@
            <property name="placeholderText">
             <string>None</string>
            </property>
-           <property name="clearButtonEnabled">
+           <property name="clearButtonEnabled" stdset="0">
             <bool>true</bool>
            </property>
           </widget>
@@ -477,14 +477,14 @@
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="toolTipDuration">
-            <number>-1</number>
-           </property>
            <property name="styleSheet">
             <string notr="true"/>
            </property>
            <property name="text">
             <string>Device arguments:</string>
+           </property>
+           <property name="toolTipDuration" stdset="0">
+            <number>-1</number>
            </property>
           </widget>
          </item>
@@ -615,7 +615,8 @@
               </property>
               <property name="icon">
                <iconset theme="media-record">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -647,7 +648,8 @@
               </property>
               <property name="icon">
                <iconset theme="media-playback-stop">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -676,7 +678,8 @@
               </property>
               <property name="icon">
                <iconset theme="document-save">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -708,7 +711,8 @@
               </property>
               <property name="icon">
                <iconset theme="view-refresh">
-                <normaloff>.</normaloff>.</iconset>
+                <normaloff/>
+               </iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1006,17 +1010,39 @@
  </customwidgets>
  <tabstops>
   <tabstop>cbDevice</tabstop>
+  <tabstop>lineEditDeviceArgs</tabstop>
   <tabstop>lineEditIP</tabstop>
+  <tabstop>spinBoxPort</tabstop>
   <tabstop>spinBoxFreq</tabstop>
   <tabstop>spinBoxSampleRate</tabstop>
   <tabstop>spinBoxBandwidth</tabstop>
+  <tabstop>btnLockBWSR</tabstop>
+  <tabstop>spinBoxGain</tabstop>
+  <tabstop>sliderGain</tabstop>
+  <tabstop>sliderIFGain</tabstop>
+  <tabstop>spinBoxIFGain</tabstop>
+  <tabstop>sliderBasebandGain</tabstop>
+  <tabstop>spinBoxBasebandGain</tabstop>
+  <tabstop>spinBoxFreqCorrection</tabstop>
+  <tabstop>comboBoxDirectSampling</tabstop>
   <tabstop>spinBoxNRepeat</tabstop>
+  <tabstop>spinbox_sniff_BitLen</tabstop>
+  <tabstop>spinbox_sniff_Center</tabstop>
+  <tabstop>spinbox_sniff_Noise</tabstop>
+  <tabstop>spinbox_sniff_ErrorTolerance</tabstop>
+  <tabstop>combox_sniff_Modulation</tabstop>
+  <tabstop>comboBox_sniff_viewtype</tabstop>
+  <tabstop>lineEdit_sniff_OutputFile</tabstop>
   <tabstop>btnStart</tabstop>
   <tabstop>btnStop</tabstop>
   <tabstop>btnSave</tabstop>
   <tabstop>btnClear</tabstop>
+  <tabstop>txtEd_sniff_Preview</tabstop>
   <tabstop>sliderYscale</tabstop>
   <tabstop>txtEditErrors</tabstop>
+  <tabstop>graphicsViewSend</tabstop>
+  <tabstop>graphicsViewReceive</tabstop>
+  <tabstop>btnAccept</tabstop>
  </tabstops>
  <resources>
   <include location="../urh.qrc"/>

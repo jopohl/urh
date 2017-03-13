@@ -62,7 +62,7 @@ class SimulatorTabController(QWidget):
     def on_btn_next_nav_clicked(self):
         selected_items = self.simulator_scene.selectedItems()
 
-        if len(selected_items) > 0:
+        if selected_items > 0:
             selected_item = selected_items[0]
             next_item = selected_item.next()
             self.simulator_scene.clearSelection()

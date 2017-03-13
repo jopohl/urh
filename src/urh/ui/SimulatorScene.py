@@ -55,9 +55,9 @@ class SimulatorItem(QGraphicsObject):
         return self == self.scene().get_first_item()
 
     def next_sibling(self):
-        next_sibling = None
+        result = None
     
-        if self.parentItem() == None:
+        if self.parentItem() is None:
             sim_items = self.scene().sim_items
         else:
             sim_items = self.parentItem().sim_items
@@ -65,17 +65,17 @@ class SimulatorItem(QGraphicsObject):
         index = sim_items.index(self)
 
         if index < len(sim_items) - 1:
-            next_sibling = sim_items[index + 1]
+            result = sim_items[index + 1]
 
-        if isinstance(next_sibling, RuleItem):
-            next_sibling = next_sibling.conditions[0]
+        if isinstance(result, RuleItem):
+            result = result.conditions[0]
 
-        return next_sibling
+        return result
 
     def prev_sibling(self):
-        prev_sibling = None
+        result = None
 
-        if self.parentItem() == None:
+        if self.parentItem() is None:
             sim_items = self.scene().sim_items
         else:
             sim_items = self.parentItem().sim_items
@@ -83,12 +83,12 @@ class SimulatorItem(QGraphicsObject):
         index = sim_items.index(self)
 
         if index > 0:
-            prev_sibling = sim_items[index - 1]
+            result = sim_items[index - 1]
 
-        if isinstance(prev_sibling, RuleItem):
-            prev_sibling = prev_sibling.conditions[-1]
+        if isinstance(result, RuleItem):
+            result = result.conditions[-1]
 
-        return prev_sibling
+        return result
 
     def next(self):
         if len(self.children()) > 0:
@@ -102,7 +102,7 @@ class SimulatorItem(QGraphicsObject):
 
             curr = curr.parentItem()
 
-            if curr == None or isinstance(curr, RuleItem):
+            if curr is None or isinstance(curr, RuleItem):
                 break
 
         return None
@@ -111,7 +111,7 @@ class SimulatorItem(QGraphicsObject):
         parent = self.parentItem()
 
         if parent and not isinstance(parent, RuleItem) and len(parent.children()) > 0 and self == parent.children()[0]:
-            return self.parentItem()
+            return parent
 
         curr = self
 
@@ -122,7 +122,7 @@ class SimulatorItem(QGraphicsObject):
 
             curr = curr.parentItem()
 
-            if curr == None or isinstance(curr, RuleItem):
+            if curr is None or isinstance(curr, RuleItem):
                 break
 
         if curr != None:
@@ -395,36 +395,36 @@ class RuleConditionItem(SimulatorItem):
                 self.scene().removeItem(item)
 
     def next_sibling(self):
-        next_sibling = None
+        result = None
 
         conditions = self.parentItem().conditions
         index = self.parentItem().conditions.index(self)
 
         if index < len(conditions) - 1:
-            next_sibling = conditions[index + 1]
+            result = conditions[index + 1]
         else:
             sim_items = self.scene().sim_items
 
             if sim_items.index(self.parentItem()) != len(sim_items) - 1:
-                next_sibling = sim_items[sim_items.index(self.parentItem()) + 1]
+                result = sim_items[sim_items.index(self.parentItem()) + 1]
 
-        return next_sibling
+        return result
 
     def prev_sibling(self):
-        prev_sibling = None
+        result = None
 
         conditions = self.parentItem().conditions
         index = conditions.index(self)
 
         if index > 0:
-            prev_sibling = conditions[index - 1]
+            result = conditions[index - 1]
         else:
             sim_items = self.scene().sim_items
 
             if sim_items.index(self.parentItem()) > 0:
-                prev_sibling = sim_items[sim_items.index(self.parentItem()) - 1]
+                result = sim_items[sim_items.index(self.parentItem()) - 1]
 
-        return prev_sibling
+        return result
 
     def children(self):
         return self.sim_items
@@ -649,10 +649,7 @@ class SimulatorScene(QGraphicsScene):
         self.update_view()
 
     def get_last_item(self):
-        last_item = None
-
-        if len(self.sim_items) > 0:
-            last_item = self.sim_items[-1]
+        last_item = self.sim_items[-1] if self.sim_items else None
 
         if isinstance(last_item, RuleItem):
             last_item = last_item.conditions[-1]
@@ -768,7 +765,7 @@ class SimulatorScene(QGraphicsScene):
         event.setAccepted(True)
 
     def insert_at(self, ref_item, position, item_to_add, add_to_scene=False):
-        if ref_item == None:
+        if ref_item is None:
             parent_item = None
             insert_position = len(self.sim_items)
         elif isinstance(item_to_add, RuleItem):
@@ -839,7 +836,7 @@ class SimulatorScene(QGraphicsScene):
         protocols_to_add = [node.protocol for node in nodes_to_add]
 
         ref_item = item
-        position = None if ref_item == None else item.drop_indicator_position
+        position = None if ref_item is None else item.drop_indicator_position
         self.add_protocols(ref_item, position, protocols_to_add)
         super().dropEvent(event)
 
@@ -854,10 +851,10 @@ class SimulatorScene(QGraphicsScene):
         self.update_view()
 
     def add_message(self, ref_item, position, source=None, destination=None, message_type=[]):
-        if source == None:
+        if source is None:
             source = self.not_assigned_part
 
-        if destination == None:
+        if destination is None:
             destination = self.broadcast_part
 
         simulator_message = MessageItem(source, destination)
@@ -871,10 +868,10 @@ class SimulatorScene(QGraphicsScene):
         return simulator_message
 
     def add_message_from_message(self, ref_item, position, message, source=None, destination=None):
-        if source == None:
+        if source is None:
             source = self.not_assigned_part
 
-        if destination == None:
+        if destination is None:
             destination = self.broadcast_part
 
         simulator_message = MessageItem(source, destination)

@@ -660,10 +660,7 @@ class SimulatorScene(QGraphicsScene):
         return last_item
 
     def get_first_item(self):
-        first_item = None
-
-        if self.sim_items:
-            first_item = self.sim_items[0]
+        first_item = self.sim_items[0] if self.sim_items else None
 
         if isinstance(first_item, RuleItem):
             first_item = first_item.conditions[0]

@@ -13,9 +13,12 @@ class ExtensionHelper(object):
     Helper class for easy access of device extensions
     """
     @classmethod
-    def get_device_modules(cls, use_cython: bool):
+    def get_device_modules(cls, use_cython: bool, library_dirs=None):
+        library_dirs = [] if library_dirs is None else library_dirs
+
         cur_dir = os.path.dirname(os.path.realpath(__file__))
-        include_dir = os.path.realpath(os.path.join(cur_dir, "includes"))
+        include_dirs = [os.path.realpath(os.path.join(cur_dir, "includes"))]
+
         devices = {
             "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
             "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
@@ -32,16 +35,14 @@ class ExtensionHelper(object):
             result = []
             lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win"))
             for dev_name, params in devices.items():
-                result.append(cls.get_device_extension(dev_name, [params["lib"]], [lib_dir], [include_dir]))
+                result.append(cls.get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 
             return result
 
         if sys.platform == "darwin":
             # On Mac OS X clang is by default not smart enough to search in the lib dir
             # see: https://github.com/jopohl/urh/issues/173
-            library_dirs = ["/usr/local/lib"]
-        else:
-            library_dirs = []
+            library_dirs.append("/usr/local/lib")
 
         result = []
 
@@ -74,23 +75,23 @@ class ExtensionHelper(object):
             if build_device_extensions[dev_name] == 1:
                 print("\nEnforcing native {0} support\n".format(dev_name))
                 result.append(
-                    cls.get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], use_cython))
+                    cls.get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
                 continue
 
             if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
-                                     include_dirs=[include_dir]):
+                                     include_dirs=include_dirs):
                 print("\nFound {0} lib. Will compile with native {1} support\n".format(params["lib"], dev_name))
                 result.append(
-                    cls.get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], use_cython))
+                    cls.get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
             elif dev_name in fallbacks:
                 print("Trying fallback for {0}".format(dev_name))
                 params = fallbacks[dev_name]
                 dev_name += "_fallback"
                 if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
-                                         include_dirs=[include_dir]):
+                                         include_dirs=include_dirs):
                     print("\nFound fallback. Will compile with native {0} support\n".format(dev_name))
                     result.append(
-                        cls.get_device_extension(dev_name, [params["lib"]], library_dirs, [include_dir], use_cython))
+                        cls.get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
             else:
                 print("\nSkipping native support for {1}\n".format(params["lib"], dev_name))
             try:

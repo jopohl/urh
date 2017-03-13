@@ -606,13 +606,6 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="2" column="0">
-           <widget class="QLabel" name="labenIncludeDirs">
-            <property name="text">
-             <string>Include directories:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
              <string>Library directories:</string>
@@ -629,14 +622,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEditIncludeDirs">
-            <property name="placeholderText">
-             <string>Comma separated list of additional include directories</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QPushButton" name="btnScanNative">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan if new device extensions can be built.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -649,14 +635,14 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="lineEditLibDirs">
             <property name="placeholderText">
              <string>Comma separated list of additional library directories</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="3" column="1">
            <widget class="QPushButton" name="btnRebuildNative">
             <property name="enabled">
              <bool>false</bool>

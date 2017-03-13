@@ -376,11 +376,12 @@ class OptionsController(QDialog):
             self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
             return
         else:
-            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding new device extensions..."))
+            s = "s" if new_natives > 1 else ""
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             QApplication.processEvents()
             print(extensions)
-            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extensions. "
-                                                             "Please restart URH to use them.".format(new_natives)))
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
+                                                             "Please restart URH to use them.".format(new_natives, s)))
 
 
     @staticmethod

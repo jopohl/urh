@@ -126,6 +126,7 @@ class OptionsController(QDialog):
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
+        self.ui.btnScanNative.clicked.connect(self.on_btn_scan_native_clicked)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
 
     def show_gnuradio_infos(self):
@@ -359,6 +360,10 @@ class OptionsController(QDialog):
     @pyqtSlot()
     def on_gnuradio_install_dir_edited(self):
         self.set_gnuradio_status()
+
+    @pyqtSlot()
+    def on_btn_scan_native_clicked(self):
+        pass
 
     @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):

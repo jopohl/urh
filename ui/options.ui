@@ -674,7 +674,7 @@
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="btnScanNative">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan if new device extensions can be built.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>

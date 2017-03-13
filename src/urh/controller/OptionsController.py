@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
+
+from urh.dev.native.ExtensionHelper import ExtensionHelper
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh import constants
@@ -89,6 +91,7 @@ class OptionsController(QDialog):
         self.read_options()
 
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
+        self.ui.labelRebuildNativeStatus.setText("")
 
     @property
     def selected_device(self) -> BackendContainer:
@@ -128,7 +131,6 @@ class OptionsController(QDialog):
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
-        self.ui.btnScanNative.clicked.connect(self.on_btn_scan_native_clicked)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
 
     def show_gnuradio_infos(self):
@@ -364,12 +366,22 @@ class OptionsController(QDialog):
         self.set_gnuradio_status()
 
     @pyqtSlot()
-    def on_btn_scan_native_clicked(self):
-        pass
-
-    @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):
-        pass
+        library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
+        num_natives = self.backend_handler.num_native_backends
+        extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
+        new_natives = len(extensions) - num_natives
+
+        if new_natives == 0:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
+            return
+        else:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding new device extensions..."))
+            QApplication.processEvents()
+            print(extensions)
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extensions. "
+                                                             "Please restart URH to use them.".format(new_natives)))
+
 
     @staticmethod
     def write_default_options():

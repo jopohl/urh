@@ -100,6 +100,11 @@ class BackendHandler(object):
         self.get_backends()
 
     @property
+    def num_native_backends(self):
+        return len([dev for dev, backend_container in self.device_backends.items()
+                    if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
+
+    @property
     def __hackrf_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import hackrf

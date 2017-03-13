@@ -72,7 +72,10 @@ def release():
     os.mkdir("aur")
     os.chdir("aur")
     call(["git", "clone", "git+ssh://aur@aur.archlinux.org/urh.git"])
-    os.chdir("urh")
+    try:
+        os.chdir("urh")
+    except FileNotFoundError:
+        input("Could not clone AUR package. Please clone manually in {}".format(os.path.relpath(os.curdir)))
 
     for line in fileinput.input("PKGBUILD", inplace=True):
         if line.startswith("pkgver="):
@@ -91,8 +94,6 @@ def release():
     os.remove("/tmp/urh_releasing")
 
 if __name__ == "__main__":
-    run_tests()
-
+#    run_tests()
     release()
-
-    run_tests()
+#    run_tests()

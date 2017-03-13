@@ -12,21 +12,21 @@ class ExtensionHelper(object):
     """
     Helper class for easy access of device extensions
     """
+    DEVICES = {
+        "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+        "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
+    }
+
+    FALLBACKS = {
+        "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
+    }
+
     @classmethod
-    def get_device_modules(cls, use_cython: bool, library_dirs=None):
+    def get_device_extensions(cls, use_cython: bool, library_dirs=None):
         library_dirs = [] if library_dirs is None else library_dirs
 
         cur_dir = os.path.dirname(os.path.realpath(__file__))
         include_dirs = [os.path.realpath(os.path.join(cur_dir, "includes"))]
-
-        devices = {
-            "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
-            "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
-        }
-
-        fallbacks = {
-            "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
-        }
 
         if sys.platform == "win32":
             if platform.architecture()[0] != "64bit":
@@ -34,7 +34,7 @@ class ExtensionHelper(object):
 
             result = []
             lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win"))
-            for dev_name, params in devices.items():
+            for dev_name, params in cls.DEVICES.items():
                 result.append(cls.get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 
             return result
@@ -51,7 +51,7 @@ class ExtensionHelper(object):
         # 0 = Do not install extension
         build_device_extensions = defaultdict(lambda: None)
 
-        for dev_name in devices:
+        for dev_name in cls.DEVICES:
             with_option = "--with-" + dev_name
             without_option = "--without-" + dev_name
 
@@ -68,7 +68,7 @@ class ExtensionHelper(object):
         sys.path.append(os.path.realpath(os.path.join(cur_dir, "lib")))
 
         compiler = ccompiler.new_compiler()
-        for dev_name, params in devices.items():
+        for dev_name, params in cls.DEVICES.items():
             if build_device_extensions[dev_name] == 0:
                 print("\nSkipping native {0} support\n".format(dev_name))
                 continue
@@ -83,9 +83,9 @@ class ExtensionHelper(object):
                 print("\nFound {0} lib. Will compile with native {1} support\n".format(params["lib"], dev_name))
                 result.append(
                     cls.get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
-            elif dev_name in fallbacks:
+            elif dev_name in cls.FALLBACKS:
                 print("Trying fallback for {0}".format(dev_name))
-                params = fallbacks[dev_name]
+                params = cls.FALLBACKS[dev_name]
                 dev_name += "_fallback"
                 if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
                                          include_dirs=include_dirs):

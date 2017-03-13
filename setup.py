@@ -111,7 +111,7 @@ except ImportError:
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
 
-extensions = get_ext_modules() + ExtensionHelper.get_device_modules(USE_CYTHON)
+extensions = get_ext_modules() + ExtensionHelper.get_device_extensions(USE_CYTHON)
 
 if USE_CYTHON:
     from Cython.Build import cythonize

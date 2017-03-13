@@ -605,7 +605,7 @@
           <item row="3" column="1">
            <widget class="QLineEdit" name="lineEditLibraries">
             <property name="placeholderText">
-             <string>Comma seperated list of libraries</string>
+             <string>Comma separated list of libraries</string>
             </property>
            </widget>
           </item>
@@ -633,27 +633,17 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QPushButton" name="btnRebuildNative">
-            <property name="text">
-             <string>Rebuild</string>
-            </property>
-            <property name="icon">
-             <iconset theme="view-refresh"/>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="1">
            <widget class="QLineEdit" name="lineEditIncludeDirs">
             <property name="placeholderText">
-             <string>Comma seperated list of additional include directories</string>
+             <string>Comma separated list of additional include directories</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
            <widget class="QLineEdit" name="lineEditLibDirs">
             <property name="placeholderText">
-             <string>Comma seperated list of additional library directories</string>
+             <string>Comma separated list of additional library directories</string>
             </property>
            </widget>
           </item>
@@ -664,6 +654,35 @@
             </property>
             <property name="wordWrap">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QPushButton" name="btnRebuildNative">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rebuild device extenions. This button will only be enabled after a successful scan.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Rebuild</string>
+            </property>
+            <property name="icon">
+             <iconset theme="view-refresh"/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QPushButton" name="pushButton">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan if new device extensions can be built.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Scan</string>
+            </property>
+            <property name="icon">
+             <iconset theme="scanner"/>
             </property>
            </widget>
           </item>

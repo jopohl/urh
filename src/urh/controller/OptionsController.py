@@ -6,7 +6,6 @@ from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 
-
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
@@ -41,11 +40,13 @@ class OptionsController(QDialog):
 
         self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
-        self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
+        self.ui.checkBoxShowConfirmCloseDialog.setChecked(
+            not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
-        self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
+        self.ui.checkBoxDefaultFuzzingPause.setChecked(
+            constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
-        self.ui.doubleSpinBoxRAMThreshold.setValue(100*constants.SETTINGS.value('ram_threshold', 0.6, float))
+        self.ui.doubleSpinBoxRAMThreshold.setValue(100 * constants.SETTINGS.value('ram_threshold', 0.6, float))
 
         self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
         self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
@@ -54,7 +55,7 @@ class OptionsController(QDialog):
         if self.backend_handler.python2_exe:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
 
-        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
+        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10 ** 6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
         completer = QCompleter()
@@ -79,7 +80,8 @@ class OptionsController(QDialog):
         self.ui.tblLabeltypes.setModel(self.field_type_table_model)
         self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function], return_index=False, parent=self))
+        self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function],
+                                                                           return_index=False, parent=self))
         self.ui.tblLabeltypes.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
         self.read_options()
@@ -97,12 +99,12 @@ class OptionsController(QDialog):
             return ""
 
     def __get_key_from_device_display_text(self, displayed_device_name):
-            displayed_device_name = displayed_device_name.lower()
-            for key in self.backend_handler.DEVICE_NAMES:
-                key = key.lower()
-                if displayed_device_name.startswith(key):
-                    return key
-            return None
+        displayed_device_name = displayed_device_name.lower()
+        for key in self.backend_handler.DEVICE_NAMES:
+            key = key.lower()
+            if displayed_device_name.startswith(key):
+                return key
+        return None
 
     def create_connects(self):
         self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.on_spinbox_symbol_threshold_value_changed)
@@ -124,6 +126,7 @@ class OptionsController(QDialog):
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
+        self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -173,8 +176,6 @@ class OptionsController(QDialog):
 
     def read_options(self):
         settings = constants.SETTINGS
-        # self.ui.chkBoxUSRP.setChecked(settings.value('usrp_available', type=bool))
-        # self.ui.chkBoxHackRF.setChecked(settings.value('hackrf_available', type=bool))
 
         self.ui.comboBoxDefaultView.setCurrentIndex(settings.value('default_view', type=int))
         self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
@@ -359,24 +360,28 @@ class OptionsController(QDialog):
     def on_gnuradio_install_dir_edited(self):
         self.set_gnuradio_status()
 
+    @pyqtSlot()
+    def on_btn_rebuild_native_clicked(self):
+        pass
+
     @staticmethod
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
 
-        if not 'rel_symbol_length' in keys:
+        if 'rel_symbol_length' not in keys:
             settings.setValue('rel_symbol_length', 0)
 
-        if not 'default_view' in keys:
+        if 'default_view' not in keys:
             settings.setValue('default_view', 0)
 
-        if not 'num_sending_repeats' in keys:
+        if 'num_sending_repeats' not in keys:
             settings.setValue('num_sending_repeats', 0)
 
-        if not 'show_pause_as_time' in keys:
+        if 'show_pause_as_time' not in keys:
             settings.setValue('show_pause_as_time', False)
 
-        settings.sync() # Ensure conf dir is created to have field types in place
+        settings.sync()  # Ensure conf dir is created to have field types in place
 
         if not os.path.isfile(constants.FIELD_TYPE_SETTINGS):
             FieldType.save_to_xml(FieldType.default_field_types())

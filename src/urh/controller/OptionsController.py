@@ -9,8 +9,9 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
+from subprocess import call
 
-from urh.dev.native.ExtensionHelper import ExtensionHelper
+import urh.dev.native.ExtensionHelper as ExtHelper
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh import constants
@@ -369,7 +370,7 @@ class OptionsController(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
         num_natives = self.backend_handler.num_native_backends
-        extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
+        extensions = ExtHelper.ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
 
         if new_natives == 0:
@@ -379,7 +380,8 @@ class OptionsController(QDialog):
             s = "s" if new_natives > 1 else ""
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             QApplication.processEvents()
-            print(extensions)
+            ExtHelper.EXTENSIONS = extensions
+            call([sys.executable, os.path.realpath(ExtHelper.__file__), "built_ext", "--inplace"])
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
                                                              "Please restart URH to use them.".format(new_natives, s)))
 

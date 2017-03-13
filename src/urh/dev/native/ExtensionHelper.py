@@ -8,6 +8,9 @@ from distutils import ccompiler
 from setuptools import Extension
 
 
+EXTENSIONS = []   # give extensions to build here
+
+
 class ExtensionHelper(object):
     """
     Helper class for easy access of device extensions
@@ -108,3 +111,10 @@ class ExtensionHelper(object):
                          ["src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)],
                          libraries=libraries, library_dirs=library_dirs,
                          include_dirs=include_dirs, language="c++")
+
+if __name__ == "__main__":
+    from setuptools import setup
+    setup(
+        name="urh",
+        ext_modules=EXTENSIONS,
+    )

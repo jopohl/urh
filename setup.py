@@ -1,8 +1,6 @@
 import os
 import sys
 
-from urh.dev.native.ExtensionHelper import ExtensionHelper
-
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
     sys.exit(1)
@@ -15,6 +13,7 @@ except ImportError:
     print("Try installing them with pip install setuptools")
     sys.exit(1)
 
+from src.urh.dev.native.ExtensionHelper import ExtensionHelper
 import src.urh.version as version
 
 if sys.platform == "win32":

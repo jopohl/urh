@@ -625,6 +625,8 @@ class MessageArrowItem(QGraphicsLineItem):
         painter.drawPolygon(arrowHead)
 
 class SimulatorScene(QGraphicsScene):
+    items_changed = pyqtSignal()
+
     def __init__(self, parent=None, controller=None):
         super().__init__(parent)
         self.controller = controller
@@ -692,6 +694,8 @@ class SimulatorScene(QGraphicsScene):
         self.update_numbering()
         self.arrange_participants()
         self.arrange_items()
+
+        self.items_changed.emit()
 
         # resize scrollbar
         self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0 , 0, 0))

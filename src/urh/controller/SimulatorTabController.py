@@ -1,3 +1,5 @@
+import re
+
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot, Qt
 
@@ -6,7 +8,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene, MessageItem
+from urh.ui.SimulatorScene import SimulatorScene, MessageItem, RuleConditionItem, RuleItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -52,12 +54,39 @@ class SimulatorTabController(QWidget):
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
+        self.simulator_scene.items_changed.connect(self.update_ui)
 
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
 
         self.ui.btnNextNav.clicked.connect(self.on_btn_next_nav_clicked)
         self.ui.btnPrevNav.clicked.connect(self.on_btn_prev_nav_clicked)
+        self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
 
+    def update_ui(self):
+        selected_items = self.simulator_scene.selectedItems()
+
+        if selected_items:
+            selected_item = selected_items[0]
+            first_message = selected_item if isinstance(selected_item, MessageItem) else None
+                
+            self.ui.navLineEdit.setText(selected_item.index)
+
+            self.ui.btnNextNav.setEnabled(not selected_items[0].is_last_item())
+            self.ui.btnPrevNav.setEnabled(not selected_items[0].is_first_item())
+        else:
+            first_message = None
+            self.ui.navLineEdit.clear()
+            self.ui.btnNextNav.setEnabled(False)
+            self.ui.btnPrevNav.setEnabled(False)
+
+        self.simulator_message_field_model.message = first_message
+        self.simulator_message_field_model.update()
+
+        if first_message:
+            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage #") + first_message.index)
+        else:
+            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
+            
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):
         selected_items = self.simulator_scene.selectedItems()
@@ -82,31 +111,44 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
-        selected_items = self.simulator_scene.selectedItems()
-        selected_messages = [item for item in selected_items if type(item) == MessageItem]
-
-        first_message = None if len(selected_messages) == 0 else selected_messages[0]
-        self.simulator_message_field_model.message = first_message
-        self.simulator_message_field_model.update()
-
-        if first_message:
-            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage #") + first_message.index)
-        else:
-            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
-
-        if selected_items:
-            self.ui.navLineEdit.setText(selected_items[0].index)
-
-            self.ui.btnNextNav.setEnabled(not selected_items[0].is_last_item())
-            self.ui.btnPrevNav.setEnabled(not selected_items[0].is_first_item())
-        else:
-            self.ui.navLineEdit.clear()
+        self.update_ui()
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
         s = SimulateDialogController(parent=self)
         s.show()
-        
+
+    @pyqtSlot()
+    def on_nav_line_edit_return_pressed(self):
+        items = self.simulator_scene.sim_items
+        nav_text = self.ui.navLineEdit.text()
+        target_item = None
+
+        if re.match(r"^\d+(\.\d+){0,2}$", nav_text):
+            index_list = nav_text.split(".")
+            index_list = list(map(int, index_list))
+
+            for index in index_list:
+                if not items or index > len(items):
+                    break
+
+                target_item = items[index - 1]
+
+                if isinstance(target_item, RuleItem):
+                    items = target_item.conditions
+                    target_item =  target_item.conditions[0]
+                elif isinstance(target_item, RuleConditionItem):
+                    items = target_item.sim_items
+                else:
+                    items = None
+
+        if target_item:
+            self.simulator_scene.clearSelection()
+            self.ui.gvSimulator.centerOn(target_item)
+            target_item.setSelected(True)
+        else:
+            self.update_ui()
+                    
     def on_project_updated(self):
         #self.simulate_list_model.participants = self.project_manager.participants
         #self.simulate_list_model.update()

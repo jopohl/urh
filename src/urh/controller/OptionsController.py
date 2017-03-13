@@ -2,6 +2,9 @@ import os
 import sys
 import platform
 
+import pickle
+import tempfile
+
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
@@ -11,7 +14,7 @@ from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
 from subprocess import call
 
-import urh.dev.native.ExtensionHelper as ExtHelper
+from urh.dev.native import ExtensionHelper
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh import constants
@@ -370,8 +373,11 @@ class OptionsController(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
         num_natives = self.backend_handler.num_native_backends
-        extensions = ExtHelper.ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
+        extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
+
+        pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
+        call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "build_ext", "--inplace"])
 
         if new_natives == 0:
             self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
@@ -380,8 +386,8 @@ class OptionsController(QDialog):
             s = "s" if new_natives > 1 else ""
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             QApplication.processEvents()
-            ExtHelper.EXTENSIONS = extensions
-            call([sys.executable, os.path.realpath(ExtHelper.__file__), "build_ext", "--inplace"])
+            pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
+            call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "build_ext", "--inplace"])
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
                                                              "Please restart URH to use them.".format(new_natives, s)))
 

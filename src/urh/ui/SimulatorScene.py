@@ -97,7 +97,7 @@ class SimulatorItem(QGraphicsObject):
         curr = self
 
         while True:
-            if curr.next_sibling() != None:
+            if curr.next_sibling() is not None:
                 return curr.next_sibling()
 
             curr = curr.parentItem()
@@ -116,7 +116,7 @@ class SimulatorItem(QGraphicsObject):
         curr = self
 
         while True:
-            if curr.prev_sibling() != None:
+            if curr.prev_sibling() is not None:
                 curr = curr.prev_sibling()
                 break
 
@@ -125,7 +125,7 @@ class SimulatorItem(QGraphicsObject):
             if curr is None or isinstance(curr, RuleItem):
                 break
 
-        if curr != None:
+        if curr is not None:
             while curr.children():
                 curr = curr.children()[-1]
 

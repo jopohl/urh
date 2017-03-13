@@ -455,6 +455,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="labelWindowsError">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Detected a 32 bit installation of python 3.&lt;/span&gt; Install &lt;span style=&quot; font-weight:600;&quot;&gt;64 bit version&lt;/span&gt; to use native backends.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="Line" name="line">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -590,7 +600,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="groupBoxNativeOptions">
          <property name="title">
           <string>Native options</string>
          </property>
@@ -602,24 +612,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEditLibraries">
-            <property name="placeholderText">
-             <string>Comma separated list of libraries</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
              <string>Library directories:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelLibraries">
-            <property name="text">
-             <string>Libraries:</string>
             </property>
            </widget>
           </item>
@@ -640,24 +636,27 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnScanNative">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan if new device extensions can be built.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Scan</string>
+            </property>
+            <property name="icon">
+             <iconset theme="scanner"/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="QLineEdit" name="lineEditLibDirs">
             <property name="placeholderText">
              <string>Comma separated list of additional library directories</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="labelWindowsError">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Detected a 32 bit installation of python 3.&lt;/span&gt; Install &lt;span style=&quot; font-weight:600;&quot;&gt;64 bit version&lt;/span&gt; to use native backends.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
+          <item row="4" column="1">
            <widget class="QPushButton" name="btnRebuildNative">
             <property name="enabled">
              <bool>false</bool>
@@ -670,19 +669,6 @@
             </property>
             <property name="icon">
              <iconset theme="view-refresh"/>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QPushButton" name="btnScanNative">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan if new device extensions can be built.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Scan</string>
-            </property>
-            <property name="icon">
-             <iconset theme="scanner"/>
             </property>
            </widget>
           </item>

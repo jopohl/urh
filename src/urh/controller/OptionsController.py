@@ -36,6 +36,8 @@ class OptionsController(QDialog):
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
 
+        # We use bundled native device backends on windows, so no need to reconfigure them
+        self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
         self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
 
         self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))

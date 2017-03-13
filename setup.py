@@ -13,7 +13,7 @@ except ImportError:
     print("Try installing them with pip install setuptools")
     sys.exit(1)
 
-from src.urh.dev.native.ExtensionHelper import ExtensionHelper
+from src.urh.dev.native import ExtensionHelper
 import src.urh.version as version
 
 if sys.platform == "win32":

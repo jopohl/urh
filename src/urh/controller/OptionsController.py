@@ -381,7 +381,7 @@ class OptionsController(QDialog):
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             QApplication.processEvents()
             ExtHelper.EXTENSIONS = extensions
-            call([sys.executable, os.path.realpath(ExtHelper.__file__), "built_ext", "--inplace"])
+            call([sys.executable, os.path.realpath(ExtHelper.__file__), "build_ext", "--inplace"])
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
                                                              "Please restart URH to use them.".format(new_natives, s)))
 

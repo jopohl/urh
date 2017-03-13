@@ -376,9 +376,6 @@ class OptionsController(QDialog):
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
 
-        pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
-        call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "build_ext", "--inplace"])
-
         if new_natives == 0:
             self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
             return
@@ -387,7 +384,9 @@ class OptionsController(QDialog):
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             QApplication.processEvents()
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
-            call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "build_ext", "--inplace"])
+            target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
+            call([sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                  "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()])
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
                                                              "Please restart URH to use them.".format(new_natives, s)))
 

@@ -160,7 +160,7 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QToolButton" name="btnPrevSearch">
+        <widget class="QToolButton" name="btnPrevNav">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -186,7 +186,7 @@
         </widget>
        </item>
        <item row="0" column="4">
-        <widget class="QToolButton" name="btnNextSearch">
+        <widget class="QToolButton" name="btnNextNav">
          <property name="enabled">
           <bool>false</bool>
          </property>

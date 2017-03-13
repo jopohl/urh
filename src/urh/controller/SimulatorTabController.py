@@ -55,6 +55,31 @@ class SimulatorTabController(QWidget):
 
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
 
+        self.ui.btnNextNav.clicked.connect(self.on_btn_next_nav_clicked)
+        self.ui.btnPrevNav.clicked.connect(self.on_btn_prev_nav_clicked)
+
+    @pyqtSlot()
+    def on_btn_next_nav_clicked(self):
+        selected_items = self.simulator_scene.selectedItems()
+
+        if len(selected_items) > 0:
+            selected_item = selected_items[0]
+            next_item = selected_item.next()
+            self.simulator_scene.clearSelection()
+            self.ui.gvSimulator.centerOn(next_item)
+            next_item.setSelected(True)
+
+    @pyqtSlot()
+    def on_btn_prev_nav_clicked(self):
+        selected_items = self.simulator_scene.selectedItems()
+
+        if len(selected_items) > 0:
+            selected_item = selected_items[0]
+            prev_item = selected_item.prev()
+            self.simulator_scene.clearSelection()
+            self.ui.gvSimulator.centerOn(prev_item)
+            prev_item.setSelected(True)
+
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
         selected_items = self.simulator_scene.selectedItems()
@@ -71,6 +96,9 @@ class SimulatorTabController(QWidget):
 
         if len(selected_items) > 0:
             self.ui.navLineEdit.setText(selected_items[0].index)
+
+            self.ui.btnNextNav.setEnabled(not selected_items[0].is_last_item())
+            self.ui.btnPrevNav.setEnabled(not selected_items[0].is_first_item())
         else:
             self.ui.navLineEdit.clear()
 

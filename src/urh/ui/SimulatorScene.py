@@ -49,26 +49,90 @@ class SimulatorItem(QGraphicsObject):
         self.update_drop_indicator(event.pos())
 
     def is_last_item(self):
-        is_last_item = True
-        sim_items = self.scene().sim_items
+        return self == self.scene().get_last_item()
+
+    def is_first_item(self):
+        return self == self.scene().get_first_item()
+
+    def next_sibling(self):
+        next_sibling = None
     
         if self.parentItem() == None:
-            if sim_items.index(self) != len(sim_items) - 1:
-                return False
-        elif isinstance(self, RuleConditionItem):
-            if sim_items.index(self.parentItem()) != len(sim_items) - 1:
-                return False
-
-            if self.parentItem().conditions.index(self) != len(self.parentItem().conditions) - 1:
-                return False
-
-            if len(self.sim_items) > 0:
-                return False
+            sim_items = self.scene().sim_items
         else:
-            if sim_items.index(self.parentItem().parentItem()) != len(sim_items) - 1:
-                return False
-            
-            #if sim
+            sim_items = self.parentItem().sim_items
+
+        index = sim_items.index(self)
+
+        if index < len(sim_items) - 1:
+            next_sibling = sim_items[index + 1]
+
+        if isinstance(next_sibling, RuleItem):
+            next_sibling = next_sibling.conditions[0]
+
+        return next_sibling
+
+    def prev_sibling(self):
+        prev_sibling = None
+
+        if self.parentItem() == None:
+            sim_items = self.scene().sim_items
+        else:
+            sim_items = self.parentItem().sim_items
+
+        index = sim_items.index(self)
+
+        if index > 0:
+            prev_sibling = sim_items[index - 1]
+
+        if isinstance(prev_sibling, RuleItem):
+            prev_sibling = prev_sibling.conditions[-1]
+
+        return prev_sibling
+
+    def next(self):
+        if len(self.children()) > 0:
+            return self.children()[0]
+
+        curr = self
+
+        while True:
+            if curr.next_sibling() != None:
+                return curr.next_sibling()
+
+            curr = curr.parentItem()
+
+            if curr == None or isinstance(curr, RuleItem):
+                break
+
+        return None
+
+    def prev(self):
+        parent = self.parentItem()
+
+        if parent and not isinstance(parent, RuleItem) and len(parent.children()) > 0 and self == parent.children()[0]:
+            return self.parentItem()
+
+        curr = self
+
+        while True:
+            if curr.prev_sibling() != None:
+                curr = curr.prev_sibling()
+                break
+
+            curr = curr.parentItem()
+
+            if curr == None or isinstance(curr, RuleItem):
+                break
+
+        if curr != None:
+            while len(curr.children()) > 0:
+                curr = curr.children()[-1]
+
+        return curr
+
+    def children(self):
+        return []
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -330,6 +394,41 @@ class RuleConditionItem(SimulatorItem):
                 self.sim_items.remove(item)
                 self.scene().removeItem(item)
 
+    def next_sibling(self):
+        next_sibling = None
+
+        conditions = self.parentItem().conditions
+        index = self.parentItem().conditions.index(self)
+
+        if index < len(conditions) - 1:
+            next_sibling = conditions[index + 1]
+        else:
+            sim_items = self.scene().sim_items
+
+            if sim_items.index(self.parentItem()) != len(sim_items) - 1:
+                next_sibling = sim_items[sim_items.index(self.parentItem()) + 1]
+
+        return next_sibling
+
+    def prev_sibling(self):
+        prev_sibling = None
+
+        conditions = self.parentItem().conditions
+        index = conditions.index(self)
+
+        if index > 0:
+            prev_sibling = conditions[index - 1]
+        else:
+            sim_items = self.scene().sim_items
+
+            if sim_items.index(self.parentItem()) > 0:
+                prev_sibling = sim_items[sim_items.index(self.parentItem()) - 1]
+
+        return prev_sibling
+
+    def children(self):
+        return self.sim_items
+
 class LabelItem(QGraphicsTextItem):
     def __init__(self, text, color, parent=None):
         super().__init__(parent)
@@ -548,6 +647,31 @@ class SimulatorScene(QGraphicsScene):
     def delete_selected_items(self):
         self.delete_items(self.selectedItems())
         self.update_view()
+
+    def get_last_item(self):
+        last_item = None
+
+        if len(self.sim_items) > 0:
+            last_item = self.sim_items[-1]
+
+        if isinstance(last_item, RuleItem):
+            last_item = last_item.conditions[-1]
+
+            if len(last_item.sim_items) > 0:
+                last_item = last_item.sim_items[-1]
+
+        return last_item
+
+    def get_first_item(self):
+        first_item = None
+
+        if len(self.sim_items) > 0:
+            first_item = self.sim_items[0]
+
+        if isinstance(first_item, RuleItem):
+            first_item = first_item.conditions[0]
+
+        return first_item
 
     def select_all_items(self):
         for item in self.sim_items:

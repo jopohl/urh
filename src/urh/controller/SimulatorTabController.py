@@ -73,7 +73,7 @@ class SimulatorTabController(QWidget):
     def on_btn_prev_nav_clicked(self):
         selected_items = self.simulator_scene.selectedItems()
 
-        if len(selected_items) > 0:
+        if selected_items:
             selected_item = selected_items[0]
             prev_item = selected_item.prev()
             self.simulator_scene.clearSelection()
@@ -94,7 +94,7 @@ class SimulatorTabController(QWidget):
         else:
             self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
 
-        if len(selected_items) > 0:
+        if selected_items:
             self.ui.navLineEdit.setText(selected_items[0].index)
 
             self.ui.btnNextNav.setEnabled(not selected_items[0].is_last_item())

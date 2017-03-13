@@ -163,7 +163,7 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu.addSeparator()
 
-        if len(self.scene().sim_items) > 0:
+        if self.scene().sim_items:
             #menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)

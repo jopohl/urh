@@ -91,7 +91,7 @@ class SimulatorItem(QGraphicsObject):
         return result
 
     def next(self):
-        if len(self.children()) > 0:
+        if self.children():
             return self.children()[0]
 
         curr = self
@@ -110,7 +110,7 @@ class SimulatorItem(QGraphicsObject):
     def prev(self):
         parent = self.parentItem()
 
-        if parent and not isinstance(parent, RuleItem) and len(parent.children()) > 0 and self == parent.children()[0]:
+        if parent and not isinstance(parent, RuleItem) and parent.children() and self == parent.children()[0]:
             return parent
 
         curr = self
@@ -126,7 +126,7 @@ class SimulatorItem(QGraphicsObject):
                 break
 
         if curr != None:
-            while len(curr.children()) > 0:
+            while curr.children():
                 curr = curr.children()[-1]
 
         return curr
@@ -579,7 +579,7 @@ class MessageItem(SimulatorItem):
             label.setPos(start_x, start_y)
             start_x += label.boundingRect().width() + 5
 
-        if len(self.labels) > 0:
+        if self.labels:
             start_y += self.labels[0].boundingRect().height() + 5
         else:
             start_y += 26
@@ -654,7 +654,7 @@ class SimulatorScene(QGraphicsScene):
         if isinstance(last_item, RuleItem):
             last_item = last_item.conditions[-1]
 
-            if len(last_item.sim_items) > 0:
+            if last_item.sim_items:
                 last_item = last_item.sim_items[-1]
 
         return last_item
@@ -662,7 +662,7 @@ class SimulatorScene(QGraphicsScene):
     def get_first_item(self):
         first_item = None
 
-        if len(self.sim_items) > 0:
+        if self.sim_items:
             first_item = self.sim_items[0]
 
         if isinstance(first_item, RuleItem):

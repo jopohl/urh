@@ -18,11 +18,19 @@ class SignalDetailsController(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         file = self.signal.filename
-        self.ui.lblFile.setText(file)
+
         self.ui.lblName.setText(self.signal.name)
-        self.ui.lblFileSize.setText(locale.format_string("%.2fMB", os.path.getsize(file) / (1024 ** 2)))
+
+        if os.path.isfile(file):
+            self.ui.lblFile.setText(file)
+            self.ui.lblFileSize.setText(locale.format_string("%.2fMB", os.path.getsize(file) / (1024 ** 2)))
+            self.ui.lFileCreated.setText(time.ctime(os.path.getctime(file)))
+        else:
+            self.ui.lblFile.setText(self.tr("signal file not found"))
+            self.ui.lblFileSize.setText("-")
+            self.ui.lFileCreated.setText("-")
+
         self.ui.lblSamplesTotal.setText("{0:n}".format(self.signal.num_samples).replace(",", " "))
-        self.ui.lFileCreated.setText(time.ctime(os.path.getctime(file)))
         self.ui.dsb_sample_rate.setValue(self.signal.sample_rate)
         self.set_duration()
 

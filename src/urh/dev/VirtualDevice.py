@@ -4,6 +4,7 @@ from enum import Enum
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
+from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
 from urh.dev.gr.ReceiverThread import ReceiverThread
 from urh.dev.gr.SenderThread import SenderThread
@@ -28,12 +29,21 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, backend_handler, name: str, mode: Mode, bw, freq, gain, samp_rate, samples_to_send=None,
+    def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
+                 gain=None, if_gain=None, baseband_gain=None,
+                 samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
+
+        freq = config.DEFAULT_FREQUENCY if freq is None else freq
+        sample_rate = config.DEFAULT_SAMPLE_RATE if sample_rate is None else sample_rate
+        bandwidth = config.DEFAULT_BANDWIDTH if bandwidth is None else bandwidth
+        gain = config.DEFAULT_GAIN if gain is None else gain
+        if_gain = config.DEFAULT_IF_GAIN if if_gain is None else if_gain
+        baseband_gain = config.DEFAULT_BB_GAIN if baseband_gain is None else baseband_gain
 
         if self.name == NetworkSDRInterfacePlugin.NETWORK_SDR_NAME:
             self.backend = Backends.network
@@ -48,17 +58,19 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
-                self.__dev = ReceiverThread(samp_rate, freq, gain, bw, parent=parent, is_ringbuffer=is_ringbuffer)
+                self.__dev = ReceiverThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                            parent=parent, is_ringbuffer=is_ringbuffer)
                 self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
-                self.__dev = SenderThread(samp_rate, freq, gain, bw, parent=parent)
+                self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                          parent=parent)
                 self.__dev.data = samples_to_send
                 self.__dev.samples_per_transmission = len(samples_to_send)
             elif mode == Mode.spectrum:
-                self.__dev = SpectrumThread(samp_rate, freq, gain, bw, parent=parent)
+                self.__dev = SpectrumThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                                            parent=parent)
             else:
                 raise ValueError("Unknown mode")
-            self.__dev.usrp_ip = device_ip
             self.__dev.device = name
             self.__dev.started.connect(self.emit_started_signal)
             self.__dev.stopped.connect(self.emit_stopped_signal)
@@ -70,13 +82,13 @@ class VirtualDevice(QObject):
 
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
-                    self.__dev = HackRF(bw, freq, gain, samp_rate, is_ringbuffer=is_ringbuffer)
+                    self.__dev = HackRF(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
                 elif name.replace("-", "") == "rtlsdr":
                     from urh.dev.native.RTLSDR import RTLSDR
-                    self.__dev = RTLSDR(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                    self.__dev = RTLSDR(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
-                    self.__dev = RTLSDRTCP(freq, gain, samp_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                    self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             else:
@@ -143,12 +155,44 @@ class VirtualDevice(QObject):
         self.__dev.gain = value
 
     @property
+    def if_gain(self):
+        return self.__dev.if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        self.__dev.if_gain = value
+
+    @property
+    def baseband_gain(self):
+        return self.__dev.baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        self.__dev.baseband_gain = value
+
+    @property
     def sample_rate(self):
         return self.__dev.sample_rate
 
     @sample_rate.setter
     def sample_rate(self, value):
         self.__dev.sample_rate = value
+
+    @property
+    def freq_correction(self):
+        return self.__dev.freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        self.__dev.freq_correction = value
+
+    @property
+    def direct_sampling_mode(self) -> int:
+        return self.__dev.direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        self.__dev.direct_sampling_mode = value
 
     @property
     def samples_to_send(self):
@@ -171,9 +215,17 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
+    def device_args(self):
+        return self.__dev.device_args
+
+    @device_args.setter
+    def device_args(self, value):
+        self.__dev.device_args = value
+
+    @property
     def ip(self):
         if self.backend == Backends.grc:
-            return self.__dev.usrp_ip
+            return self.__dev.device_ip
         elif self.backend == Backends.native:
             return self.__dev.device_ip
         else:
@@ -182,7 +234,7 @@ class VirtualDevice(QObject):
     @ip.setter
     def ip(self, value):
         if self.backend == Backends.grc:
-            self.__dev.usrp_ip = value
+            self.__dev.device_ip = value
         elif self.backend == Backends.native:
             self.__dev.device_ip = value
         elif self.backend in (Backends.none, Backends.network):
@@ -192,17 +244,17 @@ class VirtualDevice(QObject):
 
     @property
     def port(self):
-        if self.backend in (Backends.grc, Backends.native):
+        if self.backend in (Backends.grc, Backends.native, Backends.network):
             return self.__dev.port
         else:
-            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
+            raise ValueError("Unsupported Backend")
 
     @port.setter
     def port(self, value):
-        if self.backend in (Backends.grc, Backends.native):
+        if self.backend in (Backends.grc, Backends.native, Backends.network):
             self.__dev.port = value
         else:
-            raise ValueError("Port only for gnuradio socket (grc backend) and native backend")
+            raise ValueError("Unsupported Backend")
 
     @property
     def data(self):
@@ -391,7 +443,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.stop(msg)  # Already connected to stopped in constructor
         elif self.backend == Backends.native:
-            self.read_errors()  # Clear errors
+            self.read_messages()  # Clear errors
             self.__dev.stop_rx_mode("Stop on error")
             self.__dev.stop_tx_mode("Stop on error")
             self.emit_stopped_signal()
@@ -427,13 +479,15 @@ class VirtualDevice(QObject):
     def emit_index_changed(self, old, new):
         self.index_changed.emit(old, new)
 
-    def read_errors(self):
+    def read_messages(self):
         if self.backend == Backends.grc:
             return self.__dev.read_errors()
         elif self.backend == Backends.native:
-            errors = "\n\n".join(self.__dev.errors)
-            self.__dev.errors.clear()
-            return errors
+            messages = "\n".join(self.__dev.device_messages)
+            if messages and not messages.endswith("\n"):
+                messages += "\n"
+            self.__dev.device_messages.clear()
+            return messages
         elif self.backend == Backends.network:
             return ""
         else:
@@ -450,3 +504,10 @@ class VirtualDevice(QObject):
             self.__dev.client_port = port
         else:
             raise ValueError("Setting port only supported for NetworkSDR Plugin")
+
+    def increase_gr_port(self):
+        if self.backend == Backends.grc:
+            self.__dev.gr_port += 1
+            logger.info("Retry with port " + str(self.__dev.gr_port))
+        else:
+            raise ValueError("Only for GR backend")

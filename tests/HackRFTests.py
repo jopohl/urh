@@ -74,10 +74,8 @@ class TestHackRF(unittest.TestCase):
         print(c)
         # x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
 
-
-
     def test_hackrf_class_recv(self):
-        hfc = HackRF(1e6, 433.92e6, 20, 1e6)
+        hfc = HackRF(433.92e6, 1e6, 1e6, 20)
         hfc.start_rx_mode()
         i = 0
         TIME_TOTAL = 5
@@ -91,7 +89,7 @@ class TestHackRF(unittest.TestCase):
         hfc.stop_rx_mode("Finished test")
 
     def test_hackrf_class_send(self):
-        hfc = HackRF(1e6, 433.92e6, 20, 1e6)
+        hfc = HackRF(433.92e6, 1e6, 1e6, 20)
         hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex", dtype=np.complex64), repeats=1)
         while not hfc.sending_finished:
             print("Repeat: {0} Current Sample: {1}/{2}".format(hfc.current_sending_repeat+1,
@@ -99,58 +97,6 @@ class TestHackRF(unittest.TestCase):
                                                                len(hfc.samples_to_send)))
             time.sleep(1)
         hfc.stop_tx_mode("Test finished")
-
-    def test_hackrf_class_send_recv(self):
-        while True:
-            t = time.time()
-            hfc = HackRF(1e6, 433.92e6, 20, 1e6)
-            hfc.open()
-            print("opening time:", time.time()-t)
-            hfc.start_rx_mode()
-            i = 0
-            t = time.time()
-            while i < 1:
-                #print("{0}/{1}".format(i+1, 5))
-                time.sleep(1)
-                i+=1
-            print("{0:,}".format(hfc.current_recv_index))
-            rcv_data = hfc.received_data
-            print("Rcv done {0}".format(time.time()-t))
-
-            t = time.time()
-            hfc.stop_rx_mode("Finished test")
-            print("             Time stopping rx mode: {0}".format(1000*(time.time()-t)))
-            hfc.open(init=False)
-            print("             Reopen device: {0}".format(1000*(time.time()-t)))
-            hfc.start_tx_mode(rcv_data, repeats=1)
-            print("             Switch time:", 1000*(time.time()-t), "ms")
-            t = time.time()
-            while not hfc.sending_finished:
-                #print("Repeat: {0} Current Sample: {1}".format(hfc.current_sending_repeat + 1, hfc.current_sent_sample))
-                time.sleep(0.01)
-            print("Send time", time.time()-t)
-            t = time.time()
-            hfc.stop_tx_mode("Test finished")
-            #hfc.close()
-            print("Close time", time.time()-t)
-            hfc.close()
-
-    def test_buffer_io(self):
-        b = io.BytesIO(b"\x00\x01\x02\x03\x04\x05\x06")
-        br = io.BufferedReader(b) # Buffered Reader is thread safe https://docs.python.org/3/library/io.html#multi-threading
-        print(bool(br.peek()))
-        print(br.read(2))
-        print(br.tell())
-        print(br.read(2))
-        print(br.read(2))
-        print(br.read(2))
-        br.seek(0)
-        print(br.read1(2))
-        print(br.tell())
-        print(bool(br.peek()))
-        br.close()
-        b.close()
-        br.close()
 
     def test_hackrf_pack_unpack(self):
         arr = np.array([-128, -128, -0.5, -0.5, -3, -3, 127, 127], dtype=np.int8)

@@ -49,6 +49,18 @@ class InputHandlerThread(Thread):
                         except ValueError:
                             v = 1
                         self.device.set_gain(v)
+                    elif i.startswith("IFG:"):
+                        try:
+                            v = int(i.replace("IFG:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_if_gain(v)
+                    elif i.startswith("BBG:"):
+                        try:
+                            v = int(i.replace("BBG:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_baseband_gain(v)
                     elif i.startswith("BW:"):
                         try:
                             v = float(i.replace("BW:", "").split(" ")[-1])
@@ -61,6 +73,14 @@ class InputHandlerThread(Thread):
                         except ValueError:
                             v = 1
                         self.device.set_freq(v)
+                    elif i.startswith("FC:"):
+                        try:
+                            v = float(i.replace("FC:", "").split(" ")[-1])
+                        except ValueError:
+                            v = 1
+                        self.device.set_freq_correction(v)
+                    elif i.startswith("DSM:"):
+                        print("Gnuradio does not support setting direct sampling mode live.")
 
             time.sleep(0.1)
 

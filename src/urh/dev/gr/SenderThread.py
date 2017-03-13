@@ -13,13 +13,13 @@ from urh.util.Logger import logger
 class SenderThread(AbstractBaseThread):
     MAX_SAMPLES_PER_TRANSMISSION = 65536
 
-    def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1', parent=None):
-        super().__init__(sample_rate, freq, gain, bandwidth, False, ip, parent)
+    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
+        super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, False, ip, parent)
 
         self.data = numpy.empty(1, dtype=numpy.complex64)
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUSH)
-        self.port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
+        self.gr_port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
         self.max_repeats = 1  # How often shall we send the data?
 
         self.__samples_per_transmission = self.MAX_SAMPLES_PER_TRANSMISSION
@@ -42,7 +42,7 @@ class SenderThread(AbstractBaseThread):
             self.__samples_per_transmission = 2 ** (int(np.log2(val)) - 1)
 
     def run(self):
-        self.initalize_process()
+        self.initialize_process()
         len_data = len(self.data)
         self.current_iteration = self.current_iteration if self.current_iteration is not None else 0
         time.sleep(1)

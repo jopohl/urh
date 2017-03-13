@@ -3,12 +3,11 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [],
-        "extra_compile_args": [
-            "-fopenmp"
+        "depends": [
+            "/home/joe/GIT/urh/src/urh/dev/native/includes/libhackrf/hackrf.h"
         ],
-        "extra_link_args": [
-            "-fopenmp"
+        "include_dirs": [
+            "/home/joe/GIT/urh/src/urh/dev/native/includes"
         ],
         "language": "c++",
         "libraries": [
@@ -1003,9 +1002,10 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(int _
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read(int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_freq(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_lna_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_vga_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_txvga_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_rf_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_rx_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_tx_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_gain(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(PyObject *, int __pyx_skip_dispatch); /*proto*/
@@ -1014,13 +1014,15 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter
 int __pyx_module_is_main_src__urh__dev__native__lib__hackrf = 0;
 
 /* Implementation of 'src.urh.dev.native.lib.hackrf' */
-static const char __pyx_k__2[] = "";
+static const char __pyx_k_[] = "";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_time[] = "time";
 static const char __pyx_k_sleep[] = "sleep";
 static const char __pyx_k_import[] = "__import__";
-static PyObject *__pyx_kp_u__2;
+static const char __pyx_k_TIMEOUT[] = "TIMEOUT";
+static PyObject *__pyx_kp_u_;
+static PyObject *__pyx_n_s_TIMEOUT;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_sleep;
@@ -1039,22 +1041,22 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_18board_id_read(CY
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_20version_string_read(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_22set_freq(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_freq_hz); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_24is_streaming(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_lna_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_vga_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_txvga_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_antenna_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_amp_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_baseband_filter_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /* proto */
-static PyObject *__pyx_float_0_1;
-static PyObject *__pyx_tuple_;
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_rf_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_if_rx_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_if_tx_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_baseband_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_antenna_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_amp_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_40set_baseband_filter_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /* proto */
+static PyObject *__pyx_float_0_15;
 
-/* "src/urh/dev/native/lib/hackrf.pyx":8
+/* "src/urh/dev/native/lib/hackrf.pyx":11
  * from cpython cimport PyBytes_GET_SIZE
  * 
- * cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:             # <<<<<<<<<<<<<<
+ * cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:             # <<<<<<<<<<<<<<
  *     global f
- *     (<object>f)(transfer.buffer[0:transfer.valid_length])
+ *     (<object> f)(transfer.buffer[0:transfer.valid_length])
  */
 
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_transfer *__pyx_v_transfer) {
@@ -1070,14 +1072,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_t
   #endif
   __Pyx_RefNannySetupContext("_c_callback_recv", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":10
- * cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:
+  /* "src/urh/dev/native/lib/hackrf.pyx":13
+ * cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
  *     global f
- *     (<object>f)(transfer.buffer[0:transfer.valid_length])             # <<<<<<<<<<<<<<
+ *     (<object> f)(transfer.buffer[0:transfer.valid_length])             # <<<<<<<<<<<<<<
  *     return 0
  * 
  */
-  __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_transfer->buffer) + 0, __pyx_v_transfer->valid_length - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_transfer->buffer) + 0, __pyx_v_transfer->valid_length - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f));
   __pyx_t_3 = __pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f; __pyx_t_4 = NULL;
@@ -1091,14 +1093,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_t
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -1107,20 +1109,20 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_t
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 10, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 13, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -1128,22 +1130,22 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_t
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":11
+  /* "src/urh/dev/native/lib/hackrf.pyx":14
  *     global f
- *     (<object>f)(transfer.buffer[0:transfer.valid_length])
+ *     (<object> f)(transfer.buffer[0:transfer.valid_length])
  *     return 0             # <<<<<<<<<<<<<<
  * 
- * cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
+ * cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
  */
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":8
+  /* "src/urh/dev/native/lib/hackrf.pyx":11
  * from cpython cimport PyBytes_GET_SIZE
  * 
- * cdef int _c_callback_recv(chackrf.hackrf_transfer* transfer)  with gil:             # <<<<<<<<<<<<<<
+ * cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:             # <<<<<<<<<<<<<<
  *     global f
- *     (<object>f)(transfer.buffer[0:transfer.valid_length])
+ *     (<object> f)(transfer.buffer[0:transfer.valid_length])
  */
 
   /* function exit code */
@@ -1163,12 +1165,12 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv(hackrf_t
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":13
+/* "src/urh/dev/native/lib/hackrf.pyx":16
  *     return 0
  * 
- * cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:             # <<<<<<<<<<<<<<
+ * cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:             # <<<<<<<<<<<<<<
  *     global f
- *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+ *     cdef bytes bytebuf = (<object> f)(transfer.valid_length)
  */
 
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send(hackrf_transfer *__pyx_v_transfer) {
@@ -1185,14 +1187,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send(hackrf_t
   #endif
   __Pyx_RefNannySetupContext("_c_callback_send", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":15
- * cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:
+  /* "src/urh/dev/native/lib/hackrf.pyx":18
+ * cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
  *     global f
- *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)             # <<<<<<<<<<<<<<
+ *     cdef bytes bytebuf = (<object> f)(transfer.valid_length)             # <<<<<<<<<<<<<<
  *     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
  *     return 0
  */
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_transfer->valid_length); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_transfer->valid_length); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f));
   __pyx_t_3 = __pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f; __pyx_t_4 = NULL;
@@ -1206,14 +1208,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send(hackrf_t
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -1222,54 +1224,54 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send(hackrf_t
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 18, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "bytes", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 15, __pyx_L1_error)
+  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "bytes", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 18, __pyx_L1_error)
   __pyx_v_bytebuf = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":16
+  /* "src/urh/dev/native/lib/hackrf.pyx":19
  *     global f
- *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+ *     cdef bytes bytebuf = (<object> f)(transfer.valid_length)
  *     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))             # <<<<<<<<<<<<<<
  *     return 0
  * 
  */
   memcpy(__pyx_v_transfer->buffer, ((void *)__pyx_v_bytebuf), PyBytes_GET_SIZE(__pyx_v_bytebuf));
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":17
- *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+  /* "src/urh/dev/native/lib/hackrf.pyx":20
+ *     cdef bytes bytebuf = (<object> f)(transfer.valid_length)
  *     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
  *     return 0             # <<<<<<<<<<<<<<
  * 
- * cdef chackrf.hackrf_device* _c_device
+ * cdef chackrf.hackrf_device*_c_device
  */
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":13
+  /* "src/urh/dev/native/lib/hackrf.pyx":16
  *     return 0
  * 
- * cdef int _c_callback_send(chackrf.hackrf_transfer* transfer)  with gil:             # <<<<<<<<<<<<<<
+ * cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:             # <<<<<<<<<<<<<<
  *     global f
- *     cdef bytes bytebuf = (<object>f)(transfer.valid_length)
+ *     cdef bytes bytebuf = (<object> f)(transfer.valid_length)
  */
 
   /* function exit code */
@@ -1290,8 +1292,8 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send(hackrf_t
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":23
- * 
+/* "src/urh/dev/native/lib/hackrf.pyx":25
+ * cdef int hackrf_success = chackrf.HACKRF_SUCCESS
  * 
  * cpdef setup():             # <<<<<<<<<<<<<<
  *     chackrf.hackrf_init()
@@ -1305,7 +1307,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_setup(CYTHON_UNUSED
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("setup", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":24
+  /* "src/urh/dev/native/lib/hackrf.pyx":26
  * 
  * cpdef setup():
  *     chackrf.hackrf_init()             # <<<<<<<<<<<<<<
@@ -1314,7 +1316,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_setup(CYTHON_UNUSED
  */
   hackrf_init();
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":25
+  /* "src/urh/dev/native/lib/hackrf.pyx":27
  * cpdef setup():
  *     chackrf.hackrf_init()
  *     return open()             # <<<<<<<<<<<<<<
@@ -1322,14 +1324,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_setup(CYTHON_UNUSED
  * cpdef exit():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":23
- * 
+  /* "src/urh/dev/native/lib/hackrf.pyx":25
+ * cdef int hackrf_success = chackrf.HACKRF_SUCCESS
  * 
  * cpdef setup():             # <<<<<<<<<<<<<<
  *     chackrf.hackrf_init()
@@ -1366,7 +1368,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_setup(CYTHON_UNUSE
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("setup", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_setup(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_setup(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1383,7 +1385,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_setup(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":27
+/* "src/urh/dev/native/lib/hackrf.pyx":29
  *     return open()
  * 
  * cpdef exit():             # <<<<<<<<<<<<<<
@@ -1398,7 +1400,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_exit(CYTHON_UNUSED 
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("exit", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":28
+  /* "src/urh/dev/native/lib/hackrf.pyx":30
  * 
  * cpdef exit():
  *     return chackrf.hackrf_exit()             # <<<<<<<<<<<<<<
@@ -1406,13 +1408,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_exit(CYTHON_UNUSED 
  * cpdef reopen():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_exit()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_exit()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":27
+  /* "src/urh/dev/native/lib/hackrf.pyx":29
  *     return open()
  * 
  * cpdef exit():             # <<<<<<<<<<<<<<
@@ -1450,7 +1452,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_2exit(CYTHON_UNUSE
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("exit", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_exit(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_exit(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1467,7 +1469,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_2exit(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":30
+/* "src/urh/dev/native/lib/hackrf.pyx":32
  *     return chackrf.hackrf_exit()
  * 
  * cpdef reopen():             # <<<<<<<<<<<<<<
@@ -1482,18 +1484,18 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_reopen(CYTHON_UNUSE
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("reopen", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":31
+  /* "src/urh/dev/native/lib/hackrf.pyx":33
  * 
  * cpdef reopen():
  *     close()             # <<<<<<<<<<<<<<
  *     return open()
  * 
  */
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":32
+  /* "src/urh/dev/native/lib/hackrf.pyx":34
  * cpdef reopen():
  *     close()
  *     return open()             # <<<<<<<<<<<<<<
@@ -1501,13 +1503,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_reopen(CYTHON_UNUSE
  * cpdef open():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":30
+  /* "src/urh/dev/native/lib/hackrf.pyx":32
  *     return chackrf.hackrf_exit()
  * 
  * cpdef reopen():             # <<<<<<<<<<<<<<
@@ -1545,7 +1547,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_4reopen(CYTHON_UNU
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("reopen", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_reopen(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_reopen(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1562,7 +1564,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_4reopen(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":34
+/* "src/urh/dev/native/lib/hackrf.pyx":36
  *     return open()
  * 
  * cpdef open():             # <<<<<<<<<<<<<<
@@ -1577,7 +1579,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(CYTHON_UNUSED 
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("open", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":35
+  /* "src/urh/dev/native/lib/hackrf.pyx":37
  * 
  * cpdef open():
  *     return chackrf.hackrf_open(&_c_device)             # <<<<<<<<<<<<<<
@@ -1585,13 +1587,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(CYTHON_UNUSED 
  * cpdef close():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_open((&__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_open((&__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":34
+  /* "src/urh/dev/native/lib/hackrf.pyx":36
  *     return open()
  * 
  * cpdef open():             # <<<<<<<<<<<<<<
@@ -1629,7 +1631,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_6open(CYTHON_UNUSE
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("open", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_open(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1646,11 +1648,11 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_6open(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":37
+/* "src/urh/dev/native/lib/hackrf.pyx":39
  *     return chackrf.hackrf_open(&_c_device)
  * 
  * cpdef close():             # <<<<<<<<<<<<<<
- *     time.sleep(0.1)
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_close(_c_device)
  */
 
@@ -1660,44 +1662,92 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(CYTHON_UNUSED
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("close", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":38
+  /* "src/urh/dev/native/lib/hackrf.pyx":40
  * 
  * cpdef close():
- *     time.sleep(0.1)             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_close(_c_device)
  * 
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_sleep); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":39
+  /* "src/urh/dev/native/lib/hackrf.pyx":41
  * cpdef close():
- *     time.sleep(0.1)
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_close(_c_device)             # <<<<<<<<<<<<<<
  * 
  * cpdef start_rx_mode(callback):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_close(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_close(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":37
+  /* "src/urh/dev/native/lib/hackrf.pyx":39
  *     return chackrf.hackrf_open(&_c_device)
  * 
  * cpdef close():             # <<<<<<<<<<<<<<
- *     time.sleep(0.1)
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_close(_c_device)
  */
 
@@ -1705,6 +1755,9 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(CYTHON_UNUSED
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.close", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -1732,7 +1785,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_8close(CYTHON_UNUS
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("close", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_close(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1749,12 +1802,12 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_8close(CYTHON_UNUS
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":41
+/* "src/urh/dev/native/lib/hackrf.pyx":43
  *     return chackrf.hackrf_close(_c_device)
  * 
  * cpdef start_rx_mode(callback):             # <<<<<<<<<<<<<<
  *     global f
- *     f  = callback
+ *     f = callback
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_11start_rx_mode(PyObject *__pyx_self, PyObject *__pyx_v_callback); /*proto*/
@@ -1764,11 +1817,11 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_rx_mode(PyObj
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("start_rx_mode", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":43
+  /* "src/urh/dev/native/lib/hackrf.pyx":45
  * cpdef start_rx_mode(callback):
  *     global f
- *     f  = callback             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*>_c_callback_recv)
+ *     f = callback             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
  * 
  */
   __Pyx_INCREF(__pyx_v_callback);
@@ -1776,26 +1829,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_rx_mode(PyObj
   __Pyx_DECREF_SET(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f, __pyx_v_callback);
   __Pyx_GIVEREF(__pyx_v_callback);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":44
+  /* "src/urh/dev/native/lib/hackrf.pyx":46
  *     global f
- *     f  = callback
- *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*>_c_callback_recv)             # <<<<<<<<<<<<<<
+ *     f = callback
+ *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)             # <<<<<<<<<<<<<<
  * 
  * cpdef stop_rx_mode():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_start_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv, ((void *)__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_start_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv, ((void *)__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_recv))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":41
+  /* "src/urh/dev/native/lib/hackrf.pyx":43
  *     return chackrf.hackrf_close(_c_device)
  * 
  * cpdef start_rx_mode(callback):             # <<<<<<<<<<<<<<
  *     global f
- *     f  = callback
+ *     f = callback
  */
 
   /* function exit code */
@@ -1828,7 +1881,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_10start_rx_mode(CY
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("start_rx_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_rx_mode(__pyx_v_callback, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_rx_mode(__pyx_v_callback, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1845,8 +1898,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_10start_rx_mode(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":46
- *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*>_c_callback_recv)
+/* "src/urh/dev/native/lib/hackrf.pyx":48
+ *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
  * 
  * cpdef stop_rx_mode():             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_stop_rx(_c_device)
@@ -1860,7 +1913,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_rx_mode(CYTHON
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("stop_rx_mode", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":47
+  /* "src/urh/dev/native/lib/hackrf.pyx":49
  * 
  * cpdef stop_rx_mode():
  *     return chackrf.hackrf_stop_rx(_c_device)             # <<<<<<<<<<<<<<
@@ -1868,14 +1921,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_rx_mode(CYTHON
  * cpdef start_tx_mode(callback):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_stop_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_stop_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":46
- *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*>_c_callback_recv)
+  /* "src/urh/dev/native/lib/hackrf.pyx":48
+ *     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
  * 
  * cpdef stop_rx_mode():             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_stop_rx(_c_device)
@@ -1912,7 +1965,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_12stop_rx_mode(CYT
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("stop_rx_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_rx_mode(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_rx_mode(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1929,7 +1982,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_12stop_rx_mode(CYT
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":49
+/* "src/urh/dev/native/lib/hackrf.pyx":51
  *     return chackrf.hackrf_stop_rx(_c_device)
  * 
  * cpdef start_tx_mode(callback):             # <<<<<<<<<<<<<<
@@ -1944,11 +1997,11 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_tx_mode(PyObj
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("start_tx_mode", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":51
+  /* "src/urh/dev/native/lib/hackrf.pyx":53
  * cpdef start_tx_mode(callback):
  *     global f
  *     f = callback             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *>_c_callback_send)
+ *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
  * 
  */
   __Pyx_INCREF(__pyx_v_callback);
@@ -1956,21 +2009,21 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_tx_mode(PyObj
   __Pyx_DECREF_SET(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_f, __pyx_v_callback);
   __Pyx_GIVEREF(__pyx_v_callback);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":52
+  /* "src/urh/dev/native/lib/hackrf.pyx":54
  *     global f
  *     f = callback
- *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *>_c_callback_send)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)             # <<<<<<<<<<<<<<
  * 
  * cpdef stop_tx_mode():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_start_tx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send, ((void *)__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_start_tx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send, ((void *)__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf__c_callback_send))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":49
+  /* "src/urh/dev/native/lib/hackrf.pyx":51
  *     return chackrf.hackrf_stop_rx(_c_device)
  * 
  * cpdef start_tx_mode(callback):             # <<<<<<<<<<<<<<
@@ -2008,7 +2061,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_14start_tx_mode(CY
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("start_tx_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_tx_mode(__pyx_v_callback, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_start_tx_mode(__pyx_v_callback, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2025,8 +2078,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_14start_tx_mode(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":54
- *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *>_c_callback_send)
+/* "src/urh/dev/native/lib/hackrf.pyx":56
+ *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
  * 
  * cpdef stop_tx_mode():             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_stop_tx(_c_device)
@@ -2040,7 +2093,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_tx_mode(CYTHON
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("stop_tx_mode", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":55
+  /* "src/urh/dev/native/lib/hackrf.pyx":57
  * 
  * cpdef stop_tx_mode():
  *     return chackrf.hackrf_stop_tx(_c_device)             # <<<<<<<<<<<<<<
@@ -2048,14 +2101,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_tx_mode(CYTHON
  * cpdef board_id_read():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_stop_tx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_stop_tx(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":54
- *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *>_c_callback_send)
+  /* "src/urh/dev/native/lib/hackrf.pyx":56
+ *     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
  * 
  * cpdef stop_tx_mode():             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_stop_tx(_c_device)
@@ -2092,7 +2145,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_16stop_tx_mode(CYT
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("stop_tx_mode", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_tx_mode(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_stop_tx_mode(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2109,7 +2162,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_16stop_tx_mode(CYT
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":57
+/* "src/urh/dev/native/lib/hackrf.pyx":59
  *     return chackrf.hackrf_stop_tx(_c_device)
  * 
  * cpdef board_id_read():             # <<<<<<<<<<<<<<
@@ -2127,7 +2180,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("board_id_read", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":59
+  /* "src/urh/dev/native/lib/hackrf.pyx":61
  * cpdef board_id_read():
  *     cdef unsigned char value
  *     ret = chackrf.hackrf_board_id_read(_c_device, &value)             # <<<<<<<<<<<<<<
@@ -2136,7 +2189,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
  */
   __pyx_v_ret = hackrf_board_id_read(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, (&__pyx_v_value));
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":60
+  /* "src/urh/dev/native/lib/hackrf.pyx":62
  *     cdef unsigned char value
  *     ret = chackrf.hackrf_board_id_read(_c_device, &value)
  *     if ret == hackrf_success:             # <<<<<<<<<<<<<<
@@ -2146,7 +2199,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":61
+    /* "src/urh/dev/native/lib/hackrf.pyx":63
  *     ret = chackrf.hackrf_board_id_read(_c_device, &value)
  *     if ret == hackrf_success:
  *         return value             # <<<<<<<<<<<<<<
@@ -2154,13 +2207,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
  *         return ""
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyInt_From_unsigned_char(__pyx_v_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_unsigned_char(__pyx_v_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":60
+    /* "src/urh/dev/native/lib/hackrf.pyx":62
  *     cdef unsigned char value
  *     ret = chackrf.hackrf_board_id_read(_c_device, &value)
  *     if ret == hackrf_success:             # <<<<<<<<<<<<<<
@@ -2169,7 +2222,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
  */
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":63
+  /* "src/urh/dev/native/lib/hackrf.pyx":65
  *         return value
  *     else:
  *         return ""             # <<<<<<<<<<<<<<
@@ -2178,12 +2231,12 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(CYTHO
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_kp_u__2);
-    __pyx_r = __pyx_kp_u__2;
+    __Pyx_INCREF(__pyx_kp_u_);
+    __pyx_r = __pyx_kp_u_;
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":57
+  /* "src/urh/dev/native/lib/hackrf.pyx":59
  *     return chackrf.hackrf_stop_tx(_c_device)
  * 
  * cpdef board_id_read():             # <<<<<<<<<<<<<<
@@ -2221,7 +2274,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_18board_id_read(CY
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("board_id_read", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_board_id_read(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2238,11 +2291,11 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_18board_id_read(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":65
+/* "src/urh/dev/native/lib/hackrf.pyx":67
  *         return ""
  * 
  * cpdef version_string_read():             # <<<<<<<<<<<<<<
- *     cdef char* version = <char *>malloc(20 * sizeof(char))
+ *     cdef char*version = <char *> malloc(20 * sizeof(char))
  *     cdef unsigned char length = 20
  */
 
@@ -2257,26 +2310,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("version_string_read", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":66
+  /* "src/urh/dev/native/lib/hackrf.pyx":68
  * 
  * cpdef version_string_read():
- *     cdef char* version = <char *>malloc(20 * sizeof(char))             # <<<<<<<<<<<<<<
+ *     cdef char*version = <char *> malloc(20 * sizeof(char))             # <<<<<<<<<<<<<<
  *     cdef unsigned char length = 20
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)
  */
   __pyx_v_version = ((char *)malloc((20 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":67
+  /* "src/urh/dev/native/lib/hackrf.pyx":69
  * cpdef version_string_read():
- *     cdef char* version = <char *>malloc(20 * sizeof(char))
+ *     cdef char*version = <char *> malloc(20 * sizeof(char))
  *     cdef unsigned char length = 20             # <<<<<<<<<<<<<<
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)
  *     if ret == hackrf_success:
  */
   __pyx_v_length = 20;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":68
- *     cdef char* version = <char *>malloc(20 * sizeof(char))
+  /* "src/urh/dev/native/lib/hackrf.pyx":70
+ *     cdef char*version = <char *> malloc(20 * sizeof(char))
  *     cdef unsigned char length = 20
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)             # <<<<<<<<<<<<<<
  *     if ret == hackrf_success:
@@ -2284,7 +2337,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
  */
   __pyx_v_ret = hackrf_version_string_read(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_v_version, __pyx_v_length);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":69
+  /* "src/urh/dev/native/lib/hackrf.pyx":71
  *     cdef unsigned char length = 20
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)
  *     if ret == hackrf_success:             # <<<<<<<<<<<<<<
@@ -2294,7 +2347,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
   __pyx_t_1 = ((__pyx_v_ret == __pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_hackrf_success) != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":70
+    /* "src/urh/dev/native/lib/hackrf.pyx":72
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)
  *     if ret == hackrf_success:
  *         return version.decode('UTF-8')             # <<<<<<<<<<<<<<
@@ -2302,13 +2355,13 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
  *         return ""
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_version, 0, strlen(__pyx_v_version), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_version, 0, strlen(__pyx_v_version), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":69
+    /* "src/urh/dev/native/lib/hackrf.pyx":71
  *     cdef unsigned char length = 20
  *     ret = chackrf.hackrf_version_string_read(_c_device, version, length)
  *     if ret == hackrf_success:             # <<<<<<<<<<<<<<
@@ -2317,7 +2370,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
  */
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":72
+  /* "src/urh/dev/native/lib/hackrf.pyx":74
  *         return version.decode('UTF-8')
  *     else:
  *         return ""             # <<<<<<<<<<<<<<
@@ -2326,16 +2379,16 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_kp_u__2);
-    __pyx_r = __pyx_kp_u__2;
+    __Pyx_INCREF(__pyx_kp_u_);
+    __pyx_r = __pyx_kp_u_;
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":65
+  /* "src/urh/dev/native/lib/hackrf.pyx":67
  *         return ""
  * 
  * cpdef version_string_read():             # <<<<<<<<<<<<<<
- *     cdef char* version = <char *>malloc(20 * sizeof(char))
+ *     cdef char*version = <char *> malloc(20 * sizeof(char))
  *     cdef unsigned char length = 20
  */
 
@@ -2369,7 +2422,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_20version_string_r
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("version_string_read", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_version_string_read(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2386,48 +2439,118 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_20version_string_r
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":74
+/* "src/urh/dev/native/lib/hackrf.pyx":76
  *         return ""
  * 
  * cpdef set_freq(freq_hz):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_set_freq(_c_device, freq_hz)
- * 
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_23set_freq(PyObject *__pyx_self, PyObject *__pyx_v_freq_hz); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_freq(PyObject *__pyx_v_freq_hz, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  uint64_t __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  uint64_t __pyx_t_6;
   __Pyx_RefNannySetupContext("set_freq", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":75
+  /* "src/urh/dev/native/lib/hackrf.pyx":77
  * 
  * cpdef set_freq(freq_hz):
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_freq(_c_device, freq_hz)
+ * 
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 77, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":78
+ * cpdef set_freq(freq_hz):
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_set_freq(_c_device, freq_hz)             # <<<<<<<<<<<<<<
  * 
  * cpdef is_streaming():
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_As_uint64_t(__pyx_v_freq_hz); if (unlikely((__pyx_t_1 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_6 = __Pyx_PyInt_As_uint64_t(__pyx_v_freq_hz); if (unlikely((__pyx_t_6 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":74
+  /* "src/urh/dev/native/lib/hackrf.pyx":76
  *         return ""
  * 
  * cpdef set_freq(freq_hz):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_set_freq(_c_device, freq_hz)
- * 
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_freq", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -2455,7 +2578,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_22set_freq(CYTHON_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_freq(__pyx_v_freq_hz, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_freq(__pyx_v_freq_hz, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2472,12 +2595,12 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_22set_freq(CYTHON_
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":77
+/* "src/urh/dev/native/lib/hackrf.pyx":80
  *     return chackrf.hackrf_set_freq(_c_device, freq_hz)
  * 
  * cpdef is_streaming():             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
  *     ret = chackrf.hackrf_is_streaming(_c_device)
- *     if ret == 1:
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_25is_streaming(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -2485,29 +2608,96 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(CYTHON
   int __pyx_v_ret;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
   __Pyx_RefNannySetupContext("is_streaming", 0);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":78
+  /* "src/urh/dev/native/lib/hackrf.pyx":81
  * 
  * cpdef is_streaming():
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     ret = chackrf.hackrf_is_streaming(_c_device)
+ *     if ret == 1:
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":82
+ * cpdef is_streaming():
+ *     time.sleep(TIMEOUT)
  *     ret = chackrf.hackrf_is_streaming(_c_device)             # <<<<<<<<<<<<<<
  *     if ret == 1:
  *         return True
  */
   __pyx_v_ret = hackrf_is_streaming(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device);
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":79
- * cpdef is_streaming():
+  /* "src/urh/dev/native/lib/hackrf.pyx":83
+ *     time.sleep(TIMEOUT)
  *     ret = chackrf.hackrf_is_streaming(_c_device)
  *     if ret == 1:             # <<<<<<<<<<<<<<
  *         return True
  *     else:
  */
-  __pyx_t_1 = ((__pyx_v_ret == 1) != 0);
-  if (__pyx_t_1) {
+  __pyx_t_6 = ((__pyx_v_ret == 1) != 0);
+  if (__pyx_t_6) {
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":80
+    /* "src/urh/dev/native/lib/hackrf.pyx":84
  *     ret = chackrf.hackrf_is_streaming(_c_device)
  *     if ret == 1:
  *         return True             # <<<<<<<<<<<<<<
@@ -2519,8 +2709,8 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(CYTHON
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/hackrf.pyx":79
- * cpdef is_streaming():
+    /* "src/urh/dev/native/lib/hackrf.pyx":83
+ *     time.sleep(TIMEOUT)
  *     ret = chackrf.hackrf_is_streaming(_c_device)
  *     if ret == 1:             # <<<<<<<<<<<<<<
  *         return True
@@ -2528,12 +2718,12 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(CYTHON
  */
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":82
+  /* "src/urh/dev/native/lib/hackrf.pyx":86
  *         return True
  *     else:
  *         return False             # <<<<<<<<<<<<<<
  * 
- * cpdef set_lna_gain( value):
+ * cpdef set_rf_gain(value):
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
@@ -2542,15 +2732,23 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(CYTHON
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":77
+  /* "src/urh/dev/native/lib/hackrf.pyx":80
  *     return chackrf.hackrf_set_freq(_c_device, freq_hz)
  * 
  * cpdef is_streaming():             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
  *     ret = chackrf.hackrf_is_streaming(_c_device)
- *     if ret == 1:
  */
 
   /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.is_streaming", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -2576,7 +2774,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_24is_streaming(CYT
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("is_streaming", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_is_streaming(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2593,326 +2791,274 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_24is_streaming(CYT
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":84
+/* "src/urh/dev/native/lib/hackrf.pyx":88
  *         return False
  * 
- * cpdef set_lna_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
- *     return chackrf.hackrf_set_lna_gain(_c_device, value)
+ * cpdef set_rf_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Enable or disable RF amplifier """
+ *     time.sleep(TIMEOUT)
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_lna_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  uint32_t __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
-  __Pyx_RefNannySetupContext("set_lna_gain", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":86
- * cpdef set_lna_gain( value):
- *     ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
- *     return chackrf.hackrf_set_lna_gain(_c_device, value)             # <<<<<<<<<<<<<<
- * 
- * cpdef set_vga_gain( value):
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 86, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_lna_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
-  goto __pyx_L0;
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":84
- *         return False
- * 
- * cpdef set_lna_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the LNA gain, in 8Db steps, maximum value of 40 '''
- *     return chackrf.hackrf_set_lna_gain(_c_device, value)
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_lna_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_26set_lna_gain[] = " Sets the LNA gain, in 8Db steps, maximum value of 40 ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_lna_gain (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_lna_gain(__pyx_self, ((PyObject *)__pyx_v_value));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_lna_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_rf_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_lna_gain", 0);
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  __Pyx_RefNannySetupContext("set_rf_gain", 0);
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":90
+ * cpdef set_rf_gain(value):
+ *     """ Enable or disable RF amplifier """
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return set_amp_enable(value)
+ * 
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":91
+ *     """ Enable or disable RF amplifier """
+ *     time.sleep(TIMEOUT)
+ *     return set_amp_enable(value)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef set_if_rx_gain(value):
+ */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_lna_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_lna_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "src/urh/dev/native/lib/hackrf.pyx":88
- *     return chackrf.hackrf_set_lna_gain(_c_device, value)
- * 
- * cpdef set_vga_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
- *     return chackrf.hackrf_set_vga_gain(_c_device, value)
- */
-
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_vga_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  uint32_t __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
-  __Pyx_RefNannySetupContext("set_vga_gain", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":90
- * cpdef set_vga_gain( value):
- *     ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
- *     return chackrf.hackrf_set_vga_gain(_c_device, value)             # <<<<<<<<<<<<<<
- * 
- * cpdef set_txvga_gain( value):
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_vga_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
   goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/hackrf.pyx":88
+ *         return False
+ * 
+ * cpdef set_rf_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Enable or disable RF amplifier """
+ *     time.sleep(TIMEOUT)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_rf_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_26set_rf_gain[] = " Enable or disable RF amplifier ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_rf_gain (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_rf_gain(__pyx_self, ((PyObject *)__pyx_v_value));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_26set_rf_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_rf_gain", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_rf_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_rf_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/hackrf.pyx":93
+ *     return set_amp_enable(value)
+ * 
+ * cpdef set_if_rx_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the LNA gain, in 8Db steps, maximum value of 40 """
+ *     time.sleep(TIMEOUT)
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_rx_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  uint32_t __pyx_t_6;
+  __Pyx_RefNannySetupContext("set_if_rx_gain", 0);
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":95
+ * cpdef set_if_rx_gain(value):
+ *     """ Sets the LNA gain, in 8Db steps, maximum value of 40 """
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
  *     return chackrf.hackrf_set_lna_gain(_c_device, value)
  * 
- * cpdef set_vga_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the vga gain, in 2db steps, maximum value of 62 '''
- *     return chackrf.hackrf_set_vga_gain(_c_device, value)
  */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_vga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_28set_vga_gain[] = " Sets the vga gain, in 2db steps, maximum value of 62 ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_vga_gain (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_vga_gain(__pyx_self, ((PyObject *)__pyx_v_value));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_vga_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_vga_gain", 0);
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_vga_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_vga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "src/urh/dev/native/lib/hackrf.pyx":92
- *     return chackrf.hackrf_set_vga_gain(_c_device, value)
- * 
- * cpdef set_txvga_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
- *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
- */
-
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_txvga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_txvga_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  uint32_t __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
-  __Pyx_RefNannySetupContext("set_txvga_gain", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":94
- * cpdef set_txvga_gain( value):
- *     ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
- *     return chackrf.hackrf_set_txvga_gain(_c_device, value)             # <<<<<<<<<<<<<<
- * 
- * cpdef set_antenna_enable( value):
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_1 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 94, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_txvga_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
-  goto __pyx_L0;
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":92
- *     return chackrf.hackrf_set_vga_gain(_c_device, value)
- * 
- * cpdef set_txvga_gain( value):             # <<<<<<<<<<<<<<
- *     ''' Sets the txvga gain, in 1db steps, maximum value of 47 '''
- *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_txvga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_txvga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_30set_txvga_gain[] = " Sets the txvga gain, in 1db steps, maximum value of 47 ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_txvga_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_txvga_gain (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_txvga_gain(__pyx_self, ((PyObject *)__pyx_v_value));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_txvga_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_txvga_gain", 0);
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_txvga_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_txvga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "src/urh/dev/native/lib/hackrf.pyx":96
- *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
- * 
- * cpdef set_antenna_enable( value):             # <<<<<<<<<<<<<<
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
- */
-
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  int __pyx_v_val;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
-  __Pyx_RefNannySetupContext("set_antenna_enable", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":97
- * 
- * cpdef set_antenna_enable( value):
- *     cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
- * 
- */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
-  if (__pyx_t_2) {
-    __pyx_t_1 = 1;
-  } else {
-    __pyx_t_1 = 0;
-  }
-  __pyx_v_val = __pyx_t_1;
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":98
- * cpdef set_antenna_enable( value):
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)             # <<<<<<<<<<<<<<
- * 
- * cpdef set_sample_rate( sample_rate):
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyInt_From_int(hackrf_set_antenna_enable(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_v_val)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_r = __pyx_t_3;
-  __pyx_t_3 = 0;
-  goto __pyx_L0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/urh/dev/native/lib/hackrf.pyx":96
- *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
+ *     """ Sets the LNA gain, in 8Db steps, maximum value of 40 """
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_lna_gain(_c_device, value)             # <<<<<<<<<<<<<<
  * 
- * cpdef set_antenna_enable( value):             # <<<<<<<<<<<<<<
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ * cpdef set_if_tx_gain(value):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_6 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_6 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_lna_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":93
+ *     return set_amp_enable(value)
+ * 
+ * cpdef set_if_rx_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the LNA gain, in 8Db steps, maximum value of 40 """
+ *     time.sleep(TIMEOUT)
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_antenna_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_if_rx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2921,25 +3067,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_28set_if_rx_gain[] = " Sets the LNA gain, in 8Db steps, maximum value of 40 ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_antenna_enable (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_antenna_enable(__pyx_self, ((PyObject *)__pyx_v_value));
+  __Pyx_RefNannySetupContext("set_if_rx_gain (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_if_rx_gain(__pyx_self, ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_antenna_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_28set_if_rx_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_antenna_enable", 0);
+  __Pyx_RefNannySetupContext("set_if_rx_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_rx_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2948,7 +3095,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_antenna_enab
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_antenna_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_if_rx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2956,49 +3103,119 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_antenna_enab
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":100
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+/* "src/urh/dev/native/lib/hackrf.pyx":98
+ *     return chackrf.hackrf_set_lna_gain(_c_device, value)
  * 
- * cpdef set_sample_rate( sample_rate):             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
- * 
+ * cpdef set_if_tx_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the txvga gain, in 1db steps, maximum value of 47 """
+ *     time.sleep(TIMEOUT)
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(PyObject *__pyx_v_sample_rate, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_if_tx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_tx_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  double __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
-  __Pyx_RefNannySetupContext("set_sample_rate", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":101
- * 
- * cpdef set_sample_rate( sample_rate):
- *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_sample_rate); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 101, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
-  goto __pyx_L0;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  uint32_t __pyx_t_6;
+  __Pyx_RefNannySetupContext("set_if_tx_gain", 0);
 
   /* "src/urh/dev/native/lib/hackrf.pyx":100
- *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ * cpdef set_if_tx_gain(value):
+ *     """ Sets the txvga gain, in 1db steps, maximum value of 47 """
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
  * 
- * cpdef set_sample_rate( sample_rate):             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":101
+ *     """ Sets the txvga gain, in 1db steps, maximum value of 47 """
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_txvga_gain(_c_device, value)             # <<<<<<<<<<<<<<
  * 
+ * cpdef set_baseband_gain(value):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_6 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_6 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_txvga_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":98
+ *     return chackrf.hackrf_set_lna_gain(_c_device, value)
+ * 
+ * cpdef set_if_tx_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the txvga gain, in 1db steps, maximum value of 47 """
+ *     time.sleep(TIMEOUT)
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_if_tx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3007,25 +3224,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(PyO
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_if_tx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_30set_if_tx_gain[] = " Sets the txvga gain, in 1db steps, maximum value of 47 ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_if_tx_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_sample_rate (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_sample_rate(__pyx_self, ((PyObject *)__pyx_v_sample_rate));
+  __Pyx_RefNannySetupContext("set_if_tx_gain (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_if_tx_gain(__pyx_self, ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_sample_rate) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_30set_if_tx_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_sample_rate", 0);
+  __Pyx_RefNannySetupContext("set_if_tx_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(__pyx_v_sample_rate, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_if_tx_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3034,7 +3252,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_sample_rate(
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_if_tx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3042,65 +3260,119 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_sample_rate(
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/hackrf.pyx":104
+/* "src/urh/dev/native/lib/hackrf.pyx":103
+ *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
  * 
- * 
- * cpdef set_amp_enable( value):             # <<<<<<<<<<<<<<
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ * cpdef set_baseband_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the vga gain, in 2db steps, maximum value of 62 """
+ *     time.sleep(TIMEOUT)
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  int __pyx_v_val;
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_gain(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  __Pyx_RefNannySetupContext("set_amp_enable", 0);
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  uint32_t __pyx_t_6;
+  __Pyx_RefNannySetupContext("set_baseband_gain", 0);
 
   /* "src/urh/dev/native/lib/hackrf.pyx":105
- * 
- * cpdef set_amp_enable( value):
- *     cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ * cpdef set_baseband_gain(value):
+ *     """ Sets the vga gain, in 2db steps, maximum value of 62 """
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_vga_gain(_c_device, value)
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 105, __pyx_L1_error)
-  if (__pyx_t_2) {
-    __pyx_t_1 = 1;
-  } else {
-    __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
   }
-  __pyx_v_val = __pyx_t_1;
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/urh/dev/native/lib/hackrf.pyx":106
- * cpdef set_amp_enable( value):
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_amp_enable(_c_device, val)             # <<<<<<<<<<<<<<
+ *     """ Sets the vga gain, in 2db steps, maximum value of 62 """
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_vga_gain(_c_device, value)             # <<<<<<<<<<<<<<
  * 
- * cpdef set_baseband_filter_bandwidth(bandwidth_hz):
+ * cpdef set_antenna_enable(value):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyInt_From_int(hackrf_set_amp_enable(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_v_val)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_r = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __pyx_t_6 = __Pyx_PyInt_As_uint32_t(__pyx_v_value); if (unlikely((__pyx_t_6 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_vga_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":104
+  /* "src/urh/dev/native/lib/hackrf.pyx":103
+ *     return chackrf.hackrf_set_txvga_gain(_c_device, value)
  * 
- * 
- * cpdef set_amp_enable( value):             # <<<<<<<<<<<<<<
- *     cdef bint val = 1 if value else 0
- *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ * cpdef set_baseband_gain(value):             # <<<<<<<<<<<<<<
+ *     """ Sets the vga gain, in 2db steps, maximum value of 62 """
+ *     time.sleep(TIMEOUT)
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_amp_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_baseband_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3109,25 +3381,26 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(PyOb
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_32set_baseband_gain[] = " Sets the vga gain, in 2db steps, maximum value of 62 ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_amp_enable (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_amp_enable(__pyx_self, ((PyObject *)__pyx_v_value));
+  __Pyx_RefNannySetupContext("set_baseband_gain (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_baseband_gain(__pyx_self, ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_amp_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_32set_baseband_gain(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_amp_enable", 0);
+  __Pyx_RefNannySetupContext("set_baseband_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_gain(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3136,7 +3409,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_amp_enable(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_amp_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_baseband_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3145,43 +3418,614 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_amp_enable(C
 }
 
 /* "src/urh/dev/native/lib/hackrf.pyx":108
- *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ *     return chackrf.hackrf_set_vga_gain(_c_device, value)
  * 
- * cpdef set_baseband_filter_bandwidth(bandwidth_hz):             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
+ * cpdef set_antenna_enable(value):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter_bandwidth(PyObject *__pyx_v_bandwidth_hz, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_val;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  uint32_t __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
-  __Pyx_RefNannySetupContext("set_baseband_filter_bandwidth", 0);
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  __Pyx_RefNannySetupContext("set_antenna_enable", 0);
 
   /* "src/urh/dev/native/lib/hackrf.pyx":109
  * 
- * cpdef set_baseband_filter_bandwidth(bandwidth_hz):
- *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)             # <<<<<<<<<<<<<<
+ * cpdef set_antenna_enable(value):
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     cdef bint val = 1 if value else 0
+ *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":110
+ * cpdef set_antenna_enable(value):
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ * 
+ */
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 110, __pyx_L1_error)
+  if (__pyx_t_7) {
+    __pyx_t_6 = 1;
+  } else {
+    __pyx_t_6 = 0;
+  }
+  __pyx_v_val = __pyx_t_6;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":111
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
+ *     return chackrf.hackrf_set_antenna_enable(_c_device, val)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef set_sample_rate(sample_rate):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_As_uint32_t(__pyx_v_bandwidth_hz); if (unlikely((__pyx_t_1 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 109, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(hackrf_set_baseband_filter_bandwidth(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_antenna_enable(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_v_val)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/hackrf.pyx":108
+ *     return chackrf.hackrf_set_vga_gain(_c_device, value)
+ * 
+ * cpdef set_antenna_enable(value):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_antenna_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_antenna_enable(PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_antenna_enable (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_antenna_enable(__pyx_self, ((PyObject *)__pyx_v_value));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_34set_antenna_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_antenna_enable", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_antenna_enable(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_antenna_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/hackrf.pyx":113
+ *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ * 
+ * cpdef set_sample_rate(sample_rate):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(PyObject *__pyx_v_sample_rate, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  double __pyx_t_6;
+  __Pyx_RefNannySetupContext("set_sample_rate", 0);
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":114
+ * 
+ * cpdef set_sample_rate(sample_rate):
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ * 
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 114, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":115
+ * cpdef set_sample_rate(sample_rate):
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef set_amp_enable(value):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_v_sample_rate); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_sample_rate(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":113
+ *     return chackrf.hackrf_set_antenna_enable(_c_device, val)
+ * 
+ * cpdef set_sample_rate(sample_rate):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_v_sample_rate) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_sample_rate (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_sample_rate(__pyx_self, ((PyObject *)__pyx_v_sample_rate));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_36set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_sample_rate) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_sample_rate", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_sample_rate(__pyx_v_sample_rate, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/hackrf.pyx":117
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ * 
+ * cpdef set_amp_enable(value):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(PyObject *__pyx_v_value, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_val;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  __Pyx_RefNannySetupContext("set_amp_enable", 0);
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":118
+ * 
+ * cpdef set_amp_enable(value):
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     cdef bint val = 1 if value else 0
+ *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":119
+ * cpdef set_amp_enable(value):
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ * 
+ */
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 119, __pyx_L1_error)
+  if (__pyx_t_7) {
+    __pyx_t_6 = 1;
+  } else {
+    __pyx_t_6 = 0;
+  }
+  __pyx_v_val = __pyx_t_6;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":120
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
+ *     return chackrf.hackrf_set_amp_enable(_c_device, val)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef set_baseband_filter_bandwidth(bandwidth_hz):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_amp_enable(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_v_val)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":117
+ *     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
+ * 
+ * cpdef set_amp_enable(value):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     cdef bint val = 1 if value else 0
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_amp_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_amp_enable(PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_amp_enable (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_amp_enable(__pyx_self, ((PyObject *)__pyx_v_value));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_amp_enable(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_value) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_amp_enable", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_amp_enable(__pyx_v_value, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_amp_enable", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/hackrf.pyx":122
  *     return chackrf.hackrf_set_amp_enable(_c_device, val)
  * 
  * cpdef set_baseband_filter_bandwidth(bandwidth_hz):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_41set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter_bandwidth(PyObject *__pyx_v_bandwidth_hz, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  uint32_t __pyx_t_6;
+  __Pyx_RefNannySetupContext("set_baseband_filter_bandwidth", 0);
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":123
+ * 
+ * cpdef set_baseband_filter_bandwidth(bandwidth_hz):
+ *     time.sleep(TIMEOUT)             # <<<<<<<<<<<<<<
+ *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_TIMEOUT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":124
+ * cpdef set_baseband_filter_bandwidth(bandwidth_hz):
+ *     time.sleep(TIMEOUT)
+ *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)             # <<<<<<<<<<<<<<
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_6 = __Pyx_PyInt_As_uint32_t(__pyx_v_bandwidth_hz); if (unlikely((__pyx_t_6 == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(hackrf_set_baseband_filter_bandwidth(__pyx_v_3src_3urh_3dev_6native_3lib_6hackrf__c_device, __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":122
+ *     return chackrf.hackrf_set_amp_enable(_c_device, val)
+ * 
+ * cpdef set_baseband_filter_bandwidth(bandwidth_hz):             # <<<<<<<<<<<<<<
+ *     time.sleep(TIMEOUT)
  *     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("src.urh.dev.native.lib.hackrf.set_baseband_filter_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -3191,25 +4035,25 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_41set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_41set_baseband_filter_bandwidth(PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_baseband_filter_bandwidth (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_baseband_filter_bandwidth(__pyx_self, ((PyObject *)__pyx_v_bandwidth_hz));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_40set_baseband_filter_bandwidth(__pyx_self, ((PyObject *)__pyx_v_bandwidth_hz));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_38set_baseband_filter_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6hackrf_40set_baseband_filter_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bandwidth_hz) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_baseband_filter_bandwidth", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter_bandwidth(__pyx_v_bandwidth_hz, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_6hackrf_set_baseband_filter_bandwidth(__pyx_v_bandwidth_hz, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3240,13 +4084,14 @@ static PyMethodDef __pyx_methods[] = {
   {"version_string_read", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_21version_string_read, METH_NOARGS, 0},
   {"set_freq", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_23set_freq, METH_O, 0},
   {"is_streaming", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_25is_streaming, METH_NOARGS, 0},
-  {"set_lna_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_lna_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_26set_lna_gain},
-  {"set_vga_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_vga_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_28set_vga_gain},
-  {"set_txvga_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_txvga_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_30set_txvga_gain},
-  {"set_antenna_enable", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_antenna_enable, METH_O, 0},
-  {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_sample_rate, METH_O, 0},
-  {"set_amp_enable", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_amp_enable, METH_O, 0},
-  {"set_baseband_filter_bandwidth", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_baseband_filter_bandwidth, METH_O, 0},
+  {"set_rf_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_27set_rf_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_26set_rf_gain},
+  {"set_if_rx_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_29set_if_rx_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_28set_if_rx_gain},
+  {"set_if_tx_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_31set_if_tx_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_30set_if_tx_gain},
+  {"set_baseband_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_33set_baseband_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6hackrf_32set_baseband_gain},
+  {"set_antenna_enable", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_35set_antenna_enable, METH_O, 0},
+  {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_37set_sample_rate, METH_O, 0},
+  {"set_amp_enable", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_39set_amp_enable, METH_O, 0},
+  {"set_baseband_filter_bandwidth", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6hackrf_41set_baseband_filter_bandwidth, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -3269,7 +4114,8 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_u__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 1, 0, 0},
+  {&__pyx_kp_u_, __pyx_k_, sizeof(__pyx_k_), 0, 1, 0, 0},
+  {&__pyx_n_s_TIMEOUT, __pyx_k_TIMEOUT, sizeof(__pyx_k_TIMEOUT), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_sleep, __pyx_k_sleep, sizeof(__pyx_k_sleep), 0, 0, 1, 1},
@@ -3284,27 +4130,13 @@ static int __Pyx_InitCachedBuiltins(void) {
 static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
-
-  /* "src/urh/dev/native/lib/hackrf.pyx":38
- * 
- * cpdef close():
- *     time.sleep(0.1)             # <<<<<<<<<<<<<<
- *     return chackrf.hackrf_close(_c_device)
- * 
- */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_float_0_1); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
   __Pyx_RefNannyFinishContext();
   return 0;
-  __pyx_L1_error:;
-  __Pyx_RefNannyFinishContext();
-  return -1;
 }
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_1 = PyFloat_FromDouble(0.1); if (unlikely(!__pyx_float_0_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_float_0_15 = PyFloat_FromDouble(0.15); if (unlikely(!__pyx_float_0_15)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -3416,20 +4248,29 @@ PyMODINIT_FUNC PyInit_hackrf(void)
  * from libc.stdlib cimport malloc
  * from libc.string cimport memcpy
  * import time             # <<<<<<<<<<<<<<
- * cdef object f
- * from cpython cimport PyBytes_GET_SIZE
+ * 
+ * TIMEOUT = 0.15
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_time, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_time, __pyx_t_1) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/hackrf.pyx":20
+  /* "src/urh/dev/native/lib/hackrf.pyx":6
+ * import time
  * 
- * cdef chackrf.hackrf_device* _c_device
+ * TIMEOUT = 0.15             # <<<<<<<<<<<<<<
+ * 
+ * cdef object f
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TIMEOUT, __pyx_float_0_15) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+
+  /* "src/urh/dev/native/lib/hackrf.pyx":23
+ * 
+ * cdef chackrf.hackrf_device*_c_device
  * cdef int hackrf_success = chackrf.HACKRF_SUCCESS             # <<<<<<<<<<<<<<
  * 
- * 
+ * cpdef setup():
  */
   __pyx_v_3src_3urh_3dev_6native_3lib_6hackrf_hackrf_success = HACKRF_SUCCESS;
 

@@ -10,6 +10,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 import socket
 
+from urh import constants
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
@@ -66,8 +67,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.raw_mode = raw_mode
         if self.raw_mode:
-            # Take 60% of avail memory
-            num_samples = 0.6*(psutil.virtual_memory().free / 8)
+            # Take 60% of avail memory>
+            num_samples = constants.SETTINGS.value('ram_threshold', 0.6, float)*(psutil.virtual_memory().available / 8)
             self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
         else:
             self.received_bits = []

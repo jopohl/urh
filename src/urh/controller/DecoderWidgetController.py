@@ -386,15 +386,27 @@ class DecoderWidgetController(QDialog):
 
     @pyqtSlot(int)
     def on_base_functions_current_row_changed(self, index: int):
-        self.set_information(0)
+        if self.ui.basefunctions.currentItem().text() is not None:
+            self.set_information(0)
+        else:
+            self.ui.optionWidget.setCurrentIndex(0)
+            self.ui.info.clear()
 
     @pyqtSlot(int)
     def on_additional_functions_current_row_changed(self, index: int):
-        self.set_information(1)
+        if self.ui.additionalfunctions.currentItem() is not None:
+            self.set_information(1)
+        else:
+            self.ui.optionWidget.setCurrentIndex(0)
+            self.ui.info.clear()
 
     @pyqtSlot(int)
     def on_decoder_chain_current_row_changed(self, index: int):
-        self.set_information(2)
+        if self.ui.decoderchain.currentItem() is not None:
+            self.set_information(2)
+        else:
+            self.ui.optionWidget.setCurrentIndex(0)
+            self.ui.info.clear()
 
     def set_information(self, mode: int):
         # Presets
@@ -762,10 +774,10 @@ class DecoderWidgetController(QDialog):
 
     def dropEvent(self, event: QDropEvent):
         # if not self.ui.decoderchain.geometry().contains(self.mapToGlobal(event.pos())):
-        if self.ui.decoderchain.active_element >= 0:
-            self.chainoptions.pop(self.ui.decoderchain.item(self.ui.decoderchain.active_element).text(), None)
-        self.ui.decoderchain.takeItem(self.ui.decoderchain.active_element)
-        self.decoderchainUpdate()
+        if self.ui.decoderchain.currentItem() is not None:
+            self.chainoptions.pop(self.ui.decoderchain.currentItem().text(), None)
+            self.ui.decoderchain.takeItem(self.ui.decoderchain.currentRow())
+            self.decoderchainUpdate()
 
     def set_signal(self):
         indx = self.ui.combobox_signals.currentIndex()

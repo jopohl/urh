@@ -1,9 +1,7 @@
-import socket
 
 import numpy as np
 import psutil
-import time
-
+from urh import constants
 import zmq
 from PyQt5.QtCore import pyqtSignal
 
@@ -14,24 +12,23 @@ from urh.util.Logger import logger
 class ReceiverThread(AbstractBaseThread):
     index_changed = pyqtSignal(int, int)
 
-
-    def __init__(self, sample_rate, freq, gain, bandwidth, ip='127.0.0.1',
+    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
                  parent=None,  is_ringbuffer=False):
-        super().__init__(sample_rate, freq, gain, bandwidth, True, ip, parent)
+        super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
 
         self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
         self.data = None
 
     def init_recv_buffer(self):
         # Take 60% of free memory
-        nsamples = int(0.6 * (psutil.virtual_memory().free / 8))
+        nsamples = int(constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().available / 8))
         self.data = np.zeros(nsamples, dtype=np.complex64)
 
     def run(self):
         if self.data is None:
             self.init_recv_buffer()
 
-        self.initalize_process()
+        self.initialize_process()
         logger.info("Initialize receive socket")
         self.init_recv_socket()
 

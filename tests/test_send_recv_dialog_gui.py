@@ -31,23 +31,14 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
         project_manager = self.form.project_manager
-        self.receive_dialog = ReceiveDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                      project_manager.bandwidth, project_manager.gain,
-                                                      project_manager.device, testing_mode=True)
+        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True)
 
-        self.send_dialog = SendDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                project_manager.bandwidth, project_manager.gain,
-                                                project_manager.device,
-                                                modulated_data=self.signal.data, testing_mode=True)
+        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
 
-        self.spectrum_dialog = SpectrumDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                        project_manager.bandwidth, project_manager.gain,
-                                                        project_manager.device, testing_mode=True)
+        self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True)
 
-        self.sniff_dialog = ProtocolSniffDialogController(project_manager.frequency, project_manager.sample_rate,
-                                                          project_manager.bandwidth, project_manager.gain,
-                                                          project_manager.device, self.signal.noise_threshold,
+        self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
                                                           self.signal.qad_center,
                                                           self.signal.bit_len, self.signal.tolerance,
                                                           self.signal.modulation_type,
@@ -203,15 +194,15 @@ class TestSendRecvDialog(unittest.TestCase):
             dialog.ui.lineEditIP.editingFinished.emit()
             self.assertEqual(dialog.device.ip, "1.3.3.7", msg=type(dialog))
 
-            dialog.ui.spinBoxFreq.setValue(10e9)
+            dialog.ui.spinBoxFreq.setValue(2e9)
             dialog.ui.spinBoxFreq.editingFinished.emit()
             self.assertEqual(dialog.ui.spinBoxFreq.text()[-1], "G")
-            self.assertEqual(dialog.device.frequency, 10e9)
+            self.assertEqual(dialog.device.frequency, 2e9)
 
-            dialog.ui.spinBoxSampleRate.setValue(10e9)
+            dialog.ui.spinBoxSampleRate.setValue(10e6)
             dialog.ui.spinBoxSampleRate.editingFinished.emit()
-            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "G")
-            self.assertEqual(dialog.device.sample_rate, 10e9)
+            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "M")
+            self.assertEqual(dialog.device.sample_rate, 10e6)
 
             dialog.ui.spinBoxBandwidth.setValue(1e3)
             dialog.ui.spinBoxBandwidth.editingFinished.emit()
@@ -229,4 +220,5 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
-            QTest.qWait(100)
+            app.processEvents()
+            QTest.qWait(250)

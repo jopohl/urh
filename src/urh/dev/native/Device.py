@@ -1,19 +1,14 @@
 import threading
-
-import numpy as np
-from abc import abstractmethod
-
 import time
-
-import psutil
-from PyQt5.QtCore import QObject, pyqtSignal
 from multiprocessing import Pipe
-
 from multiprocessing import Value, Process
-
 from pickle import UnpicklingError
 
-from urh.util.Formatter import Formatter
+import numpy as np
+import psutil
+from PyQt5.QtCore import QObject, pyqtSignal
+
+from urh import constants
 from urh.util.Logger import logger
 
 
@@ -21,29 +16,29 @@ class Device(QObject):
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
 
-    def __init__(self, bw, freq, gain, srate, is_ringbuffer=False):
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__()
 
         self.error_not_open = -4242
 
-        self.__bandwidth = bw
-        self.__frequency = freq
-        self.__gain = gain
-        self.__sample_rate = srate
+        self.__bandwidth = bandwidth
+        self.__frequency = center_freq
+        self.__gain = gain  # = rf_gain
+        self.__if_gain = if_gain
+        self.__baseband_gain = baseband_gain
+        self.__sample_rate = sample_rate
+
+        self.__freq_correction = 0
+        self.__direct_sampling_mode = 0
 
         self.bandwidth_is_adjustable = True
 
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
-        self._max_bandwidth = 1
-        self._max_frequency = 1
-        self._max_sample_rate = 1
-        self._max_gain = 1
-
         self.success = 0
         self.error_codes = {}
-        self.errors = set()
+        self.device_messages = []
 
         self.receive_process_function = None
         self.send_process_function = None
@@ -61,7 +56,7 @@ class Device(QObject):
         self.is_receiving = False
         self.is_transmitting = False
 
-        self.device_ip = "192.168.10.2"     # For USRP and RTLSDRTCP
+        self.device_ip = "192.168.10.2"  # For USRP and RTLSDRTCP
 
         self.receive_buffer = None
 
@@ -73,10 +68,10 @@ class Device(QObject):
         self.read_recv_buffer_thread.daemon = True
         self.read_recv_buffer_thread.start()
 
-    def _start_read_error_thread(self):
-        self.read_dev_error_thread = threading.Thread(target=self.read_device_errors)
-        self.read_dev_error_thread.daemon = True
-        self.read_dev_error_thread.start()
+    def _start_read_message_thread(self):
+        self.read_dev_msg_thread = threading.Thread(target=self.read_device_messages)
+        self.read_dev_msg_thread.daemon = True
+        self.read_dev_msg_thread.start()
 
     @property
     def current_sent_sample(self):
@@ -96,11 +91,12 @@ class Device(QObject):
 
     @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth
+        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, self.if_gain, self.baseband_gain
 
     @property
     def send_process_arguments(self):
-        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.gain, self.bandwidth, self.send_buffer, \
+        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, \
+               self.gain, self.if_gain, self.baseband_gain, self.send_buffer, \
                self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
 
     def init_recv_buffer(self):
@@ -109,7 +105,7 @@ class Device(QObject):
                 nsamples = 10 ** 5
             else:
                 # Take 60% of avail memory
-                nsamples = 0.6 * (psutil.virtual_memory().free / 8)
+                nsamples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().free / 8)
             self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
             logger.info(
                 "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
@@ -117,18 +113,21 @@ class Device(QObject):
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
         error_code_msg = self.error_codes[retcode] if retcode in self.error_codes else "Error Code: " + str(retcode)
+
         if retcode == self.success:
             if msg:
-                logger.info("{0}-{1} ({2}): Success".format(type(self).__name__, action, msg))
+                formatted_message = "{0}-{1} ({2}): Success".format(type(self).__name__, action, msg)
             else:
-                logger.info("{0}-{1}: Success".format(type(self).__name__, action))
+                formatted_message = "{0}-{1}: Success".format(type(self).__name__, action)
+            logger.info(formatted_message)
         else:
             if msg:
-                err = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
+                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
             else:
-                err = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
-            self.errors.add(err)
-            logger.error(err)
+                formatted_message = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
+            logger.error(formatted_message)
+
+        self.device_messages.append(formatted_message)
 
     @property
     def received_data(self):
@@ -151,21 +150,15 @@ class Device(QObject):
         if not self.bandwidth_is_adjustable:
             return
 
-        if value > self._max_bandwidth:
-            err = "{0} bandwidth {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
-                                                                             Formatter.big_value_with_suffix(value),
-                                                                             Formatter.big_value_with_suffix(
-                                                                                 self._max_bandwidth))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_bandwidth
-
         if value != self.__bandwidth:
             self.__bandwidth = value
             self.set_device_bandwidth(value)
 
     def set_device_bandwidth(self, bw):
-        self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
+        try:
+            self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
+        except BrokenPipeError:
+            pass
 
     @property
     def frequency(self):
@@ -173,21 +166,15 @@ class Device(QObject):
 
     @frequency.setter
     def frequency(self, value):
-        if value > self._max_frequency:
-            err = "{0} frequency {1}Hz too high. Correcting to {2}Hz".format(type(self).__name__,
-                                                                             Formatter.big_value_with_suffix(value),
-                                                                             Formatter.big_value_with_suffix(
-                                                                                 self._max_frequency))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_frequency
-
         if value != self.__frequency:
             self.__frequency = value
             self.set_device_frequency(value)
 
     def set_device_frequency(self, value):
-        self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
+        try:
+            self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
+        except BrokenPipeError:
+            pass
 
     @property
     def gain(self):
@@ -195,21 +182,47 @@ class Device(QObject):
 
     @gain.setter
     def gain(self, value):
-        if value > self._max_gain:
-            err = "{0} gain {1} too high. Correcting to {2}".format(type(self).__name__, value, self._max_gain)
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_gain
-
         if value != self.__gain:
             self.__gain = value
             self.set_device_gain(value)
 
-    @abstractmethod
     def set_device_gain(self, gain):
-        # todo: split to if gain etc
-        self.parent_ctrl_conn.send("tuner_gain:" + str(int(gain)))
-        pass
+        try:
+            self.parent_ctrl_conn.send("rf_gain:" + str(int(gain)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def if_gain(self):
+        return self.__if_gain
+
+    @if_gain.setter
+    def if_gain(self, value):
+        if value != self.__if_gain:
+            self.__if_gain = value
+            self.set_device_if_gain(value)
+
+    def set_device_if_gain(self, if_gain):
+        try:
+            self.parent_ctrl_conn.send("if_gain:" + str(int(if_gain)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def baseband_gain(self):
+        return self.__baseband_gain
+
+    @baseband_gain.setter
+    def baseband_gain(self, value):
+        if value != self.__baseband_gain:
+            self.__baseband_gain = value
+            self.set_device_baseband_gain(value)
+
+    def set_device_baseband_gain(self, baseband_gain):
+        try:
+            self.parent_ctrl_conn.send("baseband_gain:" + str(int(baseband_gain)))
+        except BrokenPipeError:
+            pass
 
     @property
     def sample_rate(self):
@@ -217,24 +230,52 @@ class Device(QObject):
 
     @sample_rate.setter
     def sample_rate(self, value):
-        if value > self._max_sample_rate:
-            err = "{0} sample rate {1}Sps too high. Correcting to {2}Sps".format(type(self).__name__,
-                                                                                 Formatter.big_value_with_suffix(value),
-                                                                                 Formatter.big_value_with_suffix(
-                                                                                     self._max_sample_rate))
-            self.errors.add(err)
-            logger.warning(err)
-            value = self._max_sample_rate
-
         if value != self.__sample_rate:
             self.__sample_rate = value
             self.set_device_sample_rate(value)
 
     def set_device_sample_rate(self, sample_rate):
-        self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+        try:
+            self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def freq_correction(self):
+        return self.__freq_correction
+
+    @freq_correction.setter
+    def freq_correction(self, value):
+        if value != self.__freq_correction:
+            self.__freq_correction = value
+            self.set_device_freq_correction(value)
+
+    def set_device_freq_correction(self, value):
+        try:
+            self.parent_ctrl_conn.send("freq_correction:" + str(int(value)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def direct_sampling_mode(self):
+        return self.__direct_sampling_mode
+
+    @direct_sampling_mode.setter
+    def direct_sampling_mode(self, value):
+        if value != self.__direct_sampling_mode:
+            self.__direct_sampling_mode = value
+            self.set_device_direct_sampling_mode(value)
+
+    def set_device_direct_sampling_mode(self, value):
+        try:
+            self.parent_ctrl_conn.send("direct_sampling_mode:" + str(int(value)))
+        except BrokenPipeError:
+            pass
 
     def start_rx_mode(self):
         self.init_recv_buffer()
+        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
         self.is_receiving = True
         logger.info("{0}: Starting RX Mode".format(self.__class__.__name__))
@@ -242,16 +283,19 @@ class Device(QObject):
                                        args=self.receive_process_arguments)
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
-        self._start_read_error_thread()
+        self._start_read_message_thread()
         try:
             self.receive_process.start()
         except OSError as e:
             logger.error(repr(e))
-            self.errors.add(repr(e))
+            self.device_messages.add(repr(e))
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False
-        self.parent_ctrl_conn.send("stop")
+        try:
+            self.parent_ctrl_conn.send("stop")
+        except BrokenPipeError:
+            pass
 
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -264,24 +308,26 @@ class Device(QObject):
                 self.child_ctrl_conn.close()
                 self.child_data_conn.close()
 
-            time.sleep(0.1)
-            self.parent_data_conn, self.child_data_conn = Pipe()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
         self.is_transmitting = True
+
+        logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
 
         self.transmit_process = Process(target=self.send_process_function,
                                         args=self.send_process_arguments)
 
         self.transmit_process.daemon = True
-        self._start_read_error_thread()
+        self._start_read_message_thread()
         self.transmit_process.start()
 
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
-        self.parent_ctrl_conn.send("stop")
+        try:
+            self.parent_ctrl_conn.send("stop")
+        except BrokenPipeError:
+            pass
 
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -291,7 +337,7 @@ class Device(QObject):
                 logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
                 self.transmit_process.terminate()
                 self.transmit_process.join()
-            self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+                self.child_ctrl_conn.close()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):
@@ -307,12 +353,12 @@ class Device(QObject):
         self.set_device_gain(self.gain)
         self.set_device_sample_rate(self.sample_rate)
 
-    def read_device_errors(self):
+    def read_device_messages(self):
         while self.is_receiving or self.is_transmitting:
             try:
-                error = self.parent_ctrl_conn.recv()
-                action, error_code = error.split(":")
-                self.log_retcode(int(error_code), action)
+                message = self.parent_ctrl_conn.recv()
+                action, return_code = message.split(":")
+                self.log_retcode(int(return_code), action)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False
@@ -330,8 +376,7 @@ class Device(QObject):
                         if self.is_ringbuffer:
                             self.current_recv_index = 0
                             if nsamples >= len(self.receive_buffer):
-                                logger.warning("Receive buffer too small, skipping {0:d} samples".format(
-                                    nsamples - len(self.receive_buffer)))
+                                #logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples - len(self.receive_buffer)))
                                 nsamples = len(self.receive_buffer) - 1
 
                         else:

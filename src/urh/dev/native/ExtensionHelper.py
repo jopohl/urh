@@ -10,6 +10,8 @@ import pickle
 from setuptools import Extension
 
 
+USE_RELATIVE_PATHS = False
+
 DEVICES = {
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
@@ -101,11 +103,9 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
 
 
 def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list, use_cython=False):
-    is_release = os.path.isfile("/tmp/urh_releasing")
-
     file_ext = "pyx" if use_cython else "cpp"
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    if sys.platform == "win32" or is_release:
+    if USE_RELATIVE_PATHS:
         # We need relative paths on windows
         cpp_file_path = "src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
     else:
@@ -116,7 +116,8 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language="c++")
 
-if __name__ == "__main__":
+
+if __name__ == "__main__" and sys.platform != "win32":
     from setuptools import setup
 
     extensions = pickle.load(open(os.path.join(tempfile.gettempdir(), "native_extensions"), "rb"))

@@ -1,4 +1,6 @@
 import numpy as np
+import time
+
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
@@ -66,6 +68,7 @@ class HackRF(Device):
         exit_requested = False
 
         while not exit_requested:
+            time.sleep(0.5)
             while ctrl_connection.poll():
                 result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
                 if result == "stop":
@@ -111,6 +114,7 @@ class HackRF(Device):
         exit_requested = False
 
         while not exit_requested and not sending_is_finished():
+            time.sleep(0.5)
             while ctrl_connection.poll():
                 result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
                 if result == "stop":

@@ -170,6 +170,28 @@ class SimulatorGraphicsView(QGraphicsView):
 
         return menu
 
+    def navigate_forward(self):
+        selected_items = self.scene().selectedItems()
+
+        if selected_items:
+            selected_item = selected_items[0]
+            next_item = selected_item.next()
+            self.jump_to_item(next_item)
+
+    def navigate_backward(self):
+        selected_items = self.scene().selectedItems()
+
+        if selected_items:
+            selected_item = selected_items[0]
+            prev_item = selected_item.prev()
+            self.jump_to_item(prev_item)
+        
+    def jump_to_item(self, item):
+        if item:
+            self.scene().clearSelection()
+            self.centerOn(item)
+            item.setSelected(True)
+
     def contextMenuEvent(self, event):
         items = [item for item in self.items(event.pos()) if isinstance(item, SimulatorItem)]
         self.context_menu_item = None if len(items) == 0 else items[0]
@@ -180,3 +202,9 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu = self.create_context_menu()
         action = menu.exec_(event.globalPos())
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Up:
+            self.navigate_backward()
+        elif event.key() == Qt.Key_Down:
+            self.navigate_forward()

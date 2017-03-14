@@ -89,25 +89,11 @@ class SimulatorTabController(QWidget):
             
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):
-        selected_items = self.simulator_scene.selectedItems()
-
-        if selected_items:
-            selected_item = selected_items[0]
-            next_item = selected_item.next()
-            self.simulator_scene.clearSelection()
-            self.ui.gvSimulator.centerOn(next_item)
-            next_item.setSelected(True)
+        self.ui.gvSimulator.navigate_forward()
 
     @pyqtSlot()
     def on_btn_prev_nav_clicked(self):
-        selected_items = self.simulator_scene.selectedItems()
-
-        if selected_items:
-            selected_item = selected_items[0]
-            prev_item = selected_item.prev()
-            self.simulator_scene.clearSelection()
-            self.ui.gvSimulator.centerOn(prev_item)
-            prev_item.setSelected(True)
+        self.ui.gvSimulator.navigate_backward()
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
@@ -143,9 +129,7 @@ class SimulatorTabController(QWidget):
                     items = None
 
         if target_item:
-            self.simulator_scene.clearSelection()
-            self.ui.gvSimulator.centerOn(target_item)
-            target_item.setSelected(True)
+            self.ui.gvSimulator.jump_to_item(target_item)
         else:
             self.update_ui()
                     

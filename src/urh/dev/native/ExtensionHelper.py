@@ -117,7 +117,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
                      include_dirs=include_dirs, language="c++")
 
 
-if __name__ == "__main__" and sys.platform != "win32":
+if __name__ == "__main__":
     from setuptools import setup
 
     extensions = pickle.load(open(os.path.join(tempfile.gettempdir(), "native_extensions"), "rb"))

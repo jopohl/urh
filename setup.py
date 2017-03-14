@@ -129,7 +129,7 @@ setup(
     package_dir={"": "src"},
     package_data=get_package_data(),
     url="https://github.com/jopohl/urh",
-    license="Apache License 2.0",
+    license="GNU General Public License (GPL)",
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=install_requires,
     setup_requires=['numpy'],

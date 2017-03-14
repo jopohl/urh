@@ -103,9 +103,14 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
 def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list, use_cython=False):
     file_ext = "pyx" if use_cython else "cpp"
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
+    if sys.platform != "win32":
+        cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
+    else:
+        # We need relative paths on windows
+        cpp_file_path = "src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
+
     return Extension("urh.dev.native.lib." + dev_name,
-                     [os.path.relpath(cpp_file_path)],
+                     [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language="c++")
 

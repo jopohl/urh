@@ -386,7 +386,7 @@ class OptionsController(QDialog):
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
             target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
             call([sys.executable, os.path.realpath(ExtensionHelper.__file__),
-                  "build_ext", "-b", target_dir])
+                  "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()])
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilt {0} new device extension{1}. "
                                                              "Please restart URH to use them.".format(new_natives, s)))
 

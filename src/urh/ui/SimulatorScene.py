@@ -166,8 +166,9 @@ class SimulatorItem(QGraphicsObject):
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))
 
     def refresh(self, x_pos, y_pos):
-        width = self.scene().participants[-1].line.line().x1()
-        width -= self.scene().participants[0].line.line().x1()
+        visible_participants = [part for part in self.scene().participants if part.isVisible()]
+        width = visible_participants[-1].line.line().x1()
+        width -= visible_participants[0].line.line().x1()
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height())
 
@@ -336,8 +337,9 @@ class RuleConditionItem(SimulatorItem):
             item.refresh(20, start_y)
             start_y += round(item.boundingRect().height())
 
-        width = self.scene().participants[-1].line.line().x1()
-        width -= self.scene().participants[0].line.line().x1()
+        visible_participants = [part for part in self.scene().participants if part.isVisible()]
+        width = visible_participants[-1].line.line().x1()
+        width -= visible_participants[0].line.line().x1()
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 20)
 
@@ -636,10 +638,12 @@ class SimulatorScene(QGraphicsScene):
         self.participants = []
 
         self.not_assigned_part = ParticipantItem("?")
+        self.not_assigned_part.setVisible(False)
         self.participants.append(self.not_assigned_part)
         self.addItem(self.not_assigned_part)
 
         self.broadcast_part = ParticipantItem("Broadcast")
+        self.broadcast_part.setVisible(False)
         self.participants.append(self.broadcast_part)
         self.addItem(self.broadcast_part)
 
@@ -717,6 +721,14 @@ class SimulatorScene(QGraphicsScene):
                 self.participants_dict[participant] = participant_item
                 self.participants.insert(-2, participant_item)
 
+        for participant in self.participants:
+            for msg in self.get_all_messages():
+                if msg.source == participant or msg.destination == participant:
+                    participant.setVisible(True)
+                    break
+            else:
+                participant.setVisible(False)
+
     def get_all_messages(self):
         messages = []
 
@@ -729,17 +741,22 @@ class SimulatorScene(QGraphicsScene):
         return messages
 
     def arrange_participants(self):
-        self.participants[0].update(x_pos = 0)
+        visible_participants = [part for part in self.participants if part.isVisible()]
 
-        for i in range(1, len(self.participants)):
-            curr_participant = self.participants[i]
-            participants_left = self.participants[:i]
+        if not visible_participants:
+            return
+
+        visible_participants[0].update(x_pos = 0)
+
+        for i in range(1, len(visible_participants)):
+            curr_participant = visible_participants[i]
+            participants_left = visible_participants[:i]
 
             items = [msg for msg in self.get_all_messages()
                     if ((msg.source == curr_participant and msg.destination in participants_left)
                     or (msg.source in participants_left and msg.destination == curr_participant))]
 
-            x_max = self.participants[i - 1].line.line().x1() + 50
+            x_max = visible_participants[i - 1].line.line().x1() + 50
 
             for msg in items:
                 x = msg.labels_width() + 30
@@ -751,7 +768,7 @@ class SimulatorScene(QGraphicsScene):
             curr_participant.update(x_pos = x_max)
 
     def arrange_items(self):
-        x_pos = self.participants[0].line.line().x1()
+        x_pos = 0
         y_pos = 30
 
         for item in self.sim_items:

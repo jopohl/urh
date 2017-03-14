@@ -17,6 +17,7 @@ DEVICES = {
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
+    "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find"},
 }
 
 FALLBACKS = {

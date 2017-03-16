@@ -2,6 +2,9 @@ cimport cusrp
 # noinspection PyUnresolvedReferences
 import numpy as np
 cimport numpy as np
+from libc.stdlib cimport malloc, free
+
+np.import_array()
 
 cpdef find_devices(device_args):
     """
@@ -41,6 +44,14 @@ def receive(device_args):
     byte_string_other_stream_args = "".encode("UTF-8")
     cdef char* other_stream_args = byte_string_other_stream_args
     stream_args.args = other_stream_args
+    cdef size_t channel = 0
+    stream_args.channel_list = &channel
+    stream_args.n_channels = 1
+
+    cdef cusrp.uhd_stream_cmd_t stream_cmd
+    stream_cmd.stream_mode = cusrp.uhd_stream_mode_t.UHD_STREAM_MODE_NUM_SAMPS_AND_DONE
+    stream_cmd.num_samps = 363
+    stream_cmd.stream_now = 1
 
     cusrp.uhd_usrp_make(&usrp_handle, dev_args)
     print("Called usrp_make")
@@ -56,5 +67,34 @@ def receive(device_args):
     cusrp.uhd_rx_streamer_max_num_samps(rx_streamer_handle, &max_num_samps_out)
     print("Max num samps:", max_num_samps_out)
 
-    cusrp.uhd_usrp_free(&usrp_handle)
+
+
+    cdef float* buff = <float *>malloc(max_num_samps_out * 2 * sizeof(float))
+    buff[0] = 42
+    cdef void ** buffs = <void **> &buff
+
+    #cdef np.complex64_t[:] buffer = np.empty(max_num_samps_out, dtype=np.complex64)
+    #cdef void ** buffs = <void **> malloc(buffer.shape[0]*sizeof(void *))
+    #buffs[0] = <void *>buffer
+
+    cdef cusrp.uhd_rx_metadata_handle metadata_handle
+    cusrp.uhd_rx_metadata_make(&metadata_handle)
+
+    cdef size_t items_received
+
+    print("Buffer 0 before RX", buff[0])
+
+    cusrp.uhd_rx_streamer_issue_stream_cmd(rx_streamer_handle, &stream_cmd)
+    cusrp.uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_samps_out, &metadata_handle, 1, 0, &items_received)
+
+    print("Received items:", items_received)
+
+    print("Buffer 0 after RX", buff[0])
+
     cusrp.uhd_rx_streamer_free(&rx_streamer_handle)
+    print("Freed rx streamer handler")
+    cusrp.uhd_rx_metadata_free(&metadata_handle)
+    print("Freed metadata handle")
+    cusrp.uhd_usrp_free(&usrp_handle)
+    print("Freed usrp handle")
+

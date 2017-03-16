@@ -1,6 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libc.time cimport time_t
+from libcpp cimport bool
 
 cdef extern from "uhd/types/metadata.h":
     struct uhd_rx_metadata_t
@@ -92,10 +93,12 @@ cdef extern from "uhd/types/string_vector.h":
 cdef extern from "uhd/usrp/usrp.h":
     struct uhd_rx_streamer
     struct uhd_tx_streamer
+    struct uhd_usrp
 
     ctypedef uhd_rx_streamer* uhd_rx_streamer_handle
     ctypedef uhd_tx_streamer* uhd_tx_streamer_handle
-    
+    ctypedef uhd_usrp* uhd_usrp_handle
+
     ctypedef enum uhd_stream_mode_t:
         # Stream samples indefinitely
         UHD_STREAM_MODE_START_CONTINUOUS   = 97,
@@ -118,8 +121,24 @@ cdef extern from "uhd/usrp/usrp.h":
         # If not now, then fractional seconds into future to stream
         double time_spec_frac_secs;
 
+    ctypedef struct uhd_stream_args_t:
+        # Format of host memory
+        char* cpu_format;
+        # Over-the-wire format
+        char* otw_format;
+        # Other stream args
+        char* args;
+        # Array that lists channels
+        size_t* channel_list;
+        # Number of channels
+        int n_channels;
 
     uhd_error uhd_usrp_find(const char* args, uhd_string_vector_handle *strings_out)
+    uhd_error uhd_usrp_make(uhd_usrp_handle *h, const char *args)
+    uhd_error uhd_usrp_free(uhd_usrp_handle *h)
+    uhd_error uhd_usrp_last_error(uhd_usrp_handle h, char* error_out, size_t strbuffer_len)
+    uhd_error uhd_usrp_get_rx_stream(uhd_usrp_handle h, uhd_stream_args_t *stream_args, uhd_rx_streamer_handle h_out)
+    uhd_error uhd_usrp_get_tx_stream(uhd_usrp_handle h, uhd_stream_args_t *stream_args, uhd_tx_streamer_handle h_out)
 
     uhd_error uhd_rx_streamer_make(uhd_rx_streamer_handle *h)
     uhd_error uhd_rx_streamer_free(uhd_rx_streamer_handle *h)

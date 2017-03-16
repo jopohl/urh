@@ -7,5 +7,5 @@ class TestUSRP(unittest.TestCase):
         print(ret_code, devices)
         self.assertEqual(ret_code, 0)
 
-        usrp.receive("")
+        usrp.receive("addr=192.168.10.2")
         self.assertTrue(True)

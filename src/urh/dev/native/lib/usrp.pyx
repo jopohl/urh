@@ -30,15 +30,27 @@ def receive(device_args):
     print("Made rx_streame handler")
 
     cdef cusrp.uhd_stream_args_t stream_args
+
     # https://files.ettus.com/manual/structuhd_1_1stream__args__t.html
     byte_string_cpu_format = "fc32".encode("UTF-8")
     cdef char* cpu_format = byte_string_cpu_format
     stream_args.cpu_format = cpu_format
+    byte_string_otw_format = "sc16".encode("UTF-8")
+    cdef char* otw_format = byte_string_otw_format
+    stream_args.otw_format = otw_format
+    byte_string_other_stream_args = "".encode("UTF-8")
+    cdef char* other_stream_args = byte_string_other_stream_args
+    stream_args.args = other_stream_args
+
     cusrp.uhd_usrp_make(&usrp_handle, dev_args)
     print("Called usrp_make")
 
     cusrp.uhd_usrp_get_rx_stream(usrp_handle, &stream_args, rx_streamer_handle)
     print("Called get_rx_stream")
+
+    cdef size_t num_channels = 0
+    cusrp.uhd_rx_streamer_num_channels(rx_streamer_handle, &num_channels)
+    print("Num channels", num_channels)
 
     cdef size_t max_num_samps_out
     cusrp.uhd_rx_streamer_max_num_samps(rx_streamer_handle, &max_num_samps_out)

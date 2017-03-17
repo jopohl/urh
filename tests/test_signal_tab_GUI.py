@@ -17,7 +17,9 @@ class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
         self.form = MainController()
+        app.processEvents()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        app.processEvents()
         self.frame = self.form.signal_tab_controller.signal_frames[0]
         self.frame.signal.noise_threshold = 0.0023
         self.frame.signal.qad_center = 0.3817

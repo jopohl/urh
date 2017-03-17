@@ -11,6 +11,7 @@ app = tests.utils_testing.app
 class TestMaincontrollerGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
+        app.processEvents()
 
     def test_open_recent(self):
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))

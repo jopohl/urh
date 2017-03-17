@@ -29,6 +29,7 @@ class DecoderWidgetController(QDialog):
         # Init
         super().__init__(parent)
         self.ui = Ui_Decoder()
+        QApplication.processEvents()
         self.ui.setupUi(self)
 
         # Variables

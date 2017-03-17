@@ -13,7 +13,9 @@ app = tests.utils_testing.app
 class TestDecodingGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
+        app.processEvents()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        app.processEvents()
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
                                               signals=[self.signal],

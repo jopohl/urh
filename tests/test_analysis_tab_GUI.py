@@ -1,12 +1,12 @@
 import unittest
 
 import copy
+
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
-from urh import constants
 from urh.controller.MainController import MainController
 
 from tests.utils_testing import get_path_for_data_file
@@ -16,10 +16,10 @@ app = tests.utils_testing.app
 
 class TestAnalysisTabGUI(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
         self.form = MainController()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
+        app.processEvents()
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.signal.noise_threshold = 0.0175
         self.signal.qad_center = 0
@@ -45,8 +45,6 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_table_selection(self):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
-        self.cfc.ui.btnAnalyze.click()
-
         self.cfc.ui.tblViewProtocol.selectRow(1)
         app.processEvents()
         self.assertEqual(self.cfc.ui.lBitsSelection.text(), self.cfc.proto_analyzer.messages[1].plain_bits_str)
@@ -59,6 +57,8 @@ class TestAnalysisTabGUI(unittest.TestCase):
         app.processEvents()
         self.assertEqual("1010", self.cfc.ui.lBitsSelection.text())
         self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        app.processEvents()
+
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
         self.assertEqual(min_row, 0)
         self.assertEqual(max_row, 0)
@@ -121,14 +121,17 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
-        self.form.close_all()
+        self.cfc.proto_tree_model.rootItem.child(0).show = False
         app.processEvents()
-        QTest.qWait(500)
+
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
+        app.processEvents()
+
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
 
         create_label_action = next(a for a in menu.actions() if a.text() == "Add protocol label")
+
         self.assertFalse(create_label_action.isEnabled())
 
     def test_show_in_interpretation(self):

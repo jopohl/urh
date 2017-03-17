@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from subprocess import call, check_output
 
@@ -22,6 +23,18 @@ def run_tests():
             constants.color.BOLD + constants.color.RED + "Installation Test failed. Abort release." + constants.color.END)
         sys.exit(1)
 
+
+def cleanup():
+    """
+    Remove all cache directories
+    :return:
+    """
+    script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+    shutil.rmtree(os.path.join(script_dir, "dist"), ignore_errors=True)
+    shutil.rmtree(os.path.join(script_dir, "tmp"), ignore_errors=True)
+    shutil.rmtree(os.path.join(script_dir, "urh.egg-info"), ignore_errors=True)
+    shutil.rmtree(os.path.join(script_dir, "src", "urh.egg-info"), ignore_errors=True)
+    shutil.rmtree(os.path.join(script_dir, "src", "urh", "tmp"), ignore_errors=True)
 
 def release():
     open("/tmp/urh_releasing", "w").close()
@@ -72,7 +85,10 @@ def release():
     os.mkdir("aur")
     os.chdir("aur")
     call(["git", "clone", "git+ssh://aur@aur.archlinux.org/urh.git"])
-    os.chdir("urh")
+    try:
+        os.chdir("urh")
+    except FileNotFoundError:
+        input("Could not clone AUR package. Please clone manually in {}".format(os.path.relpath(os.curdir)))
 
     for line in fileinput.input("PKGBUILD", inplace=True):
         if line.startswith("pkgver="):
@@ -91,8 +107,8 @@ def release():
     os.remove("/tmp/urh_releasing")
 
 if __name__ == "__main__":
-    run_tests()
-
+    cleanup()
+#    run_tests()
     release()
-
-    run_tests()
+#    run_tests()
+    cleanup()

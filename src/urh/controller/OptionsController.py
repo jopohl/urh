@@ -2,14 +2,19 @@ import os
 import sys
 import platform
 
+import pickle
+import tempfile
+
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
 
-
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QStyleFactory
+from subprocess import call
+
+from urh.dev.native import ExtensionHelper
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh import constants
@@ -37,15 +42,19 @@ class OptionsController(QDialog):
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
 
+        # We use bundled native device backends on windows, so no need to reconfigure them
+        self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
         self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
 
         self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
         self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
-        self.ui.checkBoxShowConfirmCloseDialog.setChecked(not constants.SETTINGS.value('not_show_close_dialog', False, bool))
+        self.ui.checkBoxShowConfirmCloseDialog.setChecked(
+            not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
-        self.ui.checkBoxDefaultFuzzingPause.setChecked(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
+        self.ui.checkBoxDefaultFuzzingPause.setChecked(
+            constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
-        self.ui.doubleSpinBoxRAMThreshold.setValue(100*constants.SETTINGS.value('ram_threshold', 0.6, float))
+        self.ui.doubleSpinBoxRAMThreshold.setValue(100 * constants.SETTINGS.value('ram_threshold', 0.6, float))
 
         self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
         self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
@@ -54,7 +63,7 @@ class OptionsController(QDialog):
         if self.backend_handler.python2_exe:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
 
-        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10**6, int))
+        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10 ** 6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
         completer = QCompleter()
@@ -79,12 +88,14 @@ class OptionsController(QDialog):
         self.ui.tblLabeltypes.setModel(self.field_type_table_model)
         self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function], return_index=False, parent=self))
+        self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function],
+                                                                           return_index=False, parent=self))
         self.ui.tblLabeltypes.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
         self.read_options()
 
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
+        self.ui.labelRebuildNativeStatus.setText("")
 
     @property
     def selected_device(self) -> BackendContainer:
@@ -97,12 +108,12 @@ class OptionsController(QDialog):
             return ""
 
     def __get_key_from_device_display_text(self, displayed_device_name):
-            displayed_device_name = displayed_device_name.lower()
-            for key in self.backend_handler.DEVICE_NAMES:
-                key = key.lower()
-                if displayed_device_name.startswith(key):
-                    return key
-            return None
+        displayed_device_name = displayed_device_name.lower()
+        for key in self.backend_handler.DEVICE_NAMES:
+            key = key.lower()
+            if displayed_device_name.startswith(key):
+                return key
+        return None
 
     def create_connects(self):
         self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.on_spinbox_symbol_threshold_value_changed)
@@ -124,6 +135,7 @@ class OptionsController(QDialog):
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
+        self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -173,8 +185,6 @@ class OptionsController(QDialog):
 
     def read_options(self):
         settings = constants.SETTINGS
-        # self.ui.chkBoxUSRP.setChecked(settings.value('usrp_available', type=bool))
-        # self.ui.chkBoxHackRF.setChecked(settings.value('hackrf_available', type=bool))
 
         self.ui.comboBoxDefaultView.setCurrentIndex(settings.value('default_view', type=int))
         self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
@@ -359,24 +369,55 @@ class OptionsController(QDialog):
     def on_gnuradio_install_dir_edited(self):
         self.set_gnuradio_status()
 
+    @pyqtSlot()
+    def on_btn_rebuild_native_clicked(self):
+        library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
+        num_natives = self.backend_handler.num_native_backends
+        extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
+        new_natives = len(extensions) - num_natives
+
+        if new_natives == 0:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
+            return
+        else:
+            s = "s" if new_natives > 1 else ""
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
+            QApplication.processEvents()
+            pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
+            target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
+            rc = call([sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                  "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()])
+
+            if rc == 0:
+                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
+                                                                 "Rebuilt {0} new device extension{1}. "
+                                                                 "</font>"
+                                                                 "Please restart URH.".format(new_natives, s)))
+            else:
+                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color='red'>"
+                                                                 "Failed to rebuild {0} device extension{1}. "
+                                                                 "</font>"
+                                                                 "Run URH as root (<b>sudo urh</b>) "
+                                                                 "and try again.".format(new_natives, s)))
+
     @staticmethod
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
 
-        if not 'rel_symbol_length' in keys:
+        if 'rel_symbol_length' not in keys:
             settings.setValue('rel_symbol_length', 0)
 
-        if not 'default_view' in keys:
+        if 'default_view' not in keys:
             settings.setValue('default_view', 0)
 
-        if not 'num_sending_repeats' in keys:
+        if 'num_sending_repeats' not in keys:
             settings.setValue('num_sending_repeats', 0)
 
-        if not 'show_pause_as_time' in keys:
+        if 'show_pause_as_time' not in keys:
             settings.setValue('show_pause_as_time', False)
 
-        settings.sync() # Ensure conf dir is created to have field types in place
+        settings.sync()  # Ensure conf dir is created to have field types in place
 
         if not os.path.isfile(constants.FIELD_TYPE_SETTINGS):
             FieldType.save_to_xml(FieldType.default_field_types())

@@ -1,6 +1,7 @@
 import locale
 import math
 
+import time
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
@@ -47,6 +48,7 @@ class SignalFrameController(QFrame):
 
         self.ui = Ui_SignalFrame()
         QApplication.processEvents()  # fix rare segfaults on Qt 5.8
+        time.sleep(0.025)
         self.ui.setupUi(self)
 
         self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))

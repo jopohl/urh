@@ -1,5 +1,4 @@
 import re
-import weakref
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -78,11 +77,8 @@ class SimulatorTabController(QWidget):
 
             item = item.next()
 
-        if self.selected_item and self.selected_item.target:
-            target = self.selected_item.target()
-
-            if target:
-                goto_combobox.setCurrentText(target.index)
+        if self.selected_item.goto_target:
+            goto_combobox.setCurrentText(self.selected_item.goto_target.index)
 
     def update_ui(self):
         selected_items = self.simulator_scene.selectedItems()
@@ -102,6 +98,8 @@ class SimulatorTabController(QWidget):
                 self.update_goto_combobox()
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.selected_item, MessageItem):
+                self.simulator_message_field_model.message = self.selected_item
+                self.simulator_message_field_model.update()
                 self.ui.detail_view_widget.setCurrentIndex(2)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
@@ -113,13 +111,10 @@ class SimulatorTabController(QWidget):
             self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
             self.ui.detail_view_widget.setCurrentIndex(0)
 
-        self.simulator_message_field_model.message = self.selected_item if isinstance(self.selected_item, MessageItem) else None
-        self.simulator_message_field_model.update()
-
     @pyqtSlot()
     def on_goto_combobox_activated(self):
         if self.ui.goto_combobox.currentData():
-            self.selected_item.target = weakref.ref(self.ui.goto_combobox.currentData())
+            self.selected_item.goto_target = self.ui.goto_combobox.currentData()
 
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):

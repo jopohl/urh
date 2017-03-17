@@ -4,6 +4,8 @@ from PyQt5.QtCore import Qt, QRectF, QSizeF, QPointF, QSizeF, pyqtSignal, pyqtSl
 import math
 from enum import Enum
 
+import weakref
+
 from urh import constants
 from urh.signalprocessing.Message import Message
 
@@ -506,13 +508,30 @@ class GotoAction(ActionItem):
         super().__init__(parent)
         self.text.setPlainText("GOTO")
 
-        self.target = None
+        self.__goto_target = None
+
+    @property
+    def goto_target(self):
+        if not self.__goto_target or not self.__goto_target():
+            return None
+        else:
+            return self.__goto_target()
+
+    @goto_target.setter
+    def goto_target(self, value):
+        if value is None:
+            return
+
+        self.__goto_target = weakref.ref(value)
+        self.update_label()
 
     def refresh(self, x_pos, y_pos):
+        self.update_label()
         super().refresh(x_pos, y_pos)
 
-        if self.target and self.target():
-            self.text.setPlainText(self.target().index)
+    def update_label(self):
+        if self.goto_target:
+            self.text.setPlainText("GOTO " + self.goto_target.index)
 
 class ExternalProgramAction(ActionItem):
     def __init__(self, parent=None):

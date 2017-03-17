@@ -4,8 +4,8 @@ sudo: required
 
 python:
   - "3.4_with_system_site_packages"
-#  - "3.5"
-#  - "3.6"
+  - "3.5"
+  - "3.6"
 
 before_script:
   - if [[ $TRAVIS_PYTHON_VERSION == '3.4'* ]]; then sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil; fi

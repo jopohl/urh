@@ -1,9 +1,7 @@
 import locale
-import random
 import time
 
-import psutil
-from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtGui import QTransform

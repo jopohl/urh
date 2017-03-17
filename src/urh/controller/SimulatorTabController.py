@@ -82,7 +82,7 @@ class SimulatorTabController(QWidget):
             target = self.selected_item.target()
 
             if target:
-                goto_combobox.setCurrentText(self.selected_item.target().index)
+                goto_combobox.setCurrentText(target.index)
 
     def update_ui(self):
         selected_items = self.simulator_scene.selectedItems()

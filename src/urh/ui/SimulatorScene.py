@@ -504,9 +504,15 @@ class ActionItem(SimulatorItem):
 class GotoAction(ActionItem):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.text.setPlainText("goto 6")
+        self.text.setPlainText("GOTO")
 
         self.target = None
+
+    def refresh(self, x_pos, y_pos):
+        super().refresh(x_pos, y_pos)
+
+        if self.target and self.target():
+            self.text.setPlainText(self.target().index)
 
 class ExternalProgramAction(ActionItem):
     def __init__(self, parent=None):

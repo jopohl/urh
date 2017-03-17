@@ -103,15 +103,10 @@ class SimulatorItem(QGraphicsObject):
             curr = curr.parentItem()
 
             if curr is None or isinstance(curr, RuleItem):
-                break
-
-        return None
+                return None
 
     def prev(self):
         parent = self.parentItem()
-
-        if parent and not isinstance(parent, RuleItem) and parent.children() and self == parent.children()[0]:
-            return parent
 
         curr = self
 
@@ -119,15 +114,11 @@ class SimulatorItem(QGraphicsObject):
             if curr.prev_sibling() is not None:
                 curr = curr.prev_sibling()
                 break
+            else:
+                return parent
 
-            curr = curr.parentItem()
-
-            if curr is None or isinstance(curr, RuleItem):
-                break
-
-        if curr is not None:
-            while curr.children():
-                curr = curr.children()[-1]
+        while curr.children():
+            curr = curr.children()[-1]
 
         return curr
 
@@ -167,8 +158,7 @@ class SimulatorItem(QGraphicsObject):
 
     def refresh(self, x_pos, y_pos):
         visible_participants = [part for part in self.scene().participants if part.isVisible()]
-        width = visible_participants[-1].line.line().x1()
-        width -= visible_participants[0].line.line().x1()
+        width = self.scene().items_width()
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height())
 
@@ -338,8 +328,7 @@ class RuleConditionItem(SimulatorItem):
             start_y += round(item.boundingRect().height())
 
         visible_participants = [part for part in self.scene().participants if part.isVisible()]
-        width = visible_participants[-1].line.line().x1()
-        width -= visible_participants[0].line.line().x1()
+        width = self.scene().items_width()
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 20)
 
@@ -407,8 +396,11 @@ class RuleConditionItem(SimulatorItem):
         else:
             sim_items = self.scene().sim_items
 
-            if sim_items.index(self.parentItem()) != len(sim_items) - 1:
+            if sim_items.index(self.parentItem()) < len(sim_items) - 1:
                 result = sim_items[sim_items.index(self.parentItem()) + 1]
+
+        if isinstance(result, RuleItem):
+            result = result.conditions[0]
 
         return result
 
@@ -425,6 +417,9 @@ class RuleConditionItem(SimulatorItem):
 
             if sim_items.index(self.parentItem()) > 0:
                 result = sim_items[sim_items.index(self.parentItem()) - 1]
+
+        if isinstance(result, RuleItem):
+            result = result.conditions[-1]
 
         return result
 
@@ -489,16 +484,10 @@ class DataItem(QGraphicsTextItem):
     def value(self):
         return str(self)
 
-class ActionType(Enum):
-    external_program = 0
-    goto = 1
-
 class ActionItem(SimulatorItem):
     def __init__(self, type, parent=None):
         super().__init__(parent)
         self.text = QGraphicsTextItem(self)
-
-        self.type = type
 
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(8)
@@ -506,16 +495,23 @@ class ActionItem(SimulatorItem):
         self.text.setFont(font)
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
-        if type == ActionType.external_program:
-            self.text.setPlainText("Start program [/usr/bin/test]")
-        elif type == ActionType.goto:
-            self.text.setPlainText("goto 6")
-
     def refresh(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
         self.number.setPos(0, 0)
         self.text.setPos(self.number.boundingRect().width(), 0)
         super().refresh(x_pos, y_pos)
+
+class GotoAction(ActionItem):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.text.setPlainText("goto 6")
+
+        self.target = None
+
+class ExternalProgramAction(ActionItem):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.text.setPlainText("Start program [/usr/bin/test]")
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):
@@ -650,6 +646,17 @@ class SimulatorScene(QGraphicsScene):
         self.sim_items = []
         self.update_view()
 
+    def items_width(self):
+        visible_participants = [part for part in self.participants if part.isVisible()]
+
+        if len(visible_participants) >= 2:
+            width = visible_participants[-1].line.line().x1()
+            width -= visible_participants[0].line.line().x1()
+        else:
+            width = 40
+
+        return width        
+
     def delete_selected_items(self):
         self.delete_items(self.selectedItems())
         self.update_view()
@@ -728,6 +735,7 @@ class SimulatorScene(QGraphicsScene):
                     break
             else:
                 participant.setVisible(False)
+                participant.update(x_pos = 30)
 
     def get_all_messages(self):
         messages = []
@@ -866,6 +874,16 @@ class SimulatorScene(QGraphicsScene):
     def add_action(self, ref_item, position, type):
         action = ActionItem(type)
         self.insert_at(ref_item, position, action, True)
+        self.update_view()
+
+    def add_goto_action(self, ref_item, position):
+        goto_action = GotoAction()
+        self.insert_at(ref_item, position, goto_action, True)
+        self.update_view()
+
+    def add_external_program_action(self, ref_item, position):
+        external_program_action = ExternalProgramAction()
+        self.insert_at(ref_item, position, external_program_action, True)
         self.update_view()
 
     def add_message(self, ref_item, position, source=None, destination=None, message_type=[]):

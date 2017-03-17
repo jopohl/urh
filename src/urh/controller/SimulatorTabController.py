@@ -1,4 +1,5 @@
 import re
+import weakref
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -8,7 +9,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene, MessageItem, RuleConditionItem, RuleItem
+from urh.ui.SimulatorScene import SimulatorScene, GotoAction, MessageItem, RuleConditionItem, RuleItem, ConditionType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -47,6 +48,8 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model = SimulatorMessageFieldModel()
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
 
+        self.selected_item = None
+
         self.create_connects(compare_frame_controller)
 
     def create_connects(self, compare_frame_controller):
@@ -61,32 +64,63 @@ class SimulatorTabController(QWidget):
         self.ui.btnNextNav.clicked.connect(self.on_btn_next_nav_clicked)
         self.ui.btnPrevNav.clicked.connect(self.on_btn_prev_nav_clicked)
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
+        self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
+
+    def update_goto_combobox(self):
+        item = self.simulator_scene.get_first_item()
+        goto_combobox = self.ui.goto_combobox
+        goto_combobox.clear()
+
+        while item:
+            if item != self.selected_item and not (isinstance(item, RuleConditionItem)
+            and (item.type == ConditionType.ELSE or item.type == ConditionType.ELSE_IF)):
+                goto_combobox.addItem(item.index, item)
+
+            item = item.next()
+
+        if self.selected_item and self.selected_item.target:
+            target = self.selected_item.target()
+
+            if target:
+                goto_combobox.setCurrentText(self.selected_item.target().index)
 
     def update_ui(self):
         selected_items = self.simulator_scene.selectedItems()
+        self.selected_item = None
 
         if selected_items:
-            selected_item = selected_items[0]
-            first_message = selected_item if isinstance(selected_item, MessageItem) else None
+            self.selected_item = selected_items[0]
                 
-            self.ui.navLineEdit.setText(selected_item.index)
+            self.ui.navLineEdit.setText(self.selected_item.index)
 
-            self.ui.btnNextNav.setEnabled(not selected_items[0].is_last_item())
-            self.ui.btnPrevNav.setEnabled(not selected_items[0].is_first_item())
+            self.ui.btnNextNav.setEnabled(not self.selected_item.is_last_item())
+            self.ui.btnPrevNav.setEnabled(not self.selected_item.is_first_item())
+
+            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.selected_item.index)
+
+            if isinstance(self.selected_item, GotoAction):
+                self.update_goto_combobox()
+                self.ui.detail_view_widget.setCurrentIndex(1)
+            elif isinstance(self.selected_item, MessageItem):
+                self.ui.detail_view_widget.setCurrentIndex(2)
+            else:
+                self.ui.detail_view_widget.setCurrentIndex(0)
         else:
-            first_message = None
             self.ui.navLineEdit.clear()
             self.ui.btnNextNav.setEnabled(False)
             self.ui.btnPrevNav.setEnabled(False)
 
-        self.simulator_message_field_model.message = first_message
+            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
+            self.ui.detail_view_widget.setCurrentIndex(0)
+
+        self.simulator_message_field_model.message = self.selected_item if isinstance(self.selected_item, MessageItem) else None
         self.simulator_message_field_model.update()
 
-        if first_message:
-            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage #") + first_message.index)
-        else:
-            self.ui.lblMsgFieldsValues.setText(self.tr("Message fields for messsage "))
-            
+    @pyqtSlot()
+    def on_goto_combobox_activated(self):
+        if self.ui.goto_combobox.currentData():
+            self.selected_item.target = weakref.ref(self.ui.goto_combobox.currentData())
+
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):
         self.ui.gvSimulator.navigate_forward()

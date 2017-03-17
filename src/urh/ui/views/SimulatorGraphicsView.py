@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstra
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from urh.ui.SimulatorScene import MessageItem, RuleConditionItem, ParticipantItem, ActionItem, ActionType, SimulatorItem
+from urh.ui.SimulatorScene import MessageItem, RuleConditionItem, ParticipantItem, GotoAction, ExternalProgramAction, SimulatorItem
 
 class SimulatorGraphicsView(QGraphicsView):
 
@@ -39,10 +39,16 @@ class SimulatorGraphicsView(QGraphicsView):
         self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
 
     @pyqtSlot()
-    def on_add_action_triggered(self):
+    def on_add_goto_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-        self.scene().add_action(ref_item, position, type=self.sender().data())
+        self.scene().add_goto_action(ref_item, position)
+
+    @pyqtSlot()
+    def on_add_external_program_action_triggered(self):
+        ref_item = self.context_menu_item
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+        self.scene().add_external_program_action(ref_item, position)
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
@@ -101,11 +107,9 @@ class SimulatorGraphicsView(QGraphicsView):
 
         action_menu = menu.addMenu("Add action")
         add_goto_action = action_menu.addAction("Goto")
-        add_goto_action.triggered.connect(self.on_add_action_triggered)
-        add_goto_action.setData(ActionType.goto)
+        add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
         add_external_program_action = action_menu.addAction("External program")
-        add_external_program_action.setData(ActionType.external_program)
-        add_external_program_action.triggered.connect(self.on_add_action_triggered)
+        add_external_program_action.triggered.connect(self.on_add_external_program_action_triggered)
 
         if isinstance(self.context_menu_item, RuleConditionItem):
             menu.addSeparator()

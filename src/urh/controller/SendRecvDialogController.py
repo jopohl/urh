@@ -33,6 +33,7 @@ class SendRecvDialogController(QDialog):
         self.is_tx = is_tx
 
         self.ui = Ui_SendRecvDialog()
+        QApplication.processEvents()  # fix rare segfaults on Qt 5.8
         self.ui.setupUi(self)
 
         self.set_sniff_ui_items_visible(False)

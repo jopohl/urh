@@ -16,6 +16,7 @@ from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.util.Logger import logger
 
 app = tests.utils_testing.app
 
@@ -25,28 +26,41 @@ class TestSendRecvDialog(unittest.TestCase):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
 
         self.form = MainController()
+        app.processEvents()
+        logger.debug("Adding signalfile")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added signalfile")
+        app.processEvents()
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
+        app.processEvents()
 
         project_manager = self.form.project_manager
-        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True)
 
+        logger.debug("Creating Receive Dialog")
+        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True)
+        app.processEvents()
+
+        logger.debug("Creating Send Dialog")
         self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
+        app.processEvents()
 
+        logger.debug("Creating Spectrum Dialog")
         self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True)
+        app.processEvents()
 
+        logger.debug("Creating Sniff Dialog")
         self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
                                                           self.signal.qad_center,
                                                           self.signal.bit_len, self.signal.tolerance,
                                                           self.signal.modulation_type,
                                                           testing_mode=True)
+        app.processEvents()
+
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
-
-        QTest.qWait(250)
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:
@@ -100,6 +114,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.assertEqual(self.send_dialog.send_indicator.rect().width(), self.signal.num_samples)
         self.assertFalse(self.send_dialog.ui.btnClear.isEnabled())
+
         self.send_dialog.on_clear_clicked()
         self.assertEqual(self.send_dialog.send_indicator.rect().width(), 0)
 
@@ -158,11 +173,14 @@ class TestSendRecvDialog(unittest.TestCase):
         os.remove(target_file)
 
     def test_send_dialog_scene_zoom(self):
+        app.processEvents()
         self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
         view_width = self.send_dialog.graphics_view.view_rect().width()
         self.send_dialog.graphics_view.zoom(1.1)
+        app.processEvents()
         self.assertLess(self.send_dialog.graphics_view.view_rect().width(), view_width)
         self.send_dialog.graphics_view.zoom(0.8)
+        app.processEvents()
         self.assertLessEqual(self.send_dialog.graphics_view.view_rect().width(), view_width)
 
     def test_send_dialog_delete(self):
@@ -221,4 +239,3 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
             app.processEvents()
-            QTest.qWait(250)

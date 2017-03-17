@@ -46,6 +46,7 @@ class SignalFrameController(QFrame):
         self.undo_stack = undo_stack
 
         self.ui = Ui_SignalFrame()
+        QApplication.processEvents()  # fix rare segfaults on Qt 5.8
         self.ui.setupUi(self)
 
         self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))

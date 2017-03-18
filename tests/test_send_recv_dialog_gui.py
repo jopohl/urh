@@ -39,16 +39,16 @@ class TestSendRecvDialog(unittest.TestCase):
         project_manager = self.form.project_manager
 
         logger.debug("Creating Receive Dialog")
-        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True)
+        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
 
         logger.debug("Creating Send Dialog")
-        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True)
+        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True, parent=self.form)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
         app.processEvents()
 
         logger.debug("Creating Spectrum Dialog")
-        self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True)
+        self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
 
         logger.debug("Creating Sniff Dialog")
@@ -56,7 +56,7 @@ class TestSendRecvDialog(unittest.TestCase):
                                                           self.signal.qad_center,
                                                           self.signal.bit_len, self.signal.tolerance,
                                                           self.signal.modulation_type,
-                                                          testing_mode=True)
+                                                          testing_mode=True, parent=self.form)
         app.processEvents()
 
 
@@ -65,7 +65,10 @@ class TestSendRecvDialog(unittest.TestCase):
     def tearDown(self):
         for dialog in self.dialogs:
             dialog.close()
+            dialog.setParent(None)
             app.processEvents()
+        self.form.close()
+        app.processEvents()
         QTest.qWait(100)
 
     def test_network_sdr_enabled(self):

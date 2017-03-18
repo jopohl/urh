@@ -120,6 +120,8 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
+        self.cfc.ui.btnRemoveMessagetype.click()
+        self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
@@ -199,5 +201,20 @@ class TestAnalysisTabGUI(unittest.TestCase):
         app.processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
         self.cfc.ui.treeViewProtocols.selectAll()
+        self.cfc.ui.treeViewProtocols.selection_changed.emit()
         app.processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
+
+    def test_label_selection_changed(self):
+        self.assertEqual(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
+        self.cfc.add_protocol_label(40, 60, 2, 0, edit_label_name=False)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
+        self.cfc.ui.listViewLabelNames.selectAll()
+        self.assertEqual(len(self.cfc.ui.listViewLabelNames.selectedIndexes()), 1)
+        self.assertGreater(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
+
+    def test_remove_label(self):
+        self.cfc.add_protocol_label(10, 20, 2, 0, edit_label_name=False)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
+        self.cfc.protocol_label_list_model.delete_label_at(0)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 0)

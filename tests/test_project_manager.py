@@ -10,17 +10,34 @@ from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.Modulator import Modulator
 from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+from urh.util.Logger import logger
+
+app = tests.utils_testing.get_app()
 
 
 class TestProjectManager(unittest.TestCase):
     def setUp(self):
+        logger.debug("Init form")
         self.form = MainController()
+        logger.debug("Initialized form")
+        app.processEvents()
+        QTest.qWait(25)
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
 
         self.dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form)
+
+    def tearDown(self):
+        self.dialog.close()
+        self.dialog.setParent(None)
+        self.dialog.deleteLater()
+        app.processEvents()
+        QTest.qWait(10)
+        self.form.close()
+        self.form.deleteLater()
+        app.processEvents()
+        QTest.qWait(10)
 
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"
@@ -53,13 +70,15 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 2)
         self.form.close_all()
-        QTest.qWait(1500)
+        app.processEvents()
+        QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

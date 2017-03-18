@@ -1,7 +1,6 @@
 import unittest
 
 from urh.signalprocessing.encoder import Encoder
-from urh.util.crc import crc_generic
 
 
 class TestDecoding(unittest.TestCase):

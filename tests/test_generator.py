@@ -10,7 +10,7 @@ import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestGenerator(unittest.TestCase):

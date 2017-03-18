@@ -15,7 +15,7 @@ from tests.utils_testing import get_path_for_data_file
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestPlugins(unittest.TestCase):
@@ -34,7 +34,14 @@ class TestPlugins(unittest.TestCase):
         self.signal = self.sframe.signal
 
     def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
+        self.form.close_all()
+        app.processEvents()
+        QTest.qWait(10)
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        app.processEvents()
+        QTest.qWait(10)
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
@@ -109,7 +116,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
@@ -121,7 +128,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxFrequency.setValue(1e6)
         dialog.doubleSpinBoxFrequency.editingFinished.emit()
@@ -129,7 +136,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxPhase.setValue(100)
         dialog.doubleSpinBoxPhase.editingFinished.emit()
@@ -137,7 +144,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxSampleRate.setValue(2e6)
         dialog.doubleSpinBoxSampleRate.editingFinished.emit()
@@ -145,7 +152,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxNSamples.setValue(0.5e6)
         dialog.doubleSpinBoxNSamples.editingFinished.emit()
@@ -153,7 +160,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

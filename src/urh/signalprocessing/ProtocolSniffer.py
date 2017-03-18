@@ -179,8 +179,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def stop(self):
         self.rcv_device.stop("Stopping receiving due to user interaction")
-        QApplication.processEvents()
-        time.sleep(0.1)
 
     def clear(self):
         del self.data_cache[:]

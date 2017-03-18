@@ -1,8 +1,4 @@
 import unittest
-import sys
-import time
-
-import numpy as np
 
 from urh.dev.native.RTLSDRTCP import RTLSDRTCP
 

@@ -9,7 +9,7 @@ from urh.controller.MainController import MainController
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestProtocolTable(unittest.TestCase):

@@ -5,21 +5,33 @@ from PyQt5.QtTest import QTest
 import tests.utils_testing
 from urh.controller.MainController import MainController
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestMaincontrollerGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
         app.processEvents()
+        QTest.qWait(50)
+
+    def tearDown(self):
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        app.processEvents()
+        QTest.qWait(10)
 
     def test_open_recent(self):
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
         app.processEvents()
+        QTest.qWait(10)
+
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
+
         self.form.close_all()
         app.processEvents()
         QTest.qWait(10)
+
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 0)
         self.form.recentFileActionList[0].trigger()
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)

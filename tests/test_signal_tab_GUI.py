@@ -9,26 +9,52 @@ import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
+from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
+        logger.debug("Init Form")
         self.form = MainController()
         app.processEvents()
+        QTest.qWait(50)
+        logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added Signal")
         app.processEvents()
         self.frame = self.form.signal_tab_controller.signal_frames[0]
         self.frame.signal.noise_threshold = 0.0023
         self.frame.signal.qad_center = 0.3817
         self.frame.signal.bit_len = 84
 
-    def test_close_all(self):
-        self.form.close_all()
+    def tearDown(self):
+        for frame in self.form.signal_tab_controller.signal_frames:
+            try:
+                frame.close()
+                frame.setParent(None)
+                frame.deleteLater()
+            except RuntimeError:
+                continue
+        try:
+            self.frame.close()
+            self.frame.setParent(None)
+            self.frame.deleteLater()
+        except RuntimeError:
+            pass
+        self.form.close()
+        self.form.deleteLater()
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(50)
+
+    def test_close_all(self):
+        logger.debug("Close all")
+        self.form.close_all()
+        QTest.qWait(10)
+        logger.debug("Called close all")
+        app.processEvents()
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         # Add a bunch of signals
@@ -40,7 +66,7 @@ class TestSignalTabGUI(unittest.TestCase):
 
         self.form.close_all()
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(10)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)
@@ -106,7 +132,10 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.frame.ui.btnShowHideStartEnd.text(), "-")
 
     def test_apply_to_all(self):
+        logger.debug("Test apply to all")
+        app.processEvents()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        logger.debug("added new signal")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
         self.frame.ui.spinBoxInfoLen.setValue(42)
@@ -166,7 +195,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(self.frame)
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(10)
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))

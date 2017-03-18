@@ -18,15 +18,20 @@ from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+global app
+app = tests.utils_testing.get_app()
 
 
 class TestSendRecvDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
 
+        QTest.qWait(50)
+        logger.debug("init form")
         self.form = MainController()
+        logger.debug("initalized form")
         app.processEvents()
+        QTest.qWait(50)
         logger.debug("Adding signalfile")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
@@ -35,21 +40,26 @@ class TestSendRecvDialog(unittest.TestCase):
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
         app.processEvents()
+        QTest.qWait(50)
 
         project_manager = self.form.project_manager
 
         logger.debug("Creating Receive Dialog")
         self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
+        QTest.qWait(50)
 
         logger.debug("Creating Send Dialog")
-        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True, parent=self.form)
+        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True,
+                                                parent=self.form)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
         app.processEvents()
+        QTest.qWait(50)
 
         logger.debug("Creating Spectrum Dialog")
         self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
+        QTest.qWait(50)
 
         logger.debug("Creating Sniff Dialog")
         self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
@@ -58,18 +68,25 @@ class TestSendRecvDialog(unittest.TestCase):
                                                           self.signal.modulation_type,
                                                           testing_mode=True, parent=self.form)
         app.processEvents()
+        QTest.qWait(50)
 
+        logger.debug("Created Dialogs")
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
-    
+
     def tearDown(self):
         for dialog in self.dialogs:
             dialog.close()
             dialog.setParent(None)
+            dialog.deleteLater()
             app.processEvents()
-        self.form.close()
+            QTest.qWait(10)
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(10)
+        self.form.close()
+        self.form.setParent(None)
+        app.processEvents()
+        QTest.qWait(50)
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:

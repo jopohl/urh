@@ -149,7 +149,7 @@ class ProjectManager(QObject):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         self.main_controller.show_project_settings()
 
-    def write_signal_information_to_project_file(self, signal: Signal, messages, tree=None):
+    def write_signal_information_to_project_file(self, signal: Signal, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
             return
 
@@ -249,7 +249,7 @@ class ProjectManager(QObject):
 
         open_files = []
         for i, sf in enumerate(self.main_controller.signal_tab_controller.signal_frames):
-            self.write_signal_information_to_project_file(sf.signal, sf.proto_analyzer.messages, tree=tree)
+            self.write_signal_information_to_project_file(sf.signal, tree=tree)
             try:
                 pf = self.main_controller.signal_protocol_dict[sf]
                 filename = pf.filename

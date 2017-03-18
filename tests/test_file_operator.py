@@ -7,13 +7,14 @@ from zipfile import ZipFile
 
 import numpy as np
 from PyQt5.QtCore import QDir
+from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from urh.controller.MainController import MainController
 
 from urh.util import FileOperator
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestFileOperator(unittest.TestCase):
@@ -41,6 +42,7 @@ class TestFileOperator(unittest.TestCase):
                 data.tofile(name)
                 zip.write(name)
 
+        QTest.qWait(10)
         form = MainController()
         form.add_files(FileOperator.uncompress_archives(["test.tar.gz", "test.zip"], QDir.tempPath()))
         self.assertEqual(len(form.signal_tab_controller.signal_frames), 5)

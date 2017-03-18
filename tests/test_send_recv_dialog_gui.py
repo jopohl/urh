@@ -61,6 +61,11 @@ class TestSendRecvDialog(unittest.TestCase):
 
 
         self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
+    
+    def tearDown(self):
+        for dialog in self.dialogs:
+            dialog.close()
+            app.processEvents()
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:

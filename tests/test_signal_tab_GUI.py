@@ -20,7 +20,7 @@ class TestSignalTabGUI(unittest.TestCase):
         logger.debug("Init Form")
         self.form = MainController()
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(75)
         logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added Signal")
@@ -45,6 +45,7 @@ class TestSignalTabGUI(unittest.TestCase):
         except RuntimeError:
             pass
         self.form.close()
+        self.form.setParent(None)
         self.form.deleteLater()
         app.processEvents()
         QTest.qWait(50)
@@ -138,7 +139,7 @@ class TestSignalTabGUI(unittest.TestCase):
     def test_apply_to_all(self):
         logger.debug("Test apply to all")
         app.processEvents()
-        QTest.qWait(10)
+        QTest.qWait(50)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         logger.debug("added new signal")
         frame2 = self.form.signal_tab_controller.signal_frames[1]

@@ -31,7 +31,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form = MainController()
         logger.debug("initalized form")
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(75)
         logger.debug("Adding signalfile")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")

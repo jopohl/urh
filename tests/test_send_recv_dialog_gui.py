@@ -66,6 +66,7 @@ class TestSendRecvDialog(unittest.TestCase):
         for dialog in self.dialogs:
             dialog.close()
             app.processEvents()
+        QTest.qWait(100)
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:

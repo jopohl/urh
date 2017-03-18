@@ -60,6 +60,8 @@ class TestSignalTabGUI(unittest.TestCase):
         # Add a bunch of signals
         num_signals = 10
         for _ in range(num_signals):
+            app.processEvents()
+            QTest.qWait(10)
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
 
         self.assertEqual(self.form.signal_tab_controller.num_signals, num_signals)
@@ -134,6 +136,7 @@ class TestSignalTabGUI(unittest.TestCase):
     def test_apply_to_all(self):
         logger.debug("Test apply to all")
         app.processEvents()
+        QTest.qWait(10)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         logger.debug("added new signal")
         frame2 = self.form.signal_tab_controller.signal_frames[1]

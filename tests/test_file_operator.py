@@ -44,6 +44,8 @@ class TestFileOperator(unittest.TestCase):
 
         QTest.qWait(10)
         form = MainController()
+        app.processEvents()
+        QTest.qWait(10)
         form.add_files(FileOperator.uncompress_archives(["test.tar.gz", "test.zip"], QDir.tempPath()))
         self.assertEqual(len(form.signal_tab_controller.signal_frames), 5)
 

@@ -74,6 +74,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)
 
     def test_zoom(self):
+        app.processEvents()
+        QTest.qWait(10)
         x_zoom = self.frame.ui.spinBoxXZoom.value()
         self.assertEqual(x_zoom, 100)
 

@@ -40,7 +40,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(100)
 
         project_manager = self.form.project_manager
 
@@ -86,7 +86,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(10)
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:

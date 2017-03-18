@@ -40,7 +40,8 @@ class TestModulatorGUI(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         app.processEvents()
-        QTest.qWait(10)
+        QTest.qWait(50)
+        app.processEvents()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

@@ -78,6 +78,7 @@ def main():
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
 
     # noinspection PyUnresolvedReferences
     import urh.ui.xtra_icons_rc  # Use oxy theme always

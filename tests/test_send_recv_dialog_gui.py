@@ -47,19 +47,19 @@ class TestSendRecvDialog(unittest.TestCase):
         logger.debug("Creating Receive Dialog")
         self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(150)
 
         logger.debug("Creating Send Dialog")
         self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True,
                                                 parent=self.form)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(150)
 
         logger.debug("Creating Spectrum Dialog")
         self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(150)
 
         logger.debug("Creating Sniff Dialog")
         self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
@@ -85,8 +85,8 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(10)
         self.form.close()
         self.form.setParent(None)
+        QTest.qWait(50)
         app.processEvents()
-        QTest.qWait(10)
 
     def test_network_sdr_enabled(self):
         for dialog in self.dialogs:

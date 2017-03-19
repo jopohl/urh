@@ -164,6 +164,9 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
 
     def test_save_all(self):
+        logger.debug("Test save all")
+        app.processEvents()
+        QTest.qWait(50)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 

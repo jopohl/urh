@@ -24,6 +24,8 @@ class TestPlugins(unittest.TestCase):
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
         self.form = MainController()
+        app.processEvents()
+        QTest.qWait(50)
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
@@ -107,6 +109,8 @@ class TestPlugins(unittest.TestCase):
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         num_samples = 10000
+        app.processEvents()
+        QTest.qWait(10)
         dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
                                                            position=2000,
                                                            sample_rate=self.signal.sample_rate,

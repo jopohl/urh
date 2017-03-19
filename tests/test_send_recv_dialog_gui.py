@@ -31,7 +31,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form = MainController()
         logger.debug("initalized form")
         app.processEvents()
-        QTest.qWait(75)
+        QTest.qWait(100)
         logger.debug("Adding signalfile")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
@@ -40,26 +40,26 @@ class TestSendRecvDialog(unittest.TestCase):
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(150)
 
         project_manager = self.form.project_manager
 
         logger.debug("Creating Receive Dialog")
         self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(100)
 
         logger.debug("Creating Send Dialog")
         self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True,
                                                 parent=self.form)
         self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(100)
 
         logger.debug("Creating Spectrum Dialog")
         self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True, parent=self.form)
         app.processEvents()
-        QTest.qWait(50)
+        QTest.qWait(100)
 
         logger.debug("Creating Sniff Dialog")
         self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,

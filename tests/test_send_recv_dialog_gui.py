@@ -31,7 +31,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form = MainController()
         logger.debug("initalized form")
         app.processEvents()
-        QTest.qWait(100)
+        QTest.qWait(150)
         logger.debug("Adding signalfile")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
@@ -85,7 +85,7 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(10)
         self.form.close()
         self.form.setParent(None)
-        QTest.qWait(50)
+        QTest.qWait(100)
         app.processEvents()
 
     def test_network_sdr_enabled(self):

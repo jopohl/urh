@@ -16,10 +16,10 @@ class TestDecodingGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
         app.processEvents()
-        QTest.qWait(10)
+        QTest.qWait(100)
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         app.processEvents()
-        QTest.qWait(10)
+        QTest.qWait(100)
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
                                               signals=[self.signal], parent=self.form,

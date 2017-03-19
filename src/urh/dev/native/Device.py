@@ -102,7 +102,7 @@ class Device(QObject):
     def init_recv_buffer(self):
         if self.receive_buffer is None:
             if self.is_ringbuffer:
-                nsamples = 10 ** 5
+                nsamples = constants.SPECTRUM_BUFFER_SIZE
             else:
                 # Take 60% of avail memory
                 nsamples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().free / 8)

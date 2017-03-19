@@ -18,6 +18,7 @@ class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
         logger.debug("Init Form")
+        QTest.qWait(10)
         self.form = MainController()
         app.processEvents()
         QTest.qWait(50)
@@ -38,6 +39,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form.setParent(None)
         self.form.deleteLater()
         QTest.qWait(50)
+        app.closeAllWindows()
         app.sendPostedEvents()
         app.processEvents()
 

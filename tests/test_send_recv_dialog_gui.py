@@ -16,6 +16,7 @@ from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
 global app
@@ -29,15 +30,7 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(50)
         logger.debug("init form")
         self.form = MainController()
-        logger.debug("initalized form")
-        app.processEvents()
-        QTest.qWait(150)
-        logger.debug("Adding signalfile")
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        logger.debug("Added signalfile")
-        app.processEvents()
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
-        self.gframe = self.form.generator_tab_controller
+        self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def tearDown(self):
@@ -67,17 +60,21 @@ class TestSendRecvDialog(unittest.TestCase):
     def __get_sniff_dialog(self):
         logger.debug("Creating Sniff Dialog")
         sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
-                                                          self.signal.qad_center,
-                                                          self.signal.bit_len, self.signal.tolerance,
-                                                          self.signal.modulation_type,
-                                                          testing_mode=True, parent=self.form)
+                                                     self.signal.qad_center,
+                                                     self.signal.bit_len, self.signal.tolerance,
+                                                     self.signal.modulation_type,
+                                                     testing_mode=True, parent=self.form)
         return sniff_dialog
 
-    def test_network_sdr_enabled(self):
-        dialogs = [self.__get_recv_dialog(), self.__get_send_dialog(), self.__get_spectrum_dialog(),
-                   self.__get_sniff_dialog()]
+    def __get_all_dialogs(self):
+        yield self.__get_recv_dialog()
+        yield self.__get_send_dialog()
+        yield self.__get_spectrum_dialog()
+        yield self.__get_sniff_dialog()
 
-        for dialog in dialogs:
+    def test_network_sdr_enabled(self):
+
+        for dialog in self.__get_all_dialogs():
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
             if isinstance(dialog, SpectrumDialogController):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
@@ -136,6 +133,11 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(send_dialog.send_indicator.rect().width(), 0)
 
     def test_sniff(self):
+        # add a signal so we can use it
+        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added signalfile")
+        app.processEvents()
+
         # Move with encoding to generator
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(0)
@@ -218,13 +220,12 @@ class TestSendRecvDialog(unittest.TestCase):
         y, h = send_dialog.graphics_view.view_rect().y(), send_dialog.graphics_view.view_rect().height()
 
         send_dialog.ui.sliderYscale.setValue(send_dialog.ui.sliderYscale.value() +
-                                                  send_dialog.ui.sliderYscale.singleStep())
+                                             send_dialog.ui.sliderYscale.singleStep())
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
 
     def test_change_device_parameters(self):
-        dialogs = [self.__get_recv_dialog(), self.__get_send_dialog(), self.__get_spectrum_dialog(), self.__get_sniff_dialog()]
-        for dialog in dialogs:
+        for dialog in self.__get_all_dialogs():
             dialog.ui.cbDevice.setCurrentText("HackRF")
             self.assertEqual(dialog.device.name, "HackRF", msg=type(dialog))
 

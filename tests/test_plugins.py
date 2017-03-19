@@ -23,7 +23,7 @@ class TestPlugins(unittest.TestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-        QTest.qWait(10)
+        QTest.qWait(50)
         app.processEvents()
         logger.debug("Init form")
         self.form = MainController()
@@ -46,9 +46,10 @@ class TestPlugins(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
+        app.closeAllWindows()
         app.sendPostedEvents()
         app.processEvents()
-        QTest.qWait(10)
+        QTest.qWait(50)
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()

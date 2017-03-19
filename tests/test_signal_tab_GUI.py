@@ -20,7 +20,7 @@ class TestSignalTabGUI(unittest.TestCase):
         logger.debug("Init Form")
         self.form = MainController()
         app.processEvents()
-        QTest.qWait(75)
+        QTest.qWait(100)
         logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added Signal")

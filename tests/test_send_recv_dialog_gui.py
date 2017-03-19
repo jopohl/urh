@@ -80,6 +80,8 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
             else:
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
+            app.processEvents()
+            QTest.qWait(50)
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()

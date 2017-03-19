@@ -7,6 +7,8 @@ from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.util.Logger import logger
+
 app = tests.utils_testing.get_app()
 
 
@@ -14,11 +16,16 @@ class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("align_labels", True)
 
+        logger.debug("Init form")
+        QTest.qWait(10)
+        app.processEvents()
         self.form = MainController()
         app.processEvents()
         QTest.qWait(10)
 
+        logger.debug("Add signal")
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
+        logger.debug("added signal")
         app.processEvents()
         QTest.qWait(10)
 

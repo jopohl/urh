@@ -247,11 +247,13 @@ class MainController(QMainWindow):
         self.ui.progressBar.show()
 
         pa = ProtocolAnalyzer(signal)
-        sframe = self.signal_tab_controller.add_signal_frame(pa)
+        sig_frame = self.signal_tab_controller.add_signal_frame(pa)
+        logger.debug("{}: Created signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(10)
         QApplication.processEvents()
 
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
+        logger.debug("{}: Added protocol for signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(20)
         QApplication.processEvents()
 
@@ -266,15 +268,15 @@ class MainController(QMainWindow):
         self.ui.progressBar.setValue(70)
         QApplication.processEvents()
 
-        self.signal_protocol_dict[sframe] = pa
+        self.signal_protocol_dict[sig_frame] = pa
         self.ui.progressBar.setValue(80)
         QApplication.processEvents()
 
-        sframe.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
+        sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
-            sframe.ui.gvSignal.redraw_view()
+            sig_frame.ui.gvSignal.redraw_view()
 
-        sframe.ui.gvSignal.auto_fit_view()
+        sig_frame.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
         QApplication.processEvents()

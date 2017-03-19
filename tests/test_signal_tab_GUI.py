@@ -20,7 +20,7 @@ class TestSignalTabGUI(unittest.TestCase):
         logger.debug("Init Form")
         self.form = MainController()
         app.processEvents()
-        QTest.qWait(150)
+        QTest.qWait(50)
         logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added Signal")
@@ -31,19 +31,9 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.signal.bit_len = 84
 
     def tearDown(self):
-        for frame in self.form.signal_tab_controller.signal_frames:
-            try:
-                frame.close()
-                frame.setParent(None)
-                frame.deleteLater()
-            except RuntimeError:
-                continue
-        try:
-            self.frame.close()
-            self.frame.setParent(None)
-            self.frame.deleteLater()
-        except RuntimeError:
-            pass
+        self.form.close_all()
+        app.processEvents()
+        QTest.qWait(10)
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()

@@ -238,7 +238,10 @@ class SignalFrameController(QFrame):
     def update_number_selected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
         self.__set_duration()
-        sel_messages = self.ui.gvSignal.selected_messages
+        try:
+            sel_messages = self.ui.gvSignal.selected_messages
+        except AttributeError:
+            sel_messages = []
         if len(sel_messages) == 1:
             self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
         else:
@@ -756,7 +759,7 @@ class SignalFrameController(QFrame):
     def update_protocol_selection_from_roi(self):
         protocol = self.proto_analyzer
 
-        if protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
+        if protocol is None or protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
             return
 
         start = self.ui.gvSignal.selection_area.x

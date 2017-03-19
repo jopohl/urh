@@ -37,8 +37,9 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
-        app.processEvents()
         QTest.qWait(50)
+        app.sendPostedEvents()
+        app.processEvents()
 
     def test_close_all(self):
         logger.debug("Close all")

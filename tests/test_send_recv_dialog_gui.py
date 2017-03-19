@@ -37,7 +37,8 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
-        QTest.qWait(100)
+        QTest.qWait(50)
+        app.sendPostedEvents()
         app.processEvents()
 
     def __get_recv_dialog(self):

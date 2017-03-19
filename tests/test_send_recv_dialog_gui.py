@@ -43,11 +43,15 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __get_recv_dialog(self):
         logger.debug("Creating Receive Dialog")
+        QTest.qWait(10)
+        app.processEvents()
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
 
     def __get_send_dialog(self):
         logger.debug("Creating Send Dialog")
+        QTest.qWait(10)
+        app.processEvents()
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
@@ -55,11 +59,15 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __get_spectrum_dialog(self):
         logger.debug("Creating Spectrum Dialog")
+        QTest.qWait(10)
+        app.processEvents()
         spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
         logger.debug("Creating Sniff Dialog")
+        QTest.qWait(10)
+        app.processEvents()
         sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
                                                      self.signal.qad_center,
                                                      self.signal.bit_len, self.signal.tolerance,

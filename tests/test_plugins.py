@@ -14,6 +14,7 @@ from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 from tests.utils_testing import get_path_for_data_file
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 app = tests.utils_testing.get_app()
 
@@ -22,8 +23,11 @@ class TestPlugins(unittest.TestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
+        QTest.qWait(10)
+        app.processEvents()
+        logger.debug("Init form")
         self.form = MainController()
+        logger.debug("Initalized form")
         app.processEvents()
         QTest.qWait(50)
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
@@ -42,6 +46,7 @@ class TestPlugins(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
+        app.sendPostedEvents()
         app.processEvents()
         QTest.qWait(10)
 

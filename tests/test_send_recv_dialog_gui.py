@@ -152,6 +152,8 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
         self.assertEqual(gframe.table_model.rowCount(), 3)
 
+        app.processEvents()
+        QTest.qWait(50)
         sniff_dialog = self.__get_sniff_dialog()
         sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)

@@ -90,9 +90,9 @@ class SpectrumDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_device_started(self):
         super().on_device_started()
+        self.ui.btnClear.setEnabled(True)
         self.ui.spinBoxPort.setEnabled(False)
         self.ui.lineEditIP.setEnabled(False)
-        self.ui.btnClear.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
 
     @pyqtSlot()

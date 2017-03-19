@@ -39,57 +39,45 @@ class TestSendRecvDialog(unittest.TestCase):
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
+
+    def tearDown(self):
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        QTest.qWait(100)
         app.processEvents()
-        QTest.qWait(150)
 
-        project_manager = self.form.project_manager
-
+    def __get_recv_dialog(self):
         logger.debug("Creating Receive Dialog")
-        self.receive_dialog = ReceiveDialogController(project_manager, testing_mode=True, parent=self.form)
-        app.processEvents()
-        QTest.qWait(150)
+        receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
+        return receive_dialog
 
+    def __get_send_dialog(self):
         logger.debug("Creating Send Dialog")
-        self.send_dialog = SendDialogController(project_manager, modulated_data=self.signal.data, testing_mode=True,
-                                                parent=self.form)
-        self.send_dialog.graphics_view.show_full_scene(reinitialize=True)
-        app.processEvents()
-        QTest.qWait(150)
+        send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
+                                           testing_mode=True, parent=self.form)
+        send_dialog.graphics_view.show_full_scene(reinitialize=True)
+        return send_dialog
 
+    def __get_spectrum_dialog(self):
         logger.debug("Creating Spectrum Dialog")
-        self.spectrum_dialog = SpectrumDialogController(project_manager, testing_mode=True, parent=self.form)
-        app.processEvents()
-        QTest.qWait(150)
+        spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
+        return spectrum_dialog
 
+    def __get_sniff_dialog(self):
         logger.debug("Creating Sniff Dialog")
-        self.sniff_dialog = ProtocolSniffDialogController(project_manager, self.signal.noise_threshold,
+        sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
                                                           self.signal.qad_center,
                                                           self.signal.bit_len, self.signal.tolerance,
                                                           self.signal.modulation_type,
                                                           testing_mode=True, parent=self.form)
-        app.processEvents()
-        QTest.qWait(50)
-
-        logger.debug("Created Dialogs")
-
-        self.dialogs = [self.receive_dialog, self.send_dialog, self.spectrum_dialog, self.sniff_dialog]
-
-    def tearDown(self):
-        for dialog in self.dialogs:
-            dialog.close()
-            dialog.setParent(None)
-            dialog.deleteLater()
-            app.processEvents()
-            QTest.qWait(10)
-        app.processEvents()
-        QTest.qWait(10)
-        self.form.close()
-        self.form.setParent(None)
-        QTest.qWait(100)
-        app.processEvents()
+        return sniff_dialog
 
     def test_network_sdr_enabled(self):
-        for dialog in self.dialogs:
+        dialogs = [self.__get_recv_dialog(), self.__get_send_dialog(), self.__get_spectrum_dialog(),
+                   self.__get_sniff_dialog()]
+
+        for dialog in dialogs:
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
             if isinstance(dialog, SpectrumDialogController):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
@@ -97,9 +85,10 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
     def test_receive(self):
-        self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.receive_dialog.device.set_server_port(2222)
-        self.receive_dialog.ui.btnStart.click()
+        receive_dialog = self.__get_recv_dialog()
+        receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        receive_dialog.device.set_server_port(2222)
+        receive_dialog.ui.btnStart.click()
 
         data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
 
@@ -114,35 +103,37 @@ class TestSendRecvDialog(unittest.TestCase):
         app.processEvents()
         QTest.qWait(500)
 
-        self.assertEqual(self.receive_dialog.device.current_index, 3)
-        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:3], data))
+        self.assertEqual(receive_dialog.device.current_index, 3)
+        self.assertTrue(np.array_equal(receive_dialog.device.data[:3], data))
 
-        self.receive_dialog.ui.btnStop.click()
-        self.receive_dialog.ui.btnClear.click()
+        receive_dialog.ui.btnStop.click()
+        receive_dialog.ui.btnClear.click()
 
-        self.assertEqual(self.receive_dialog.device.current_index, 0)
+        self.assertEqual(receive_dialog.device.current_index, 0)
 
     def test_send(self):
-        self.receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.receive_dialog.device.set_server_port(3333)
-        self.receive_dialog.ui.btnStart.click()
+        receive_dialog = self.__get_recv_dialog()
+        receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        receive_dialog.device.set_server_port(3333)
+        receive_dialog.ui.btnStart.click()
 
-        self.send_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.send_dialog.device.set_client_port(3333)
-        self.send_dialog.ui.spinBoxNRepeat.setValue(2)
-        self.send_dialog.ui.btnStart.click()
+        send_dialog = self.__get_send_dialog()
+        send_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        send_dialog.device.set_client_port(3333)
+        send_dialog.ui.spinBoxNRepeat.setValue(2)
+        send_dialog.ui.btnStart.click()
         app.processEvents()
         QTest.qWait(500)
 
-        self.assertEqual(self.receive_dialog.device.current_index, 2 * self.signal.num_samples)
-        self.assertTrue(np.array_equal(self.receive_dialog.device.data[:self.receive_dialog.device.current_index // 2],
+        self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
+        self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
                                        self.signal.data))
 
-        self.assertEqual(self.send_dialog.send_indicator.rect().width(), self.signal.num_samples)
-        self.assertFalse(self.send_dialog.ui.btnClear.isEnabled())
+        self.assertEqual(send_dialog.send_indicator.rect().width(), self.signal.num_samples)
+        self.assertFalse(send_dialog.ui.btnClear.isEnabled())
 
-        self.send_dialog.on_clear_clicked()
-        self.assertEqual(self.send_dialog.send_indicator.rect().width(), 0)
+        send_dialog.on_clear_clicked()
+        self.assertEqual(send_dialog.send_indicator.rect().width(), 0)
 
     def test_sniff(self):
         # Move with encoding to generator
@@ -157,18 +148,19 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
         self.assertEqual(gframe.table_model.rowCount(), 3)
 
-        self.sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        self.assertEqual(self.sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        sniff_dialog = self.__get_sniff_dialog()
+        sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
-        self.sniff_dialog.device.set_server_port(4444)
+        sniff_dialog.device.set_server_port(4444)
         gframe.network_sdr_plugin.client_port = 4444
-        self.sniff_dialog.ui.btnStart.click()
+        sniff_dialog.ui.btnStart.click()
         app.processEvents()
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
 
         QTest.qWait(500)
-        received_msgs = self.sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
+        received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = gframe.table_model.protocol.plain_bits_str
 
         self.assertEqual(len(received_msgs), len(orig_msgs))
@@ -176,16 +168,16 @@ class TestSendRecvDialog(unittest.TestCase):
             pad = 0 if len(orig) % 8 == 0 else 8 - len(orig) % 8
             self.assertEqual(received, orig + "0" * pad)
 
-        self.sniff_dialog.ui.btnStop.click()
+        sniff_dialog.ui.btnStop.click()
         target_file = os.path.join(QDir.tempPath(), "sniff_file")
         self.assertFalse(os.path.isfile(target_file))
 
-        self.sniff_dialog.ui.btnClear.click()
+        sniff_dialog.ui.btnClear.click()
         app.processEvents()
-        self.sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
-        self.sniff_dialog.ui.btnStart.click()
+        sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
+        sniff_dialog.ui.btnStart.click()
         app.processEvents()
-        self.assertFalse(self.sniff_dialog.ui.btnAccept.isEnabled())
+        self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())
 
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
@@ -199,35 +191,40 @@ class TestSendRecvDialog(unittest.TestCase):
         os.remove(target_file)
 
     def test_send_dialog_scene_zoom(self):
+        send_dialog = self.__get_send_dialog()
         app.processEvents()
-        self.assertEqual(self.send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
-        view_width = self.send_dialog.graphics_view.view_rect().width()
-        self.send_dialog.graphics_view.zoom(1.1)
+        self.assertEqual(send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
+        view_width = send_dialog.graphics_view.view_rect().width()
+        send_dialog.graphics_view.zoom(1.1)
         app.processEvents()
-        self.assertLess(self.send_dialog.graphics_view.view_rect().width(), view_width)
-        self.send_dialog.graphics_view.zoom(0.8)
+        self.assertLess(send_dialog.graphics_view.view_rect().width(), view_width)
+        send_dialog.graphics_view.zoom(0.8)
         app.processEvents()
-        self.assertLessEqual(self.send_dialog.graphics_view.view_rect().width(), view_width)
+        self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
 
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
-        self.assertEqual(num_samples, self.send_dialog.scene_manager.signal.num_samples)
-        self.assertEqual(num_samples, len(self.send_dialog.device.samples_to_send))
-        self.send_dialog.graphics_view.set_selection_area(0, 1337)
-        self.send_dialog.graphics_view.delete_action.trigger()
-        self.assertEqual(self.send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
-        self.assertEqual(len(self.send_dialog.device.samples_to_send), num_samples - 1337)
+        send_dialog = self.__get_send_dialog()
+        self.assertEqual(num_samples, send_dialog.scene_manager.signal.num_samples)
+        self.assertEqual(num_samples, len(send_dialog.device.samples_to_send))
+        send_dialog.graphics_view.set_selection_area(0, 1337)
+        send_dialog.graphics_view.delete_action.trigger()
+        self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
+        self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)
 
     def test_send_dialog_y_slider(self):
-        y, h = self.send_dialog.graphics_view.view_rect().y(), self.send_dialog.graphics_view.view_rect().height()
+        send_dialog = self.__get_send_dialog()
+        app.processEvents()
+        y, h = send_dialog.graphics_view.view_rect().y(), send_dialog.graphics_view.view_rect().height()
 
-        self.send_dialog.ui.sliderYscale.setValue(self.send_dialog.ui.sliderYscale.value() +
-                                                  self.send_dialog.ui.sliderYscale.singleStep())
-        self.assertNotEqual(y, self.send_dialog.graphics_view.view_rect().y())
-        self.assertNotEqual(h, self.send_dialog.graphics_view.view_rect().height())
+        send_dialog.ui.sliderYscale.setValue(send_dialog.ui.sliderYscale.value() +
+                                                  send_dialog.ui.sliderYscale.singleStep())
+        self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
+        self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
 
     def test_change_device_parameters(self):
-        for dialog in self.dialogs:
+        dialogs = [self.__get_recv_dialog(), self.__get_send_dialog(), self.__get_spectrum_dialog(), self.__get_sniff_dialog()]
+        for dialog in dialogs:
             dialog.ui.cbDevice.setCurrentText("HackRF")
             self.assertEqual(dialog.device.name, "HackRF", msg=type(dialog))
 

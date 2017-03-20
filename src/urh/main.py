@@ -84,10 +84,10 @@ def main():
     import urh.ui.xtra_icons_rc  # Use oxy theme always
     QIcon.setThemeName("oxy")
 
-    constants.SETTINGS.setValue("default_theme", QApplication.style().objectName())
+    constants.SETTINGS.setValue("default_theme", app.style().objectName())
 
     if constants.SETTINGS.value("use_fallback_theme", False, bool):
-        QApplication.setStyle(QStyleFactory.create("Fusion"))
+        app.setStyle(QStyleFactory.create("Fusion"))
 
     main_window = MainController()
 

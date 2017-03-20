@@ -23,13 +23,9 @@ class TestPlugins(unittest.TestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-        QTest.qWait(50)
-        app.processEvents()
         logger.debug("Init form")
         self.form = MainController()
         logger.debug("Initalized form")
-        app.processEvents()
-        QTest.qWait(50)
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller

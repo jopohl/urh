@@ -4,7 +4,7 @@ import traceback
 import numpy
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics, QFont
-from PyQt5.QtWidgets import QInputDialog, QApplication, QWidget, QUndoStack
+from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.FuzzingDialogController import FuzzingDialogController
@@ -343,7 +343,7 @@ class GeneratorTabController(QWidget):
             modulated_samples.append(modulator.modulated_samples)
             pos += len(modulator.modulated_samples)
             self.ui.prBarGeneration.setValue(i + 1)
-            QApplication.processEvents()
+            QApplication.instance().processEvents()
 
         self.ui.prBarGeneration.hide()
         return numpy.concatenate(modulated_samples).astype(numpy.complex64)

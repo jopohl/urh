@@ -542,14 +542,14 @@ class SendRecvDialogController(QDialog):
 
     def _restart_device_thread(self):
         self.device.stop("Restarting with new port")
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         if self.device.backend == Backends.grc:
             self.device.increase_gr_port()
 
 
         self.device.start()
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def on_clear_clicked(self):

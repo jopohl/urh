@@ -19,7 +19,6 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
-global app
 app = tests.utils_testing.get_app()
 
 

@@ -1,9 +1,7 @@
 import os
-import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
-from PyQt5.QtWidgets import QApplication
 
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends

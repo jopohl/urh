@@ -158,7 +158,7 @@ class MainController(QMainWindow):
         self.ui.actionSpectrum_Analyzer.triggered.connect(self.on_show_spectrum_dialog_action_triggered)
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
-        self.ui.actionAbout_Qt.triggered.connect(QApplication.aboutQt)
+        self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
 
         self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
         self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)
@@ -250,12 +250,12 @@ class MainController(QMainWindow):
         sig_frame = self.signal_tab_controller.add_signal_frame(pa)
         logger.debug("{}: Created signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(10)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
         logger.debug("{}: Added protocol for signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(20)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
@@ -263,23 +263,25 @@ class MainController(QMainWindow):
             signal.auto_detect()
         signal.blockSignals(False)
         self.ui.progressBar.setValue(50)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         self.ui.progressBar.setValue(70)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         self.signal_protocol_dict[sig_frame] = pa
         self.ui.progressBar.setValue(80)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
+        logger.debug("{}: Refresh signal frame".format(self.__class__.__name__))
         sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sig_frame.ui.gvSignal.redraw_view()
 
+        logger.debug("{}: Autofit view signal frame".format(self.__class__.__name__))
         sig_frame.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         self.compare_frame_controller.filter_search_results()
 
@@ -316,9 +318,9 @@ class MainController(QMainWindow):
                 signal_frame.proto_analyzer.destroy()
             signal_frame.proto_analyzer = None
             signal_frame.close()
-            QApplication.processEvents()
+            QApplication.instance().processEvents()
             signal_frame.destroy()
-            QApplication.processEvents()
+            QApplication.instance().processEvents()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()
@@ -368,9 +370,9 @@ class MainController(QMainWindow):
 
             self.signal_tab_controller.ui.lLoadingFile.setText(
                 self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
-            QApplication.processEvents()
+            QApplication.instance().processEvents()
 
-            QApplication.setOverrideCursor(Qt.WaitCursor)
+            QApplication.instance().setOverrideCursor(Qt.WaitCursor)
 
             if file_extension == ".complex":
                 self.add_signalfile(file, group_id)
@@ -385,7 +387,7 @@ class MainController(QMainWindow):
             else:
                 self.add_signalfile(file, group_id)
 
-            QApplication.restoreOverrideCursor()
+            QApplication.instance().restoreOverrideCursor()
         self.signal_tab_controller.ui.lLoadingFile.setText("")
 
     def set_frame_numbers(self):
@@ -534,7 +536,7 @@ class MainController(QMainWindow):
         if last_sig_frame is not None:
             self.signal_tab_controller.ui.scrollArea.ensureWidgetVisible(last_sig_frame, 0, 0)
 
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
         self.ui.tabWidget.setCurrentIndex(0)
         if focus_frame is not None:
             focus_frame.ui.txtEdProto.setFocus()
@@ -637,10 +639,10 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list)
     def on_signals_recorded(self, file_names: list):
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         for filename in file_names:
             self.add_signalfile(filename)
-        QApplication.restoreOverrideCursor()
+        QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()
     def show_options_dialog_action_triggered(self):
@@ -707,7 +709,7 @@ class MainController(QMainWindow):
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
                 self.ui.progressBar.hide()
-                QApplication.restoreOverrideCursor()
+                QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()
     def on_close_all_action_triggered(self):

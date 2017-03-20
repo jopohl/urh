@@ -1,7 +1,6 @@
 import locale
 import math
 
-import time
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
@@ -414,7 +413,7 @@ class SignalFrameController(QFrame):
 
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         self.proto_analyzer.get_protocol_from_signal()
 
@@ -579,7 +578,7 @@ class SignalFrameController(QFrame):
         else:
             self.ui.gvLegend.hide()
 
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
         self.ui.gvSignal.auto_fit_view()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()

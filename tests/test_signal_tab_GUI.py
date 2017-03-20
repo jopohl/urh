@@ -18,7 +18,8 @@ class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
         logger.debug("Init Form")
-        QTest.qWait(10)
+        QTest.qWait(50)
+        app.processEvents()
         self.form = MainController()
         app.processEvents()
         QTest.qWait(50)

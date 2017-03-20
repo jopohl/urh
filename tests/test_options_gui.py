@@ -14,6 +14,7 @@ app = tests.utils_testing.get_app()
 
 class TestOptionsGUI(unittest.TestCase):
     def setUp(self):
+        tests.utils_testing.short_wait()
         self.form = MainController()
         tests.utils_testing.short_wait()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)

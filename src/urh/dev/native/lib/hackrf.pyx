@@ -23,12 +23,10 @@ cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
 cpdef setup():
-    time.sleep(TIMEOUT)
     chackrf.hackrf_init()
     return open()
 
 cpdef exit():
-    time.sleep(TIMEOUT)
     return chackrf.hackrf_exit()
 
 cpdef reopen():
@@ -36,11 +34,9 @@ cpdef reopen():
     return open()
 
 cpdef open():
-    time.sleep(TIMEOUT)
     return chackrf.hackrf_open(&_c_device)
 
 cpdef close():
-    time.sleep(TIMEOUT)
     return chackrf.hackrf_close(_c_device)
 
 cpdef start_rx_mode(callback):

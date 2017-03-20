@@ -3,7 +3,7 @@ from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
 
-TIMEOUT = 0.15
+TIMEOUT = 0.2
 
 cdef object f
 from cpython cimport PyBytes_GET_SIZE
@@ -23,10 +23,12 @@ cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
 cpdef setup():
+    time.sleep(TIMEOUT)
     chackrf.hackrf_init()
     return open()
 
 cpdef exit():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_exit()
 
 cpdef reopen():
@@ -34,6 +36,7 @@ cpdef reopen():
     return open()
 
 cpdef open():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_open(&_c_device)
 
 cpdef close():
@@ -46,6 +49,7 @@ cpdef start_rx_mode(callback):
     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
 
 cpdef stop_rx_mode():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_rx(_c_device)
 
 cpdef start_tx_mode(callback):
@@ -54,6 +58,7 @@ cpdef start_tx_mode(callback):
     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
 
 cpdef stop_tx_mode():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_tx(_c_device)
 
 cpdef board_id_read():

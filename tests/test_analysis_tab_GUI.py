@@ -9,16 +9,16 @@ from PyQt5.QtTest import QTest
 import tests.utils_testing
 from urh.controller.MainController import MainController
 
-from tests.utils_testing import get_path_for_data_file
+from tests.utils_testing import get_path_for_data_file, short_wait
 
 app = tests.utils_testing.get_app()
 
 
 class TestAnalysisTabGUI(unittest.TestCase):
     def setUp(self):
+        short_wait()
         self.form = MainController()
-        app.processEvents()
-        QTest.qWait(25)
+        short_wait()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
         app.processEvents()
@@ -162,11 +162,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        app.processEvents()
-        QTest.qWait(10)
+        short_wait()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        app.processEvents()
-        QTest.qWait(10)
+        short_wait()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 

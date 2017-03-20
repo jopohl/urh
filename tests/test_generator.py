@@ -16,6 +16,7 @@ app = tests.utils_testing.get_app()
 class TestGenerator(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
+        tests.utils_testing.short_wait()
         self.form = MainController()
 
     def test_generation(self):

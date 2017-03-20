@@ -17,17 +17,14 @@ class TestProtocolLabelDialog(unittest.TestCase):
         constants.SETTINGS.setValue("align_labels", True)
 
         logger.debug("Init form")
-        QTest.qWait(10)
-        app.processEvents()
+        tests.utils_testing.short_wait()
         self.form = MainController()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
 
         logger.debug("Add signal")
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
         logger.debug("added signal")
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
 
         self.cframe = self.form.compare_frame_controller
 
@@ -43,13 +40,11 @@ class TestProtocolLabelDialog(unittest.TestCase):
         self.dialog.close()
         self.dialog.setParent(None)
         self.dialog.deleteLater()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

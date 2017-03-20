@@ -15,19 +15,17 @@ app = tests.utils_testing.get_app()
 class TestModulatorGUI(unittest.TestCase):
     def setUp(self):
         logger.debug("Init Form")
+        tests.utils_testing.short_wait(interval=10)
         self.form = MainController()
         logger.debug("Add Signal")
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added Signal")
-        app.processEvents()
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait(interval=10)
         logger.debug("Create modulation dialog")
         self.dialog, _ = self.gframe.prepare_modulation_dialog()
         self.gframe.initialize_modulation_dialog("1111", self.dialog)
@@ -35,13 +33,13 @@ class TestModulatorGUI(unittest.TestCase):
     def tearDown(self):
         self.dialog.close()
         self.dialog.setParent(None)
-        app.processEvents()
-        QTest.qWait(10)
+        self.dialog.deleteLater()
+        tests.utils_testing.short_wait()
+
         self.form.close()
         self.form.setParent(None)
-        app.processEvents()
-        QTest.qWait(50)
-        app.processEvents()
+        self.form.deleteLater()
+        tests.utils_testing.short_wait()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

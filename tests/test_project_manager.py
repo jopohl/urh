@@ -18,11 +18,10 @@ app = tests.utils_testing.get_app()
 class TestProjectManager(unittest.TestCase):
     def setUp(self):
         logger.debug("Init form")
-        QTest.qWait(25)
+        tests.utils_testing.short_wait()
         self.form = MainController()
         logger.debug("Initialized form")
-        app.processEvents()
-        QTest.qWait(25)
+        tests.utils_testing.short_wait()
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
@@ -31,9 +30,7 @@ class TestProjectManager(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
-        QTest.qWait(50)
-        app.sendPostedEvents()
-        app.processEvents()
+        tests.utils_testing.short_wait()
 
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"
@@ -66,15 +63,13 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 2)
         self.form.close_all()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

@@ -23,10 +23,12 @@ app = tests.utils_testing.get_app()
 
 
 class TestSendRecvDialog(unittest.TestCase):
+    SEND_RECV_TIMEOUT = 300
+
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
 
-        QTest.qWait(50)
+        tests.utils_testing.short_wait()
         logger.debug("init form")
         self.form = MainController()
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
@@ -36,23 +38,17 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.close()
         self.form.setParent(None)
         self.form.deleteLater()
-        QTest.qWait(50)
-        app.closeAllWindows()
-        app.sendPostedEvents()
-        app.processEvents()
-        QTest.qWait(50)
+        tests.utils_testing.short_wait(interval=10)
 
     def __get_recv_dialog(self):
         logger.debug("Creating Receive Dialog")
-        QTest.qWait(100)
-        app.processEvents()
+        tests.utils_testing.short_wait()
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
 
     def __get_send_dialog(self):
         logger.debug("Creating Send Dialog")
-        QTest.qWait(100)
-        app.processEvents()
+        tests.utils_testing.short_wait()
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
@@ -60,15 +56,13 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __get_spectrum_dialog(self):
         logger.debug("Creating Spectrum Dialog")
-        QTest.qWait(100)
-        app.processEvents()
+        tests.utils_testing.short_wait()
         spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
         logger.debug("Creating Sniff Dialog")
-        QTest.qWait(100)
-        app.processEvents()
+        tests.utils_testing.short_wait()
         sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
                                                      self.signal.qad_center,
                                                      self.signal.bit_len, self.signal.tolerance,
@@ -90,8 +84,8 @@ class TestSendRecvDialog(unittest.TestCase):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
             else:
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
-            app.processEvents()
-            QTest.qWait(50)
+
+            tests.utils_testing.short_wait(interval=10)
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()
@@ -110,7 +104,7 @@ class TestSendRecvDialog(unittest.TestCase):
         sock.close()
 
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 3)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:3], data))
@@ -132,7 +126,7 @@ class TestSendRecvDialog(unittest.TestCase):
         send_dialog.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
@@ -146,7 +140,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_sniff(self):
         # add a signal so we can use it
-        QTest.qWait(100)
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
         app.processEvents()
@@ -163,8 +157,7 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
         self.assertEqual(gframe.table_model.rowCount(), 3)
 
-        app.processEvents()
-        QTest.qWait(50)
+        tests.utils_testing.short_wait()
         sniff_dialog = self.__get_sniff_dialog()
         sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
@@ -176,7 +169,7 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
 
-        QTest.qWait(500)
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = gframe.table_model.protocol.plain_bits_str
 
@@ -198,7 +191,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
         gframe.ui.btnNetworkSDRSend.click()
         app.processEvents()
-        QTest.qWait(500)
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         with open(target_file, "r") as f:
             for i, line in enumerate(f):

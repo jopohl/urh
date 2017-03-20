@@ -1,5 +1,6 @@
 import os
 
+from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -9,6 +10,15 @@ def get_app():
     if app is None:
         app = QApplication(sys.argv)
     return app
+
+
+def short_wait(interval=1):
+    app = QApplication.instance()
+    app.processEvents()
+    app.sendPostedEvents()
+    QTest.qWait(interval)
+    app.sendPostedEvents()
+    app.processEvents()
 
 f = os.readlink(__file__) if os.path.islink(__file__) else __file__
 path = os.path.realpath(os.path.join(f, ".."))

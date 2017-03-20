@@ -15,19 +15,18 @@ app = tests.utils_testing.get_app()
 class TestOptionsGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
     def tearDown(self):
         self.dialog.close()
+        self.dialog.setParent(None)
         self.dialog.deleteLater()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
         self.form.close()
+        self.form.setParent(None)
         self.form.deleteLater()
-        app.processEvents()
-        QTest.qWait(10)
+        tests.utils_testing.short_wait()
 
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)

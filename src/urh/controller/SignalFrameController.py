@@ -472,7 +472,10 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
             # self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            try:    # Without try/except: segfault (TypeError) when changing sample_rate in info dialog of signal
+                self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            except TypeError:
+                pass
 
             self.ui.txtEdProto.blockSignals(False)
 

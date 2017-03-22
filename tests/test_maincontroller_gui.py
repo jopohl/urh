@@ -12,12 +12,6 @@ class TestMaincontrollerGUI(unittest.TestCase):
         self.form = MainController()
         tests.utils_testing.short_wait()
 
-    def tearDown(self):
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
     def test_open_recent(self):
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
         tests.utils_testing.short_wait()

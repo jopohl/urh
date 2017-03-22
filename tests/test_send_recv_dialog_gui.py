@@ -35,10 +35,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def tearDown(self):
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait(interval=10)
+        QTest.qWait(100)
 
     def __get_recv_dialog(self):
         logger.debug("Creating Receive Dialog")

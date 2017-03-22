@@ -2,6 +2,7 @@ import os
 
 from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QUndoCommand, QUndoStack
 
 
@@ -39,6 +40,7 @@ class Plugin(QObject):
         pass
 
     def load_settings_frame(self):
+        QApplication.instance().processEvents()
         self.settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
         self.create_connects()
 

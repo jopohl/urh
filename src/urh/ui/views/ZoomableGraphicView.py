@@ -6,6 +6,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.SceneManager import SceneManager
@@ -133,6 +134,7 @@ class ZoomableGraphicView(SelectableGraphicView):
             self.scene_manager.scene_type = self.scene_type
             if reinitialize:
                 self.scene_manager.init_scene()
+            QApplication.instance().processEvents()
             vr = self.view_rect()
             start, end = vr.x(), vr.x() + vr.width()
             self.scene_manager.show_scene_section(start, end, *self._get_sub_path_ranges_and_colors(start, end))

@@ -36,16 +36,6 @@ class TestProtocolLabelDialog(unittest.TestCase):
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())
         table_model = self.dialog.ui.tblViewProtoLabels.model()

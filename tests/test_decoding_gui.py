@@ -23,13 +23,6 @@ class TestDecodingGUI(unittest.TestCase):
                                               signals=[self.signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        short_wait()
-        self.form.close()
-        short_wait(interval=10)
-
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)  # One Invert

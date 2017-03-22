@@ -30,35 +30,27 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.signal.qad_center = 0.3817
         self.frame.signal.bit_len = 84
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
     def test_close_all(self):
         logger.debug("Close all")
         self.form.close_all()
         tests.utils_testing.short_wait()
         logger.debug("Called close all")
         app.processEvents()
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
-        num_signals = 5
-        for _ in range(num_signals):
+        num_frames = 5
+        for _ in range(num_frames):
             tests.utils_testing.short_wait()
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
 
-        self.assertEqual(self.form.signal_tab_controller.num_signals, num_signals)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
         self.form.close_all()
         tests.utils_testing.short_wait()
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 1)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
 
     def test_zoom(self):
         tests.utils_testing.short_wait()

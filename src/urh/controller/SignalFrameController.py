@@ -46,9 +46,7 @@ class SignalFrameController(QFrame):
         self.undo_stack = undo_stack
 
         self.ui = Ui_SignalFrame()
-        logger.debug("{}: Call setupUi".format(self.__class__.__name__))
         self.ui.setupUi(self)
-        logger.debug("{}: Called setupUi".format(self.__class__.__name__))
 
         self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
         self.ui.txtEdProto.participants = project_manager.participants

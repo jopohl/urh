@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDoubleSpinBox
 
 class KillerDoubleSpinBox(QDoubleSpinBox):
@@ -42,6 +43,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             self.setSingleStep(10 ** -(self.decimals()))
 
     def textFromValue(self, value: float):
+        QApplication.instance().processEvents()
         if abs(value) >= 10 ** 9:
             return super().textFromValue(value / 10 ** 9) + "G"
         elif abs(value) >= 10 ** 6:

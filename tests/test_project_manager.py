@@ -26,12 +26,6 @@ class TestProjectManager(unittest.TestCase):
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
 
-    def tearDown(self):
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"
         amplitude = random.random()
@@ -64,15 +58,15 @@ class TestProjectManager(unittest.TestCase):
     def test_close_all(self):
         self.form.close_all()
         tests.utils_testing.short_wait()
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 2)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()
         tests.utils_testing.short_wait()
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 
     def test_project_dialog(self):

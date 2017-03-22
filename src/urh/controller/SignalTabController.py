@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import pyqtSignal, Qt, QCoreApplication, pyqtSlot
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
 
 from urh import constants
@@ -17,8 +18,8 @@ class SignalTabController(QWidget):
     frame_was_dropped = pyqtSignal(int, int)
 
     @property
-    def num_signals(self):
-        return self.splitter.count() - 1
+    def num_frames(self):
+        return self.__num_frames
 
     @property
     def signal_frames(self):
@@ -26,15 +27,8 @@ class SignalTabController(QWidget):
 
         :rtype: list of SignalFrameController
         """
-        return [self.splitter.widget(i) for i in range(self.num_signals)]
-
-    @property
-    def signal_views(self):
-        """
-
-        :rtype: list of EpicGraphicView
-        """
-        return [sWidget.ui.gvSignal for sWidget in self.signal_frames]
+        QApplication.instance().processEvents()
+        return [self.splitter.widget(i) for i in range(self.num_frames)]
 
     @property
     def signal_undo_stack(self):
@@ -57,17 +51,16 @@ class SignalTabController(QWidget):
         self.signal_vlay.addWidget(self.splitter)
         self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
 
+        self.__num_frames = 0
+
         self.drag_pos = None
 
     def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
     def close_frame(self, frame:SignalFrameController):
+        self.__num_frames -= 1
         self.frame_closed.emit(frame)
-
-    def reset_all_signalx_zoom(self):
-        for gvs in self.signal_views:
-            gvs.showing_full_signal = True
 
     def add_signal_frame(self, proto_analyzer):
         sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
@@ -78,6 +71,7 @@ class SignalTabController(QWidget):
             # new signal from "create signal from selection"
             sig_frame.ui.btnSaveSignal.show()
 
+        QApplication.instance().processEvents()
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
         sig_frame.signal_created.connect(self.signal_created.emit)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
@@ -94,13 +88,14 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbSignalView.setCurrentIndex(1)
             sig_frame.ui.cbSignalView.setDisabled(True)
 
-        self.splitter.insertWidget(self.num_signals, sig_frame)
-
-        self.reset_all_signalx_zoom()
+        QApplication.instance().processEvents()
+        self.splitter.insertWidget(self.num_frames, sig_frame)
         sig_frame.blockSignals(False)
 
         default_view = constants.SETTINGS.value('default_view', 0, int)
         sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
+
+        self.__num_frames += 1
 
         return sig_frame
 
@@ -121,8 +116,10 @@ class SignalTabController(QWidget):
         sig_frame.set_empty_frame_visibilities()
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
 
-        self.splitter.insertWidget(self.num_signals, sig_frame)
+        self.splitter.insertWidget(self.num_frames, sig_frame)
         QCoreApplication.processEvents()
+
+        self.__num_frames += 1
 
         return sig_frame
 
@@ -142,7 +139,7 @@ class SignalTabController(QWidget):
 
     @pyqtSlot()
     def save_all(self):
-        if self.num_signals == 0:
+        if self.num_frames == 0:
             return
 
         settings = constants.SETTINGS
@@ -216,7 +213,7 @@ class SignalTabController(QWidget):
         end = pos
         start_index = -1
         end_index = -1
-        if self.num_signals > 1:
+        if self.num_frames > 1:
             for i, w in enumerate(self.signal_frames):
                 if w.geometry().contains(start):
                     start_index = i

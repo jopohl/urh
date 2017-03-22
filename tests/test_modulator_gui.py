@@ -30,17 +30,6 @@ class TestModulatorGUI(unittest.TestCase):
         self.dialog, _ = self.gframe.prepare_modulation_dialog()
         self.gframe.initialize_modulation_dialog("1111", self.dialog)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
         self.dialog.ui.btnAddModulation.click()

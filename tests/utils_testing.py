@@ -33,7 +33,7 @@ def trace_calls(frame, event, arg):
 
 import sys
 
-sys.settrace(trace_calls)
+# sys.settrace(trace_calls)
 
 global form
 form = None

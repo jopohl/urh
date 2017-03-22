@@ -6,6 +6,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
+from urh.dev.native.Device import Device
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
@@ -91,6 +92,9 @@ class VirtualDevice(QObject):
                     self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
+            elif name == "test":
+                # For Unittests Only
+                self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
             else:
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.portnumber = portnumber

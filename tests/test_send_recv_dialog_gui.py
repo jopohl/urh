@@ -15,6 +15,7 @@ from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogCont
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
@@ -213,3 +214,63 @@ class TestSendRecvDialog(unittest.TestCase):
                                              send_dialog.ui.sliderYscale.singleStep())
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
+
+    def test_change_device_parameters(self):
+        for dialog in self.__get_all_dialogs():
+            bh = BackendContainer("test", {Backends.native}, True, True)
+            self.assertTrue(bh.is_enabled)
+            dialog.backend_handler.device_backends["test"] = bh
+            dialog.ui.cbDevice.addItem("test")
+            dialog.ui.cbDevice.setCurrentText("test")
+            self.assertEqual(dialog.device.name, "test", msg=type(dialog))
+            self.assertEqual(dialog.device.backend, Backends.native, msg=type(dialog))
+
+            dialog.ui.lineEditIP.setText("1.3.3.7")
+            dialog.ui.lineEditIP.editingFinished.emit()
+            self.assertEqual(dialog.device.ip, "1.3.3.7", msg=type(dialog))
+
+            dialog.ui.spinBoxFreq.setValue(2e9)
+            dialog.ui.spinBoxFreq.editingFinished.emit()
+            self.assertEqual(dialog.ui.spinBoxFreq.text()[-1], "G")
+            self.assertEqual(dialog.device.frequency, 2e9)
+
+            dialog.ui.spinBoxSampleRate.setValue(10e6)
+            dialog.ui.spinBoxSampleRate.editingFinished.emit()
+            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "M")
+            self.assertEqual(dialog.device.sample_rate, 10e6)
+
+            dialog.ui.spinBoxBandwidth.setValue(3e6)
+            dialog.ui.spinBoxBandwidth.editingFinished.emit()
+            self.assertEqual(dialog.ui.spinBoxBandwidth.text()[-1], "M")
+            self.assertEqual(dialog.device.bandwidth, 3e6)
+
+            dialog.ui.spinBoxGain.setValue(5)
+            dialog.ui.spinBoxGain.editingFinished.emit()
+            self.assertEqual(dialog.device.gain, 5)
+
+            dialog.ui.spinBoxIFGain.setValue(10)
+            dialog.ui.spinBoxIFGain.editingFinished.emit()
+            self.assertEqual(dialog.device.if_gain, 10)
+
+            dialog.ui.spinBoxBasebandGain.setValue(15)
+            dialog.ui.spinBoxBasebandGain.editingFinished.emit()
+            self.assertEqual(dialog.device.baseband_gain, 15)
+
+            dialog.ui.spinBoxFreqCorrection.setValue(40)
+            dialog.ui.spinBoxFreqCorrection.editingFinished.emit()
+            self.assertEqual(dialog.device.freq_correction, 40)
+
+            self.assertEqual(dialog.ui.comboBoxDirectSampling.count(), 0)
+            dialog.ui.comboBoxDirectSampling.addItem("test")
+            dialog.ui.comboBoxDirectSampling.addItem("test1")
+            dialog.ui.comboBoxDirectSampling.setCurrentIndex(1)
+            self.assertEqual(dialog.device.direct_sampling_mode, 1)
+
+            dialog.ui.spinBoxNRepeat.setValue(10)
+            dialog.ui.spinBoxNRepeat.editingFinished.emit()
+            if isinstance(dialog, SendDialogController):
+                self.assertEqual(dialog.device.num_sending_repeats, 10)
+            else:
+                self.assertEqual(dialog.device.num_sending_repeats, None)
+
+            app.processEvents()

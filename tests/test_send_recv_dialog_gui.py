@@ -33,9 +33,6 @@ class TestSendRecvDialog(unittest.TestCase):
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-    def tearDown(self):
-        QTest.qWait(100)
-
     def __get_recv_dialog(self):
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
@@ -43,6 +40,7 @@ class TestSendRecvDialog(unittest.TestCase):
     def __get_send_dialog(self):
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
+        tests.utils_testing.short_wait(interval=10)
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 

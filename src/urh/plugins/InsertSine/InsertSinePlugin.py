@@ -1,5 +1,4 @@
 import os
-import threading
 
 import numpy as np
 from PyQt5 import uic
@@ -11,6 +10,7 @@ from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDialog
 
 from urh.SceneManager import SceneManager
@@ -20,7 +20,6 @@ from urh.util.Formatter import Formatter
 
 class InsertSinePlugin(SignalEditorPlugin):
     insert_sine_wave_clicked = pyqtSignal()
-    sine_wave_updated = pyqtSignal()
 
     INSERT_INDICATOR_COLOR = QColor(0, 255, 0, 80)
 
@@ -134,7 +133,6 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.lineEditTime.editingFinished.connect(self.on_line_edit_time_editing_finished)
         self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
-        self.sine_wave_updated.connect(self.on_sine_wave_updated)
 
     def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
         self.create_dialog_connects()
@@ -158,23 +156,17 @@ class InsertSinePlugin(SignalEditorPlugin):
         if self.dialog_ui.graphicsViewSineWave.scene_manager:
             self.dialog_ui.graphicsViewSineWave.scene_manager.clear_path()
 
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.__set_status_of_editable_elements(enabled=False)
-
-        sine_thread = threading.Thread(target=self.__update_sine_wave)
-        sine_thread.setDaemon(True)
-        sine_thread.start()
-
-    def __update_sine_wave(self):
         t = np.arange(0, self.num_samples) / self.sample_rate
         arg = ((2 * np.pi * self.frequency * t + self.phase) * 1j).astype(np.complex64)
         self.complex_wave = self.amplitude * np.exp(arg)  # type: np.ndarray
         self.draw_data = np.insert(self.original_data, self.position, self.complex_wave).imag.astype(np.float32)
         y, h = self.dialog_ui.graphicsViewSineWave.view_rect().y(), self.dialog_ui.graphicsViewSineWave.view_rect().height()
         self.insert_indicator.setRect(self.position, y - h, self.num_samples, 2 * h + abs(y))
-        self.sine_wave_updated.emit()
 
-    def on_sine_wave_updated(self):
         self.__set_status_of_editable_elements(enabled=True)
+        QApplication.instance().restoreOverrideCursor()
         self.dialog_ui.graphicsViewSineWave.plot_data(self.draw_data)
         self.dialog_ui.graphicsViewSineWave.show_full_scene()
 

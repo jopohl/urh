@@ -71,6 +71,7 @@ class TestFuzzing(unittest.TestCase):
     def test_fuzz_label_bit(self):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
 
+        tests.utils_testing.short_wait(10)
         fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0, proto_view=0, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
         fdc.finished.connect(self.gframe.refresh_table)

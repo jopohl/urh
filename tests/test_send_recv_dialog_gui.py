@@ -142,7 +142,7 @@ class TestSendRecvDialog(unittest.TestCase):
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
         self.assertEqual(gframe.table_model.rowCount(), 3)
 
-        tests.utils_testing.short_wait()
+        tests.utils_testing.short_wait(interval=10)
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 

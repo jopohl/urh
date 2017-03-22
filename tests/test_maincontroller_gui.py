@@ -16,7 +16,7 @@ class TestMaincontrollerGUI(unittest.TestCase):
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        tests.utils_testing.short_wait(interval=10)
 
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 0)
         self.form.recentFileActionList[0].trigger()

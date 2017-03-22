@@ -25,11 +25,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.signal.bit_len = 84
 
     def test_close_all(self):
-        logger.debug("Close all")
         self.form.close_all()
         tests.utils_testing.short_wait()
-        logger.debug("Called close all")
-        app.processEvents()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals

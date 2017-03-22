@@ -24,7 +24,7 @@ app = tests.utils_testing.get_app()
 
 
 class TestSendRecvDialog(unittest.TestCase):
-    SEND_RECV_TIMEOUT = 300
+    SEND_RECV_TIMEOUT = 500
 
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)

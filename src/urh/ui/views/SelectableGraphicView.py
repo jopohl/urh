@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
 from PyQt5.QtGui import QPainter
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QGraphicsView
 
 from urh import constants
@@ -17,6 +18,7 @@ class SelectableGraphicView(QGraphicsView):
     shift_state_changed = pyqtSignal(bool)
 
     def __init__(self, parent=None):
+        QApplication.instance().processEvents()
         super().__init__(parent)
 
         self.setResizeAnchor(QGraphicsView.NoAnchor)

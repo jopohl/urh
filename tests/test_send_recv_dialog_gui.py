@@ -184,6 +184,9 @@ class TestSendRecvDialog(unittest.TestCase):
 
         os.remove(target_file)
 
+        sniff_dialog.ui.btnStop.click()
+        self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())
+
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
         app.processEvents()

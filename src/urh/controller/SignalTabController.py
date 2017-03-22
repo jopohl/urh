@@ -65,7 +65,7 @@ class SignalTabController(QWidget):
     def add_signal_frame(self, proto_analyzer):
         sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
         sframes = self.signal_frames
-        prev_signal_frame = sframes[-1] if len(sframes) > 0 else None
+
 
         if len(proto_analyzer.signal.filename) == 0:
             # new signal from "create signal from selection"
@@ -79,7 +79,8 @@ class SignalTabController(QWidget):
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
         sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
 
-        if prev_signal_frame is not None:
+        prev_signal_frame = sframes[-1] if len(sframes) > 0 else None
+        if prev_signal_frame is not None and hasattr(prev_signal_frame, "ui"):
             sig_frame.ui.cbProtoView.setCurrentIndex(prev_signal_frame.ui.cbProtoView.currentIndex())
 
         sig_frame.blockSignals(True)

@@ -1,5 +1,3 @@
-import subprocess
-
 from urh import constants
 from urh.util.crc import crc_generic
 
@@ -421,11 +419,11 @@ class Encoder(object):
         # add shlex.quote(param) later for security reasons
         # print(command, param)
         try:
+            import subprocess
             p = subprocess.Popen([command + " " + param],
                                  shell=True,
                                  # stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE)
-            # stderr=subprocess.PIPE)
             out, _ = p.communicate(param.encode())
             return out.decode()
         except:

@@ -122,6 +122,10 @@ class TestSendRecvDialog(unittest.TestCase):
 
         send_dialog.on_clear_clicked()
         self.assertEqual(send_dialog.send_indicator.rect().width(), 0)
+        send_dialog.ui.btnStop.click()
+        self.assertFalse(send_dialog.ui.btnStop.isEnabled())
+        receive_dialog.ui.btnStop.click()
+        self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
 
     def test_sniff(self):
         # add a signal so we can use it

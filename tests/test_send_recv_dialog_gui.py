@@ -73,7 +73,7 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
-            tests.utils_testing.short_wait(interval=10)
+            tests.utils_testing.short_wait(interval=25)
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()

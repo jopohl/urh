@@ -54,6 +54,7 @@ class InsertSinePlugin(SignalEditorPlugin):
             self.__dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
             self.__dialog_ui.lineEditTime.setValidator(
                 QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
+
             scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
             self.__dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
             self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
@@ -157,11 +158,11 @@ class InsertSinePlugin(SignalEditorPlugin):
         if self.dialog_ui.graphicsViewSineWave.scene_manager:
             self.dialog_ui.graphicsViewSineWave.scene_manager.clear_path()
 
+        self.__set_status_of_editable_elements(enabled=False)
+
         sine_thread = threading.Thread(target=self.__update_sine_wave)
         sine_thread.setDaemon(True)
         sine_thread.start()
-
-        self.__set_status_of_editable_elements(enabled=False)
 
     def __update_sine_wave(self):
         t = np.arange(0, self.num_samples) / self.sample_rate

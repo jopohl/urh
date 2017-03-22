@@ -343,6 +343,7 @@ class SignalFrameController(QFrame):
         gv_legend.ysep = -self.signal.qad_center
 
         # Save current visible region for restoring it after drawing
+        QApplication.instance().processEvents()
         y, h = gvs.sceneRect().y(), gvs.sceneRect().height()
         x, w = gvs.view_rect().x(), gvs.view_rect().width()
 

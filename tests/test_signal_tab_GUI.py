@@ -17,14 +17,8 @@ app = tests.utils_testing.get_app()
 class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
-        logger.debug("Init Form")
-        tests.utils_testing.short_wait()
         self.form = MainController()
-        tests.utils_testing.short_wait()
-        logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        logger.debug("Added Signal")
-        app.processEvents()
         self.frame = self.form.signal_tab_controller.signal_frames[0]
         self.frame.signal.noise_threshold = 0.0023
         self.frame.signal.qad_center = 0.3817
@@ -114,10 +108,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.frame.ui.btnShowHideStartEnd.text(), "-")
 
     def test_apply_to_all(self):
-        logger.debug("Test apply to all")
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
-        logger.debug("added new signal")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
         self.frame.ui.spinBoxInfoLen.setValue(42)
@@ -140,8 +131,6 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
 
     def test_save_all(self):
-        logger.debug("Test save all")
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 

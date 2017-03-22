@@ -25,37 +25,45 @@ class InsertSinePlugin(SignalEditorPlugin):
     INSERT_INDICATOR_COLOR = QColor(0, 255, 0, 80)
 
     def __init__(self):
-        dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
-        self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))  # type: QDialog
-        self.dialog_ui.setModal(True)
 
-        self.complex_wave = None
-        self.__amplitude = 0.5
-        self.__frequency = 10
-        self.__phase = 0
-        self.__sample_rate = 1e6
-        self.__num_samples = int(1e6)
-
-        self.original_data = None
-        self.draw_data = None
-        self.position = 0
-
-        self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
-        self.dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
-        self.dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
-        self.dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
-        self.dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
-        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
-        scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
-        self.dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
-        self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
-                                                            QPen(QColor(Qt.transparent), Qt.FlatCap),
-                                                            QBrush(self.INSERT_INDICATOR_COLOR))
-        self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
-
-        self.set_time()
-
+        self.__dialog_ui = None  # type: QDialog
         super().__init__(name="InsertSine")
+
+    @property
+    def dialog_ui(self) -> QDialog:
+        if self.__dialog_ui is None:
+            dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
+            self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            self.__dialog_ui.setModal(True)
+
+            self.complex_wave = None
+            self.__amplitude = 0.5
+            self.__frequency = 10
+            self.__phase = 0
+            self.__sample_rate = 1e6
+            self.__num_samples = int(1e6)
+
+            self.original_data = None
+            self.draw_data = None
+            self.position = 0
+
+            self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
+            self.__dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
+            self.__dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
+            self.__dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
+            self.__dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
+            self.__dialog_ui.lineEditTime.setValidator(
+                QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
+            scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
+            self.__dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
+            self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
+                                                                QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                QBrush(self.INSERT_INDICATOR_COLOR))
+            self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
+
+            self.set_time()
+
+        return self.__dialog_ui
 
     @property
     def amplitude(self) -> float:

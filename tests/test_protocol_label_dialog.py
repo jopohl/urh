@@ -16,15 +16,8 @@ class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("align_labels", True)
 
-        logger.debug("Init form")
-        tests.utils_testing.short_wait()
         self.form = MainController()
-        tests.utils_testing.short_wait()
-
-        logger.debug("Add signal")
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
-        logger.debug("added signal")
-        tests.utils_testing.short_wait()
 
         self.cframe = self.form.compare_frame_controller
 

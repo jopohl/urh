@@ -35,7 +35,6 @@ class PluginController(QFrame):
     def on_list_selection_changed(self):
         i = self.ui.listViewPlugins.currentIndex().row()
         self.ui.txtEditPluginDescription.setText(self.model.plugins[i].description)
-        self.model.plugins[i].load_settings_frame()
 
         if self.settings_layout.count() > 0:
             self.settings_layout.takeAt(0).widget().setParent(None)

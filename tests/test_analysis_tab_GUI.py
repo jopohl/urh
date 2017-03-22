@@ -16,9 +16,7 @@ app = tests.utils_testing.get_app()
 
 class TestAnalysisTabGUI(unittest.TestCase):
     def setUp(self):
-        short_wait()
         self.form = MainController()
-        short_wait()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
         app.processEvents()

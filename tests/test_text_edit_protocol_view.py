@@ -12,15 +12,9 @@ app = tests.utils_testing.get_app()
 
 class TestTextEditProtocolView(unittest.TestCase):
     def test_create_context_menu(self):
-        logger.debug("Init form")
         self.form = MainController()
-        tests.utils_testing.short_wait()
-        logger.debug("Intialized form")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        logger.debug("added signalfile")
-        app.processEvents()
         self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(2)
-        app.processEvents()
 
         logger.debug("Get text edit")
         text_edit = self.form.signal_tab_controller.signal_frames[0].ui.txtEdProto

@@ -14,9 +14,7 @@ app = tests.utils_testing.get_app()
 
 class TestDecodingGUI(unittest.TestCase):
     def setUp(self):
-        short_wait()
         self.form = MainController()
-        short_wait()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,

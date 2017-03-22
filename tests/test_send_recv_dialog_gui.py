@@ -28,8 +28,6 @@ class TestSendRecvDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
 
-        tests.utils_testing.short_wait()
-        logger.debug("init form")
         self.form = MainController()
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -38,28 +36,20 @@ class TestSendRecvDialog(unittest.TestCase):
         QTest.qWait(100)
 
     def __get_recv_dialog(self):
-        logger.debug("Creating Receive Dialog")
-        tests.utils_testing.short_wait()
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
 
     def __get_send_dialog(self):
-        logger.debug("Creating Send Dialog")
-        tests.utils_testing.short_wait()
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 
     def __get_spectrum_dialog(self):
-        logger.debug("Creating Spectrum Dialog")
-        tests.utils_testing.short_wait()
         spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        logger.debug("Creating Sniff Dialog")
-        tests.utils_testing.short_wait()
         sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
                                                      self.signal.qad_center,
                                                      self.signal.bit_len, self.signal.tolerance,
@@ -137,7 +127,6 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_sniff(self):
         # add a signal so we can use it
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
         app.processEvents()

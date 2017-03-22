@@ -8,9 +8,7 @@ app = tests.utils_testing.get_app()
 
 class TestMaincontrollerGUI(unittest.TestCase):
     def setUp(self):
-        tests.utils_testing.short_wait()
         self.form = MainController()
-        tests.utils_testing.short_wait()
 
     def test_open_recent(self):
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))

@@ -17,11 +17,7 @@ app = tests.utils_testing.get_app()
 
 class TestProjectManager(unittest.TestCase):
     def setUp(self):
-        logger.debug("Init form")
-        tests.utils_testing.short_wait()
         self.form = MainController()
-        logger.debug("Initialized form")
-        tests.utils_testing.short_wait()
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
@@ -59,9 +55,7 @@ class TestProjectManager(unittest.TestCase):
         self.form.close_all()
         tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()

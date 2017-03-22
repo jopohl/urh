@@ -15,8 +15,15 @@ class Plugin(QObject):
         self.name = name
         self.plugin_path = ""
         self.description = ""
-        self.settings_frame = None
+        self.__settings_frame = None
         self.qsettings = QSettings(QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin")
+
+    @property
+    def settings_frame(self):
+        if self.__settings_frame is None:
+            self.__settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
+            self.create_connects()
+        return self.__settings_frame
 
     @property
     def enabled(self) -> bool:
@@ -38,11 +45,6 @@ class Plugin(QObject):
 
     def create_connects(self):
         pass
-
-    def load_settings_frame(self):
-        QApplication.instance().processEvents()
-        self.settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
-        self.create_connects()
 
 
 class ProtocolPlugin(Plugin):

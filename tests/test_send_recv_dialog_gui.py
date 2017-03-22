@@ -76,7 +76,6 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()
-        receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         receive_dialog.device.set_server_port(2222)
         receive_dialog.ui.btnStart.click()
 
@@ -103,12 +102,10 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_send(self):
         receive_dialog = self.__get_recv_dialog()
-        receive_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         receive_dialog.device.set_server_port(3333)
         receive_dialog.ui.btnStart.click()
 
         send_dialog = self.__get_send_dialog()
-        send_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         send_dialog.device.set_client_port(3333)
         send_dialog.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
@@ -145,7 +142,6 @@ class TestSendRecvDialog(unittest.TestCase):
 
         tests.utils_testing.short_wait()
         sniff_dialog = self.__get_sniff_dialog()
-        sniff_dialog.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         sniff_dialog.device.set_server_port(4444)
@@ -217,43 +213,3 @@ class TestSendRecvDialog(unittest.TestCase):
                                              send_dialog.ui.sliderYscale.singleStep())
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
-
-    def test_change_device_parameters(self):
-        for dialog in self.__get_all_dialogs():
-            dialog.ui.cbDevice.setCurrentText("HackRF")
-            self.assertEqual(dialog.device.name, "HackRF", msg=type(dialog))
-
-            dialog.ui.cbDevice.setCurrentText("USRP")
-            self.assertEqual(dialog.device.name, "USRP", msg=type(dialog))
-
-            dialog.ui.lineEditIP.setText("1.3.3.7")
-            dialog.ui.lineEditIP.editingFinished.emit()
-            self.assertEqual(dialog.device.ip, "1.3.3.7", msg=type(dialog))
-
-            dialog.ui.spinBoxFreq.setValue(2e9)
-            dialog.ui.spinBoxFreq.editingFinished.emit()
-            self.assertEqual(dialog.ui.spinBoxFreq.text()[-1], "G")
-            self.assertEqual(dialog.device.frequency, 2e9)
-
-            dialog.ui.spinBoxSampleRate.setValue(10e6)
-            dialog.ui.spinBoxSampleRate.editingFinished.emit()
-            self.assertEqual(dialog.ui.spinBoxSampleRate.text()[-1], "M")
-            self.assertEqual(dialog.device.sample_rate, 10e6)
-
-            dialog.ui.spinBoxBandwidth.setValue(1e3)
-            dialog.ui.spinBoxBandwidth.editingFinished.emit()
-            self.assertEqual(dialog.ui.spinBoxBandwidth.text()[-1], "K")
-            self.assertEqual(dialog.device.bandwidth, 1e3)
-
-            dialog.ui.spinBoxGain.setValue(5)
-            dialog.ui.spinBoxGain.editingFinished.emit()
-            self.assertEqual(dialog.device.gain, 5)
-
-            dialog.ui.spinBoxNRepeat.setValue(10)
-            dialog.ui.spinBoxNRepeat.editingFinished.emit()
-            if isinstance(dialog, SendDialogController):
-                self.assertEqual(dialog.device.num_sending_repeats, 10)
-            else:
-                self.assertEqual(dialog.device.num_sending_repeats, None)
-
-            app.processEvents()

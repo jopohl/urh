@@ -19,7 +19,8 @@ class SignalTabController(QWidget):
 
     @property
     def num_frames(self):
-        return self.__num_frames
+        QApplication.instance().processEvents()
+        return self.splitter.count() - 1
 
     @property
     def signal_frames(self):
@@ -51,15 +52,12 @@ class SignalTabController(QWidget):
         self.signal_vlay.addWidget(self.splitter)
         self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
 
-        self.__num_frames = 0
-
         self.drag_pos = None
 
     def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
     def close_frame(self, frame:SignalFrameController):
-        self.__num_frames -= 1
         self.frame_closed.emit(frame)
 
     def add_signal_frame(self, proto_analyzer):
@@ -96,8 +94,6 @@ class SignalTabController(QWidget):
         default_view = constants.SETTINGS.value('default_view', 0, int)
         sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
 
-        self.__num_frames += 1
-
         return sig_frame
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
@@ -119,8 +115,6 @@ class SignalTabController(QWidget):
 
         self.splitter.insertWidget(self.num_frames, sig_frame)
         QCoreApplication.processEvents()
-
-        self.__num_frames += 1
 
         return sig_frame
 

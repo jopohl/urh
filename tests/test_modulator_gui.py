@@ -110,7 +110,7 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
-        #self.dialog.show()   # if on KDE
+        self.dialog.show()
         tree_view = self.dialog.ui.treeViewSignals
         tree_model = tree_view.model()
         item = tree_model.rootItem.children[0].children[0]

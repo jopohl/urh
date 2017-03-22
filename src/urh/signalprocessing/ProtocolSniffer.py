@@ -30,7 +30,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
-        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.backend_handler = BackendHandler()
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         is_ringbuffer=False, raw_mode=False)
 

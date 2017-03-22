@@ -38,7 +38,7 @@ class SendRecvDialogController(QDialog):
         self.graphics_view = None  # type: QGraphicsView
         self.__device = None  # type: VirtualDevice
 
-        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.backend_handler = BackendHandler()
 
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
@@ -79,6 +79,9 @@ class SendRecvDialogController(QDialog):
 
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
+
+        if testing_mode:
+            self.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.timer = QTimer(self)
 

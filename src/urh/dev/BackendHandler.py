@@ -76,8 +76,7 @@ class BackendHandler(object):
     """
     DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "RTL-TCP", "FUNcube-Dongle", "SDRPlay", "AirSpy")
 
-    def __init__(self, testing_mode=False):
-        self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
+    def __init__(self):
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
@@ -85,9 +84,6 @@ class BackendHandler(object):
 
         self.gnuradio_installed = False
         self.set_gnuradio_installed_status()
-
-        if self.testing_mode:
-            self.gnuradio_installed = True
 
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
@@ -146,7 +142,8 @@ class BackendHandler(object):
         else:
             # we are on a nice unix with gnuradio installed to default python path
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-                self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+                self.gnuradio_installed = os.system(self.python2_exe + " -c 'import gnuradio'") == 0
+                # self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
                 constants.SETTINGS.setValue("python2_exe", self.python2_exe)
             else:
                 self.gnuradio_installed = False
@@ -191,8 +188,6 @@ class BackendHandler(object):
         for device_name in self.DEVICE_NAMES:
             ab, rx_suprt, tx_suprt = self.__avail_backends_for_device(device_name)
             container = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
-            if self.testing_mode:
-                container.is_enabled = True
             self.device_backends[device_name.lower()] = container
 
     def __get_python2_interpreter(self):

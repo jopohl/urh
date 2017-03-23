@@ -4,11 +4,13 @@ from PyQt5.QtGui import QValidator
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDoubleSpinBox
 
+
 class KillerDoubleSpinBox(QDoubleSpinBox):
     """
     Print values with suffix (G,M,K)
     """
     def __init__(self, parent=None):
+        QApplication.instance().processEvents()
         super().__init__(parent)
 
         self.auto_update_step_size = True

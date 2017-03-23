@@ -1,6 +1,7 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMessageBox
 
 from urh.LiveSceneManager import LiveSceneManager
@@ -68,6 +69,7 @@ class ReceiveDialogController(SendRecvDialogController):
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 
+        QApplication.instance().processEvents()
         self.scene_manager = LiveSceneManager(np.array([]), parent=self)
 
     @pyqtSlot()

@@ -1,15 +1,12 @@
 import os
 import unittest
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QPoint
-from PyQt5.QtTest import QTest
+from PyQt5.QtCore import QDir, QPoint
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
-from urh.util.Logger import logger
 
 app = tests.utils_testing.get_app()
 
@@ -31,8 +28,8 @@ class TestSignalTabGUI(unittest.TestCase):
         # Add a bunch of signals
         num_frames = 5
         for _ in range(num_frames):
-            tests.utils_testing.short_wait()
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+            tests.utils_testing.short_wait(interval=50)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 

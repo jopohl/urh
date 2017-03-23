@@ -102,12 +102,12 @@ class Device(QObject):
     def init_recv_buffer(self):
         if self.receive_buffer is None:
             if self.is_ringbuffer:
-                nsamples = constants.SPECTRUM_BUFFER_SIZE
+                num_samples = constants.SPECTRUM_BUFFER_SIZE
             else:
                 # Take 60% of avail memory
-                nsamples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (
-                psutil.virtual_memory().available / 8)
-            self.receive_buffer = np.zeros(int(nsamples), dtype=np.complex64, order='C')
+                threshold = constants.SETTINGS.value('ram_threshold', 0.6, float)
+                num_samples = threshold * (psutil.virtual_memory().available / 8)
+            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
             logger.info(
                 "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 

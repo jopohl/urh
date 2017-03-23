@@ -37,7 +37,8 @@ class SceneManager(QObject):
         :type color: list of QColor
         :return:
         """
-        paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1), end=self.__limit_value(x2),
+        paths = path_creator.create_path(self.plot_data.astype(np.float32), start=self.__limit_value(x1),
+                                         end=self.__limit_value(x2),
                                          subpath_ranges=subpath_ranges)
         self.set_path(paths, colors=colors)
 
@@ -61,7 +62,7 @@ class SceneManager(QObject):
             return
 
         if math.isnan(self.minimum) or math.isnan(self.maximum):
-            minimum, maximum = util.minmax(self.plot_data)
+            minimum, maximum = util.minmax(self.plot_data.astype(np.float32))
         else:
             minimum, maximum = self.minimum, self.maximum
 

@@ -2,10 +2,6 @@ import os
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-import sys
-
-from urh.controller.MainController import MainController
-
 
 def trace_calls(frame, event, arg):
     if event != 'call':
@@ -21,7 +17,11 @@ def trace_calls(frame, event, arg):
     caller_line_no = caller.f_lineno
     caller_filename = caller.f_code.co_filename
     if "urh" in caller_filename or "urh" in func_filename:
-        start, end = "\033[0;32m", "\033[0;0m"
+        if "_test" in caller_filename or "_test" in func_filename:
+            start = '\033[91m'
+        else:
+            start = "\033[0;32m"
+        end = "\033[0;0m"
     else:
         start, end = "", ""
 
@@ -33,10 +33,9 @@ def trace_calls(frame, event, arg):
 
 import sys
 
+
 # sys.settrace(trace_calls)
 
-global form
-form = None
 
 def get_app():
     app = QApplication.instance()
@@ -44,12 +43,6 @@ def get_app():
         app = QApplication(sys.argv)
     return app
 
-
-def get_form():
-    global form
-    if form is None:
-        form = MainController()
-    return form
 
 def short_wait(interval=1):
     app = QApplication.instance()
@@ -64,4 +57,5 @@ path = os.path.realpath(os.path.join(f, ".."))
 
 
 def get_path_for_data_file(filename):
+    short_wait()  # wait a bit, to ensure resources are free before we access the file
     return os.path.join(path, "data", filename)

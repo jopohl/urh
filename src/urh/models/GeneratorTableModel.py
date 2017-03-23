@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import QApplication
 
 from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
@@ -88,8 +89,8 @@ class GeneratorTableModel(TableModel):
                 continue
 
         # Which Nodes to add?
-        nodes_to_add = []
-        """:type: list of ProtocolTreeItem """
+        nodes_to_add = []  # type: list[ProtocolTreeItem]
+
         for group_node in group_nodes:
             nodes_to_add.extend(group_node.children)
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
@@ -97,6 +98,7 @@ class GeneratorTableModel(TableModel):
         for node in reversed(nodes_to_add):
             undo_action = InsertBitsAndPauses(self.protocol, self.dropped_row, node.protocol)
             self.undo_stack.push(undo_action)
+            QApplication.instance().processEvents()
 
         return True
 

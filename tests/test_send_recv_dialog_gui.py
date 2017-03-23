@@ -64,12 +64,14 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
-            tests.utils_testing.short_wait(10)
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
             if isinstance(dialog, SpectrumDialogController):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
             else:
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
+
+            dialog.close()
+            tests.utils_testing.short_wait(25)
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()
@@ -97,6 +99,9 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.assertEqual(receive_dialog.device.current_index, 0)
 
+        receive_dialog.close()
+        tests.utils_testing.short_wait(25)
+
     def test_send(self):
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(3333)
@@ -123,6 +128,10 @@ class TestSendRecvDialog(unittest.TestCase):
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
 
+        receive_dialog.close()
+        send_dialog.close()
+        tests.utils_testing.short_wait(25)
+
     def test_sniff(self):
         # add a signal so we can use it
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
@@ -130,31 +139,29 @@ class TestSendRecvDialog(unittest.TestCase):
         app.processEvents()
 
         # Move with encoding to generator
-        gframe = self.form.generator_tab_controller
-        gframe.ui.cbViewType.setCurrentIndex(0)
-        item = gframe.tree_model.rootItem.children[0].children[0]
-        index = gframe.tree_model.createIndex(0, 0, item)
-        rect = gframe.ui.treeProtocols.visualRect(index)
-        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
-        self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
-        mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
-        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
-        self.assertEqual(gframe.table_model.rowCount(), 3)
+        generator_frame = self.form.generator_tab_controller
+        generator_frame.ui.cbViewType.setCurrentIndex(0)
+        item = generator_frame.tree_model.rootItem.children[0].children[0]
+        index = generator_frame.tree_model.createIndex(0, 0, item)
+        mimedata = generator_frame.tree_model.mimeData([index])
+        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
+        tests.utils_testing.short_wait(interval=10)
+        self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
         tests.utils_testing.short_wait(interval=10)
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         sniff_dialog.device.set_server_port(4444)
-        gframe.network_sdr_plugin.client_port = 4444
+        generator_frame.network_sdr_plugin.client_port = 4444
         sniff_dialog.ui.btnStart.click()
         app.processEvents()
-        gframe.ui.btnNetworkSDRSend.click()
+        generator_frame.ui.btnNetworkSDRSend.click()
         app.processEvents()
 
         QTest.qWait(self.SEND_RECV_TIMEOUT)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
-        orig_msgs = gframe.table_model.protocol.plain_bits_str
+        orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 
         self.assertEqual(len(received_msgs), len(orig_msgs))
         for received, orig in zip(received_msgs, orig_msgs):
@@ -172,7 +179,7 @@ class TestSendRecvDialog(unittest.TestCase):
         app.processEvents()
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())
 
-        gframe.ui.btnNetworkSDRSend.click()
+        generator_frame.ui.btnNetworkSDRSend.click()
         app.processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
@@ -186,6 +193,9 @@ class TestSendRecvDialog(unittest.TestCase):
         sniff_dialog.ui.btnStop.click()
         self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())
 
+        sniff_dialog.close()
+        tests.utils_testing.short_wait(25)
+
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
         app.processEvents()
@@ -198,6 +208,9 @@ class TestSendRecvDialog(unittest.TestCase):
         app.processEvents()
         self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
 
+        send_dialog.close()
+        tests.utils_testing.short_wait(25)
+
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
         send_dialog = self.__get_send_dialog()
@@ -208,6 +221,9 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
         self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)
 
+        send_dialog.close()
+        tests.utils_testing.short_wait(25)
+
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
         app.processEvents()
@@ -217,6 +233,9 @@ class TestSendRecvDialog(unittest.TestCase):
                                              send_dialog.ui.sliderYscale.singleStep())
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
+
+        send_dialog.close()
+        tests.utils_testing.short_wait(25)
 
     def test_change_device_parameters(self):
         for dialog in self.__get_all_dialogs():
@@ -276,4 +295,5 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
-            app.processEvents()
+            dialog.close()
+            tests.utils_testing.short_wait(25)

@@ -10,9 +10,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
     Print values with suffix (G,M,K)
     """
     def __init__(self, parent=None):
-        QApplication.instance().processEvents()
         super().__init__(parent)
-        QApplication.instance().processEvents()
 
         self.auto_update_step_size = True
         self.allowed_values = None  # set a list to restrict allowed values
@@ -46,7 +44,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             self.setSingleStep(10 ** -(self.decimals()))
 
     def textFromValue(self, value: float):
-        QApplication.instance().processEvents()
         if abs(value) >= 10 ** 9:
             return super().textFromValue(value / 10 ** 9) + "G"
         elif abs(value) >= 10 ** 6:

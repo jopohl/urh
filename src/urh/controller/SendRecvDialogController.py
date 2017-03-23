@@ -558,6 +558,7 @@ class SendRecvDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         self.emit_editing_finished_signals()
+        QApplication.instance().processEvents()
         if self.device.backend == Backends.network:
             event.accept()
             return

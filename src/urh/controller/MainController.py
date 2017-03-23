@@ -135,6 +135,8 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setVisible(False)
         self.ui.actionMaximize_all.setVisible(False)
 
+        QApplication.instance().processEvents()
+
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))

@@ -775,6 +775,7 @@ class ProtocolAnalyzer(object):
             pass  # No message types defined
         self.message_types = []
         self.messages = None
+        self.signal = None
 
     def update_auto_message_types(self):
         for message in self.messages:

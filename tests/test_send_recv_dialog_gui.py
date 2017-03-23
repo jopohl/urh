@@ -64,6 +64,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
+            tests.utils_testing.short_wait(10)
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
             if isinstance(dialog, SpectrumDialogController):
                 self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)

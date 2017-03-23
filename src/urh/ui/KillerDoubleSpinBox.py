@@ -12,6 +12,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
     def __init__(self, parent=None):
         QApplication.instance().processEvents()
         super().__init__(parent)
+        QApplication.instance().processEvents()
 
         self.auto_update_step_size = True
         self.allowed_values = None  # set a list to restrict allowed values

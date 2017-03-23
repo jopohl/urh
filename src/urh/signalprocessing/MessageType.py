@@ -23,8 +23,8 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
-        self.__id = ''.join(
-            random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
+        pool = string.ascii_letters + string.digits
+        self.__id = ''.join(random.choice(pool) for _ in range(50)) if id is None else id
 
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False

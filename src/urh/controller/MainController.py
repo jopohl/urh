@@ -308,19 +308,9 @@ class MainController(QMainWindow):
             if signal_frame.signal is not None:
                 # Non-Empty Frame (when a signal and not a protocol is opened)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-                signal_frame.signal.setParent(None)
-                signal_frame.scene_manager.setParent(None)
-                QApplication.instance().processEvents()
 
-                signal_frame.scene_manager.deleteLater()
-                signal_frame.signal.deleteLater()
-                QApplication.instance().processEvents()
-
-                signal_frame.proto_analyzer.destroy()
-
-            signal_frame.proto_analyzer = None
-            signal_frame.setParent(None)
             signal_frame.close()
+            signal_frame.setParent(None)
             QApplication.instance().processEvents()
             signal_frame.deleteLater()
             QApplication.instance().processEvents()

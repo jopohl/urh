@@ -22,6 +22,7 @@ class TestModulatorGUI(unittest.TestCase):
 
         tests.utils_testing.short_wait()
         self.dialog, _ = self.gframe.prepare_modulation_dialog()
+        tests.utils_testing.short_wait()
         self.gframe.initialize_modulation_dialog("1111", self.dialog)
 
     def test_add_remove_modulator(self):

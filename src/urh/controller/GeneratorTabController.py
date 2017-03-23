@@ -391,9 +391,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
-        pac = self.table_model.protocol
-        assert isinstance(pac, ProtocolAnalyzerContainer)
-        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.message_type)
+        fuzz_active = any(lbl.active_fuzzing for msg in self.table_model.protocol.messages for lbl in msg.message_type)
         self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()
@@ -405,7 +403,7 @@ class GeneratorTabController(QWidget):
             self.ui.btnFuzz.setFont(font)
             self.ui.btnFuzz.setStyleSheet("")
 
-        has_same_message = pac.multiple_fuzz_labels_per_message
+        has_same_message = self.table_model.protocol.multiple_fuzz_labels_per_message
         self.ui.rBSuccessive.setEnabled(has_same_message)
         self.ui.rBExhaustive.setEnabled(has_same_message)
         self.ui.rbConcurrent.setEnabled(has_same_message)

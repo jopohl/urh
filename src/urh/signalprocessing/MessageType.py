@@ -1,5 +1,6 @@
 import random
 import string
+import xml.etree.ElementTree as ET
 from copy import deepcopy
 
 from urh import constants
@@ -7,7 +8,6 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
-import xml.etree.ElementTree as ET
 
 
 class MessageType(list):
@@ -23,6 +23,8 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
+
+        random.seed()
         pool = string.ascii_letters + string.digits
         self.__id = ''.join(random.choice(pool) for _ in range(50)) if id is None else id
 

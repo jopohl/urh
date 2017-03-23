@@ -303,7 +303,7 @@ class Signal(QObject):
     def estimate_qad_center(self) -> float:
         center = self.__parameter_cache[self.modulation_type_str]["qad_center"]
         if center is None:
-            noise_value = signal_functions.get_noise_for_mod_type(self.modulation_type)
+            noise_value = signal_functions.get_noise_for_mod_type(int(self.modulation_type))
             qad = self.qad[np.where(self.qad > noise_value)] if noise_value < 0 else self.qad
             center = signal_functions.estimate_qad_center(qad, constants.NUM_CENTERS)
             self.__parameter_cache[self.modulation_type_str]["qad_center"] = center

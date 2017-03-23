@@ -313,9 +313,10 @@ class MainController(QMainWindow):
                 signal_frame.signal.deleteLater()
                 signal_frame.proto_analyzer.destroy()
             signal_frame.proto_analyzer = None
+            signal_frame.setParent(None)
             signal_frame.close()
             QApplication.instance().processEvents()
-            signal_frame.destroy()
+            signal_frame.deleteLater()
             QApplication.instance().processEvents()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()

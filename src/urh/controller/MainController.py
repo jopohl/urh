@@ -237,6 +237,7 @@ class MainController(QMainWindow):
         # Sample rate will be overriden in case of a project later
         signal = Signal(filename, sig_name, wav_is_qad_demod=alrdy_qad_demod,
                         sample_rate=self.project_manager.device_conf["sample_rate"])
+        QApplication.instance().processEvents()
 
         if self.project_manager.project_file is None:
             self.adjust_for_current_file(signal.filename)

@@ -4,7 +4,6 @@ import unittest
 
 import numpy as np
 from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
@@ -25,6 +24,7 @@ app = tests.utils_testing.get_app()
 
 class TestSendRecvDialog(unittest.TestCase):
     SEND_RECV_TIMEOUT = 500
+    CLOSE_TIMEOUT = 50
 
     def setUp(self):
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
@@ -62,6 +62,10 @@ class TestSendRecvDialog(unittest.TestCase):
         yield self.__get_spectrum_dialog()
         yield self.__get_sniff_dialog()
 
+    def __close_dialog(self, dialog):
+        dialog.close()
+        tests.utils_testing.short_wait(self.CLOSE_TIMEOUT)
+
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
@@ -70,8 +74,7 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
-            dialog.close()
-            tests.utils_testing.short_wait(25)
+            self.__close_dialog(dialog)
 
     def test_receive(self):
         receive_dialog = self.__get_recv_dialog()
@@ -99,8 +102,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
         self.assertEqual(receive_dialog.device.current_index, 0)
 
-        receive_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(receive_dialog)
 
     def test_send(self):
         receive_dialog = self.__get_recv_dialog()
@@ -128,9 +130,8 @@ class TestSendRecvDialog(unittest.TestCase):
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
 
-        receive_dialog.close()
-        send_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(receive_dialog)
+        self.__close_dialog(send_dialog)
 
     def test_sniff(self):
         # add a signal so we can use it
@@ -193,8 +194,7 @@ class TestSendRecvDialog(unittest.TestCase):
         sniff_dialog.ui.btnStop.click()
         self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())
 
-        sniff_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(sniff_dialog)
 
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
@@ -208,8 +208,7 @@ class TestSendRecvDialog(unittest.TestCase):
         app.processEvents()
         self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
 
-        send_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(send_dialog)
 
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
@@ -221,8 +220,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
         self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)
 
-        send_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(send_dialog)
 
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
@@ -234,8 +232,7 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
 
-        send_dialog.close()
-        tests.utils_testing.short_wait(25)
+        self.__close_dialog(send_dialog)
 
     def test_change_device_parameters(self):
         for dialog in self.__get_all_dialogs():
@@ -295,5 +292,4 @@ class TestSendRecvDialog(unittest.TestCase):
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
-            dialog.close()
-            tests.utils_testing.short_wait(25)
+            self.__close_dialog(dialog)

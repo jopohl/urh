@@ -15,16 +15,16 @@ app = tests.utils_testing.get_app()
 class TestModulatorGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
-        self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
+        app.processEvents()
 
         logger.debug("Preparing Modulation dialog")
         tests.utils_testing.short_wait(interval=10)
-        self.dialog, _ = self.gframe.prepare_modulation_dialog()
+        self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()
 
         logger.debug("Initializing Modulation dialog")
         tests.utils_testing.short_wait(interval=10)
-        self.gframe.initialize_modulation_dialog("1111", self.dialog)
+        self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
 
     def tearDown(self):

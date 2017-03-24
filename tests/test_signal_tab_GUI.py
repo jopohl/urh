@@ -21,6 +21,10 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.signal.qad_center = 0.3817
         self.frame.signal.bit_len = 84
 
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait(interval=50)
+
     def test_close_all(self):
         self.form.close_all()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
@@ -29,7 +33,6 @@ class TestSignalTabGUI(unittest.TestCase):
         num_frames = 5
         for _ in range(num_frames):
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-            tests.utils_testing.short_wait(interval=50)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 

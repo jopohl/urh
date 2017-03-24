@@ -771,8 +771,8 @@ class ProtocolAnalyzer(object):
                 message_type.clear()
         except TypeError:
             pass  # No message types defined
-        self.message_types = []
-        self.messages = None
+        self.message_types.clear()
+        self.messages.clear()
         self.signal = None
 
     def update_auto_message_types(self):

@@ -101,7 +101,6 @@ class Signal(QObject):
 
             self.filename = filename
 
-            QApplication.instance().processEvents()
             if not self.qad_demod_file_loaded:
                 self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
 

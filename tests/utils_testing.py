@@ -57,5 +57,5 @@ path = os.path.realpath(os.path.join(f, ".."))
 
 
 def get_path_for_data_file(filename):
-    short_wait()  # wait a bit, to ensure resources are free before we access the file
+    short_wait(interval=10)  # wait a bit, to ensure resources are free before we access the file
     return os.path.join(path, "data", filename)

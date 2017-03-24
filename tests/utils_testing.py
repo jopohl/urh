@@ -17,6 +17,9 @@ def trace_calls(frame, event, arg):
     caller_line_no = caller.f_lineno
     caller_filename = caller.f_code.co_filename
     if "urh" in caller_filename or "urh" in func_filename:
+        if "logging" in caller_filename or "logging" in func_filename:
+            return
+
         if "_test" in caller_filename or "_test" in func_filename:
             start = '\033[91m'
         else:
@@ -33,7 +36,8 @@ def trace_calls(frame, event, arg):
 
 import sys
 
-sys.settrace(trace_calls)
+
+# sys.settrace(trace_calls)
 
 
 def get_app():

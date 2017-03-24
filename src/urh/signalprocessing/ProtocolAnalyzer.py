@@ -773,6 +773,8 @@ class ProtocolAnalyzer(object):
             pass  # No message types defined
         self.message_types.clear()
         self.messages.clear()
+        if self.signal is not None:
+            self.signal.destroy()
         self.signal = None
 
     def update_auto_message_types(self):

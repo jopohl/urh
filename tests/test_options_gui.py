@@ -16,7 +16,7 @@ class TestOptionsGUI(unittest.TestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
+        self.dialog.deleteLater()
         tests.utils_testing.short_wait(interval=50)
 
     def test_interpretation_tab(self):

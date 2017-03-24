@@ -3,14 +3,12 @@ import random
 import unittest
 
 from PyQt5.QtCore import QDir
-from PyQt5.QtTest import QTest
 
 import tests.utils_testing
-from urh.controller.ProjectDialogController import ProjectDialogController
-from urh.controller.MainController import MainController
-from urh.signalprocessing.Modulator import Modulator
 from tests.utils_testing import get_path_for_data_file
-from urh.util.Logger import logger
+from urh.controller.MainController import MainController
+from urh.controller.ProjectDialogController import ProjectDialogController
+from urh.signalprocessing.Modulator import Modulator
 
 app = tests.utils_testing.get_app()
 
@@ -53,11 +51,13 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
+        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()
+        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

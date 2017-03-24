@@ -15,14 +15,12 @@ class TestSignalTabGUI(unittest.TestCase):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
         self.form = MainController()
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait(interval=50)
-
     def test_close_all(self):
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all()
+        tests.utils_testing.short_wait()
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
@@ -33,6 +31,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
         self.form.close_all()
+        tests.utils_testing.short_wait()
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

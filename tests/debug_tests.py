@@ -5,7 +5,7 @@ import sys
 import time
 
 RUNS = 200
-LOG_SIZE_KB = 10
+LOG_SIZE_KB = 100
 
 
 os.system("mkdir -p /tmp/tests")

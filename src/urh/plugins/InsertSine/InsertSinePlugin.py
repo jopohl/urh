@@ -2,16 +2,9 @@ import os
 
 import numpy as np
 from PyQt5 import uic
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QBrush
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QPen
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
+from PyQt5.QtWidgets import QApplication, QDialog
 
 from urh.SceneManager import SceneManager
 from urh.plugins.Plugin import SignalEditorPlugin
@@ -26,6 +19,18 @@ class InsertSinePlugin(SignalEditorPlugin):
     def __init__(self):
 
         self.__dialog_ui = None  # type: QDialog
+        self.complex_wave = None
+
+        self.__amplitude = 0.5
+        self.__frequency = 10
+        self.__phase = 0
+        self.__sample_rate = 1e6
+        self.__num_samples = int(1e6)
+
+        self.original_data = None
+        self.draw_data = None
+        self.position = 0
+
         super().__init__(name="InsertSine")
 
     @property
@@ -34,18 +39,6 @@ class InsertSinePlugin(SignalEditorPlugin):
             dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
             self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
             self.__dialog_ui.setModal(True)
-
-            self.complex_wave = None
-            self.__amplitude = 0.5
-            self.__frequency = 10
-            self.__phase = 0
-            self.__sample_rate = 1e6
-            self.__num_samples = int(1e6)
-
-            self.original_data = None
-            self.draw_data = None
-            self.position = 0
-
             self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
             self.__dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
             self.__dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)

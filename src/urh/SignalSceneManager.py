@@ -1,12 +1,9 @@
-from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QPainterPath, QFont, QPen
 import numpy as np
+from PyQt5.QtGui import QFont
 
-from urh import constants
 from urh.SceneManager import SceneManager
+from urh.cythonext import signalFunctions
 from urh.signalprocessing.Signal import Signal
-from urh.ui.ZoomableScene import ZoomableScene
-from urh.cythonext import path_creator, util, signalFunctions
 
 
 class SignalSceneManager(SceneManager):
@@ -46,3 +43,9 @@ class SignalSceneManager(SceneManager):
             self.scene.draw_noise_area(self.signal.noise_min_plot, self.signal.noise_max_plot - self.signal.noise_min_plot)
         else:
             self.scene.draw_sep_area(-self.signal.qad_center)
+
+    def destroy(self):
+        self.plot_data = None
+        self.signal = None
+        self.line_item = None
+        self.text_item = None

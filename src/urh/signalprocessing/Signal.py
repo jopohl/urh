@@ -286,10 +286,12 @@ class Signal(QObject):
         return signal_functions.afp_demod(self.data, self.noise_threshold, self.modulation_type)
 
     def calc_noise_threshold(self, noise_start: int, noise_end: int):
+        num_digits = 4
         noise_start, noise_end = int(noise_start), int(noise_end)
         try:
             magnitudes = np.absolute(self.data[noise_start:noise_end])
-            return np.around(np.max(magnitudes), decimals=4)
+            maximum = np.max(magnitudes)
+            return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
             return self.noise_threshold

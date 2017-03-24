@@ -51,13 +51,11 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()
-        tests.utils_testing.short_wait()
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

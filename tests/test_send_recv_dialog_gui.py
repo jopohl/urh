@@ -40,7 +40,7 @@ class TestSendRecvDialog(unittest.TestCase):
     def __get_send_dialog(self):
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
-        tests.utils_testing.short_wait(interval=10)
+        app.processEvents()
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 
@@ -64,6 +64,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
+        dialog.setParent(None)
         tests.utils_testing.short_wait(self.CLOSE_TIMEOUT)
 
     def test_network_sdr_enabled(self):
@@ -146,10 +147,10 @@ class TestSendRecvDialog(unittest.TestCase):
         index = generator_frame.tree_model.createIndex(0, 0, item)
         mimedata = generator_frame.tree_model.mimeData([index])
         generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
-        tests.utils_testing.short_wait(interval=10)
+        app.processEvents()
         self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
-        tests.utils_testing.short_wait(interval=10)
+        app.processEvents()
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 

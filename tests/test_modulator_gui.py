@@ -31,6 +31,7 @@ class TestModulatorGUI(unittest.TestCase):
 
     def tearDown(self):
         self.dialog.close()
+        self.dialog.setParent(None)
         self.dialog.deleteLater()
         tests.utils_testing.short_wait(interval=50)
 
@@ -120,7 +121,6 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
-        # self.dialog.show()  # KDE fix
         tree_view = self.dialog.ui.treeViewSignals
         tree_model = tree_view.model()
         item = tree_model.rootItem.children[0].children[0]

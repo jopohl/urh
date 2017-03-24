@@ -2,6 +2,7 @@ import os
 import unittest
 
 from PyQt5.QtCore import QDir, QPoint
+from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
@@ -19,8 +20,6 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all()
-        tests.utils_testing.short_wait()
-
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
@@ -31,7 +30,6 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
         self.form.close_all()
-        tests.utils_testing.short_wait()
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
@@ -39,7 +37,7 @@ class TestSignalTabGUI(unittest.TestCase):
     def test_zoom(self):
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         frame = self.form.signal_tab_controller.signal_frames[0]
-        tests.utils_testing.short_wait()
+        app.processEvents()
         x_zoom = frame.ui.spinBoxXZoom.value()
         self.assertEqual(x_zoom, 100)
 
@@ -174,7 +172,6 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertFalse(os.path.isfile(frame.signal.filename))
         frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(frame)
-        tests.utils_testing.short_wait()
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
@@ -185,10 +182,11 @@ class TestSignalTabGUI(unittest.TestCase):
         frame.ui.gvSignal.selection_area.end = 128440
         frame.ui.gvSignal.selection_area.start = 89383
         frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
-        tests.utils_testing.short_wait()
+        app.processEvents()
+        QTest.qWait(100)
         self.assertEqual(frame.proto_analyzer.messages[0].plain_bits_str, frame.ui.txtEdProto.selected_text)
         frame.ui.txtEdProto.show_proto_clicked.emit()
-        tests.utils_testing.short_wait()
+        app.processEvents()
         self.assertAlmostEqual((128440 - 89383) / 1000000,
                                (frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
 

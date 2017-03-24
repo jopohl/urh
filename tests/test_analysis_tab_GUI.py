@@ -1,15 +1,12 @@
+import copy
 import unittest
 
-import copy
-
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
-
-from tests.utils_testing import get_path_for_data_file, short_wait
 
 app = tests.utils_testing.get_app()
 
@@ -160,9 +157,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        short_wait()
+        app.processEvents()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        short_wait()
+        app.processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 

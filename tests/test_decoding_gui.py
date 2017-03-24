@@ -1,9 +1,7 @@
 import unittest
 
-from PyQt5.QtTest import QTest
-
 import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file, short_wait
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.MainController import MainController

@@ -187,3 +187,18 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertTrue(self.frame.ui.btnAutoDetect.isChecked())
         self.frame.ui.btnAutoDetect.click()
         self.assertFalse(self.frame.ui.btnAutoDetect.isChecked())
+
+    def test_create_new_signal(self):
+        start, end = 400, 8568
+        self.frame.ui.gvSignal.selection_area.end = end
+        self.frame.ui.gvSignal.selection_area.start = start
+
+        self.assertEqual(self.frame.ui.gvSignal.selection_area.end, end)
+        self.assertEqual(self.frame.ui.gvSignal.selection_area.width, end - start)
+        self.frame.ui.gvSignal.sel_area_start_end_changed.emit(start, end)
+
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
+        self.frame.ui.gvSignal.on_create_action_triggered()
+
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
+        self.assertEqual(self.form.signal_tab_controller.signal_frames[1].signal.num_samples, end - start)

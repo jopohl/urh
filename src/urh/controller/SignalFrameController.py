@@ -2,8 +2,7 @@ import locale
 import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
-from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
+from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
     QApplication, QCheckBox
 
@@ -816,11 +815,10 @@ class SignalFrameController(QFrame):
         self.jump_sync = True
 
     def refresh_signal(self, draw_full_signal=False):
-        gvs = self.ui.gvSignal
-        gvs.sel_area_active = False
+        self.ui.gvSignal.sel_area_active = False
         self.draw_signal(draw_full_signal)
 
-        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
+        self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
         self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
 
         selected = 0
@@ -831,7 +829,7 @@ class SignalFrameController(QFrame):
         self.__set_duration()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
-        gvs.sel_area_active = True
+        self.ui.gvSignal.sel_area_active = True
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):

@@ -16,7 +16,7 @@ longest_streak = 0
 for i in range(RUNS):
     try:
         time.sleep(0.1)
-        filename = "/tmp/tests/" + str(datetime.datetime.now())
+        filename = "/tmp/tests/" + str(datetime.datetime.now()).replace(" ", "-")
         t = time.time()
         completed = subprocess.run("pytest -s -v ../tests", shell=True, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)

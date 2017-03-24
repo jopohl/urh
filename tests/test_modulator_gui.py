@@ -15,8 +15,6 @@ app = tests.utils_testing.get_app()
 class TestModulatorGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
 
@@ -33,6 +31,7 @@ class TestModulatorGUI(unittest.TestCase):
         self.dialog.close()
         self.dialog.setParent(None)
         self.dialog.deleteLater()
+        self.form.close_all()
         tests.utils_testing.short_wait(interval=50)
 
     def test_add_remove_modulator(self):
@@ -121,6 +120,9 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
+        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
+
         tree_view = self.dialog.ui.treeViewSignals
         tree_model = tree_view.model()
         item = tree_model.rootItem.children[0].children[0]
@@ -131,7 +133,7 @@ class TestModulatorGUI(unittest.TestCase):
         drag_drop = QDropEvent(rect.center(), Qt.CopyAction|Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)
         drag_drop.acceptProposedAction()
         self.dialog.ui.gVOriginalSignal.dropEvent(drag_drop)
-        self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), self.signal.num_samples)
+        self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples)
 
         self.dialog.ui.cbShowDataBitsOnly.click()
         self.dialog.ui.chkBoxLockSIV.click()

@@ -20,10 +20,18 @@ class TestModulatorGUI(unittest.TestCase):
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-        tests.utils_testing.short_wait()
+        logger.debug("Preparing Modulation dialog")
+        tests.utils_testing.short_wait(interval=10)
         self.dialog, _ = self.gframe.prepare_modulation_dialog()
-        tests.utils_testing.short_wait()
+
+        logger.debug("Initializing Modulation dialog")
+        tests.utils_testing.short_wait(interval=10)
         self.gframe.initialize_modulation_dialog("1111", self.dialog)
+        logger.debug("Preparation success")
+
+    def tearDown(self):
+        self.dialog.close()
+        tests.utils_testing.short_wait(interval=50)
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 
-from urh.models.PluginListModel import PluginListModel
 from urh import constants
+from urh.models.PluginListModel import PluginListModel
 from urh.ui.ui_plugins import Ui_FramePlugins
 
 
@@ -37,6 +37,8 @@ class PluginController(QFrame):
         self.ui.txtEditPluginDescription.setText(self.model.plugins[i].description)
 
         if self.settings_layout.count() > 0:
-            self.settings_layout.takeAt(0).widget().setParent(None)
+            widget = self.settings_layout.takeAt(0).widget()
+            self.settings_layout.removeWidget(widget)
+            widget.setParent(None)
 
         self.settings_layout.addWidget(self.model.plugins[i].settings_frame)

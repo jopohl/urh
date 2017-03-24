@@ -65,7 +65,8 @@ class TestSendRecvDialog(unittest.TestCase):
     def __close_dialog(self, dialog):
         dialog.close()
         dialog.setParent(None)
-        tests.utils_testing.short_wait(self.CLOSE_TIMEOUT)
+        dialog.deleteLater()
+        tests.utils_testing.short_wait()
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():

@@ -1,8 +1,6 @@
 from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QColor, QFont
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QColor
 
-from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -98,7 +96,6 @@ class GeneratorTableModel(TableModel):
         for node in reversed(nodes_to_add):
             undo_action = InsertBitsAndPauses(self.protocol, self.dropped_row, node.protocol)
             self.undo_stack.push(undo_action)
-            QApplication.instance().processEvents()
 
         return True
 

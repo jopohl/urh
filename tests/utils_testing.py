@@ -33,8 +33,7 @@ def trace_calls(frame, event, arg):
 
 import sys
 
-
-# sys.settrace(trace_calls)
+sys.settrace(trace_calls)
 
 
 def get_app():
@@ -47,9 +46,7 @@ def get_app():
 def short_wait(interval=1):
     app = QApplication.instance()
     app.processEvents()
-    app.sendPostedEvents()
     QTest.qWait(interval)
-    app.sendPostedEvents()
     app.processEvents()
 
 f = os.readlink(__file__) if os.path.islink(__file__) else __file__
@@ -57,5 +54,4 @@ path = os.path.realpath(os.path.join(f, ".."))
 
 
 def get_path_for_data_file(filename):
-    short_wait(interval=10)  # wait a bit, to ensure resources are free before we access the file
     return os.path.join(path, "data", filename)

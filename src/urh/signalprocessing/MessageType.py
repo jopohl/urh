@@ -1,5 +1,5 @@
 import random
-import string
+import uuid
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 
@@ -23,10 +23,7 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
-
-        random.seed()
-        pool = string.ascii_letters + string.digits
-        self.__id = ''.join(random.choice(pool) for _ in range(50)) if id is None else id
+        self.__id = str(uuid.uuid4()) if id is None else id
 
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False

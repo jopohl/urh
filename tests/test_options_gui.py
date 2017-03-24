@@ -1,7 +1,4 @@
-import os
 import unittest
-
-from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from urh.controller.MainController import MainController
@@ -16,6 +13,11 @@ class TestOptionsGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
+
+    def tearDown(self):
+        self.dialog.close()
+        self.dialog.setParent(None)
+        tests.utils_testing.short_wait(interval=50)
 
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)

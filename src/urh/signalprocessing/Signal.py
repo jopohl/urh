@@ -217,7 +217,7 @@ class Signal(QObject):
     def noise_threshold(self, value):
         if value != self.noise_threshold:
             self._qad = None
-            self.clear_parameter_cache()
+            self.parameter_cache.clear()
             self._noise_threshold = value
             self.noise_min_plot = -value
             self.noise_max_plot = value
@@ -341,11 +341,6 @@ class Signal(QObject):
         if emit_update and needs_update and not self.block_protocol_update:
             self.protocol_needs_update.emit()
 
-    def clear_parameter_cache(self):
-        for mod in self.parameter_cache.keys():
-            self.parameter_cache[mod]["bit_len"] = None
-            self.parameter_cache[mod]["qad_center"] = None
-
     def estimate_frequency(self, start: int, end: int, sample_rate: float):
         """
         Schätzt die Frequenz des Basissignals mittels FFT
@@ -403,7 +398,7 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def __invalidate_after_edit(self):
-        self.clear_parameter_cache()
+        self.parameter_cache.clear()
         self.changed = True
         self.data_edited.emit()
         self.protocol_needs_update.emit()

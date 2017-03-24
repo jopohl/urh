@@ -3,13 +3,11 @@ import os
 import traceback
 
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication
 
-from urh import constants
-from urh import version
+from urh import constants, version
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.GeneratorTabController import GeneratorTabController
@@ -314,8 +312,6 @@ class MainController(QMainWindow):
 
             signal_frame.close()
             signal_frame.setParent(None)
-            QApplication.instance().processEvents()
-            signal_frame.deleteLater()
             QApplication.instance().processEvents()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()

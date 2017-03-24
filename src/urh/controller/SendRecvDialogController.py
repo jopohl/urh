@@ -2,14 +2,8 @@ import locale
 import time
 
 from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtGui import QRegExpValidator, QIcon
-from PyQt5.QtGui import QTransform
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QSlider
-from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtGui import QCloseEvent, QRegExpValidator, QIcon, QTransform
+from PyQt5.QtWidgets import QDialog, QGraphicsView, QLabel, QSlider, QSpinBox
 
 from urh import constants
 from urh.dev import config
@@ -543,14 +537,11 @@ class SendRecvDialogController(QDialog):
 
     def _restart_device_thread(self):
         self.device.stop("Restarting with new port")
-        QApplication.instance().processEvents()
 
         if self.device.backend == Backends.grc:
             self.device.increase_gr_port()
 
-
         self.device.start()
-        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def on_clear_clicked(self):
@@ -558,7 +549,6 @@ class SendRecvDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         self.emit_editing_finished_signals()
-        QApplication.instance().processEvents()
         if self.device.backend == Backends.network:
             event.accept()
             return

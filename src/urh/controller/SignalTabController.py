@@ -1,7 +1,5 @@
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import pyqtSignal, Qt, QCoreApplication, pyqtSlot
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
+from PyQt5.QtCore import QPoint, pyqtSignal, Qt, QCoreApplication, pyqtSlot
+from PyQt5.QtWidgets import QApplication, QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
 
 from urh import constants
 from urh.controller.SignalFrameController import SignalFrameController
@@ -19,7 +17,6 @@ class SignalTabController(QWidget):
 
     @property
     def num_frames(self):
-        QApplication.instance().processEvents()
         return self.splitter.count() - 1
 
     @property
@@ -28,7 +25,6 @@ class SignalTabController(QWidget):
 
         :rtype: list of SignalFrameController
         """
-        QApplication.instance().processEvents()
         return [self.splitter.widget(i) for i in range(self.num_frames)]
 
     @property
@@ -42,12 +38,12 @@ class SignalTabController(QWidget):
         self.splitter = QSplitter()
         self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
-        self.placeholder_widget = QWidget()
-        self.placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        placeholder_widget = QWidget()
+        placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.undo_stack = QUndoStack()
         self.project_manager = project_manager
 
-        self.splitter.addWidget(self.placeholder_widget)
+        self.splitter.addWidget(placeholder_widget)
         self.signal_vlay = QVBoxLayout()
         self.signal_vlay.addWidget(self.splitter)
         self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
@@ -69,7 +65,6 @@ class SignalTabController(QWidget):
             # new signal from "create signal from selection"
             sig_frame.ui.btnSaveSignal.show()
 
-        QApplication.instance().processEvents()
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
         sig_frame.signal_created.connect(self.signal_created.emit)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
@@ -87,8 +82,8 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbSignalView.setCurrentIndex(1)
             sig_frame.ui.cbSignalView.setDisabled(True)
 
-        QApplication.instance().processEvents()
         self.splitter.insertWidget(self.num_frames, sig_frame)
+        QApplication.instance().processEvents()
         sig_frame.blockSignals(False)
 
         default_view = constants.SETTINGS.value('default_view', 0, int)
@@ -239,3 +234,20 @@ class SignalTabController(QWidget):
     def on_participant_changed(self):
         for sframe in self.signal_frames:
             sframe.on_participant_changed()
+
+    def update_splitter(self):
+        self.signal_vlay.removeWidget(self.splitter)
+        splitter = QSplitter()
+        splitter.setOrientation(Qt.Vertical)
+        splitter.setChildrenCollapsible(True)
+        placeholder_widget = QWidget()
+        placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        for frame in self.signal_frames:
+            splitter.addWidget(frame)
+        splitter.addWidget(placeholder_widget)
+        self.ui.scrlAreaSignals.layout().addWidget(splitter)
+
+        self.splitter.setParent(None)
+        del self.splitter
+
+        self.splitter = splitter

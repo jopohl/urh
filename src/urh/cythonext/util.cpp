@@ -1854,8 +1854,7 @@ static PyTypeObject *__pyx_ptype_5numpy_broadcast = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ndarray = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, char *, char *, int *); /*proto*/
-
-/* Module declarations from 'libcpp' */
+static CYTHON_INLINE int __pyx_f_5numpy_import_array(void); /*proto*/
 
 /* Module declarations from 'src.urh.cythonext.util' */
 static PyTypeObject *__pyx_array_type = 0;
@@ -2159,7 +2158,7 @@ static PyObject *__pyx_tuple__27;
 static PyObject *__pyx_tuple__28;
 
 /* "src/urh/cythonext/util.pyx":6
- * from libcpp cimport bool
+ * np.import_array()
  * 
  * cpdef tuple minmax(float[:] arr):             # <<<<<<<<<<<<<<
  *     cdef long long i, ns = len(arr)
@@ -2354,7 +2353,7 @@ static PyObject *__pyx_f_3src_3urh_9cythonext_4util_minmax(__Pyx_memviewslice __
   goto __pyx_L0;
 
   /* "src/urh/cythonext/util.pyx":6
- * from libcpp cimport bool
+ * np.import_array()
  * 
  * cpdef tuple minmax(float[:] arr):             # <<<<<<<<<<<<<<
  *     cdef long long i, ns = len(arr)
@@ -18515,7 +18514,8 @@ PyMODINIT_FUNC PyInit_util(void)
 #endif
 {
   PyObject *__pyx_t_1 = NULL;
-  static PyThread_type_lock __pyx_t_2[8];
+  int __pyx_t_2;
+  static PyThread_type_lock __pyx_t_3[8];
   __Pyx_RefNannyDeclarations
   #if CYTHON_REFNANNY
   __Pyx_RefNanny = __Pyx_RefNannyImportAPI("refnanny");
@@ -18650,12 +18650,21 @@ PyMODINIT_FUNC PyInit_util(void)
  * # noinspection PyUnresolvedReferences
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as np
- * from libcpp cimport bool
+ * np.import_array()
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/cythonext/util.pyx":4
+ * import numpy as np
+ * cimport numpy as np
+ * np.import_array()             # <<<<<<<<<<<<<<
+ * 
+ * cpdef tuple minmax(float[:] arr):
+ */
+  __pyx_t_2 = __pyx_f_5numpy_import_array(); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 4, __pyx_L1_error)
 
   /* "src/urh/cythonext/util.pyx":1
  * # noinspection PyUnresolvedReferences             # <<<<<<<<<<<<<<
@@ -18766,15 +18775,15 @@ PyMODINIT_FUNC PyInit_util(void)
  *     PyThread_allocate_lock(),
  *     PyThread_allocate_lock(),
  */
-  __pyx_t_2[0] = PyThread_allocate_lock();
-  __pyx_t_2[1] = PyThread_allocate_lock();
-  __pyx_t_2[2] = PyThread_allocate_lock();
-  __pyx_t_2[3] = PyThread_allocate_lock();
-  __pyx_t_2[4] = PyThread_allocate_lock();
-  __pyx_t_2[5] = PyThread_allocate_lock();
-  __pyx_t_2[6] = PyThread_allocate_lock();
-  __pyx_t_2[7] = PyThread_allocate_lock();
-  memcpy(&(__pyx_memoryview_thread_locks[0]), __pyx_t_2, sizeof(__pyx_memoryview_thread_locks[0]) * (8));
+  __pyx_t_3[0] = PyThread_allocate_lock();
+  __pyx_t_3[1] = PyThread_allocate_lock();
+  __pyx_t_3[2] = PyThread_allocate_lock();
+  __pyx_t_3[3] = PyThread_allocate_lock();
+  __pyx_t_3[4] = PyThread_allocate_lock();
+  __pyx_t_3[5] = PyThread_allocate_lock();
+  __pyx_t_3[6] = PyThread_allocate_lock();
+  __pyx_t_3[7] = PyThread_allocate_lock();
+  memcpy(&(__pyx_memoryview_thread_locks[0]), __pyx_t_3, sizeof(__pyx_memoryview_thread_locks[0]) * (8));
 
   /* "View.MemoryView":535
  *         info.obj = self

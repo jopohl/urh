@@ -1,12 +1,10 @@
 import struct
-
+cimport numpy as np
+import numpy as np
 from PyQt5.QtCore import QByteArray, QDataStream
 from PyQt5.QtGui import QPainterPath
+np.import_array()
 
-# noinspection PyUnresolvedReferences
-import numpy as np
-cimport numpy as np
-import  cython
 from cython.parallel import prange
 
 from urh import constants

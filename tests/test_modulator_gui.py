@@ -27,6 +27,13 @@ class TestModulatorGUI(unittest.TestCase):
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
 
+    def tearDown(self):
+        self.dialog.setParent(None)
+        self.dialog.close()
+        self.dialog.deleteLater()
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
         self.dialog.ui.btnAddModulation.click()

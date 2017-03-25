@@ -31,6 +31,11 @@ class TestPlugins(unittest.TestCase):
 
         self.signal = self.sframe.signal
 
+    def tearDown(self):
+        self.signal = None
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
         action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,

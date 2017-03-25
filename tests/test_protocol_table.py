@@ -32,6 +32,10 @@ class TestProtocolTable(unittest.TestCase):
         self.__add_labels()
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
 
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+
     def test_set_shown_protocols_performance(self):
         t = time.time()
         self.cframe.set_shown_protocols()

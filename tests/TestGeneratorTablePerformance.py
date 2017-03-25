@@ -34,6 +34,10 @@ class TestGeneratorTable(unittest.TestCase):
 
         self.__add_labels()
 
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+
     def test_performance(self):
         item = self.gframe.tree_model.rootItem.children[0].children[0]
         index = self.gframe.tree_model.createIndex(0, 0, item)

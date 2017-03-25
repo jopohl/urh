@@ -62,3 +62,8 @@ class FFTSceneManager(SceneManager):
     def set_text(self, text):
         self.scene.draw_grid = False
         super().set_text(text)
+
+    def eliminate(self):
+        super().eliminate()
+        self.peak = None
+        self.peak_item = None

@@ -252,3 +252,16 @@ class SelectableGraphicView(QGraphicsView):
         top_left = self.mapToScene(0, 0)
         bottom_right = self.mapToScene(self.viewport().width() - 1, self.viewport().height() - 1)
         return QRectF(top_left, bottom_right)
+
+    def eliminate(self):
+        if self.scene_manager is not None:
+            self.scene_manager.eliminate()
+            self.scene_manager = None
+        if self.scene() is not None:
+            self.scene().clear()
+            self.scene().setParent(None)
+            self.setScene(None)
+
+        self.setParent(None)
+        self.destroy()
+        self.deleteLater()

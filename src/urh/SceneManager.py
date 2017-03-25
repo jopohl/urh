@@ -89,6 +89,13 @@ class SceneManager(QObject):
     def set_text(self, text):
         self.text_item.setPlainText(text)
 
+    def eliminate(self):
+        self.plot_data = None
+        self.line_item = None
+        self.text_item = None
+        self.scene.clear()
+        self.scene.setParent(None)
+
     @staticmethod
     def create_rectangle(proto_bits, pulse_len=100):
         """

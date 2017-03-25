@@ -364,7 +364,7 @@ class Signal(QObject):
         freq_in_hertz = abs(freq * sample_rate)
         return freq_in_hertz
 
-    def destroy(self):
+    def eliminate(self):
         self._fulldata = None
         self._qad = None
         self.parameter_cache.clear()

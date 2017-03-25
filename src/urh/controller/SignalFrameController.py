@@ -476,6 +476,34 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.blockSignals(False)
 
+    def eliminate(self):
+        self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
+        self.ui.gvSignal.scene().clear()
+        self.ui.gvSignal.scene().setParent(None)
+
+        if self.signal is not None:
+            # Avoid memory leaks
+            self.scene_manager.eliminate()
+            self.signal.eliminate()
+            self.proto_analyzer.eliminate()
+            self.ui.gvSignal.scene_manager.eliminate()
+
+        self.ui.gvLegend.eliminate()
+        self.ui.gvSignal.eliminate()
+
+        self.scene_manager = None
+        self.signal = None
+        self.proto_analyzer = None
+
+        self.ui.layoutWidget.setParent(None)
+        self.ui.layoutWidget.deleteLater()
+
+        self.setParent(None)
+        self.destroy()
+        self.deleteLater()
+
+
+
     @pyqtSlot()
     def on_signal_zoomed(self):
         gvs = self.ui.gvSignal

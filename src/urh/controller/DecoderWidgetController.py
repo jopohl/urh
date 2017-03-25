@@ -1,14 +1,10 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QDir, Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication, QFileDialog, QInputDialog, \
+    QLineEdit, QMessageBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -125,6 +121,11 @@ class DecoderWidgetController(QDialog):
         self.ui.rB_delafterpos.clicked.connect(self.handle_cut)
         self.ui.cutmark.textEdited.connect(self.handle_cut)
         self.ui.cutmark2.valueChanged.connect(self.handle_cut)
+
+    def closeEvent(self, event: QCloseEvent):
+        event.accept()
+        self.ui.graphicsView_decoded.eliminate()
+        self.ui.graphicsView_signal.eliminate()
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())

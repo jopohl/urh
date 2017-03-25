@@ -235,7 +235,6 @@ class MainController(QMainWindow):
         # Sample rate will be overriden in case of a project later
         signal = Signal(filename, sig_name, wav_is_qad_demod=alrdy_qad_demod,
                         sample_rate=self.project_manager.device_conf["sample_rate"])
-        QApplication.instance().processEvents()
 
         if self.project_manager.project_file is None:
             self.adjust_for_current_file(signal.filename)
@@ -282,11 +281,15 @@ class MainController(QMainWindow):
 
         self.compare_frame_controller.filter_search_results()
 
+        QApplication.instance().processEvents()
         self.refresh_main_menu()
         self.ui.progressBar.hide()
+        QApplication.instance().processEvents()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
+            signal_frame.proto_selection_timer.stop()
+            signal_frame.ui.gvSignal.redraw_timer.stop()
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
@@ -299,7 +302,7 @@ class MainController(QMainWindow):
                 # if item from tree in generator is selected and corresponding signal is closed
                 self.generator_tab_controller.tree_model.remove_protocol(proto)
 
-                proto.destroy()
+                proto.eliminate()
                 del self.signal_protocol_dict[signal_frame]
 
             if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
@@ -309,14 +312,11 @@ class MainController(QMainWindow):
             if signal_frame.signal is not None:
                 # Non-Empty Frame (when a signal and not a protocol is opened)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-                # Avoid memory leaks
-                signal_frame.scene_manager.destroy()
-                signal_frame.signal.destroy()
-                signal_frame.proto_analyzer.destroy()
 
-            signal_frame.close()
-            signal_frame.deleteLater()
-            QApplication.instance().processEvents()
+            num_frames = self.signal_tab_controller.num_frames
+            signal_frame.eliminate()
+            assert self.signal_tab_controller.num_frames == num_frames - 1
+            self.signal_tab_controller.update_splitter()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()

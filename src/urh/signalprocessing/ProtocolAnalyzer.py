@@ -765,7 +765,7 @@ class ProtocolAnalyzer(object):
         root = tree.getroot()
         self.from_xml_tag(root, read_bits=read_bits)
 
-    def destroy(self):
+    def eliminate(self):
         try:
             for message_type in self.message_types:
                 message_type.clear()
@@ -774,7 +774,7 @@ class ProtocolAnalyzer(object):
         self.message_types.clear()
         self.messages.clear()
         if self.signal is not None:
-            self.signal.destroy()
+            self.signal.eliminate()
         self.signal = None
 
     def update_auto_message_types(self):

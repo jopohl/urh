@@ -19,7 +19,6 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
@@ -226,7 +225,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialogController(self.modulators, parent=self)
+        modulator_dialog = ModulatorDialogController(self.modulators, parent=self.parent())
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)

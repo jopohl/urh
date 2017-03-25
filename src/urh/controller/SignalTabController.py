@@ -244,10 +244,12 @@ class SignalTabController(QWidget):
         placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         for frame in self.signal_frames:
             splitter.addWidget(frame)
+
         splitter.addWidget(placeholder_widget)
         self.ui.scrlAreaSignals.layout().addWidget(splitter)
 
         self.splitter.setParent(None)
+        self.splitter.deleteLater()
         del self.splitter
 
         self.splitter = splitter

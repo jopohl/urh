@@ -111,7 +111,8 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     def setScene(self, scene: QGraphicsScene):
         super().setScene(scene)
-        self.margin = 0.25 * self.scene().height()
+        if self.scene() is not None:
+            self.margin = 0.25 * self.scene().height()
 
     def plot_data(self, data):
         if self.scene_manager is None:
@@ -135,6 +136,10 @@ class ZoomableGraphicView(SelectableGraphicView):
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
         # Overwritten in Epic Graphic View
         return None, None
+
+    def eliminate(self):
+        self.redraw_timer.stop()
+        super().eliminate()
 
     @pyqtSlot()
     def on_signal_zoomed(self):

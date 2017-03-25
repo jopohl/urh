@@ -1,6 +1,6 @@
 import numpy
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QResizeEvent, QKeyEvent
+from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from urh.signalprocessing.Modulator import Modulator
@@ -127,6 +127,12 @@ class ModulatorDialogController(QDialog):
         self.ui.btnSaveAndClose.clicked.connect(self.close)
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
+
+    def closeEvent(self, event: QCloseEvent):
+        event.accept()
+
+        for gv in (self.ui.gVModulated, self.ui.gVCarrier, self.ui.gVOriginalSignal, self.ui.gVData):
+            gv.eliminate()
 
     def draw_carrier(self):
         self.ui.gVCarrier.plot_data(self.current_modulator.carrier_data)

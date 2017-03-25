@@ -126,6 +126,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.lineEditTime.editingFinished.connect(self.on_line_edit_time_editing_finished)
         self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
+        self.__dialog_ui.finished.connect(self.on_dialog_finished)
 
     def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
         self.create_dialog_connects()
@@ -222,3 +223,9 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_btn_ok_clicked(self):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
+
+    @pyqtSlot()
+    def on_dialog_finished(self):
+        self.sender().graphicsViewSineWave.eliminate()
+        self.sender().setParent(None)
+        self.sender().deleteLater()

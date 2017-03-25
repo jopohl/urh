@@ -44,8 +44,6 @@ class SignalSceneManager(SceneManager):
         else:
             self.scene.draw_sep_area(-self.signal.qad_center)
 
-    def destroy(self):
-        self.plot_data = None
+    def eliminate(self):
+        super().eliminate()
         self.signal = None
-        self.line_item = None
-        self.text_item = None

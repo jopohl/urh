@@ -1,15 +1,14 @@
 import os
 import unittest
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
+
 app = tests.utils_testing.get_app()
 
 
@@ -17,6 +16,10 @@ class TestGenerator(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
         self.form = MainController()
+
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_generation(self):
         """

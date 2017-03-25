@@ -14,7 +14,6 @@ app = tests.utils_testing.get_app()
 
 class TestFuzzing(unittest.TestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
         self.form = MainController()
@@ -26,30 +25,31 @@ class TestFuzzing(unittest.TestCase):
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.setValue(100)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.editingFinished.emit()
 
-        self.sframe = self.form.signal_tab_controller.signal_frames[0]
-        self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
 
         # Dewhitening mit SyncByte 0x9a7d9a7d, Data Whitening Poly 0x21, Compute and apply CRC16 via X0r,
         # Rest auf False anlegen und setzen
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.cframe.ui.cbProtoView.setCurrentIndex(1) # Hex
+        self.form.compare_frame_controller.ui.cbProtoView.setCurrentIndex(1)  # Hex
         decoding = Encoder(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x8"])
-        self.cframe.decodings.append(decoding)
-        self.cframe.ui.cbDecoding.addItem(decoding.name)
-        self.cframe.set_decoding(decoding)
+        self.form.compare_frame_controller.decodings.append(decoding)
+        self.form.compare_frame_controller.ui.cbDecoding.addItem(decoding.name)
+        self.form.compare_frame_controller.set_decoding(decoding)
 
         # CRC Check
-        self.assertEqual(self.cframe.protocol_model.display_data[0][-4:], "0000")
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.display_data[0][-4:], "0000")
 
         # Serial Part 1: Bits 207-226 (Dezimal: 91412) (20 Bits)
-        self.cframe.add_protocol_label(start=206, end=225, messagenr=0, proto_view=0, edit_label_name=False)
+        self.form.compare_frame_controller.add_protocol_label(start=206, end=225, messagenr=0, proto_view=0,
+                                                              edit_label_name=False)
 
         # Zeros: Bits 227-244 (18 Bits)
-        self.cframe.add_protocol_label(start=226, end=243, messagenr=0, proto_view=0, edit_label_name = False)
+        self.form.compare_frame_controller.add_protocol_label(start=226, end=243, messagenr=0, proto_view=0,
+                                                              edit_label_name=False)
 
         # Serial Part 2: Bit 245 - 264 (Dezimal: 1034678) (20 Bits)
-        self.cframe.add_protocol_label(start=244, end=263, messagenr=0, proto_view=0, edit_label_name = False)
+        self.form.compare_frame_controller.add_protocol_label(start=244, end=263, messagenr=0, proto_view=0,
+                                                              edit_label_name=False)
 
         self.form.ui.tabWidget.setCurrentIndex(2)
         item = self.gframe.tree_model.rootItem.children[0].children[0]
@@ -66,7 +66,8 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(len(self.gframe.table_model.protocol.protocol_labels), 3)
 
     def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_fuzz_label_bit(self):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view

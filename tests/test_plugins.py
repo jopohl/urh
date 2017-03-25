@@ -1,17 +1,13 @@
+import math
 import unittest
 
-import math
-
-from PyQt5.QtTest import QTest
-
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
-
-from tests.utils_testing import get_path_for_data_file
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -34,6 +30,11 @@ class TestPlugins(unittest.TestCase):
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
         self.signal = self.sframe.signal
+
+    def tearDown(self):
+        self.signal = None
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()

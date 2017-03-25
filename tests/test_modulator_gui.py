@@ -28,11 +28,11 @@ class TestModulatorGUI(unittest.TestCase):
         logger.debug("Preparation success")
 
     def tearDown(self):
+        self.form.close_all()
         self.dialog.close()
         self.dialog.setParent(None)
         self.dialog.deleteLater()
-        self.form.close_all()
-        tests.utils_testing.short_wait(interval=50)
+        tests.utils_testing.short_wait(interval=10)
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

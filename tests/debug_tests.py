@@ -5,7 +5,7 @@ import sys
 import time
 
 RUNS = 200
-LOG_SIZE_KB = 100
+LOG_SIZE_MB = 1
 
 
 os.system("mkdir -p /tmp/tests")
@@ -29,7 +29,7 @@ for i in range(RUNS):
             streak = 0
             print("#{} failed [{:.2f}s]".format(i + 1, time.time() - t))
             with open(filename, "wb") as f:
-                f.write(completed.stdout[-LOG_SIZE_KB * 1024:])
+                f.write(completed.stdout[-LOG_SIZE_MB * 1024 * 1024:])
             print("Written output to file {}".format(filename))
     except KeyboardInterrupt:
         sys.exit(1)

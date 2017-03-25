@@ -1,9 +1,7 @@
 import locale
-import random
 import time
 
-import psutil
-from PyQt5.QtCore import Qt, pyqtSlot, QTimer, QRegExp, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtGui import QTransform
@@ -33,7 +31,9 @@ class SendRecvDialogController(QDialog):
         self.is_tx = is_tx
 
         self.ui = Ui_SendRecvDialog()
+        logger.debug("{}: Call setupUi".format(self.__class__.__name__))
         self.ui.setupUi(self)
+        logger.debug("{}: Called setupUi".format(self.__class__.__name__))
 
         self.set_sniff_ui_items_visible(False)
 
@@ -542,14 +542,14 @@ class SendRecvDialogController(QDialog):
 
     def _restart_device_thread(self):
         self.device.stop("Restarting with new port")
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         if self.device.backend == Backends.grc:
             self.device.increase_gr_port()
 
 
         self.device.start()
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def on_clear_clicked(self):

@@ -1,6 +1,4 @@
 import unittest
-from audioop import reverse
-from collections import defaultdict
 
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder

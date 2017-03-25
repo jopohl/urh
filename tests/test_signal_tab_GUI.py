@@ -9,41 +9,59 @@ import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
+from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_save_dialog", True)
+        logger.debug("Init Form")
+        tests.utils_testing.short_wait()
         self.form = MainController()
+        tests.utils_testing.short_wait()
+        logger.debug("Add Signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added Signal")
+        app.processEvents()
         self.frame = self.form.signal_tab_controller.signal_frames[0]
         self.frame.signal.noise_threshold = 0.0023
         self.frame.signal.qad_center = 0.3817
         self.frame.signal.bit_len = 84
 
-    def test_close_all(self):
+    def tearDown(self):
         self.form.close_all()
+        tests.utils_testing.short_wait()
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        tests.utils_testing.short_wait()
+
+    def test_close_all(self):
+        logger.debug("Close all")
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+        logger.debug("Called close all")
         app.processEvents()
-        QTest.qWait(500)
         self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
 
         # Add a bunch of signals
-        num_signals = 10
+        num_signals = 5
         for _ in range(num_signals):
+            tests.utils_testing.short_wait()
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
 
         self.assertEqual(self.form.signal_tab_controller.num_signals, num_signals)
 
         self.form.close_all()
-        app.processEvents()
-        QTest.qWait(500)
+        tests.utils_testing.short_wait()
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_signals, 1)
 
     def test_zoom(self):
+        tests.utils_testing.short_wait()
         x_zoom = self.frame.ui.spinBoxXZoom.value()
         self.assertEqual(x_zoom, 100)
 
@@ -104,7 +122,10 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(self.frame.ui.btnShowHideStartEnd.text(), "-")
 
     def test_apply_to_all(self):
+        logger.debug("Test apply to all")
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        logger.debug("added new signal")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
         self.frame.ui.spinBoxInfoLen.setValue(42)
@@ -127,6 +148,8 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
 
     def test_save_all(self):
+        logger.debug("Test save all")
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
@@ -160,11 +183,13 @@ class TestSignalTabGUI(unittest.TestCase):
         self.assertTrue(self.frame.signal.changed)
 
         self.frame.signal.filename = os.path.join(QDir.tempPath(), "sig.complex")
+        if os.path.isfile(self.frame.signal.filename):
+            os.remove(self.frame.signal.filename)
+
         self.assertFalse(os.path.isfile(self.frame.signal.filename))
         self.frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(self.frame)
-        app.processEvents()
-        QTest.qWait(500)
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
@@ -173,10 +198,10 @@ class TestSignalTabGUI(unittest.TestCase):
         self.frame.ui.gvSignal.selection_area.end = 128440
         self.frame.ui.gvSignal.selection_area.start = 89383
         self.frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
-        QTest.qWait(100)
+        tests.utils_testing.short_wait()
         self.assertEqual(self.frame.proto_analyzer.messages[0].plain_bits_str, self.frame.ui.txtEdProto.selected_text)
         self.frame.ui.txtEdProto.show_proto_clicked.emit()
-        QTest.qWait(100)
+        tests.utils_testing.short_wait()
         self.assertAlmostEqual((128440 - 89383) / 1000000,
                                (self.frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
 

@@ -61,11 +61,11 @@ class TableView(QTableView):
         for i in range(10):
             self.setColumnWidth(i, 2 * w)
 
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
         for i in range(10, self.model().columnCount()):
             self.setColumnWidth(i, w * len(str(i + 1)))
             if i % 10 == 0:
-                QApplication.processEvents()
+                QApplication.instance().processEvents()
 
     def resize_vertical_header(self):
         num_rows = self.model().rowCount()
@@ -81,7 +81,7 @@ class TableView(QTableView):
                 self.verticalHeader().resizeSection(i, w)
                 self.setRowHeight(i, rh)
                 if i % 10 == 0:
-                    QApplication.processEvents()
+                    QApplication.instance().processEvents()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
@@ -115,7 +115,7 @@ class TableView(QTableView):
                 if cell.data():
                     text += str(cell.data())
 
-            QApplication.clipboard().setText(text)
+            QApplication.instance().clipboard().setText(text)
             return
 
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \

@@ -7,20 +7,39 @@ from PyQt5.QtTest import QTest
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestModulatorGUI(unittest.TestCase):
     def setUp(self):
+        logger.debug("Init Form")
+        tests.utils_testing.short_wait(interval=10)
         self.form = MainController()
+        logger.debug("Add Signal")
+        tests.utils_testing.short_wait()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added Signal")
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
 
+        tests.utils_testing.short_wait(interval=10)
+        logger.debug("Create modulation dialog")
         self.dialog, _ = self.gframe.prepare_modulation_dialog()
         self.gframe.initialize_modulation_dialog("1111", self.dialog)
+
+    def tearDown(self):
+        self.dialog.close()
+        self.dialog.setParent(None)
+        self.dialog.deleteLater()
+        tests.utils_testing.short_wait()
+
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        tests.utils_testing.short_wait()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

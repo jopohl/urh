@@ -14,16 +14,18 @@ from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 from tests.utils_testing import get_path_for_data_file
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestPlugins(unittest.TestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
+        logger.debug("Init form")
         self.form = MainController()
+        logger.debug("Initalized form")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
@@ -34,7 +36,12 @@ class TestPlugins(unittest.TestCase):
         self.signal = self.sframe.signal
 
     def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
+        self.form.close_all()
+        tests.utils_testing.short_wait()
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        tests.utils_testing.short_wait()
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
@@ -100,6 +107,7 @@ class TestPlugins(unittest.TestCase):
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         num_samples = 10000
+        tests.utils_testing.short_wait()
         dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
                                                            position=2000,
                                                            sample_rate=self.signal.sample_rate,
@@ -108,8 +116,7 @@ class TestPlugins(unittest.TestCase):
         graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
@@ -120,40 +127,35 @@ class TestPlugins(unittest.TestCase):
         self.assertEqual(insert_sine_plugin.amplitude, 0.1)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         dialog.doubleSpinBoxFrequency.setValue(1e6)
         dialog.doubleSpinBoxFrequency.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.frequency, 1e6)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         dialog.doubleSpinBoxPhase.setValue(100)
         dialog.doubleSpinBoxPhase.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.phase, 100)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         dialog.doubleSpinBoxSampleRate.setValue(2e6)
         dialog.doubleSpinBoxSampleRate.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.sample_rate, 2e6)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         dialog.doubleSpinBoxNSamples.setValue(0.5e6)
         dialog.doubleSpinBoxNSamples.editingFinished.emit()
         self.assertEqual(insert_sine_plugin.num_samples, 0.5e6)
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            app.processEvents()
-            QTest.qWait(100)
+            tests.utils_testing.short_wait()
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

@@ -9,7 +9,7 @@ from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestFuzzing(unittest.TestCase):

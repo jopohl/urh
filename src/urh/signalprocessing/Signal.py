@@ -264,12 +264,12 @@ class Signal(QObject):
             self.save_as(self.filename)
 
     def save_as(self, filename: str):
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.filename = filename
         FileOperator.save_signal(self)
         self.name = os.path.splitext(os.path.basename(filename))[0]
         self.changed = False
-        QApplication.restoreOverrideCursor()
+        QApplication.instance().restoreOverrideCursor()
 
     def get_signal_start(self) -> int:
         """

@@ -29,6 +29,7 @@ class DecoderWidgetController(QDialog):
         # Init
         super().__init__(parent)
         self.ui = Ui_Decoder()
+        QApplication.instance().processEvents()
         self.ui.setupUi(self)
 
         # Variables
@@ -796,9 +797,9 @@ class DecoderWidgetController(QDialog):
 
         tmp_scene = QGraphicsScene()
         tmp_scene.addText(self.tr("Loading Signal..."))
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.ui.graphicsView_signal.setScene(tmp_scene)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         if signal is not None:
             last_message = pa.messages[-1]
@@ -808,4 +809,4 @@ class DecoderWidgetController(QDialog):
             self.ui.graphicsView_signal.plot_data(plot_data)
 
         self.ui.graphicsView_signal.centerOn(0, 0)
-        QApplication.restoreOverrideCursor()
+        QApplication.instance().restoreOverrideCursor()

@@ -6,7 +6,7 @@ from urh.controller.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.Signal import Signal
 from urh.util.Formatter import Formatter
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestSignalDetailsGUI(unittest.TestCase):

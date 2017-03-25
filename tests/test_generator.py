@@ -10,12 +10,13 @@ import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestGenerator(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
+        tests.utils_testing.short_wait()
         self.form = MainController()
 
     def test_generation(self):

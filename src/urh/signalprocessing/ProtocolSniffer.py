@@ -1,9 +1,7 @@
 import os
-import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
-from PyQt5.QtWidgets import QApplication
 
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -179,8 +177,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def stop(self):
         self.rcv_device.stop("Stopping receiving due to user interaction")
-        QApplication.processEvents()
-        time.sleep(0.1)
 
     def clear(self):
         del self.data_cache[:]

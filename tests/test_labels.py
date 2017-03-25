@@ -7,8 +7,9 @@ import tests.utils_testing
 from urh import constants
 from urh.controller.MainController import MainController
 from tests.utils_testing import get_path_for_data_file
+from urh.util.Logger import logger
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestLabels(unittest.TestCase):
@@ -16,8 +17,13 @@ class TestLabels(unittest.TestCase):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
 
+        logger.debug("Init form")
         self.form = MainController()
+        logger.debug("Intiliazed form")
+        app.processEvents()
+        logger.debug("Add signal")
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        logger.debug("Added signal")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.cframe.ui.cbProtoView.setCurrentIndex(0)

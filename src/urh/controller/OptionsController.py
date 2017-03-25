@@ -299,9 +299,9 @@ class OptionsController(QDialog):
     def on_checkbox_fallback_theme_clicked(self, use_fallback: bool):
         constants.SETTINGS.setValue('use_fallback_theme', use_fallback)
         if use_fallback:
-            QApplication.setStyle(QStyleFactory.create("Fusion"))
+            QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
         else:
-            QApplication.setStyle(constants.SETTINGS.value("default_theme", type=str))
+            QApplication.instance().setStyle(constants.SETTINGS.value("default_theme", type=str))
 
     @pyqtSlot(bool)
     def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
@@ -382,7 +382,7 @@ class OptionsController(QDialog):
         else:
             s = "s" if new_natives > 1 else ""
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-            QApplication.processEvents()
+            QApplication.instance().processEvents()
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
             target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
             rc = call([sys.executable, os.path.realpath(ExtensionHelper.__file__),

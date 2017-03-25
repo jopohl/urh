@@ -1,27 +1,31 @@
-import os
-import random
 import unittest
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
-from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
-from urh.signalprocessing.Modulator import Modulator
-from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+from urh.util.Logger import logger
+
+app = tests.utils_testing.get_app()
 
 
 class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("align_labels", True)
 
+        logger.debug("Init form")
+        tests.utils_testing.short_wait()
         self.form = MainController()
+        tests.utils_testing.short_wait()
+
+        logger.debug("Add signal")
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
+        logger.debug("added signal")
+        tests.utils_testing.short_wait()
+
         self.cframe = self.form.compare_frame_controller
 
         self.cframe.add_protocol_label(9, 19, 0, 0, edit_label_name=False)  # equals 10-20 in view
@@ -31,6 +35,16 @@ class TestProtocolLabelDialog(unittest.TestCase):
         self.dialog = ProtocolLabelController(preselected_index=1,
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
+
+    def tearDown(self):
+        self.dialog.close()
+        self.dialog.setParent(None)
+        self.dialog.deleteLater()
+        tests.utils_testing.short_wait()
+        self.form.close()
+        self.form.setParent(None)
+        self.form.deleteLater()
+        tests.utils_testing.short_wait()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

@@ -8,7 +8,7 @@ from urh.models.FileSystemModel import FileSystemModel
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 import tests.utils_testing
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestDirectoryTreeView(unittest.TestCase):

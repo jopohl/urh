@@ -45,7 +45,8 @@ DEVICE_CONFIG["USRP"] = {
 
 # http://osmocom.org/projects/sdr/wiki/rtl-sdr
 DEVICE_CONFIG["RTL-SDR"] = {
-    "center_freq": dev_range(start=22 * M, stop=2200 * M, step=1),
+    # 0.1 MHz lower limit because: https://github.com/jopohl/urh/issues/211
+    "center_freq": dev_range(start=0.1 * M, stop=2200 * M, step=1),
     "sample_rate": dev_range(start=1, stop=int(3.2 * M), step=1),
     "bandwidth": dev_range(start=1, stop=int(3.2 * M), step=1),
     "rx_rf_gain": list(range(0, 51)),  # CAUTION: API is *10 so e.g. 1 needs to be given as 10 to API

@@ -46,7 +46,9 @@ class SignalFrameController(QFrame):
         self.undo_stack = undo_stack
 
         self.ui = Ui_SignalFrame()
+        logger.debug("{}: Call setupUi".format(self.__class__.__name__))
         self.ui.setupUi(self)
+        logger.debug("{}: Called setupUi".format(self.__class__.__name__))
 
         self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
         self.ui.txtEdProto.participants = project_manager.participants
@@ -235,7 +237,10 @@ class SignalFrameController(QFrame):
     def update_number_selected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
         self.__set_duration()
-        sel_messages = self.ui.gvSignal.selected_messages
+        try:
+            sel_messages = self.ui.gvSignal.selected_messages
+        except AttributeError:
+            sel_messages = []
         if len(sel_messages) == 1:
             self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
         else:
@@ -408,7 +413,7 @@ class SignalFrameController(QFrame):
 
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
 
         self.proto_analyzer.get_protocol_from_signal()
 
@@ -467,7 +472,10 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
             # self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            try:    # Without try/except: segfault (TypeError) when changing sample_rate in info dialog of signal
+                self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            except TypeError:
+                pass
 
             self.ui.txtEdProto.blockSignals(False)
 
@@ -573,7 +581,7 @@ class SignalFrameController(QFrame):
         else:
             self.ui.gvLegend.hide()
 
-        QApplication.processEvents()
+        QApplication.instance().processEvents()
         self.ui.gvSignal.auto_fit_view()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()
@@ -753,7 +761,7 @@ class SignalFrameController(QFrame):
     def update_protocol_selection_from_roi(self):
         protocol = self.proto_analyzer
 
-        if protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
+        if protocol is None or protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
             return
 
         start = self.ui.gvSignal.selection_area.x

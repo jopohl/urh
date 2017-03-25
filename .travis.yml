@@ -20,6 +20,6 @@ install:
 
 script:
   - python3 src/urh/cythonext/build.py
-  - pytest -v --cov=src/urh tests
+  - pytest -s -v --cov=src/urh tests
 
 after_success: codeclimate-test-reporter

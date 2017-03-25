@@ -6,7 +6,7 @@ import tests.utils_testing
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
 from urh.signalprocessing.MessageType import MessageType
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestMessageTypeOptionsGUI(unittest.TestCase):

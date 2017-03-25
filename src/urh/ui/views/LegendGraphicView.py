@@ -12,6 +12,15 @@ class LegendGraphicView(QGraphicsView):
         self.scene_height = 2
         super().__init__(parent)
 
+    def eliminate(self):
+        if self.scene() is not None:
+            self.scene().clear()
+            self.scene().setParent(None)
+
+        self.setParent(None)
+        self.destroy()
+        self.deleteLater()
+
     def resizeEvent(self, event):
         self.resized.emit()
 

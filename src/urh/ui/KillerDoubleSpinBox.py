@@ -1,7 +1,9 @@
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDoubleSpinBox
+
 
 class KillerDoubleSpinBox(QDoubleSpinBox):
     """

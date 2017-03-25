@@ -1,13 +1,10 @@
 import unittest
 
-from PyQt5.QtTest import QTest
-
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
-from urh.util.Logger import logger
 
 app = tests.utils_testing.get_app()
 
@@ -16,15 +13,8 @@ class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("align_labels", True)
 
-        logger.debug("Init form")
-        tests.utils_testing.short_wait()
         self.form = MainController()
-        tests.utils_testing.short_wait()
-
-        logger.debug("Add signal")
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
-        logger.debug("added signal")
-        tests.utils_testing.short_wait()
 
         self.cframe = self.form.compare_frame_controller
 
@@ -37,13 +27,7 @@ class TestProtocolLabelDialog(unittest.TestCase):
                                               viewtype=0, parent=self.cframe)
 
     def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
+        self.form.close_all()
         tests.utils_testing.short_wait()
 
     def test_protocol_label_dialog(self):

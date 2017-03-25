@@ -1,23 +1,25 @@
 import os
 import unittest
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
+
 app = tests.utils_testing.get_app()
 
 
 class TestGenerator(unittest.TestCase):
     def setUp(self):
         constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        tests.utils_testing.short_wait()
         self.form = MainController()
+
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_generation(self):
         """
@@ -115,12 +117,29 @@ class TestGenerator(unittest.TestCase):
         self.form.on_selected_tab_changed(2)
         self.assertEqual(1, 1)
 
-    def test_create_context_menu(self):
+    def test_create_table_context_menu(self):
         # Context menu should be empty if table is empty
         self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
         self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
         self.assertEqual(len(menu.actions()), 0)
+
+        # Add data to test entries in context menu
+        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        gframe = self.form.generator_tab_controller
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+
+        self.assertGreater(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        n_items = len(menu.actions())
+        self.assertGreater(n_items, 0)
+
+        # If there is a selection, additional items should be present in context menu
+        gframe.ui.tableMessages.selectRow(0)
+        menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        self.assertGreater(len(menu.actions()), n_items)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

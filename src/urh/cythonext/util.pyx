@@ -1,7 +1,8 @@
 # noinspection PyUnresolvedReferences
-import numpy as np
 cimport numpy as np
-from libcpp cimport bool
+import numpy as np
+
+np.import_array()
 
 cpdef tuple minmax(float[:] arr):
     cdef long long i, ns = len(arr)

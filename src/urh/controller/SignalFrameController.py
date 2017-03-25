@@ -2,8 +2,7 @@ import locale
 import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
-from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
+from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
     QApplication, QCheckBox
 
@@ -46,9 +45,7 @@ class SignalFrameController(QFrame):
         self.undo_stack = undo_stack
 
         self.ui = Ui_SignalFrame()
-        logger.debug("{}: Call setupUi".format(self.__class__.__name__))
         self.ui.setupUi(self)
-        logger.debug("{}: Called setupUi".format(self.__class__.__name__))
 
         self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
         self.ui.txtEdProto.participants = project_manager.participants
@@ -479,6 +476,34 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.blockSignals(False)
 
+    def eliminate(self):
+        self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
+        self.ui.gvSignal.scene().clear()
+        self.ui.gvSignal.scene().setParent(None)
+
+        if self.signal is not None:
+            # Avoid memory leaks
+            self.scene_manager.eliminate()
+            self.signal.eliminate()
+            self.proto_analyzer.eliminate()
+            self.ui.gvSignal.scene_manager.eliminate()
+
+        self.ui.gvLegend.eliminate()
+        self.ui.gvSignal.eliminate()
+
+        self.scene_manager = None
+        self.signal = None
+        self.proto_analyzer = None
+
+        self.ui.layoutWidget.setParent(None)
+        self.ui.layoutWidget.deleteLater()
+
+        self.setParent(None)
+        self.destroy()
+        self.deleteLater()
+
+
+
     @pyqtSlot()
     def on_signal_zoomed(self):
         gvs = self.ui.gvSignal
@@ -596,7 +621,7 @@ class SignalFrameController(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialogController(project_manager, modulated_data=self.signal.data, parent=self)
+            dialog = SendDialogController(project_manager, modulated_data=self.signal.data, parent=None)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -818,11 +843,10 @@ class SignalFrameController(QFrame):
         self.jump_sync = True
 
     def refresh_signal(self, draw_full_signal=False):
-        gvs = self.ui.gvSignal
-        gvs.sel_area_active = False
+        self.ui.gvSignal.sel_area_active = False
         self.draw_signal(draw_full_signal)
 
-        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
+        self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
         self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
 
         selected = 0
@@ -833,7 +857,7 @@ class SignalFrameController(QFrame):
         self.__set_duration()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
-        gvs.sel_area_active = True
+        self.ui.gvSignal.sel_area_active = True
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):

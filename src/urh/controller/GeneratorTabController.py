@@ -19,7 +19,6 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
@@ -95,11 +94,7 @@ class GeneratorTabController(QWidget):
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
         self.ui.tableMessages.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tableMessages.encodings_updated.connect(self.on_table_selection_changed)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_table)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_pause_list)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_label_list)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_estimated_time)
-        self.table_model.undo_stack.indexChanged.connect(self.set_fuzzing_ui_status)
+        self.table_model.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
         self.table_model.protocol.qt_signals.line_duplicated.connect(self.refresh_pause_list)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -141,11 +136,13 @@ class GeneratorTabController(QWidget):
         is_data_there = self.table_model.display_data is not None and len(self.table_model.display_data) > 0
         self.ui.btnSend.setEnabled(is_data_there)
         self.ui.btnGenerate.setEnabled(is_data_there)
+        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def refresh_label_list(self):
         self.label_list_model.message = self.selected_message
         self.label_list_model.update()
+        QApplication.instance().processEvents()
 
     @property
     def generator_undo_stack(self) -> QUndoStack:
@@ -228,7 +225,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialogController(self.modulators, parent=self)
+        modulator_dialog = ModulatorDialogController(self.modulators, parent=None)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -248,6 +245,14 @@ class GeneratorTabController(QWidget):
         dialog.ui.gVData.auto_fit_view()
         dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
         dialog.ui.gVCarrier.auto_fit_view()
+
+    @pyqtSlot()
+    def on_undo_stack_index_changed(self):
+        self.refresh_table()
+        self.refresh_pause_list()
+        self.refresh_label_list()
+        self.refresh_estimated_time()
+        self.set_fuzzing_ui_status()
 
     @pyqtSlot()
     def show_modulation_dialog(self):
@@ -304,6 +309,7 @@ class GeneratorTabController(QWidget):
             sr = self.modulators[self.table_model.protocol.messages[i].modulator_indx].sample_rate
             item = fmt_str.format(pause, i + 1, i + 2, Formatter.science_time(pause / sr))
             self.ui.lWPauses.addItem(item)
+        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def on_lWpauses_selection_changed(self):
@@ -384,9 +390,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
-        pac = self.table_model.protocol
-        assert isinstance(pac, ProtocolAnalyzerContainer)
-        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.message_type)
+        fuzz_active = any(lbl.active_fuzzing for msg in self.table_model.protocol.messages for lbl in msg.message_type)
         self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()
@@ -398,10 +402,11 @@ class GeneratorTabController(QWidget):
             self.ui.btnFuzz.setFont(font)
             self.ui.btnFuzz.setStyleSheet("")
 
-        has_same_message = pac.multiple_fuzz_labels_per_message
+        has_same_message = self.table_model.protocol.multiple_fuzz_labels_per_message
         self.ui.rBSuccessive.setEnabled(has_same_message)
         self.ui.rBExhaustive.setEnabled(has_same_message)
         self.ui.rbConcurrent.setEnabled(has_same_message)
+        QApplication.instance().processEvents()
 
     def refresh_existing_encodings(self, encodings_from_file):
         """
@@ -438,6 +443,7 @@ class GeneratorTabController(QWidget):
 
         self.ui.lEstimatedTime.setText(
             locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
+        QApplication.instance().processEvents()
 
     @pyqtSlot(int, int, int)
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
@@ -475,6 +481,7 @@ class GeneratorTabController(QWidget):
         self.tree_model.rootItem.addGroup()
         self.table_model.protocol.clear()
         self.table_model.clear()
+        QApplication.processEvents()
         self.refresh_tree()
         self.refresh_table()
         self.refresh_label_list()
@@ -484,7 +491,7 @@ class GeneratorTabController(QWidget):
         try:
             modulated_data = self.modulate_data()
             try:
-                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=None)
             except OSError as e:
                 logger.error(repr(e))
                 return

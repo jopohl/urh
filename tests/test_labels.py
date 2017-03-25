@@ -4,9 +4,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
 from urh.util.Logger import logger
 
 app = tests.utils_testing.get_app()
@@ -38,7 +38,8 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(len(self.cframe.active_message_type), 2)
 
     def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)

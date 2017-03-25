@@ -23,11 +23,6 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.signal.bit_len = 100
         self.signal.tolerance = 5
 
-    def tearDown(self):
-        self.signal = None
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def test_analyze_button_fsk(self):
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.cfc.ui.btnAnalyze.click()

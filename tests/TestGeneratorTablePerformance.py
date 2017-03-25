@@ -9,7 +9,7 @@ from urh.controller.MainController import MainController
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-app = tests.utils_testing.app
+app = tests.utils_testing.get_app()
 
 
 class TestGeneratorTable(unittest.TestCase):
@@ -33,10 +33,6 @@ class TestGeneratorTable(unittest.TestCase):
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
         self.__add_labels()
-
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
 
     def test_performance(self):
         item = self.gframe.tree_model.rootItem.children[0].children[0]

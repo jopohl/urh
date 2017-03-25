@@ -37,9 +37,6 @@ class TestLabels(unittest.TestCase):
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)

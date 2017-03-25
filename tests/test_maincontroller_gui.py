@@ -10,10 +10,6 @@ class TestMaincontrollerGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def test_open_recent(self):
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)

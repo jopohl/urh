@@ -17,10 +17,6 @@ class TestGenerator(unittest.TestCase):
         constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
         self.form = MainController()
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def test_generation(self):
         """
         Complex test including much functionality

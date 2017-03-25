@@ -33,11 +33,6 @@ class TestSendRecvDialog(unittest.TestCase):
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-    def tearDown(self):
-        self.signal = None
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def __get_recv_dialog(self):
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
@@ -69,8 +64,6 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
-        dialog.setParent(None)
-        dialog.deleteLater()
         tests.utils_testing.short_wait()
 
     def test_network_sdr_enabled(self):

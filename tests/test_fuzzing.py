@@ -65,10 +65,6 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(self.gframe.table_model.row_count, 1)
         self.assertEqual(len(self.gframe.table_model.protocol.protocol_labels), 3)
 
-    def tearDown(self):
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def test_fuzz_label_bit(self):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
 

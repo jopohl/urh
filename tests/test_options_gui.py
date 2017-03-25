@@ -14,14 +14,6 @@ class TestOptionsGUI(unittest.TestCase):
         self.form = MainController()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
 

@@ -1,13 +1,13 @@
-from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QPainterPath, QFont, QPen, QColor
 import math
+
 import numpy as np
+from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtGui import QFont, QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
+from urh.cythonext import path_creator, util
 from urh.ui.ZoomableScene import ZoomableScene
-from urh.cythonext import path_creator
-from urh.cythonext import util
 
 
 class SceneManager(QObject):

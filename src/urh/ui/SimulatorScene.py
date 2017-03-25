@@ -8,6 +8,7 @@ import weakref
 
 from urh import constants
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset
 
 class SimulatorItem(QGraphicsObject):
     def __init__(self, parent=None):
@@ -316,6 +317,7 @@ class RuleConditionItem(SimulatorItem):
         self.text = RuleTextItem(type.value, QColor.fromRgb(139,148,148), self)
         self.setFlags(QGraphicsItem.ItemIsSelectable)
         self.sim_items = []
+        self.ruleset = SimulatorRuleset()
 
     def refresh(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
@@ -532,6 +534,8 @@ class GotoAction(ActionItem):
     def update_label(self):
         if self.goto_target:
             self.text.setPlainText("GOTO " + self.goto_target.index)
+        else:
+            self.text.setPlainText("GOTO")
 
 class ExternalProgramAction(ActionItem):
     def __init__(self, parent=None):

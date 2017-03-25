@@ -151,3 +151,7 @@ class TestPlugins(unittest.TestCase):
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")
+
+        dialog.close()
+        dialog.setParent(None)
+        dialog.deleteLater()

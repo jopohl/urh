@@ -577,7 +577,7 @@ class MainController(QMainWindow):
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
         try:
-            r = ReceiveDialogController(pm, parent=self)
+            r = ReceiveDialogController(pm, parent=None)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -646,7 +646,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
-        pdc = ProjectDialogController(parent=self)
+        pdc = ProjectDialogController(parent=None)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 

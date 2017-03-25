@@ -621,7 +621,7 @@ class SignalFrameController(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialogController(project_manager, modulated_data=self.signal.data, parent=self)
+            dialog = SendDialogController(project_manager, modulated_data=self.signal.data, parent=None)
         except OSError as e:
             logger.error(repr(e))
             return

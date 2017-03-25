@@ -72,7 +72,7 @@ class TestProjectManager(unittest.TestCase):
         gain = 42
         descr = "URH rockz."
 
-        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form)
+        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=None)
 
         dialog.ui.spinBoxFreq.setValue(frequency)
         self.assertEqual(dialog.freq, frequency)
@@ -132,7 +132,7 @@ class TestProjectManager(unittest.TestCase):
 
         self.form.project_manager.from_dialog(dialog)
 
-        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form, new_project=False)
+        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=None, new_project=False)
         self.assertEqual(dialog.ui.spinBoxFreq.value(), frequency)
         self.assertEqual(dialog.ui.spinBoxSampleRate.value(), sample_rate)
         self.assertEqual(dialog.ui.spinBoxBandwidth.value(), bandwidth)

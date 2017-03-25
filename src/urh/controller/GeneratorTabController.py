@@ -225,7 +225,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialogController(self.modulators, parent=self.parent())
+        modulator_dialog = ModulatorDialogController(self.modulators, parent=None)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -491,7 +491,7 @@ class GeneratorTabController(QWidget):
         try:
             modulated_data = self.modulate_data()
             try:
-                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=None)
             except OSError as e:
                 logger.error(repr(e))
                 return

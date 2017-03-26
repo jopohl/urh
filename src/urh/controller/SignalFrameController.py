@@ -475,24 +475,18 @@ class SignalFrameController(QFrame):
             self.ui.txtEdProto.blockSignals(False)
 
     def eliminate(self):
-        logger.debug("stop proto selection timer")
         self.proto_selection_timer.stop()
-        logger.debug("Remove layout")
         self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
-        logger.debug("clear secene")
         self.ui.gvSignal.scene().clear()
-        logger.debug("Set scene parent")
         self.ui.gvSignal.scene().setParent(None)
 
         if self.signal is not None:
             # Avoid memory leaks
-            logger.debug("Eliminate attributes")
             self.scene_manager.eliminate()
             self.signal.eliminate()
             self.proto_analyzer.eliminate()
             self.ui.gvSignal.scene_manager.eliminate()
 
-        logger.debug("eliminate gvs")
         self.ui.gvLegend.eliminate()
         self.ui.gvSignal.eliminate()
 

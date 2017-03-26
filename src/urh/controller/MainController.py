@@ -283,8 +283,8 @@ class MainController(QMainWindow):
         self.ui.progressBar.hide()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
+        logger.debug("closing signal frame")
         try:
-            logger.debug("write info")
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
@@ -292,13 +292,11 @@ class MainController(QMainWindow):
                 proto = None
 
             if proto is not None:
-                logger.debug("remove prot")
                 self.compare_frame_controller.remove_protocol(proto)
                 # Needs to be removed in generator also, otherwise program crashes,
                 # if item from tree in generator is selected and corresponding signal is closed
                 self.generator_tab_controller.tree_model.remove_protocol(proto)
 
-                logger.debug("eliminate proto")
                 proto.eliminate()
                 del self.signal_protocol_dict[signal_frame]
 
@@ -311,7 +309,6 @@ class MainController(QMainWindow):
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
 
             num_frames = self.signal_tab_controller.num_frames
-            logger.debug("Eliminate signal frame")
             signal_frame.eliminate()
             assert self.signal_tab_controller.num_frames == num_frames - 1
             # self.signal_tab_controller.update_splitter()
@@ -320,6 +317,8 @@ class MainController(QMainWindow):
             self.set_frame_numbers()
             self.refresh_main_menu()
         except Exception as e:
+            logger.debug("Exception occured")
+            logger.debug(str(e))
             logger.debug(str(e) + traceback.format_exc())
             Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
             self.ui.progressBar.hide()
@@ -395,10 +394,8 @@ class MainController(QMainWindow):
 
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        logger.debug("save project")
         self.project_manager.saveProject()
 
-        logger.debug("close all signaltab")
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
         self.generator_tab_controller.close_all()

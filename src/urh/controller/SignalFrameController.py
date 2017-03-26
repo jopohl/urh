@@ -481,6 +481,7 @@ class SignalFrameController(QFrame):
 
         if self.signal is not None:
             # Avoid memory leaks
+            logger.debug("Eliminate attributes")
             self.scene_manager.eliminate()
             self.signal.eliminate()
             self.proto_analyzer.eliminate()

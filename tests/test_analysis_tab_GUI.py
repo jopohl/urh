@@ -27,6 +27,7 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def tearDown(self):
         logger.debug("Teardown")
         self.form.close_all()
+        logger.debug("Closed all")
         self.signal = None
         tests.utils_testing.short_wait()
 

@@ -1,5 +1,4 @@
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
@@ -65,11 +64,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
                      "spinbox_sniff_Center", "spinbox_sniff_BitLen", "spinbox_sniff_ErrorTolerance",
                      "label_sniff_Noise", "label_sniff_Center", "label_sniff_BitLength", "label_sniff_Tolerance"):
             getattr(self.ui, item).setVisible(visible)
-
-    def closeEvent(self, event: QCloseEvent):
-        if hasattr(self, "sniffer"):
-            self.sniffer.stop()
-        event.accept()
 
     @property
     def device(self):

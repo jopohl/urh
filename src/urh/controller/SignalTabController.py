@@ -232,22 +232,3 @@ class SignalTabController(QWidget):
     def on_participant_changed(self):
         for sframe in self.signal_frames:
             sframe.on_participant_changed()
-
-    def update_splitter(self):
-        self.signal_vlay.removeWidget(self.splitter)
-        splitter = QSplitter()
-        splitter.setOrientation(Qt.Vertical)
-        splitter.setChildrenCollapsible(True)
-        placeholder_widget = QWidget()
-        placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
-        for frame in self.signal_frames:
-            splitter.addWidget(frame)
-
-        splitter.addWidget(placeholder_widget)
-        self.ui.scrlAreaSignals.layout().addWidget(splitter)
-
-        self.splitter.setParent(None)
-        self.splitter.deleteLater()
-        del self.splitter
-
-        self.splitter = splitter

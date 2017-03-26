@@ -307,10 +307,7 @@ class MainController(QMainWindow):
                 # Non-Empty Frame (when a signal and not a protocol is opened)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
 
-            num_frames = self.signal_tab_controller.num_frames
             signal_frame.eliminate()
-            assert self.signal_tab_controller.num_frames == num_frames - 1
-            self.signal_tab_controller.update_splitter()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()

@@ -77,7 +77,7 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
     if len(samples) <= 2:
-        return np.empty(len(samples), dtype=np.float32)
+        return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i, ns
     cdef float complex tmp = 0
@@ -87,7 +87,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     cdef float imag = 0
     ns = len(samples)
 
-    cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
+    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
@@ -211,7 +211,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
     cdef float NOISE = get_noise_for_mod_type(mod_type)
     ns = len(samples)
 
-    cdef unsigned long long[:, ::1] result = np.empty((ns, 2), dtype=np.uint64, order="C")
+    cdef unsigned long long[:, ::1] result = np.zeros((ns, 2), dtype=np.uint64, order="C")
     if ns == 0:
         return result
 

@@ -32,6 +32,8 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def tearDown(self):
         self.form.close_all()
+        self.signal.eliminate()
+        self.signal = None
         tests.utils_testing.short_wait()
 
     def __get_recv_dialog(self):

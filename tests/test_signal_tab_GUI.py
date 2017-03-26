@@ -223,6 +223,7 @@ class TestSignalTabGUI(unittest.TestCase):
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         frame.ui.gvSignal.on_create_action_triggered()
+        app.processEvents()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.assertEqual(self.form.signal_tab_controller.signal_frames[1].signal.num_samples, end - start)

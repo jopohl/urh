@@ -119,8 +119,10 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_add_message_type(self):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
+        app.processEvents()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
         self.cfc.ui.btnRemoveMessagetype.click()
+        app.processEvents()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):

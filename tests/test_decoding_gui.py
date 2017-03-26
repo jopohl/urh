@@ -22,6 +22,7 @@ class TestDecodingGUI(unittest.TestCase):
     def tearDown(self):
         self.signal = None
         self.form.close_all()
+        self.dialog.close()
         tests.utils_testing.short_wait()
 
     def test_edit_decoding(self):

@@ -124,6 +124,8 @@ class DecoderWidgetController(QDialog):
     def closeEvent(self, event: QCloseEvent):
         self.ui.graphicsView_decoded.eliminate()
         self.ui.graphicsView_signal.eliminate()
+        self.signals.clear()
+        del self.signals
         event.accept()
 
     def choose_decoder(self):

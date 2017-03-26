@@ -28,7 +28,8 @@ class TestAnalysisTabGUI(unittest.TestCase):
         logger.debug("Teardown")
         self.form.close_all()
         logger.debug("Closed all")
-        self.signal = None
+        self.signal.eliminate()
+        del self.signal
         tests.utils_testing.short_wait()
 
     def test_analyze_button_fsk(self):

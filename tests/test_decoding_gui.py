@@ -20,9 +20,10 @@ class TestDecodingGUI(unittest.TestCase):
                                               project_manager=self.form.project_manager)
 
     def tearDown(self):
-        self.signal = None
         self.form.close_all()
         self.dialog.close()
+        self.signal.eliminate()
+        del self.signal
         tests.utils_testing.short_wait()
 
     def test_edit_decoding(self):

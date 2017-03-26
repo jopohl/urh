@@ -766,13 +766,8 @@ class ProtocolAnalyzer(object):
         self.from_xml_tag(root, read_bits=read_bits)
 
     def eliminate(self):
-        try:
-            for message_type in self.message_types:
-                message_type.clear()
-        except TypeError:
-            pass  # No message types defined
-        self.message_types.clear()
-        self.messages.clear()
+        self.message_types = None
+        self.messages = None
         if self.signal is not None:
             self.signal.eliminate()
         self.signal = None

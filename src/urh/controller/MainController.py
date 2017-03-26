@@ -284,8 +284,7 @@ class MainController(QMainWindow):
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
-            signal_frame.proto_selection_timer.stop()
-            signal_frame.ui.gvSignal.redraw_timer.stop()
+            logger.debug("write info")
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
@@ -293,11 +292,13 @@ class MainController(QMainWindow):
                 proto = None
 
             if proto is not None:
+                logger.debug("remove prot")
                 self.compare_frame_controller.remove_protocol(proto)
                 # Needs to be removed in generator also, otherwise program crashes,
                 # if item from tree in generator is selected and corresponding signal is closed
                 self.generator_tab_controller.tree_model.remove_protocol(proto)
 
+                logger.debug("eliminate proto")
                 proto.eliminate()
                 del self.signal_protocol_dict[signal_frame]
 
@@ -390,10 +391,13 @@ class MainController(QMainWindow):
         event.accept()
 
     def close_all(self):
+
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
+        logger.debug("save project")
         self.project_manager.saveProject()
 
+        logger.debug("close all signaltab")
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
         self.generator_tab_controller.close_all()

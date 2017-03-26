@@ -475,6 +475,8 @@ class SignalFrameController(QFrame):
             self.ui.txtEdProto.blockSignals(False)
 
     def eliminate(self):
+        logger.debug("stop proto selection timer")
+        self.proto_selection_timer.stop()
         logger.debug("Remove layout")
         self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
         logger.debug("clear secene")

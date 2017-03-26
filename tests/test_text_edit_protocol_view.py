@@ -32,7 +32,6 @@ class TestTextEditProtocolView(unittest.TestCase):
         QTest.qWait(1)
 
     def test_create_context_menu(self):
-        self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(2)
 

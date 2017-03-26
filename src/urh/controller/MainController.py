@@ -320,6 +320,7 @@ class MainController(QMainWindow):
             self.set_frame_numbers()
             self.refresh_main_menu()
         except Exception as e:
+            logger.debug(str(e) + traceback.format_exc())
             Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
             self.ui.progressBar.hide()
             self.unsetCursor()

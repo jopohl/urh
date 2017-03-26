@@ -19,8 +19,8 @@ class FFTSceneManager(SceneManager):
 
         self.init_scene(draw_grid=False)
 
-        self.peak_item = self.scene.addPath(QPainterPath(), QPen(constants.PEAK_COLOR, Qt.FlatCap))
-        """:type: QGraphicsPathItem """
+        self.peak_item = self.scene.addPath(QPainterPath(),
+                                            QPen(constants.PEAK_COLOR, Qt.FlatCap))  # type: QGraphicsPathItem
 
         font = QFont("Helvetica")
         font.setStyleHint(QFont.SansSerif, QFont.OpenGLCompatible)
@@ -62,3 +62,8 @@ class FFTSceneManager(SceneManager):
     def set_text(self, text):
         self.scene.draw_grid = False
         super().set_text(text)
+
+    def eliminate(self):
+        super().eliminate()
+        self.peak = None
+        self.peak_item = None

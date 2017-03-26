@@ -1,12 +1,6 @@
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QActionGroup
-from PyQt5.QtWidgets import QMenu
-from PyQt5.QtWidgets import QUndoStack
+from PyQt5.QtCore import QPoint, Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QContextMenuEvent, QIcon, QKeySequence
+from PyQt5.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
@@ -95,6 +89,18 @@ class EditableGraphicView(ZoomableGraphicView):
         self.redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         self.redo_action.setShortcut(QKeySequence.Redo)
         self.redo_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+
+    def eliminate(self):
+        self.participants = None
+        self.stored_item = None
+        if self.signal is not None:
+            self.signal.eliminate()
+        self.__signal = None
+        self.insert_sine_plugin = None
+        self.undo_action = None
+        self.redo_action = None
+        self.undo_stack = None
+        super().eliminate()
 
     @property
     def sample_rate(self) -> float:

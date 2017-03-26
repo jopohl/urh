@@ -3,13 +3,11 @@ import os
 import traceback
 
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication
 
-from urh import constants
-from urh import version
+from urh import constants, version
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.GeneratorTabController import GeneratorTabController
@@ -135,6 +133,8 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setVisible(False)
         self.ui.actionMaximize_all.setVisible(False)
 
+        QApplication.instance().processEvents()
+
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
@@ -248,12 +248,10 @@ class MainController(QMainWindow):
 
         pa = ProtocolAnalyzer(signal)
         sig_frame = self.signal_tab_controller.add_signal_frame(pa)
-        logger.debug("{}: Created signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(10)
         QApplication.instance().processEvents()
 
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
-        logger.debug("{}: Added protocol for signal frame".format(self.__class__.__name__))
         self.ui.progressBar.setValue(20)
         QApplication.instance().processEvents()
 
@@ -272,12 +270,10 @@ class MainController(QMainWindow):
         self.ui.progressBar.setValue(80)
         QApplication.instance().processEvents()
 
-        logger.debug("{}: Refresh signal frame".format(self.__class__.__name__))
         sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sig_frame.ui.gvSignal.redraw_view()
 
-        logger.debug("{}: Autofit view signal frame".format(self.__class__.__name__))
         sig_frame.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
         self.ui.progressBar.setValue(99)
@@ -285,11 +281,15 @@ class MainController(QMainWindow):
 
         self.compare_frame_controller.filter_search_results()
 
+        QApplication.instance().processEvents()
         self.refresh_main_menu()
         self.ui.progressBar.hide()
+        QApplication.instance().processEvents()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
+            signal_frame.proto_selection_timer.stop()
+            signal_frame.ui.gvSignal.redraw_timer.stop()
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
                 proto = self.signal_protocol_dict[signal_frame]
@@ -302,7 +302,7 @@ class MainController(QMainWindow):
                 # if item from tree in generator is selected and corresponding signal is closed
                 self.generator_tab_controller.tree_model.remove_protocol(proto)
 
-                proto.destroy()
+                proto.eliminate()
                 del self.signal_protocol_dict[signal_frame]
 
             if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
@@ -310,17 +310,13 @@ class MainController(QMainWindow):
                     self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() - signal_frame.height())
 
             if signal_frame.signal is not None:
-                # Non-Empty Frame (when a signal and not a protocol is opended)
+                # Non-Empty Frame (when a signal and not a protocol is opened)
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
-                signal_frame.scene_manager.deleteLater()
-                signal_frame.signal.destroy()
-                signal_frame.signal.deleteLater()
-                signal_frame.proto_analyzer.destroy()
-            signal_frame.proto_analyzer = None
-            signal_frame.close()
-            QApplication.instance().processEvents()
-            signal_frame.destroy()
-            QApplication.instance().processEvents()
+
+            num_frames = self.signal_tab_controller.num_frames
+            signal_frame.eliminate()
+            assert self.signal_tab_controller.num_frames == num_frames - 1
+            self.signal_tab_controller.update_splitter()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()

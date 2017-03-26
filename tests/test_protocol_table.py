@@ -2,12 +2,11 @@ import time
 import unittest
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from urh.controller.MainController import MainController
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 app = tests.utils_testing.get_app()
 
@@ -32,6 +31,10 @@ class TestProtocolTable(unittest.TestCase):
 
         self.__add_labels()
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
+
+    def tearDown(self):
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_set_shown_protocols_performance(self):
         t = time.time()

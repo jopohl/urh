@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtGui import QColor
 
-from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -88,8 +87,8 @@ class GeneratorTableModel(TableModel):
                 continue
 
         # Which Nodes to add?
-        nodes_to_add = []
-        """:type: list of ProtocolTreeItem """
+        nodes_to_add = []  # type: list[ProtocolTreeItem]
+
         for group_node in group_nodes:
             nodes_to_add.extend(group_node.children)
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])

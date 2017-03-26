@@ -1,12 +1,14 @@
 # noinspection PyUnresolvedReferences
+cimport numpy as np
+import numpy as np
 from libcpp cimport bool
 
-# noinspection PyUnresolvedReferences
-import numpy as np
-cimport numpy as np
+np.import_array()
+
 from urh.cythonext import util
 
 from cython.parallel import prange
+# noinspection PyUnresolvedReferences
 from libc.math cimport atan2, sqrt, M_PI, sin, cos
 
 cdef:

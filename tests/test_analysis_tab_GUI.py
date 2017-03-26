@@ -1,24 +1,19 @@
+import copy
 import unittest
 
-import copy
-
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
 
 import tests.utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
-
-from tests.utils_testing import get_path_for_data_file, short_wait
 
 app = tests.utils_testing.get_app()
 
 
 class TestAnalysisTabGUI(unittest.TestCase):
     def setUp(self):
-        short_wait()
         self.form = MainController()
-        short_wait()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
         app.processEvents()
@@ -27,6 +22,11 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.signal.qad_center = 0
         self.signal.bit_len = 100
         self.signal.tolerance = 5
+
+    def tearDown(self):
+        self.signal = None
+        self.form.close_all()
+        tests.utils_testing.short_wait()
 
     def test_analyze_button_fsk(self):
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
@@ -162,9 +162,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        short_wait()
+        app.processEvents()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        short_wait()
+        app.processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 

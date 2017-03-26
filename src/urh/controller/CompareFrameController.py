@@ -645,10 +645,11 @@ class CompareFrameController(QFrame):
         self.updateUI()
 
     def reset(self):
-        self.proto_tree_model.rootItem.clearChilds()
-        self.proto_tree_model.rootItem.addGroup()
         for message_type in self.proto_analyzer.message_types:
             message_type.clear()
+        self.proto_tree_model.rootItem.clearChilds()
+        QApplication.processEvents()
+        self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
     def show_protocol_label_dialog(self, preselected_index: int):

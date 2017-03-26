@@ -2,14 +2,8 @@ import locale
 import time
 
 from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtGui import QRegExpValidator, QIcon
-from PyQt5.QtGui import QTransform
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QSlider
-from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtGui import QCloseEvent, QRegExpValidator, QIcon, QTransform
+from PyQt5.QtWidgets import QDialog, QGraphicsView, QLabel, QSlider, QSpinBox
 
 from urh import constants
 from urh.dev import config
@@ -31,16 +25,14 @@ class SendRecvDialogController(QDialog):
         self.is_tx = is_tx
 
         self.ui = Ui_SendRecvDialog()
-        logger.debug("{}: Call setupUi".format(self.__class__.__name__))
         self.ui.setupUi(self)
-        logger.debug("{}: Called setupUi".format(self.__class__.__name__))
 
         self.set_sniff_ui_items_visible(False)
 
         self.graphics_view = None  # type: QGraphicsView
         self.__device = None  # type: VirtualDevice
 
-        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.backend_handler = BackendHandler()
 
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(False)
@@ -81,6 +73,9 @@ class SendRecvDialogController(QDialog):
 
         if device in items:
             self.ui.cbDevice.setCurrentIndex(items.index(device))
+
+        if testing_mode:
+            self.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.timer = QTimer(self)
 
@@ -542,14 +537,11 @@ class SendRecvDialogController(QDialog):
 
     def _restart_device_thread(self):
         self.device.stop("Restarting with new port")
-        QApplication.instance().processEvents()
 
         if self.device.backend == Backends.grc:
             self.device.increase_gr_port()
 
-
         self.device.start()
-        QApplication.instance().processEvents()
 
     @pyqtSlot()
     def on_clear_clicked(self):

@@ -28,7 +28,7 @@ class TestSignalTabGUI(unittest.TestCase):
         self.form = MainController()
 
     def tearDown(self):
-        self.form.close()
+        self.form.close_all()
         QApplication.instance().processEvents()
         QTest.qWait(1)
 

@@ -448,6 +448,7 @@ class MainController(QMainWindow):
 
         settings = constants.SETTINGS
         recent_file_paths = settings.value("recentFiles", [])
+        recent_file_paths = [] if recent_file_paths is None else recent_file_paths  # check None for OSX
         recent_file_paths = [p for p in recent_file_paths if p != file_path and p is not None and os.path.exists(p)]
         recent_file_paths.insert(0, file_path)
         recent_file_paths = recent_file_paths[:constants.MAX_RECENT_FILE_NR]

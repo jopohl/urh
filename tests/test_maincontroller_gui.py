@@ -15,12 +15,6 @@ class TestMaincontrollerGUI(unittest.TestCase):
         tests.utils_testing.short_wait()
 
     def test_open_recent(self):
-        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
-        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
-
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 0)
         self.form.recentFileActionList[0].trigger()
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)

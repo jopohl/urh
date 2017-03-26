@@ -460,6 +460,9 @@ class MainController(QMainWindow):
         for i in range(len(self.recentFileActionList)):
             self.recentFileActionList[i].setVisible(False)
 
+        if recent_file_paths is None:
+            return
+
         for i, file_path in enumerate(recent_file_paths):
             suffix = " (Directory)" if os.path.isdir(file_path) else ""
             stripped_name = QFileInfo(file_path).fileName() + suffix

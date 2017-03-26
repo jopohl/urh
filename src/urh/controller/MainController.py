@@ -312,7 +312,7 @@ class MainController(QMainWindow):
             num_frames = self.signal_tab_controller.num_frames
             signal_frame.eliminate()
             assert self.signal_tab_controller.num_frames == num_frames - 1
-            self.signal_tab_controller.update_splitter()
+            # self.signal_tab_controller.update_splitter()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()

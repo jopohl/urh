@@ -129,10 +129,13 @@ class ModulatorDialogController(QDialog):
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
 
     def closeEvent(self, event: QCloseEvent):
-        event.accept()
-
         for gv in (self.ui.gVModulated, self.ui.gVCarrier, self.ui.gVOriginalSignal, self.ui.gVData):
             gv.eliminate()
+
+        self.protocol = None
+        self.modulators = None
+
+        event.accept()
 
     def draw_carrier(self):
         self.ui.gVCarrier.plot_data(self.current_modulator.carrier_data)

@@ -548,6 +548,14 @@ class SendRecvDialogController(QDialog):
         pass
 
     def closeEvent(self, event: QCloseEvent):
+        # For Spectrum Dialog Controller
+        if hasattr(self, "gain_timer"):
+            self.gain_timer.stop()
+        if hasattr(self, "if_gain_timer"):
+            self.if_gain_timer.stop()
+        if hasattr(self, "bb_gain_timer"):
+            self.bb_gain_timer.stop()
+
         self.emit_editing_finished_signals()
         if self.device.backend == Backends.network:
             event.accept()
@@ -563,6 +571,12 @@ class SendRecvDialogController(QDialog):
         if self.device.backend != Backends.none:
             # Backend none is selected, when no device is available
             logger.debug("Cleaning up device")
+            try:
+                # For Protocol Sniffer
+                self.device.index_changed.disconnect()
+            except TypeError:
+                pass
+
             self.device.cleanup()
             logger.debug("Successfully cleaned up device")
             self.recording_parameters.emit(str(self.device.name), dict(frequency=self.device.frequency,
@@ -574,6 +588,7 @@ class SendRecvDialogController(QDialog):
                                                                        freq_correction=self.device.freq_correction
                                                                        ))
 
+        self.__device = None
         event.accept()
 
     @pyqtSlot()

@@ -123,9 +123,9 @@ class DecoderWidgetController(QDialog):
         self.ui.cutmark2.valueChanged.connect(self.handle_cut)
 
     def closeEvent(self, event: QCloseEvent):
-        event.accept()
         self.ui.graphicsView_decoded.eliminate()
         self.ui.graphicsView_signal.eliminate()
+        event.accept()
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())

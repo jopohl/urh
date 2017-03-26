@@ -310,7 +310,7 @@ class MainController(QMainWindow):
             num_frames = self.signal_tab_controller.num_frames
             signal_frame.eliminate()
             assert self.signal_tab_controller.num_frames == num_frames - 1
-            # self.signal_tab_controller.update_splitter()
+            self.signal_tab_controller.update_splitter()
 
             self.compare_frame_controller.ui.treeViewProtocols.expandAll()
             self.set_frame_numbers()
@@ -394,7 +394,10 @@ class MainController(QMainWindow):
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
-        self.generator_tab_controller.close_all()
+        self.generator_tab_controller.table_model.protocol.clear()
+        self.generator_tab_controller.refresh_tree()
+        self.generator_tab_controller.refresh_table()
+        self.generator_tab_controller.refresh_label_list()
 
         self.project_manager.project_path = ""
         self.project_manager.project_file = None

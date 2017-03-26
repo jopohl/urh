@@ -471,15 +471,6 @@ class GeneratorTabController(QWidget):
         self.table_model.update()
         self.ui.tableMessages.resize_columns()
 
-    def close_all(self):
-        self.tree_model.rootItem.clearChilds()
-        self.tree_model.rootItem.addGroup()
-        self.table_model.protocol.clear()
-        self.table_model.clear()
-        self.refresh_tree()
-        self.refresh_table()
-        self.refresh_label_list()
-
     @pyqtSlot()
     def on_btn_send_clicked(self):
         try:

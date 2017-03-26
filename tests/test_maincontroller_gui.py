@@ -15,9 +15,12 @@ class TestMaincontrollerGUI(unittest.TestCase):
         tests.utils_testing.short_wait()
 
     def test_open_recent(self):
-        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 0)
-        self.form.recentFileActionList[0].trigger()
+        # Ensure we have at least one recent action
+        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
+
+        self.form.recentFileActionList[0].trigger()
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 2)
 
     def test_update_decodings(self):
         self.form.update_decodings()

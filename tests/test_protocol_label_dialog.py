@@ -2,7 +2,6 @@ import unittest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 
@@ -11,8 +10,6 @@ app = tests.utils_testing.get_app()
 
 class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("align_labels", True)
-
         self.form = MainController()
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
 

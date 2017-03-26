@@ -50,6 +50,7 @@ def get_app():
         constants.SETTINGS.setValue("not_show_save_dialog", True)
         constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
         constants.SETTINGS.setValue("NetworkSDRInterface", True)
+        constants.SETTINGS.setValue("align_labels", True)
     return app
 
 

@@ -88,7 +88,6 @@ class MainController(QMainWindow):
 
         self.recentFileActionList = []
         self.create_connects()
-        self.update_recent_action_list()
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()
@@ -320,24 +319,6 @@ class MainController(QMainWindow):
             self.ui.progressBar.hide()
             self.unsetCursor()
 
-    def update_recent_action_list(self):
-        recent_file_paths = constants.SETTINGS.value("recentFiles")
-        recent_file_paths = [p for p in recent_file_paths if os.path.exists(p)] if recent_file_paths else []
-        it_end = len(recent_file_paths) if len(
-            recent_file_paths) < constants.MAX_RECENT_FILE_NR else constants.MAX_RECENT_FILE_NR
-
-        for i in range(it_end):
-            suffix = " (Directory)" if os.path.isdir(recent_file_paths[i]) else ""
-            stripped_name = QFileInfo(recent_file_paths[i]).fileName() + suffix
-            self.recentFileActionList[i].setText(stripped_name)
-            self.recentFileActionList[i].setData(recent_file_paths[i])
-            self.recentFileActionList[i].setVisible(True)
-
-        for i in range(it_end, constants.MAX_RECENT_FILE_NR):
-            self.recentFileActionList[i].setVisible(False)
-
-        constants.SETTINGS.setValue("recentFiles", recent_file_paths)
-
     def add_files(self, filepaths, group_id=0):
         num_files = len(filepaths)
         if num_files == 0:
@@ -461,20 +442,30 @@ class MainController(QMainWindow):
 
     @pyqtSlot(str)
     def adjust_for_current_file(self, file_path):
+        if file_path is None:
+            return
+
         if file_path in FileOperator.archives.keys():
             file_path = copy.copy(FileOperator.archives[file_path])
 
         settings = constants.SETTINGS
         recent_file_paths = settings.value("recentFiles", [])
-        recent_file_paths = [p for p in recent_file_paths if p != file_path]
+        recent_file_paths = [p for p in recent_file_paths if p != file_path and p is not None and os.path.exists(p)]
         recent_file_paths.insert(0, file_path)
+        recent_file_paths = recent_file_paths[:constants.MAX_RECENT_FILE_NR]
 
-        while len(recent_file_paths) > constants.MAX_RECENT_FILE_NR:
-            recent_file_paths.pop()
+        for i, file_path in enumerate(recent_file_paths):
+            suffix = " (Directory)" if os.path.isdir(file_path) else ""
+            stripped_name = QFileInfo(file_path).fileName() + suffix
+            self.recentFileActionList[i].setText(stripped_name)
+            self.recentFileActionList[i].setData(file_path)
+            self.recentFileActionList[i].setVisible(True)
+
+        for i in range(len(recent_file_paths), constants.MAX_RECENT_FILE_NR):
+            self.recentFileActionList[i].setVisible(False)
 
         settings.setValue("recentFiles", recent_file_paths)
 
-        self.update_recent_action_list()
 
     @pyqtSlot()
     def on_show_field_types_config_action_triggered(self):

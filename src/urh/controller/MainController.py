@@ -310,6 +310,7 @@ class MainController(QMainWindow):
                 self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
 
             num_frames = self.signal_tab_controller.num_frames
+            logger.debug("Eliminate signal frame")
             signal_frame.eliminate()
             assert self.signal_tab_controller.num_frames == num_frames - 1
             # self.signal_tab_controller.update_splitter()

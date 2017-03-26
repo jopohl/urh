@@ -320,7 +320,7 @@ class MainController(QMainWindow):
             logger.debug("Exception occured")
             logger.debug(str(e))
             logger.debug(str(e) + traceback.format_exc())
-            Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
+            # Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
             self.ui.progressBar.hide()
             self.unsetCursor()
 

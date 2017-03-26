@@ -1,4 +1,5 @@
 import struct
+# noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
 from PyQt5.QtCore import QByteArray, QDataStream

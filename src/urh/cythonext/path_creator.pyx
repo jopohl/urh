@@ -1,8 +1,5 @@
 import struct
-cimport numpy as np
-import numpy as np
-from PyQt5.QtCore import QByteArray, QDataStream
-from PyQt5.QtGui import QPainterPath
+
 
 np.import_array()
 

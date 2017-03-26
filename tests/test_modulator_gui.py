@@ -27,10 +27,12 @@ class TestModulatorGUI(unittest.TestCase):
     def setUp(self):
         self.form = MainController()
         self.form.ui.tabWidget.setCurrentIndex(2)
-        self.app.processEvents()
+        QApplication.instance().processEvents()
 
         logger.debug("Preparing Modulation dialog")
         self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
         logger.debug("Initializing Modulation dialog")
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
@@ -39,9 +41,6 @@ class TestModulatorGUI(unittest.TestCase):
     def tearDown(self):
         self.form.close_all()
         self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        sip.delete(self.dialog)
         QApplication.instance().processEvents()
         QTest.qWait(1)
 

@@ -477,8 +477,6 @@ class SignalFrameController(QFrame):
     def eliminate(self):
         self.proto_selection_timer.stop()
         self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
-        self.ui.gvSignal.scene().clear()
-        self.ui.gvSignal.scene().setParent(None)
 
         if self.signal is not None:
             # Avoid memory leaks

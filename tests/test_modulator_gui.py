@@ -39,6 +39,9 @@ class TestModulatorGUI(unittest.TestCase):
     def tearDown(self):
         self.form.close_all()
         self.dialog.close()
+        self.dialog.setParent(None)
+        self.dialog.deleteLater()
+        sip.delete(self.dialog)
         QApplication.instance().processEvents()
         QTest.qWait(1)
 

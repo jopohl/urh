@@ -1,12 +1,24 @@
 import sys
 import unittest
 
+import sip
+from PyQt5.QtWidgets import QApplication
+
 from tests import utils_testing
 
 utils_testing.write_settings()
 
 
 class TestWhitening(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def test_native_backends_installed(self):
         if sys.platform == "win32":
             import os

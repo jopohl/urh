@@ -1,6 +1,9 @@
+import sys
 import unittest
 
 import numpy as np
+import sip
+from PyQt5.QtWidgets import QApplication
 
 from tests import utils_testing
 from urh.signalprocessing.Modulator import Modulator
@@ -10,6 +13,15 @@ from urh.signalprocessing.Signal import Signal
 utils_testing.write_settings()
 
 class GFSK(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def test_gfsk(self):
         modulator = Modulator("gfsk")
         modulator.modulation_type_str = "FSK"

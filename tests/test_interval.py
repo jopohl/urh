@@ -1,4 +1,8 @@
+import sys
 import unittest
+
+import sip
+from PyQt5.QtWidgets import QApplication
 
 from tests import utils_testing
 from urh.signalprocessing.Interval import Interval
@@ -7,6 +11,15 @@ utils_testing.write_settings()
 
 
 class TestInterval(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def test_is_overlapping(self):
         i1 = Interval(40, 64)
         i2 = Interval(64, 104)

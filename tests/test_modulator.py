@@ -1,8 +1,11 @@
 import os
+import sys
 import time
 import unittest
 
+import sip
 from PyQt5.QtCore import QDir
+from PyQt5.QtWidgets import QApplication
 
 from tests import utils_testing
 from urh.signalprocessing.Modulator import Modulator
@@ -13,6 +16,15 @@ utils_testing.write_settings()
 
 
 class TestModulator(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.modulation_data = [True, False, False, False, True, True, False, True]
         self.samples_per_bit = 100

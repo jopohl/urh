@@ -20,6 +20,15 @@ class TestProtocolTable(unittest.TestCase):
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
         self.cframe = self.form.compare_frame_controller
@@ -40,15 +49,6 @@ class TestProtocolTable(unittest.TestCase):
         self.form.close_all()
         QApplication.instance().processEvents()
         QTest.qWait(1)
-
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
 
     def test_set_shown_protocols_performance(self):
         t = time.time()

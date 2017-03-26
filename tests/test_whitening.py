@@ -1,4 +1,8 @@
+import sys
 import unittest
+
+import sip
+from PyQt5.QtWidgets import QApplication
 
 from tests import utils_testing
 from urh.signalprocessing.encoder import Encoder
@@ -6,6 +10,15 @@ from urh.signalprocessing.encoder import Encoder
 utils_testing.write_settings()
 
 class TestWhitening(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     # Testmethode muss immer mit Präfix test_* starten
     def test_whitening(self):
         e = Encoder()

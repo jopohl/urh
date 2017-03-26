@@ -7,6 +7,7 @@ from PyQt5.QtTest import QTest
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.util.Logger import logger
 
 app = tests.utils_testing.get_app()
 
@@ -24,8 +25,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.signal.tolerance = 5
 
     def tearDown(self):
-        self.signal = None
+        logger.debug("Teardown")
         self.form.close_all()
+        self.signal = None
         tests.utils_testing.short_wait()
 
     def test_analyze_button_fsk(self):
@@ -119,10 +121,8 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_add_message_type(self):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
-        app.processEvents()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
         self.cfc.ui.btnRemoveMessagetype.click()
-        app.processEvents()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):

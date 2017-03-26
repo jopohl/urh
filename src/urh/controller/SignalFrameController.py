@@ -4,7 +4,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
-    QApplication, QCheckBox
+    QCheckBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -410,8 +410,6 @@ class SignalFrameController(QFrame):
 
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
-        QApplication.instance().processEvents()
-
         self.proto_analyzer.get_protocol_from_signal()
 
     def show_protocol(self, old_view=-1, refresh=False):
@@ -606,7 +604,6 @@ class SignalFrameController(QFrame):
         else:
             self.ui.gvLegend.hide()
 
-        QApplication.instance().processEvents()
         self.ui.gvSignal.auto_fit_view()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()

@@ -1,27 +1,21 @@
 import os
-import sys
-import platform
-
 import pickle
+import platform
+import sys
 import tempfile
+from subprocess import call
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
-
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QHeaderView
-from PyQt5.QtWidgets import QStyleFactory
-from subprocess import call
-
-from urh.dev.native import ExtensionHelper
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory
 
 from urh import constants
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
+from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
 
@@ -382,7 +376,6 @@ class OptionsController(QDialog):
         else:
             s = "s" if new_natives > 1 else ""
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-            QApplication.instance().processEvents()
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
             target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
             rc = call([sys.executable, os.path.realpath(ExtensionHelper.__file__),

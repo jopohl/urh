@@ -1,8 +1,6 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QDialog, QHeaderView
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
@@ -39,7 +37,6 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
 
         self.ui.tblViewProtoLabels.setModel(self.model)
-        QApplication.instance().processEvents()
         self.ui.tblViewProtoLabels.selectRow(preselected_index)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

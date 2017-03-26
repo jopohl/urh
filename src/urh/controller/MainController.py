@@ -133,8 +133,6 @@ class MainController(QMainWindow):
         self.ui.actionMinimize_all.setVisible(False)
         self.ui.actionMaximize_all.setVisible(False)
 
-        QApplication.instance().processEvents()
-
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
@@ -281,10 +279,8 @@ class MainController(QMainWindow):
 
         self.compare_frame_controller.filter_search_results()
 
-        QApplication.instance().processEvents()
         self.refresh_main_menu()
         self.ui.progressBar.hide()
-        QApplication.instance().processEvents()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
@@ -366,7 +362,6 @@ class MainController(QMainWindow):
 
             self.signal_tab_controller.ui.lLoadingFile.setText(
                 self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
-            QApplication.instance().processEvents()
 
             QApplication.instance().setOverrideCursor(Qt.WaitCursor)
 

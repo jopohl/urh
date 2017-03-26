@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, Qt, QCoreApplication, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
+from PyQt5.QtCore import QPoint, pyqtSignal, Qt, pyqtSlot
+from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
 
 from urh import constants
 from urh.controller.SignalFrameController import SignalFrameController
@@ -83,7 +83,6 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbSignalView.setDisabled(True)
 
         self.splitter.insertWidget(self.num_frames, sig_frame)
-        QApplication.instance().processEvents()
         sig_frame.blockSignals(False)
 
         default_view = constants.SETTINGS.value('default_view', 0, int)
@@ -109,7 +108,6 @@ class SignalTabController(QWidget):
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
 
         self.splitter.insertWidget(self.num_frames, sig_frame)
-        QCoreApplication.processEvents()
 
         return sig_frame
 

@@ -1,15 +1,13 @@
 import copy
 import math
-import xml.etree.ElementTree as ET
 import sys
+import xml.etree.ElementTree as ET
 
 import numpy as np
-from urh.cythonext.signalFunctions import Symbol
-
-from urh import constants
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger

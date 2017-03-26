@@ -9,12 +9,12 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions, util
-from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
 from urh.util.Logger import logger
 

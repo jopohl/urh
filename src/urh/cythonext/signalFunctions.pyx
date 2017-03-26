@@ -275,33 +275,6 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
 
     return result[:cur_index]
 
-cdef class Symbol:
-    cdef public str name
-    cdef public int nbits
-    cdef public int pulsetype
-    cdef public unsigned long long nsamples # Num Samples for this Symbol. Needed in Modulator.
-    def __init__(self, str name, int nbits, int pulsetype, unsigned long long nsamples):
-        """
-        :param nbits: Number of bits this Symbol covers
-        :param name: Name of the symbol (one char)
-        :param pulsetype: 0 für 0er Puls, 1 für 1er Puls
-        :return:
-        """
-        self.name = name
-        self.pulsetype = pulsetype
-        self.nbits = nbits
-        self.nsamples = nsamples
-
-    def __repr__(self):
-        return "{0} ({1}:{2})".format(self.name, self.pulsetype, self.name)
-
-    def __deepcopy__(self, memo):
-        result = Symbol(self.name, self.nbits, self.pulsetype, self.nsamples)
-        memo[id(self)] = result
-        return result
-
-
-
 cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_center, int tolerance, int mod_type):
 
     start = find_signal_start(qad_samples, mod_type)

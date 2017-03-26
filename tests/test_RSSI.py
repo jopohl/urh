@@ -1,7 +1,13 @@
 import unittest
+
+from tests import utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from tests.utils_testing import get_path_for_data_file
+
+utils_testing.write_settings()
+
+
 
 class TestRSSI(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten

@@ -5,9 +5,12 @@ import sip
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
+
+utils_testing.write_settings()
 
 
 class TestProtocolLabelDialog(unittest.TestCase):

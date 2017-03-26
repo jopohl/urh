@@ -7,9 +7,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.controller.MainController import MainController
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+
+utils_testing.write_settings()
 
 
 class TestProtocolTable(unittest.TestCase):

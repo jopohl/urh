@@ -1,5 +1,8 @@
 import os
 
+from urh import constants
+
+
 def trace_calls(frame, event, arg):
     if event != 'call':
         return
@@ -30,6 +33,22 @@ def trace_calls(frame, event, arg):
            caller_line_no, caller_filename, end))
     return
 
+
+global settings_written
+
+
+def write_settings():
+    global settings_written
+    try:
+        settings_written
+    except NameError:
+        settings_written = True
+        settings = constants.SETTINGS
+        settings.setValue("not_show_close_dialog", True)  # prevent interactive close questions
+        settings.setValue("not_show_save_dialog", True)
+        settings.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
+        settings.setValue("NetworkSDRInterface", True)
+        settings.setValue("align_labels", True)
 
 # sys.settrace(trace_calls)
 

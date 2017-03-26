@@ -1,10 +1,15 @@
 import copy
 import unittest
 
+from tests import utils_testing
+from tests.utils_testing import get_path_for_data_file
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from tests.utils_testing import get_path_for_data_file
+
+utils_testing.write_settings()
+
+
 
 class TestPCAP(unittest.TestCase):
     def test_write(self):

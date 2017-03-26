@@ -4,9 +4,12 @@ import unittest
 
 from PyQt5.QtCore import QDir
 
+from tests import utils_testing
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+
+utils_testing.write_settings()
 
 
 class TestModulator(unittest.TestCase):

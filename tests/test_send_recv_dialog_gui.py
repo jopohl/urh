@@ -9,6 +9,7 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
@@ -19,6 +20,8 @@ from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
+
+utils_testing.write_settings()
 
 
 class TestSendRecvDialog(unittest.TestCase):

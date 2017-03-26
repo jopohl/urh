@@ -6,12 +6,15 @@ import unittest
 import sip
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh import constants
 from urh.cythonext.signalFunctions import Symbol
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.signalprocessing.encoder import Encoder
+
+utils_testing.write_settings()
 
 
 class TestFuzzing(unittest.TestCase):

@@ -5,12 +5,14 @@ import sip
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 
+utils_testing.write_settings()
 
 class TestDecodingGUI(unittest.TestCase):
     @classmethod

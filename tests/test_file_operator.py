@@ -12,8 +12,11 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.controller.MainController import MainController
 from urh.util import FileOperator
+
+utils_testing.write_settings()
 
 
 class TestFileOperator(unittest.TestCase):

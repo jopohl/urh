@@ -1,6 +1,9 @@
+import sys
 import unittest
 
-import sys
+from tests import utils_testing
+
+utils_testing.write_settings()
 
 
 class TestWhitening(unittest.TestCase):

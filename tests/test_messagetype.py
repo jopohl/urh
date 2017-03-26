@@ -1,7 +1,10 @@
 import unittest
 
+from tests import utils_testing
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+
+utils_testing.write_settings()
 
 
 class TestMessageType(unittest.TestCase):

@@ -6,6 +6,7 @@ import sip
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
@@ -14,6 +15,8 @@ from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
+
+utils_testing.write_settings()
 
 
 class TestPlugins(unittest.TestCase):

@@ -6,9 +6,12 @@ import sip
 from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileSystemModel import FileSystemModel
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
+
+utils_testing.write_settings()
 
 
 class TestDirectoryTreeView(unittest.TestCase):

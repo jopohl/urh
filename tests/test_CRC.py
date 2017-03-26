@@ -4,8 +4,11 @@ import unittest
 import sip
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.signalprocessing.encoder import Encoder
 from urh.util.crc import crc_generic
+
+utils_testing.write_settings()
 
 class TestCRC(unittest.TestCase):
     @classmethod

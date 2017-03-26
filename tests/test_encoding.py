@@ -4,7 +4,10 @@ import unittest
 import sip
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.signalprocessing.encoder import Encoder
+
+utils_testing.write_settings()
 
 
 class TestDecoding(unittest.TestCase):

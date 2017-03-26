@@ -6,7 +6,10 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 import tests.utils_testing
+from tests import utils_testing
 from urh.controller.MainController import MainController
+
+utils_testing.write_settings()
 
 
 class TestMaincontrollerGUI(unittest.TestCase):

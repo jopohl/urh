@@ -1,8 +1,11 @@
 import unittest
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+
+utils_testing.write_settings()
 
 class TestSignal(unittest.TestCase):
     def test_freq_detection(self):

@@ -1,6 +1,9 @@
 import unittest
 
+from tests import utils_testing
 from urh.signalprocessing.Interval import Interval
+
+utils_testing.write_settings()
 
 
 class TestInterval(unittest.TestCase):

@@ -5,10 +5,13 @@ import sip
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from urh.controller.MainController import MainController
 from urh.controller.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
+
+utils_testing.write_settings()
 
 class TestOptionsGUI(unittest.TestCase):
     @classmethod

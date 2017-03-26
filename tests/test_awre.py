@@ -4,6 +4,7 @@ import unittest
 import sip
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
@@ -19,6 +20,8 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+
+utils_testing.write_settings()
 
 class TestAWRE(unittest.TestCase):
     @classmethod

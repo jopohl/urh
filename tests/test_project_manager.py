@@ -8,10 +8,13 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
+
+utils_testing.write_settings()
 
 
 class TestProjectManager(unittest.TestCase):

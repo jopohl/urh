@@ -7,8 +7,11 @@ from PyQt5.QtCore import QDir, QPoint
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
+
+utils_testing.write_settings()
 
 
 class TestSignalTabGUI(unittest.TestCase):

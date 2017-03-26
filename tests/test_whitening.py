@@ -1,6 +1,9 @@
 import unittest
 
+from tests import utils_testing
 from urh.signalprocessing.encoder import Encoder
+
+utils_testing.write_settings()
 
 class TestWhitening(unittest.TestCase):
     # Testmethode muss immer mit Präfix test_* starten

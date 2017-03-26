@@ -6,9 +6,14 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.util.Logger import logger
+
+utils_testing.write_settings()
+
+
 
 class TestLabels(unittest.TestCase):
     @classmethod

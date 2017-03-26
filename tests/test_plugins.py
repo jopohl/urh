@@ -3,7 +3,6 @@ import unittest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -17,8 +16,6 @@ app = tests.utils_testing.get_app()
 
 class TestPlugins(unittest.TestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
         logger.debug("Init form")
         self.form = MainController()
         logger.debug("Initalized form")

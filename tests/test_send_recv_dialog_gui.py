@@ -8,7 +8,6 @@ from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.ReceiveDialogController import ReceiveDialogController
@@ -27,8 +26,6 @@ class TestSendRecvDialog(unittest.TestCase):
     CLOSE_TIMEOUT = 50
 
     def setUp(self):
-        constants.SETTINGS.setValue("NetworkSDRInterface", True)
-
         self.form = MainController()
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)

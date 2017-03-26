@@ -283,7 +283,6 @@ class MainController(QMainWindow):
         self.ui.progressBar.hide()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
-        logger.debug("closing signal frame")
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
@@ -317,10 +316,7 @@ class MainController(QMainWindow):
             self.set_frame_numbers()
             self.refresh_main_menu()
         except Exception as e:
-            logger.debug("Exception occured")
-            logger.debug(str(e))
-            logger.debug(str(e) + traceback.format_exc())
-            # Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
+            Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
             self.ui.progressBar.hide()
             self.unsetCursor()
 

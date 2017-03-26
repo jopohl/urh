@@ -6,14 +6,12 @@ from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 
 app = tests.utils_testing.get_app()
 
 class TestSignalTabGUI(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("not_show_save_dialog", True)
         self.form = MainController()
 
     def tearDown(self):

@@ -5,7 +5,6 @@ from PyQt5.QtTest import QTest
 
 import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.util.Logger import logger
 
@@ -14,9 +13,6 @@ app = tests.utils_testing.get_app()
 
 class TestLabels(unittest.TestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
         logger.debug("Init form")
         self.form = MainController()
         logger.debug("Intiliazed form")

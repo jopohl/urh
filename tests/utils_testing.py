@@ -3,6 +3,8 @@ import os
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
+from urh import constants
+
 def trace_calls(frame, event, arg):
     if event != 'call':
         return
@@ -44,6 +46,10 @@ def get_app():
     app = QApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
+        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
+        constants.SETTINGS.setValue("not_show_save_dialog", True)
+        constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
+        constants.SETTINGS.setValue("NetworkSDRInterface", True)
     return app
 
 

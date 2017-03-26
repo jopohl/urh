@@ -14,8 +14,6 @@ app = tests.utils_testing.get_app()
 
 class TestFuzzing(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("steckdose_anlernen.complex"))
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.setValue(0.06)

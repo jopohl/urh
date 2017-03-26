@@ -1,12 +1,14 @@
 import os
 import socket
+import sys
 import unittest
 
 import numpy as np
+import sip
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
@@ -18,12 +20,19 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
-app = tests.utils_testing.get_app()
-
 
 class TestSendRecvDialog(unittest.TestCase):
     SEND_RECV_TIMEOUT = 500
     CLOSE_TIMEOUT = 50
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
 
     def setUp(self):
         self.form = MainController()
@@ -34,7 +43,8 @@ class TestSendRecvDialog(unittest.TestCase):
         self.form.close_all()
         self.signal.eliminate()
         self.signal = None
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def __get_recv_dialog(self):
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
@@ -43,7 +53,7 @@ class TestSendRecvDialog(unittest.TestCase):
     def __get_send_dialog(self):
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
-        app.processEvents()
+        QApplication.instance().processEvents()
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 
@@ -67,7 +77,8 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
@@ -94,7 +105,7 @@ class TestSendRecvDialog(unittest.TestCase):
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
-        app.processEvents()
+        QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 3)
@@ -116,7 +127,7 @@ class TestSendRecvDialog(unittest.TestCase):
         send_dialog.device.set_client_port(3333)
         send_dialog.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
@@ -140,7 +151,7 @@ class TestSendRecvDialog(unittest.TestCase):
         # add a signal so we can use it
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signalfile")
-        app.processEvents()
+        QApplication.instance().processEvents()
 
         # Move with encoding to generator
         generator_frame = self.form.generator_tab_controller
@@ -149,19 +160,19 @@ class TestSendRecvDialog(unittest.TestCase):
         index = generator_frame.tree_model.createIndex(0, 0, item)
         mimedata = generator_frame.tree_model.mimeData([index])
         generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
-        app.processEvents()
+        QApplication.instance().processEvents()
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         sniff_dialog.device.set_server_port(4444)
         generator_frame.network_sdr_plugin.client_port = 4444
         sniff_dialog.ui.btnStart.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
         generator_frame.ui.btnNetworkSDRSend.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
 
         QTest.qWait(self.SEND_RECV_TIMEOUT)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
@@ -177,14 +188,14 @@ class TestSendRecvDialog(unittest.TestCase):
         self.assertFalse(os.path.isfile(target_file))
 
         sniff_dialog.ui.btnClear.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
         sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
         sniff_dialog.ui.btnStart.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())
 
         generator_frame.ui.btnNetworkSDRSend.click()
-        app.processEvents()
+        QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         with open(target_file, "r") as f:
@@ -201,14 +212,14 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
         view_width = send_dialog.graphics_view.view_rect().width()
         send_dialog.graphics_view.zoom(1.1)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertLess(send_dialog.graphics_view.view_rect().width(), view_width)
         send_dialog.graphics_view.zoom(0.8)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
 
         self.__close_dialog(send_dialog)
@@ -227,7 +238,7 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
-        app.processEvents()
+        QApplication.instance().processEvents()
         y, h = send_dialog.graphics_view.view_rect().y(), send_dialog.graphics_view.view_rect().height()
 
         send_dialog.ui.sliderYscale.setValue(send_dialog.ui.sliderYscale.value() +

@@ -1,16 +1,27 @@
+import sys
 import unittest
 
-import tests.utils_testing
+import sip
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
+
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 
-app = tests.utils_testing.get_app()
-
 
 class TestDecodingGUI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
@@ -22,9 +33,8 @@ class TestDecodingGUI(unittest.TestCase):
     def tearDown(self):
         self.form.close_all()
         self.dialog.close()
-        self.signal.eliminate()
-        del self.signal
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI

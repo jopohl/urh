@@ -1,15 +1,30 @@
 import copy
+import sys
 import unittest
 
+import sip
+from PyQt5.QtWidgets import QApplication
+
+from tests.utils_testing import get_path_for_data_file
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
 from urh.signalprocessing.encoder import Encoder
-from tests.utils_testing import get_path_for_data_file
+
 
 class TestAutoAssignments(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
+
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("decoded_bits.txt")) as f:

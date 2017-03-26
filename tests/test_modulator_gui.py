@@ -1,38 +1,44 @@
+import sys
 import unittest
 
+import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.util.Logger import logger
 
-app = tests.utils_testing.get_app()
-
 
 class TestModulatorGUI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+    
     def setUp(self):
         self.form = MainController()
         self.form.ui.tabWidget.setCurrentIndex(2)
-        app.processEvents()
+        self.app.processEvents()
 
         logger.debug("Preparing Modulation dialog")
-        tests.utils_testing.short_wait(interval=10)
         self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()
 
         logger.debug("Initializing Modulation dialog")
-        tests.utils_testing.short_wait(interval=10)
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
 
     def tearDown(self):
-        self.dialog.setParent(None)
-        self.dialog.close()
-        self.dialog.deleteLater()
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        self.dialog.close()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
@@ -40,7 +46,7 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnAddModulation.click()
         self.assertEqual(len(self.dialog.modulators), 3)
-        app.processEvents()
+        self.app.processEvents()
         self.dialog.ui.btnRemoveModulation.click()
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnRemoveModulation.click()

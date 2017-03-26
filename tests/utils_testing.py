@@ -1,10 +1,5 @@
 import os
 
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
-
-from urh import constants
-
 def trace_calls(frame, event, arg):
     if event != 'call':
         return
@@ -36,29 +31,7 @@ def trace_calls(frame, event, arg):
     return
 
 
-import sys
-
-
 # sys.settrace(trace_calls)
-
-
-def get_app():
-    app = QApplication.instance()
-    if app is None:
-        app = QApplication(sys.argv)
-        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        constants.SETTINGS.setValue("not_show_save_dialog", True)
-        constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
-        constants.SETTINGS.setValue("NetworkSDRInterface", True)
-        constants.SETTINGS.setValue("align_labels", True)
-    return app
-
-
-def short_wait(interval=1):
-    app = QApplication.instance()
-    app.processEvents()
-    QTest.qWait(interval)
-    app.processEvents()
 
 f = os.readlink(__file__) if os.path.islink(__file__) else __file__
 path = os.path.realpath(os.path.join(f, ".."))

@@ -1,23 +1,31 @@
 import hashlib
-import unittest
-import tempfile
 import os
+import sys
 import tarfile
+import tempfile
+import unittest
 from zipfile import ZipFile
 
 import numpy as np
+import sip
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from urh.controller.MainController import MainController
-
 from urh.util import FileOperator
-
-app = tests.utils_testing.get_app()
 
 
 class TestFileOperator(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def test_save_wav(self):
         temp_dir = tempfile.gettempdir()
         os.chdir(temp_dir)
@@ -61,3 +69,7 @@ class TestFileOperator(unittest.TestCase):
 
         zip_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
         self.assertNotEqual(zip_md5, zip_md5_after_save)
+
+        form.close_all()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)

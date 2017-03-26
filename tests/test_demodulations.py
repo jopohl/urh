@@ -1,11 +1,23 @@
+import sys
 import unittest
 
+import sip
+from PyQt5.QtWidgets import QApplication
+
+from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from tests.utils_testing import get_path_for_data_file
 
 
 class TestDemodulations(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
 
     # Testmethode muss immer mit Präfix test_* starten
     def test_ask(self):

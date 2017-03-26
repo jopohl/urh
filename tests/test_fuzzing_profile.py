@@ -1,16 +1,29 @@
-import unittest
 import os
+import sys
 import tempfile
+import unittest
+
+import sip
+from PyQt5.QtWidgets import QApplication
 
 from urh import constants
 from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.encoder import Encoder
 
 
 class TestFuzzing(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         filename = os.path.join(tempfile.gettempdir(), "test.fuzz")
         mod1 = Modulator("mod 1")

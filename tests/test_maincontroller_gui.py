@@ -1,18 +1,31 @@
+import sys
 import unittest
+
+import sip
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
 import tests.utils_testing
 from urh.controller.MainController import MainController
 
-app = tests.utils_testing.get_app()
-
 
 class TestMaincontrollerGUI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
 
     def tearDown(self):
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_open_recent(self):
         # Ensure we have at least one recent action

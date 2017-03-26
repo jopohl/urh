@@ -1,23 +1,31 @@
 import copy
+import sys
 import unittest
 
+import sip
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
-from urh.util.Logger import logger
-
-app = tests.utils_testing.get_app()
 
 
 class TestAnalysisTabGUI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.signal.noise_threshold = 0.0175
         self.signal.qad_center = 0
@@ -25,12 +33,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.signal.tolerance = 5
 
     def tearDown(self):
-        logger.debug("Teardown")
         self.form.close_all()
-        logger.debug("Closed all")
-        self.signal.eliminate()
-        del self.signal
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_analyze_button_fsk(self):
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
@@ -52,18 +57,18 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.ui.tblViewProtocol.selectRow(1)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(self.cfc.ui.lBitsSelection.text(), self.cfc.proto_analyzer.messages[1].plain_bits_str)
 
         self.cfc.ui.tblViewProtocol.clearSelection()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual("", self.cfc.ui.lBitsSelection.text())
 
         self.cfc.ui.tblViewProtocol.select(0, 0, 0, 3)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual("1010", self.cfc.ui.lBitsSelection.text())
         self.cfc.ui.cbProtoView.setCurrentIndex(1)
-        app.processEvents()
+        QApplication.instance().processEvents()
 
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
         self.assertEqual(min_row, 0)
@@ -130,11 +135,11 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
         self.cfc.proto_tree_model.rootItem.child(0).show = False
-        app.processEvents()
+        QApplication.instance().processEvents()
 
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
-        app.processEvents()
+        QApplication.instance().processEvents()
 
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
 
@@ -166,9 +171,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 
@@ -200,11 +205,11 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_tree_view_selection_changed(self):
         self.cfc.proto_tree_model.addGroup()
         self.cfc.proto_tree_model.addGroup()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
         self.cfc.ui.treeViewProtocols.selectAll()
         self.cfc.ui.treeViewProtocols.selection_changed.emit()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
 
     def test_label_selection_changed(self):

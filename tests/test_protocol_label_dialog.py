@@ -1,14 +1,25 @@
+import sys
 import unittest
 
-import tests.utils_testing
+import sip
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
+
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 
-app = tests.utils_testing.get_app()
-
 
 class TestProtocolLabelDialog(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
@@ -25,7 +36,8 @@ class TestProtocolLabelDialog(unittest.TestCase):
 
     def tearDown(self):
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

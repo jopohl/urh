@@ -1,18 +1,34 @@
+import sys
 import unittest
 
+import sip
 from PyQt5.QtCore import Qt
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
 from urh.signalprocessing.MessageType import MessageType
 
-app = tests.utils_testing.get_app()
 
 
 class TestMessageTypeOptionsGUI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.message_type = MessageType(name="Test")
         self.dialog = MessageTypeDialogController(self.message_type)
+
+    def tearDown(self):
+        self.dialog.close()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_message_type_dialog_parameters(self):
         self.assertEqual(self.message_type.name, self.dialog.windowTitle())

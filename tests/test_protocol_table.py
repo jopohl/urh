@@ -1,14 +1,15 @@
+import sys
 import time
 import unittest
 
+import sip
 from PyQt5.QtCore import Qt
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from urh.controller.MainController import MainController
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
-app = tests.utils_testing.get_app()
 
 
 class TestProtocolTable(unittest.TestCase):
@@ -34,7 +35,17 @@ class TestProtocolTable(unittest.TestCase):
 
     def tearDown(self):
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
 
     def test_set_shown_protocols_performance(self):
         t = time.time()

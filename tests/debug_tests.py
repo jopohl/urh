@@ -4,7 +4,7 @@ import subprocess
 import sys
 import time
 
-RUNS = 200
+RUNS = 2000
 LOG_SIZE_MB = 1
 
 

@@ -1,18 +1,27 @@
+import sys
 import unittest
 
+import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
-app = tests.utils_testing.get_app()
-
 
 class TestFuzzing(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication(sys.argv)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        sip.delete(cls.app)
+
     def setUp(self):
         self.form = MainController()
         self.form.add_signalfile(get_path_for_data_file("steckdose_anlernen.complex"))
@@ -64,14 +73,13 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(len(self.gframe.table_model.protocol.protocol_labels), 3)
 
     def tearDown(self):
-        self.signal = None
         self.form.close_all()
-        tests.utils_testing.short_wait()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
 
     def test_fuzz_label_bit(self):
         self.gframe.ui.cbViewType.setCurrentIndex(1) # hex view
 
-        tests.utils_testing.short_wait(10)
         fdc = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0, proto_view=0, parent=self.gframe)
         fdc.finished.connect(self.gframe.refresh_label_list)
         fdc.finished.connect(self.gframe.refresh_table)
@@ -84,8 +92,7 @@ class TestFuzzing(unittest.TestCase):
         self.assertEqual(fdc.message_data[fdc.current_label_start:fdc.current_label_end], "11111100100110110110") # Serial Part 2
 
         fdc.close()
-        fdc.setParent(None)
-        tests.utils_testing.short_wait(10)
+        QTest.qWait(10)
 
     def test_fuzz_label_hex(self):
         for message in self.gframe.table_model.protocol.messages:

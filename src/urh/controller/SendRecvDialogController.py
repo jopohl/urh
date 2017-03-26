@@ -581,6 +581,8 @@ class SendRecvDialogController(QDialog):
                                                                        freq_correction=self.device.freq_correction
                                                                        ))
 
+        if self.graphics_view is not None:
+            self.graphics_view.eliminate()
         self.graphics_view = None
         event.accept()
 

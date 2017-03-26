@@ -88,6 +88,7 @@ class MainController(QMainWindow):
 
         self.recentFileActionList = []
         self.create_connects()
+        self.init_recent_file_action_list(constants.SETTINGS.value("recentFiles", []))
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()
@@ -454,18 +455,20 @@ class MainController(QMainWindow):
         recent_file_paths.insert(0, file_path)
         recent_file_paths = recent_file_paths[:constants.MAX_RECENT_FILE_NR]
 
+        self.init_recent_file_action_list(recent_file_paths)
+
+        settings.setValue("recentFiles", recent_file_paths)
+
+    def init_recent_file_action_list(self, recent_file_paths: list):
+        for i in range(len(self.recentFileActionList)):
+            self.recentFileActionList[i].setVisible(False)
+
         for i, file_path in enumerate(recent_file_paths):
             suffix = " (Directory)" if os.path.isdir(file_path) else ""
             stripped_name = QFileInfo(file_path).fileName() + suffix
             self.recentFileActionList[i].setText(stripped_name)
             self.recentFileActionList[i].setData(file_path)
             self.recentFileActionList[i].setVisible(True)
-
-        for i in range(len(recent_file_paths), constants.MAX_RECENT_FILE_NR):
-            self.recentFileActionList[i].setVisible(False)
-
-        settings.setValue("recentFiles", recent_file_paths)
-
 
     @pyqtSlot()
     def on_show_field_types_config_action_triggered(self):

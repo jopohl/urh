@@ -1,6 +1,7 @@
 import sys
 import unittest
 
+import gc
 import sip
 import time
 from PyQt5.QtTest import QTest
@@ -20,38 +21,29 @@ class QtTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.app.quit()
         sip.delete(cls.app)
-        QTest.qSleep(10)
+        del cls.app
+        QTest.qSleep(100)
 
     def setUp(self):
         self.form = MainController()
 
     def add_signal_to_form(self, filename: str):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
         self.form.add_signalfile(get_path_for_data_file(filename))
 
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
     def tearDown(self):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
         if hasattr(self, "dialog"):
             self.dialog.close()
+            self.dialog.setParent(None)
+            sip.delete(self.dialog)
+            del self.dialog
 
         if hasattr(self, "form"):
             self.form.close_all()
-            self.form.close()
-
-        if hasattr(self, "signal"):
-            try:
-                self.signal.eliminate()
-                self.signal.setParent(None)
-                self.signal.deleteLater()
-            except RuntimeError:
-                pass  # Signal is already deleted, nice!
+            self.form.setParent(None)
+            sip.delete(self.form)
+            del self.form
 
         QApplication.instance().processEvents()
         QTest.qWait(10)
+        QTest.qSleep(10)
+        gc.collect()

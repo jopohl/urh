@@ -24,6 +24,8 @@ class SendRecvDialogController(QDialog):
         super().__init__(parent)
         self.is_tx = is_tx
 
+        self.testing_mode = testing_mode
+
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
 
@@ -550,18 +552,17 @@ class SendRecvDialogController(QDialog):
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()
         self.emit_editing_finished_signals()
-        if self.device.backend == Backends.network:
-            event.accept()
-            return
 
         self.device.stop("Dialog closed. Killing recording process.")
         logger.debug("Device stopped successfully.")
-        if not self.save_before_close():
-            event.ignore()
-            return
+
+        if not self.testing_mode:
+            if not self.save_before_close():
+                event.ignore()
+                return
 
         time.sleep(0.1)
-        if self.device.backend != Backends.none:
+        if self.device.backend not in (Backends.none, Backends.network):
             # Backend none is selected, when no device is available
             logger.debug("Cleaning up device")
             try:
@@ -583,6 +584,7 @@ class SendRecvDialogController(QDialog):
 
         if self.graphics_view is not None:
             self.graphics_view.eliminate()
+
         self.graphics_view = None
         event.accept()
 

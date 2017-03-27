@@ -92,7 +92,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     @property
     def current_receive_index(self):
-        if hasattr(self.server, "current_receive_index"):
+        if hasattr(self, "server") and hasattr(self.server, "current_receive_index"):
             return self.server.current_receive_index
         else:
             return 0
@@ -143,7 +143,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def stop_tcp_server(self):
         if hasattr(self, "server"):
+            logger.debug("Shutdown TCP server")
             self.server.shutdown()
+            self.server.server_close()
         if hasattr(self, "server_thread"):
             self.server_thread.join()
         self.receive_check_timer.stop()

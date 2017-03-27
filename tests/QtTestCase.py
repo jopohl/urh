@@ -20,8 +20,7 @@ class QtTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.app.quit()
         sip.delete(cls.app)
-        QTest.qWait(10)
-        time.sleep(0.01)
+        QTest.qSleep(10)
 
     def setUp(self):
         self.form = MainController()
@@ -56,4 +55,3 @@ class QtTestCase(unittest.TestCase):
 
         QApplication.instance().processEvents()
         QTest.qWait(10)
-        time.sleep(0.01)

@@ -2,9 +2,6 @@ from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
 class TestWhitening(QtTestCase):
-    def setUp(self):
-        pass
-
     def test_whitening(self):
         e = Encoder()
 
@@ -18,5 +15,3 @@ class TestWhitening(QtTestCase):
         newinpt, err, _ = e.apply_data_whitening(False, output)
         #print (e.bit2hex(newinpt), newinpt, err)
         self.assertEqual(original_inpt, newinpt)
-
-

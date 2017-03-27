@@ -1,11 +1,11 @@
-import unittest
-
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-class TestProtocolAnalyzer(unittest.TestCase):
+
+class TestProtocolAnalyzer(QtTestCase):
     def setUp(self):
         pass
 

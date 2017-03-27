@@ -10,15 +10,13 @@ from tests.QtTestCase import QtTestCase
 class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.cfc = self.form.compare_frame_controller
         self.add_signal_to_form("two_participants.complex")
-        QApplication.instance().processEvents()
+        self.cfc = self.form.compare_frame_controller
         self.signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.signal.noise_threshold = 0.0175
         self.signal.qad_center = 0
         self.signal.bit_len = 100
         self.signal.tolerance = 5
-
 
     def test_analyze_button_fsk(self):
         self.add_signal_to_form("fsk.complex")

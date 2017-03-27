@@ -53,6 +53,8 @@ class TestSignalTabGUI(QtTestCase):
         self.assertNotEqual(samples_in_view, frame.ui.lSamplesInView.text())
 
     def test_load_proto(self):
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
         self.form.add_files([get_path_for_data_file("protocol.proto")])
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(), "Protocol (*.proto)")
 

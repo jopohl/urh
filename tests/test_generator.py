@@ -58,7 +58,7 @@ class TestGenerator(QtTestCase):
         modulated_data.tofile(filename)
 
         # Reload datafile and see if bits match
-        self.form.add_signalfile(filename)
+        self.add_signal_to_form(filename)
         sframe = self.form.signal_tab_controller.signal_frames[1]
         sframe.ui.cbProtoView.setCurrentIndex(0)
         self.assertEqual(sframe.ui.lineEditSignalName.text(), "generator_test")

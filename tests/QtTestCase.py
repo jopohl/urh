@@ -14,7 +14,7 @@ faulthandler.enable()
 
 
 class QtTestCase(unittest.TestCase):
-    CLOSE_TIMEOUT = 50
+    CLOSE_TIMEOUT = 10
 
     @classmethod
     def setUpClass(cls):
@@ -28,26 +28,15 @@ class QtTestCase(unittest.TestCase):
         cls.app = None
 
     def setUp(self):
-        QApplication.instance().processEvents()
         self.form = MainController()
-        QApplication.instance().processEvents()
-        QTest.qWait(10)
 
     def add_signal_to_form(self, filename: str):
-        QApplication.instance().processEvents()
-        QTest.qWait(10)
         self.form.add_signalfile(get_path_for_data_file(filename))
 
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-            QApplication.instance().processEvents()
-            QTest.qWait(10)
-
         if hasattr(self, "form"):
             self.form.close_all()
-            QApplication.instance().processEvents()
-            QTest.qWait(10)
-
         QApplication.processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)

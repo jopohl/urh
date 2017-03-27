@@ -144,3 +144,8 @@ class TestPlugins(QtTestCase):
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")
+
+        #  Close the dialog via finished
+        dialog.finished.emit(0)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.CLOSE_TIMEOUT)

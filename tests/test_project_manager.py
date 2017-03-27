@@ -15,7 +15,6 @@ class TestProjectManager(QtTestCase):
     def setUp(self):
         super().setUp()
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
-        self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
 
     def test_save_modulations(self):

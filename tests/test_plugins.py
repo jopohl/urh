@@ -1,6 +1,7 @@
 import math
 
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
@@ -94,8 +95,8 @@ class TestPlugins(QtTestCase):
         graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
-            self.app.processEvents()
-            QTest.qWait(100)
+            QApplication.instance().processEvents()
+            QTest.qWait(10)
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
@@ -107,7 +108,7 @@ class TestPlugins(QtTestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxFrequency.setValue(1e6)
         dialog.doubleSpinBoxFrequency.editingFinished.emit()
@@ -115,7 +116,7 @@ class TestPlugins(QtTestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxPhase.setValue(100)
         dialog.doubleSpinBoxPhase.editingFinished.emit()
@@ -123,7 +124,7 @@ class TestPlugins(QtTestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxSampleRate.setValue(2e6)
         dialog.doubleSpinBoxSampleRate.editingFinished.emit()
@@ -131,7 +132,7 @@ class TestPlugins(QtTestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         dialog.doubleSpinBoxNSamples.setValue(0.5e6)
         dialog.doubleSpinBoxNSamples.editingFinished.emit()
@@ -139,7 +140,7 @@ class TestPlugins(QtTestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(100)
+            QTest.qWait(10)
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

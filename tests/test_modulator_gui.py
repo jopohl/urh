@@ -12,7 +12,6 @@ class TestModulatorGUI(QtTestCase):
     def setUp(self):
         super().setUp()
         self.form.ui.tabWidget.setCurrentIndex(2)
-        QApplication.instance().processEvents()
 
         logger.debug("Preparing Modulation dialog")
         self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()

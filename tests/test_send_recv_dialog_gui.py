@@ -21,7 +21,6 @@ from urh.util.Logger import logger
 
 class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 500
-    CLOSE_TIMEOUT = 50
 
     def setUp(self):
         super().setUp()
@@ -29,14 +28,10 @@ class TestSendRecvDialog(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return receive_dialog
 
     def __get_send_dialog(self):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
                                            testing_mode=True, parent=self.form)
         QApplication.instance().processEvents()
@@ -44,14 +39,10 @@ class TestSendRecvDialog(QtTestCase):
         return send_dialog
 
     def __get_spectrum_dialog(self):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
         spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
         sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
                                                      self.signal.qad_center,
                                                      self.signal.bit_len, self.signal.tolerance,
@@ -67,8 +58,9 @@ class TestSendRecvDialog(QtTestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
-        QApplication.instance().processEvents()
-        QTest.qWait(10)
+        dialog.setParent(None)
+        dialog.deleteLater()
+        sip.delete(dialog)
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():

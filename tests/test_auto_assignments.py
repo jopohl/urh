@@ -39,9 +39,6 @@ class TestAutoAssignments(QtTestCase):
         self.decodings.append(Encoder(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
         self.decodings.append(Encoder(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
 
-    def tearDown(self):
-        pass
-
     def test_message_type_assign_by_value(self):
         start = 8
         end = 15

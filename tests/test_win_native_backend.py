@@ -7,9 +7,6 @@ class TestWhitening(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_native_backends_installed(self):
         if sys.platform == "win32":
             import os

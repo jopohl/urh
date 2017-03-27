@@ -8,9 +8,6 @@ class TestAutodetections(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_auto_detect_esaver(self):
         signal = Signal(get_path_for_data_file("esaver.complex"), "ESaver")
         signal.modulation_type = 1

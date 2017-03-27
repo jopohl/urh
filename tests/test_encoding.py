@@ -6,9 +6,6 @@ class TestDecoding(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_carrier(self):
         e = Encoder()
 

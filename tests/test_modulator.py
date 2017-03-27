@@ -17,9 +17,6 @@ class TestModulator(QtTestCase):
 
         self.total_samples = len(self.modulation_data) * self.samples_per_bit + self.pause
 
-    def tearDown(self):
-        pass
-
     def test_ask_fsk_psk_modulation(self):
         modulations = ["ASK", "FSK", "PSK"]
 

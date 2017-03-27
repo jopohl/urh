@@ -9,9 +9,6 @@ class TestProtocolAnalyzer(unittest.TestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_get_bit_sample_pos(self):
         signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = 0

@@ -26,9 +26,6 @@ class TestFuzzing(QtTestCase):
         pac.create_fuzzing_label(1, 10, 0)
         pac.to_xml_file(filename)
 
-    def tearDown(self):
-        pass
-
     def test_load_profile(self):
         pac = ProtocolAnalyzerContainer([])
         pac.from_xml_file(os.path.join(tempfile.gettempdir(), "test.fuzz"))

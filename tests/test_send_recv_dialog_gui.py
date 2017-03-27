@@ -28,12 +28,6 @@ class TestSendRecvDialog(QtTestCase):
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-    def tearDown(self):
-        self.signal.setParent(None)
-        self.signal.deleteLater()
-        sip.delete(self.signal)
-        super().tearDown()
-
     def __get_recv_dialog(self):
         QApplication.instance().processEvents()
         QTest.qWait(1)

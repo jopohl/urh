@@ -6,9 +6,6 @@ class TestCRC(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_crc(self):
         # http://depa.usst.edu.cn/chenjq/www2/software/crc/CRC_Javascript/CRCcalculation.htm
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False

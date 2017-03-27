@@ -50,9 +50,6 @@ class TestAWRE(QtTestCase):
         for i, message in enumerate(self.zero_crc_protocol.messages):
             message.participant = alice if i in alice_indices else bob
 
-    def tearDown(self):
-        pass
-
     @staticmethod
     def __field_type_with_function(field_types, function) -> FieldType:
         return next(ft for ft in field_types if ft.function == function)

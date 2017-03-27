@@ -11,9 +11,6 @@ class TestPCAP(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_write(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = 0

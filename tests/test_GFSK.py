@@ -9,9 +9,6 @@ class GFSK(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_gfsk(self):
         modulator = Modulator("gfsk")
         modulator.modulation_type_str = "FSK"

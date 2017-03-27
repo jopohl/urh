@@ -2,6 +2,7 @@ import sys
 import unittest
 
 import sip
+import time
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
@@ -19,6 +20,8 @@ class QtTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.app.quit()
         sip.delete(cls.app)
+        QTest.qWait(10)
+        time.sleep(0.01)
 
     def setUp(self):
         self.form = MainController()
@@ -43,5 +46,14 @@ class QtTestCase(unittest.TestCase):
             self.form.close_all()
             self.form.close()
 
+        if hasattr(self, "signal"):
+            try:
+                self.signal.eliminate()
+                self.signal.setParent(None)
+                self.signal.deleteLater()
+            except RuntimeError:
+                pass  # Signal is already deleted, nice!
+
         QApplication.instance().processEvents()
         QTest.qWait(10)
+        time.sleep(0.01)

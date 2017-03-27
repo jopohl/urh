@@ -5,9 +5,6 @@ class TestWhitening(QtTestCase):
     def setUp(self):
         pass
 
-    def tearDown(self):
-        pass
-
     def test_whitening(self):
         e = Encoder()
 

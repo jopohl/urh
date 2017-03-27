@@ -15,12 +15,7 @@ class TestSignalDetailsGUI(QtTestCase):
         self.dialog = SignalDetailsController(self.signal)
 
     def tearDown(self):
-        self.signal.setParent(None)
-        self.signal.deleteLater()
-        sip.delete(self.signal)
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         QApplication.instance().processEvents()
         QTest.qWait(10)
 

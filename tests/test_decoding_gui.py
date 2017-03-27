@@ -1,5 +1,3 @@
-import sip
-
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
@@ -17,8 +15,6 @@ class TestDecodingGUI(QtTestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         super().tearDown()
 
     def test_edit_decoding(self):

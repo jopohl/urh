@@ -1,4 +1,3 @@
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
@@ -15,8 +14,6 @@ class TestMessageTypeOptionsGUI(QtTestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         QApplication.instance().processEvents()
         QTest.qWait(10)
 

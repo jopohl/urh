@@ -22,8 +22,6 @@ class TestProtocolLabelDialog(QtTestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         super().tearDown()
 
     def test_protocol_label_dialog(self):

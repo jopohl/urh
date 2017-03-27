@@ -1,4 +1,3 @@
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
@@ -27,8 +26,6 @@ class TestModulatorGUI(QtTestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         super().tearDown()
 
     def test_add_remove_modulator(self):

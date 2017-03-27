@@ -1,6 +1,5 @@
-import unittest
-
 import sys
+import unittest
 
 import sip
 from PyQt5.QtTest import QTest
@@ -26,8 +25,5 @@ class QtTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.form.close_all()
-        self.form.close()
-        self.form.setParent(None)
-        sip.delete(self.form)
         QApplication.instance().processEvents()
-        QTest.qWait(25)
+        QTest.qWait(100)

@@ -1,5 +1,3 @@
-import sip
-
 from tests.QtTestCase import QtTestCase
 from urh.controller.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
@@ -12,8 +10,6 @@ class TestOptionsGUI(QtTestCase):
 
     def tearDown(self):
         self.dialog.close()
-        self.dialog.setParent(None)
-        sip.delete(self.dialog)
         super().tearDown()
 
     def test_interpretation_tab(self):

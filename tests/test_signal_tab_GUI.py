@@ -14,19 +14,21 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(100)
+        QTest.qWait(10)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
         num_frames = 5
         for _ in range(num_frames):
+            QApplication.instance().processEvents()
+            QTest.qWait(10)
             self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(100)
+        QTest.qWait(10)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

@@ -3,7 +3,6 @@ import math
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
@@ -14,7 +13,7 @@ from urh.util.Formatter import Formatter
 class TestPlugins(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
@@ -49,7 +48,7 @@ class TestPlugins(QtTestCase):
     def test_zero_hide_plugin_function(self):
         zh = ZeroHidePlugin()
         zh.following_zeros = 3
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         self.form.ui.tabWidget.setCurrentIndex(1)
         test_bits = "10110010010110110110110110110110110001000000"
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits)

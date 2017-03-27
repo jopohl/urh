@@ -4,7 +4,6 @@ from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 
 
 class TestGenerator(QtTestCase):
@@ -19,7 +18,7 @@ class TestGenerator(QtTestCase):
 
         """
         # Load a Signal
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -77,7 +76,7 @@ class TestGenerator(QtTestCase):
         self.assertTrue(proto.startswith(gen_proto))
 
     def test_close_signal(self):
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -112,7 +111,7 @@ class TestGenerator(QtTestCase):
         self.assertEqual(len(menu.actions()), 0)
 
         # Add data to test entries in context menu
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         gframe = self.form.generator_tab_controller
         index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
         mimedata = gframe.tree_model.mimeData([index])

@@ -8,10 +8,6 @@ class TestOptionsGUI(QtTestCase):
         super().setUp()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
-    def tearDown(self):
-        self.dialog.close()
-        super().tearDown()
-
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
 

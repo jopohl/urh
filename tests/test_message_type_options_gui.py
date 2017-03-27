@@ -1,6 +1,4 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -11,11 +9,6 @@ class TestMessageTypeOptionsGUI(QtTestCase):
     def setUp(self):
         self.message_type = MessageType(name="Test")
         self.dialog = MessageTypeDialogController(self.message_type)
-
-    def tearDown(self):
-        self.dialog.close()
-        QApplication.instance().processEvents()
-        QTest.qWait(10)
 
     def test_message_type_dialog_parameters(self):
         self.assertEqual(self.message_type.name, self.dialog.windowTitle())

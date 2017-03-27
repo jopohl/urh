@@ -145,7 +145,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def test_sniff(self):
         # add a signal so we can use it
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 

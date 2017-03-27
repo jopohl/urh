@@ -4,7 +4,6 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 from urh.util.Logger import logger
 
 
@@ -23,10 +22,6 @@ class TestModulatorGUI(QtTestCase):
         logger.debug("Initializing Modulation dialog")
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
-
-    def tearDown(self):
-        self.dialog.close()
-        super().tearDown()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
@@ -114,7 +109,7 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         signal = self.form.signal_tab_controller.signal_frames[0].signal
 
         tree_view = self.dialog.ui.treeViewSignals

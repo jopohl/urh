@@ -1,12 +1,11 @@
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 from urh.util.Logger import logger
 
 class TestTextEditProtocolView(QtTestCase):
     def test_create_context_menu(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(2)
 
         logger.debug("Get text edit")

@@ -1,11 +1,10 @@
-import tests.utils_testing
 from tests.QtTestCase import QtTestCase
 
 
 class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent(self):
         # Ensure we have at least one recent action
-        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
         self.form.recentFileActionList[0].trigger()
@@ -16,6 +15,6 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertTrue(True)
 
     def test_options_changed(self):
-        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         self.form.on_options_changed({"rel_symbol_length": 0, "show_pause_as_time": True, "default_view": 0})
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 0)

@@ -1,5 +1,3 @@
-import sip
-
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.ProtocolLabelController import ProtocolLabelController
@@ -19,10 +17,6 @@ class TestProtocolLabelDialog(QtTestCase):
         self.dialog = ProtocolLabelController(preselected_index=1,
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
-
-    def tearDown(self):
-        self.dialog.close()
-        super().tearDown()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

@@ -2,14 +2,13 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 from urh.util.Logger import logger
 
 
 class TestLabels(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         logger.debug("Added signal")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller

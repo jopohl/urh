@@ -2,7 +2,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.signalprocessing.encoder import Encoder
@@ -11,7 +10,7 @@ from urh.signalprocessing.encoder import Encoder
 class TestFuzzing(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.form.add_signalfile(get_path_for_data_file("steckdose_anlernen.complex"))
+        self.add_signal_to_form("steckdose_anlernen.complex")
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.setValue(0.06)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0127)

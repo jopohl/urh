@@ -10,7 +10,7 @@ from tests.utils_testing import get_path_for_data_file
 
 class TestSignalTabGUI(QtTestCase):
     def test_close_all(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all()
         QApplication.instance().processEvents()
@@ -20,9 +20,7 @@ class TestSignalTabGUI(QtTestCase):
         # Add a bunch of signals
         num_frames = 5
         for _ in range(num_frames):
-            QApplication.instance().processEvents()
-            QTest.qWait(10)
-            self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+            self.add_signal_to_form("esaver.complex")
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
@@ -30,11 +28,11 @@ class TestSignalTabGUI(QtTestCase):
         QApplication.instance().processEvents()
         QTest.qWait(10)
 
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
 
     def test_zoom(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         QApplication.instance().processEvents()
         x_zoom = frame.ui.spinBoxXZoom.value()
@@ -59,7 +57,7 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(), "Protocol (*.proto)")
 
     def test_graphic_view_selection(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         frame.ui.gvSignal.selection_area.start = 0
         frame.ui.gvSignal.selection_area.end = 4000
@@ -77,7 +75,7 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(frame.ui.gvSignal.selection_area.end, 6000)
 
     def test_graphic_view_zoom_to_selection(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         frame.ui.gvSignal.context_menu_position = QPoint(0, 0)
         menu = frame.ui.gvSignal.create_context_menu()
@@ -96,16 +94,16 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(frame.ui.spinBoxSelectionEnd.value(), 4711)
 
     def test_show_hide_start_end(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         self.assertEqual(frame.ui.btnShowHideStartEnd.text(), "+")
         frame.ui.btnShowHideStartEnd.click()
         self.assertEqual(frame.ui.btnShowHideStartEnd.text(), "-")
 
     def test_apply_to_all(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
         frame.ui.spinBoxInfoLen.setValue(42)
@@ -128,9 +126,9 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
 
     def test_save_all(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
         frame.signal.changed = True
@@ -151,7 +149,7 @@ class TestSignalTabGUI(QtTestCase):
         os.remove(frame2.signal.filename)
 
     def test_crop_and_save_signal(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         frame.ui.gvSignal.selection_area.end = 4000
         frame.ui.gvSignal.selection_area.start = 1000
@@ -171,12 +169,12 @@ class TestSignalTabGUI(QtTestCase):
         self.assertFalse(os.path.isfile(frame.signal.filename))
         frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(frame)
-        self.form.add_signalfile(os.path.join(QDir.tempPath(), "sig.complex"))
+        self.add_signal_to_form(os.path.join(QDir.tempPath(), "sig.complex"))
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
 
     def test_selection_sync(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         frame.ui.gvSignal.selection_area.end = 128440
         frame.ui.gvSignal.selection_area.start = 89383
@@ -190,21 +188,21 @@ class TestSignalTabGUI(QtTestCase):
                                (frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
 
     def test_show_demod_view(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         self.assertTrue(frame.ui.gvLegend.isHidden())
         frame.ui.cbSignalView.setCurrentIndex(1)
         self.assertFalse(frame.ui.gvLegend.isHidden())
 
     def test_auto_detect_button(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         self.assertTrue(frame.ui.btnAutoDetect.isChecked())
         frame.ui.btnAutoDetect.click()
         self.assertFalse(frame.ui.btnAutoDetect.isChecked())
 
     def test_create_new_signal(self):
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
         start, end = 400, 8568
         frame.ui.gvSignal.selection_area.end = end

@@ -1,42 +1,17 @@
 import hashlib
 import os
-import sys
 import tarfile
 import tempfile
-import unittest
 from zipfile import ZipFile
 
 import numpy as np
-import sip
 from PyQt5.QtCore import QDir
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.util import FileOperator
 
-utils_testing.write_settings()
 
-
-class TestFileOperator(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-    def setUp(self):
-        self.form = MainController()
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
+class TestFileOperator(QtTestCase):
     def test_save_wav(self):
         temp_dir = tempfile.gettempdir()
         os.chdir(temp_dir)

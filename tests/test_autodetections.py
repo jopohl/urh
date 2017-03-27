@@ -1,26 +1,16 @@
-import sys
 import unittest
 
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Signal import Signal
 
-utils_testing.write_settings()
+class TestAutodetections(QtTestCase):
+    def setUp(self):
+        pass
 
-class TestAutodetections(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
+    def tearDown(self):
+        pass
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-    # Testmethode muss immer mit Präfix test_* starten
     def test_auto_detect_esaver(self):
         signal = Signal(get_path_for_data_file("esaver.complex"), "ESaver")
         signal.modulation_type = 1

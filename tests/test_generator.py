@@ -1,37 +1,13 @@
 import os
-import sys
-import unittest
 
-import sip
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
-
-utils_testing.write_settings()
 
 
-class TestGenerator(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-    def setUp(self):
-        self.form = MainController()
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
+class TestGenerator(QtTestCase):
     def test_generation(self):
         """
         Complex test including much functionality

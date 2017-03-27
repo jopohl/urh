@@ -1,39 +1,19 @@
 import math
-import sys
-import unittest
 
-import sip
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
-from urh.util.Logger import logger
-
-utils_testing.write_settings()
 
 
-class TestPlugins(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-
+class TestPlugins(QtTestCase):
     def setUp(self):
-        logger.debug("Init form")
-        self.form = MainController()
-        logger.debug("Initalized form")
+        super().setUp()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
@@ -42,11 +22,6 @@ class TestPlugins(unittest.TestCase):
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
         self.signal = self.sframe.signal
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
@@ -121,7 +96,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
@@ -133,7 +108,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxFrequency.setValue(1e6)
         dialog.doubleSpinBoxFrequency.editingFinished.emit()
@@ -141,7 +116,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxPhase.setValue(100)
         dialog.doubleSpinBoxPhase.editingFinished.emit()
@@ -149,7 +124,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxSampleRate.setValue(2e6)
         dialog.doubleSpinBoxSampleRate.editingFinished.emit()
@@ -157,7 +132,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         dialog.doubleSpinBoxNSamples.setValue(0.5e6)
         dialog.doubleSpinBoxNSamples.editingFinished.emit()
@@ -165,7 +140,7 @@ class TestPlugins(unittest.TestCase):
 
         while not dialog.doubleSpinBoxAmplitude.isEnabled():
             self.app.processEvents()
-            QTest.qWait(10)
+            QTest.qWait(100)
 
         sep = Formatter.local_decimal_seperator()
         self.assertEqual(dialog.lineEditTime.text(), "250" + sep + "000m")

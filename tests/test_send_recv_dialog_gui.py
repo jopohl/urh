@@ -1,7 +1,5 @@
 import os
 import socket
-import sys
-import unittest
 
 import numpy as np
 import sip
@@ -9,9 +7,8 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
@@ -21,33 +18,21 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
-utils_testing.write_settings()
 
-
-class TestSendRecvDialog(unittest.TestCase):
+class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 500
     CLOSE_TIMEOUT = 50
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def tearDown(self):
-        self.form.close_all()
-        self.signal.eliminate()
-        self.signal = None
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
+        self.signal.setParent(None)
+        self.signal.deleteLater()
+        sip.delete(self.signal)
+        super().tearDown()
 
     def __get_recv_dialog(self):
         receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
@@ -80,8 +65,10 @@ class TestSendRecvDialog(unittest.TestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
+        dialog.setParent(None)
+        sip.delete(dialog)
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(10)
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():

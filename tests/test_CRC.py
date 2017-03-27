@@ -1,25 +1,14 @@
-import sys
-import unittest
-
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 from urh.util.crc import crc_generic
 
-utils_testing.write_settings()
+class TestCRC(QtTestCase):
+    def setUp(self):
+        pass
 
-class TestCRC(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
+    def tearDown(self):
+        pass
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-    # Testmethode muss immer mit Präfix test_* starten
     def test_crc(self):
         # http://depa.usst.edu.cn/chenjq/www2/software/crc/CRC_Javascript/CRCcalculation.htm
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False

@@ -1,12 +1,7 @@
 import os
-import sys
 import tempfile
-import unittest
 
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
@@ -14,19 +9,8 @@ from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerConta
 from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
 
-utils_testing.write_settings()
 
-
-class TestFuzzing(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestFuzzing(QtTestCase):
     def setUp(self):
         filename = os.path.join(tempfile.gettempdir(), "test.fuzz")
         mod1 = Modulator("mod 1")
@@ -41,6 +25,9 @@ class TestFuzzing(unittest.TestCase):
         pac.used_symbols.add(Symbol("A", 1, 1, 100))
         pac.create_fuzzing_label(1, 10, 0)
         pac.to_xml_file(filename)
+
+    def tearDown(self):
+        pass
 
     def test_load_profile(self):
         pac = ProtocolAnalyzerContainer([])

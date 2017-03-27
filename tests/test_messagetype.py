@@ -1,25 +1,13 @@
-import sys
-import unittest
-
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
-utils_testing.write_settings()
+class TestMessageType(QtTestCase):
+    def setUp(self):
+        pass
 
-
-class TestMessageType(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+    def tearDown(self):
+        pass
 
     def test_find_unlabeled_range(self):
         lbl11 = ProtocolLabel(name="Label 1.1", start=2, end=10, color_index=0)

@@ -1,36 +1,14 @@
-import sys
-import unittest
-
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.util.Logger import logger
 
-utils_testing.write_settings()
 
-
-
-class TestLabels(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-    
+class TestLabels(QtTestCase):
     def setUp(self):
-        logger.debug("Init form")
-        self.form = MainController()
-        logger.debug("Intiliazed form")
-        self.app.processEvents()
-        logger.debug("Add signal")
+        super().setUp()
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         logger.debug("Added signal")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
@@ -45,11 +23,6 @@ class TestLabels(unittest.TestCase):
         self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name = False)  # FuzzBit
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)

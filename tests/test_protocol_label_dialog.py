@@ -1,30 +1,13 @@
-import sys
-import unittest
-
 import sip
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 
-utils_testing.write_settings()
-
-
-class TestProtocolLabelDialog(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+class TestProtocolLabelDialog(QtTestCase):
 
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
 
         self.cframe = self.form.compare_frame_controller
@@ -38,9 +21,10 @@ class TestProtocolLabelDialog(unittest.TestCase):
                                               viewtype=0, parent=self.cframe)
 
     def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
+        self.dialog.close()
+        self.dialog.setParent(None)
+        sip.delete(self.dialog)
+        super().tearDown()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

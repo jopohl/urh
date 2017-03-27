@@ -1,11 +1,6 @@
 import copy
-import sys
-import unittest
 
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -14,20 +9,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
 from urh.signalprocessing.encoder import Encoder
 
-utils_testing.write_settings()
-
-
-class TestAutoAssignments(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-
+class TestAutoAssignments(QtTestCase):
     def setUp(self):
         self.protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("decoded_bits.txt")) as f:
@@ -56,6 +38,9 @@ class TestAutoAssignments(unittest.TestCase):
         self.decodings.append(Encoder(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
         self.decodings.append(Encoder(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
         self.decodings.append(Encoder(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
+
+    def tearDown(self):
+        pass
 
     def test_message_type_assign_by_value(self):
         start = 8

@@ -1,35 +1,8 @@
-import sys
-import unittest
-
-import sip
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
-
 import tests.utils_testing
-from tests import utils_testing
-from urh.controller.MainController import MainController
-
-utils_testing.write_settings()
+from tests.QtTestCase import QtTestCase
 
 
-class TestMaincontrollerGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-    def setUp(self):
-        self.form = MainController()
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
+class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent(self):
         # Ensure we have at least one recent action
         self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))

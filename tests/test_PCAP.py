@@ -1,29 +1,18 @@
 import copy
-import sys
-import unittest
 
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-utils_testing.write_settings()
 
+class TestPCAP(QtTestCase):
+    def setUp(self):
+        pass
 
-
-class TestPCAP(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+    def tearDown(self):
+        pass
 
     def test_write(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")

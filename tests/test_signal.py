@@ -1,25 +1,14 @@
-import sys
-import unittest
-
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-utils_testing.write_settings()
+class TestSignal(QtTestCase):
+    def setUp(self):
+        pass
 
-class TestSignal(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+    def tearDown(self):
+        pass
 
     def test_freq_detection(self):
         s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")

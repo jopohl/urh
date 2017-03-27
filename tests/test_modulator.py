@@ -1,36 +1,24 @@
 import os
-import sys
 import time
-import unittest
 
-import sip
 from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-utils_testing.write_settings()
 
-
-class TestModulator(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestModulator(QtTestCase):
     def setUp(self):
         self.modulation_data = [True, False, False, False, True, True, False, True]
         self.samples_per_bit = 100
         self.pause = 1000
 
         self.total_samples = len(self.modulation_data) * self.samples_per_bit + self.pause
+
+    def tearDown(self):
+        pass
 
     def test_ask_fsk_psk_modulation(self):
         modulations = ["ASK", "FSK", "PSK"]

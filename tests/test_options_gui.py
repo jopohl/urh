@@ -1,37 +1,20 @@
-import sys
-import unittest
-
 import sip
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.controller.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
-utils_testing.write_settings()
-
-class TestOptionsGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestOptionsGUI(QtTestCase):
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
     def tearDown(self):
-        self.form.close_all()
         self.dialog.close()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
+        self.dialog.setParent(None)
+        sip.delete(self.dialog)
+        super().tearDown()
 
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)

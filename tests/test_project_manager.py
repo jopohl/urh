@@ -1,42 +1,22 @@
 import os
 import random
-import sys
-import unittest
 
-import sip
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
 
-utils_testing.write_settings()
 
-
-class TestProjectManager(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestProjectManager(QtTestCase):
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"
@@ -70,14 +50,14 @@ class TestProjectManager(unittest.TestCase):
     def test_close_all(self):
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(100)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(100)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

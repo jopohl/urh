@@ -1,10 +1,4 @@
-import sys
-import unittest
-
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
@@ -21,18 +15,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-utils_testing.write_settings()
-
-class TestAWRE(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestAWRE(QtTestCase):
     def setUp(self):
         self.field_types = FieldType.default_field_types()
 
@@ -66,6 +49,9 @@ class TestAWRE(unittest.TestCase):
 
         for i, message in enumerate(self.zero_crc_protocol.messages):
             message.participant = alice if i in alice_indices else bob
+
+    def tearDown(self):
+        pass
 
     @staticmethod
     def __field_type_with_function(field_types, function) -> FieldType:

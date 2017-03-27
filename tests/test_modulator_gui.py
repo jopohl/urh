@@ -1,31 +1,18 @@
-import sys
-import unittest
-
 import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.util.Logger import logger
 
-utils_testing.write_settings()
 
-class TestModulatorGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+class TestModulatorGUI(QtTestCase):
     
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.form.ui.tabWidget.setCurrentIndex(2)
         QApplication.instance().processEvents()
 
@@ -39,10 +26,10 @@ class TestModulatorGUI(unittest.TestCase):
         logger.debug("Preparation success")
 
     def tearDown(self):
-        self.form.close_all()
         self.dialog.close()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
+        self.dialog.setParent(None)
+        sip.delete(self.dialog)
+        super().tearDown()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)

@@ -1,36 +1,19 @@
-import sys
 import time
-import unittest
 
-import sip
 from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-utils_testing.write_settings()
 
-
-class TestProtocolTable(unittest.TestCase):
+class TestProtocolTable(QtTestCase):
     NUM_MESSAGES = 100
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
@@ -44,11 +27,6 @@ class TestProtocolTable(unittest.TestCase):
 
         self.__add_labels()
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), self.NUM_LABELS)
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_set_shown_protocols_performance(self):
         t = time.time()

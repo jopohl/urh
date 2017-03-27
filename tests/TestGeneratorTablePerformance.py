@@ -1,33 +1,20 @@
-import sys
 import time
-import unittest
 
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
-class TestGeneratorTable(unittest.TestCase):
+class TestGeneratorTable(QtTestCase):
     NUM_MESSAGES = 100
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -42,11 +29,6 @@ class TestGeneratorTable(unittest.TestCase):
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
         self.__add_labels()
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_performance(self):
         item = self.gframe.tree_model.rootItem.children[0].children[0]

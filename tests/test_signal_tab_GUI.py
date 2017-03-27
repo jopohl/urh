@@ -1,43 +1,20 @@
 import os
-import sys
-import unittest
 
-import sip
 from PyQt5.QtCore import QDir, QPoint
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
-
-utils_testing.write_settings()
 
 
-class TestSignalTabGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
-    def setUp(self):
-        self.form = MainController()
-
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
-
+class TestSignalTabGUI(QtTestCase):
     def test_close_all(self):
         self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(100)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
@@ -49,7 +26,7 @@ class TestSignalTabGUI(unittest.TestCase):
 
         self.form.close_all()
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(100)
 
         self.form.add_signalfile(get_path_for_data_file("ask.complex"))
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

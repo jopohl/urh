@@ -1,27 +1,16 @@
-import sys
 import unittest
 
-import sip
-from PyQt5.QtWidgets import QApplication
-
-from tests import utils_testing
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-utils_testing.write_settings()
-
-
 class TestProtocolAnalyzer(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
+    def setUp(self):
+        pass
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
+    def tearDown(self):
+        pass
 
     def test_get_bit_sample_pos(self):
         signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")

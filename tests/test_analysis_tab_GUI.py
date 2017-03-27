@@ -1,31 +1,16 @@
 import copy
-import sys
-import unittest
 
-import sip
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from tests import utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
-
-utils_testing.write_settings()
 
 
-class TestAnalysisTabGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication(sys.argv)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        sip.delete(cls.app)
-
+class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.cfc = self.form.compare_frame_controller
         self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
         QApplication.instance().processEvents()
@@ -35,10 +20,6 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.signal.bit_len = 100
         self.signal.tolerance = 5
 
-    def tearDown(self):
-        self.form.close_all()
-        QApplication.instance().processEvents()
-        QTest.qWait(1)
 
     def test_analyze_button_fsk(self):
         self.form.add_signalfile(get_path_for_data_file("fsk.complex"))

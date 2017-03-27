@@ -12,11 +12,8 @@ class TestAnalysisTabGUI(QtTestCase):
         super().setUp()
         self.add_signal_to_form("two_participants.complex")
         self.cfc = self.form.compare_frame_controller
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
-        self.signal.noise_threshold = 0.0175
-        self.signal.qad_center = 0
-        self.signal.bit_len = 100
-        self.signal.tolerance = 5
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
 
     def test_analyze_button_fsk(self):
         self.add_signal_to_form("fsk.complex")

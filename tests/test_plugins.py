@@ -21,8 +21,6 @@ class TestPlugins(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
-        self.signal = self.sframe.signal
-
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
         action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,
@@ -87,9 +85,9 @@ class TestPlugins(QtTestCase):
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         num_samples = 10000
-        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.signal.data,
+        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.sframe.signal.data,
                                                            position=2000,
-                                                           sample_rate=self.signal.sample_rate,
+                                                           sample_rate=self.sframe.signal.sample_rate,
                                                            num_samples=num_samples)
 
         graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
@@ -98,7 +96,7 @@ class TestPlugins(QtTestCase):
             QApplication.instance().processEvents()
             QTest.qWait(10)
 
-        self.assertEqual(int(graphics_view.sceneRect().width()), self.signal.num_samples + num_samples)
+        self.assertEqual(int(graphics_view.sceneRect().width()), self.sframe.signal.num_samples + num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().x(), 2000)
 

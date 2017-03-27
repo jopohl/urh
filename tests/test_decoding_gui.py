@@ -7,9 +7,9 @@ class TestDecodingGUI(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("esaver.complex")
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[self.signal], parent=self.form,
+                                              signals=[signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
     def test_edit_decoding(self):

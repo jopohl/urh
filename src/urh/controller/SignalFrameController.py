@@ -500,7 +500,6 @@ class SignalFrameController(QFrame):
 
         self.setParent(None)
         self.deleteLater()
-        sip.delete(self)
 
     @pyqtSlot()
     def on_signal_zoomed(self):

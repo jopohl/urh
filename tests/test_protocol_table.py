@@ -1,6 +1,8 @@
 import time
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
@@ -46,6 +48,8 @@ class TestProtocolTable(QtTestCase):
 
 
     def __build_protocol(self):
+        QApplication.instance().processEvents()
+        QTest.qWait(10)
         result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_MESSAGES):
             b = Message([True] * self.BITS_PER_MESSAGE, pause=1000, message_type=result.default_message_type)

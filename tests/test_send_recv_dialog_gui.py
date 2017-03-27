@@ -60,7 +60,8 @@ class TestSendRecvDialog(QtTestCase):
         dialog.close()
         dialog.setParent(None)
         dialog.deleteLater()
-        sip.delete(dialog)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.CLOSE_TIMEOUT)
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():

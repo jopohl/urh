@@ -8,6 +8,10 @@ from PyQt5.QtWidgets import QApplication
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
 
+import faulthandler
+
+faulthandler.enable()
+
 
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 50
@@ -37,17 +41,13 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-            self.dialog.setParent(None)
-            self.dialog.deleteLater()
-            sip.delete(self.dialog)
-            del self.dialog
+            QApplication.instance().processEvents()
+            QTest.qWait(10)
 
         if hasattr(self, "form"):
             self.form.close_all()
-            self.form.setParent(None)
-            self.form.deleteLater()
-            sip.delete(self.form)
-            del self.form
+            QApplication.instance().processEvents()
+            QTest.qWait(10)
 
         QApplication.processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)

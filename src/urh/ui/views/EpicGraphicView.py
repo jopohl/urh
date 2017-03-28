@@ -70,10 +70,6 @@ class EpicGraphicView(EditableGraphicView):
         else:
             return []
 
-    def eliminate(self):
-        self.horizontalScrollBar().blockSignals(True)
-        super().eliminate()
-
     def is_pos_in_separea(self, pos: QPoint):
         if self.scene_type == 0:
             return False

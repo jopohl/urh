@@ -17,8 +17,6 @@ class FFTSceneManager(SceneManager):
         self.scene = GridScene(parent=graphic_view)
         self.scene.setBackgroundBrush(constants.BGCOLOR)
 
-        self.init_scene(draw_grid=False)
-
         self.peak_item = self.scene.addPath(QPainterPath(),
                                             QPen(constants.PEAK_COLOR, Qt.FlatCap))  # type: QGraphicsPathItem
 
@@ -43,7 +41,6 @@ class FFTSceneManager(SceneManager):
         self.scene.draw_grid = draw_grid
         minimum = -4.5
         maximum = 2
-        # minimum = -np.log10(np.max(self.y)))
 
         self.peak = self.plot_data if len(self.peak) < self.num_samples else np.maximum(self.peak, self.plot_data)
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)

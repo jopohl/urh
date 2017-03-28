@@ -14,7 +14,7 @@ class SceneManager(QObject):
     def __init__(self, parent):
         super().__init__(parent)
         self.scene = ZoomableScene()
-        self.plot_data = np.array([0] * 100)
+        self.plot_data = None  # type: np.ndarray
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
         self.text_item = self.scene.addText("", QFont("Helvetica"))
         self.minimum = float("nan")  # NaN = AutoDetect

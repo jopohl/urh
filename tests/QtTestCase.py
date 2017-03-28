@@ -44,5 +44,7 @@ class QtTestCase(unittest.TestCase):
             self.dialog.close()
         if hasattr(self, "form"):
             self.form.close_all()
+            if self.SHOW:
+                self.form.close()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)

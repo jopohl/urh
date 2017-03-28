@@ -74,8 +74,9 @@ class TestSendRecvDialog(QtTestCase):
             self.__close_dialog(dialog)
 
     def test_receive(self):
+        port = self.__get_free_port()
         receive_dialog = self.__get_recv_dialog()
-        receive_dialog.device.set_server_port(2222)
+        receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
 
         data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
@@ -83,7 +84,7 @@ class TestSendRecvDialog(QtTestCase):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        sock.connect(("127.0.0.1", 2222))
+        sock.connect(("127.0.0.1", port))
         sock.sendall(data.tostring())
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
@@ -102,12 +103,13 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(receive_dialog)
 
     def test_send(self):
+        port = self.__get_free_port()
         receive_dialog = self.__get_recv_dialog()
-        receive_dialog.device.set_server_port(3333)
+        receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
 
         send_dialog = self.__get_send_dialog()
-        send_dialog.device.set_client_port(3333)
+        send_dialog.device.set_client_port(port)
         send_dialog.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
@@ -150,8 +152,10 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
-        sniff_dialog.device.set_server_port(4444)
-        generator_frame.network_sdr_plugin.client_port = 4444
+        port = self.__get_free_port()
+
+        sniff_dialog.device.set_server_port(port)
+        generator_frame.network_sdr_plugin.client_port = port
         sniff_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
         generator_frame.ui.btnNetworkSDRSend.click()
@@ -290,3 +294,11 @@ class TestSendRecvDialog(QtTestCase):
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
             self.__close_dialog(dialog)
+
+    def __get_free_port(self):
+        import socket
+        s = socket.socket()
+        s.bind(("", 0))
+        port = s.getsockname()[1]
+        s.close()
+        return port

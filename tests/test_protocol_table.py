@@ -49,7 +49,7 @@ class TestProtocolTable(QtTestCase):
 
     def __build_protocol(self):
         QApplication.instance().processEvents()
-        QTest.qWait(10)
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_MESSAGES):
             b = Message([True] * self.BITS_PER_MESSAGE, pause=1000, message_type=result.default_message_type)

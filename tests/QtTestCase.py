@@ -15,6 +15,7 @@ faulthandler.enable()
 
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
+    WAIT_TIMEOUT_BEFORE_NEW = 10
 
     @classmethod
     def setUpClass(cls):
@@ -32,7 +33,7 @@ class QtTestCase(unittest.TestCase):
 
     def add_signal_to_form(self, filename: str):
         QApplication.instance().processEvents()
-        QTest.qWait(1)
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         self.form.add_signalfile(get_path_for_data_file(filename))
 
     def tearDown(self):

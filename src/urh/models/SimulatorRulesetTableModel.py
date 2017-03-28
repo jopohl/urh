@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 
 class SimulatorRulesetTableModel(QAbstractTableModel):
-    header_labels = ["Variable", "Operator", "Value"]
+    header_labels = ["Variable", "Viewtype", "Operator", "Value"]
 
     def __init__(self, operator_descriptions: list, ruleset=[], parent=None):
         self.ruleset = ruleset
@@ -35,8 +35,10 @@ class SimulatorRulesetTableModel(QAbstractTableModel):
             if j == 0:
                 return rule.variable
             elif j == 1:
-                return rule.operator_description
+                return rule.value_type
             elif j == 2:
+                return rule.operator_description
+            elif j == 3:
                 return rule.target_value
 
     def setData(self, index: QModelIndex, value, role=None):
@@ -48,8 +50,10 @@ class SimulatorRulesetTableModel(QAbstractTableModel):
                 if j == 0:
                     rule.variable = value
                 elif j == 1:
-                    rule.operator_description = self.operator_descriptions[int(value)]
+                    rule.value_type = value
                 elif j == 2:
+                    rule.operator_description = self.operator_descriptions[int(value)]
+                elif j == 3:
                     rule.target_value = value
             except ValueError:
                 return False

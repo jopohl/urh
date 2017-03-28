@@ -57,9 +57,9 @@ class SimulatorTabController(QWidget):
         operator_descriptions.sort()
         self.simulator_ruleset_model = SimulatorRulesetTableModel(operator_descriptions, parent=self)
         self.ui.tblViewSimulatorRuleset.setModel(self.simulator_ruleset_model)
-        self.mcbd = MessageComboBoxDelegate(self.simulator_scene, parent=self)
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0, self.mcbd)
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(1, ComboBoxDelegate(operator_descriptions, parent=self))
+        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0, MessageComboBoxDelegate(self.simulator_scene, parent=self))
+        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(1, ComboBoxDelegate(["Bit", "Hex", "ASCII"], parent=self))
+        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(2, ComboBoxDelegate(operator_descriptions, parent=self))
 
         self.selected_item = None
 
@@ -105,6 +105,7 @@ class SimulatorTabController(QWidget):
     def update_ui(self):
         selected_items = self.simulator_scene.selectedItems()
         self.selected_item = None
+        self.ui.goto_combobox.clear()
 
         if selected_items:
             self.selected_item = selected_items[0]
@@ -149,8 +150,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_goto_combobox_activated(self):
-        if self.ui.goto_combobox.currentData():
-            self.selected_item.goto_target = self.ui.goto_combobox.currentData()
+        self.selected_item.goto_target = self.ui.goto_combobox.currentData()
 
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):
@@ -207,6 +207,7 @@ class SimulatorTabController(QWidget):
     def open_editors(self, row):
         self.ui.tblViewSimulatorRuleset.openPersistentEditor(self.simulator_ruleset_model.index(row, 0))
         self.ui.tblViewSimulatorRuleset.openPersistentEditor(self.simulator_ruleset_model.index(row, 1))
+        self.ui.tblViewSimulatorRuleset.openPersistentEditor(self.simulator_ruleset_model.index(row, 2))
 
     @pyqtSlot(bool)
     def on_cb_rulesetmode_toggled(self, checked: bool):
@@ -218,7 +219,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
-        self.selected_item.ruleset.append(SimulatorRule(None, "=", "1"))
+        self.selected_item.ruleset.append(SimulatorRule(variable=None, operator="=", target_value="1", value_type=0))
         self.simulator_ruleset_model.update()
 
         for i in range(len(self.selected_item.ruleset)):

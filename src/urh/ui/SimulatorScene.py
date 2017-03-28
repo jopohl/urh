@@ -226,13 +226,14 @@ class RuleItem(QGraphicsItem):
     def has_else_condition(self):
         return len([cond for cond in self.conditions if cond.type is ConditionType.ELSE]) == 1
 
-    def get_all_messages(self):
-        messages = []
+    def get_all_items(self):
+        items = []
 
         for cond in self.conditions:
-            messages.extend([item for item in cond.sim_items if type(item) is MessageItem])
+            items.append(cond)
+            items.extend(cond.sim_items)
 
-        return messages
+        return items
 
     def cut_selected_messages(self):
         messages = []
@@ -521,14 +522,15 @@ class GotoAction(ActionItem):
 
     @goto_target.setter
     def goto_target(self, value):
-        if value is None:
-            return
+        self.__goto_target = weakref.ref(value) if value else None
 
-        self.__goto_target = weakref.ref(value)
         self.update_label()
 
     def refresh(self, x_pos, y_pos):
-        self.update_label()
+        if self.goto_target not in self.scene().get_all_items():
+            self.goto_target = None
+            self.update_label()
+
         super().refresh(x_pos, y_pos)
 
     def update_label(self):
@@ -766,14 +768,19 @@ class SimulatorScene(QGraphicsScene):
                 participant.setVisible(False)
                 participant.update(x_pos = 30)
 
-    def get_all_messages(self):
-        messages = []
+    def get_all_items(self):
+        items = []
 
         for item in self.sim_items:
-            if type(item) is MessageItem:
-                messages.append(item)
-            elif type(item) is RuleItem:
-                messages.extend(item.get_all_messages())
+            if isinstance(item, RuleItem):
+                items.extend(item.get_all_items())
+            else:
+                items.append(item)
+
+        return items
+
+    def get_all_messages(self):
+        messages = [item for item in self.get_all_items() if isinstance(item, MessageItem)]
 
         return messages
 

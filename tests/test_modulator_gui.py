@@ -15,9 +15,6 @@ class TestModulatorGUI(QtTestCase):
 
         logger.debug("Preparing Modulation dialog")
         self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
-
         logger.debug("Initializing Modulation dialog")
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")

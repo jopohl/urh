@@ -558,9 +558,7 @@ class SignalFrameController(QFrame):
     def on_protocol_updated(self):
         self.ui.gvSignal.redraw_view()  # Participants may have changed
         self.ui.txtEdProto.setEnabled(True)
-        cur_scroll = self.ui.txtEdProto.verticalScrollBar().value()
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
-        self.ui.txtEdProto.verticalScrollBar().setValue(cur_scroll)
 
     @pyqtSlot(float)
     def update_legend(self, y_sep):

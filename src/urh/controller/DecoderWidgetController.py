@@ -26,6 +26,7 @@ class DecoderWidgetController(QDialog):
         super().__init__(parent)
         self.ui = Ui_Decoder()
         self.ui.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         # Variables
         self.old_inpt_txt = ""

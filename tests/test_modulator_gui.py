@@ -22,6 +22,9 @@ class TestModulatorGUI(QtTestCase):
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
         self.dialog.ui.btnAddModulation.click()

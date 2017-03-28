@@ -65,6 +65,9 @@ class TestFuzzing(QtTestCase):
         self.dialog.finished.connect(self.gframe.refresh_table)
         self.dialog.finished.connect(self.gframe.set_fuzzing_ui_status)
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_fuzz_label_bit(self):
         self.assertEqual(self.dialog.message_data[self.dialog.current_label_start:self.dialog.current_label_end],
                          "00010110010100010100")  # Serial Part 1

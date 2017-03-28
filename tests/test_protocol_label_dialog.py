@@ -23,6 +23,9 @@ class TestProtocolLabelDialog(QtTestCase):
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())
         table_model = self.dialog.ui.tblViewProtoLabels.model()

@@ -12,6 +12,9 @@ class TestDecodingGUI(QtTestCase):
                                               signals=[signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)  # One Invert

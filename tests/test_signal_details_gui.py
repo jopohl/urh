@@ -10,6 +10,9 @@ class TestSignalDetailsGUI(QtTestCase):
         self.signal.sample_rate = 2e6
         self.dialog = SignalDetailsController(self.signal)
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_set_sample_rate(self):
         self.assertEqual(Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
                          self.dialog.ui.lDuration.text())

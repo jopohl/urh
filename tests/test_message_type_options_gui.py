@@ -10,6 +10,9 @@ class TestMessageTypeOptionsGUI(QtTestCase):
         self.message_type = MessageType(name="Test")
         self.dialog = MessageTypeDialogController(self.message_type)
 
+        if self.SHOW:
+            self.dialog.show()
+
     def test_message_type_dialog_parameters(self):
         self.assertEqual(self.message_type.name, self.dialog.windowTitle())
         self.assertEqual(self.message_type.assign_manually, not self.dialog.ui.rbAssignAutomatically.isChecked())

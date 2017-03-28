@@ -16,6 +16,7 @@ faulthandler.enable()
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
     WAIT_TIMEOUT_BEFORE_NEW = 10
+    SHOW = True
 
     @classmethod
     def setUpClass(cls):
@@ -30,6 +31,8 @@ class QtTestCase(unittest.TestCase):
 
     def setUp(self):
         self.form = MainController()
+        if self.SHOW:
+            self.form.show()
 
     def add_signal_to_form(self, filename: str):
         QApplication.instance().processEvents()

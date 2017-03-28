@@ -35,7 +35,6 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.redraw_timer.timeout.connect(self.redraw_view)
 
         self.zoomed.connect(self.on_signal_zoomed)
-        self.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
     @property
     def y_center(self):
@@ -48,6 +47,10 @@ class ZoomableGraphicView(SelectableGraphicView):
     @property
     def scene_type(self):
         return 0  # gets overwritten in Epic Graphic View
+
+    def scrollContentsBy(self, dx: int, dy: int):
+        super().scrollContentsBy(dx, dy)
+        self.redraw_timer.start(0)
 
     def zoom(self, factor, suppress_signal=False, event: QWheelEvent = None):
         if factor > 1 and self.view_rect().width() / factor < 300:
@@ -144,10 +147,6 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_signal_zoomed(self):
         self.redraw_timer.start(30)
-
-    @pyqtSlot()
-    def on_signal_scrolled(self):
-        self.redraw_timer.start(0)
 
     @pyqtSlot()
     def on_zoom_in_action_triggered(self):

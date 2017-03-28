@@ -54,7 +54,8 @@ class FFTSceneManager(SceneManager):
 
     def clear_peak(self):
         self.peak = []
-        self.peak_item.setPath(QPainterPath())
+        if self.peak_item:
+            self.peak_item.setPath(QPainterPath())
 
     def set_text(self, text):
         self.scene.draw_grid = False

@@ -142,13 +142,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_thread.start()
 
     def stop_tcp_server(self):
+        self.receive_check_timer.stop()
         if hasattr(self, "server"):
             logger.debug("Shutdown TCP server")
             self.server.shutdown()
             self.server.server_close()
         if hasattr(self, "server_thread"):
             self.server_thread.join()
-        self.receive_check_timer.stop()
 
     def send_data(self, data) -> str:
         # Create a socket (SOCK_STREAM means a TCP socket)

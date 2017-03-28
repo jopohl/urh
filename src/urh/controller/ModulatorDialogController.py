@@ -39,7 +39,7 @@ class ModulatorDialogController(QDialog):
         self.ui.btnSearchPrev.setEnabled(False)
 
         self.ui.chkBoxLockSIV.setDisabled(True)
-        
+
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
 
@@ -126,15 +126,6 @@ class ModulatorDialogController(QDialog):
         self.ui.btnSaveAndClose.clicked.connect(self.close)
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
-
-    def closeEvent(self, event: QCloseEvent):
-        for gv in (self.ui.gVModulated, self.ui.gVCarrier, self.ui.gVOriginalSignal, self.ui.gVData):
-            gv.eliminate()
-
-        self.protocol = None
-        self.modulators = None
-
-        event.accept()
 
     def draw_carrier(self):
         self.ui.gVCarrier.plot_data(self.current_modulator.carrier_data)

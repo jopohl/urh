@@ -529,7 +529,8 @@ class GotoAction(ActionItem):
     def refresh(self, x_pos, y_pos):
         if self.goto_target not in self.scene().get_all_items():
             self.goto_target = None
-            self.update_label()
+
+        self.update_label()
 
         super().refresh(x_pos, y_pos)
 

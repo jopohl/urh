@@ -9,7 +9,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene, GotoAction, MessageItem, RuleConditionItem, RuleItem, ConditionType
+from urh.ui.SimulatorScene import SimulatorScene, GotoAction, ExternalProgramAction, MessageItem, RuleConditionItem, RuleItem, ConditionType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
 from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset, SimulatorRule, Mode
@@ -138,6 +138,8 @@ class SimulatorTabController(QWidget):
                     self.open_editors(i)
 
                 self.ui.detail_view_widget.setCurrentIndex(3)
+            elif isinstance(self.selected_item, ExternalProgramAction):
+                self.ui.detail_view_widget.setCurrentIndex(4)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
         else:

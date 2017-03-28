@@ -234,6 +234,7 @@ class GeneratorTabController(QWidget):
         return modulator_dialog, selected_message
 
     def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialogController):
+        dialog.on_modulation_type_changed()  # for drawing modulated signal initially
         dialog.original_bits = bits
         dialog.ui.linEdDataBits.setText(bits)
         dialog.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem

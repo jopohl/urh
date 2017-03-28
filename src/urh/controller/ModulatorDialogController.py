@@ -39,12 +39,11 @@ class ModulatorDialogController(QDialog):
         self.ui.btnSearchPrev.setEnabled(False)
 
         self.ui.chkBoxLockSIV.setDisabled(True)
-
-        self.create_connects()
-        self.on_modulation_type_changed()
-
+        
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
+
+        self.create_connects()
 
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()

@@ -20,7 +20,7 @@ from urh.util.Logger import logger
 
 
 class TestSendRecvDialog(QtTestCase):
-    SEND_RECV_TIMEOUT = 500
+    SEND_RECV_TIMEOUT = 1000
 
     def setUp(self):
         super().setUp()

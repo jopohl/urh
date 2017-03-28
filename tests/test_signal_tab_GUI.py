@@ -215,6 +215,8 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.sel_area_start_end_changed.emit(start, end)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
         frame.ui.gvSignal.on_create_action_triggered()
         QApplication.instance().processEvents()
 

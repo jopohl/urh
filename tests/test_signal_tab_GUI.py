@@ -53,6 +53,8 @@ class TestSignalTabGUI(QtTestCase):
         self.assertNotEqual(samples_in_view, frame.ui.lSamplesInView.text())
 
     def test_load_proto(self):
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         self.form.add_files([get_path_for_data_file("protocol.proto")])
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(), "Protocol (*.proto)")
 
@@ -213,6 +215,8 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.sel_area_start_end_changed.emit(start, end)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         frame.ui.gvSignal.on_create_action_triggered()
         QApplication.instance().processEvents()
 

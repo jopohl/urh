@@ -38,6 +38,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         if self.__dialog_ui is None:
             dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
             self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
             self.__dialog_ui.setModal(True)
             self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
             self.__dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
@@ -227,5 +228,3 @@ class InsertSinePlugin(SignalEditorPlugin):
     @pyqtSlot()
     def on_dialog_finished(self):
         self.sender().graphicsViewSineWave.eliminate()
-        self.sender().setParent(None)
-        self.sender().deleteLater()

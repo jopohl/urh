@@ -123,17 +123,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     def start_tcp_server_for_receiving(self):
-        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler,
-                                             bind_and_activate=False)
+        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler)
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
-
-        self.server.allow_reuse_address = True  # allow reusing addresses if the server is stopped and started again
-        self.server.server_bind()      # only necessary, because we disabled bind_and_activate above
-        self.server.server_activate()  # only necessary, because we disabled bind_and_activate above
 
         self.receive_check_timer.start()
 

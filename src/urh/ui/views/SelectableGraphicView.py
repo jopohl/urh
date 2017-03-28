@@ -261,7 +261,3 @@ class SelectableGraphicView(QGraphicsView):
             self.scene().clear()
             self.scene().setParent(None)
             self.setScene(None)
-
-        self.setParent(None)
-        self.destroy()
-        self.deleteLater()

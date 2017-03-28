@@ -17,10 +17,6 @@ class LegendGraphicView(QGraphicsView):
             self.scene().clear()
             self.scene().setParent(None)
 
-        self.setParent(None)
-        self.destroy()
-        self.deleteLater()
-
     def resizeEvent(self, event):
         self.resized.emit()
 

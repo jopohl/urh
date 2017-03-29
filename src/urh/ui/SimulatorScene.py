@@ -544,6 +544,8 @@ class ExternalProgramAction(ActionItem):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.text.setPlainText("Start program [/usr/bin/test]")
+        self.ext_prog = None
+        self.args = None
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, name, parent=None):

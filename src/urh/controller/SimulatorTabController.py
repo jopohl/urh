@@ -1,7 +1,7 @@
 import re
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtCore import pyqtSlot, Qt, QDir
 
 from urh.models.SimulateListModel import SimulateListModel
 from urh.models.SimulatorRulesetTableModel import SimulatorRulesetTableModel
@@ -68,6 +68,9 @@ class SimulatorTabController(QWidget):
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
         self.ui.btnRemoveRule.clicked.connect(self.on_btn_remove_rule_clicked)
+        self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
+        self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
+        self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
         self.project_manager.project_updated.connect(self.on_project_updated)
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
         self.ui.rbAllApply.toggled.connect(self.on_cb_rulesetmode_toggled)
@@ -139,6 +142,12 @@ class SimulatorTabController(QWidget):
 
                 self.ui.detail_view_widget.setCurrentIndex(3)
             elif isinstance(self.selected_item, ExternalProgramAction):
+                self.ui.extProgramLineEdit.setText(self.selected_item.ext_prog)
+
+                #if self.ui.cmdLineArgsLineEdit.text():
+                self.ui.cmdLineArgsLineEdit.setText(self.selected_item.args)
+                #else:
+                 #   self.ui.cmdLineArgs
                 self.ui.detail_view_widget.setCurrentIndex(4)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
@@ -235,6 +244,21 @@ class SimulatorTabController(QWidget):
 
         for i in range(len(self.selected_item.ruleset)):
             self.open_editors(i)
+
+    @pyqtSlot()
+    def on_btn_choose_ext_prog_clicked(self):
+        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
+
+        if file_name and ok:
+            self.ui.extProgramLineEdit.setText(file_name)
+
+    @pyqtSlot()
+    def on_ext_program_line_edit_text_changed(self):
+        self.selected_item.ext_prog = self.ui.extProgramLineEdit.text()
+
+    @pyqtSlot()
+    def on_cmd_line_args_line_edit_text_changed(self):
+        self.selected_item.args = self.ui.cmdLineArgsLineEdit.text()
 
     @pyqtSlot()
     def refresh_tree(self):

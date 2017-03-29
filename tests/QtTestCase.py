@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 
@@ -16,7 +17,7 @@ faulthandler.enable()
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
     WAIT_TIMEOUT_BEFORE_NEW = 10
-    SHOW = True
+    SHOW = not os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "hide_gui"))
 
     @classmethod
     def setUpClass(cls):

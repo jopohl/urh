@@ -238,8 +238,10 @@ class Signal(QObject):
 
     @property
     def real_plot_data(self):
-        return self.data.real
-
+        try:
+            return self.data.real
+        except AttributeError:
+            return np.zeros(0, dtype=np.float32)
     @property
     def wave_data(self):
         return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))

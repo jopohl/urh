@@ -3,7 +3,6 @@ import re
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot, Qt, QDir
 
-from urh.models.SimulateListModel import SimulateListModel
 from urh.models.SimulatorRulesetTableModel import SimulatorRulesetTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
@@ -34,9 +33,6 @@ class SimulatorTabController(QWidget):
         self.ui.setupUi(self)
 
         self.ui.splitter_2.setSizes([self.width() / 0.7, self.width() / 0.3])
-
-        #self.simulate_list_model = SimulateListModel(self.project_manager.participants)
-        #self.ui.listViewSimulate.setModel(self.simulate_list_model)
 
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
@@ -143,11 +139,7 @@ class SimulatorTabController(QWidget):
                 self.ui.detail_view_widget.setCurrentIndex(3)
             elif isinstance(self.selected_item, ExternalProgramAction):
                 self.ui.extProgramLineEdit.setText(self.selected_item.ext_prog)
-
-                #if self.ui.cmdLineArgsLineEdit.text():
                 self.ui.cmdLineArgsLineEdit.setText(self.selected_item.args)
-                #else:
-                 #   self.ui.cmdLineArgs
                 self.ui.detail_view_widget.setCurrentIndex(4)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
@@ -177,7 +169,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        s = SimulateDialogController(parent=self)
+        s = SimulateDialogController(project_manager=self.project_manager, parent=self)
         s.show()
 
     @pyqtSlot()
@@ -210,9 +202,6 @@ class SimulatorTabController(QWidget):
             self.update_ui()
                     
     def on_project_updated(self):
-        #self.simulate_list_model.participants = self.project_manager.participants
-        #self.simulate_list_model.update()
-
         self.simulator_scene.update_view()
 
     def open_editors(self, row):

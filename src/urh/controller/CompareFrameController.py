@@ -512,7 +512,6 @@ class CompareFrameController(QFrame):
         # Instant Visual Refresh of Tree
         self.proto_tree_model.update()
         self.ui.treeViewProtocols.expandAll()
-        QApplication.instance().processEvents()
 
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         relative_hidden_row_positions = {}

@@ -178,6 +178,7 @@ class TestSignalTabGUI(QtTestCase):
     def test_selection_sync(self):
         self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
+        frame.ui.cbProtoView.setCurrentIndex(0)  # set to bit view
         frame.ui.gvSignal.selection_area.end = 128440
         frame.ui.gvSignal.selection_area.start = 89383
         frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)

@@ -17,6 +17,7 @@ install:
   - sleep 3
 
 before_script:
+   - touch tests/show_gui
    - python3 src/urh/cythonext/build.py
 
 script:

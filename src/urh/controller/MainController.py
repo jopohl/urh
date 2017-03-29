@@ -62,7 +62,6 @@ class MainController(QMainWindow):
         self.undo_group.addStack(self.compare_frame_controller.protocol_undo_stack)
         self.undo_group.addStack(self.generator_tab_controller.generator_undo_stack)
         self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
-        self.ui.progressBar.hide()
 
         self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
@@ -241,32 +240,18 @@ class MainController(QMainWindow):
         self.add_signal(signal, group_id)
 
     def add_signal(self, signal, group_id=0):
-        self.ui.progressBar.setMaximum(100)
-        self.ui.progressBar.show()
-
+        self.setCursor(Qt.WaitCursor)
         pa = ProtocolAnalyzer(signal)
         sig_frame = self.signal_tab_controller.add_signal_frame(pa)
-        self.ui.progressBar.setValue(10)
-        QApplication.instance().processEvents()
-
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
-        self.ui.progressBar.setValue(20)
-        QApplication.instance().processEvents()
 
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
         if not has_entry:
             signal.auto_detect()
         signal.blockSignals(False)
-        self.ui.progressBar.setValue(50)
-        QApplication.instance().processEvents()
-
-        self.ui.progressBar.setValue(70)
-        QApplication.instance().processEvents()
 
         self.signal_protocol_dict[sig_frame] = pa
-        self.ui.progressBar.setValue(80)
-        QApplication.instance().processEvents()
 
         sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
@@ -274,13 +259,10 @@ class MainController(QMainWindow):
 
         sig_frame.ui.gvSignal.auto_fit_view()
         self.set_frame_numbers()
-        self.ui.progressBar.setValue(99)
-        QApplication.instance().processEvents()
 
         self.compare_frame_controller.filter_search_results()
-
         self.refresh_main_menu()
-        self.ui.progressBar.hide()
+        self.unsetCursor()
 
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
@@ -314,7 +296,6 @@ class MainController(QMainWindow):
             self.refresh_main_menu()
         except Exception as e:
             Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
-            self.ui.progressBar.hide()
             self.unsetCursor()
 
     def add_files(self, filepaths, group_id=0):
@@ -485,7 +466,6 @@ class MainController(QMainWindow):
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
         except Exception as e:
             Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
-            self.ui.progressBar.hide()
             self.unsetCursor()
 
     @pyqtSlot()
@@ -696,7 +676,6 @@ class MainController(QMainWindow):
                     self.add_files(file_names)
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
-                self.ui.progressBar.hide()
                 QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()

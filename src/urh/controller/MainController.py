@@ -71,8 +71,7 @@ class MainController(QMainWindow):
 
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 
-        self.signal_protocol_dict = {}
-        """:type: dict[SignalFrameController,ProtocolAnalyzer]"""
+        self.signal_protocol_dict = {}  # type: dict[SignalFrameController, ProtocolAnalyzer]
         self.signal_tab_controller.ui.lLoadingFile.setText("")
 
         self.ui.lnEdtTreeFilter.setClearButtonEnabled(True)
@@ -122,7 +121,7 @@ class MainController(QMainWindow):
         self.ui.menuEdit.insertAction(self.ui.actionMinimize_all, redo_action)
         self.refresh_main_menu()
 
-        self.apply_default_view()
+        self.apply_default_view(constants.SETTINGS.value('default_view', type=int))
         self.project_save_timer.start(ProjectManager.AUTOSAVE_INTERVAL_MINUTES * 60 * 1000)
 
         self.ui.actionProject_settings.setVisible(False)
@@ -194,10 +193,10 @@ class MainController(QMainWindow):
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
-            recentFileAction = QAction(self)
-            recentFileAction.setVisible(False)
-            recentFileAction.triggered.connect(self.on_open_recent_action_triggered)
-            self.recentFileActionList.append(recentFileAction)
+            recent_file_action = QAction(self)
+            recent_file_action.setVisible(False)
+            recent_file_action.triggered.connect(self.on_open_recent_action_triggered)
+            self.recentFileActionList.append(recent_file_action)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
     def add_protocol_file(self, filename):
@@ -376,8 +375,7 @@ class MainController(QMainWindow):
         self.ui.actionSaveAllSignals.setEnabled(enable)
         self.ui.actionClose_all.setEnabled(enable)
 
-    def apply_default_view(self):
-        view_index = constants.SETTINGS.value('default_view', type=int)
+    def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
         self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
         for sig_frame in self.signal_tab_controller.signal_frames:
@@ -714,7 +712,7 @@ class MainController(QMainWindow):
     @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):
         refresh_protocol_needed = False
-        for key in changed_options.keys():
+        for key in changed_options:
             if key == "rel_symbol_length":
                 st = changed_options[key]
                 constants.SETTINGS.setValue('rel_symbol_length', st)
@@ -730,8 +728,8 @@ class MainController(QMainWindow):
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
 
-        if "default_view" in changed_options.keys():
-            self.apply_default_view()
+        if "default_view" in changed_options:
+            self.apply_default_view(int(changed_options["default_view"]))
 
     @pyqtSlot()
     def on_text_edit_project_description_text_changed(self):

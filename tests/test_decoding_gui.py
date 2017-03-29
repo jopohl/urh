@@ -1,34 +1,19 @@
-import unittest
-
-from PyQt5.QtTest import QTest
-
-import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file, short_wait
+from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
-from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 
-app = tests.utils_testing.get_app()
-
-
-class TestDecodingGUI(unittest.TestCase):
+class TestDecodingGUI(QtTestCase):
     def setUp(self):
-        short_wait()
-        self.form = MainController()
-        short_wait()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
+        super().setUp()
+        self.add_signal_to_form("esaver.complex")
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[self.signal], parent=self.form,
+                                              signals=[signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        short_wait()
-        self.form.close()
-        short_wait(interval=10)
+        if self.SHOW:
+            self.dialog.show()
 
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI

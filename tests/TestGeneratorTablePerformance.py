@@ -1,24 +1,20 @@
 import time
-import unittest
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.utils_testing
-from urh.controller.MainController import MainController
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-app = tests.utils_testing.app
 
-
-class TestGeneratorTable(unittest.TestCase):
+class TestGeneratorTable(QtTestCase):
     NUM_MESSAGES = 100
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)

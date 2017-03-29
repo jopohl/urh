@@ -1,8 +1,8 @@
 import locale
 import os
+import time
 
 import numpy
-import time
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu, QApplication
@@ -17,12 +17,12 @@ from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.encoder import Encoder
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.signalprocessing.encoder import Encoder
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
@@ -512,7 +512,6 @@ class CompareFrameController(QFrame):
         # Instant Visual Refresh of Tree
         self.proto_tree_model.update()
         self.ui.treeViewProtocols.expandAll()
-        QApplication.instance().processEvents()
 
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         relative_hidden_row_positions = {}
@@ -645,10 +644,10 @@ class CompareFrameController(QFrame):
         self.updateUI()
 
     def reset(self):
-        self.proto_tree_model.rootItem.clearChilds()
-        self.proto_tree_model.rootItem.addGroup()
         for message_type in self.proto_analyzer.message_types:
             message_type.clear()
+        self.proto_tree_model.rootItem.clearChilds()
+        self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
     def show_protocol_label_dialog(self, preselected_index: int):
@@ -1367,11 +1366,10 @@ class CompareFrameController(QFrame):
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
             for i, tree_item in enumerate(tree_items):
                 proto = tree_item.protocol
-                if proto.show and any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
-                    # index = self.proto_tree_model.createIndex(i, 0, tree_item)
-                    # selection.select(index, index)
-                    active_group_ids.add(group)
-                    self.selected_protocols.add(proto)
+                if proto.show and proto in self.rows_for_protocols:
+                    if any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
+                        active_group_ids.add(group)
+                        self.selected_protocols.add(proto)
 
         if active_group_ids != set(self.active_group_ids):
             self.active_group_ids = list(active_group_ids)

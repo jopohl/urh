@@ -1,12 +1,6 @@
-from PyQt5.QtCore import QTimer, pyqtSlot
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtGui import QWheelEvent
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
+from PyQt5.QtGui import QIcon, QKeySequence, QWheelEvent
+from PyQt5.QtWidgets import QAction, QGraphicsScene
 
 from urh.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
@@ -41,7 +35,6 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.redraw_timer.timeout.connect(self.redraw_view)
 
         self.zoomed.connect(self.on_signal_zoomed)
-        self.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
     @property
     def y_center(self):
@@ -54,6 +47,10 @@ class ZoomableGraphicView(SelectableGraphicView):
     @property
     def scene_type(self):
         return 0  # gets overwritten in Epic Graphic View
+
+    def scrollContentsBy(self, dx: int, dy: int):
+        super().scrollContentsBy(dx, dy)
+        self.redraw_timer.start(0)
 
     def zoom(self, factor, suppress_signal=False, event: QWheelEvent = None):
         if factor > 1 and self.view_rect().width() / factor < 300:
@@ -117,7 +114,8 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     def setScene(self, scene: QGraphicsScene):
         super().setScene(scene)
-        self.margin = 0.25 * self.scene().height()
+        if self.scene() is not None:
+            self.margin = 0.25 * self.scene().height()
 
     def plot_data(self, data):
         if self.scene_manager is None:
@@ -133,6 +131,7 @@ class ZoomableGraphicView(SelectableGraphicView):
             self.scene_manager.scene_type = self.scene_type
             if reinitialize:
                 self.scene_manager.init_scene()
+
             vr = self.view_rect()
             start, end = vr.x(), vr.x() + vr.width()
             self.scene_manager.show_scene_section(start, end, *self._get_sub_path_ranges_and_colors(start, end))
@@ -141,13 +140,13 @@ class ZoomableGraphicView(SelectableGraphicView):
         # Overwritten in Epic Graphic View
         return None, None
 
+    def eliminate(self):
+        self.redraw_timer.stop()
+        super().eliminate()
+
     @pyqtSlot()
     def on_signal_zoomed(self):
         self.redraw_timer.start(30)
-
-    @pyqtSlot()
-    def on_signal_scrolled(self):
-        self.redraw_timer.start(0)
 
     @pyqtSlot()
     def on_zoom_in_action_triggered(self):

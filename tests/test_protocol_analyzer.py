@@ -1,13 +1,14 @@
-import unittest
-
-from PyQt5.QtTest import QTest
-
+from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from tests.utils_testing import get_path_for_data_file
 
-class TestProtocolAnalyzer(unittest.TestCase):
+
+class TestProtocolAnalyzer(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_get_bit_sample_pos(self):
         signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = 0

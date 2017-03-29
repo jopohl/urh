@@ -1,22 +1,17 @@
 import copy
 import itertools
-import xml
-from xml.dom import minidom
-import xml.etree.ElementTree as ET
+from enum import Enum
 
 import numpy
 
-from urh.cythonext.signalFunctions import Symbol
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
-from urh.signalprocessing.encoder import Encoder
-from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
-from enum import Enum
+
 
 class FuzzMode(Enum):
     successive = 0

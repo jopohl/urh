@@ -1,33 +1,15 @@
-import os
-import unittest
-
-from PyQt5.QtTest import QTest
-
-import tests.utils_testing
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.controller.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
-app = tests.utils_testing.get_app()
-
-
-class TestOptionsGUI(unittest.TestCase):
+class TestOptionsGUI(QtTestCase):
     def setUp(self):
-        tests.utils_testing.short_wait()
-        self.form = MainController()
-        tests.utils_testing.short_wait()
+        super().setUp()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
+        if self.SHOW:
+            self.dialog.show()
 
     def test_interpretation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)

@@ -6,9 +6,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
-from urh.dev.gr.ReceiverThread import ReceiverThread
-from urh.dev.gr.SenderThread import SenderThread
-from urh.dev.gr.SpectrumThread import SpectrumThread
+from urh.dev.native.Device import Device
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
@@ -58,15 +56,18 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
+                from urh.dev.gr.ReceiverThread import ReceiverThread
                 self.__dev = ReceiverThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                             parent=parent, is_ringbuffer=is_ringbuffer)
                 self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
+                from urh.dev.gr.SenderThread import SenderThread
                 self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                           parent=parent)
                 self.__dev.data = samples_to_send
                 self.__dev.samples_per_transmission = len(samples_to_send)
             elif mode == Mode.spectrum:
+                from urh.dev.gr.SpectrumThread import SpectrumThread
                 self.__dev = SpectrumThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                             parent=parent)
             else:
@@ -91,6 +92,10 @@ class VirtualDevice(QObject):
                     self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
+            elif name == "test":
+                # For Unittests Only
+                self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
+                self.__dev.BYTES_PER_SAMPLE = 4
             else:
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.portnumber = portnumber

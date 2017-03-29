@@ -1,40 +1,23 @@
-import unittest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh.controller.MainController import MainController
-
-app = tests.utils_testing.get_app()
+from tests.QtTestCase import QtTestCase
 
 
-class TestMaincontrollerGUI(unittest.TestCase):
-    def setUp(self):
-        tests.utils_testing.short_wait()
-        self.form = MainController()
-        tests.utils_testing.short_wait()
-
-    def tearDown(self):
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
-
+class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent(self):
-        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
-        tests.utils_testing.short_wait()
+        # Ensure we have at least one recent action
+        self.add_signal_to_form("esaver.complex")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
-        self.form.close_all()
-        tests.utils_testing.short_wait()
-
-        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 0)
         self.form.recentFileActionList[0].trigger()
-        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 2)
 
     def test_update_decodings(self):
         self.form.update_decodings()
         self.assertTrue(True)
 
     def test_options_changed(self):
-        self.form.add_signalfile(tests.utils_testing.get_path_for_data_file("esaver.complex"))
-        self.form.on_options_changed({"rel_symbol_length": 0, "show_pause_as_time": True, "default_view": 0})
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 0)
+        self.add_signal_to_form("esaver.complex")
+        self.form.on_options_changed({"rel_symbol_length": 0, "show_pause_as_time": True, "default_view": 2})
+        QApplication.instance().processEvents()
+        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 2)

@@ -1,4 +1,5 @@
 import locale
+import xml.etree.ElementTree as ET
 
 import numpy as np
 from PyQt5.QtCore import Qt
@@ -7,11 +8,9 @@ from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
 from urh.cythonext import path_creator
-from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.Symbol import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
-
-import xml.etree.ElementTree as ET
 
 
 class Modulator(object):

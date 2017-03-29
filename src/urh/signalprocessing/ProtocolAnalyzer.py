@@ -1,23 +1,21 @@
 import copy
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 from collections import defaultdict
+from xml.dom import minidom
 
 import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.awre.FormatFinder import FormatFinder
-from urh.cythonext import signalFunctions
-from urh.cythonext.signalFunctions import Symbol
-
+from urh.cythonext import signalFunctions, util
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
-from urh.cythonext import util
 from urh.util.Logger import logger
 
 
@@ -235,7 +233,7 @@ class ProtocolAnalyzer(object):
         for bits, pause in zip(bit_data, pauses):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
-            rssi = np.mean(np.abs(signal._fulldata[start:end]))
+            rssi = np.mean(np.abs(signal.data[start:end]))
             message = Message(bits, pause, message_type=self.default_message_type,
                               bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.messages.append(message)
@@ -767,14 +765,12 @@ class ProtocolAnalyzer(object):
         root = tree.getroot()
         self.from_xml_tag(root, read_bits=read_bits)
 
-    def destroy(self):
-        try:
-            for message_type in self.message_types:
-                message_type.clear()
-        except TypeError:
-            pass  # No message types defined
-        self.message_types = []
+    def eliminate(self):
+        self.message_types = None
         self.messages = None
+        if self.signal is not None:
+            self.signal.eliminate()
+        self.signal = None
 
     def update_auto_message_types(self):
         for message in self.messages:

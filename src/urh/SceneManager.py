@@ -1,20 +1,20 @@
-from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QPainterPath, QFont, QPen, QColor
 import math
+
 import numpy as np
+from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtGui import QFont, QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
+from urh.cythonext import path_creator, util
 from urh.ui.ZoomableScene import ZoomableScene
-from urh.cythonext import path_creator
-from urh.cythonext import util
 
 
 class SceneManager(QObject):
     def __init__(self, parent):
         super().__init__(parent)
         self.scene = ZoomableScene()
-        self.plot_data = np.array([0] * 100)
+        self.plot_data = None  # type: np.ndarray
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
         self.text_item = self.scene.addText("", QFont("Helvetica"))
         self.minimum = float("nan")  # NaN = AutoDetect
@@ -37,7 +37,8 @@ class SceneManager(QObject):
         :type color: list of QColor
         :return:
         """
-        paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1), end=self.__limit_value(x2),
+        paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1),
+                                         end=self.__limit_value(x2),
                                          subpath_ranges=subpath_ranges)
         self.set_path(paths, colors=colors)
 
@@ -87,6 +88,13 @@ class SceneManager(QObject):
 
     def set_text(self, text):
         self.text_item.setPlainText(text)
+
+    def eliminate(self):
+        self.plot_data = None
+        self.line_item = None
+        self.text_item = None
+        self.scene.clear()
+        self.scene.setParent(None)
 
     @staticmethod
     def create_rectangle(proto_bits, pulse_len=100):

@@ -1,24 +1,21 @@
 import time
-import unittest
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh.controller.MainController import MainController
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-app = tests.utils_testing.get_app()
 
-
-class TestProtocolTable(unittest.TestCase):
+class TestProtocolTable(QtTestCase):
     NUM_MESSAGES = 100
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 25
 
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
@@ -51,6 +48,8 @@ class TestProtocolTable(unittest.TestCase):
 
 
     def __build_protocol(self):
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         result = ProtocolAnalyzer(signal=None)
         for _ in range(self.NUM_MESSAGES):
             b = Message([True] * self.BITS_PER_MESSAGE, pause=1000, message_type=result.default_message_type)

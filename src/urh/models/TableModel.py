@@ -6,7 +6,7 @@ from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack, QMessageBox
 
 from urh import constants
-from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.Symbol import Symbol
 
 
 class TableModel(QAbstractTableModel):

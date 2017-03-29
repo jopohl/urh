@@ -1,12 +1,16 @@
 import copy
-import unittest
 
+from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from tests.utils_testing import get_path_for_data_file
 
-class TestPCAP(unittest.TestCase):
+
+class TestPCAP(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_write(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = 0

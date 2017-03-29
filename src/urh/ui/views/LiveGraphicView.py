@@ -35,5 +35,8 @@ class LiveGraphicView(ZoomableGraphicView):
                 self.freq_clicked.emit(freq)
 
     def update(self, *__args):
-        super().update(*__args)
-        super().show_full_scene()
+        try:
+            super().update(*__args)
+            super().show_full_scene()
+        except RuntimeError:
+            pass

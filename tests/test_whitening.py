@@ -1,9 +1,7 @@
-import unittest
-
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
-class TestWhitening(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestWhitening(QtTestCase):
     def test_whitening(self):
         e = Encoder()
 
@@ -17,5 +15,3 @@ class TestWhitening(unittest.TestCase):
         newinpt, err, _ = e.apply_data_whitening(False, output)
         #print (e.bit2hex(newinpt), newinpt, err)
         self.assertEqual(original_inpt, newinpt)
-
-

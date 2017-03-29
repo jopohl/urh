@@ -92,7 +92,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     @property
     def current_receive_index(self):
-        if hasattr(self.server, "current_receive_index"):
+        if hasattr(self, "server") and hasattr(self.server, "current_receive_index"):
             return self.server.current_receive_index
         else:
             return 0
@@ -123,17 +123,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     def start_tcp_server_for_receiving(self):
-        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler,
-                                             bind_and_activate=False)
+        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler)
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
-
-        self.server.allow_reuse_address = True  # allow reusing addresses if the server is stopped and started again
-        self.server.server_bind()      # only necessary, because we disabled bind_and_activate above
-        self.server.server_activate()  # only necessary, because we disabled bind_and_activate above
 
         self.receive_check_timer.start()
 
@@ -142,11 +137,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_thread.start()
 
     def stop_tcp_server(self):
+        self.receive_check_timer.stop()
         if hasattr(self, "server"):
+            logger.debug("Shutdown TCP server")
             self.server.shutdown()
+            self.server.server_close()
         if hasattr(self, "server_thread"):
             self.server_thread.join()
-        self.receive_check_timer.stop()
 
     def send_data(self, data) -> str:
         # Create a socket (SOCK_STREAM means a TCP socket)

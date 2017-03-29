@@ -1366,11 +1366,10 @@ class CompareFrameController(QFrame):
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
             for i, tree_item in enumerate(tree_items):
                 proto = tree_item.protocol
-                if proto.show and any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
-                    # index = self.proto_tree_model.createIndex(i, 0, tree_item)
-                    # selection.select(index, index)
-                    active_group_ids.add(group)
-                    self.selected_protocols.add(proto)
+                if proto.show and proto in self.rows_for_protocols:
+                    if any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
+                        active_group_ids.add(group)
+                        self.selected_protocols.add(proto)
 
         if active_group_ids != set(self.active_group_ids):
             self.active_group_ids = list(active_group_ids)

@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QPoint
+
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
@@ -51,3 +53,16 @@ class TestDecodingGUI(QtTestCase):
         for i in range(0, self.dialog.ui.additionalfunctions.count()):
             self.dialog.ui.additionalfunctions.setCurrentRow(i)
             self.assertIn(self.dialog.ui.additionalfunctions.currentItem().text(), self.dialog.ui.info.text())
+
+    def test_context_menu(self):
+        self.dialog.ui.combobox_decodings.setCurrentIndex(4)
+        decoding = Encoder(chain=[constants.DECODING_INVERT])
+        self.dialog.decodings[4] = decoding
+        self.dialog.set_e()
+
+        self.assertEqual(1, self.dialog.ui.decoderchain.count())
+
+        self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
+        menu = self.dialog.ui.decoderchain.create_context_menu()
+        menu_actions = [action.text() for action in menu.actions() if action.text()]
+        self.assertEqual(3, len(menu_actions))

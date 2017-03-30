@@ -2,6 +2,7 @@ import os
 
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 
@@ -126,6 +127,29 @@ class TestGenerator(QtTestCase):
         gframe.ui.tableMessages.selectRow(0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
         self.assertGreater(len(menu.actions()), n_items)
+
+    def test_create_fuzzing_list_view_context_menu(self):
+        # Context menu should be empty if table is empty
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
+        menu = self.form.generator_tab_controller.ui.listViewProtoLabels.create_context_menu()
+        self.assertEqual(len(menu.actions()), 0)
+
+        # Add data to test entries in context menu
+        self.add_signal_to_form("fsk.complex")
+        self.form.compare_frame_controller.add_protocol_label(0, 10, 0, 0, False)
+        self.assertEqual(1, len(self.form.compare_frame_controller.proto_analyzer.protocol_labels))
+        gframe = self.form.generator_tab_controller
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+
+        self.assertGreater(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        # Select a row so there is a message for that fuzzing labels can be shown
+        self.form.generator_tab_controller.ui.tableMessages.selectRow(0)
+        menu = self.form.generator_tab_controller.ui.listViewProtoLabels.create_context_menu()
+        n_items = len(menu.actions())
+        self.assertGreater(n_items, 0)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

@@ -110,7 +110,6 @@ class GeneratorTabController(QWidget):
         self.ui.lWPauses.lost_focus.connect(self.on_lWPauses_lost_focus)
         self.ui.lWPauses.doubleClicked.connect(self.on_lWPauses_double_clicked)
         self.ui.btnGenerate.clicked.connect(self.generate_file)
-        self.ui.listViewProtoLabels.editActionTriggered.connect(self.show_fuzzing_dialog)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.handle_plabel_fuzzing_state_changed)
         self.ui.btnFuzz.clicked.connect(self.on_btn_fuzzing_clicked)
         self.ui.tableMessages.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
@@ -355,6 +354,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
+
         if self.selected_message is not None:
             fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
                                           msg_index=self.selected_message_index, proto_view=view, parent=self)

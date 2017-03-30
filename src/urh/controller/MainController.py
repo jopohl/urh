@@ -5,7 +5,7 @@ import traceback
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication
+    QMessageBox, QApplication, QCheckBox
 
 from urh import constants, version
 from urh.controller.CompareFrameController import CompareFrameController
@@ -25,7 +25,6 @@ from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.ui.WavFileDialog import WavFileDialog
 from urh.ui.ui_main import Ui_MainWindow
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -219,17 +218,30 @@ class MainController(QMainWindow):
                                      filename))
             return
 
-        alrdy_qad_demod = False
+        already_qad_demodulated = False
         if filename.endswith(".wav"):
-            accept, alrdy_qad_demod = WavFileDialog.dialog(self)
-            if not accept:
+            cb = QCheckBox("Signal in file is already quadrature demodulated")
+            msg = self.tr("You selected a .wav file as signal.\n"
+                          "Universal Radio Hacker (URH) will interpret it as real part of the signal.\n"
+                          "Protocol results may be bad due to missing imaginary part.\n\n"
+                          "Load a complex file if you experience problems.\n"
+                          "You have been warned.")
+            msg_box = QMessageBox(QMessageBox.Information, "WAV file selected", msg)
+            msg_box.addButton(QMessageBox.Ok)
+            msg_box.addButton(QMessageBox.Abort)
+            msg_box.setCheckBox(cb)
+
+            reply = msg_box.exec()
+            if reply != QMessageBox.Ok:
                 return
+
+            already_qad_demodulated = cb.isChecked()
 
         sig_name = os.path.splitext(os.path.basename(filename))[0]
 
         # Use default sample rate for signal
         # Sample rate will be overriden in case of a project later
-        signal = Signal(filename, sig_name, wav_is_qad_demod=alrdy_qad_demod,
+        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated,
                         sample_rate=self.project_manager.device_conf["sample_rate"])
 
         if self.project_manager.project_file is None:

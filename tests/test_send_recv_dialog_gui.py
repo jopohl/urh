@@ -18,7 +18,6 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
-
 class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 1000
 
@@ -66,10 +65,7 @@ class TestSendRecvDialog(QtTestCase):
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
             items = [dialog.ui.cbDevice.itemText(i) for i in range(dialog.ui.cbDevice.count())]
-            if isinstance(dialog, SpectrumDialogController):
-                self.assertNotIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
-            else:
-                self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
+            self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
             self.__close_dialog(dialog)
 
@@ -101,6 +97,32 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(receive_dialog.device.current_index, 0)
 
         self.__close_dialog(receive_dialog)
+
+    def test_spectrum(self):
+        port = self.__get_free_port()
+        spectrum_dialog = self.__get_spectrum_dialog()
+        spectrum_dialog.device.set_server_port(port)
+        spectrum_dialog.ui.btnStart.click()
+        self.assertEqual(len(spectrum_dialog.scene_manager.peak), 0)
+
+        data = np.array([complex(1, 1), complex(2, 2), complex(3, 3)], dtype=np.complex64)
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        sock.connect(("127.0.0.1", port))
+        sock.sendall(data.tostring())
+        sock.shutdown(socket.SHUT_RDWR)
+        sock.close()
+
+        QApplication.instance().processEvents()
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
+
+        self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
+
+        spectrum_dialog.ui.btnStop.click()
+
+        self.__close_dialog(spectrum_dialog)
 
     def test_send(self):
         port = self.__get_free_port()

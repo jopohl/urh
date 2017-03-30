@@ -41,7 +41,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.receive_buffer[self.server.current_receive_index:self.server.current_receive_index+len(received)] = received
                 self.server.current_receive_index += len(received)
 
-    def __init__(self, raw_mode=False):
+    def __init__(self, raw_mode=False, spectrum=False):
         """
 
         :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
@@ -67,8 +67,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.raw_mode = raw_mode
         if self.raw_mode:
-            # Take 60% of avail memory>
-            num_samples = constants.SETTINGS.value('ram_threshold', 0.6, float)*(psutil.virtual_memory().available / 8)
+            if not spectrum:
+                # Take 60% of avail memory
+                num_samples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (
+                psutil.virtual_memory().available / 8)
+            else:
+                num_samples = constants.SPECTRUM_BUFFER_SIZE
             self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
         else:
             self.received_bits = []

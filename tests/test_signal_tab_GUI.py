@@ -223,3 +223,12 @@ class TestSignalTabGUI(QtTestCase):
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.assertEqual(self.form.signal_tab_controller.signal_frames[1].signal.num_samples, end - start)
+
+    def test_demodulated_view(self):
+        self.add_signal_to_form("esaver.complex")
+        frame = self.form.signal_tab_controller.signal_frames[0]
+        frame.ui.cbSignalView.setCurrentIndex(1)
+        QApplication.instance().processEvents()
+        self.assertEqual(frame.ui.gvSignal.scene_type, 1)
+        if self.SHOW:
+            self.assertTrue(frame.ui.gvLegend.isVisible())

@@ -7,7 +7,7 @@ from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.signalprocessing.encoder import Encoder
 
 
-class TestFuzzing(QtTestCase):
+class TestFuzzingDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("steckdose_anlernen.complex")
@@ -92,3 +92,52 @@ class TestFuzzing(QtTestCase):
         self.dialog.ui.comboBoxFuzzingLabel.setCurrentIndex(2)
         self.assertEqual(self.dialog.message_data[self.dialog.current_label_start:self.dialog.current_label_end],
                          "fc9b6")  # Serial Part 2
+
+    def test_add_remove_fuzzing_data(self):
+        self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
+        self.assertEqual(self.dialog.fuzz_table_model.rowCount(), 1)
+        self.dialog.ui.btnAddRow.click()
+        self.assertEqual(self.dialog.fuzz_table_model.data[1], "00010110010100010101")  # serial part 1
+        self.dialog.ui.btnAddRow.click()
+        self.assertEqual(self.dialog.fuzz_table_model.data[2], "00010110010100010110")  # serial part 1
+        self.assertEqual(self.dialog.fuzz_table_model.rowCount(), 3)
+        self.dialog.ui.btnDelRow.click()
+        self.dialog.ui.btnDelRow.click()
+        self.assertEqual(self.dialog.fuzz_table_model.rowCount(), 1)
+
+    def test_adding_fuzzing_range(self):
+        self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
+        self.dialog.ui.sBAddRangeStart.setValue(10)
+        self.dialog.ui.sBAddRangeEnd.setValue(100)
+        self.dialog.ui.sBAddRangeStep.setValue(20)
+        self.dialog.ui.btnAddRange.click()
+        self.assertEqual(6, self.dialog.fuzz_table_model.rowCount())
+
+    def test_adding_fuzzing_boundaries(self):
+        self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
+        self.dialog.ui.spinBoxLowerBound.setValue(2)
+        self.dialog.ui.spinBoxUpperBound.setValue(200)
+        self.dialog.ui.spinBoxBoundaryNumber.setValue(2)
+        self.dialog.ui.btnAddBoundaries.click()
+        self.assertEqual(5, self.dialog.fuzz_table_model.rowCount())
+
+    def test_adding_fuzzing_random_values(self):
+        self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
+        self.dialog.ui.spinBoxNumberRandom.setValue(10)
+        self.dialog.ui.btnAddRandom.click()
+        self.assertEqual(11, self.dialog.fuzz_table_model.rowCount())
+
+    def test_remove_duplicates(self):
+        self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
+        self.dialog.ui.sBAddRangeStart.setValue(10)
+        self.dialog.ui.sBAddRangeEnd.setValue(50)
+        self.dialog.ui.sBAddRangeStep.setValue(5)
+        self.dialog.ui.btnAddRange.click()
+        self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())
+        self.dialog.ui.btnAddRange.click()
+        self.dialog.ui.btnAddRange.click()
+        self.assertEqual(28, self.dialog.fuzz_table_model.rowCount())
+        self.dialog.ui.chkBRemoveDuplicates.click()
+        self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())
+        self.dialog.ui.btnAddRange.click()
+        self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())

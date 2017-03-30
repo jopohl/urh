@@ -1,10 +1,9 @@
 from PyQt5.QtCore import QPoint, pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack
+from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.signalprocessing.Signal import Signal
-from urh.ui.SaveAllDialog import SaveAllDialog
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
 
 
@@ -132,15 +131,24 @@ class SignalTabController(QWidget):
 
         settings = constants.SETTINGS
         try:
-            not_show = settings.value('not_show_save_dialog', type=bool)
+            not_show = settings.value('not_show_save_dialog', type=bool, defaultValue=False)
         except TypeError:
             not_show = False
 
         if not not_show:
-            ok, notshowagain = SaveAllDialog.dialog(self)
-            settings.setValue("not_show_save_dialog", notshowagain)
+            cb = QCheckBox("Don't ask me again.")
+            msg_box = QMessageBox(QMessageBox.Question, self.tr("Confirm saving all signals"),
+                                  self.tr("All changed signal files will be overwritten. OK?"))
+            msg_box.addButton(QMessageBox.Yes)
+            msg_box.addButton(QMessageBox.No)
+            msg_box.setCheckBox(cb)
+
+            reply = msg_box.exec()
+            not_show_again = cb.isChecked()
+            settings.setValue("not_show_save_dialog", not_show_again)
             self.not_show_again_changed.emit()
-            if not ok:
+
+            if reply != QMessageBox.Yes:
                 return
 
         for f in self.signal_frames:

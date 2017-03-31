@@ -365,7 +365,8 @@ class OptionsController(QDialog):
 
     @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):
-        library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
+        library_dirs = None if not self.ui.lineEditLibDirs.text() \
+                            else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
         num_natives = self.backend_handler.num_native_backends
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
@@ -378,8 +379,12 @@ class OptionsController(QDialog):
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
             target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
-            rc = call([sys.executable, os.path.realpath(ExtensionHelper.__file__),
-                  "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()])
+            build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                         "build_ext", "-b", target_dir,
+                         "-t", tempfile.gettempdir()]
+            if library_dirs:
+                build_cmd.extend(["-L", ":".join(library_dirs)])
+            rc = call(build_cmd)
 
             if rc == 0:
                 self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"

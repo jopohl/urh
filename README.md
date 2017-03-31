@@ -72,6 +72,10 @@ If you installed URH via pip you can keep it up to date with
 ```bash
 pip3 install --upgrade urh
 ```
+If this shouldn't work you can try:
+```bash
+python3 -m pip install --upgrade urh
+```
 
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.

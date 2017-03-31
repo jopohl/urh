@@ -67,6 +67,12 @@ corresponding native device support.
 3. In a terminal, type: ``` pip3 install urh ```.
 4. Type ``` urh ``` in a terminal to get it started.
 
+### Updating
+If you installed URH via pip you can keep it up to date with
+```bash
+pip3 install --upgrade urh
+```
+
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.
 

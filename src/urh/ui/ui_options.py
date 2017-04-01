@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(953, 653)
+        DialogOptions.resize(653, 550)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.tabWidget = QtWidgets.QTabWidget(DialogOptions)

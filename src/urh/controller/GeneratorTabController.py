@@ -255,7 +255,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def show_modulation_dialog(self):
         modulator_dialog, message = self.prepare_modulation_dialog()
-        modulator_dialog.show()
+        modulator_dialog.showMaximized()
 
         self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
         self.has_default_modulation = False

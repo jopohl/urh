@@ -10,7 +10,7 @@ class Ui_Decoder(object):
     def setupUi(self, Decoder):
         Decoder.setObjectName("Decoder")
         Decoder.setWindowModality(QtCore.Qt.WindowModal)
-        Decoder.resize(923, 685)
+        Decoder.resize(800, 543)
         Decoder.setModal(True)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(Decoder)
         self.verticalLayout_4.setObjectName("verticalLayout_4")

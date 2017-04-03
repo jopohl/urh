@@ -1,8 +1,10 @@
 import copy
 
 from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog
 
+from urh import constants
 from urh.models.RulesetTableModel import RulesetTableModel
 from urh.signalprocessing import Ruleset
 from urh.signalprocessing.MessageType import MessageType
@@ -44,6 +46,11 @@ class MessageTypeDialogController(QDialog):
 
         self.create_connects()
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
     def create_connects(self):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
         self.ui.btnRemoveRule.clicked.connect(self.on_btn_remove_rule_clicked)
@@ -63,6 +70,10 @@ class MessageTypeDialogController(QDialog):
     def open_editors(self, row):
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 2))
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 3))
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        event.accept()
 
     @pyqtSlot()
     def on_btn_add_rule_clicked(self):

@@ -91,6 +91,11 @@ class OptionsController(QDialog):
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
         self.ui.labelRebuildNativeStatus.setText("")
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
     @property
     def selected_device(self) -> BackendContainer:
         try:
@@ -220,6 +225,7 @@ class OptionsController(QDialog):
 
         self.values_changed.emit(changed_values)
 
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         event.accept()
 
     def set_gnuradio_status(self):

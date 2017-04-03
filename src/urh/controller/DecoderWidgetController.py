@@ -84,6 +84,11 @@ class DecoderWidgetController(QDialog):
         # Connects
         self.create_connects()
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
     def create_connects(self):
         self.ui.inpt.textChanged.connect(self.decoder_update)
         self.ui.multiple.valueChanged.connect(self.handle_multiple_changed)
@@ -121,6 +126,10 @@ class DecoderWidgetController(QDialog):
         self.ui.rB_delafterpos.clicked.connect(self.handle_cut)
         self.ui.cutmark.textEdited.connect(self.handle_cut)
         self.ui.cutmark2.valueChanged.connect(self.handle_cut)
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        event.accept()
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())

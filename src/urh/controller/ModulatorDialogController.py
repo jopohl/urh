@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
+from urh import constants
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
@@ -45,6 +46,11 @@ class ModulatorDialogController(QDialog):
 
         self.create_connects()
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()
         return s[s.rindex("(") + 1:s.rindex(")")]
@@ -79,6 +85,10 @@ class ModulatorDialogController(QDialog):
 
         self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
         self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        event.accept()
 
     @property
     def current_modulator(self):

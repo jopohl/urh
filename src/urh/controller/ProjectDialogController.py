@@ -5,7 +5,7 @@ import string
 import numpy
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtGui import QRegExpValidator, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 
 from urh import constants
@@ -153,6 +153,12 @@ class ProjectDialogController(QDialog):
 
         self.open_editors()
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
+
     def __set_relative_rssi_delegate(self):
         n = len(self.participants)
         if n == 0:
@@ -211,6 +217,10 @@ class ProjectDialogController(QDialog):
         for row in range(len(self.participants)):
             self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))
             self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 3))
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        event.accept()
 
     @pyqtSlot(float)
     def on_spin_box_sample_rate_value_changed(self, value: float):

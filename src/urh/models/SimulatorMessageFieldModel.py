@@ -1,10 +1,15 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 
-class SimulatorMessageFieldModel(QAbstractTableModel):
-    header_labels = ['Name', 'Value']
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.ui.SimulatorScene import MessageDataItem
 
-    def __init__(self, parent=None):
+class SimulatorMessageFieldModel(QAbstractTableModel):
+    header_labels = ['Name', 'Log level', 'Log format', 'Value']
+
+    def __init__(self, controller, parent=None):
         super().__init__(parent)
+
+        self.controller = controller
 
         self.__message = None
         """:type: urh.ui.SimulatorScene.MessageItem"""
@@ -55,10 +60,40 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
+                return MessageDataItem.LOG_LEVELS[lbl.log_level_index]
+            elif j == 2:
+                return ProtocolLabel.DISPLAY_FORMATS[lbl.display_format_index]
+            elif j == 3:
                 return lbl.value
 
     def setData(self, index: QModelIndex, value, role=None):
-        pass
+        if role == Qt.EditRole:
+            i, j = index.row(), index.column()
+            lbl = self.labels[i]
+
+            try:
+                if j == 0:
+                    lbl.name = value
+
+                    if value in self.controller.field_types_by_caption:
+                        lbl.type = self.controller.field_types_by_caption[value]
+                    else:
+                        lbl.type = None
+                if j == 1:
+                    lbl.log_level_index = int(value)
+                elif j == 2:
+                    lbl.display_format_index = int(value)
+            except ValueError:
+                return False
+
+            return True
+
 
     def flags(self, index: QModelIndex):
-        return super().flags(index)
+        flags = super().flags(index)
+        column = index.column()
+
+        if not column == 3:
+            flags |= Qt.ItemIsEditable
+
+        return flags

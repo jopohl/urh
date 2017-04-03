@@ -8,6 +8,7 @@ import weakref
 
 from urh import constants
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset
 
 class SimulatorItem(QGraphicsObject):
@@ -431,37 +432,40 @@ class RuleConditionItem(SimulatorItem):
     def children(self):
         return self.sim_items
 
-class LabelItem(QGraphicsTextItem):
-    def __init__(self, text, color, parent=None):
+class MessageDataItem(QGraphicsTextItem):
+    LOG_LEVELS = ["0 (No logging)", "1", "2", "3 (Verbose logging)"]
+
+    def __init__(self, name: str, color_index: int, type: FieldType=None, is_unlabeled_data=False, plain_bits=None, parent=None):
         super().__init__(parent)
-        self.color = color
+
+        self.__name = name
+        self.color_index = color_index
+        self.__type = type
+        self.display_format_index = 0 if type is None else type.display_format_index
+        self.is_unlabeled_data = is_unlabeled_data
+        self.log_level_index = 0
+        self.__plain_bits = plain_bits if plain_bits else []
+
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(8)
         self.setFont(font)
-        self.setPlainText(text)
+        self.refresh()
 
     def paint(self, painter, option, widget):
-        painter.setBrush(self.color)
-        painter.drawRect(self.boundingRect())
+        if not self.is_unlabeled_data:
+            painter.setBrush(constants.LABEL_COLORS[self.color_index])
+            painter.drawRect(self.boundingRect())
+
         super().paint(painter, option, widget)
 
-    @property
-    def name(self):
-        return self.toPlainText()
+    def refresh(self):
+        if self.is_unlabeled_data:
+            self.setPlainText("...")
+        else:
+            self.setPlainText(self.name)
 
-    @property
-    def value(self):
-        return "1::seq + 1"
-
-class DataItem(QGraphicsTextItem):
-    def __init__(self, plain_bits, parent=None):
-        super().__init__(parent)
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(8)
-        self.setFont(font)
-        self.setPlainText("...")
-
-        self.__plain_bits = plain_bits
+        if self.scene():
+            self.scene().update_view()
 
     @property
     def plain_bits(self):
@@ -470,9 +474,6 @@ class DataItem(QGraphicsTextItem):
         :rtype: list[bool]
         """
         return self.__plain_bits
-
-    def __str__(self):
-        return self.bits2string(self.plain_bits)
 
     def bits2string(self, bits) -> str:
         """
@@ -483,11 +484,26 @@ class DataItem(QGraphicsTextItem):
 
     @property
     def name(self):
-        return "[Unlabeled data]"
+        if not self.__name:
+            self.__name = "No name"
+
+        if self.is_unlabeled_data:
+            return "[Unlabeled data]"
+        else:
+            return self.__name
+
+    @name.setter
+    def name(self, val):
+        if val:
+            self.__name = val
+            self.refresh()
 
     @property
     def value(self):
-        return str(self)
+        if self.is_unlabeled_data:
+            return self.bits2string(self.plain_bits)
+        else:
+            return "1::seq + 1"
 
 class ActionItem(SimulatorItem):
     def __init__(self, type, parent=None):
@@ -581,6 +597,10 @@ class MessageItem(SimulatorItem):
         self.destination = destination
         self.labels = []
 
+    @property
+    def name(self):
+        return self.index
+
     def labels_width(self):
         width = self.number.boundingRect().width()
         #width += 5
@@ -588,8 +608,24 @@ class MessageItem(SimulatorItem):
         width += 5 * (len(self.labels) - 1)
         return width
 
-    def add_item(self, item):
-        item.setParentItem(self)
+    def get_labels(self):
+        return [lbl for lbl in self.labels if not lbl.is_unlabeled_data]
+
+    def add_item(self, name=None, color_ind=None, type: FieldType=None, is_unlabeled_data=False, plain_bits=None):
+        name = "" if not name else name
+        plain_bits = [] if not plain_bits else plain_bits
+
+        used_colors = [item.color_index for item in self.labels]
+        avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
+
+        if color_ind is None:
+            if len(avail_colors) > 0:
+                color_ind = avail_colors[0]
+            else:
+                color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
+
+        item = MessageDataItem(name, color_ind, type, is_unlabeled_data, plain_bits, self)
+        #item.setParentItem(self)
         self.labels.append(item)
 
     def refresh(self, x_pos, y_pos):
@@ -935,7 +971,7 @@ class SimulatorScene(QGraphicsScene):
         simulator_message = MessageItem(source, destination)
 
         for label in message_type:
-            simulator_message.add_item(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            simulator_message.add_item(label.name, label.color_index, label.type)
 
         self.insert_at(ref_item, position, simulator_message, True)
 
@@ -955,13 +991,13 @@ class SimulatorScene(QGraphicsScene):
 
         for label in message.message_type:
             if label.start > start:
-                simulator_message.add_item(DataItem(message.plain_bits[start:label.start]))
+                simulator_message.add_item(is_unlabeled_data=True, plain_bits=message.plain_bits[start:label.start])
 
-            simulator_message.add_item(LabelItem(label.name, constants.LABEL_COLORS[label.color_index]))
+            simulator_message.add_item(label.name, label.color_index, label.type)
             start = label.end
 
         if start < len(message) - 1:
-            simulator_message.add_item(DataItem(message.plain_bits[start:len(message)]))
+            simulator_message.add_item(is_unlabeled_data=True, plain_bits=message.plain_bits[start:len(message)])
 
         self.insert_at(ref_item, position, simulator_message, True)
 

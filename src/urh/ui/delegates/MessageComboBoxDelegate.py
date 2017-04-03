@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QItemDelegate, QStyle, QStyleOptionViewItem, QComboB
 from PyQt5.QtCore import Qt, QModelIndex, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QStandardItem
 
-from urh.ui.SimulatorScene import LabelItem
+from urh.ui.SimulatorScene import MessageDataItem
 
 class MessageComboBoxDelegate(QItemDelegate):
     def __init__(self, simulator_scene, parent=None):
@@ -15,7 +15,7 @@ class MessageComboBoxDelegate(QItemDelegate):
 
         editor.addItem("---Select label---", None)
         for message in self.simulator_scene.get_all_messages():
-            labels = [lbl for lbl in message.labels if isinstance(lbl, LabelItem)]
+            labels = [lbl for lbl in message.labels if not lbl.is_unlabeled_data]
 
             for label in labels:
                 editor.addItem(message.index + "::" + label.name, label)

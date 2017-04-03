@@ -238,8 +238,10 @@ class Signal(QObject):
 
     @property
     def real_plot_data(self):
-        return self.data.real
-
+        try:
+            return self.data.real
+        except AttributeError:
+            return np.zeros(0, dtype=np.float32)
     @property
     def wave_data(self):
         return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))
@@ -285,11 +287,14 @@ class Signal(QObject):
         return signal_functions.afp_demod(self.data, self.noise_threshold, self.modulation_type)
 
     def calc_noise_threshold(self, noise_start: int, noise_end: int):
-        NDIGITS = 4
+        num_digits = 4
+        noise_start, noise_end = int(noise_start), int(noise_end)
         try:
-            return np.ceil(np.max(np.absolute(self.data[int(noise_start):int(noise_end)])) * 10 ** NDIGITS) / 10 ** NDIGITS
+            magnitudes = np.absolute(self.data[noise_start:noise_end])
+            maximum = np.max(magnitudes)
+            return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
-            logger.warning("Could not caluclate noise treshold for range {}-{}".format(int(noise_start),int(noise_end)))
+            logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
             return self.noise_threshold
 
     def estimate_bitlen(self) -> int:
@@ -302,7 +307,7 @@ class Signal(QObject):
     def estimate_qad_center(self) -> float:
         center = self.__parameter_cache[self.modulation_type_str]["qad_center"]
         if center is None:
-            noise_value = signal_functions.get_noise_for_mod_type(self.modulation_type)
+            noise_value = signal_functions.get_noise_for_mod_type(int(self.modulation_type))
             qad = self.qad[np.where(self.qad > noise_value)] if noise_value < 0 else self.qad
             center = signal_functions.estimate_qad_center(qad, constants.NUM_CENTERS)
             self.__parameter_cache[self.modulation_type_str]["qad_center"] = center
@@ -361,9 +366,10 @@ class Signal(QObject):
         freq_in_hertz = abs(freq * sample_rate)
         return freq_in_hertz
 
-    def destroy(self):
+    def eliminate(self):
         self._fulldata = None
         self._qad = None
+        self.parameter_cache.clear()
 
     def silent_set_modulation_type(self, mod_type: int):
         self.__modulation_type = mod_type

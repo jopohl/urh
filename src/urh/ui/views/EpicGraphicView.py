@@ -22,7 +22,6 @@ class EpicGraphicView(EditableGraphicView):
         self.cache_qad = True
         self.y_sep = 0
 
-        self.parent_frame = self.parent().parent().parent()
         self._init_undo_stack(self.parent_frame.undo_stack)
 
         self.save_action = QAction(self.tr("Save"), self)  # type: QAction
@@ -31,6 +30,10 @@ class EpicGraphicView(EditableGraphicView):
         self.save_action.triggered.connect(self.on_save_action_triggered)
         self.save_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.save_action)
+
+    @property
+    def parent_frame(self):
+        return self.parent().parent().parent()
 
     @property
     def sample_rate(self):
@@ -45,7 +48,10 @@ class EpicGraphicView(EditableGraphicView):
 
     @property
     def signal(self):
-        return self.parent_frame.signal
+        if self.parent_frame is not None:
+            return self.parent_frame.signal
+        else:
+            return None
 
     @property
     def protocol(self) -> ProtocolAnalyzer:

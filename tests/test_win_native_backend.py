@@ -1,9 +1,9 @@
-import unittest
-
 import sys
 
+from tests.QtTestCase import QtTestCase
 
-class TestWhitening(unittest.TestCase):
+
+class TestWinNativeBackend(QtTestCase):
     def test_native_backends_installed(self):
         if sys.platform == "win32":
             import os

@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QDialog, QHeaderView
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel

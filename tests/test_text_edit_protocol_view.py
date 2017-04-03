@@ -1,37 +1,23 @@
-import unittest
+from PyQt5.QtWidgets import QApplication
 
-from PyQt5.QtTest import QTest
-
-import tests.utils_testing
-from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
+from tests.QtTestCase import QtTestCase
 from urh.util.Logger import logger
 
-app = tests.utils_testing.get_app()
-
-
-class TestTextEditProtocolView(unittest.TestCase):
+class TestTextEditProtocolView(QtTestCase):
     def test_create_context_menu(self):
-        logger.debug("Init form")
-        self.form = MainController()
-        tests.utils_testing.short_wait()
-        logger.debug("Intialized form")
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        logger.debug("added signalfile")
-        app.processEvents()
+        self.add_signal_to_form("esaver.complex")
         self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(2)
-        app.processEvents()
 
         logger.debug("Get text edit")
         text_edit = self.form.signal_tab_controller.signal_frames[0].ui.txtEdProto
 
         menu = text_edit.create_context_menu()
-        app.processEvents()
+        QApplication.instance().processEvents()
         line_wrap_action = next(action for action in menu.actions() if action.text().startswith("Linewrap"))
         checked = line_wrap_action.isChecked()
         line_wrap_action.trigger()
 
         menu = text_edit.create_context_menu()
-        app.processEvents()
+        QApplication.instance().processEvents()
         line_wrap_action = next(action for action in menu.actions() if action.text().startswith("Linewrap"))
         self.assertNotEqual(checked, line_wrap_action.isChecked())

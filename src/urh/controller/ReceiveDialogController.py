@@ -1,6 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QMessageBox
 
 from urh.LiveSceneManager import LiveSceneManager
@@ -67,7 +66,6 @@ class ReceiveDialogController(SendRecvDialogController):
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.receive,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
-
         self.scene_manager = LiveSceneManager(np.array([]), parent=self)
 
     @pyqtSlot()
@@ -96,12 +94,11 @@ class ReceiveDialogController(SendRecvDialogController):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        initial_name = "{0} {1}Hz {2}Sps {3}Hz.complex".format(dev.name, big_val(dev.frequency),
-                                                               big_val(dev.sample_rate),
-                                                               big_val(dev.bandwidth)).replace(
+        initial_name = "{0} {1}Hz {2}Sps {3}Hz".format(dev.name, big_val(dev.frequency), big_val(dev.sample_rate),
+                                                       big_val(dev.bandwidth)).replace(
             Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
-        filename = FileOperator.save_data_dialog(initial_name, data, parent=self)
+        filename = FileOperator.save_data_dialog(initial_name + ".complex", data, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)

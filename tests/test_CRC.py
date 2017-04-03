@@ -1,10 +1,11 @@
-import unittest
-
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 from urh.util.crc import crc_generic
 
-class TestCRC(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestCRC(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_crc(self):
         # http://depa.usst.edu.cn/chenjq/www2/software/crc/CRC_Javascript/CRCcalculation.htm
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False

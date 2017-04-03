@@ -1,34 +1,21 @@
-import unittest
+from PyQt5.QtCore import QPoint
 
-from PyQt5.QtTest import QTest
-
-import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file, short_wait
+from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
-from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 
-app = tests.utils_testing.get_app()
-
-
-class TestDecodingGUI(unittest.TestCase):
+class TestDecodingGUI(QtTestCase):
     def setUp(self):
-        short_wait()
-        self.form = MainController()
-        short_wait()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
+        super().setUp()
+        self.add_signal_to_form("esaver.complex")
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[self.signal], parent=self.form,
+                                              signals=[signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        short_wait()
-        self.form.close()
-        short_wait(interval=10)
+        if self.SHOW:
+            self.dialog.show()
 
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI
@@ -66,3 +53,16 @@ class TestDecodingGUI(unittest.TestCase):
         for i in range(0, self.dialog.ui.additionalfunctions.count()):
             self.dialog.ui.additionalfunctions.setCurrentRow(i)
             self.assertIn(self.dialog.ui.additionalfunctions.currentItem().text(), self.dialog.ui.info.text())
+
+    def test_context_menu(self):
+        self.dialog.ui.combobox_decodings.setCurrentIndex(4)
+        decoding = Encoder(chain=[constants.DECODING_INVERT])
+        self.dialog.decodings[4] = decoding
+        self.dialog.set_e()
+
+        self.assertEqual(1, self.dialog.ui.decoderchain.count())
+
+        self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
+        menu = self.dialog.ui.decoderchain.create_context_menu()
+        menu_actions = [action.text() for action in menu.actions() if action.text()]
+        self.assertEqual(3, len(menu_actions))

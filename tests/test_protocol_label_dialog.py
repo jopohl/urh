@@ -1,30 +1,17 @@
-import unittest
-
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
-from urh.controller.MainController import MainController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
-from urh.util.Logger import logger
 
-app = tests.utils_testing.get_app()
+class TestProtocolLabelDialog(QtTestCase):
 
-
-class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("align_labels", True)
-
-        logger.debug("Init form")
-        tests.utils_testing.short_wait()
-        self.form = MainController()
-        tests.utils_testing.short_wait()
-
-        logger.debug("Add signal")
+        super().setUp()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
-        logger.debug("added signal")
-        tests.utils_testing.short_wait()
 
         self.cframe = self.form.compare_frame_controller
 
@@ -36,15 +23,8 @@ class TestProtocolLabelDialog(unittest.TestCase):
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
 
-    def tearDown(self):
-        self.dialog.close()
-        self.dialog.setParent(None)
-        self.dialog.deleteLater()
-        tests.utils_testing.short_wait()
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
+        if self.SHOW:
+            self.dialog.show()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

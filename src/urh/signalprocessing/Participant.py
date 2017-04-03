@@ -1,6 +1,6 @@
+import uuid
 import xml.etree.ElementTree as ET
-import string
-import random
+
 
 class Participant(object):
 
@@ -17,7 +17,7 @@ class Participant(object):
         self.relative_rssi = relative_rssi
 
         if id is None:
-            self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
+            self.__id = str(uuid.uuid4()) if id is None else id
         else:
             self.__id = id
 

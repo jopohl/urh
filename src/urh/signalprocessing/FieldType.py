@@ -1,7 +1,6 @@
-import random
-import string
-from enum import Enum
+import uuid
 import xml.etree.cElementTree as ET
+from enum import Enum
 from xml.dom import minidom
 
 from urh import constants
@@ -38,7 +37,7 @@ class FieldType(object):
             self.display_format_index = display_format_index
 
         if id is None:
-            self.__id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
+            self.__id = str(uuid.uuid4()) if id is None else id
         else:
             self.__id = id
 

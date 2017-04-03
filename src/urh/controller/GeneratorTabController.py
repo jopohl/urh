@@ -19,7 +19,6 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
@@ -95,11 +94,7 @@ class GeneratorTabController(QWidget):
         self.ui.cBoxModulations.currentIndexChanged.connect(self.on_selected_modulation_changed)
         self.ui.tableMessages.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tableMessages.encodings_updated.connect(self.on_table_selection_changed)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_table)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_pause_list)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_label_list)
-        self.table_model.undo_stack.indexChanged.connect(self.refresh_estimated_time)
-        self.table_model.undo_stack.indexChanged.connect(self.set_fuzzing_ui_status)
+        self.table_model.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
         self.table_model.protocol.qt_signals.line_duplicated.connect(self.refresh_pause_list)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -115,7 +110,6 @@ class GeneratorTabController(QWidget):
         self.ui.lWPauses.lost_focus.connect(self.on_lWPauses_lost_focus)
         self.ui.lWPauses.doubleClicked.connect(self.on_lWPauses_double_clicked)
         self.ui.btnGenerate.clicked.connect(self.generate_file)
-        self.ui.listViewProtoLabels.editActionTriggered.connect(self.show_fuzzing_dialog)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.handle_plabel_fuzzing_state_changed)
         self.ui.btnFuzz.clicked.connect(self.on_btn_fuzzing_clicked)
         self.ui.tableMessages.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
@@ -228,7 +222,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialogController(self.modulators, parent=self)
+        modulator_dialog = ModulatorDialogController(self.modulators, parent=self.parent())
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -239,6 +233,7 @@ class GeneratorTabController(QWidget):
         return modulator_dialog, selected_message
 
     def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialogController):
+        dialog.on_modulation_type_changed()  # for drawing modulated signal initially
         dialog.original_bits = bits
         dialog.ui.linEdDataBits.setText(bits)
         dialog.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
@@ -250,9 +245,17 @@ class GeneratorTabController(QWidget):
         dialog.ui.gVCarrier.auto_fit_view()
 
     @pyqtSlot()
+    def on_undo_stack_index_changed(self):
+        self.refresh_table()
+        self.refresh_pause_list()
+        self.refresh_label_list()
+        self.refresh_estimated_time()
+        self.set_fuzzing_ui_status()
+
+    @pyqtSlot()
     def show_modulation_dialog(self):
         modulator_dialog, message = self.prepare_modulation_dialog()
-        modulator_dialog.show()
+        modulator_dialog.showMaximized()
 
         self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
         self.has_default_modulation = False
@@ -351,6 +354,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
+
         if self.selected_message is not None:
             fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
                                           msg_index=self.selected_message_index, proto_view=view, parent=self)
@@ -384,9 +388,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
-        pac = self.table_model.protocol
-        assert isinstance(pac, ProtocolAnalyzerContainer)
-        fuzz_active = any(lbl.active_fuzzing for msg in pac.messages for lbl in msg.message_type)
+        fuzz_active = any(lbl.active_fuzzing for msg in self.table_model.protocol.messages for lbl in msg.message_type)
         self.ui.btnFuzz.setEnabled(fuzz_active)
         if self.ui.btnFuzz.isEnabled() and not btn_was_enabled:
             font = self.ui.btnFuzz.font()
@@ -398,7 +400,7 @@ class GeneratorTabController(QWidget):
             self.ui.btnFuzz.setFont(font)
             self.ui.btnFuzz.setStyleSheet("")
 
-        has_same_message = pac.multiple_fuzz_labels_per_message
+        has_same_message = self.table_model.protocol.multiple_fuzz_labels_per_message
         self.ui.rBSuccessive.setEnabled(has_same_message)
         self.ui.rBExhaustive.setEnabled(has_same_message)
         self.ui.rbConcurrent.setEnabled(has_same_message)
@@ -469,15 +471,6 @@ class GeneratorTabController(QWidget):
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.table_model.update()
         self.ui.tableMessages.resize_columns()
-
-    def close_all(self):
-        self.tree_model.rootItem.clearChilds()
-        self.tree_model.rootItem.addGroup()
-        self.table_model.protocol.clear()
-        self.table_model.clear()
-        self.refresh_tree()
-        self.refresh_table()
-        self.refresh_label_list()
 
     @pyqtSlot()
     def on_btn_send_clicked(self):

@@ -1,10 +1,11 @@
-import unittest
-
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
 
-class TestDecoding(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestDecoding(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_carrier(self):
         e = Encoder()
 

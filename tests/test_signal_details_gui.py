@@ -1,19 +1,17 @@
-import unittest
-
-import tests.utils_testing
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.Signal import Signal
 from urh.util.Formatter import Formatter
 
-app = tests.utils_testing.get_app()
-
-
-class TestSignalDetailsGUI(unittest.TestCase):
+class TestSignalDetailsGUI(QtTestCase):
     def setUp(self):
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "test")
         self.signal.sample_rate = 2e6
         self.dialog = SignalDetailsController(self.signal)
+
+        if self.SHOW:
+            self.dialog.show()
 
     def test_set_sample_rate(self):
         self.assertEqual(Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),

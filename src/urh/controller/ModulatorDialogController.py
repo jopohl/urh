@@ -1,6 +1,6 @@
 import numpy
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QResizeEvent, QKeyEvent
+from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from urh.signalprocessing.Modulator import Modulator
@@ -40,11 +40,10 @@ class ModulatorDialogController(QDialog):
 
         self.ui.chkBoxLockSIV.setDisabled(True)
 
-        self.create_connects()
-        self.on_modulation_type_changed()
-
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
+
+        self.create_connects()
 
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()

@@ -20,7 +20,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, testing_mode=False):
+                 modulation_type: int, device: str, backend_handler: BackendHandler):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -30,7 +30,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
-        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         is_ringbuffer=False, raw_mode=False)
 

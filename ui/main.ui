@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1017</width>
-    <height>884</height>
+    <width>798</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -166,13 +166,6 @@
       </widget>
      </widget>
     </item>
-    <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -180,7 +173,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1017</width>
+     <width>798</width>
      <height>21</height>
     </rect>
    </property>

@@ -1,16 +1,16 @@
-import unittest
 import os
 import tempfile
 
+from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.Message import Message
+from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
 
 
-class TestFuzzing(unittest.TestCase):
+class TestFuzzing(QtTestCase):
     def setUp(self):
         filename = os.path.join(tempfile.gettempdir(), "test.fuzz")
         mod1 = Modulator("mod 1")

@@ -6,9 +6,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
-from urh.dev.gr.ReceiverThread import ReceiverThread
-from urh.dev.gr.SenderThread import SenderThread
-from urh.dev.gr.SpectrumThread import SpectrumThread
+from urh.dev.native.Device import Device
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
 
@@ -58,15 +56,18 @@ class VirtualDevice(QObject):
 
         if self.backend == Backends.grc:
             if mode == Mode.receive:
+                from urh.dev.gr.ReceiverThread import ReceiverThread
                 self.__dev = ReceiverThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                             parent=parent, is_ringbuffer=is_ringbuffer)
                 self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
+                from urh.dev.gr.SenderThread import SenderThread
                 self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                           parent=parent)
                 self.__dev.data = samples_to_send
                 self.__dev.samples_per_transmission = len(samples_to_send)
             elif mode == Mode.spectrum:
+                from urh.dev.gr.SpectrumThread import SpectrumThread
                 self.__dev = SpectrumThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                             parent=parent)
             else:
@@ -91,6 +92,10 @@ class VirtualDevice(QObject):
                     self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
+            elif name == "test":
+                # For Unittests Only
+                self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
+                self.__dev.BYTES_PER_SAMPLE = 4
             else:
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.portnumber = portnumber
@@ -99,7 +104,7 @@ class VirtualDevice(QObject):
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
         elif self.backend == Backends.network:
-            self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode)
+            self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode, spectrum=self.mode == Mode.spectrum)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:
@@ -391,7 +396,7 @@ class VirtualDevice(QObject):
         if self.mode == Mode.spectrum:
             if self.backend == Backends.grc:
                 return self.__dev.x, self.__dev.y
-            elif self.backend == Backends.native:
+            elif self.backend == Backends.native or self.backend == Backends.network:
                 w = np.abs(np.fft.fft(self.__dev.receive_buffer))
                 freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
                 idx = np.argsort(freqs)
@@ -413,7 +418,7 @@ class VirtualDevice(QObject):
 
             self.emit_started_signal()
         elif self.backend == Backends.network:
-            if self.mode == Mode.receive:
+            if self.mode == Mode.receive or self.mode == Mode.spectrum:
                 self.__dev.start_tcp_server_for_receiving()
             else:
                 self.__dev.start_raw_sending_thread()

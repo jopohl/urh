@@ -1,15 +1,11 @@
-import unittest
-
-from urh import constants
+from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-from tests.utils_testing import get_path_for_data_file
-
-class TestSignal(unittest.TestCase):
+class TestSignal(QtTestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type = int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
+        pass
 
     def test_freq_detection(self):
         s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
@@ -28,6 +24,3 @@ class TestSignal(unittest.TestCase):
         start, nsamples = pa.get_samplepos_of_bitseq(0, 0, 0, 1, False)
         freq = s.estimate_frequency(start, start + nsamples, 1e6)
         self.assertEqual(freq, 10000)  # Freq for 1 is 10K
-
-    def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len)  # Restore Symbol Length

@@ -1,14 +1,10 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QDir, Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication, QFileDialog, QInputDialog, \
+    QLineEdit, QMessageBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -29,8 +25,8 @@ class DecoderWidgetController(QDialog):
         # Init
         super().__init__(parent)
         self.ui = Ui_Decoder()
-        QApplication.instance().processEvents()
         self.ui.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         # Variables
         self.old_inpt_txt = ""
@@ -799,7 +795,6 @@ class DecoderWidgetController(QDialog):
         tmp_scene.addText(self.tr("Loading Signal..."))
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.ui.graphicsView_signal.setScene(tmp_scene)
-        QApplication.instance().processEvents()
 
         if signal is not None:
             last_message = pa.messages[-1]

@@ -48,7 +48,10 @@ class PLabelTableModel(QAbstractTableModel):
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i, j = index.row(), index.column()
         if role == Qt.DisplayRole:
-            lbl = self.message_type[i]
+            try:
+                lbl = self.message_type[i]
+            except IndexError:
+                return False
             if j == 0:
                 return lbl.name
             elif j == 1:

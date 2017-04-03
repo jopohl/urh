@@ -1,36 +1,21 @@
 import os
 import random
-import unittest
 
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh.controller.ProjectDialogController import ProjectDialogController
-from urh.controller.MainController import MainController
-from urh.signalprocessing.Modulator import Modulator
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.util.Logger import logger
+from urh.controller.ProjectDialogController import ProjectDialogController
+from urh.signalprocessing.Modulator import Modulator
 
-app = tests.utils_testing.get_app()
 
-
-class TestProjectManager(unittest.TestCase):
+class TestProjectManager(QtTestCase):
     def setUp(self):
-        logger.debug("Init form")
-        tests.utils_testing.short_wait()
-        self.form = MainController()
-        logger.debug("Initialized form")
-        tests.utils_testing.short_wait()
+        super().setUp()
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
-        self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
-
-    def tearDown(self):
-        self.form.close()
-        self.form.setParent(None)
-        self.form.deleteLater()
-        tests.utils_testing.short_wait()
 
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"
@@ -63,16 +48,16 @@ class TestProjectManager(unittest.TestCase):
 
     def test_close_all(self):
         self.form.close_all()
-        tests.utils_testing.short_wait()
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
-        tests.utils_testing.short_wait()
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
-        tests.utils_testing.short_wait()
-        self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 2)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.CLOSE_TIMEOUT)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
+        self.add_signal_to_form("ask.complex")
+        self.add_signal_to_form("fsk.complex")
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_all()
-        tests.utils_testing.short_wait()
-        self.assertEqual(self.form.signal_tab_controller.num_signals, 0)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.CLOSE_TIMEOUT)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 
     def test_project_dialog(self):

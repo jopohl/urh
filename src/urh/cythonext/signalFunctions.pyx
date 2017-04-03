@@ -1,12 +1,14 @@
 # noinspection PyUnresolvedReferences
+cimport numpy as np
+import numpy as np
 from libcpp cimport bool
 
-# noinspection PyUnresolvedReferences
-import numpy as np
-cimport numpy as np
+np.import_array()
+
 from urh.cythonext import util
 
 from cython.parallel import prange
+# noinspection PyUnresolvedReferences
 from libc.math cimport atan2, sqrt, M_PI, sin, cos
 
 cdef:
@@ -75,7 +77,7 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
     if len(samples) <= 2:
-        return np.empty(len(samples), dtype=np.float32)
+        return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i, ns
     cdef float complex tmp = 0
@@ -85,7 +87,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     cdef float imag = 0
     ns = len(samples)
 
-    cdef float[::1] result = np.empty(ns, dtype=np.float32, order="C")
+    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
@@ -209,7 +211,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
     cdef float NOISE = get_noise_for_mod_type(mod_type)
     ns = len(samples)
 
-    cdef unsigned long long[:, ::1] result = np.empty((ns, 2), dtype=np.uint64, order="C")
+    cdef unsigned long long[:, ::1] result = np.zeros((ns, 2), dtype=np.uint64, order="C")
     if ns == 0:
         return result
 
@@ -272,33 +274,6 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
         cur_index = len_result
 
     return result[:cur_index]
-
-cdef class Symbol:
-    cdef public str name
-    cdef public int nbits
-    cdef public int pulsetype
-    cdef public unsigned long long nsamples # Num Samples for this Symbol. Needed in Modulator.
-    def __init__(self, str name, int nbits, int pulsetype, unsigned long long nsamples):
-        """
-        :param nbits: Number of bits this Symbol covers
-        :param name: Name of the symbol (one char)
-        :param pulsetype: 0 für 0er Puls, 1 für 1er Puls
-        :return:
-        """
-        self.name = name
-        self.pulsetype = pulsetype
-        self.nbits = nbits
-        self.nsamples = nsamples
-
-    def __repr__(self):
-        return "{0} ({1}:{2})".format(self.name, self.pulsetype, self.name)
-
-    def __deepcopy__(self, memo):
-        result = Symbol(self.name, self.nbits, self.pulsetype, self.nsamples)
-        memo[id(self)] = result
-        return result
-
-
 
 cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_center, int tolerance, int mod_type):
 

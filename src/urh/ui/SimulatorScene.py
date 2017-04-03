@@ -808,15 +808,6 @@ class SimulatorScene(QGraphicsScene):
                 self.participants_dict[participant] = participant_item
                 self.participants.insert(-2, participant_item)
 
-        for participant in self.participants:
-            for msg in self.get_all_messages():
-                if msg.source == participant or msg.destination == participant:
-                    participant.setVisible(True)
-                    break
-            else:
-                participant.setVisible(False)
-                participant.update(x_pos = 30)
-
     def get_all_items(self):
         items = []
 
@@ -834,6 +825,15 @@ class SimulatorScene(QGraphicsScene):
         return messages
 
     def arrange_participants(self):
+        for participant in self.participants:
+            for msg in self.get_all_messages():
+                if msg.source == participant or msg.destination == participant:
+                    participant.setVisible(True)
+                    break
+            else:
+                participant.setVisible(False)
+                participant.update(x_pos = 30)
+
         visible_participants = [part for part in self.participants if part.isVisible()]
 
         if not visible_participants:

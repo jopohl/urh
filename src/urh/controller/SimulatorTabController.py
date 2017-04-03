@@ -49,13 +49,12 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.field_types = FieldType.load_from_xml()
-        self.field_types = FieldType.load_from_xml()
         self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
-        self.update_field_type_combobox()
+        self.update_field_types()
         self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(MessageDataItem.LOG_LEVELS, parent=self))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
@@ -71,10 +70,16 @@ class SimulatorTabController(QWidget):
 
         self.create_connects(compare_frame_controller)
 
-    def update_field_type_combobox(self):
-        field_types = [ft.caption for ft in self.field_types]
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
+    def update_field_types(self):
+        self.field_types = FieldType.load_from_xml()
+        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
+        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
+        self.update_field_name_column()
 
+    def update_field_name_column(self):
+        field_name_column_items = [MessageDataItem.UNLABELED_DATA_NAME]
+        field_name_column_items.extend([ft.caption for ft in self.field_types])
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_name_column_items, is_editable=True, return_index=False, parent=self))
 
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)

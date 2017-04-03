@@ -75,9 +75,14 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 if j == 0:
                     lbl.name = value
 
-                    if value in self.controller.field_types_by_caption:
+                    if value == MessageDataItem.UNLABELED_DATA_NAME:
+                        lbl.is_unlabeled_data = True
+                        lbl.type = None
+                    elif value in self.controller.field_types_by_caption:
+                        lbl.is_unlabeled_data = False
                         lbl.type = self.controller.field_types_by_caption[value]
                     else:
+                        lbl.is_unlabeled_data = False
                         lbl.type = None
                 if j == 1:
                     lbl.log_level_index = int(value)

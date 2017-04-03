@@ -434,6 +434,7 @@ class RuleConditionItem(SimulatorItem):
 
 class MessageDataItem(QGraphicsTextItem):
     LOG_LEVELS = ["0 (No logging)", "1", "2", "3 (Verbose logging)"]
+    UNLABELED_DATA_NAME = "[Unlabeled data]"
 
     def __init__(self, name: str, color_index: int, type: FieldType=None, is_unlabeled_data=False, plain_bits=None, parent=None):
         super().__init__(parent)
@@ -442,7 +443,7 @@ class MessageDataItem(QGraphicsTextItem):
         self.color_index = color_index
         self.__type = type
         self.display_format_index = 0 if type is None else type.display_format_index
-        self.is_unlabeled_data = is_unlabeled_data
+        self.__is_unlabeled_data = is_unlabeled_data
         self.log_level_index = 0
         self.__plain_bits = plain_bits if plain_bits else []
 
@@ -468,6 +469,15 @@ class MessageDataItem(QGraphicsTextItem):
             self.scene().update_view()
 
     @property
+    def is_unlabeled_data(self):
+        return self.__is_unlabeled_data
+
+    @is_unlabeled_data.setter
+    def is_unlabeled_data(self, val):
+        self.__is_unlabeled_data = val
+        self.refresh()
+
+    @property
     def plain_bits(self):
         """
 
@@ -488,7 +498,7 @@ class MessageDataItem(QGraphicsTextItem):
             self.__name = "No name"
 
         if self.is_unlabeled_data:
-            return "[Unlabeled data]"
+            return MessageDataItem.UNLABELED_DATA_NAME
         else:
             return self.__name
 

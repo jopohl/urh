@@ -44,6 +44,7 @@ class Ui_FAnalysis(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.splitter_2 = QtWidgets.QSplitter(self.frame_2)
         self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_2.setChildrenCollapsible(False)
         self.splitter_2.setObjectName("splitter_2")
         self.frame_4 = QtWidgets.QFrame(self.splitter_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)

@@ -50,6 +50,9 @@ class MainController(QMainWindow):
                                                                plugin_manager=self.plugin_manager,
                                                                project_manager=self.project_manager)
 
+        self.compare_frame_controller.ui.splitter_2.setSizes([self.compare_frame_controller.width() * 0.1,
+                                                              self.compare_frame_controller.width() * 0.9])
+
         self.ui.tab_protocol.layout().addWidget(self.compare_frame_controller)
 
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,

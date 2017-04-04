@@ -145,7 +145,7 @@ class FuzzingDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
-        event.accept()
+        super().closeEvent(event)
 
     @pyqtSlot(int)
     def on_fuzzing_start_changed(self, value: int):

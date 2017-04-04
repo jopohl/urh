@@ -129,7 +129,7 @@ class DecoderWidgetController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
-        event.accept()
+        super().closeEvent(event)
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())

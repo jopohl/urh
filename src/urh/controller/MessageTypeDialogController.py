@@ -73,7 +73,7 @@ class MessageTypeDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
-        event.accept()
+        super().closeEvent(event)
 
     @pyqtSlot()
     def on_btn_add_rule_clicked(self):

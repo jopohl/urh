@@ -355,7 +355,7 @@ class MainController(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         self.project_manager.saveProject()
-        event.accept()
+        super().closeEvent(event)
 
     def close_all(self):
 

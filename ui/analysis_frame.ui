@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
-    <height>501</height>
+       <width>1098</width>
+       <height>839</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,8 +51,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>885</width>
-        <height>718</height>
+           <width>1080</width>
+           <height>821</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -89,198 +89,195 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QLabel" name="label_5">
-                   <property name="text">
-                    <string>Protocols:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QToolButton" name="btnSaveProto">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="baseSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>Save current protocol..</string>
-                   </property>
-                   <property name="icon">
-                    <iconset theme="document-save">
-                     <normaloff>.</normaloff>.</iconset>
-                   </property>
-                   <property name="toolButtonStyle">
-                    <enum>Qt::ToolButtonIconOnly</enum>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                   <widget class="QTabWidget" name="tabWidget">
+                       <property name="currentIndex">
+                           <number>0</number>
+                       </property>
+                       <widget class="QWidget" name="tab">
+                           <attribute name="title">
+                               <string>Protocols</string>
+                           </attribute>
+                           <layout class="QVBoxLayout" name="verticalLayout_10">
+                               <item>
+                                   <widget class="ProtocolTreeView" name="treeViewProtocols">
+                                       <property name="sizePolicy">
+                                           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                               <horstretch>0</horstretch>
+                                               <verstretch>0</verstretch>
+                                           </sizepolicy>
+                                       </property>
+                                       <property name="acceptDrops">
+                                           <bool>true</bool>
+                                       </property>
+                                       <property name="dragEnabled">
+                                           <bool>true</bool>
+                                       </property>
+                                       <property name="dragDropOverwriteMode">
+                                           <bool>false</bool>
+                                       </property>
+                                       <property name="dragDropMode">
+                                           <enum>QAbstractItemView::DragDrop</enum>
+                                       </property>
+                                       <property name="defaultDropAction">
+                                           <enum>Qt::IgnoreAction</enum>
+                                       </property>
+                                       <property name="selectionMode">
+                                           <enum>QAbstractItemView::SingleSelection</enum>
+                                       </property>
+                                       <property name="selectionBehavior">
+                                           <enum>QAbstractItemView::SelectRows</enum>
+                                       </property>
+                                       <property name="animated">
+                                           <bool>true</bool>
+                                       </property>
+                                       <attribute name="headerVisible">
+                                           <bool>false</bool>
+                                       </attribute>
+                                   </widget>
+                               </item>
+                               <item>
+                                   <widget class="QToolButton" name="btnSaveProto">
+                                       <property name="sizePolicy">
+                                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                               <horstretch>0</horstretch>
+                                               <verstretch>0</verstretch>
+                                           </sizepolicy>
+                                       </property>
+                                       <property name="maximumSize">
+                                           <size>
+                                               <width>16777215</width>
+                                               <height>16777215</height>
+                                           </size>
+                                       </property>
+                                       <property name="baseSize">
+                                           <size>
+                                               <width>0</width>
+                                               <height>0</height>
+                                           </size>
+                                       </property>
+                                       <property name="text">
+                                           <string>Save current protocol...</string>
+                                       </property>
+                                       <property name="icon">
+                                           <iconset theme="document-save">
+                                               <normaloff>.</normaloff>.
+                                           </iconset>
+                                       </property>
+                                       <property name="toolButtonStyle">
+                                           <enum>Qt::ToolButtonTextBesideIcon</enum>
+                                       </property>
+                                   </widget>
+                               </item>
+                           </layout>
+                       </widget>
+                       <widget class="QWidget" name="tab_2">
+                           <attribute name="title">
+                               <string>Participants</string>
+                           </attribute>
+                           <layout class="QVBoxLayout" name="verticalLayout_11">
+                               <item>
+                                   <widget class="QListView" name="listViewParticipants">
+                                       <property name="sizePolicy">
+                                           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                                               <horstretch>0</horstretch>
+                                               <verstretch>0</verstretch>
+                                           </sizepolicy>
+                                       </property>
+                                   </widget>
+                               </item>
+                           </layout>
+                       </widget>
+                   </widget>
                </item>
-               <item>
-                <widget class="ProtocolTreeView" name="treeViewProtocols">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="acceptDrops">
-                  <bool>true</bool>
-                 </property>
-                 <property name="dragEnabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="dragDropOverwriteMode">
-                  <bool>false</bool>
-                 </property>
-                 <property name="dragDropMode">
-                  <enum>QAbstractItemView::DragDrop</enum>
-                 </property>
-                 <property name="defaultDropAction">
-                  <enum>Qt::IgnoreAction</enum>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::SingleSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectRows</enum>
-                 </property>
-                 <property name="animated">
-                  <bool>true</bool>
-                 </property>
-                 <attribute name="headerVisible">
-                  <bool>false</bool>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>Participants:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QListView" name="listViewParticipants">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="cbProtoView">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Bits</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Hex</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ASCII</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="cbDecoding">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::AdjustToContents</enum>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>NRZ</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Manchester</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Manchester II</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Differential Manchester</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lEncodingErrors">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Decoding errors for message:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lDecodingErrorsValue">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>0 (0.00%)     </string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelDecodingState">
-                 <property name="text">
-                  <string>SUCCESS</string>
+                  <item>
+                      <widget class="QComboBox" name="cbProtoView">
+                          <property name="sizePolicy">
+                              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                              </sizepolicy>
+                          </property>
+                          <property name="toolTip">
+                              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                          </property>
+                          <item>
+                              <property name="text">
+                                  <string>Bits</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>Hex</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>ASCII</string>
+                              </property>
+                          </item>
+                      </widget>
+                  </item>
+                  <item>
+                      <widget class="QComboBox" name="cbDecoding">
+                          <property name="sizePolicy">
+                              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                              </sizepolicy>
+                          </property>
+                          <property name="sizeAdjustPolicy">
+                              <enum>QComboBox::AdjustToContents</enum>
+                          </property>
+                          <item>
+                              <property name="text">
+                                  <string>NRZ</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>Manchester</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>Manchester II</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>Differential Manchester</string>
+                              </property>
+                          </item>
+                          <item>
+                              <property name="text">
+                                  <string>...</string>
+                              </property>
+                          </item>
+                      </widget>
+                  </item>
+                  <item>
+                      <widget class="QLabel" name="lEncodingErrors">
+                          <property name="sizePolicy">
+                              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                              </sizepolicy>
+                          </property>
+                          <property name="text">
+                              <string>Decoding errors for message:</string>
+                          </property>
+                      </widget>
+                  </item>
+                  <item>
+                      <widget class="QLabel" name="lDecodingErrorsValue">
+                          <property name="sizePolicy">
+                              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                              </sizepolicy>
+                          </property>
+                          <property name="text">
+                              <string>0 (0.00%)</string>
                  </property>
                 </widget>
                </item>

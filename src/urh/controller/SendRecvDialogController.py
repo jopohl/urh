@@ -592,7 +592,7 @@ class SendRecvDialogController(QDialog):
             self.graphics_view.eliminate()
 
         self.graphics_view = None
-        event.accept()
+        super().closeEvent(event)
 
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):

@@ -226,7 +226,7 @@ class OptionsController(QDialog):
         self.values_changed.emit(changed_values)
 
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
-        event.accept()
+        super().closeEvent(event)
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()

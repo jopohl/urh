@@ -40,3 +40,6 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_SetLOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type frequency)
     int LMS_GetLOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type *frequency)
     int LMS_GetLOFrequencyRange(lms_device_t *device, bool dir_tx, lms_range_t *range)
+
+    int LMS_SetNormalizedGain(lms_device_t *device, bool dir_tx, size_t chan, float_type gain)
+    int LMS_GetNormalizedGain(lms_device_t *device, bool dir_tx, size_t chan, float_type *gain)

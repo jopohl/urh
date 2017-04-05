@@ -151,6 +151,7 @@ cpdef float_type get_center_frequency(bool dir_tx, size_t chan):
 cpdef tuple get_center_frequency_range(bool dir_tx):
     """
     Obtain the supported RF center frequency range in Hz.
+    
     :param dir_tx: Select RX or TX
     :return: Tuple (start, end, step) of allowed center freq range in Hz, (-1, -1, -1) on Error
     """
@@ -160,3 +161,32 @@ cpdef tuple get_center_frequency_range(bool dir_tx):
         return center_freq_range.min, center_freq_range.max, center_freq_range.step
     else:
         return -1, -1, -1
+
+cpdef int set_normalized_gain(bool dir_tx, size_t chan, float_type gain):
+    """
+    Set the combined gain value
+    
+    This function computes and sets the optimal gain values of various amplifiers
+    that are present in the device based on desired normalized gain value.
+    
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :param gain: Desired gain, range [0, 1.0], where 1.0 represents the maximum gain
+    :return:  0 on success, (-1) on failure
+    """
+    return LMS_SetNormalizedGain(_c_device, dir_tx, chan, gain)
+
+cpdef float_type get_normalized_gain(bool dir_tx, size_t chan):
+    """
+    Obtain the current combined gain value
+    
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :return: Current gain, range [0, 1.0], where 1.0 represents the maximum gain, or -1 on error
+    """
+    cdef float_type gain = 0.0
+    result = LMS_GetNormalizedGain(_c_device, dir_tx, chan, &gain)
+    if result == 0:
+        return gain
+    else:
+        return -1

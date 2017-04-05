@@ -35,6 +35,10 @@ class TestLimeSDR(unittest.TestCase):
         print("RX 0 set center freq:", limesdr.set_center_frequency(False, 0, 433.92e6))
         print("RX 0 center freq:", limesdr.get_center_frequency(False, 0))
 
+        print("RX 0 gain", limesdr.get_normalized_gain(False, 0))
+        print("RX 0 set gain", limesdr.set_normalized_gain(False, 0, 0.5))
+        print("RX 0 gain", limesdr.get_normalized_gain(False, 0))
+
         print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))

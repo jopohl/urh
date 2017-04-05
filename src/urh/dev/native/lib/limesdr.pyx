@@ -319,32 +319,32 @@ cpdef start_rx():
 
     stream.channel = 0
     stream.isTx = 0
+    stream.dataFmt = dataFmt_t.LMS_FMT_F32
     #stream.fifoSize = 1000
     #stream.throughputVsLatency = 0.5
-    #print(stream.dataFmt)
-    print("SAMPLE RATE:", get_sample_rate(False, 0))
+
+
     rc = LMS_SetupStream(_c_device, &stream)
     if rc != 0:
         print("Setup stream failed")
         return -1
 
-    print(stream.fifoSize)
     rc = LMS_StartStream(&stream)
     if rc != 0:
         print("Start stream failed")
         return -1
 
     cdef lms_stream_status_t stream_status
-    for i in range(10):
-        LMS_GetStreamStatus(&stream, &stream_status)
-        print("Channel", stream.channel)
-        print("StreamRX", stream.isTx)
-        print("Dropped PAckets", stream_status.droppedPackets)
-        print("Sample rate", stream_status.sampleRate)
-        print("link rate", stream_status.linkRate)
-        print("fifo size", stream_status.fifoSize)
-        print(stream_status.fifoFilledCount)
-        time.sleep(1)
+    # for i in range(10):
+    #     LMS_GetStreamStatus(&stream, &stream_status)
+    #     print("Channel", stream.channel)
+    #     print("StreamRX", stream.isTx)
+    #     print("Dropped PAckets", stream_status.droppedPackets)
+    #     print("Sample rate", stream_status.sampleRate)
+    #     print("link rate", stream_status.linkRate)
+    #     print("fifo size", stream_status.fifoSize)
+    #     print(stream_status.fifoFilledCount)
+    #     time.sleep(1)
 
     cdef size_t num_samples = 1000
     cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))

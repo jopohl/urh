@@ -3,12 +3,6 @@ from libcpp cimport bool
 ctypedef unsigned int  uint32_t
 ctypedef unsigned long long uint64_t
 
-ctypedef enum dataFmt_t:
-    # Data output format
-    LMS_FMT_F32 = 0
-    LMS_FMT_I16 = 1
-    LMS_FMT_I12 = 2
-
 cdef extern from "lime/LimeSuite.h":
     ctypedef double float_type
     const int LMS_SUCCESS = 0
@@ -88,6 +82,11 @@ cdef extern from "lime/LimeSuite.h":
         # in buffer (if there is any) in RX or flushes transfer buffer in TX (even
         # if the buffer is not full yet)
         bool flushPartialPacket
+
+    ctypedef enum dataFmt_t:
+        LMS_FMT_F32 "lms_stream_t::LMS_FMT_F32" = 0
+        LMS_FMT_I16 "lms_stream_t::LMS_FMT_I16"
+        LMS_FMT_I12 "lms_stream_t::LMS_FMT_I12"
 
     ctypedef struct lms_stream_t:
         # Stream handle. Should not be modified manually. Assigned by LMS_SetupStream()

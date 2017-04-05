@@ -46,6 +46,11 @@ class TestLimeSDR(unittest.TestCase):
 
         print("RX 0 calibrate:", limesdr.calibrate(False, 0, 2e6))
 
+        antenna_list = limesdr.get_antenna_list(False, 0)
+        print("RX 0 antenna list", antenna_list)
+        print("RX 0 current antenna", limesdr.get_antenna(False, 0), antenna_list[limesdr.get_antenna(False, 0)])
+        print("RX 0 current antenna BW", limesdr.get_antenna_bw(False, 0, limesdr.get_antenna(False, 0)))
+
         print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))

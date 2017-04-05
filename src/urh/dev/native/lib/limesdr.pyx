@@ -246,3 +246,55 @@ cpdef calibrate(bool dir_tx, size_t chan, double bw):
     :return: 0 on success, (-1) on failure
     """
     return LMS_Calibrate(_c_device, dir_tx, chan, bw, 0)
+
+cpdef list get_antenna_list(bool dir_tx, size_t chan):
+    """
+    Obtain antenna list with names. First item in the list is the name of antenna index 0.
+    :param dir_tx:  Select RX or TX
+    :param chan: channel index
+    :return: 
+    """
+    cdef lms_name_t *ant_list = <lms_name_t *> malloc(256 * sizeof(lms_name_t))
+    result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)
+    if result > 0:
+        return [ant_list[i].decode('UTF-8') for i in range(0, result)]
+    else:
+        return []
+
+cpdef int set_antenna(bool dir_tx, size_t chan, size_t index):
+    """
+    Select the antenna for the specified RX or TX channel.
+    
+    LMS_SetFrequency() automatically selects antenna based on frequency. 
+    This function is meant to override path selected by LMS_SetFrequency() and should be called after LMS_SetFrequency().
+    :param dir_tx: Select RX or TX
+    :param chan:  channel index
+    :param index: Index of antenna to select
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_SetAntenna(_c_device, dir_tx, chan, index)
+
+cpdef int get_antenna(bool dir_tx, size_t chan):
+    """
+    Obtain currently selected antenna of the the specified RX or TX channel.
+     
+    :param dir_tx: Select RX or TX
+    :param chan: channel index
+    :return: Index of selected antenna on success, (-1) on failure
+    """
+    return LMS_GetAntenna(_c_device, dir_tx, chan)
+
+cpdef tuple get_antenna_bw(bool dir_tx, size_t chan, size_t index):
+    """
+    Obtains bandwidth (lower and upper frequency) of the specified antenna
+    :param dir_tx: Select RX or TX
+    :param chan:  channel index
+    :param index: Antenna index
+    :return: Tuple (start, end, step) of allowed bandwidth values in Hz, (-1, -1, -1) on Error
+    """
+    cdef lms_range_t bandwidth_range
+    result = LMS_GetAntennaBW(_c_device, dir_tx, chan, index, &bandwidth_range)
+    if result == 0:
+        return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+    else:
+        return -1, -1, -1

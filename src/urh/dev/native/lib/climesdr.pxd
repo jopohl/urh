@@ -50,3 +50,9 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_SetLPF(lms_device_t *device, bool dir_tx, size_t chan, bool enabled)
     int LMS_SetGFIRLPF(lms_device_t *device, bool dir_tx, size_t chan, bool enabled, float_type bandwidth)
     int LMS_Calibrate(lms_device_t *device, bool dir_tx, size_t chan, double bw, unsigned flags)
+
+    ctypedef char lms_name_t[16]
+    int LMS_GetAntennaList(lms_device_t *device, bool dir_tx, size_t chan, lms_name_t *list)
+    int LMS_SetAntenna(lms_device_t *device, bool dir_tx, size_t chan, size_t index)
+    int LMS_GetAntenna(lms_device_t *device, bool dir_tx, size_t chan)
+    int LMS_GetAntennaBW(lms_device_t *device, bool dir_tx, size_t chan, size_t index, lms_range_t *range)

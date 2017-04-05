@@ -900,6 +900,10 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_lpf_bandwidth(bool, 
 static float_type __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_lpf_bandwidth(bool, size_t, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_lpf_bandwidth_range(bool, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_calibrate(bool, size_t, double, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_list(bool, size_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_antenna(bool, size_t, size_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna(bool, size_t, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(bool, size_t, size_t, int __pyx_skip_dispatch); /*proto*/
 #define __Pyx_MODULE_NAME "src.urh.dev.native.lib.limesdr"
 int __pyx_module_is_main_src__urh__dev__native__lib__limesdr = 0;
 
@@ -912,6 +916,7 @@ static const char __pyx_k_info[] = "info";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_rate[] = "rate";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_index[] = "index";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_dir_tx[] = "dir_tx";
 static const char __pyx_k_enabled[] = "enabled";
@@ -925,6 +930,7 @@ static PyObject *__pyx_n_s_dir_tx;
 static PyObject *__pyx_n_s_enabled;
 static PyObject *__pyx_n_s_frequency;
 static PyObject *__pyx_n_s_gain;
+static PyObject *__pyx_n_s_index;
 static PyObject *__pyx_n_s_info;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_oversample;
@@ -951,11 +957,16 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_32set_lpf_bandwid
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_34get_lpf_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_36get_lpf_bandwidth_range(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_38calibrate(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, double __pyx_v_bw); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_list(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index); /* proto */
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_tuple__4;
+static PyObject *__pyx_tuple__5;
 
 /* "src/urh/dev/native/lib/limesdr.pyx":6
  * cdef lms_device_t *_c_device
@@ -3573,6 +3584,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_calibrate(bool __p
  *     """
  *     return LMS_Calibrate(_c_device, dir_tx, chan, bw, 0)             # <<<<<<<<<<<<<<
  * 
+ * cpdef list get_antenna_list(bool dir_tx, size_t chan):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_int(LMS_Calibrate(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_bw, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 248, __pyx_L1_error)
@@ -3691,6 +3703,661 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_38calibrate(CYTHO
   return __pyx_r;
 }
 
+/* "src/urh/dev/native/lib/limesdr.pyx":250
+ *     return LMS_Calibrate(_c_device, dir_tx, chan, bw, 0)
+ * 
+ * cpdef list get_antenna_list(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain antenna list with names. First item in the list is the name of antenna index 0.
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_41get_antenna_list(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_list(bool __pyx_v_dir_tx, size_t __pyx_v_chan, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  lms_name_t *__pyx_v_ant_list;
+  int __pyx_v_result;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  int __pyx_t_3;
+  long __pyx_t_4;
+  char *__pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
+  __Pyx_RefNannySetupContext("get_antenna_list", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":257
+ *     :return:
+ *     """
+ *     cdef lms_name_t *ant_list = <lms_name_t *> malloc(256 * sizeof(lms_name_t))             # <<<<<<<<<<<<<<
+ *     result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)
+ *     if result > 0:
+ */
+  __pyx_v_ant_list = ((lms_name_t *)malloc((0x100 * (sizeof(lms_name_t)))));
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":258
+ *     """
+ *     cdef lms_name_t *ant_list = <lms_name_t *> malloc(256 * sizeof(lms_name_t))
+ *     result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)             # <<<<<<<<<<<<<<
+ *     if result > 0:
+ *         return [ant_list[i].decode('UTF-8') for i in range(0, result)]
+ */
+  __pyx_v_result = LMS_GetAntennaList(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_ant_list);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":259
+ *     cdef lms_name_t *ant_list = <lms_name_t *> malloc(256 * sizeof(lms_name_t))
+ *     result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)
+ *     if result > 0:             # <<<<<<<<<<<<<<
+ *         return [ant_list[i].decode('UTF-8') for i in range(0, result)]
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result > 0) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":260
+ *     result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)
+ *     if result > 0:
+ *         return [ant_list[i].decode('UTF-8') for i in range(0, result)]             # <<<<<<<<<<<<<<
+ *     else:
+ *         return []
+ */
+    __Pyx_XDECREF(__pyx_r);
+    { /* enter inner scope */
+      long __pyx_8genexpr1__pyx_v_i;
+      __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 260, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_3 = __pyx_v_result;
+      for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
+        __pyx_8genexpr1__pyx_v_i = __pyx_t_4;
+        __pyx_t_5 = (__pyx_v_ant_list[__pyx_8genexpr1__pyx_v_i]);
+        __pyx_t_6 = __Pyx_decode_c_string(__pyx_t_5, 0, strlen(__pyx_t_5), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 260, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_6))) __PYX_ERR(0, 260, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      }
+    } /* exit inner scope */
+    __pyx_r = ((PyObject*)__pyx_t_2);
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":259
+ *     cdef lms_name_t *ant_list = <lms_name_t *> malloc(256 * sizeof(lms_name_t))
+ *     result = LMS_GetAntennaList(_c_device, dir_tx, chan, ant_list)
+ *     if result > 0:             # <<<<<<<<<<<<<<
+ *         return [ant_list[i].decode('UTF-8') for i in range(0, result)]
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":262
+ *         return [ant_list[i].decode('UTF-8') for i in range(0, result)]
+ *     else:
+ *         return []             # <<<<<<<<<<<<<<
+ * 
+ * cpdef int set_antenna(bool dir_tx, size_t chan, size_t index):
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 262, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_r = ((PyObject*)__pyx_t_2);
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":250
+ *     return LMS_Calibrate(_c_device, dir_tx, chan, bw, 0)
+ * 
+ * cpdef list get_antenna_list(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain antenna list with names. First item in the list is the name of antenna index 0.
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_list", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_41get_antenna_list(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_list[] = "\n    Obtain antenna list with names. First item in the list is the name of antenna index 0.\n    :param dir_tx:  Select RX or TX\n    :param chan: channel index\n    :return: \n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_41get_antenna_list(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_antenna_list (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_antenna_list", 1, 2, 2, 1); __PYX_ERR(0, 250, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_antenna_list") < 0)) __PYX_ERR(0, 250, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 250, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 250, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_antenna_list", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 250, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_list", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_list(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_list(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_antenna_list", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_list(__pyx_v_dir_tx, __pyx_v_chan, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_list", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/limesdr.pyx":264
+ *         return []
+ * 
+ * cpdef int set_antenna(bool dir_tx, size_t chan, size_t index):             # <<<<<<<<<<<<<<
+ *     """
+ *     Select the antenna for the specified RX or TX channel.
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_43set_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_antenna(bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_antenna", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":275
+ *     :return: 0 on success, (-1) on failure
+ *     """
+ *     return LMS_SetAntenna(_c_device, dir_tx, chan, index)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef int get_antenna(bool dir_tx, size_t chan):
+ */
+  __pyx_r = LMS_SetAntenna(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index);
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":264
+ *         return []
+ * 
+ * cpdef int set_antenna(bool dir_tx, size_t chan, size_t index):             # <<<<<<<<<<<<<<
+ *     """
+ *     Select the antenna for the specified RX or TX channel.
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_43set_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna[] = "\n    Select the antenna for the specified RX or TX channel.\n    \n    LMS_SetFrequency() automatically selects antenna based on frequency. \n    This function is meant to override path selected by LMS_SetFrequency() and should be called after LMS_SetFrequency().\n    :param dir_tx: Select RX or TX\n    :param chan:  channel index\n    :param index: Index of antenna to select\n    :return: 0 on success, (-1) on failure\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_43set_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  size_t __pyx_v_index;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_antenna (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,&__pyx_n_s_index,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("set_antenna", 1, 3, 3, 1); __PYX_ERR(0, 264, __pyx_L3_error)
+        }
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_index)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("set_antenna", 1, 3, 3, 2); __PYX_ERR(0, 264, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_antenna") < 0)) __PYX_ERR(0, 264, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 264, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 264, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyInt_As_size_t(values[2]); if (unlikely((__pyx_v_index == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 264, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_antenna", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 264, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.set_antenna", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_antenna", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_antenna(__pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.set_antenna", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/limesdr.pyx":277
+ *     return LMS_SetAntenna(_c_device, dir_tx, chan, index)
+ * 
+ * cpdef int get_antenna(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain currently selected antenna of the the specified RX or TX channel.
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_45get_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna(bool __pyx_v_dir_tx, size_t __pyx_v_chan, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_antenna", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":285
+ *     :return: Index of selected antenna on success, (-1) on failure
+ *     """
+ *     return LMS_GetAntenna(_c_device, dir_tx, chan)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef tuple get_antenna_bw(bool dir_tx, size_t chan, size_t index):
+ */
+  __pyx_r = LMS_GetAntenna(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan);
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":277
+ *     return LMS_SetAntenna(_c_device, dir_tx, chan, index)
+ * 
+ * cpdef int get_antenna(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain currently selected antenna of the the specified RX or TX channel.
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_45get_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna[] = "\n    Obtain currently selected antenna of the the specified RX or TX channel.\n     \n    :param dir_tx: Select RX or TX\n    :param chan: channel index\n    :return: Index of selected antenna on success, (-1) on failure\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_45get_antenna(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_antenna (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_antenna", 1, 2, 2, 1); __PYX_ERR(0, 277, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_antenna") < 0)) __PYX_ERR(0, 277, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_antenna", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 277, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_antenna", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna(__pyx_v_dir_tx, __pyx_v_chan, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/limesdr.pyx":287
+ *     return LMS_GetAntenna(_c_device, dir_tx, chan)
+ * 
+ * cpdef tuple get_antenna_bw(bool dir_tx, size_t chan, size_t index):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtains bandwidth (lower and upper frequency) of the specified antenna
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_47get_antenna_bw(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  lms_range_t __pyx_v_bandwidth_range;
+  int __pyx_v_result;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  __Pyx_RefNannySetupContext("get_antenna_bw", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":296
+ *     """
+ *     cdef lms_range_t bandwidth_range
+ *     result = LMS_GetAntennaBW(_c_device, dir_tx, chan, index, &bandwidth_range)             # <<<<<<<<<<<<<<
+ *     if result == 0:
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+ */
+  __pyx_v_result = LMS_GetAntennaBW(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index, (&__pyx_v_bandwidth_range));
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":297
+ *     cdef lms_range_t bandwidth_range
+ *     result = LMS_GetAntennaBW(_c_device, dir_tx, chan, index, &bandwidth_range)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result == 0) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":298
+ *     result = LMS_GetAntennaBW(_c_device, dir_tx, chan, index, &bandwidth_range)
+ *     if result == 0:
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step             # <<<<<<<<<<<<<<
+ *     else:
+ *         return -1, -1, -1
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_bandwidth_range.min); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = PyFloat_FromDouble(__pyx_v_bandwidth_range.max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_bandwidth_range.step); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_4);
+    __pyx_t_2 = 0;
+    __pyx_t_3 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = ((PyObject*)__pyx_t_5);
+    __pyx_t_5 = 0;
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":297
+ *     cdef lms_range_t bandwidth_range
+ *     result = LMS_GetAntennaBW(_c_device, dir_tx, chan, index, &bandwidth_range)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":300
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+ *     else:
+ *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_tuple__5);
+    __pyx_r = __pyx_tuple__5;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":287
+ *     return LMS_GetAntenna(_c_device, dir_tx, chan)
+ * 
+ * cpdef tuple get_antenna_bw(bool dir_tx, size_t chan, size_t index):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtains bandwidth (lower and upper frequency) of the specified antenna
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_bw", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_47get_antenna_bw(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw[] = "\n    Obtains bandwidth (lower and upper frequency) of the specified antenna\n    :param dir_tx: Select RX or TX\n    :param chan:  channel index\n    :param index: Antenna index\n    :return: Tuple (start, end, step) of allowed bandwidth values in Hz, (-1, -1, -1) on Error\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_47get_antenna_bw(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  size_t __pyx_v_index;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_antenna_bw (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,&__pyx_n_s_index,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_antenna_bw", 1, 3, 3, 1); __PYX_ERR(0, 287, __pyx_L3_error)
+        }
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_index)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_antenna_bw", 1, 3, 3, 2); __PYX_ERR(0, 287, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_antenna_bw") < 0)) __PYX_ERR(0, 287, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 287, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 287, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyInt_As_size_t(values[2]); if (unlikely((__pyx_v_index == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 287, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_antenna_bw", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 287, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_bw", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_antenna_bw", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(__pyx_v_dir_tx, __pyx_v_chan, __pyx_v_index, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_antenna_bw", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
 static PyMethodDef __pyx_methods[] = {
   {"get_device_list", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_1get_device_list, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_get_device_list},
   {"open", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_3open, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_2open},
@@ -3712,6 +4379,10 @@ static PyMethodDef __pyx_methods[] = {
   {"get_lpf_bandwidth", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_35get_lpf_bandwidth, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_34get_lpf_bandwidth},
   {"get_lpf_bandwidth_range", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_37get_lpf_bandwidth_range, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_36get_lpf_bandwidth_range},
   {"calibrate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_39calibrate, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_38calibrate},
+  {"get_antenna_list", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_41get_antenna_list, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_list},
+  {"set_antenna", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_43set_antenna, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna},
+  {"get_antenna", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_45get_antenna, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna},
+  {"get_antenna_bw", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_47get_antenna_bw, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw},
   {0, 0, 0, 0}
 };
 
@@ -3741,6 +4412,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_enabled, __pyx_k_enabled, sizeof(__pyx_k_enabled), 0, 0, 1, 1},
   {&__pyx_n_s_frequency, __pyx_k_frequency, sizeof(__pyx_k_frequency), 0, 0, 1, 1},
   {&__pyx_n_s_gain, __pyx_k_gain, sizeof(__pyx_k_gain), 0, 0, 1, 1},
+  {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
   {&__pyx_n_s_info, __pyx_k_info, sizeof(__pyx_k_info), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_oversample, __pyx_k_oversample, sizeof(__pyx_k_oversample), 0, 0, 1, 1},
@@ -3803,6 +4475,15 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__4 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 231, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":300
+ *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+ *     else:
+ *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ */
+  __pyx_tuple__5 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;

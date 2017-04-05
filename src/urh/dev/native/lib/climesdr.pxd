@@ -36,3 +36,7 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_SetSampleRate(lms_device_t *device, float_type rate, size_t oversample)
     int LMS_GetSampleRate(lms_device_t *device, bool dir_tx, size_t chan, float_type *host_Hz, float_type *rf_Hz)
     int LMS_GetSampleRateRange(lms_device_t *device, bool dir_tx, lms_range_t *range)
+
+    int LMS_SetLOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type frequency)
+    int LMS_GetLOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type *frequency)
+    int LMS_GetLOFrequencyRange(lms_device_t *device, bool dir_tx, lms_range_t *range)

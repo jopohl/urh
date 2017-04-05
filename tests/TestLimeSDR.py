@@ -30,6 +30,11 @@ class TestLimeSDR(unittest.TestCase):
         print("Set Sample Rate:", limesdr.set_sample_rate(2e6, 0))
         print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate(dir_tx=False, chan=0))
 
+        print("RX Frequency Range:", limesdr.get_center_frequency_range(False))
+        print("RX 0 center freq:", limesdr.get_center_frequency(False, 0))
+        print("RX 0 set center freq:", limesdr.set_center_frequency(False, 0, 433.92e6))
+        print("RX 0 center freq:", limesdr.get_center_frequency(False, 0))
+
         print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))

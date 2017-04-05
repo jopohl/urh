@@ -891,6 +891,9 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(bool, siz
 static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_sample_rate(float_type, size_t, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_sample_rate(bool, size_t, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_sample_rate_range(bool, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_center_frequency(bool, size_t, float_type, int __pyx_skip_dispatch); /*proto*/
+static float_type __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency(bool, size_t, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency_range(bool, int __pyx_skip_dispatch); /*proto*/
 #define __Pyx_MODULE_NAME "src.urh.dev.native.lib.limesdr"
 int __pyx_module_is_main_src__urh__dev__native__lib__limesdr = 0;
 
@@ -904,10 +907,12 @@ static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_dir_tx[] = "dir_tx";
 static const char __pyx_k_enabled[] = "enabled";
+static const char __pyx_k_frequency[] = "frequency";
 static const char __pyx_k_oversample[] = "oversample";
 static PyObject *__pyx_n_s_chan;
 static PyObject *__pyx_n_s_dir_tx;
 static PyObject *__pyx_n_s_enabled;
+static PyObject *__pyx_n_s_frequency;
 static PyObject *__pyx_n_s_info;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_oversample;
@@ -925,9 +930,13 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_14enable_channel(
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_16set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, float_type __pyx_v_rate, size_t __pyx_v_oversample); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_18get_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_20get_sample_rate_range(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_22set_center_frequency(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, float_type __pyx_v_frequency); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_24get_center_frequency(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_26get_center_frequency_range(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx); /* proto */
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
+static PyObject *__pyx_tuple__3;
 
 /* "src/urh/dev/native/lib/limesdr.pyx":6
  * cdef lms_device_t *_c_device
@@ -1956,7 +1965,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_sample_rate(bo
  *     :return: tuple of host_Hz, rf_Hz or tuple -1,-1 on Error
  *     """
  *     cdef float_type host_hz = 0.0  # sampling rate used for data exchange with the host             # <<<<<<<<<<<<<<
- *     cdef float_type rf_hz = 0.0    # RF sampling rate in Hz
+ *     cdef float_type rf_hz = 0.0  # RF sampling rate in Hz
  * 
  */
   __pyx_v_host_hz = 0.0;
@@ -1964,14 +1973,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_sample_rate(bo
   /* "src/urh/dev/native/lib/limesdr.pyx":104
  *     """
  *     cdef float_type host_hz = 0.0  # sampling rate used for data exchange with the host
- *     cdef float_type rf_hz = 0.0    # RF sampling rate in Hz             # <<<<<<<<<<<<<<
+ *     cdef float_type rf_hz = 0.0  # RF sampling rate in Hz             # <<<<<<<<<<<<<<
  * 
  *     result = LMS_GetSampleRate(_c_device, dir_tx, chan, &host_hz, &rf_hz)
  */
   __pyx_v_rf_hz = 0.0;
 
   /* "src/urh/dev/native/lib/limesdr.pyx":106
- *     cdef float_type rf_hz = 0.0    # RF sampling rate in Hz
+ *     cdef float_type rf_hz = 0.0  # RF sampling rate in Hz
  * 
  *     result = LMS_GetSampleRate(_c_device, dir_tx, chan, &host_hz, &rf_hz)             # <<<<<<<<<<<<<<
  *     if result == 0:
@@ -2221,6 +2230,8 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_sample_rate_ra
  *         return sample_rate_range.min, sample_rate_range.max, sample_rate_range.step
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ * 
+ * cpdef int set_center_frequency(bool dir_tx, size_t chan, float_type frequency):
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
@@ -2298,6 +2309,466 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_20get_sample_rate
   return __pyx_r;
 }
 
+/* "src/urh/dev/native/lib/limesdr.pyx":125
+ *         return -1, -1, -1
+ * 
+ * cpdef int set_center_frequency(bool dir_tx, size_t chan, float_type frequency):             # <<<<<<<<<<<<<<
+ *     """
+ *     Set RF center frequency in Hz. This automatically selects the appropriate
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_23set_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_center_frequency(bool __pyx_v_dir_tx, size_t __pyx_v_chan, float_type __pyx_v_frequency, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_center_frequency", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":134
+ *     :return: 0 on success, (-1) on failure
+ *     """
+ *     return LMS_SetLOFrequency(_c_device, dir_tx, chan, frequency)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef float_type get_center_frequency(bool dir_tx, size_t chan):
+ */
+  __pyx_r = LMS_SetLOFrequency(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_frequency);
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":125
+ *         return -1, -1, -1
+ * 
+ * cpdef int set_center_frequency(bool dir_tx, size_t chan, float_type frequency):             # <<<<<<<<<<<<<<
+ *     """
+ *     Set RF center frequency in Hz. This automatically selects the appropriate
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_23set_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_22set_center_frequency[] = "\n    Set RF center frequency in Hz. This automatically selects the appropriate\n    antenna (band path) for the desired frequency. In oder to override antenna selection use LMS_SetAntenna().\n    :param dir_tx: Select RX or TX\n    :param chan: Channel index\n    :param frequency: Desired RF center frequency in Hz\n    :return: 0 on success, (-1) on failure\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_23set_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  float_type __pyx_v_frequency;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_center_frequency (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,&__pyx_n_s_frequency,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("set_center_frequency", 1, 3, 3, 1); __PYX_ERR(0, 125, __pyx_L3_error)
+        }
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_frequency)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("set_center_frequency", 1, 3, 3, 2); __PYX_ERR(0, 125, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_center_frequency") < 0)) __PYX_ERR(0, 125, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+    __pyx_v_frequency = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_frequency == ((float_type)-1)) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_center_frequency", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 125, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.set_center_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_22set_center_frequency(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan, __pyx_v_frequency);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_22set_center_frequency(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, float_type __pyx_v_frequency) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_center_frequency", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_center_frequency(__pyx_v_dir_tx, __pyx_v_chan, __pyx_v_frequency, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.set_center_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/limesdr.pyx":136
+ *     return LMS_SetLOFrequency(_c_device, dir_tx, chan, frequency)
+ * 
+ * cpdef float_type get_center_frequency(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain the current RF center frequency in Hz.
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_25get_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static float_type __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency(bool __pyx_v_dir_tx, size_t __pyx_v_chan, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  float_type __pyx_v_frequency;
+  int __pyx_v_result;
+  float_type __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("get_center_frequency", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":144
+ *     :return: Current RF center frequency in Hz on success, (-1) on failure
+ *     """
+ *     cdef float_type frequency = 0.0             # <<<<<<<<<<<<<<
+ *     result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)
+ *     if result == 0:
+ */
+  __pyx_v_frequency = 0.0;
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":145
+ *     """
+ *     cdef float_type frequency = 0.0
+ *     result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)             # <<<<<<<<<<<<<<
+ *     if result == 0:
+ *         return frequency
+ */
+  __pyx_v_result = LMS_GetLOFrequency(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, __pyx_v_chan, (&__pyx_v_frequency));
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":146
+ *     cdef float_type frequency = 0.0
+ *     result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return frequency
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result == 0) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":147
+ *     result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)
+ *     if result == 0:
+ *         return frequency             # <<<<<<<<<<<<<<
+ *     else:
+ *         return -1
+ */
+    __pyx_r = __pyx_v_frequency;
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":146
+ *     cdef float_type frequency = 0.0
+ *     result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return frequency
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":149
+ *         return frequency
+ *     else:
+ *         return -1             # <<<<<<<<<<<<<<
+ * 
+ * cpdef tuple get_center_frequency_range(bool dir_tx):
+ */
+  /*else*/ {
+    __pyx_r = -1.0;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":136
+ *     return LMS_SetLOFrequency(_c_device, dir_tx, chan, frequency)
+ * 
+ * cpdef float_type get_center_frequency(bool dir_tx, size_t chan):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain the current RF center frequency in Hz.
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_25get_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_24get_center_frequency[] = "\n    Obtain the current RF center frequency in Hz.\n    \n    :param dir_tx: Select RX or TX\n    :param chan: Channel index\n    :return: Current RF center frequency in Hz on success, (-1) on failure\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_25get_center_frequency(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  bool __pyx_v_dir_tx;
+  size_t __pyx_v_chan;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_center_frequency (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dir_tx,&__pyx_n_s_chan,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dir_tx)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chan)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_center_frequency", 1, 2, 2, 1); __PYX_ERR(0, 136, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_center_frequency") < 0)) __PYX_ERR(0, 136, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 136, __pyx_L3_error)
+    __pyx_v_chan = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_chan == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 136, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_center_frequency", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 136, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_center_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_24get_center_frequency(__pyx_self, __pyx_v_dir_tx, __pyx_v_chan);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_24get_center_frequency(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_center_frequency", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency(__pyx_v_dir_tx, __pyx_v_chan, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_center_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/limesdr.pyx":151
+ *         return -1
+ * 
+ * cpdef tuple get_center_frequency_range(bool dir_tx):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain the supported RF center frequency range in Hz.
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_27get_center_frequency_range(PyObject *__pyx_self, PyObject *__pyx_arg_dir_tx); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency_range(bool __pyx_v_dir_tx, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  lms_range_t __pyx_v_center_freq_range;
+  int __pyx_v_result;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  __Pyx_RefNannySetupContext("get_center_frequency_range", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":158
+ *     """
+ *     cdef lms_range_t center_freq_range
+ *     result = LMS_GetLOFrequencyRange(_c_device, dir_tx, &center_freq_range)             # <<<<<<<<<<<<<<
+ *     if result == 0:
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step
+ */
+  __pyx_v_result = LMS_GetLOFrequencyRange(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_dir_tx, (&__pyx_v_center_freq_range));
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":159
+ *     cdef lms_range_t center_freq_range
+ *     result = LMS_GetLOFrequencyRange(_c_device, dir_tx, &center_freq_range)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result == 0) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":160
+ *     result = LMS_GetLOFrequencyRange(_c_device, dir_tx, &center_freq_range)
+ *     if result == 0:
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step             # <<<<<<<<<<<<<<
+ *     else:
+ *         return -1, -1, -1
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_center_freq_range.min); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = PyFloat_FromDouble(__pyx_v_center_freq_range.max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_center_freq_range.step); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_4);
+    __pyx_t_2 = 0;
+    __pyx_t_3 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = ((PyObject*)__pyx_t_5);
+    __pyx_t_5 = 0;
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":159
+ *     cdef lms_range_t center_freq_range
+ *     result = LMS_GetLOFrequencyRange(_c_device, dir_tx, &center_freq_range)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":162
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step
+ *     else:
+ *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_tuple__3);
+    __pyx_r = __pyx_tuple__3;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":151
+ *         return -1
+ * 
+ * cpdef tuple get_center_frequency_range(bool dir_tx):             # <<<<<<<<<<<<<<
+ *     """
+ *     Obtain the supported RF center frequency range in Hz.
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_center_frequency_range", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_27get_center_frequency_range(PyObject *__pyx_self, PyObject *__pyx_arg_dir_tx); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_26get_center_frequency_range[] = "\n    Obtain the supported RF center frequency range in Hz.\n    :param dir_tx: Select RX or TX\n    :return: Tuple (start, end, step) of allowed center freq range in Hz, (-1, -1, -1) on Error\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_27get_center_frequency_range(PyObject *__pyx_self, PyObject *__pyx_arg_dir_tx) {
+  bool __pyx_v_dir_tx;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_center_frequency_range (wrapper)", 0);
+  assert(__pyx_arg_dir_tx); {
+    __pyx_v_dir_tx = __Pyx_PyObject_IsTrue(__pyx_arg_dir_tx); if (unlikely((__pyx_v_dir_tx == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 151, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_center_frequency_range", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_26get_center_frequency_range(__pyx_self, ((bool)__pyx_v_dir_tx));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_26get_center_frequency_range(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_center_frequency_range", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_center_frequency_range(__pyx_v_dir_tx, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_center_frequency_range", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
 static PyMethodDef __pyx_methods[] = {
   {"get_device_list", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_1get_device_list, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_get_device_list},
   {"open", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_3open, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_2open},
@@ -2310,6 +2781,9 @@ static PyMethodDef __pyx_methods[] = {
   {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_17set_sample_rate, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_16set_sample_rate},
   {"get_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_19get_sample_rate, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_18get_sample_rate},
   {"get_sample_rate_range", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_21get_sample_rate_range, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_20get_sample_rate_range},
+  {"set_center_frequency", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_23set_center_frequency, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_22set_center_frequency},
+  {"get_center_frequency", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_25get_center_frequency, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_24get_center_frequency},
+  {"get_center_frequency_range", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_27get_center_frequency_range, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_26get_center_frequency_range},
   {0, 0, 0, 0}
 };
 
@@ -2335,6 +2809,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_chan, __pyx_k_chan, sizeof(__pyx_k_chan), 0, 0, 1, 1},
   {&__pyx_n_s_dir_tx, __pyx_k_dir_tx, sizeof(__pyx_k_dir_tx), 0, 0, 1, 1},
   {&__pyx_n_s_enabled, __pyx_k_enabled, sizeof(__pyx_k_enabled), 0, 0, 1, 1},
+  {&__pyx_n_s_frequency, __pyx_k_frequency, sizeof(__pyx_k_frequency), 0, 0, 1, 1},
   {&__pyx_n_s_info, __pyx_k_info, sizeof(__pyx_k_info), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_oversample, __pyx_k_oversample, sizeof(__pyx_k_oversample), 0, 0, 1, 1},
@@ -2369,10 +2844,21 @@ static int __Pyx_InitCachedConstants(void) {
  *         return sample_rate_range.min, sample_rate_range.max, sample_rate_range.step
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ * 
+ * cpdef int set_center_frequency(bool dir_tx, size_t chan, float_type frequency):
  */
   __pyx_tuple__2 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":162
+ *         return center_freq_range.min, center_freq_range.max, center_freq_range.step
+ *     else:
+ *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ */
+  __pyx_tuple__3 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;

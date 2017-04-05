@@ -121,3 +121,42 @@ cpdef tuple get_sample_rate_range(bool dir_tx):
         return sample_rate_range.min, sample_rate_range.max, sample_rate_range.step
     else:
         return -1, -1, -1
+
+cpdef int set_center_frequency(bool dir_tx, size_t chan, float_type frequency):
+    """
+    Set RF center frequency in Hz. This automatically selects the appropriate
+    antenna (band path) for the desired frequency. In oder to override antenna selection use LMS_SetAntenna().
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :param frequency: Desired RF center frequency in Hz
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_SetLOFrequency(_c_device, dir_tx, chan, frequency)
+
+cpdef float_type get_center_frequency(bool dir_tx, size_t chan):
+    """
+    Obtain the current RF center frequency in Hz.
+    
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :return: Current RF center frequency in Hz on success, (-1) on failure
+    """
+    cdef float_type frequency = 0.0
+    result = LMS_GetLOFrequency(_c_device, dir_tx, chan, &frequency)
+    if result == 0:
+        return frequency
+    else:
+        return -1
+
+cpdef tuple get_center_frequency_range(bool dir_tx):
+    """
+    Obtain the supported RF center frequency range in Hz.
+    :param dir_tx: Select RX or TX
+    :return: Tuple (start, end, step) of allowed center freq range in Hz, (-1, -1, -1) on Error
+    """
+    cdef lms_range_t center_freq_range
+    result = LMS_GetLOFrequencyRange(_c_device, dir_tx, &center_freq_range)
+    if result == 0:
+        return center_freq_range.min, center_freq_range.max, center_freq_range.step
+    else:
+        return -1, -1, -1

@@ -51,6 +51,8 @@ class TestLimeSDR(unittest.TestCase):
         print("RX 0 current antenna", limesdr.get_antenna(False, 0), antenna_list[limesdr.get_antenna(False, 0)])
         print("RX 0 current antenna BW", limesdr.get_antenna_bw(False, 0, limesdr.get_antenna(False, 0)))
 
+        print("Chip Temperature", limesdr.get_chip_temperature())
+
         print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))

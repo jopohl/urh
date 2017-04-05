@@ -56,3 +56,5 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_SetAntenna(lms_device_t *device, bool dir_tx, size_t chan, size_t index)
     int LMS_GetAntenna(lms_device_t *device, bool dir_tx, size_t chan)
     int LMS_GetAntennaBW(lms_device_t *device, bool dir_tx, size_t chan, size_t index, lms_range_t *range)
+
+    int LMS_GetChipTemperature(lms_device_t *dev, size_t ind, float_type *temp)

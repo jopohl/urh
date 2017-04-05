@@ -298,3 +298,16 @@ cpdef tuple get_antenna_bw(bool dir_tx, size_t chan, size_t index):
         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
     else:
         return -1, -1, -1
+
+cpdef float_type get_chip_temperature():
+    """
+    Read LMS7 chip internal temperature sensor
+    
+    :return: Temperature on success, (-1) on failure
+    """
+    cdef float_type chip_temp = 0.0
+    result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)
+    if result == 0:
+        return chip_temp
+    else:
+        return -1

@@ -904,6 +904,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_list(b
 static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_antenna(bool, size_t, size_t, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna(bool, size_t, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(bool, size_t, size_t, int __pyx_skip_dispatch); /*proto*/
+static float_type __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_chip_temperature(int __pyx_skip_dispatch); /*proto*/
 #define __Pyx_MODULE_NAME "src.urh.dev.native.lib.limesdr"
 int __pyx_module_is_main_src__urh__dev__native__lib__limesdr = 0;
 
@@ -961,6 +962,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_40get_antenna_lis
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw(CYTHON_UNUSED PyObject *__pyx_self, bool __pyx_v_dir_tx, size_t __pyx_v_chan, size_t __pyx_v_index); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_48get_chip_temperature(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
@@ -4237,6 +4239,8 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(boo
  *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ * 
+ * cpdef float_type get_chip_temperature():
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
@@ -4358,6 +4362,131 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw(
   return __pyx_r;
 }
 
+/* "src/urh/dev/native/lib/limesdr.pyx":302
+ *         return -1, -1, -1
+ * 
+ * cpdef float_type get_chip_temperature():             # <<<<<<<<<<<<<<
+ *     """
+ *     Read LMS7 chip internal temperature sensor
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_49get_chip_temperature(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static float_type __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_chip_temperature(CYTHON_UNUSED int __pyx_skip_dispatch) {
+  float_type __pyx_v_chip_temp;
+  int __pyx_v_result;
+  float_type __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("get_chip_temperature", 0);
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":308
+ *     :return: Temperature on success, (-1) on failure
+ *     """
+ *     cdef float_type chip_temp = 0.0             # <<<<<<<<<<<<<<
+ *     result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)
+ *     if result == 0:
+ */
+  __pyx_v_chip_temp = 0.0;
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":309
+ *     """
+ *     cdef float_type chip_temp = 0.0
+ *     result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)             # <<<<<<<<<<<<<<
+ *     if result == 0:
+ *         return chip_temp
+ */
+  __pyx_v_result = LMS_GetChipTemperature(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, 0, (&__pyx_v_chip_temp));
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":310
+ *     cdef float_type chip_temp = 0.0
+ *     result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return chip_temp
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result == 0) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":311
+ *     result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)
+ *     if result == 0:
+ *         return chip_temp             # <<<<<<<<<<<<<<
+ *     else:
+ *         return -1
+ */
+    __pyx_r = __pyx_v_chip_temp;
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/limesdr.pyx":310
+ *     cdef float_type chip_temp = 0.0
+ *     result = LMS_GetChipTemperature(_c_device, 0, &chip_temp)
+ *     if result == 0:             # <<<<<<<<<<<<<<
+ *         return chip_temp
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":313
+ *         return chip_temp
+ *     else:
+ *         return -1             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_r = -1.0;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/limesdr.pyx":302
+ *         return -1, -1, -1
+ * 
+ * cpdef float_type get_chip_temperature():             # <<<<<<<<<<<<<<
+ *     """
+ *     Read LMS7 chip internal temperature sensor
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_49get_chip_temperature(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_48get_chip_temperature[] = "\n    Read LMS7 chip internal temperature sensor\n    \n    :return: Temperature on success, (-1) on failure\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_49get_chip_temperature(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_chip_temperature (wrapper)", 0);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_48get_chip_temperature(__pyx_self);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_48get_chip_temperature(CYTHON_UNUSED PyObject *__pyx_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("get_chip_temperature", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_chip_temperature(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.limesdr.get_chip_temperature", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
 static PyMethodDef __pyx_methods[] = {
   {"get_device_list", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_1get_device_list, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_get_device_list},
   {"open", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_3open, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_2open},
@@ -4383,6 +4512,7 @@ static PyMethodDef __pyx_methods[] = {
   {"set_antenna", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_43set_antenna, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_42set_antenna},
   {"get_antenna", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_45get_antenna, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_44get_antenna},
   {"get_antenna_bw", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_47get_antenna_bw, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_46get_antenna_bw},
+  {"get_chip_temperature", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_49get_chip_temperature, METH_NOARGS, __pyx_doc_3src_3urh_3dev_6native_3lib_7limesdr_48get_chip_temperature},
   {0, 0, 0, 0}
 };
 
@@ -4480,6 +4610,8 @@ static int __Pyx_InitCachedConstants(void) {
  *         return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
+ * 
+ * cpdef float_type get_chip_temperature():
  */
   __pyx_tuple__5 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);

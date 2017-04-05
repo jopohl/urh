@@ -1,3 +1,4 @@
+import time
 from climesdr cimport *
 from libc.stdlib cimport malloc
 
@@ -311,3 +312,54 @@ cpdef float_type get_chip_temperature():
         return chip_temp
     else:
         return -1
+
+cpdef start_rx():
+    cdef lms_stream_t stream
+    cdef lms_stream_meta_t meta
+
+    stream.channel = 0
+    stream.isTx = 0
+    #stream.fifoSize = 1000
+    #stream.throughputVsLatency = 0.5
+    #print(stream.dataFmt)
+    print("SAMPLE RATE:", get_sample_rate(False, 0))
+    rc = LMS_SetupStream(_c_device, &stream)
+    if rc != 0:
+        print("Setup stream failed")
+        return -1
+
+    print(stream.fifoSize)
+    rc = LMS_StartStream(&stream)
+    if rc != 0:
+        print("Start stream failed")
+        return -1
+
+    cdef lms_stream_status_t stream_status
+    for i in range(10):
+        LMS_GetStreamStatus(&stream, &stream_status)
+        print("Channel", stream.channel)
+        print("StreamRX", stream.isTx)
+        print("Dropped PAckets", stream_status.droppedPackets)
+        print("Sample rate", stream_status.sampleRate)
+        print("link rate", stream_status.linkRate)
+        print("fifo size", stream_status.fifoSize)
+        print(stream_status.fifoFilledCount)
+        time.sleep(1)
+
+    cdef size_t num_samples = 1000
+    cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))
+    print("buff 0 before rx", buff[0])
+    LMS_RecvStream(&stream, <void *> buff, num_samples, &meta, 100)
+    print("buff 0 after rx", buff[0])
+
+    rc = LMS_StopStream(&stream)
+    if rc != 0:
+        print("Stop stream failed")
+        return -1
+
+    LMS_DestroyStream(_c_device, &stream)
+    if rc != 0:
+        print("Destroy stream failed")
+        return -1
+
+    return 0

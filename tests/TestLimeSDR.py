@@ -16,11 +16,25 @@ class TestLimeSDR(unittest.TestCase):
         print("Devices:", limesdr.get_device_list())
         # print("Open:", limesdr.open("LimeSDR-USB, media=USB 3.0, module=STREAM, addr=1d50:6108, serial=0009060B0049180A"))
         print("Open:", limesdr.open())
+        print("-" * 20)
+
         print("Is Open 0:", limesdr.is_open(0))
         print("Is Open 1:", limesdr.is_open(1))
+        print("Init", limesdr.init())
+        print("Num Channels TX:", limesdr.get_num_channels(True))
+        print("Num Channels RX:", limesdr.get_num_channels(False))
+        # print("Enable RX Channel 0:", limesdr.enable_channel(dir_tx=False, chan=0, enabled=True))
+
+        print("RX Sample Rate Range:", limesdr.get_sample_rate_range(False))
+        print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate(dir_tx=False, chan=0))
+        print("Set Sample Rate:", limesdr.set_sample_rate(2e6, 0))
+        print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate(dir_tx=False, chan=0))
+
+        print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))
         print("Is Open 1:", limesdr.is_open(1))
+
 
 
 if __name__ == "__main__":

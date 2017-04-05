@@ -46,3 +46,78 @@ cpdef int disconnect():
 
 cpdef bool is_open(int port):
     return LMS_IsOpen(_c_device, port)
+
+cpdef int init():
+    """
+    Configure LMS chip with settings that make it ready for operation.
+ 
+    This configuration differs from default LMS chip configuration which is
+    described in chip datasheet. In order to load default chip configuration use LMS_Reset().
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_Init(_c_device)
+
+cpdef int get_num_channels(bool dir_tx):
+    """
+    Obtain number of RX or TX channels. Use this to determine the maximum
+    channel index (specifying channel index is required by most API functions).
+    The maximum channel index is N-1, where N is number returned by this function
+    :param dir_tx: Select RX or TX
+    :return:  Number of channels on success, (-1) on failure
+    """
+    return LMS_GetNumChannels(_c_device, dir_tx)
+
+cpdef int enable_channel(bool dir_tx, size_t chan, bool enabled):
+    """
+    Enable or disable specified RX channel.
+    
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :param enabled: true(1) to enable, false(0) to disable.
+    :return:  0 on success, (-1) on failure
+    """
+    return LMS_EnableChannel(_c_device, dir_tx, chan, enabled)
+
+cpdef int set_sample_rate(float_type rate, size_t oversample):
+    """
+    Set sampling rate for all RX/TX channels. Sample rate is in complex samples
+    (1 sample = I + Q). The function sets sampling rate that is used for data
+    exchange with the host. It also allows to specify higher sampling rate to be
+    used in RF by setting oversampling ratio. Valid oversampling values are 1, 2,
+    4, 8, 16, 32 or 0 (use device default oversampling value).
+    :param rate: sampling rate in Hz to set
+    :param oversample: RF oversampling ratio
+    :return:  0 on success, (-1) on failure
+    """
+    LMS_SetSampleRate(_c_device, rate, oversample)
+
+cpdef tuple get_sample_rate(bool dir_tx, size_t chan):
+    """
+    Get the sampling rate of the specified LMS device RX or TX channel.
+    The function obtains the sample rate used in data interface with the host and
+    the RF sample rate used by DAC/ADC.
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :return: tuple of host_Hz, rf_Hz or tuple -1,-1 on Error
+    """
+    cdef float_type host_hz = 0.0  # sampling rate used for data exchange with the host
+    cdef float_type rf_hz = 0.0  # RF sampling rate in Hz
+
+    result = LMS_GetSampleRate(_c_device, dir_tx, chan, &host_hz, &rf_hz)
+    if result == 0:
+        return host_hz, rf_hz
+    else:
+        return -1, -1
+
+cpdef tuple get_sample_rate_range(bool dir_tx):
+    """
+    Get the range of supported sampling rates.
+    :param dir_tx: Select RX or TX
+    :return: Tuple (start, end, step) of Allowed sample rate range in Hz, (-1, -1, -1) on Error
+    """
+    cdef lms_range_t sample_rate_range
+    result = LMS_GetSampleRateRange(_c_device, dir_tx, &sample_rate_range)
+    if result == 0:
+        return sample_rate_range.min, sample_rate_range.max, sample_rate_range.step
+    else:
+        return -1, -1, -1

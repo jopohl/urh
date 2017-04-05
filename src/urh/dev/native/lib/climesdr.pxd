@@ -1,6 +1,9 @@
 from libcpp cimport bool
 
 cdef extern from "lime/LimeSuite.h":
+    ctypedef double float_type
+    const int LMS_SUCCESS = 0
+
     ctypedef void lms_device_t
     ctypedef char lms_info_str_t[256]
 
@@ -9,3 +12,27 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_Close(lms_device_t *device)
     int LMS_Disconnect(lms_device_t *device)
     bool LMS_IsOpen(lms_device_t *device, int port)
+
+    const bool LMS_CH_TX = True
+    const bool LMS_CH_RX = False
+
+    ctypedef struct lms_range_t:
+        float_type min  # Minimum allowed value
+        float_type max  # Minimum allowed value
+        float_type step  # Minimum value step
+
+    ctypedef enum lms_testsig_t:
+        LMS_TESTSIG_NONE = 0  # Disable test signals. Return to normal operation
+        LMS_TESTSIG_NCODIV8  # Test signal from NCO half scale
+        LMS_TESTSIG_NCODIV4  # Test signal from NCO half scale
+        LMS_TESTSIG_NCODIV8F  # Test signal from NCO full scale
+        LMS_TESTSIG_NCODIV4F  # Test signal from NCO full scale
+        LMS_TESTSIG_DC  # DC test signal
+
+    int LMS_Init(lms_device_t *device)
+    int LMS_GetNumChannels(lms_device_t *device, bool dir_tx)
+    int LMS_EnableChannel(lms_device_t *device, bool dir_tx, size_t chan, bool enabled)
+
+    int LMS_SetSampleRate(lms_device_t *device, float_type rate, size_t oversample)
+    int LMS_GetSampleRate(lms_device_t *device, bool dir_tx, size_t chan, float_type *host_Hz, float_type *rf_Hz)
+    int LMS_GetSampleRateRange(lms_device_t *device, bool dir_tx, lms_range_t *range)

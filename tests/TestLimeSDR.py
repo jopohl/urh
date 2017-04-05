@@ -39,6 +39,13 @@ class TestLimeSDR(unittest.TestCase):
         print("RX 0 set gain", limesdr.set_normalized_gain(False, 0, 0.5))
         print("RX 0 gain", limesdr.get_normalized_gain(False, 0))
 
+        print("RX Bandwidth Range", limesdr.get_lpf_bandwidth_range(False))
+        print("RX 0 Bandwidth", limesdr.get_lpf_bandwidth(False, 0))
+        print("RX 0 set Bandwidth", limesdr.set_lpf_bandwidth(False, 0, 2e6))
+        print("RX 0 Bandwidth", limesdr.get_lpf_bandwidth(False, 0))
+
+        print("RX 0 calibrate:", limesdr.calibrate(False, 0, 2e6))
+
         print("-" * 20)
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))

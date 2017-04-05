@@ -43,3 +43,10 @@ cdef extern from "lime/LimeSuite.h":
 
     int LMS_SetNormalizedGain(lms_device_t *device, bool dir_tx, size_t chan, float_type gain)
     int LMS_GetNormalizedGain(lms_device_t *device, bool dir_tx, size_t chan, float_type *gain)
+
+    int LMS_SetLPFBW(lms_device_t *device, bool dir_tx, size_t chan, float_type bandwidth)
+    int LMS_GetLPFBW(lms_device_t *device, bool dir_tx, size_t chan, float_type *bandwidth)
+    int LMS_GetLPFBWRange(lms_device_t *device, bool dir_tx, lms_range_t *range)
+    int LMS_SetLPF(lms_device_t *device, bool dir_tx, size_t chan, bool enabled)
+    int LMS_SetGFIRLPF(lms_device_t *device, bool dir_tx, size_t chan, bool enabled, float_type bandwidth)
+    int LMS_Calibrate(lms_device_t *device, bool dir_tx, size_t chan, double bw, unsigned flags)

@@ -190,3 +190,59 @@ cpdef float_type get_normalized_gain(bool dir_tx, size_t chan):
         return gain
     else:
         return -1
+
+cpdef int set_lpf_bandwidth(bool dir_tx, size_t chan, float_type bandwidth):
+    """
+    Configure analog LPF of the LMS chip for the desired RF bandwidth.
+    This function automatically enables LPF.
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :param bandwidth: LPF bandwidth in Hz
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_SetLPFBW(_c_device, dir_tx, chan, bandwidth)
+
+cpdef float_type get_lpf_bandwidth(bool dir_tx, size_t chan):
+    """
+    Get the currently configured analog LPF RF bandwidth.
+    
+    :param dir_tx: Select RX or TX
+    :param chan: Channel index
+    :return: Current LPF bandwidth in Hz on success, (-1) on failure
+    """
+    cdef float_type bandwidth = 0.0
+    result = LMS_GetLPFBW(_c_device, dir_tx, chan, &bandwidth)
+    if result == 0:
+        return bandwidth
+    else:
+        return -1
+
+cpdef get_lpf_bandwidth_range(bool dir_tx):
+    """
+    Get the RF bandwidth setting range supported by the analog LPF of LMS chip
+    :param dir_tx: Select RX or TX
+    :return: Tuple (start, end, step) of allowed bandwidth values in Hz, (-1, -1, -1) on Error
+    """
+    cdef lms_range_t bandwidth_range
+    result = LMS_GetLPFBWRange(_c_device, dir_tx, &bandwidth_range)
+    if result == 0:
+        return bandwidth_range.min, bandwidth_range.max, bandwidth_range.step
+    else:
+        return -1, -1, -1
+
+cpdef calibrate(bool dir_tx, size_t chan, double bw):
+    """
+    Perform the automatic calibration of specified RX/TX channel. The automatic
+    calibration must be run after device configuration is finished because
+    calibration values are dependant on various configuration settings.
+
+    automatic RX calibration is not available when RX_LNA_H path is
+    selected
+
+    Device should be configured
+    :param dir_tx: Select RX or TX
+    :param chan: channel index
+    :param bw: bandwidth
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_Calibrate(_c_device, dir_tx, chan, bw, 0)

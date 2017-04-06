@@ -1,6 +1,9 @@
 import unittest
 import sys
 
+import numpy as np
+from multiprocessing import Pipe
+
 if sys.platform == "win32":
     import os
 
@@ -53,7 +56,16 @@ class TestLimeSDR(unittest.TestCase):
 
         print("Chip Temperature", limesdr.get_chip_temperature())
 
-        limesdr.start_rx()
+        parent_conn, child_conn = Pipe()
+
+        for _ in range(2):
+            print("Setup stream", limesdr.setup_stream(False, 0, 1000))
+            print("Start stream", limesdr.start_stream())
+            limesdr.recv_stream(child_conn, 1000, 100)
+            print("Stop stream", limesdr.stop_stream())
+            print("Destroy stream", limesdr.destroy_stream())
+
+            print(parent_conn.recv_bytes())
 
         print("-" * 20)
         print("Close:", limesdr.close())

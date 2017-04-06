@@ -1,8 +1,11 @@
-import time
+import struct
 from climesdr cimport *
-from libc.stdlib cimport malloc
+from libc.stdlib cimport malloc, free
+from cython.view cimport array as cvarray
+
 
 cdef lms_device_t *_c_device
+cdef lms_stream_t stream
 
 cpdef list get_device_list():
     """
@@ -313,53 +316,69 @@ cpdef float_type get_chip_temperature():
     else:
         return -1
 
-cpdef start_rx():
-    cdef lms_stream_t stream
-    cdef lms_stream_meta_t meta
-
-    stream.channel = 0
-    stream.isTx = 0
+cpdef int setup_stream(bool dir_tx, uint32_t chan, uint32_t fifo_size):
+    """
+    Create new stream based on parameters passed in configuration structure.
+    The structure is initialized with stream handle.
+    :param dir_tx: Select RX or TX
+    :param chan:  channel index
+    :param fifo_size: FIFO size (in samples) used by stream.
+    :return: 0 on success, (-1) on failure
+    """
+    stream.isTx = dir_tx
+    stream.channel = chan
+    stream.fifoSize = fifo_size
     stream.dataFmt = dataFmt_t.LMS_FMT_F32
-    #stream.fifoSize = 1000
-    #stream.throughputVsLatency = 0.5
 
+    return LMS_SetupStream(_c_device, &stream)
 
-    rc = LMS_SetupStream(_c_device, &stream)
-    if rc != 0:
-        print("Setup stream failed")
-        return -1
+cpdef int destroy_stream():
+    """
+    Deallocate memory used for stream.
+    :return: 0 on success, (-1) on failure
+    """
+    LMS_DestroyStream(_c_device, &stream)
 
-    rc = LMS_StartStream(&stream)
-    if rc != 0:
-        print("Start stream failed")
-        return -1
+cpdef int start_stream():
+    """
+    Start stream 
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_StartStream(&stream)
 
-    cdef lms_stream_status_t stream_status
-    # for i in range(10):
-    #     LMS_GetStreamStatus(&stream, &stream_status)
-    #     print("Channel", stream.channel)
-    #     print("StreamRX", stream.isTx)
-    #     print("Dropped PAckets", stream_status.droppedPackets)
-    #     print("Sample rate", stream_status.sampleRate)
-    #     print("link rate", stream_status.linkRate)
-    #     print("fifo size", stream_status.fifoSize)
-    #     print(stream_status.fifoFilledCount)
-    #     time.sleep(1)
+cpdef int stop_stream():
+    """
+    Stop stream
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_StopStream(&stream)
 
-    cdef size_t num_samples = 1000
+cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
+    """
+    Read samples from the FIFO of the specified stream.
+    Sample buffer must be big enough to hold requested number of samples.
+    
+    :param timeout_ms: how long to wait for data before timing out.
+    :return: 
+    """
+    cdef lms_stream_meta_t meta
     cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))
+
+    #cdef float[::1] buff = cvarray(shape=(num_samples,), itemsize=sizeof(float), format="f")
+
+
+    if not buff:
+        raise MemoryError()
+
     print("buff 0 before rx", buff[0])
-    LMS_RecvStream(&stream, <void *> buff, num_samples, &meta, 100)
+    cdef int received_samples = LMS_RecvStream(&stream, buff, num_samples, &meta, timeout_ms)
     print("buff 0 after rx", buff[0])
 
-    rc = LMS_StopStream(&stream)
-    if rc != 0:
-        print("Stop stream failed")
-        return -1
+    float_arr = <float[:received_samples]>buff
+    print(float_arr[0], buff[0])
+    print(float_arr[1], buff[1])
+    print(float_arr[2], buff[2])
+    print(float_arr[3], buff[3])
+    connection.send_bytes(<float[:received_samples]>buff)
 
-    LMS_DestroyStream(_c_device, &stream)
-    if rc != 0:
-        print("Destroy stream failed")
-        return -1
-
-    return 0
+    free(buff)

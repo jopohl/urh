@@ -1,8 +1,9 @@
-import struct
 from climesdr cimport *
 from libc.stdlib cimport malloc, free
-from cython.view cimport array as cvarray
+# noinspection PyUnresolvedReferences
+from cython.view cimport array as cvarray  # needed for converting of malloc array to python array
 
+from urh.util.Logger import logger
 
 cdef lms_device_t *_c_device
 cdef lms_stream_t stream
@@ -358,27 +359,22 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
     Read samples from the FIFO of the specified stream.
     Sample buffer must be big enough to hold requested number of samples.
     
+    :param num_samples: how many samples shall be read from streams FIFO
+    :param connection: multiprocessing connection to send the received samples to
     :param timeout_ms: how long to wait for data before timing out.
     :return: 
     """
     cdef lms_stream_meta_t meta
     cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))
 
-    #cdef float[::1] buff = cvarray(shape=(num_samples,), itemsize=sizeof(float), format="f")
-
-
     if not buff:
         raise MemoryError()
 
-    print("buff 0 before rx", buff[0])
     cdef int received_samples = LMS_RecvStream(&stream, buff, num_samples, &meta, timeout_ms)
-    print("buff 0 after rx", buff[0])
 
-    float_arr = <float[:received_samples]>buff
-    print(float_arr[0], buff[0])
-    print(float_arr[1], buff[1])
-    print(float_arr[2], buff[2])
-    print(float_arr[3], buff[3])
-    connection.send_bytes(<float[:received_samples]>buff)
+    if received_samples > 0:
+        connection.send_bytes(<float[:received_samples]>buff)
+    else:
+        logger.warning("LimeSDR: Failed to receive stream")
 
     free(buff)

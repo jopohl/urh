@@ -473,6 +473,7 @@ class SendRecvDialogController(QDialog):
         self.ui.btnStop.setEnabled(False)
         self.ui.btnClear.setEnabled(True)
         self.ui.btnSave.setEnabled(self.device.current_index > 0)
+        self.set_bandwidth_status()
 
         self.timer.stop()
         self.scene_manager.set_text("")

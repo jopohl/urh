@@ -1,12 +1,74 @@
+import time
+
 from urh.dev.native.Device import Device
+from urh.dev.native.lib import limesdr
 
 
 class LimeSDR(Device):
+    FIFO_SIZE = 32768
+    READ_SAMPLES = 32768
+    LIME_TIMEOUT_MS = 10
+
     BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
+    DEVICE_LIB = limesdr
+    DEVICE_METHODS = Device.DEVICE_METHODS.copy()
+    DEVICE_METHODS.update({
+        Device.Command.SET_FREQUENCY.name: "set_center_frequency",
+        Device.Command.SET_BANDWIDTH.name: "set_lpf_bandwidth",
+        Device.Command.SET_RF_GAIN.name: "set_normalized_gain"
+    })
+
+    @staticmethod
+    def initialize_limesdr(freq, sample_rate, bandwidth, gain, ctrl_conn, is_tx):
+        ret = limesdr.open()
+        ctrl_conn.send("OPEN:" + str(ret))
+
+        if ret != 0:
+            return False
+
+        ret = limesdr.init()
+        ctrl_conn.send("INIT:" + str(ret))
+
+        if ret != 0:
+            return False
+
+        LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
+        LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
+        LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
+        LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
+        return True
+
+    @staticmethod
+    def shutdown_lime_sdr(ctrl_conn):
+        ret = limesdr.close()
+        ctrl_conn.send("CLOSE:" + str(ret))
+        return True
 
     @staticmethod
     def lime_receive(data_conn, ctrl_conn, frequency: float, sample_rate: float, bandwidth: float, gain: float):
-        pass
+        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, ctrl_conn, is_tx=False):
+            return False
+
+        exit_requested = False
+
+        # TODO Channel 0 currently hardcoded
+        limesdr.setup_stream(False, 0, LimeSDR.FIFO_SIZE)
+        limesdr.start_stream()
+
+        while not exit_requested:
+            limesdr.recv_stream(data_conn, LimeSDR.READ_SAMPLES, LimeSDR.LIME_TIMEOUT_MS)
+            time.sleep(0.1)
+            while ctrl_conn.poll():
+                result = LimeSDR.process_command(ctrl_conn.recv(), ctrl_conn, is_tx=False)
+                if result == LimeSDR.Command.STOP.name:
+                    exit_requested = True
+                    break
+
+        limesdr.stop_stream()
+        limesdr.destroy_stream()
+        LimeSDR.shutdown_lime_sdr(ctrl_conn)
+        data_conn.close()
+        ctrl_conn.close()
 
     @staticmethod
     def lime_send(ctrl_conn, frequency: float, sample_rate: float, bandwidth: float, gain: float,
@@ -20,6 +82,12 @@ class LimeSDR(Device):
 
         self.receive_process_function = LimeSDR.lime_receive
         self.send_process_function = LimeSDR.lime_send
+
+    def set_device_gain(self, gain):
+        try:
+            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, gain * 0.01))
+        except BrokenPipeError:
+            pass
 
     @property
     def receive_process_arguments(self):

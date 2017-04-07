@@ -39,15 +39,8 @@ class LimeSDR(Device):
         # TODO Channel 0 currently hardcoded
         limesdr.CHANNEL = 0
         limesdr.IS_TX = is_tx
-        # Lime need CRLF to work
         lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
-        lime_out = os.path.join(tempfile.gettempdir(), "lime.ini")
-        with open(lime_file) as inp, open(lime_out, 'w') as out:
-            txt = inp.read()
-            txt = txt.replace('\n', '\r\n')
-            out.write(txt)
-
-        limesdr.load_config(lime_out)
+        limesdr.load_config(lime_file)
 
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)

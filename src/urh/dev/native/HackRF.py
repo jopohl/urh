@@ -11,6 +11,7 @@ class HackRF(Device):
     DEVICE_LIB = hackrf
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
+        Device.Command.SET_FREQUENCY: "set_freq",
         Device.Command.SET_BANDWIDTH: "set_baseband_filter_bandwidth"
     })
 

@@ -30,7 +30,7 @@ class Device(QObject):
 
     DEVICE_LIB = None
     DEVICE_METHODS = {
-        Command.SET_FREQUENCY: "set_freq",
+        Command.SET_FREQUENCY: "set_center_freq",
         Command.SET_SAMPLE_RATE: "set_sample_rate",
         Command.SET_BANDWIDTH: "set_bandwidth",
         Command.SET_RF_GAIN: "set_rf_gain",

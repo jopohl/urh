@@ -99,6 +99,8 @@ class SendRecvDialogController(QDialog):
         except TypeError:
             pass
 
+        self.ui.splitter.setSizes([0.3 * self.width(), 0.7 * self.width()])
+
     @property
     def is_rx(self) -> bool:
         return not self.is_tx

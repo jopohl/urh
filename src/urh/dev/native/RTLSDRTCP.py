@@ -52,35 +52,35 @@ class RTLSDRTCP(Device):
 
     def process_command(self, command, ctrl_connection, is_tx=False):
         logger.debug("RTLSDRTCP: {}".format(command))
-        if command == self.Command.STOP:
+        if command == self.Command.STOP.name:
             return self.Command.STOP
 
         tag, value = command
-        if tag == self.Command.SET_FREQUENCY:
+        if tag == self.Command.SET_FREQUENCY.name:
             logger.info("RTLSDRTCP: Set center freq to {0}".format(int(value)))
             return self.set_parameter("centerFreq", int(value), ctrl_connection)
 
-        elif tag == self.Command.SET_RF_GAIN:
+        elif tag == self.Command.SET_RF_GAIN.name:
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
             return self.set_parameter("tunerGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
-        elif tag == self.Command.SET_IF_GAIN:
+        elif tag == self.Command.SET_IF_GAIN.name:
             logger.info("RTLSDRTCP: Set if gain to {0}".format(int(value)))
             return self.set_parameter("tunerIFGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
-        elif tag == self.Command.SET_SAMPLE_RATE:
+        elif tag == self.Command.SET_SAMPLE_RATE.name:
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))
             return self.set_parameter("sampleRate", int(value), ctrl_connection)
 
-        elif tag == self.Command.SET_BANDWIDTH:
+        elif tag == self.Command.SET_BANDWIDTH.name:
             logger.info("RTLSDRTCP: Set bandwidth to {0}".format(int(value)))
             return self.set_parameter("bandwidth", int(value), ctrl_connection)
 
-        elif tag == self.Command.SET_FREQUENCY_CORRECTION:
+        elif tag == self.Command.SET_FREQUENCY_CORRECTION.name:
             logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
             return self.set_parameter("freqCorrection", int(value), ctrl_connection)
 
-        elif tag == self.Command.SET_DIRECT_SAMPLING_MODE:
+        elif tag == self.Command.SET_DIRECT_SAMPLING_MODE.name:
             logger.info("RTLSDRTCP: Set direct sampling mode to {0}".format(int(value)))
             return self.set_parameter("directSampling", int(value), ctrl_connection)
 

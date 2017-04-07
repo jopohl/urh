@@ -11,8 +11,8 @@ class HackRF(Device):
     DEVICE_LIB = hackrf
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
-        Device.Command.SET_FREQUENCY: "set_freq",
-        Device.Command.SET_BANDWIDTH: "set_baseband_filter_bandwidth"
+        Device.Command.SET_FREQUENCY.name: "set_freq",
+        Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth"
     })
 
     @staticmethod
@@ -23,12 +23,12 @@ class HackRF(Device):
         if ret != 0:
             return False
 
-        HackRF.process_command((HackRF.Command.SET_FREQUENCY, freq), ctrl_conn, is_tx)
-        HackRF.process_command((HackRF.Command.SET_SAMPLE_RATE, sample_rate), ctrl_conn, is_tx)
-        HackRF.process_command((HackRF.Command.SET_BANDWIDTH, bandwidth), ctrl_conn, is_tx)
-        HackRF.process_command((HackRF.Command.SET_RF_GAIN, gain), ctrl_conn, is_tx)
-        HackRF.process_command((HackRF.Command.SET_IF_GAIN, if_gain), ctrl_conn, is_tx)
-        HackRF.process_command((HackRF.Command.SET_BB_GAIN, baseband_gain), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_RF_GAIN.name, gain), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_IF_GAIN.name, if_gain), ctrl_conn, is_tx)
+        HackRF.process_command((HackRF.Command.SET_BB_GAIN.name, baseband_gain), ctrl_conn, is_tx)
 
         return True
 
@@ -63,7 +63,7 @@ class HackRF(Device):
             time.sleep(0.5)
             while ctrl_connection.poll():
                 result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
-                if result == HackRF.Command.STOP:
+                if result == HackRF.Command.STOP.name:
                     exit_requested = True
                     break
 
@@ -109,7 +109,7 @@ class HackRF(Device):
             time.sleep(0.5)
             while ctrl_connection.poll():
                 result = HackRF.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
-                if result == HackRF.Command.STOP:
+                if result == HackRF.Command.STOP.name:
                     exit_requested = True
                     break
 

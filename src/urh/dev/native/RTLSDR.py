@@ -14,9 +14,9 @@ class RTLSDR(Device):
     DEVICE_LIB = rtlsdr
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
-        Device.Command.SET_RF_GAIN: "set_tuner_gain",
-        Device.Command.SET_FREQUENCY_CORRECTION: "set_freq_correction",
-        Device.Command.SET_DIRECT_SAMPLING_MODE: "set_direct_sampling"
+        Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
+        Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
+        Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
     })
 
     @staticmethod
@@ -25,11 +25,12 @@ class RTLSDR(Device):
         ret = rtlsdr.open(device_number)
         ctrl_connection.send("OPEN:" + str(ret))
 
-        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY, center_freq), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_SAMPLE_RATE, sample_rate), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN, 10 * gain), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY_CORRECTION, freq_correction), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_DIRECT_SAMPLING_MODE, direct_sampling_mode), ctrl_connection, False)
+        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY.name, center_freq), ctrl_connection, False)
+        RTLSDR.process_command((RTLSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_connection, False)
+        RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN.name, 10 * gain), ctrl_connection, False)
+        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY_CORRECTION.name, freq_correction), ctrl_connection, False)
+        RTLSDR.process_command((RTLSDR.Command.SET_DIRECT_SAMPLING_MODE.name, direct_sampling_mode), ctrl_connection,
+                               False)
 
         ret = rtlsdr.reset_buffer()
         ctrl_connection.send("RESET_BUFFER:" + str(ret))
@@ -39,7 +40,7 @@ class RTLSDR(Device):
         while not exit_requested:
             while ctrl_connection.poll():
                 result = RTLSDR.process_command(ctrl_connection.recv(), ctrl_connection, False)
-                if result == RTLSDR.Command.STOP:
+                if result == RTLSDR.Command.STOP.name:
                     exit_requested = True
                     break
 

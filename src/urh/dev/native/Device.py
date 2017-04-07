@@ -30,19 +30,19 @@ class Device(QObject):
 
     DEVICE_LIB = None
     DEVICE_METHODS = {
-        Command.SET_FREQUENCY: "set_center_freq",
-        Command.SET_SAMPLE_RATE: "set_sample_rate",
-        Command.SET_BANDWIDTH: "set_bandwidth",
-        Command.SET_RF_GAIN: "set_rf_gain",
-        Command.SET_IF_GAIN: {"rx": "set_if_rx_gain", "tx": "set_if_tx_gain"},
-        Command.SET_BB_GAIN: {"rx": "set_baseband_gain"}
+        Command.SET_FREQUENCY.name: "set_center_freq",
+        Command.SET_SAMPLE_RATE.name: "set_sample_rate",
+        Command.SET_BANDWIDTH.name: "set_bandwidth",
+        Command.SET_RF_GAIN.name: "set_rf_gain",
+        Command.SET_IF_GAIN.name: {"rx": "set_if_rx_gain", "tx": "set_if_tx_gain"},
+        Command.SET_BB_GAIN.name: {"rx": "set_baseband_gain"}
     }
 
     @classmethod
     def process_command(cls, command, ctrl_connection, is_tx: bool):
         is_rx = not is_tx
-        if command == cls.Command.STOP:
-            return cls.Command.STOP
+        if command == cls.Command.STOP.name:
+            return cls.Command.STOP.name
 
         tag, value = command
 
@@ -58,7 +58,7 @@ class Device(QObject):
 
         if method_name:
             ret = getattr(cls.DEVICE_LIB, method_name)(value)
-            ctrl_connection.send("{0} to {1}:{2}".format(tag.name, value, ret))
+            ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__()
@@ -201,7 +201,7 @@ class Device(QObject):
 
     def set_device_bandwidth(self, bw):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_BANDWIDTH, int(bw)))
+            self.parent_ctrl_conn.send((self.Command.SET_BANDWIDTH.name, int(bw)))
         except BrokenPipeError:
             pass
 
@@ -217,7 +217,7 @@ class Device(QObject):
 
     def set_device_frequency(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY, int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY.name, int(value)))
         except BrokenPipeError:
             pass
 
@@ -233,7 +233,7 @@ class Device(QObject):
 
     def set_device_gain(self, gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN, int(gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, int(gain)))
         except BrokenPipeError:
             pass
 
@@ -249,7 +249,7 @@ class Device(QObject):
 
     def set_device_if_gain(self, if_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN, int(if_gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, int(if_gain)))
         except BrokenPipeError:
             pass
 
@@ -265,7 +265,7 @@ class Device(QObject):
 
     def set_device_baseband_gain(self, baseband_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN, int(baseband_gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, int(baseband_gain)))
         except BrokenPipeError:
             pass
 
@@ -281,7 +281,7 @@ class Device(QObject):
 
     def set_device_sample_rate(self, sample_rate):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE, int(sample_rate)))
+            self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE.name, int(sample_rate)))
         except BrokenPipeError:
             pass
 
@@ -297,7 +297,7 @@ class Device(QObject):
 
     def set_device_freq_correction(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY_CORRECTION, int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY_CORRECTION.name, int(value)))
         except BrokenPipeError:
             pass
 
@@ -313,7 +313,7 @@ class Device(QObject):
 
     def set_device_direct_sampling_mode(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_DIRECT_SAMPLING_MODE, int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_DIRECT_SAMPLING_MODE.name, int(value)))
         except BrokenPipeError:
             pass
 
@@ -338,7 +338,7 @@ class Device(QObject):
     def stop_rx_mode(self, msg):
         self.is_receiving = False
         try:
-            self.parent_ctrl_conn.send(self.Command.STOP)
+            self.parent_ctrl_conn.send(self.Command.STOP.name)
         except BrokenPipeError:
             pass
 
@@ -370,7 +370,7 @@ class Device(QObject):
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
         try:
-            self.parent_ctrl_conn.send(self.Command.STOP)
+            self.parent_ctrl_conn.send(self.Command.STOP.name)
         except BrokenPipeError:
             pass
 

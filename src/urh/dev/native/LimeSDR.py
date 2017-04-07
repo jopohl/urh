@@ -38,7 +38,7 @@ class LimeSDR(Device):
         # TODO Channel 0 currently hardcoded
         limesdr.CHANNEL = 0
         limesdr.IS_TX = is_tx
-        limesdr.load_config(os.path.join(os.path.dirname(os.path.realpath(__file__)), "limesdr.ini"))
+        limesdr.load_config(os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini"))
 
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)

@@ -7,7 +7,7 @@ from urh.dev.native.lib import limesdr
 
 
 class LimeSDR(Device):
-    FIFO_SIZE = 32768
+    FIFO_SIZE = 4000000000
     READ_SAMPLES = 32768
     LIME_TIMEOUT_MS = 10
 

@@ -24,3 +24,6 @@ class TestRTLSDRTCP(unittest.TestCase):
         sdr.close()
         self.assertEqual(error, 0)
 
+
+if __name__ == "__main__":
+    unittest.main()

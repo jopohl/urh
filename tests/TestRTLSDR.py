@@ -82,3 +82,7 @@ class TestRTLSDR(unittest.TestCase):
 
         packed = RTLSDR.pack_complex(unpacked)
         self.assertEqual(received, packed)
+
+
+if __name__ == "__main__":
+    unittest.main()

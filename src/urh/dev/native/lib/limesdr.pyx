@@ -353,3 +353,8 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
         logger.warning("LimeSDR: Failed to receive stream")
 
     free(buff)
+
+cpdef load_config(filename):
+    filename_byte_string = filename.encode('UTF-8')
+    c_filename = <char *> filename_byte_string
+    LMS_LoadConfig(_c_device, c_filename)

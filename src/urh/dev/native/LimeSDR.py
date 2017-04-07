@@ -1,3 +1,4 @@
+import os
 import time
 
 import numpy as np
@@ -37,13 +38,12 @@ class LimeSDR(Device):
         # TODO Channel 0 currently hardcoded
         limesdr.CHANNEL = 0
         limesdr.IS_TX = is_tx
+        limesdr.load_config(os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini"))
 
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
-
-        limesdr.calibrate(bandwidth)
 
         return True
 

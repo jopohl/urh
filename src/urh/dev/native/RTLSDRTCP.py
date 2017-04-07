@@ -25,8 +25,9 @@ class RTLSDRTCP(Device):
             sdr.device_number = device_number
             sdr.set_parameter("centerFreq", int(center_freq), ctrl_connection)
             sdr.set_parameter("sampleRate", int(sample_rate), ctrl_connection)
-            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection)   # set bandwidth equal to sample_rate
-            sdr.set_parameter("tunerGain", 10 * int(gain), ctrl_connection)     # gain is multiplied by 10 because of rtlsdr-API
+            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection)  # set bandwidth equal to sample_rate
+            sdr.set_parameter("tunerGain", 10 * int(gain),
+                              ctrl_connection)  # gain is multiplied by 10 because of rtlsdr-API
             sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
             sdr.set_parameter("directSampling", int(direct_sampling_mode), ctrl_connection)
             exit_requested = False
@@ -49,37 +50,37 @@ class RTLSDRTCP(Device):
         data_connection.close()
         ctrl_connection.close()
 
-    def process_command(self, command, ctrl_connection):
+    def process_command(self, command, ctrl_connection, is_tx=False):
         logger.debug("RTLSDRTCP: {}".format(command))
-        if command == "stop":
-            return "stop"
+        if command == self.Command.STOP:
+            return self.Command.STOP
 
-        tag, value = command.split(":")
-        if tag == "center_freq":
+        tag, value = command
+        if tag == self.Command.SET_FREQUENCY:
             logger.info("RTLSDRTCP: Set center freq to {0}".format(int(value)))
             return self.set_parameter("centerFreq", int(value), ctrl_connection)
 
-        elif tag == "rf_gain":
+        elif tag == self.Command.SET_RF_GAIN:
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
             return self.set_parameter("tunerGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
-        elif tag == "if_gain":
+        elif tag == self.Command.SET_IF_GAIN:
             logger.info("RTLSDRTCP: Set if gain to {0}".format(int(value)))
             return self.set_parameter("tunerIFGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
 
-        elif tag == "sample_rate":
+        elif tag == self.Command.SET_SAMPLE_RATE:
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))
             return self.set_parameter("sampleRate", int(value), ctrl_connection)
 
-        elif tag == "tuner_bandwidth":
+        elif tag == self.Command.SET_BANDWIDTH:
             logger.info("RTLSDRTCP: Set bandwidth to {0}".format(int(value)))
             return self.set_parameter("bandwidth", int(value), ctrl_connection)
 
-        elif tag == "freq_correction":
+        elif tag == self.Command.SET_FREQUENCY_CORRECTION:
             logger.info("RTLSDRTCP: Set ppm correction to {0}".format(int(value)))
             return self.set_parameter("freqCorrection", int(value), ctrl_connection)
 
-        elif tag == "direct_sampling_mode":
+        elif tag == self.Command.SET_DIRECT_SAMPLING_MODE:
             logger.info("RTLSDRTCP: Set direct sampling mode to {0}".format(int(value)))
             return self.set_parameter("directSampling", int(value), ctrl_connection)
 

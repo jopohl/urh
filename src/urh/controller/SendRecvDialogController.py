@@ -591,7 +591,6 @@ class SendRecvDialogController(QDialog):
         if self.graphics_view is not None:
             self.graphics_view.eliminate()
 
-        self.graphics_view = None
         super().closeEvent(event)
 
     @pyqtSlot()

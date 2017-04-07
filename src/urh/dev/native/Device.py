@@ -3,6 +3,7 @@ import time
 from multiprocessing import Pipe
 from multiprocessing import Value, Process
 from pickle import UnpicklingError
+from enum import Enum
 
 import numpy as np
 import psutil
@@ -13,8 +14,51 @@ from urh.util.Logger import logger
 
 
 class Device(QObject):
+    class Command(Enum):
+        STOP = 0
+        SET_FREQUENCY = 1
+        SET_SAMPLE_RATE = 2
+        SET_BANDWIDTH = 3
+        SET_RF_GAIN = 4
+        SET_IF_GAIN = 5
+        SET_BB_GAIN = 6
+        SET_DIRECT_SAMPLING_MODE = 7
+        SET_FREQUENCY_CORRECTION = 8
+
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
+
+    DEVICE_LIB = None
+    DEVICE_METHODS = {
+        Command.SET_FREQUENCY: "set_freq",
+        Command.SET_SAMPLE_RATE: "set_sample_rate",
+        Command.SET_BANDWIDTH: "set_bandwidth",
+        Command.SET_RF_GAIN: "set_rf_gain",
+        Command.SET_IF_GAIN: {"rx": "set_if_rx_gain", "tx": "set_if_tx_gain"},
+        Command.SET_BB_GAIN: {"rx": "set_baseband_gain"}
+    }
+
+    @classmethod
+    def process_command(cls, command, ctrl_connection, is_tx: bool):
+        is_rx = not is_tx
+        if command == cls.Command.STOP:
+            return cls.Command.STOP
+
+        tag, value = command
+
+        try:
+            if isinstance(cls.DEVICE_METHODS[tag], str):
+                method_name = cls.DEVICE_METHODS[tag]
+            elif isinstance(cls.DEVICE_METHODS[tag], dict):
+                method_name = cls.DEVICE_METHODS[tag]["rx" if is_rx else "tx"]
+            else:
+                method_name = None
+        except KeyError:
+            method_name = None
+
+        if method_name:
+            ret = getattr(cls.DEVICE_LIB, method_name)(value)
+            ctrl_connection.send("{0} to {1}:{2}".format(tag.name, value, ret))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__()
@@ -157,7 +201,7 @@ class Device(QObject):
 
     def set_device_bandwidth(self, bw):
         try:
-            self.parent_ctrl_conn.send("bandwidth:" + str(int(bw)))
+            self.parent_ctrl_conn.send((self.Command.SET_BANDWIDTH, int(bw)))
         except BrokenPipeError:
             pass
 
@@ -173,7 +217,7 @@ class Device(QObject):
 
     def set_device_frequency(self, value):
         try:
-            self.parent_ctrl_conn.send("center_freq:" + str(int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY, int(value)))
         except BrokenPipeError:
             pass
 
@@ -189,7 +233,7 @@ class Device(QObject):
 
     def set_device_gain(self, gain):
         try:
-            self.parent_ctrl_conn.send("rf_gain:" + str(int(gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN, int(gain)))
         except BrokenPipeError:
             pass
 
@@ -205,7 +249,7 @@ class Device(QObject):
 
     def set_device_if_gain(self, if_gain):
         try:
-            self.parent_ctrl_conn.send("if_gain:" + str(int(if_gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN, int(if_gain)))
         except BrokenPipeError:
             pass
 
@@ -221,7 +265,7 @@ class Device(QObject):
 
     def set_device_baseband_gain(self, baseband_gain):
         try:
-            self.parent_ctrl_conn.send("baseband_gain:" + str(int(baseband_gain)))
+            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN, int(baseband_gain)))
         except BrokenPipeError:
             pass
 
@@ -237,7 +281,7 @@ class Device(QObject):
 
     def set_device_sample_rate(self, sample_rate):
         try:
-            self.parent_ctrl_conn.send("sample_rate:" + str(int(sample_rate)))
+            self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE, int(sample_rate)))
         except BrokenPipeError:
             pass
 
@@ -253,7 +297,7 @@ class Device(QObject):
 
     def set_device_freq_correction(self, value):
         try:
-            self.parent_ctrl_conn.send("freq_correction:" + str(int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY_CORRECTION, int(value)))
         except BrokenPipeError:
             pass
 
@@ -269,7 +313,7 @@ class Device(QObject):
 
     def set_device_direct_sampling_mode(self, value):
         try:
-            self.parent_ctrl_conn.send("direct_sampling_mode:" + str(int(value)))
+            self.parent_ctrl_conn.send((self.Command.SET_DIRECT_SAMPLING_MODE, int(value)))
         except BrokenPipeError:
             pass
 
@@ -294,7 +338,7 @@ class Device(QObject):
     def stop_rx_mode(self, msg):
         self.is_receiving = False
         try:
-            self.parent_ctrl_conn.send("stop")
+            self.parent_ctrl_conn.send(self.Command.STOP)
         except BrokenPipeError:
             pass
 
@@ -326,7 +370,7 @@ class Device(QObject):
     def stop_tx_mode(self, msg):
         self.is_transmitting = False
         try:
-            self.parent_ctrl_conn.send("stop")
+            self.parent_ctrl_conn.send(self.Command.STOP)
         except BrokenPipeError:
             pass
 
@@ -347,12 +391,6 @@ class Device(QObject):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         pass
-
-    def set_device_parameters(self):
-        self.set_device_bandwidth(self.bandwidth)
-        self.set_device_frequency(self.frequency)
-        self.set_device_gain(self.gain)
-        self.set_device_sample_rate(self.sample_rate)
 
     def read_device_messages(self):
         while self.is_receiving or self.is_transmitting:
@@ -404,11 +442,7 @@ class Device(QObject):
 
         logger.debug("Exiting read_receive_queue thread.")
 
-    def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None,
-                             skip_device_parameters=False, resume=False):
-        if not skip_device_parameters:
-            self.set_device_parameters()
-
+    def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:
             self.samples_to_send = samples_to_send
             self.send_buffer = None

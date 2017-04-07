@@ -102,7 +102,7 @@ class VirtualDevice(QObject):
             self.__dev.device_ip = device_ip
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
-                self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
+                self.__dev.init_send_parameters(samples_to_send, sending_repeats)
         elif self.backend == Backends.network:
             self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode, spectrum=self.mode == Mode.spectrum)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
@@ -213,7 +213,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.data = value
         elif self.backend == Backends.native:
-            self.__dev.init_send_parameters(value, self.num_sending_repeats, skip_device_parameters=True)
+            self.__dev.init_send_parameters(value, self.num_sending_repeats)
         elif self.backend == Backends.network:
             self.__dev.samples_to_send = value
         else:

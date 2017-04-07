@@ -1,5 +1,7 @@
 import time
 
+import numpy as np
+
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
 
@@ -32,10 +34,17 @@ class LimeSDR(Device):
         if ret != 0:
             return False
 
+        # TODO Channel 0 currently hardcoded
+        limesdr.CHANNEL = 0
+        limesdr.IS_TX = is_tx
+
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
+
+        limesdr.calibrate(bandwidth)
+
         return True
 
     @staticmethod
@@ -51,8 +60,7 @@ class LimeSDR(Device):
 
         exit_requested = False
 
-        # TODO Channel 0 currently hardcoded
-        limesdr.setup_stream(False, 0, LimeSDR.FIFO_SIZE)
+        limesdr.setup_stream(LimeSDR.FIFO_SIZE)
         limesdr.start_stream()
 
         while not exit_requested:
@@ -97,3 +105,17 @@ class LimeSDR(Device):
     def send_process_arguments(self):
         return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, \
                self.send_buffer, self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+
+    @staticmethod
+    def unpack_complex(buffer, nvalues: int):
+        result = np.empty(nvalues, dtype=np.complex64)
+        unpacked = np.frombuffer(buffer, dtype=[('r', np.float32), ('i', np.float32)])
+        result.real = unpacked["r"]
+        result.imag = unpacked["i"]
+        return result
+
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
+        assert complex_samples.dtype == np.complex64
+        # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
+        return complex_samples.view(np.float32).tostring()

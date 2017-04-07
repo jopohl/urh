@@ -90,6 +90,9 @@ class VirtualDevice(QObject):
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
                     self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                elif name == "limesdr":
+                    from urh.dev.native.LimeSDR import LimeSDR
+                    self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             elif name == "test":

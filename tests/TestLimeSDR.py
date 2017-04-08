@@ -1,11 +1,11 @@
 import unittest
 import sys
 
-import numpy as np
+import os
 from multiprocessing import Pipe
 
 if sys.platform == "win32":
-    import os
+
 
     cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
     dll_dir = os.path.realpath(os.path.join(cur_dir, "..", "src", "urh", "dev", "native", "lib", "win"))
@@ -30,6 +30,10 @@ class TestLimeSDR(unittest.TestCase):
         print("Num Channels RX:", limesdr.get_num_channels())
         limesdr.CHANNEL = 0
         print("Enable RX Channel 0:", limesdr.enable_channel(True, False, 0))
+
+        path = os.path.realpath(os.path.join(__file__, "..", "..", "src", "urh", "dev", "native", "lime.ini"))
+        print(path)
+        limesdr.load_config(path)
 
         limesdr.print_last_error()
         print("RX Sample Rate Range:", limesdr.get_sample_rate_range())
@@ -81,8 +85,6 @@ class TestLimeSDR(unittest.TestCase):
         print("Close:", limesdr.close())
         print("Is Open 0:", limesdr.is_open(0))
         print("Is Open 1:", limesdr.is_open(1))
-
-
 
 if __name__ == "__main__":
     unittest.main()

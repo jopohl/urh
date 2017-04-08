@@ -469,7 +469,8 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_device_stopped(self):
-        self.graphics_view.capturing_data = False
+        if self.graphics_view is not None:
+            self.graphics_view.capturing_data = False
         self.set_device_ui_items_enabled(True)
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
@@ -485,7 +486,8 @@ class SendRecvDialogController(QDialog):
     def on_device_started(self):
         self.ui.txtEditErrors.clear()
         self.scene_manager.set_text("Waiting for device..")
-        self.graphics_view.capturing_data = True
+        if self.graphics_view is not None:
+            self.graphics_view.capturing_data = True
         self.ui.btnSave.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
 
@@ -593,6 +595,8 @@ class SendRecvDialogController(QDialog):
 
         if self.graphics_view is not None:
             self.graphics_view.eliminate()
+
+        self.graphics_view = None
 
         super().closeEvent(event)
 

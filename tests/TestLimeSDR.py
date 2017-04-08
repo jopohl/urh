@@ -35,6 +35,11 @@ class TestLimeSDR(unittest.TestCase):
         print(path)
         limesdr.load_config(path)
 
+        clocks = ["LMS_CLOCK_REF", "LMS_CLOCK_SXR", "LMS_CLOCK_SXT", "LMS_CLOCK_CGEN", "LMS_CLOCK_RXTSP", "LMS_CLOCK_TXTSP"]
+
+        for i, clock in enumerate(clocks):
+            print(clock, limesdr.get_clock_freq(i))
+
         limesdr.print_last_error()
         print("RX Sample Rate Range:", limesdr.get_sample_rate_range())
         print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate())

@@ -31,27 +31,33 @@ class TestLimeSDR(unittest.TestCase):
         limesdr.CHANNEL = 0
         print("Enable RX Channel 0:", limesdr.enable_channel(True, False, 0))
 
+        limesdr.print_last_error()
         print("RX Sample Rate Range:", limesdr.get_sample_rate_range())
         print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate())
         print("Set Sample Rate:", limesdr.set_sample_rate(2e6))
         print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate())
 
+        limesdr.print_last_error()
         print("RX Frequency Range:", limesdr.get_center_frequency_range())
         print("RX 0 center freq:", limesdr.get_center_frequency())
         print("RX 0 set center freq:", limesdr.set_center_frequency(433.92e6))
         print("RX 0 center freq:", limesdr.get_center_frequency())
 
+        limesdr.print_last_error()
         print("RX 0 gain", limesdr.get_normalized_gain())
         print("RX 0 set gain", limesdr.set_normalized_gain(0.5))
         print("RX 0 gain", limesdr.get_normalized_gain())
 
+        limesdr.print_last_error()
         print("RX Bandwidth Range", limesdr.get_lpf_bandwidth_range())
         print("RX 0 Bandwidth", limesdr.get_lpf_bandwidth())
         print("RX 0 set Bandwidth", limesdr.set_lpf_bandwidth(20e6))
         print("RX 0 Bandwidth", limesdr.get_lpf_bandwidth())
 
+        limesdr.print_last_error()
         print("RX 0 calibrate:", limesdr.calibrate(20e6))
 
+        limesdr.print_last_error()
         antenna_list = limesdr.get_antenna_list()
         print("RX 0 antenna list", antenna_list)
         print("RX 0 current antenna", limesdr.get_antenna(), antenna_list[limesdr.get_antenna()])
@@ -62,6 +68,7 @@ class TestLimeSDR(unittest.TestCase):
         parent_conn, child_conn = Pipe()
 
         for _ in range(2):
+            limesdr.print_last_error()
             print("Setup stream", limesdr.setup_stream(1000))
             print("Start stream", limesdr.start_stream())
             limesdr.recv_stream(child_conn, 1000, 100)

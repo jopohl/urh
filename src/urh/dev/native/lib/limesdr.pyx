@@ -288,7 +288,7 @@ cpdef tuple get_antenna_bw(size_t index):
     else:
         return -1, -1, -1
 
-cpdef get_nco_frequency():
+cpdef tuple get_nco_frequency():
     cdef float_type freq = 0.0
     cdef float_type pho = 0.0
     result = LMS_GetNCOFrequency(_c_device, IS_TX, CHANNEL, &freq, &pho)

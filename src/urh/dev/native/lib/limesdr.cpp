@@ -4742,7 +4742,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_antenna_bw(siz
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
  * 
- * cpdef get_nco_frequency():
+ * cpdef tuple get_nco_frequency():
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
@@ -4823,7 +4823,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_50get_antenna_bw(
 /* "src/urh/dev/native/lib/limesdr.pyx":291
  *         return -1, -1, -1
  * 
- * cpdef get_nco_frequency():             # <<<<<<<<<<<<<<
+ * cpdef tuple get_nco_frequency():             # <<<<<<<<<<<<<<
  *     cdef float_type freq = 0.0
  *     cdef float_type pho = 0.0
  */
@@ -4843,7 +4843,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_nco_frequency(
 
   /* "src/urh/dev/native/lib/limesdr.pyx":292
  * 
- * cpdef get_nco_frequency():
+ * cpdef tuple get_nco_frequency():
  *     cdef float_type freq = 0.0             # <<<<<<<<<<<<<<
  *     cdef float_type pho = 0.0
  *     result = LMS_GetNCOFrequency(_c_device, IS_TX, CHANNEL, &freq, &pho)
@@ -4851,7 +4851,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_nco_frequency(
   __pyx_v_freq = 0.0;
 
   /* "src/urh/dev/native/lib/limesdr.pyx":293
- * cpdef get_nco_frequency():
+ * cpdef tuple get_nco_frequency():
  *     cdef float_type freq = 0.0
  *     cdef float_type pho = 0.0             # <<<<<<<<<<<<<<
  *     result = LMS_GetNCOFrequency(_c_device, IS_TX, CHANNEL, &freq, &pho)
@@ -4898,7 +4898,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_nco_frequency(
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_3);
     __pyx_t_2 = 0;
     __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_4;
+    __pyx_r = ((PyObject*)__pyx_t_4);
     __pyx_t_4 = 0;
     goto __pyx_L0;
 
@@ -4928,7 +4928,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_nco_frequency(
   /* "src/urh/dev/native/lib/limesdr.pyx":291
  *         return -1, -1, -1
  * 
- * cpdef get_nco_frequency():             # <<<<<<<<<<<<<<
+ * cpdef tuple get_nco_frequency():             # <<<<<<<<<<<<<<
  *     cdef float_type freq = 0.0
  *     cdef float_type pho = 0.0
  */
@@ -19587,7 +19587,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     else:
  *         return -1, -1, -1             # <<<<<<<<<<<<<<
  * 
- * cpdef get_nco_frequency():
+ * cpdef tuple get_nco_frequency():
  */
   __pyx_tuple__5 = PyTuple_Pack(3, __pyx_int_neg_1, __pyx_int_neg_1, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);

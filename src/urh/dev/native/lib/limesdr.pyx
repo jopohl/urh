@@ -65,6 +65,13 @@ cpdef int init():
     """
     return LMS_Init(_c_device)
 
+
+cpdef int reset():
+    return LMS_Reset(_c_device)
+
+cpdef int synchronize():
+    return LMS_Synchronize(_c_device, True)
+
 cpdef int get_num_channels():
     """
     Obtain number of RX or TX channels. Use this to determine the maximum
@@ -74,14 +81,14 @@ cpdef int get_num_channels():
     """
     return LMS_GetNumChannels(_c_device, IS_TX)
 
-cpdef int enable_channel(bool enabled):
+cpdef int enable_channel(bool enabled, bool is_tx, size_t channel):
     """
     Enable or disable specified RX channel.
     
     :param enabled: true(1) to enable, false(0) to disable.
     :return:  0 on success, (-1) on failure
     """
-    return LMS_EnableChannel(_c_device, IS_TX, CHANNEL, enabled)
+    return LMS_EnableChannel(_c_device, is_tx, channel, enabled)
 
 cpdef int set_sample_rate(float_type rate, size_t oversample=0):
     """
@@ -281,6 +288,64 @@ cpdef tuple get_antenna_bw(size_t index):
     else:
         return -1, -1, -1
 
+cpdef get_nco_frequency():
+    cdef float_type freq = 0.0
+    cdef float_type pho = 0.0
+    result = LMS_GetNCOFrequency(_c_device, IS_TX, CHANNEL, &freq, &pho)
+    if result == 0:
+        return freq, pho
+    else:
+        return -1, 1
+
+cpdef get_vco_range(size_t vco_id):
+    """
+    Get VCO value range.
+    
+    :param vco_id: VCO identifier 
+    :return: Tuple (start, end, step) of vco value range, (-1, -1, -1) on Error
+    """
+    cdef lms_range_t vco_range
+    result = LMS_GetVCORange(_c_device, vco_id, &vco_range)
+    if result == 0:
+        return vco_range.min, vco_range.max, vco_range.step
+    else:
+        return -1, -1, -1
+
+cpdef float_type get_reference_clock_hz():
+    """
+    Get the currently set reference clock
+    
+    :return: ref clock in hz on success else -1
+    """
+    cdef float_type clock_hz = 0.0
+    result = LMS_GetReferenceClock(_c_device, &clock_hz)
+    if result == 0:
+        return clock_hz
+    else:
+        return -1
+
+cpdef float_type get_clock_freq(size_t clk_id):
+    cdef float_type clock_hz = 0.0
+    result = LMS_GetClockFreq(_c_device, clk_id, &clock_hz)
+    if result == 0:
+        return clock_hz
+    else:
+        return -1
+
+cpdef int set_clock_freq(size_t clk_id, float_type frequency_hz):
+    return LMS_SetClockFreq(_c_device, clk_id, frequency_hz)
+
+cpdef int set_reference_clock(float_type ref_clock_hz):
+    """
+    Changes device reference clock used by API for various calculations.
+    Normally reference clock should be detected automatically based on device.
+    Use this function in case you have replaced the reference crystal.
+ 
+    :param ref_clock_hz: reference clock in Hz
+    :return: 0 on success, (-1) on failure
+    """
+    return LMS_SetReferenceClock(_c_device, ref_clock_hz)
+
 cpdef float_type get_chip_temperature():
     """
     Read LMS7 chip internal temperature sensor
@@ -358,3 +423,13 @@ cpdef load_config(filename):
     filename_byte_string = filename.encode('UTF-8')
     c_filename = <char *> filename_byte_string
     LMS_LoadConfig(_c_device, c_filename)
+
+cpdef perform_register_test():
+    LMS_RegisterTest(_c_device)
+    print_last_error()
+
+cpdef void print_last_error():
+    cdef char * error_msg = <char *> malloc(2000 * sizeof(char))
+    error_msg = <char *>LMS_GetLastErrorMessage()
+    error_msg_py = error_msg.decode("UTF-8")
+    print(error_msg_py)

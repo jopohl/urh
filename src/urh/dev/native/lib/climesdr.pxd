@@ -34,6 +34,7 @@ cdef extern from "lime/LimeSuite.h":
 
     int LMS_Init(lms_device_t *device)
     int LMS_Reset(lms_device_t *device)
+    int LMS_Synchronize(lms_device_t *dev, bool to_chip)
     int LMS_GetNumChannels(lms_device_t *device, bool dir_tx)
     int LMS_EnableChannel(lms_device_t *device, bool dir_tx, size_t chan, bool enabled)
 
@@ -61,6 +62,19 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_CalibrateAnalogRSSIDC(lms_device_t *device);
     int LMS_CalibrateRP_BIAS(lms_device_t *device);
 
+    int LMS_SetNCOFrequency(lms_device_t *device, bool dir_tx, size_t chan, const float_type *freq, float_type pho)
+    int LMS_GetNCOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type *freq, float_type *pho)
+
+    int LMS_GetVCORange(lms_device_t * dev, size_t vco_id, lms_range_t* range)
+    int LMS_SetVCORange(lms_device_t * dev, size_t vco_id, lms_range_t range)
+
+    int LMS_GetClockFreq(lms_device_t *dev, size_t clk_id, float_type *freq)
+    int LMS_SetClockFreq(lms_device_t *dev, size_t clk_id, float_type freq)
+
+    int LMS_GetReferenceClock(lms_device_t* device, float_type* clock_Hz)
+    int LMS_SetReferenceClock(lms_device_t* device, float_type clock_Hz)
+
+    int LMS_RegisterTest(lms_device_t *device)
 
     ctypedef char lms_name_t[16]
     int LMS_GetAntennaList(lms_device_t *device, bool dir_tx, size_t chan, lms_name_t *list)
@@ -130,3 +144,5 @@ cdef extern from "lime/LimeSuite.h":
                        unsigned timeout_ms)
     int LMS_SendStream(lms_stream_t *stream, const void *samples, size_t sample_count, const lms_stream_meta_t *meta,
                        unsigned timeout_ms)
+
+    const char* LMS_GetLastErrorMessage()

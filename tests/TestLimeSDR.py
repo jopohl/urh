@@ -29,7 +29,7 @@ class TestLimeSDR(unittest.TestCase):
         limesdr.IS_TX = False
         print("Num Channels RX:", limesdr.get_num_channels())
         limesdr.CHANNEL = 0
-        print("Enable RX Channel 0:", limesdr.enable_channel(True))
+        print("Enable RX Channel 0:", limesdr.enable_channel(True, False, 0))
 
         print("RX Sample Rate Range:", limesdr.get_sample_rate_range())
         print("RX Channel 0 Sample Rate:", limesdr.get_sample_rate())

@@ -419,6 +419,22 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
 
     free(buff)
 
+cpdef int send_stream(float[::1] samples, unsigned timeout_ms):
+    """
+    Write samples to the FIFO of the specified stream.
+    
+    :param samples: sample buffer
+    :param timeout_ms: how long to wait for data before timing out
+    :return: number of samples send on success, (-1) on failure
+    """
+    cdef lms_stream_meta_t meta
+    cdef size_t sample_count = len(samples)
+
+    if len(samples) > 0:
+        return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+    else:
+        return -1
+
 cpdef load_config(filename):
     filename_byte_string = filename.encode('UTF-8')
     c_filename = <char *> filename_byte_string

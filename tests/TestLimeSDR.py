@@ -4,6 +4,8 @@ import sys
 import os
 from multiprocessing import Pipe
 
+import numpy as np
+
 if sys.platform == "win32":
 
 
@@ -85,6 +87,16 @@ class TestLimeSDR(unittest.TestCase):
             print("Destroy stream", limesdr.destroy_stream())
 
             print(parent_conn.recv_bytes())
+
+        limesdr.IS_TX = True
+        samples_to_send = np.ones(5000000, dtype=np.float32)
+        for _ in range(2):
+            limesdr.print_last_error()
+            print("Setup stream", limesdr.setup_stream(5000000))
+            print("Start stream", limesdr.start_stream())
+            print("Send samples", limesdr.send_stream(samples_to_send, 100))
+            print("Stop stream", limesdr.stop_stream())
+            print("Destroy stream", limesdr.destroy_stream())
 
         print("-" * 20)
         print("Close:", limesdr.close())

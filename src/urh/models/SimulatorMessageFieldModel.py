@@ -1,18 +1,21 @@
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt5.QtGui import QFont
 
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.ui.SimulatorScene import MessageDataItem
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class SimulatorMessageFieldModel(QAbstractTableModel):
-    header_labels = ['Name', 'Log level', 'Log format', 'Value']
+    header_labels = ['Name', 'Value']
+
+    protocol_label_updated = pyqtSignal(SimulatorProtocolLabel)
 
     def __init__(self, controller, parent=None):
         super().__init__(parent)
 
-        self.controller = controller
+        self.controller = controller # type: SimulatorTabController
 
         self.__message = None
-        """:type: urh.ui.SimulatorScene.MessageItem"""
+        """:type: urh.signalprocessing.SimulatorMessage"""
 
     @property
     def message(self):
@@ -26,7 +29,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
     @property
     def labels(self):
         if self.__message:
-            return self.__message.labels
+            return self.__message.message_type
         else:
             return []
 
@@ -52,53 +55,43 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
-            lbl = self.labels[i]
+        i = index.row()
+        j = index.column()
+        lbl = self.labels[i]
 
+        if role == Qt.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return MessageDataItem.LOG_LEVELS[lbl.log_level_index]
-            elif j == 2:
-                return ProtocolLabel.DISPLAY_FORMATS[lbl.display_format_index]
-            elif j == 3:
-                return lbl.value
+                return "1::seq"
+        elif role == Qt.FontRole:
+            if j == 0:
+                font = QFont()
+                font.setItalic(lbl.type is None)
+                return font
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
             i, j = index.row(), index.column()
             lbl = self.labels[i]
 
-            try:
-                if j == 0:
-                    lbl.name = value
+            if j == 0:
+                lbl.name = value
 
-                    if value == MessageDataItem.UNLABELED_DATA_NAME:
-                        lbl.is_unlabeled_data = True
-                        lbl.type = None
-                    elif value in self.controller.field_types_by_caption:
-                        lbl.is_unlabeled_data = False
-                        lbl.type = self.controller.field_types_by_caption[value]
-                    else:
-                        lbl.is_unlabeled_data = False
-                        lbl.type = None
-                if j == 1:
-                    lbl.log_level_index = int(value)
-                elif j == 2:
-                    lbl.display_format_index = int(value)
-            except ValueError:
-                return False
+                if value in self.controller.field_types_by_caption:
+                    lbl.type = self.controller.field_types_by_caption[value]
+                else:
+                    lbl.type = None
 
-            return True
+                self.protol_label_updated.emit(lbl)
 
+        return True
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
         column = index.column()
 
-        if not column == 3:
+        if column == 0:
             flags |= Qt.ItemIsEditable
 
         return flags

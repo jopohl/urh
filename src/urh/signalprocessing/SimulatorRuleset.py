@@ -11,7 +11,7 @@ class Mode(Enum):
     all_apply = 0
     atleast_one_applies = 1
 
-class SimulatorRule(object):
+class SimulatorRulesetItem(object):
     def __init__(self, variable, operator: str, target_value: str, value_type: int):
         assert operator in OPERATIONS
         self.__variable = weakref.ref(variable) if variable else None

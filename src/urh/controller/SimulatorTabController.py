@@ -8,12 +8,16 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene, MessageDataItem, GotoAction, ExternalProgramAction, MessageItem, RuleConditionItem, RuleItem, ConditionType
+from urh.ui.SimulatorScene import SimulatorScene, GotoAction, ExternalProgramAction
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
 from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset, SimulatorRule, Mode
+from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset, SimulatorRulesetItem, Mode
+from urh.signalprocessing.MessageItem import MessageItem
+from urh.signalprocessing.RuleItem import RuleConditionItem, RuleItem, ConditionType
+
+from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.SimulateDialogController import SimulateDialogController
@@ -31,6 +35,8 @@ class SimulatorTabController(QWidget):
         self.compare_frame_controller = compare_frame_controller
         self.proto_analyzer = compare_frame_controller.proto_analyzer
 
+        self.sim_proto_manager = SimulatorProtocolManager(self.project_manager)
+
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)
 
@@ -42,6 +48,10 @@ class SimulatorTabController(QWidget):
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
 
+        self.simulator_message_field_model = SimulatorMessageFieldModel(self)
+        self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
+        self.update_field_types()
+
         self.simulator_scene = SimulatorScene(controller=self)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
         self.ui.gvSimulator.setScene(self.simulator_scene)
@@ -51,12 +61,6 @@ class SimulatorTabController(QWidget):
         self.field_types = FieldType.load_from_xml()
         self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
-
-        self.simulator_message_field_model = SimulatorMessageFieldModel(self)
-        self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
-        self.update_field_types()
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(MessageDataItem.LOG_LEVELS, parent=self))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()
@@ -77,9 +81,8 @@ class SimulatorTabController(QWidget):
         self.update_field_name_column()
 
     def update_field_name_column(self):
-        field_name_column_items = [MessageDataItem.UNLABELED_DATA_NAME]
-        field_name_column_items.extend([ft.caption for ft in self.field_types])
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_name_column_items, is_editable=True, return_index=False, parent=self))
+        field_types = [ft.caption for ft in self.field_types]
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
 
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
@@ -140,7 +143,7 @@ class SimulatorTabController(QWidget):
                 self.update_goto_combobox()
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.selected_item, MessageItem):
-                self.simulator_message_field_model.message = self.selected_item
+                self.simulator_message_field_model.message = self.selected_item.model_item
                 self.simulator_message_field_model.update()
 
                 self.ui.detail_view_widget.setCurrentIndex(2)
@@ -240,7 +243,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
-        self.selected_item.ruleset.append(SimulatorRule(variable=None, operator="=", target_value="1", value_type=0))
+        self.selected_item.ruleset.append(SimulatorRulesetItem(variable=None, operator="=", target_value="1", value_type=0))
         self.simulator_ruleset_model.update()
 
         for i in range(len(self.selected_item.ruleset)):

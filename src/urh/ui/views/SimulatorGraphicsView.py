@@ -2,7 +2,9 @@ from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstra
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from urh.ui.SimulatorScene import MessageItem, RuleConditionItem, ParticipantItem, GotoAction, ExternalProgramAction, SimulatorItem
+from urh.ui.SimulatorScene import ParticipantItem, GotoAction, ExternalProgramAction, SimulatorItem
+from urh.signalprocessing.MessageItem import MessageItem
+from urh.signalprocessing.RuleItem import RuleConditionItem
 
 class SimulatorGraphicsView(QGraphicsView):
 

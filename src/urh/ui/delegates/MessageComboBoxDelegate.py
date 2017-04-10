@@ -2,8 +2,6 @@ from PyQt5.QtWidgets import QItemDelegate, QStyle, QStyleOptionViewItem, QComboB
 from PyQt5.QtCore import Qt, QModelIndex, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QStandardItem
 
-from urh.ui.SimulatorScene import MessageDataItem
-
 class MessageComboBoxDelegate(QItemDelegate):
     def __init__(self, simulator_scene, parent=None):
         super().__init__(parent)

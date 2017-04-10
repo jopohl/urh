@@ -333,7 +333,7 @@ class Device(QObject):
             self.receive_process.start()
         except OSError as e:
             logger.error(repr(e))
-            self.device_messages.add(repr(e))
+            self.device_messages.append(repr(e))
 
     def stop_rx_mode(self, msg):
         self.is_receiving = False

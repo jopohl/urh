@@ -8,9 +8,12 @@ from urh.dev.native.lib import limesdr
 
 
 class LimeSDR(Device):
-    FIFO_SIZE = 4000000000
     READ_SAMPLES = 32768
     SEND_SAMPLES = 32768
+
+    RECV_FIFO_SIZE = 4000000000
+    SEND_FIFO_SIZE = 5 * SEND_SAMPLES
+
     LIME_TIMEOUT_RECEIVE_MS = 10
     LIME_TIMEOUT_SEND_MS = 100
 
@@ -67,7 +70,7 @@ class LimeSDR(Device):
 
         exit_requested = False
 
-        limesdr.setup_stream(LimeSDR.FIFO_SIZE)
+        limesdr.setup_stream(LimeSDR.RECV_FIFO_SIZE)
         limesdr.start_stream()
 
         while not exit_requested:
@@ -99,7 +102,7 @@ class LimeSDR(Device):
         exit_requested = False
         num_samples = LimeSDR.SEND_SAMPLES
 
-        limesdr.setup_stream(5*LimeSDR.SEND_SAMPLES)
+        limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
         limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():
@@ -113,7 +116,6 @@ class LimeSDR(Device):
                 else:
                     current_sent_index.value = len(samples_to_send)
 
-            time.sleep(0.1)
             while ctrl_connection.poll():
                 result = LimeSDR.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
                 if result == LimeSDR.Command.STOP.name:

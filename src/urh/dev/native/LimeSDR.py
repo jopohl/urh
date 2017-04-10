@@ -41,8 +41,10 @@ class LimeSDR(Device):
             return False
 
         # TODO Channel 0 currently hardcoded
-        limesdr.set_channel(0)
+        channel = 0
+        limesdr.set_channel(channel)
         limesdr.set_tx(is_tx)
+        limesdr.enable_channel(True, is_tx, channel)
         #if is_tx:
         #    lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime_send.ini")
         #else:
@@ -63,6 +65,10 @@ class LimeSDR(Device):
 
     @staticmethod
     def shutdown_lime_sdr(ctrl_conn):
+        limesdr.enable_channel(False, False, 0)
+        limesdr.enable_channel(False, False, 1)
+        limesdr.enable_channel(False, True, 0)
+        limesdr.enable_channel(False, True, 1)
         ret = limesdr.close()
         ctrl_conn.send("CLOSE:" + str(ret))
         return True

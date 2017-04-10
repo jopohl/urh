@@ -143,13 +143,14 @@ class LimeSDR(Device):
 
     @property
     def current_sent_sample(self):
-        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
-        return self._current_sent_sample.value
+        # We can pass samples directly to LimeSDR API and do not need to convert to bytes,
+        # however we need to pass float values so we need to divide by 2
+        return self._current_sent_sample.value // 2
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
         # We can pass samples directly to LimeSDR API and do not need to convert to bytes
-        self._current_sent_sample.value = value
+        self._current_sent_sample.value = value * 2
 
 
     @property

@@ -26,17 +26,22 @@ class TestLimeSDR(unittest.TestCase):
         print("Is Open 0:", limesdr.is_open(0))
         print("Is Open 1:", limesdr.is_open(1))
         print("Init", limesdr.init())
-        limesdr.IS_TX = True
+        limesdr.set_tx(True)
+        self.assertTrue(limesdr.get_tx())
+        #print(limesdr.IS_TX)
         print("Num Channels TX:", limesdr.get_num_channels())
-        limesdr.IS_TX = False
+        print("TX antennas", limesdr.get_antenna_list())
+        limesdr.set_tx(False)
+        self.assertFalse(limesdr.get_tx())
+
         print("Num Channels RX:", limesdr.get_num_channels())
         limesdr.CHANNEL = 0
         print("Enable RX Channel 0:", limesdr.enable_channel(True, False, 0))
 
         path = os.path.realpath(os.path.join(__file__, "..", "..", "src", "urh", "dev", "native", "lime.ini"))
         print(path)
-        #limesdr.load_config(path)
-        limesdr.save_config("/tmp/lime_test.ini")
+        limesdr.load_config(path)
+        #limesdr.save_config("/tmp/lime_test.ini")
 
         clocks = ["LMS_CLOCK_REF", "LMS_CLOCK_SXR", "LMS_CLOCK_SXT", "LMS_CLOCK_CGEN", "LMS_CLOCK_RXTSP", "LMS_CLOCK_TXTSP"]
 
@@ -89,11 +94,12 @@ class TestLimeSDR(unittest.TestCase):
 
             print(parent_conn.recv_bytes())
 
-        limesdr.IS_TX = True
-        samples_to_send = np.ones(5000000, dtype=np.float32)
+        limesdr.set_tx(True)
+        self.assertTrue(limesdr.get_tx())
+        samples_to_send = np.ones(5000, dtype=np.float32)
         for _ in range(2):
             limesdr.print_last_error()
-            print("Setup stream", limesdr.setup_stream(5000000))
+            print("Setup stream", limesdr.setup_stream(5000))
             print("Start stream", limesdr.start_stream())
             print("Send samples", limesdr.send_stream(samples_to_send, 100))
             print("Stop stream", limesdr.stop_stream())

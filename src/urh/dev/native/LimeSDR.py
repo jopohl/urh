@@ -36,8 +36,8 @@ class LimeSDR(Device):
             return False
 
         # TODO Channel 0 currently hardcoded
-        limesdr.CHANNEL = 0
-        limesdr.IS_TX = is_tx
+        limesdr.set_channel(0)
+        limesdr.set_tx(is_tx)
         lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
         limesdr.load_config(lime_file)
 
@@ -86,7 +86,8 @@ class LimeSDR(Device):
     @staticmethod
     def lime_send(ctrl_connection, frequency: float, sample_rate: float, bandwidth: float, gain: float,
                   samples_to_send, current_sent_index, current_sending_repeat, sending_repeats):
-        samples_to_send = samples_to_send.astype(np.float32)
+        # samples_to_send = samples_to_send.astype(np.float32)
+        samples_to_send = np.ones(1000, dtype=np.float32)
 
         def sending_is_finished():
             if sending_repeats == 0:  # 0 = infinity

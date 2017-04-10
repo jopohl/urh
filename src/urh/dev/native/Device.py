@@ -396,8 +396,11 @@ class Device(QObject):
         while self.is_receiving or self.is_transmitting:
             try:
                 message = self.parent_ctrl_conn.recv()
-                action, return_code = message.split(":")
-                self.log_retcode(int(return_code), action)
+                try:
+                    action, return_code = message.split(":")
+                    self.log_retcode(int(return_code), action)
+                except ValueError:
+                    self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False

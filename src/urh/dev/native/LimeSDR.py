@@ -46,6 +46,10 @@ class LimeSDR(Device):
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
 
+        antennas = limesdr.get_antenna_list()
+        ctrl_conn.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
+        ctrl_conn.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))
+
         return True
 
     @staticmethod
@@ -80,9 +84,43 @@ class LimeSDR(Device):
         ctrl_conn.close()
 
     @staticmethod
-    def lime_send(ctrl_conn, frequency: float, sample_rate: float, bandwidth: float, gain: float,
-                  send_buffer, current_sent_index, current_sending_repeat, sending_repeats):
-        pass
+    def lime_send(ctrl_connection, frequency: float, sample_rate: float, bandwidth: float, gain: float,
+                  samples_to_send, current_sent_index, current_sending_repeat, sending_repeats):
+        samples_to_send = samples_to_send.astype(np.float32)
+
+        def sending_is_finished():
+            if sending_repeats == 0:  # 0 = infinity
+                return False
+
+            return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(samples_to_send)
+
+        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, ctrl_connection, is_tx=True):
+            return False
+
+        exit_requested = False
+        num_samples = 32768
+
+        while not exit_requested and not sending_is_finished():
+            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
+                                LimeSDR.LIME_TIMEOUT_MS)
+
+            current_sent_index.value += num_samples
+            if current_sent_index.value >= len(samples_to_send) - 1:
+                current_sending_repeat.value += 1
+                if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
+                    current_sent_index.value = 0
+                else:
+                    current_sent_index.value = len(samples_to_send)
+
+            time.sleep(0.1)
+            while ctrl_connection.poll():
+                result = LimeSDR.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
+                if result == LimeSDR.Command.STOP.name:
+                    exit_requested = True
+                    break
+
+        LimeSDR.shutdown_lime_sdr(ctrl_connection)
+        ctrl_connection.close()
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
@@ -105,7 +143,7 @@ class LimeSDR(Device):
     @property
     def send_process_arguments(self):
         return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, \
-               self.send_buffer, self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+               self.samples_to_send, self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

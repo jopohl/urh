@@ -431,7 +431,10 @@ cpdef int send_stream(float[::1] samples, unsigned timeout_ms):
     cdef size_t sample_count = len(samples)
 
     if len(samples) > 0:
-        return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+        print("Start sending")
+        result = LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+        print("Finished sending")
+        return result
     else:
         return -1
 

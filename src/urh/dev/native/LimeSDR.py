@@ -15,7 +15,7 @@ class LimeSDR(Device):
     SEND_FIFO_SIZE = 5 * SEND_SAMPLES
 
     LIME_TIMEOUT_RECEIVE_MS = 10
-    LIME_TIMEOUT_SEND_MS = 100
+    LIME_TIMEOUT_SEND_MS = 10
 
     BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
     DEVICE_LIB = limesdr
@@ -43,7 +43,7 @@ class LimeSDR(Device):
         # TODO Channel 0 currently hardcoded
         limesdr.set_channel(0)
         limesdr.set_tx(is_tx)
-        lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
+        lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime_send.ini")
         limesdr.load_config(lime_file)
 
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
@@ -159,7 +159,7 @@ class LimeSDR(Device):
     @property
     def send_process_arguments(self):
         return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, \
-               self.samples_to_send.astype(np.float32), self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+               self.samples_to_send.view(np.float32), self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

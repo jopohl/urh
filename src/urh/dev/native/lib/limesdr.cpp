@@ -6502,7 +6502,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_recv_stream(PyObject *__
  *     cdef int received_samples = LMS_RecvStream(&stream, buff, num_samples, &meta, timeout_ms)
  * 
  *     if received_samples > 0:             # <<<<<<<<<<<<<<
- *         connection.send_bytes(<float[:received_samples]>buff)
+ *         connection.send_bytes(<float[:2*received_samples]>buff)
  *     else:
  */
   __pyx_t_1 = ((__pyx_v_received_samples > 0) != 0);
@@ -6511,7 +6511,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_recv_stream(PyObject *__
     /* "src/urh/dev/native/lib/limesdr.pyx":431
  * 
  *     if received_samples > 0:
- *         connection.send_bytes(<float[:received_samples]>buff)             # <<<<<<<<<<<<<<
+ *         connection.send_bytes(<float[:2*received_samples]>buff)             # <<<<<<<<<<<<<<
  *     else:
  *         logger.warning("LimeSDR: Failed to receive stream")
  */
@@ -6522,7 +6522,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_recv_stream(PyObject *__
       __PYX_ERR(0, 431, __pyx_L1_error)
     }
     __pyx_t_6 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_float);
-    __pyx_t_5 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_received_samples));
+    __pyx_t_5 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)(2 * __pyx_v_received_samples)));
     if (unlikely(!__pyx_t_6 || !__pyx_t_5 || !PyBytes_AsString(__pyx_t_6))) __PYX_ERR(0, 431, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GOTREF(__pyx_t_5);
@@ -6583,14 +6583,14 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_recv_stream(PyObject *__
  *     cdef int received_samples = LMS_RecvStream(&stream, buff, num_samples, &meta, timeout_ms)
  * 
  *     if received_samples > 0:             # <<<<<<<<<<<<<<
- *         connection.send_bytes(<float[:received_samples]>buff)
+ *         connection.send_bytes(<float[:2*received_samples]>buff)
  *     else:
  */
     goto __pyx_L4;
   }
 
   /* "src/urh/dev/native/lib/limesdr.pyx":433
- *         connection.send_bytes(<float[:received_samples]>buff)
+ *         connection.send_bytes(<float[:2*received_samples]>buff)
  *     else:
  *         logger.warning("LimeSDR: Failed to receive stream")             # <<<<<<<<<<<<<<
  * 
@@ -20266,7 +20266,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":433
- *         connection.send_bytes(<float[:received_samples]>buff)
+ *         connection.send_bytes(<float[:2*received_samples]>buff)
  *     else:
  *         logger.warning("LimeSDR: Failed to receive stream")             # <<<<<<<<<<<<<<
  * 

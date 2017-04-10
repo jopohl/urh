@@ -428,7 +428,7 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
     cdef int received_samples = LMS_RecvStream(&stream, buff, num_samples, &meta, timeout_ms)
 
     if received_samples > 0:
-        connection.send_bytes(<float[:received_samples]>buff)
+        connection.send_bytes(<float[:2*received_samples]>buff)
     else:
         logger.warning("LimeSDR: Failed to receive stream")
 

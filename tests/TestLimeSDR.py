@@ -96,10 +96,10 @@ class TestLimeSDR(unittest.TestCase):
 
         limesdr.set_tx(True)
         self.assertTrue(limesdr.get_tx())
-        samples_to_send = np.ones(5000, dtype=np.float32)
+        samples_to_send = np.ones(32768, dtype=np.float32)
         for _ in range(2):
             limesdr.print_last_error()
-            print("Setup stream", limesdr.setup_stream(5000))
+            print("Setup stream", limesdr.setup_stream(4000000000))
             print("Start stream", limesdr.start_stream())
             print("Send samples", limesdr.send_stream(samples_to_send, 100))
             print("Stop stream", limesdr.stop_stream())

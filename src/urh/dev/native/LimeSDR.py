@@ -10,7 +10,9 @@ from urh.dev.native.lib import limesdr
 class LimeSDR(Device):
     FIFO_SIZE = 4000000000
     READ_SAMPLES = 32768
-    LIME_TIMEOUT_MS = 10
+    SEND_SAMPLES = 32768
+    LIME_TIMEOUT_RECEIVE_MS = 10
+    LIME_TIMEOUT_SEND_MS = 100
 
     BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
     DEVICE_LIB = limesdr
@@ -69,8 +71,7 @@ class LimeSDR(Device):
         limesdr.start_stream()
 
         while not exit_requested:
-            limesdr.recv_stream(data_conn, LimeSDR.READ_SAMPLES, LimeSDR.LIME_TIMEOUT_MS)
-            time.sleep(0.1)
+            limesdr.recv_stream(data_conn, LimeSDR.READ_SAMPLES, LimeSDR.LIME_TIMEOUT_RECEIVE_MS)
             while ctrl_conn.poll():
                 result = LimeSDR.process_command(ctrl_conn.recv(), ctrl_conn, is_tx=False)
                 if result == LimeSDR.Command.STOP.name:
@@ -86,9 +87,6 @@ class LimeSDR(Device):
     @staticmethod
     def lime_send(ctrl_connection, frequency: float, sample_rate: float, bandwidth: float, gain: float,
                   samples_to_send, current_sent_index, current_sending_repeat, sending_repeats):
-        # samples_to_send = samples_to_send.astype(np.float32)
-        samples_to_send = np.ones(1000, dtype=np.float32)
-
         def sending_is_finished():
             if sending_repeats == 0:  # 0 = infinity
                 return False
@@ -99,12 +97,14 @@ class LimeSDR(Device):
             return False
 
         exit_requested = False
-        num_samples = 32768
+        num_samples = LimeSDR.SEND_SAMPLES
+
+        limesdr.setup_stream(LimeSDR.FIFO_SIZE)
+        limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():
             limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
-                                LimeSDR.LIME_TIMEOUT_MS)
-
+                                LimeSDR.LIME_TIMEOUT_SEND_MS)
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1
@@ -120,6 +120,8 @@ class LimeSDR(Device):
                     exit_requested = True
                     break
 
+        limesdr.stop_stream()
+        limesdr.destroy_stream()
         LimeSDR.shutdown_lime_sdr(ctrl_connection)
         ctrl_connection.close()
 
@@ -138,13 +140,24 @@ class LimeSDR(Device):
             pass
 
     @property
+    def current_sent_sample(self):
+        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
+        return self._current_sent_sample.value
+
+    @current_sent_sample.setter
+    def current_sent_sample(self, value: int):
+        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
+        self._current_sent_sample.value = value
+
+
+    @property
     def receive_process_arguments(self):
         return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain
 
     @property
     def send_process_arguments(self):
         return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, \
-               self.samples_to_send, self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+               self.samples_to_send.astype(np.float32), self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

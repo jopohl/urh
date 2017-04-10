@@ -45,18 +45,16 @@ class LimeSDR(Device):
         limesdr.set_channel(channel)
         limesdr.set_tx(is_tx)
         limesdr.enable_channel(True, is_tx, channel)
-        #if is_tx:
-        #    lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime_send.ini")
-        #else:
-        #    lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
-        lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
-        limesdr.load_config(lime_file)
 
+        # TODO: Antenna is hardcoded
+        antenna = 1 if is_tx else 2
+        limesdr.set_antenna(antenna)
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
 
+        limesdr.calibrate(bandwidth)
         antennas = limesdr.get_antenna_list()
         ctrl_conn.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_conn.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))

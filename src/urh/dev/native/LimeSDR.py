@@ -43,10 +43,11 @@ class LimeSDR(Device):
         # TODO Channel 0 currently hardcoded
         limesdr.set_channel(0)
         limesdr.set_tx(is_tx)
-        if is_tx:
-            lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime_send.ini")
-        else:
-            lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
+        #if is_tx:
+        #    lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime_send.ini")
+        #else:
+        #    lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
+        lime_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "lime.ini")
         limesdr.load_config(lime_file)
 
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)

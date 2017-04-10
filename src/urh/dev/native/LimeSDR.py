@@ -15,7 +15,7 @@ class LimeSDR(Device):
     SEND_FIFO_SIZE = 5 * SEND_SAMPLES
 
     LIME_TIMEOUT_RECEIVE_MS = 10
-    LIME_TIMEOUT_SEND_MS = 10
+    LIME_TIMEOUT_SEND_MS = 1000
 
     BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
     DEVICE_LIB = limesdr
@@ -106,8 +106,7 @@ class LimeSDR(Device):
         limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():
-            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
-                                LimeSDR.LIME_TIMEOUT_SEND_MS)
+            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples], LimeSDR.LIME_TIMEOUT_SEND_MS)
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1
@@ -151,7 +150,6 @@ class LimeSDR(Device):
     def current_sent_sample(self, value: int):
         # We can pass samples directly to LimeSDR API and do not need to convert to bytes
         self._current_sent_sample.value = value * 2
-
 
     @property
     def receive_process_arguments(self):

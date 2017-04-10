@@ -443,6 +443,11 @@ cpdef load_config(filename):
     c_filename = <char *> filename_byte_string
     LMS_LoadConfig(_c_device, c_filename)
 
+cpdef save_config(str filename):
+    filename_byte_string = filename.encode('UTF-8')
+    c_filename = <char *> filename_byte_string
+    LMS_SaveConfig(_c_device, c_filename)
+
 cpdef perform_register_test():
     LMS_RegisterTest(_c_device)
     print_last_error()

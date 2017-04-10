@@ -35,7 +35,8 @@ class TestLimeSDR(unittest.TestCase):
 
         path = os.path.realpath(os.path.join(__file__, "..", "..", "src", "urh", "dev", "native", "lime.ini"))
         print(path)
-        limesdr.load_config(path)
+        #limesdr.load_config(path)
+        limesdr.save_config("/tmp/lime_test.ini")
 
         clocks = ["LMS_CLOCK_REF", "LMS_CLOCK_SXR", "LMS_CLOCK_SXT", "LMS_CLOCK_CGEN", "LMS_CLOCK_RXTSP", "LMS_CLOCK_TXTSP"]
 

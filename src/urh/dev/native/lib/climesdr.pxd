@@ -38,6 +38,7 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_GetNumChannels(lms_device_t *device, bool dir_tx)
     int LMS_EnableChannel(lms_device_t *device, bool dir_tx, size_t chan, bool enabled)
 
+    int LMS_SaveConfig(lms_device_t *device, const char *filename)
     int LMS_LoadConfig(lms_device_t *device, const char *filename)
 
     int LMS_SetSampleRate(lms_device_t *device, float_type rate, size_t oversample)

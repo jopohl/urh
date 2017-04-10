@@ -1,8 +1,10 @@
 import math
 
 from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog
 
+from urh import constants
 from urh.models.FuzzingTableModel import FuzzingTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -39,6 +41,11 @@ class FuzzingDialogController(QDialog):
         self.ui.tblFuzzingValues.resize_me()
 
         self.create_connects()
+
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
 
     @property
     def message(self):
@@ -135,6 +142,10 @@ class FuzzingDialogController(QDialog):
         self.ui.lFuzzedBits.setText(self.message_data[fuz_start:fuz_end] + fuzamble)
         self.ui.lPostBits.setText(self.message_data[self.current_label_end:proto_end] + postambel)
         self.set_add_spinboxes_maximum_on_label_change()
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        super().closeEvent(event)
 
     @pyqtSlot(int)
     def on_fuzzing_start_changed(self, value: int):

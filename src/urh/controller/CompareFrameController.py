@@ -209,16 +209,13 @@ class CompareFrameController(QFrame):
         if message:
             errors = message.decoding_errors
             percent = 100 * (errors / len(message))
-            color = "green" if errors == 0 else "red"
-            self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
-            self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%)", (errors, percent)))
-
             state = message.decoding_state if message.decoding_state != message.decoder.ErrorState.SUCCESS else ""
-            self.ui.labelDecodingState.setText(state)
-            self.ui.labelDecodingState.setStyleSheet("color: red")
+            color = "green" if errors == 0 and state == "" else "red"
+
+            self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
+            self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%) %s", (errors, percent, state)))
         else:
             self.ui.lDecodingErrorsValue.setText("")
-            self.ui.labelDecodingState.setText("")
 
             # self.ui.lSupport.setStyleSheet("color: green")
 

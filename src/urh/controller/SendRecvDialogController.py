@@ -94,6 +94,10 @@ class SendRecvDialogController(QDialog):
                           + "\\." + ip_range + "$")
         self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
 
     @property
     def is_rx(self) -> bool:
@@ -582,11 +586,13 @@ class SendRecvDialogController(QDialog):
                                                                        freq_correction=self.device.freq_correction
                                                                        ))
 
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+
         if self.graphics_view is not None:
             self.graphics_view.eliminate()
 
         self.graphics_view = None
-        event.accept()
+        super().closeEvent(event)
 
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):

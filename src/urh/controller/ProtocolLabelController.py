@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView
 
 from urh import constants
@@ -51,6 +51,11 @@ class ProtocolLabelController(QDialog):
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
@@ -66,6 +71,10 @@ class ProtocolLabelController(QDialog):
             event.ignore()
         else:
             event.accept()
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        super().closeEvent(event)
 
     @pyqtSlot()
     def confirm(self):

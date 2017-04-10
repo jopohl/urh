@@ -498,7 +498,10 @@ class SendRecvDialogController(QDialog):
         self.timer.start(self.update_interval)
 
     def update_view(self):
-        self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
+        try:
+            self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
+        except AttributeError:
+            return
 
         txt = self.ui.txtEditErrors.toPlainText()
         new_messages = self.device.read_messages()

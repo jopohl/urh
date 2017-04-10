@@ -6770,7 +6770,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_send_stream(__Pyx_memvie
  *     cdef size_t sample_count = len(samples)
  * 
  *     if len(samples) > 0:             # <<<<<<<<<<<<<<
- *         return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+ *         return LMS_SendStream(&stream, &samples[0], 2*sample_count, &meta, timeout_ms)
  *     else:
  */
   __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_samples, 1, (PyObject *(*)(char *)) __pyx_memview_get_float, (int (*)(char *, PyObject *)) __pyx_memview_set_float, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 448, __pyx_L1_error)
@@ -6783,25 +6783,25 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_send_stream(__Pyx_memvie
     /* "src/urh/dev/native/lib/limesdr.pyx":449
  * 
  *     if len(samples) > 0:
- *         return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)             # <<<<<<<<<<<<<<
+ *         return LMS_SendStream(&stream, &samples[0], 2*sample_count, &meta, timeout_ms)             # <<<<<<<<<<<<<<
  *     else:
  *         return -1
  */
     __pyx_t_4 = 0;
-    __pyx_r = LMS_SendStream((&__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_stream), (&(*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_4)) )))), __pyx_v_sample_count, (&__pyx_v_meta), __pyx_v_timeout_ms);
+    __pyx_r = LMS_SendStream((&__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_stream), (&(*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_4)) )))), (2 * __pyx_v_sample_count), (&__pyx_v_meta), __pyx_v_timeout_ms);
     goto __pyx_L0;
 
     /* "src/urh/dev/native/lib/limesdr.pyx":448
  *     cdef size_t sample_count = len(samples)
  * 
  *     if len(samples) > 0:             # <<<<<<<<<<<<<<
- *         return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+ *         return LMS_SendStream(&stream, &samples[0], 2*sample_count, &meta, timeout_ms)
  *     else:
  */
   }
 
   /* "src/urh/dev/native/lib/limesdr.pyx":451
- *         return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
+ *         return LMS_SendStream(&stream, &samples[0], 2*sample_count, &meta, timeout_ms)
  *     else:
  *         return -1             # <<<<<<<<<<<<<<
  * 

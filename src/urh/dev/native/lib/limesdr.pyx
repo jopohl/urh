@@ -420,7 +420,6 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
     :return: 
     """
     cdef lms_stream_meta_t meta
-    meta.waitForTimestamp = False
     cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))
 
     if not buff:
@@ -444,24 +443,13 @@ cpdef int send_stream(float[::1] samples, unsigned timeout_ms):
     :return: number of samples send on success, (-1) on failure
     """
     cdef lms_stream_meta_t meta
-    meta.waitForTimestamp = False
     cdef size_t sample_count = len(samples)
-    cdef float*buff = <float *> malloc(sample_count * sizeof(float))
-
-    if not buff:
-        raise MemoryError()
-
-    cdef int i
-    for i in range(0, sample_count):
-        buff[i] = samples[i]
 
     if len(samples) > 0:
-        result = LMS_SendStream(&stream, buff, sample_count, &meta, timeout_ms)
+        return LMS_SendStream(&stream, &samples[0], sample_count, &meta, timeout_ms)
     else:
-        result = -1
+        return -1
 
-    free(buff)
-    return result
 cpdef load_config(filename):
     filename_byte_string = filename.encode('UTF-8')
     c_filename = <char *> filename_byte_string

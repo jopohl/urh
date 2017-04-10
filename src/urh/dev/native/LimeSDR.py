@@ -99,7 +99,7 @@ class LimeSDR(Device):
         exit_requested = False
         num_samples = LimeSDR.SEND_SAMPLES
 
-        limesdr.setup_stream(LimeSDR.FIFO_SIZE)
+        limesdr.setup_stream(5*LimeSDR.SEND_SAMPLES)
         limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():

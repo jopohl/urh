@@ -108,11 +108,17 @@ cpdef int enable_channel(bool enabled, bool is_tx, size_t channel):
 cpdef int disable_current_channel():
     return enable_channel(False, IS_TX, CHANNEL)
 
+cpdef enable_all_channels():
+    enable_channel(1, False, 0)
+    enable_channel(1, False, 1)
+    enable_channel(1, True, 0)
+    enable_channel(1, True, 1)
+
 cpdef disable_all_channels():
-    enable_channel(False, False, 0)
-    enable_channel(False, False, 1)
-    enable_channel(False, True, 0)
-    enable_channel(False, True, 1)
+    enable_channel(0, False, 0)
+    enable_channel(0, False, 1)
+    enable_channel(0, True, 0)
+    enable_channel(0, True, 1)
 
 cpdef int set_sample_rate(float_type rate, size_t oversample=0):
     """

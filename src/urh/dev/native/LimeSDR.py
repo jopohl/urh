@@ -1,5 +1,4 @@
 import numpy as np
-import time
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
@@ -13,7 +12,7 @@ class LimeSDR(Device):
     SEND_FIFO_SIZE = 5 * SEND_SAMPLES
 
     LIME_TIMEOUT_RECEIVE_MS = 10
-    LIME_TIMEOUT_SEND_MS = 10
+    LIME_TIMEOUT_SEND_MS = 500
 
     BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
     DEVICE_LIB = limesdr
@@ -116,7 +115,6 @@ class LimeSDR(Device):
                 samples_to_send[current_sent_index.value:current_sent_index.value+num_samples].astype(np.float32),
                 LimeSDR.LIME_TIMEOUT_SEND_MS
             )
-            time.sleep(LimeSDR.LIME_TIMEOUT_SEND_MS/1000)
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1

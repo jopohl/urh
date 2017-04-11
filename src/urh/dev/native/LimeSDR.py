@@ -111,8 +111,10 @@ class LimeSDR(Device):
         limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():
-            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
-                                LimeSDR.LIME_TIMEOUT_SEND_MS)
+            limesdr.send_stream(
+                samples_to_send[current_sent_index.value:current_sent_index.value+num_samples].astype(np.float32),
+                LimeSDR.LIME_TIMEOUT_SEND_MS
+            )
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1

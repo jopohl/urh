@@ -2,6 +2,7 @@ import numpy as np
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
+from urh.util.Logger import logger
 
 
 class LimeSDR(Device):
@@ -107,8 +108,10 @@ class LimeSDR(Device):
         exit_requested = False
         num_samples = LimeSDR.SEND_SAMPLES
 
-        limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
-        limesdr.start_stream()
+        ret = limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
+        logger.debug("LimeSDR: Setup Stream: {}".format(ret))
+        ret = limesdr.start_stream()
+        logger.debug("LimeSDR: Start stream: {}".format(ret))
 
         while not exit_requested and not sending_is_finished():
             limesdr.send_stream(
@@ -129,8 +132,10 @@ class LimeSDR(Device):
                     exit_requested = True
                     break
 
-        limesdr.stop_stream()
-        limesdr.destroy_stream()
+        ret = limesdr.stop_stream()
+        logger.debug("LimeSDR: Stop stream: {}".format(ret))
+        ret = limesdr.destroy_stream()
+        logger.debug("LimeSDR: Destroy stream: {}".format(ret))
         LimeSDR.shutdown_lime_sdr(ctrl_connection)
         ctrl_connection.close()
 

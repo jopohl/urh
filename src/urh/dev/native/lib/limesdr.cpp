@@ -1879,7 +1879,7 @@ static PyObject *__pyx_tuple__32;
  * 
  * cpdef set_tx(bool is_tx):             # <<<<<<<<<<<<<<
  *     global IS_TX
- *     IS_TX = is_tx
+ *     IS_TX = <bool>is_tx
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_1set_tx(PyObject *__pyx_self, PyObject *__pyx_arg_is_tx); /*proto*/
@@ -1891,18 +1891,18 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_tx(bool __pyx_
   /* "src/urh/dev/native/lib/limesdr.pyx":16
  * cpdef set_tx(bool is_tx):
  *     global IS_TX
- *     IS_TX = is_tx             # <<<<<<<<<<<<<<
+ *     IS_TX = <bool>is_tx             # <<<<<<<<<<<<<<
  * 
  * cpdef bool get_tx():
  */
-  __pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_IS_TX = __pyx_v_is_tx;
+  __pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_IS_TX = ((bool)__pyx_v_is_tx);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":14
  * cpdef bool IS_TX = False
  * 
  * cpdef set_tx(bool is_tx):             # <<<<<<<<<<<<<<
  *     global IS_TX
- *     IS_TX = is_tx
+ *     IS_TX = <bool>is_tx
  */
 
   /* function exit code */
@@ -1959,7 +1959,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_set_tx(CYTHON_UNU
 }
 
 /* "src/urh/dev/native/lib/limesdr.pyx":18
- *     IS_TX = is_tx
+ *     IS_TX = <bool>is_tx
  * 
  * cpdef bool get_tx():             # <<<<<<<<<<<<<<
  *     return IS_TX
@@ -1983,7 +1983,7 @@ static bool __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_tx(CYTHON_UNUSED in
   goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/limesdr.pyx":18
- *     IS_TX = is_tx
+ *     IS_TX = <bool>is_tx
  * 
  * cpdef bool get_tx():             # <<<<<<<<<<<<<<
  *     return IS_TX
@@ -2037,7 +2037,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_2get_tx(CYTHON_UN
  * 
  * cpdef set_channel(size_t channel):             # <<<<<<<<<<<<<<
  *     global CHANNEL
- *     CHANNEL = channel
+ *     CHANNEL = <size_t>channel
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_5set_channel(PyObject *__pyx_self, PyObject *__pyx_arg_channel); /*proto*/
@@ -2049,18 +2049,18 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_channel(size_t
   /* "src/urh/dev/native/lib/limesdr.pyx":23
  * cpdef set_channel(size_t channel):
  *     global CHANNEL
- *     CHANNEL = channel             # <<<<<<<<<<<<<<
+ *     CHANNEL = <size_t>channel             # <<<<<<<<<<<<<<
  * 
  * cpdef size_t get_channel():
  */
-  __pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_CHANNEL = __pyx_v_channel;
+  __pyx_v_3src_3urh_3dev_6native_3lib_7limesdr_CHANNEL = ((size_t)__pyx_v_channel);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":21
  *     return IS_TX
  * 
  * cpdef set_channel(size_t channel):             # <<<<<<<<<<<<<<
  *     global CHANNEL
- *     CHANNEL = channel
+ *     CHANNEL = <size_t>channel
  */
 
   /* function exit code */
@@ -2117,7 +2117,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_4set_channel(CYTH
 }
 
 /* "src/urh/dev/native/lib/limesdr.pyx":25
- *     CHANNEL = channel
+ *     CHANNEL = <size_t>channel
  * 
  * cpdef size_t get_channel():             # <<<<<<<<<<<<<<
  *     return CHANNEL
@@ -2141,7 +2141,7 @@ static size_t __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_get_channel(CYTHON_UN
   goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/limesdr.pyx":25
- *     CHANNEL = channel
+ *     CHANNEL = <size_t>channel
  * 
  * cpdef size_t get_channel():             # <<<<<<<<<<<<<<
  *     return CHANNEL

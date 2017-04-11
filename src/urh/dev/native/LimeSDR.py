@@ -52,6 +52,7 @@ class LimeSDR(Device):
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
 
         antennas = limesdr.get_antenna_list()
+        ctrl_conn.send("Current normalized gain is {0:.2f}".format(limesdr.get_normalized_gain()))
         ctrl_conn.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_conn.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))
 
@@ -115,6 +116,7 @@ class LimeSDR(Device):
                 samples_to_send[current_sent_index.value:current_sent_index.value+num_samples].astype(np.float32),
                 LimeSDR.LIME_TIMEOUT_SEND_MS
             )
+            time.sleep(LimeSDR.LIME_TIMEOUT_SEND_MS/1000)
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1

@@ -13,14 +13,14 @@ cpdef bool IS_TX = False
 
 cpdef set_tx(bool is_tx):
     global IS_TX
-    IS_TX = is_tx
+    IS_TX = <bool>is_tx
 
 cpdef bool get_tx():
     return IS_TX
 
 cpdef set_channel(size_t channel):
     global CHANNEL
-    CHANNEL = channel
+    CHANNEL = <size_t>channel
 
 cpdef size_t get_channel():
     return CHANNEL

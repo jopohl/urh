@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
@@ -50,7 +51,6 @@ class LimeSDR(Device):
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
 
-        limesdr.calibrate(bandwidth)
         antennas = limesdr.get_antenna_list()
         ctrl_conn.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_conn.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))

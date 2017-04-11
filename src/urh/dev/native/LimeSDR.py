@@ -29,7 +29,7 @@ class LimeSDR(Device):
     def initialize_limesdr(freq, sample_rate, bandwidth, gain, channel_index, antenna_index, ctrl_conn, is_tx):
         ret = limesdr.open()
         ctrl_conn.send("OPEN:" + str(ret))
-
+        limesdr.disable_all_channels()
         if ret != 0:
             return False
 

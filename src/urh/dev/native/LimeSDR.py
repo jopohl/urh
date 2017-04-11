@@ -115,7 +115,7 @@ class LimeSDR(Device):
 
         while not exit_requested and not sending_is_finished():
             limesdr.send_stream(
-                samples_to_send[current_sent_index.value:current_sent_index.value+num_samples].astype(np.float32),
+                samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
                 LimeSDR.LIME_TIMEOUT_SEND_MS
             )
             current_sent_index.value += num_samples
@@ -152,14 +152,13 @@ class LimeSDR(Device):
 
     @property
     def current_sent_sample(self):
-        # We can pass samples directly to LimeSDR API and do not need to convert to bytes,
-        # however we need to pass float values so we need to divide by 2
-        return self._current_sent_sample.value // 2
+        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
+        return self._current_sent_sample.value
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
         # We can pass samples directly to LimeSDR API and do not need to convert to bytes
-        self._current_sent_sample.value = value * 2
+        self._current_sent_sample.value = value
 
     @property
     def receive_process_arguments(self):
@@ -169,7 +168,7 @@ class LimeSDR(Device):
     @property
     def send_process_arguments(self):
         return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, self.channel_index, \
-               self.antenna_index, self.samples_to_send.view(np.float32), self._current_sent_sample, \
+               self.antenna_index, self.samples_to_send, self._current_sent_sample, \
                self._current_sending_repeat, self.sending_repeats
 
     @staticmethod

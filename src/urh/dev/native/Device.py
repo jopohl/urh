@@ -24,6 +24,8 @@ class Device(QObject):
         SET_BB_GAIN = 6
         SET_DIRECT_SAMPLING_MODE = 7
         SET_FREQUENCY_CORRECTION = 8
+        SET_CHANNEL_INDEX = 9
+        SET_ANTENNA_INDEX = 10
 
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
@@ -71,6 +73,9 @@ class Device(QObject):
         self.__if_gain = if_gain
         self.__baseband_gain = baseband_gain
         self.__sample_rate = sample_rate
+
+        self.__channel_index = 0
+        self.__antenna_index = 0
 
         self.__freq_correction = 0
         self.__direct_sampling_mode = 0
@@ -282,6 +287,38 @@ class Device(QObject):
     def set_device_sample_rate(self, sample_rate):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE.name, int(sample_rate)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def channel_index(self) -> int:
+        return self.__channel_index
+
+    @channel_index.setter
+    def channel_index(self, value: int):
+        if value != self.__channel_index:
+            self.__channel_index = value
+            self.set_device_channel_index(value)
+
+    def set_device_channel_index(self, value):
+        try:
+            self.parent_ctrl_conn.send((self.Command.SET_CHANNEL_INDEX.name, int(value)))
+        except BrokenPipeError:
+            pass
+
+    @property
+    def antenna_index(self):
+        return self.__antenna_index
+
+    @antenna_index.setter
+    def antenna_index(self, value):
+        if value != self.__antenna_index:
+            self.__antenna_index = value
+            self.set_device_antenna_index(value)
+
+    def set_device_antenna_index(self, value):
+        try:
+            self.parent_ctrl_conn.send((self.Command.SET_ANTENNA_INDEX.name, int(value)))
         except BrokenPipeError:
             pass
 

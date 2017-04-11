@@ -51,6 +51,12 @@ DEVICE_CONFIG["LimeSDR"] = {
     "bandwidth": dev_range(start=int(1.4 * M), stop=130 * M, step=1),
     "rx_rf_gain": list(range(0, 101)),  # Normalized Gain 0-100%
     "tx_rf_gain": list(range(0, 101)),  # Normalized Gain 0-100%
+    "rx_channel": ["RX1", "RX2"],
+    "tx_channel": ["TX1", "TX2"],
+    "rx_antenna": ["None", "High (RX_H)", "Low (RX_L)", "Wide (RX_W)"],
+    "rx_antenna_default_index": 2,
+    "tx_antenna": ["None", "Band 1 (TX_1)", "Band 2 (TX_2)"],
+    "tx_antenna_default_index": 1
 }
 
 # http://osmocom.org/projects/sdr/wiki/rtl-sdr

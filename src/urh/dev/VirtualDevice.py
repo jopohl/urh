@@ -187,6 +187,22 @@ class VirtualDevice(QObject):
         self.__dev.sample_rate = value
 
     @property
+    def channel_index(self) -> int:
+        return self.__dev.channel_index
+
+    @channel_index.setter
+    def channel_index(self, value: int):
+        self.__dev.channel_index = value
+
+    @property
+    def antenna_index(self) -> int:
+        return self.__dev.antenna_index
+
+    @antenna_index.setter
+    def antenna_index(self, value: int):
+        self.__dev.antenna_index = value
+
+    @property
     def freq_correction(self):
         return self.__dev.freq_correction
 

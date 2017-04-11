@@ -105,6 +105,9 @@ cpdef int enable_channel(bool enabled, bool is_tx, size_t channel):
     """
     return LMS_EnableChannel(_c_device, is_tx, channel, enabled)
 
+cpdef int disable_current_channel():
+    return enable_channel(False, IS_TX, CHANNEL)
+
 cpdef int set_sample_rate(float_type rate, size_t oversample=0):
     """
     Set sampling rate for all RX/TX channels. Sample rate is in complex samples

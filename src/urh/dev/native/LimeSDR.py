@@ -1,6 +1,3 @@
-import os
-import time
-
 import numpy as np
 
 from urh.dev.native.Device import Device
@@ -23,11 +20,13 @@ class LimeSDR(Device):
     DEVICE_METHODS.update({
         Device.Command.SET_FREQUENCY.name: "set_center_frequency",
         Device.Command.SET_BANDWIDTH.name: "set_lpf_bandwidth",
-        Device.Command.SET_RF_GAIN.name: "set_normalized_gain"
+        Device.Command.SET_RF_GAIN.name: "set_normalized_gain",
+        Device.Command.SET_CHANNEL_INDEX.name: "set_channel",
+        Device.Command.SET_ANTENNA_INDEX.name: "set_antenna"
     })
 
     @staticmethod
-    def initialize_limesdr(freq, sample_rate, bandwidth, gain, ctrl_conn, is_tx):
+    def initialize_limesdr(freq, sample_rate, bandwidth, gain, channel_index, antenna_index, ctrl_conn, is_tx):
         ret = limesdr.open()
         ctrl_conn.send("OPEN:" + str(ret))
 
@@ -40,15 +39,12 @@ class LimeSDR(Device):
         if ret != 0:
             return False
 
-        # TODO Channel 0 currently hardcoded
-        channel = 0
-        limesdr.set_channel(channel)
+        LimeSDR.process_command((LimeSDR.Command.SET_CHANNEL_INDEX.name, channel_index), ctrl_conn, is_tx)
         limesdr.set_tx(is_tx)
-        limesdr.enable_channel(True, is_tx, channel)
+        limesdr.enable_channel(True, is_tx, channel_index)
 
-        # TODO: Antenna is hardcoded
-        antenna = 1 if is_tx else 2
-        limesdr.set_antenna(antenna)
+        # Set Antenna needs to be called before other stuff!!!
+        LimeSDR.process_command((LimeSDR.Command.SET_ANTENNA_INDEX.name, antenna_index), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
@@ -63,17 +59,16 @@ class LimeSDR(Device):
 
     @staticmethod
     def shutdown_lime_sdr(ctrl_conn):
-        limesdr.enable_channel(False, False, 0)
-        limesdr.enable_channel(False, False, 1)
-        limesdr.enable_channel(False, True, 0)
-        limesdr.enable_channel(False, True, 1)
+        limesdr.disable_current_channel()
         ret = limesdr.close()
         ctrl_conn.send("CLOSE:" + str(ret))
         return True
 
     @staticmethod
-    def lime_receive(data_conn, ctrl_conn, frequency: float, sample_rate: float, bandwidth: float, gain: float):
-        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, ctrl_conn, is_tx=False):
+    def lime_receive(data_conn, ctrl_conn, frequency: float, sample_rate: float, bandwidth: float, gain: float,
+                     channel_index: int, antenna_index: int):
+        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, channel_index, antenna_index,
+                                          ctrl_conn, is_tx=False):
             return False
 
         exit_requested = False
@@ -97,6 +92,7 @@ class LimeSDR(Device):
 
     @staticmethod
     def lime_send(ctrl_connection, frequency: float, sample_rate: float, bandwidth: float, gain: float,
+                  channel_index: int, antenna_index: int,
                   samples_to_send, current_sent_index, current_sending_repeat, sending_repeats):
         def sending_is_finished():
             if sending_repeats == 0:  # 0 = infinity
@@ -104,7 +100,8 @@ class LimeSDR(Device):
 
             return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(samples_to_send)
 
-        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, ctrl_connection, is_tx=True):
+        if not LimeSDR.initialize_limesdr(frequency, sample_rate, bandwidth, gain, channel_index, antenna_index,
+                                          ctrl_connection, is_tx=True):
             return False
 
         exit_requested = False
@@ -114,7 +111,8 @@ class LimeSDR(Device):
         limesdr.start_stream()
 
         while not exit_requested and not sending_is_finished():
-            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples], LimeSDR.LIME_TIMEOUT_SEND_MS)
+            limesdr.send_stream(samples_to_send[current_sent_index.value:current_sent_index.value+num_samples],
+                                LimeSDR.LIME_TIMEOUT_SEND_MS)
             current_sent_index.value += num_samples
             if current_sent_index.value >= len(samples_to_send) - 1:
                 current_sending_repeat.value += 1
@@ -143,10 +141,7 @@ class LimeSDR(Device):
         self.send_process_function = LimeSDR.lime_send
 
     def set_device_gain(self, gain):
-        try:
-            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, gain * 0.01))
-        except BrokenPipeError:
-            pass
+        super().set_device_gain(gain * 0.01)
 
     @property
     def current_sent_sample(self):
@@ -161,12 +156,14 @@ class LimeSDR(Device):
 
     @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain
+        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, \
+               self.gain, self.channel_index, self.antenna_index
 
     @property
     def send_process_arguments(self):
-        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, \
-               self.samples_to_send.view(np.float32), self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, self.channel_index, \
+               self.antenna_index, self.samples_to_send.view(np.float32), self._current_sent_sample, \
+               self._current_sending_repeat, self.sending_repeats
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):

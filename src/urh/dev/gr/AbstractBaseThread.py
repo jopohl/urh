@@ -34,6 +34,8 @@ class AbstractBaseThread(QThread):
         self._bandwidth = bandwidth
         self._freq_correction = 1
         self._direct_sampling_mode = 0
+        self._antenna_index = 0
+        self._channel_index = 0
         self._receiving = receiving  # False for Sender-Thread
         self.device_args = ""  # e.g. addr=192.168.10.2
         self.device = "USRP"
@@ -153,6 +155,26 @@ class AbstractBaseThread(QThread):
                 self.tb_process.stdin.flush()
             except BrokenPipeError:
                 pass
+
+    @property
+    def channel_index(self):
+        return self._channel_index
+
+    @channel_index.setter
+    def channel_index(self, value):
+        self._channel_index = value
+        if self.tb_process:
+            raise NotImplementedError()
+
+    @property
+    def antenna_index(self):
+        return self._antenna_index
+
+    @antenna_index.setter
+    def antenna_index(self, value):
+        self._antenna_index = value
+        if self.tb_process:
+            raise NotImplementedError()
 
     @property
     def direct_sampling_mode(self):

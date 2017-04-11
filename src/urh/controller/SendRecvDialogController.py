@@ -3,7 +3,7 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
 from PyQt5.QtGui import QCloseEvent, QRegExpValidator, QIcon, QTransform
-from PyQt5.QtWidgets import QDialog, QGraphicsView, QLabel, QSlider, QSpinBox
+from PyQt5.QtWidgets import QDialog, QGraphicsView, QLabel, QSlider, QSpinBox, QComboBox
 
 from urh import constants
 from urh.dev import config
@@ -234,6 +234,20 @@ class SendRecvDialogController(QDialog):
                 slider.setVisible(False)
             getattr(self.ui, "slider" + ui_element).setVisible(conf_key in conf)
 
+        key_ui_channel_ant_map = {prefix + "antenna": "Antenna", prefix + "channel": "Channel"}
+        for conf_key, ui_element in key_ui_channel_ant_map.items():
+            getattr(self.ui, "label" + ui_element).setVisible(conf_key in conf)
+            combobox = getattr(self.ui, "comboBox" + ui_element)  # type: QComboBox
+            if conf_key in conf:
+                combobox.clear()
+                combobox.addItems(conf[conf_key])
+                if conf_key + "_default_index" in conf:
+                    combobox.setCurrentIndex(conf[conf_key+"_default_index"])
+
+                combobox.setVisible(True)
+            else:
+                combobox.setVisible(False)
+
         self.ui.lineEditDeviceArgs.setVisible("device_args" in conf)
         self.ui.labelDeviceArgs.setVisible("device_args" in conf)
         self.ui.lineEditIP.setVisible("ip" in conf)
@@ -257,6 +271,8 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxNRepeat.setEnabled(enabled)
         self.ui.cbDevice.setEnabled(enabled)
         self.ui.spinBoxPort.setEnabled(enabled)
+        self.ui.comboBoxChannel.setEnabled(enabled)
+        self.ui.comboBoxAntenna.setEnabled(enabled)
 
     def emit_editing_finished_signals(self):
         self.ui.spinBoxFreq.editingFinished.emit()
@@ -270,6 +286,8 @@ class SendRecvDialogController(QDialog):
         self.ui.lineEditIP.editingFinished.emit()
         self.ui.spinBoxPort.editingFinished.emit()
         self.ui.lineEditDeviceArgs.editingFinished.emit()
+        self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
+        self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
 
     def get_devices_for_combobox(self):
         items = []
@@ -322,6 +340,9 @@ class SendRecvDialogController(QDialog):
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
         self.ui.lineEditIP.editingFinished.connect(self.on_line_edit_ip_editing_finished)
         self.ui.lineEditDeviceArgs.editingFinished.connect(self.on_line_edit_device_args_editing_finished)
+
+        self.ui.comboBoxAntenna.currentIndexChanged.connect(self.on_combobox_antenna_current_index_changed)
+        self.ui.comboBoxChannel.currentIndexChanged.connect(self.on_combobox_channel_current_index_changed)
 
         self.ui.spinBoxFreqCorrection.editingFinished.connect(self.on_spinbox_freq_correction_editing_finished)
         self.ui.comboBoxDirectSampling.currentIndexChanged.connect(self.on_combobox_direct_sampling_index_changed)
@@ -386,6 +407,14 @@ class SendRecvDialogController(QDialog):
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):
         self.device.port = self.ui.spinBoxPort.value()
+
+    @pyqtSlot(int)
+    def on_combobox_antenna_current_index_changed(self, index: int):
+        self.device.antenna_index = index
+
+    @pyqtSlot(int)
+    def on_combobox_channel_current_index_changed(self, index: int):
+        self.device.channel_index = index
 
     @pyqtSlot()
     def on_spinbox_freq_correction_editing_finished(self):

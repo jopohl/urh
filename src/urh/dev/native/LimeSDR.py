@@ -59,7 +59,7 @@ class LimeSDR(Device):
 
     @staticmethod
     def shutdown_lime_sdr(ctrl_conn):
-        limesdr.disable_current_channel()
+        limesdr.disable_all_channels()
         ret = limesdr.close()
         ctrl_conn.send("CLOSE:" + str(ret))
         return True

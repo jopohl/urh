@@ -798,7 +798,7 @@ struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7limesdr_open {
 };
 
 /* "src/urh/dev/native/lib/limesdr.pyx":123
- *     enable_channel(0, True, 1)
+ *     enable_channel(False, True, 1)
  * 
  * cpdef int set_sample_rate(float_type rate, size_t oversample=0):             # <<<<<<<<<<<<<<
  *     """
@@ -3289,8 +3289,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_28disable_current
  *     return enable_channel(False, IS_TX, CHANNEL)
  * 
  * cpdef enable_all_channels():             # <<<<<<<<<<<<<<
- *     enable_channel(1, False, 0)
- *     enable_channel(1, False, 1)
+ *     enable_channel(True, False, 0)
+ *     enable_channel(True, False, 1)
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_31enable_all_channels(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -3302,34 +3302,34 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_all_channel
   /* "src/urh/dev/native/lib/limesdr.pyx":112
  * 
  * cpdef enable_all_channels():
- *     enable_channel(1, False, 0)             # <<<<<<<<<<<<<<
- *     enable_channel(1, False, 1)
- *     enable_channel(1, True, 0)
+ *     enable_channel(True, False, 0)             # <<<<<<<<<<<<<<
+ *     enable_channel(True, False, 1)
+ *     enable_channel(True, True, 0)
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(1, 0, 0, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":113
  * cpdef enable_all_channels():
- *     enable_channel(1, False, 0)
- *     enable_channel(1, False, 1)             # <<<<<<<<<<<<<<
- *     enable_channel(1, True, 0)
- *     enable_channel(1, True, 1)
+ *     enable_channel(True, False, 0)
+ *     enable_channel(True, False, 1)             # <<<<<<<<<<<<<<
+ *     enable_channel(True, True, 0)
+ *     enable_channel(True, True, 1)
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(1, 0, 1, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":114
- *     enable_channel(1, False, 0)
- *     enable_channel(1, False, 1)
- *     enable_channel(1, True, 0)             # <<<<<<<<<<<<<<
- *     enable_channel(1, True, 1)
+ *     enable_channel(True, False, 0)
+ *     enable_channel(True, False, 1)
+ *     enable_channel(True, True, 0)             # <<<<<<<<<<<<<<
+ *     enable_channel(True, True, 1)
  * 
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(1, 1, 0, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":115
- *     enable_channel(1, False, 1)
- *     enable_channel(1, True, 0)
- *     enable_channel(1, True, 1)             # <<<<<<<<<<<<<<
+ *     enable_channel(True, False, 1)
+ *     enable_channel(True, True, 0)
+ *     enable_channel(True, True, 1)             # <<<<<<<<<<<<<<
  * 
  * cpdef disable_all_channels():
  */
@@ -3339,8 +3339,8 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_all_channel
  *     return enable_channel(False, IS_TX, CHANNEL)
  * 
  * cpdef enable_all_channels():             # <<<<<<<<<<<<<<
- *     enable_channel(1, False, 0)
- *     enable_channel(1, False, 1)
+ *     enable_channel(True, False, 0)
+ *     enable_channel(True, False, 1)
  */
 
   /* function exit code */
@@ -3387,11 +3387,11 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_30enable_all_chan
 }
 
 /* "src/urh/dev/native/lib/limesdr.pyx":117
- *     enable_channel(1, True, 1)
+ *     enable_channel(True, True, 1)
  * 
  * cpdef disable_all_channels():             # <<<<<<<<<<<<<<
- *     enable_channel(0, False, 0)
- *     enable_channel(0, False, 1)
+ *     enable_channel(False, False, 0)
+ *     enable_channel(False, False, 1)
  */
 
 static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7limesdr_33disable_all_channels(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -3403,45 +3403,45 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_disable_all_channe
   /* "src/urh/dev/native/lib/limesdr.pyx":118
  * 
  * cpdef disable_all_channels():
- *     enable_channel(0, False, 0)             # <<<<<<<<<<<<<<
- *     enable_channel(0, False, 1)
- *     enable_channel(0, True, 0)
+ *     enable_channel(False, False, 0)             # <<<<<<<<<<<<<<
+ *     enable_channel(False, False, 1)
+ *     enable_channel(False, True, 0)
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(0, 0, 0, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":119
  * cpdef disable_all_channels():
- *     enable_channel(0, False, 0)
- *     enable_channel(0, False, 1)             # <<<<<<<<<<<<<<
- *     enable_channel(0, True, 0)
- *     enable_channel(0, True, 1)
+ *     enable_channel(False, False, 0)
+ *     enable_channel(False, False, 1)             # <<<<<<<<<<<<<<
+ *     enable_channel(False, True, 0)
+ *     enable_channel(False, True, 1)
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(0, 0, 1, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":120
- *     enable_channel(0, False, 0)
- *     enable_channel(0, False, 1)
- *     enable_channel(0, True, 0)             # <<<<<<<<<<<<<<
- *     enable_channel(0, True, 1)
+ *     enable_channel(False, False, 0)
+ *     enable_channel(False, False, 1)
+ *     enable_channel(False, True, 0)             # <<<<<<<<<<<<<<
+ *     enable_channel(False, True, 1)
  * 
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(0, 1, 0, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":121
- *     enable_channel(0, False, 1)
- *     enable_channel(0, True, 0)
- *     enable_channel(0, True, 1)             # <<<<<<<<<<<<<<
+ *     enable_channel(False, False, 1)
+ *     enable_channel(False, True, 0)
+ *     enable_channel(False, True, 1)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_sample_rate(float_type rate, size_t oversample=0):
  */
   __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_enable_channel(0, 1, 1, 0);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":117
- *     enable_channel(1, True, 1)
+ *     enable_channel(True, True, 1)
  * 
  * cpdef disable_all_channels():             # <<<<<<<<<<<<<<
- *     enable_channel(0, False, 0)
- *     enable_channel(0, False, 1)
+ *     enable_channel(False, False, 0)
+ *     enable_channel(False, False, 1)
  */
 
   /* function exit code */
@@ -3488,7 +3488,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7limesdr_32disable_all_cha
 }
 
 /* "src/urh/dev/native/lib/limesdr.pyx":123
- *     enable_channel(0, True, 1)
+ *     enable_channel(False, True, 1)
  * 
  * cpdef int set_sample_rate(float_type rate, size_t oversample=0):             # <<<<<<<<<<<<<<
  *     """
@@ -3517,7 +3517,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_7limesdr_set_sample_rate(float_ty
   LMS_SetSampleRate(__pyx_v_3src_3urh_3dev_6native_3lib_7limesdr__c_device, __pyx_v_rate, __pyx_v_oversample);
 
   /* "src/urh/dev/native/lib/limesdr.pyx":123
- *     enable_channel(0, True, 1)
+ *     enable_channel(False, True, 1)
  * 
  * cpdef int set_sample_rate(float_type rate, size_t oversample=0):             # <<<<<<<<<<<<<<
  *     """

@@ -393,6 +393,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_base_functions_current_row_changed(self, index: int):
         if self.ui.basefunctions.currentItem().text() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(0)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -401,6 +402,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_additional_functions_current_row_changed(self, index: int):
         if self.ui.additionalfunctions.currentItem() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(1)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -605,8 +607,8 @@ class DecoderWidgetController(QDialog):
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
                    "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
                    "Example:\n" \
-                   "- Cut before '1010' would delete everything before first '1010' bits.\n"
-
+                   "- Cut before '1010' would delete everything before first '1010' bits.\n" \
+                   "- Cut before Position = 3 (in bit) would delete the first three bits.\n"
             self.ui.optionWidget.setCurrentIndex(6)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:

@@ -192,7 +192,10 @@ class Encoder(object):
         elements = string.split(";")
         for i in elements:
             if len(i):
-                tsrc, tdst = i.split(":")
+                try:
+                    tsrc, tdst = i.split(":")
+                except ValueError:
+                    return [src, dst]
                 src.append(self.str2bit(tsrc))
                 dst.append(self.str2bit(tdst))
         return [src, dst]

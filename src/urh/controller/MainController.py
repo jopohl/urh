@@ -459,9 +459,17 @@ class MainController(QMainWindow):
             return
 
         for i, file_path in enumerate(recent_file_paths):
-            suffix = " (Directory)" if os.path.isdir(file_path) else ""
-            stripped_name = QFileInfo(file_path).fileName() + suffix
-            self.recentFileActionList[i].setText(stripped_name)
+            if os.path.isdir(file_path):
+                head, tail = os.path.split(file_path)
+                display_text = tail
+                head, tail = os.path.split(head)
+                if tail:
+                    display_text = tail + "/" + display_text
+                display_text = "Directory: " + display_text
+            else:
+                display_text = os.path.basename(file_path)
+
+            self.recentFileActionList[i].setText(display_text)
             self.recentFileActionList[i].setData(file_path)
             self.recentFileActionList[i].setVisible(True)
 

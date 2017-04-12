@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QWheelEvent
 
 from urh.FFTSceneManager import FFTSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
@@ -46,6 +47,7 @@ class SpectrumDialogController(SendRecvDialogController):
     def create_connects(self):
         super().create_connects()
         self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
+        self.graphics_view.wheel_event_triggered.connect(self.on_graphics_view_wheel_event_triggered)
 
     def update_view(self):
         if super().update_view():
@@ -63,6 +65,10 @@ class SpectrumDialogController(SendRecvDialogController):
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.spectrum,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
+
+    @pyqtSlot(QWheelEvent)
+    def on_graphics_view_wheel_event_triggered(self, event: QWheelEvent):
+        self.ui.sliderYscale.wheelEvent(event)
 
     @pyqtSlot(float)
     def on_graphics_view_freq_clicked(self, freq: float):

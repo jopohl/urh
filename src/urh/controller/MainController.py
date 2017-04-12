@@ -465,7 +465,9 @@ class MainController(QMainWindow):
                 head, tail = os.path.split(head)
                 if tail:
                     display_text = tail + "/" + display_text
-                display_text = "Directory: " + display_text
+
+                self.recentFileActionList[i].setIcon(QIcon.fromTheme("folder"))
+
             else:
                 display_text = os.path.basename(file_path)
 

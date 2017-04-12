@@ -617,13 +617,17 @@ class DecoderWidgetController(QDialog):
                 self.ui.rB_delafter.setChecked(False)
                 self.ui.rB_delbeforepos.setChecked(False)
                 self.ui.rB_delafterpos.setChecked(False)
+                self.ui.cutmark.setEnabled(False)
+                self.ui.cutmark2.setEnabled(False)
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
                         self.ui.cutmark.setText("1010")
+                        self.ui.cutmark.setEnabled(True)
                         self.old_cutmark = self.ui.cutmark.text()
                         self.ui.cutmark2.setValue(1)
+                        self.ui.cutmark2.setEnabled(False)
                         self.ui.rB_delbefore.setChecked(True)
                         self.ui.rB_delafter.setChecked(False)
                         self.ui.rB_delbeforepos.setChecked(False)

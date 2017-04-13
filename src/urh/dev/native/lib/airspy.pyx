@@ -12,18 +12,19 @@ cpdef open_by_serial(uint64_t serial_number):
     return cairspy.airspy_open_sn(&_c_device, serial_number)
 
 cpdef open():
-    return cairspy.airspy_open(_c_device)
+    return cairspy.airspy_open(&_c_device)
 
 cpdef close():
     return cairspy.airspy_close(_c_device)
 
 cpdef array.array get_sample_rates():
     cdef uint32_t count = 0
-    cairspy.airspy_get_samplerates(_c_device, &count, 0)
+    result = cairspy.airspy_get_samplerates(_c_device, &count, 0)
+    if result != cairspy.airspy_error.AIRSPY_SUCCESS:
+        return array.array('I', [])
 
     cdef array.array sample_rates = array.array('I', [0]*count)
-    # todo: Maybe we need & sample_rates.data.as_uints[0], check when airspy arrived
-    result = cairspy.airspy_get_samplerates(_c_device, sample_rates.data.as_uints[0], 0)
+    result = cairspy.airspy_get_samplerates(_c_device, &sample_rates.data.as_uints[0], count)
 
     if result == cairspy.airspy_error.AIRSPY_SUCCESS:
         return sample_rates

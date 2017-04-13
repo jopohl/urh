@@ -1,12 +1,20 @@
 cimport cairspy
 from cpython cimport array
 import array
+# noinspection PyUnresolvedReferences
+from cython.view cimport array as cvarray  # needed for converting of malloc array to python array
 
 ctypedef unsigned char uint8_t
 ctypedef unsigned int uint32_t
 ctypedef unsigned long long uint64_t
 
 cdef cairspy.airspy_device* _c_device
+cdef object f
+
+cdef int _c_callback_recv(cairspy.airspy_transfer*transfer)  with gil:
+    global f
+    (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
+    return 0
 
 cpdef open_by_serial(uint64_t serial_number):
     return cairspy.airspy_open_sn(&_c_device, serial_number)
@@ -61,9 +69,12 @@ cpdef int set_vga_gain(uint8_t vga_gain):
     """
     return cairspy.airspy_set_vga_gain(_c_device, vga_gain)
 
-cpdef int start_rx():
+cpdef int start_rx(callback):
+    global f
+    f = callback
+
     cairspy.airspy_set_sample_type(_c_device, cairspy.airspy_sample_type.AIRSPY_SAMPLE_FLOAT32_IQ)
-    pass # todo
+    cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
 
 cpdef int stop_rx():
     return cairspy.airspy_stop_rx(_c_device)

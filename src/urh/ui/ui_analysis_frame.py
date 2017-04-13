@@ -496,8 +496,7 @@ class Ui_FAnalysis(object):
         self.btnSaveProto.setText(_translate("FAnalysis", "Save current protocol..."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("FAnalysis", "Protocols"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("FAnalysis", "Participants"))
-        self.cbProtoView.setToolTip(
-            _translate("FAnalysis", "<html><head/><body><p>Set the desired view here.</p></body></html>"))
+        self.cbProtoView.setToolTip(_translate("FAnalysis", "<html><head/><body><p>Set the desired view here.</p></body></html>"))
         self.cbProtoView.setItemText(0, _translate("FAnalysis", "Bits"))
         self.cbProtoView.setItemText(1, _translate("FAnalysis", "Hex"))
         self.cbProtoView.setItemText(2, _translate("FAnalysis", "ASCII"))

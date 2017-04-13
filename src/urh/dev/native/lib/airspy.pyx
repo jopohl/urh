@@ -67,6 +67,6 @@ cpdef int start_rx():
 cpdef int stop_rx():
     return cairspy.airspy_stop_rx(_c_device)
 
-cpdef error_name(cairspy.airspy_error error_code):
+cpdef str error_name(cairspy.airspy_error error_code):
     cdef const char* c_error_name = cairspy.airspy_error_name(error_code)
     return c_error_name.decode('UTF-8')

@@ -1,6 +1,7 @@
 import unittest
 from urh.dev.native.lib import airspy
 
+
 class TestAirSpy(unittest.TestCase):
     def test_cython_wrapper(self):
         result = airspy.open()
@@ -24,7 +25,7 @@ class TestAirSpy(unittest.TestCase):
         result = airspy.set_vga_gain(10)
         print("Set vga gain", airspy.error_name(result), result)
 
-        result = airspy.start_rx()
+        result = airspy.start_rx(print)
         print("Set start rx", airspy.error_name(result), result)
 
         result = airspy.stop_rx()

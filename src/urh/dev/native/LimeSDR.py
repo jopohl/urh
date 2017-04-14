@@ -48,6 +48,7 @@ class LimeSDR(Device):
         LimeSDR.process_command((LimeSDR.Command.SET_ANTENNA_INDEX.name, antenna_index), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_FREQUENCY.name, freq), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_conn, is_tx)
+        ctrl_conn.send("Setting bandwidth...")
         LimeSDR.process_command((LimeSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_conn, is_tx)
         LimeSDR.process_command((LimeSDR.Command.SET_RF_GAIN.name, gain * 0.01), ctrl_conn, is_tx)
 

@@ -74,8 +74,10 @@ class LimeSDR(Device):
 
         exit_requested = False
 
+        ctrl_conn.send("Initializing stream...")
         limesdr.setup_stream(LimeSDR.RECV_FIFO_SIZE)
-        limesdr.start_stream()
+        ret = limesdr.start_stream()
+        ctrl_conn.send("Initialize stream:{0}".format(ret))
 
         while not exit_requested:
             limesdr.recv_stream(data_conn, LimeSDR.READ_SAMPLES, LimeSDR.LIME_TIMEOUT_RECEIVE_MS)
@@ -108,10 +110,10 @@ class LimeSDR(Device):
         exit_requested = False
         num_samples = LimeSDR.SEND_SAMPLES
 
-        ret = limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
-        logger.debug("LimeSDR: Setup Stream: {}".format(ret))
+        ctrl_connection.send("Initializing stream...")
+        limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
         ret = limesdr.start_stream()
-        logger.debug("LimeSDR: Start stream: {}".format(ret))
+        ctrl_connection.send("Initialize stream:{0}".format(ret))
 
         while not exit_requested and not sending_is_finished():
             limesdr.send_stream(

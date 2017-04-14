@@ -367,7 +367,6 @@ class SendRecvDialogController(QDialog):
         self.ui.lSignalSize.setText("0")
         self.ui.lTime.setText("0")
         self.ui.lblCurrentRepeatValue.setText("-")
-        self.scene_manager.set_text("")
         self.ui.progressBar.setValue(0)
         self.ui.btnClear.setEnabled(False)
         self.ui.btnSave.setEnabled(False)
@@ -508,13 +507,11 @@ class SendRecvDialogController(QDialog):
         self.set_bandwidth_status()
 
         self.timer.stop()
-        self.scene_manager.set_text("")
         self.update_view()
 
     @pyqtSlot()
     def on_device_started(self):
         self.ui.txtEditErrors.clear()
-        #self.scene_manager.set_text("Waiting for device..")
         if self.graphics_view is not None:
             self.graphics_view.capturing_data = True
         self.ui.btnSave.setEnabled(False)

@@ -17,7 +17,6 @@ class SceneManager(QObject):
         self.scene = ZoomableScene()
         self.plot_data = None  # type: np.ndarray
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
-        self.text_item = self.scene.addText("", QFont("Helvetica"))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
 
@@ -57,8 +56,6 @@ class SceneManager(QObject):
         self.show_scene_section(0, self.num_samples)
 
     def init_scene(self, apply_padding=True):
-        self.set_text("")
-
         if self.num_samples == 0:
             return
 
@@ -87,16 +84,9 @@ class SceneManager(QObject):
                 item.setParentItem(None)
                 del item
 
-    def set_text(self, text):
-        try:
-            self.text_item.setPlainText(text)
-        except AttributeError:
-            logger.info("SceneManager: Could not set text item")
-
     def eliminate(self):
         self.plot_data = None
         self.line_item = None
-        self.text_item = None
         self.scene.clear()
         self.scene.setParent(None)
 

@@ -400,6 +400,7 @@ cpdef int setup_stream(uint32_t fifo_size):
     stream.channel = <uint32_t> CHANNEL
     stream.fifoSize = fifo_size
     stream.dataFmt = dataFmt_t.LMS_FMT_F32
+    stream.throughputVsLatency = 0.0  # optimize for minimum latency
 
     return LMS_SetupStream(_c_device, &stream)
 

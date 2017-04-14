@@ -106,11 +106,6 @@ cpdef set_baseband_gain(value):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_vga_gain(_c_device, value)
 
-cpdef set_antenna_enable(value):
-    time.sleep(TIMEOUT)
-    cdef bint val = 1 if value else 0
-    return chackrf.hackrf_set_antenna_enable(_c_device, val)
-
 cpdef set_sample_rate(sample_rate):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)

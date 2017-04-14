@@ -90,6 +90,9 @@ class VirtualDevice(QObject):
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
                     self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                elif name == "limesdr":
+                    from urh.dev.native.LimeSDR import LimeSDR
+                    self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
             elif name == "test":
@@ -102,7 +105,7 @@ class VirtualDevice(QObject):
             self.__dev.device_ip = device_ip
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
-                self.__dev.init_send_parameters(samples_to_send, sending_repeats, skip_device_parameters=True)
+                self.__dev.init_send_parameters(samples_to_send, sending_repeats)
         elif self.backend == Backends.network:
             self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode, spectrum=self.mode == Mode.spectrum)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
@@ -184,6 +187,22 @@ class VirtualDevice(QObject):
         self.__dev.sample_rate = value
 
     @property
+    def channel_index(self) -> int:
+        return self.__dev.channel_index
+
+    @channel_index.setter
+    def channel_index(self, value: int):
+        self.__dev.channel_index = value
+
+    @property
+    def antenna_index(self) -> int:
+        return self.__dev.antenna_index
+
+    @antenna_index.setter
+    def antenna_index(self, value: int):
+        self.__dev.antenna_index = value
+
+    @property
     def freq_correction(self):
         return self.__dev.freq_correction
 
@@ -213,7 +232,7 @@ class VirtualDevice(QObject):
         if self.backend == Backends.grc:
             self.__dev.data = value
         elif self.backend == Backends.native:
-            self.__dev.init_send_parameters(value, self.num_sending_repeats, skip_device_parameters=True)
+            self.__dev.init_send_parameters(value, self.num_sending_repeats)
         elif self.backend == Backends.network:
             self.__dev.samples_to_send = value
         else:

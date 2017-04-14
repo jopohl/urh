@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from urh import constants
 from urh.cythonext import path_creator, util
 from urh.ui.ZoomableScene import ZoomableScene
+from urh.util.Logger import logger
 
 
 class SceneManager(QObject):
@@ -87,7 +88,10 @@ class SceneManager(QObject):
                 del item
 
     def set_text(self, text):
-        self.text_item.setPlainText(text)
+        try:
+            self.text_item.setPlainText(text)
+        except AttributeError:
+            logger.info("SceneManager: Could not set text item")
 
     def eliminate(self):
         self.plot_data = None

@@ -75,7 +75,9 @@ def get_package_data():
 
     # Bundle headers
     package_data["urh.dev.native.includes"] = ["*.h"]
-    package_data["urh.dev.native.includes.libhackrf"] = ["*.h"]
+    for dirpath, dirnames, filenames in os.walk("src/urh/dev/native/includes"):
+        for dir_name in dirnames:
+            package_data["urh.dev.native.includes."+dir_name] = ["*.h"]
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows

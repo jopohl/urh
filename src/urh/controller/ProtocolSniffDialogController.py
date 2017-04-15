@@ -38,6 +38,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
 
+        self.setWindowTitle(self.tr("Sniff protocol"))
+
         self.create_connects()
 
     def create_connects(self):

@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh.LiveSceneManager import LiveSceneManager
@@ -49,6 +49,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.setWindowTitle(self.tr("Sniff protocol"))
 
+        self.clear_timer = QTimer()
+        self.clear_timer.setInterval(5000)
+
         self.create_connects()
 
     @property
@@ -72,6 +75,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def create_connects(self):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
+
+        self.clear_timer.timeout.connect(self.on_clear_timer_timeout)
 
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
         self.sniffer.qt_signals.sniff_device_errors_changed.connect(self.on_device_errors_changed)
@@ -115,12 +120,19 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
-        self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
+        self.scene_manager.plot_data = self.device.data.real if hasattr(self.device.data, "real") else None
 
         super().on_device_started()
 
         self.ui.btnStart.setEnabled(False)
         self.set_device_ui_items_enabled(False)
+
+        self.clear_timer.start()
+
+    @pyqtSlot()
+    def on_device_stopped(self):
+        super().on_device_stopped()
+        self.clear_timer.stop()
 
     @pyqtSlot()
     def on_noise_edited(self):
@@ -202,3 +214,11 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def on_line_edit_output_file_text_changed(self, text: str):
         self.sniffer.sniff_file = text
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))
+
+    @pyqtSlot()
+    def on_clear_timer_timeout(self):
+        self.device.current_index = 0
+        self.scene_manager.end = self.device.current_index
+        self.scene_manager.init_scene()
+        self.scene_manager.show_full_scene()
+        self.graphics_view.update()

@@ -92,6 +92,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.combox_sniff_Modulation.currentIndexChanged.connect(self.on_modulation_changed)
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.lineEdit_sniff_OutputFile.textChanged.connect(self.on_line_edit_output_file_text_changed)
+        self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
 
     def set_device_ui_items_visibility(self, device_name: str):
         super().set_device_ui_items_visibility(device_name)
@@ -141,22 +142,27 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_noise_edited(self):
         self.sniffer.signal._noise_threshold = self.ui.spinbox_sniff_Noise.value()
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot()
     def on_center_edited(self):
         self.sniffer.signal.qad_center = self.ui.spinbox_sniff_Center.value()
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot()
     def on_bit_len_edited(self):
         self.sniffer.signal.bit_len = self.ui.spinbox_sniff_BitLen.value()
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot()
     def on_tolerance_edited(self):
         self.sniffer.signal.tolerance = self.ui.spinbox_sniff_ErrorTolerance.value()
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot(int)
     def on_modulation_changed(self, new_index: int):
         self.sniffer.signal.silent_set_modulation_type(new_index)
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -168,27 +174,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.sniffer.stop()
 
     @pyqtSlot()
-    def on_sniffer_rcv_stopped(self):
-        self.ui.btnStart.setEnabled(True)
-        self.ui.btnStop.setEnabled(False)
-        self.ui.btnClear.setEnabled(True)
-
-        self.ui.spinBoxSampleRate.setEnabled(True)
-        self.ui.spinBoxFreq.setEnabled(True)
-        self.ui.lineEditIP.setEnabled(True)
-        self.ui.spinBoxBandwidth.setEnabled(True)
-        self.ui.spinBoxGain.setEnabled(True)
-        self.ui.cbDevice.setEnabled(True)
-
-        self.ui.spinbox_sniff_Noise.setEnabled(True)
-        self.ui.spinbox_sniff_Center.setEnabled(True)
-        self.ui.spinbox_sniff_BitLen.setEnabled(True)
-        self.ui.spinbox_sniff_ErrorTolerance.setEnabled(True)
-        self.ui.combox_sniff_Modulation.setEnabled(True)
-
-
-
-    @pyqtSlot()
     def on_clear_clicked(self):
         self.ui.btnClear.setEnabled(False)
         self.ui.txtEd_sniff_Preview.clear()
@@ -196,14 +181,14 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        new_data = self.sniffer.plain_to_string(self.view_type, start=from_index, show_pauses=False)
+        new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index)
         if new_data.strip():
             self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
             self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)
     def on_view_type_changed(self, new_index: int):
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.plain_to_string(new_index, show_pauses=False))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(new_index))
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):
@@ -226,3 +211,10 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.scene_manager.init_scene()
         self.scene_manager.show_full_scene()
         self.graphics_view.update()
+
+    @pyqtSlot(int)
+    def on_combobox_sniff_encoding_index_changed(self, index: int):
+        if self.sniffer.decoder != self.encodings[index]:
+            self.sniffer.set_decoder_for_messages(self.encodings[index])
+            self.sniffer.decoder = self.encodings[index]
+            self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))

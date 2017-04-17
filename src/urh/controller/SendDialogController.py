@@ -17,7 +17,6 @@ class SendDialogController(SendRecvDialogController):
     def __init__(self, project_manager, modulated_data, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 
-        self.update_interval = 25
         self.graphics_view = self.ui.graphicsViewSend
         self.ui.stackedWidget.setCurrentIndex(1)
         self.hide_receive_ui_items()

@@ -23,6 +23,8 @@ class SendRecvDialogController(QDialog):
     def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
         super().__init__(parent)
         self.is_tx = is_tx
+        self.update_interval = 25
+
 
         self.testing_mode = testing_mode
 

@@ -12,7 +12,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     protocol_accepted = pyqtSignal(list)
 
     def __init__(self, project_manager, noise,
-                 center, bit_length, tolerance, modulation_type_index,
+                 center, bit_length, tolerance, modulation_type_index, encodings,
                  parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
@@ -51,6 +51,10 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.clear_timer = QTimer()
         self.clear_timer.setInterval(5000)
+
+        self.encodings = encodings
+        for encoding in self.encodings:
+            self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
         self.create_connects()
 

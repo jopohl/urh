@@ -36,20 +36,13 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-189</y>
          <width>387</width>
-         <height>1083</height>
+         <height>1111</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="0">
-         <widget class="QLabel" name="labelChannel">
-          <property name="text">
-           <string>Channel:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="22" column="0" colspan="2">
+        <item row="23" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string/>
@@ -412,6 +405,13 @@
           </layout>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelChannel">
+          <property name="text">
+           <string>Channel:</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="cbDevice">
           <item>
@@ -570,6 +570,13 @@
           </property>
          </widget>
         </item>
+        <item row="10" column="2">
+         <widget class="QSpinBox" name="spinBoxIFGain">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
         <item row="9" column="1">
          <widget class="QSlider" name="sliderGain">
           <property name="toolTip">
@@ -602,10 +609,10 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="2">
-         <widget class="QSpinBox" name="spinBoxIFGain">
+        <item row="11" column="2">
+         <widget class="QSpinBox" name="spinBoxBasebandGain">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -626,13 +633,6 @@
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="2">
-         <widget class="QSpinBox" name="spinBoxBasebandGain">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -755,6 +755,13 @@
           </property>
          </widget>
         </item>
+        <item row="24" column="0" colspan="3">
+         <widget class="QTextEdit" name="txtEditErrors">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item row="16" column="1">
          <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
           <property name="decimals">
@@ -772,13 +779,6 @@
          <widget class="QLabel" name="label_sniff_Noise">
           <property name="text">
            <string>Noise:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="23" column="0" colspan="3">
-         <widget class="QTextEdit" name="txtEditErrors">
-          <property name="readOnly">
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -818,23 +818,6 @@
           </item>
          </widget>
         </item>
-        <item row="18" column="1">
-         <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
-          <property name="maximum">
-           <number>999999</number>
-          </property>
-          <property name="value">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
-        <item row="19" column="0">
-         <widget class="QLabel" name="label_sniff_Modulation">
-          <property name="text">
-           <string>Modulation:</string>
-          </property>
-         </widget>
-        </item>
         <item row="20" column="1">
          <widget class="QComboBox" name="comboBox_sniff_viewtype">
           <item>
@@ -854,6 +837,23 @@
           </item>
          </widget>
         </item>
+        <item row="18" column="1">
+         <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
+          <property name="maximum">
+           <number>999999</number>
+          </property>
+          <property name="value">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="19" column="0">
+         <widget class="QLabel" name="label_sniff_Modulation">
+          <property name="text">
+           <string>Modulation:</string>
+          </property>
+         </widget>
+        </item>
         <item row="20" column="0">
          <widget class="QLabel" name="label_sniff_viewtype">
           <property name="text">
@@ -861,7 +861,7 @@
           </property>
          </widget>
         </item>
-        <item row="21" column="1">
+        <item row="22" column="1">
          <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
           <property name="readOnly">
            <bool>false</bool>
@@ -874,7 +874,10 @@
           </property>
          </widget>
         </item>
-        <item row="21" column="0">
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxChannel"/>
+        </item>
+        <item row="22" column="0">
          <widget class="QLabel" name="label_sniff_OutputFile">
           <property name="text">
            <string>Output file:</string>
@@ -888,8 +891,8 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="comboBoxChannel"/>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="comboBoxAntenna"/>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="labelAntenna">
@@ -898,8 +901,15 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QComboBox" name="comboBoxAntenna"/>
+        <item row="21" column="0">
+         <widget class="QLabel" name="label_sniff_encoding">
+          <property name="text">
+           <string>Encoding:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="21" column="1">
+         <widget class="QComboBox" name="comboBox_sniff_encoding"/>
         </item>
        </layout>
       </widget>

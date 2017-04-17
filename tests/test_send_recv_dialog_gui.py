@@ -55,6 +55,7 @@ class TestSendRecvDialog(QtTestCase):
                                                      self.signal.qad_center,
                                                      self.signal.bit_len, self.signal.tolerance,
                                                      self.signal.modulation_type,
+                                                     self.form.compare_frame_controller.decodings,
                                                      testing_mode=True, parent=self.form)
         if self.SHOW:
             sniff_dialog.show()

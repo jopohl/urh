@@ -960,6 +960,9 @@
          <widget class="QWidget" name="page">
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
+            <widget class="LiveGraphicView" name="graphicsView_sniff_Preview"/>
+           </item>
+           <item>
             <widget class="QPlainTextEdit" name="txtEd_sniff_Preview">
              <property name="lineWrapMode">
               <enum>QPlainTextEdit::NoWrap</enum>

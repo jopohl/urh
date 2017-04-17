@@ -278,6 +278,13 @@ class MainController(QMainWindow):
         self.refresh_main_menu()
         self.unsetCursor()
 
+    def close_protocol(self, protocol):
+        self.compare_frame_controller.remove_protocol(protocol)
+        # Needs to be removed in generator also, otherwise program crashes,
+        # if item from tree in generator is selected and corresponding signal is closed
+        self.generator_tab_controller.tree_model.remove_protocol(protocol)
+        protocol.eliminate()
+
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
@@ -287,12 +294,7 @@ class MainController(QMainWindow):
                 proto = None
 
             if proto is not None:
-                self.compare_frame_controller.remove_protocol(proto)
-                # Needs to be removed in generator also, otherwise program crashes,
-                # if item from tree in generator is selected and corresponding signal is closed
-                self.generator_tab_controller.tree_model.remove_protocol(proto)
-
-                proto.eliminate()
+                self.close_protocol(proto)
                 del self.signal_protocol_dict[signal_frame]
 
             if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
@@ -727,12 +729,14 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):
-        frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
-        if len(frames) != len(protocols):
-            logger.error("failed to close {} protocols".format(len(protocols) - len(frames)))
+        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols}
 
-        for frame in frames:
+        for frame in frame_protos:
             self.close_signal_frame(frame)
+
+        for proto in (proto for proto in protocols if proto not in frame_protos.values()):
+            # close protocols without associated signal frame
+            self.close_protocol(proto)
 
     @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):

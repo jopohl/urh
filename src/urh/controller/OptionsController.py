@@ -402,6 +402,11 @@ class OptionsController(QDialog):
                                                                  "</font>"
                                                                  "Run URH as root (<b>sudo urh</b>) "
                                                                  "and try again.".format(new_natives, s)))
+            try:
+                os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
+            except OSError:
+                pass
+
 
     @staticmethod
     def write_default_options():

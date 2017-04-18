@@ -612,10 +612,12 @@ class MainController(QMainWindow):
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                             self.compare_frame_controller.decodings, parent=self)
+
         if psd.has_empty_device_list:
             Errors.no_device()
             psd.close()
         else:
+            psd.recording_parameters.connect(pm.set_recording_parameters)
             psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
             psd.show()
 

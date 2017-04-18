@@ -22,7 +22,7 @@ class Ui_SendRecvDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, -189, 387, 1111))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 387, 1111))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -567,6 +567,7 @@ class Ui_SendRecvDialog(object):
         self.labelAntenna.setText(_translate("SendRecvDialog", "Antenna:"))
         self.label_sniff_encoding.setText(_translate("SendRecvDialog", "Encoding:"))
         self.label_7.setText(_translate("SendRecvDialog", "Hint: You can edit the raw signal before sending."))
+        self.btnAccept.setToolTip(_translate("SendRecvDialog", "<html><head/><body><p>Accept the sniffed data and load it into <span style=\" font-weight:600;\">Analysis</span> tab.</p></body></html>"))
         self.btnAccept.setText(_translate("SendRecvDialog", "Accept data"))
         self.label_y_scale.setText(_translate("SendRecvDialog", "Y-Scale"))
 

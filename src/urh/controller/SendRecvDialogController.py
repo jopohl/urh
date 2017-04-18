@@ -23,6 +23,8 @@ class SendRecvDialogController(QDialog):
     def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
         super().__init__(parent)
         self.is_tx = is_tx
+        self.update_interval = 25
+
 
         self.testing_mode = testing_mode
 
@@ -566,7 +568,7 @@ class SendRecvDialogController(QDialog):
         self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 
-        if self.is_rx and self.device.data is not None:
+        if self.is_rx and self.device.data is not None and len(self.device.data) > 0:
             self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index /
                                                                      len(self.device.data))))
 
@@ -621,6 +623,9 @@ class SendRecvDialogController(QDialog):
                                                                        ))
 
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+
+        if self.device is not None:
+            self.device.data = None
 
         if self.graphics_view is not None:
             self.graphics_view.eliminate()

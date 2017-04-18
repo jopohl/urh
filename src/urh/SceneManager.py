@@ -15,12 +15,20 @@ class SceneManager(QObject):
     def __init__(self, parent):
         super().__init__(parent)
         self.scene = ZoomableScene()
-        self.plot_data = None  # type: np.ndarray
+        self.__plot_data = None  # type: np.ndarray
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
 
         self.padding = 1.25
+
+    @property
+    def plot_data(self):
+        return self.__plot_data
+
+    @plot_data.setter
+    def plot_data(self, value):
+        self.__plot_data = value
 
     @property
     def num_samples(self):

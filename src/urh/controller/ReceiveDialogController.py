@@ -18,8 +18,6 @@ class ReceiveDialogController(SendRecvDialogController):
         except ValueError:
             return
 
-        self.update_interval = 25
-
         self.graphics_view = self.ui.graphicsViewReceive
         self.ui.stackedWidget.setCurrentIndex(0)
         self.hide_send_ui_items()

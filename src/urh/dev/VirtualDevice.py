@@ -28,8 +28,7 @@ class VirtualDevice(QObject):
     sender_needs_restart = pyqtSignal()
 
     def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
-                 gain=None, if_gain=None, baseband_gain=None,
-                 samples_to_send=None,
+                 gain=None, if_gain=None, baseband_gain=None, samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
         super().__init__(parent)
         self.name = name
@@ -95,6 +94,7 @@ class VirtualDevice(QObject):
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
+
             elif name == "test":
                 # For Unittests Only
                 self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)
@@ -310,7 +310,7 @@ class VirtualDevice(QObject):
             else:
                 self.__dev.receive_buffer = value
         else:
-            raise ValueError("Unsupported Backend")
+            logger.warning("{}:{} has no data".format(self.__class__.__name__, self.backend.name))
 
     def free_data(self):
         if self.backend == Backends.grc:

@@ -79,7 +79,6 @@ class Device(QObject):
 
         self.__freq_correction = 0
         self.__direct_sampling_mode = 0
-
         self.bandwidth_is_adjustable = True
 
         self._current_sent_sample = Value("L", 0)
@@ -457,7 +456,6 @@ class Device(QObject):
                             if nsamples >= len(self.receive_buffer):
                                 #logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples - len(self.receive_buffer)))
                                 nsamples = len(self.receive_buffer) - 1
-
                         else:
                             self.stop_rx_mode(
                                 "Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples,

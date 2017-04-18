@@ -36,7 +36,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-189</y>
+         <y>0</y>
          <width>387</width>
          <height>1111</height>
         </rect>
@@ -987,6 +987,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="btnAccept">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the sniffed data and load it into &lt;span style=&quot; font-weight:600;&quot;&gt;Analysis&lt;/span&gt; tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Accept data</string>
              </property>

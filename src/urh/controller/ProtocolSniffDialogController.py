@@ -2,6 +2,7 @@ import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
+from urh import constants
 from urh.LiveSceneManager import LiveSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -57,6 +58,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
         self.create_connects()
+
+        self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 
     @property
     def device(self):

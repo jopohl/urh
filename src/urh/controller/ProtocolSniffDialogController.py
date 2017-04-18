@@ -172,6 +172,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def on_clear_clicked(self):
         self.ui.btnClear.setEnabled(False)
         self.ui.txtEd_sniff_Preview.clear()
+        self.scene_manager.clear_path()
+        self.device.current_index = 0
         self.sniffer.clear()
 
     @pyqtSlot(int)

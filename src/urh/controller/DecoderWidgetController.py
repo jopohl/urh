@@ -393,6 +393,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_base_functions_current_row_changed(self, index: int):
         if self.ui.basefunctions.currentItem().text() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(0)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -401,6 +402,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_additional_functions_current_row_changed(self, index: int):
         if self.ui.additionalfunctions.currentItem() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(1)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -605,8 +607,8 @@ class DecoderWidgetController(QDialog):
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
                    "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
                    "Example:\n" \
-                   "- Cut before '1010' would delete everything before first '1010' bits.\n"
-
+                   "- Cut before '1010' would delete everything before first '1010' bits.\n" \
+                   "- Cut before Position = 3 (in bit) would delete the first three bits.\n"
             self.ui.optionWidget.setCurrentIndex(6)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
@@ -617,13 +619,17 @@ class DecoderWidgetController(QDialog):
                 self.ui.rB_delafter.setChecked(False)
                 self.ui.rB_delbeforepos.setChecked(False)
                 self.ui.rB_delafterpos.setChecked(False)
+                self.ui.cutmark.setEnabled(False)
+                self.ui.cutmark2.setEnabled(False)
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
                         self.ui.cutmark.setText("1010")
+                        self.ui.cutmark.setEnabled(True)
                         self.old_cutmark = self.ui.cutmark.text()
                         self.ui.cutmark2.setValue(1)
+                        self.ui.cutmark2.setEnabled(False)
                         self.ui.rB_delbefore.setChecked(True)
                         self.ui.rB_delafter.setChecked(False)
                         self.ui.rB_delbeforepos.setChecked(False)

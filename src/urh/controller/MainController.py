@@ -2,7 +2,7 @@ import copy
 import os
 import traceback
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
+from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication, QCheckBox
@@ -24,6 +24,7 @@ from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
 from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_main import Ui_MainWindow
@@ -208,14 +209,27 @@ class MainController(QMainWindow):
             self.recentFileActionList.append(recent_file_action)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
-    def add_protocol_file(self, filename):
+    def add_plain_bits_from_txt(self, filename: str):
+        protocol = ProtocolAnalyzer(None)
+        protocol.filename = filename
+        with open(filename) as f:
+            for line in f:
+                protocol.messages.append(Message.from_plain_bits_str(line.strip(), {}))
 
+        self.compare_frame_controller.add_protocol(protocol)
+        self.compare_frame_controller.refresh()
+        self.__add_empty_frame_for_filename(protocol, filename)
+
+    def __add_empty_frame_for_filename(self, protocol: ProtocolAnalyzer, filename: str):
+        sf = self.signal_tab_controller.add_empty_frame(filename, protocol)
+        self.signal_protocol_dict[sf] = protocol
+        self.set_frame_numbers()
+        self.file_proxy_model.open_files.add(filename)
+
+    def add_protocol_file(self, filename):
         proto = self.compare_frame_controller.add_protocol_from_file(filename)
         if proto:
-            sf = self.signal_tab_controller.add_empty_frame(filename, proto)
-            self.signal_protocol_dict[sf] = proto
-            self.set_frame_numbers()
-            self.file_proxy_model.open_files.add(filename)
+            self.__add_empty_frame_for_filename(proto, filename)
 
     def add_fuzz_profile(self, filename):
         self.ui.tabWidget.setCurrentIndex(2)
@@ -285,6 +299,13 @@ class MainController(QMainWindow):
         self.refresh_main_menu()
         self.unsetCursor()
 
+    def close_protocol(self, protocol):
+        self.compare_frame_controller.remove_protocol(protocol)
+        # Needs to be removed in generator also, otherwise program crashes,
+        # if item from tree in generator is selected and corresponding signal is closed
+        self.generator_tab_controller.tree_model.remove_protocol(protocol)
+        protocol.eliminate()
+
     def close_signal_frame(self, signal_frame: SignalFrameController):
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
@@ -294,12 +315,7 @@ class MainController(QMainWindow):
                 proto = None
 
             if proto is not None:
-                self.compare_frame_controller.remove_protocol(proto)
-                # Needs to be removed in generator also, otherwise program crashes,
-                # if item from tree in generator is selected and corresponding signal is closed
-                self.generator_tab_controller.tree_model.remove_protocol(proto)
-
-                proto.eliminate()
+                self.close_protocol(proto)
                 del self.signal_protocol_dict[signal_frame]
 
             if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
@@ -354,6 +370,8 @@ class MainController(QMainWindow):
                 self.add_signalfile(file, group_id)
             elif file_extension == ".fuzz":
                 self.add_fuzz_profile(file)
+            elif file_extension == ".txt":
+                self.add_plain_bits_from_txt(file)
             else:
                 self.add_signalfile(file, group_id)
 
@@ -467,9 +485,19 @@ class MainController(QMainWindow):
             return
 
         for i, file_path in enumerate(recent_file_paths):
-            suffix = " (Directory)" if os.path.isdir(file_path) else ""
-            stripped_name = QFileInfo(file_path).fileName() + suffix
-            self.recentFileActionList[i].setText(stripped_name)
+            if os.path.isdir(file_path):
+                head, tail = os.path.split(file_path)
+                display_text = tail
+                head, tail = os.path.split(head)
+                if tail:
+                    display_text = tail + "/" + display_text
+
+                self.recentFileActionList[i].setIcon(QIcon.fromTheme("folder"))
+
+            else:
+                display_text = os.path.basename(file_path)
+
+            self.recentFileActionList[i].setText(display_text)
             self.recentFileActionList[i].setData(file_path)
             self.recentFileActionList[i].setVisible(True)
 
@@ -606,11 +634,16 @@ class MainController(QMainWindow):
             noise = 0.001
             center = 0.02
 
-        psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type, parent=self)
+        psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
+                                            self.compare_frame_controller.decodings,
+                                            encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
+                                            parent=self)
+
         if psd.has_empty_device_list:
             Errors.no_device()
             psd.close()
         else:
+            psd.recording_parameters.connect(pm.set_recording_parameters)
             psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
             psd.show()
 
@@ -725,12 +758,14 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):
-        frames = [sframe for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols]
-        if len(frames) != len(protocols):
-            logger.error("failed to close {} protocols".format(len(protocols) - len(frames)))
+        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols}
 
-        for frame in frames:
+        for frame in frame_protos:
             self.close_signal_frame(frame)
+
+        for proto in (proto for proto in protocols if proto not in frame_protos.values()):
+            # close protocols without associated signal frame
+            self.close_protocol(proto)
 
     @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):

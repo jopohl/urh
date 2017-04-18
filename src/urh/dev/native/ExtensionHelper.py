@@ -14,6 +14,7 @@ USE_RELATIVE_PATHS = False
 
 DEVICES = {
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+    "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
 }
 
@@ -94,10 +95,21 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
                     get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
         else:
             print("\nSkipping native support for {1}\n".format(params["lib"], dev_name))
+
+        # remove Temp file for checking
         try:
-            os.remove("a.out")  # Temp file for checking
+            os.remove("a.out")
         except OSError:
             pass
+
+        for filename in os.listdir(tempfile.gettempdir()):
+            dev_name = dev_name.replace("_fallback", "")
+            func_names = [DEVICES[dev_name]["test_function"]]
+            if dev_name in FALLBACKS:
+                func_names.append(FALLBACKS[dev_name]["test_function"])
+
+            if any(filename.startswith(func_name) for func_name in func_names) and filename.endswith(".c"):
+                os.remove(os.path.join(tempfile.gettempdir(), filename))
 
     return result
 

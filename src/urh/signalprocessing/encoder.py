@@ -192,9 +192,12 @@ class Encoder(object):
         elements = string.split(";")
         for i in elements:
             if len(i):
-                tsrc, tdst = i.split(":")
-                src.append(self.str2bit(tsrc))
-                dst.append(self.str2bit(tdst))
+                try:
+                    tsrc, tdst = i.split(":")
+                    src.append(self.str2bit(tsrc))
+                    dst.append(self.str2bit(tdst))
+                except (ValueError, AttributeError):
+                    pass
         return [src, dst]
 
     def get_subst_string(self, inpt):

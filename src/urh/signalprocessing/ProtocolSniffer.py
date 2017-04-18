@@ -49,15 +49,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.__sniff_file = ""
         self.__store_data = True
 
-    def plain_to_string(self, view: int, show_pauses=True, start=0) -> str:
-        """
-
-        :param start: First message to begin with
-        :param show_pauses: Show pauses in output?
-        :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
-        """
-        return '\n'.join(msg.view_to_string(view, False, show_pauses) for
-                         msg in self.messages[start:])
+    def decoded_to_string(self, view: int, start=0):
+        return '\n'.join(msg.view_to_string(view, decoded=True, show_pauses=False) for msg in self.messages[start:])
 
     @property
     def sniff_file(self):
@@ -77,8 +70,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive,
-                                            device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
+            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
+                                            is_ringbuffer=False, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
@@ -96,7 +89,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
             for bit_str in self.rcv_device.data:
-                self.messages.append(Message.from_plain_bits_str(bit_str, {}))
+                msg = Message.from_plain_bits_str(bit_str, {})
+                msg.decoder = self.decoder
+                self.messages.append(msg)
 
             self.rcv_device.free_data()  # do not store received bits twice
 
@@ -150,7 +145,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
                 rssi = np.mean(np.abs(signal._fulldata[start:end]))
-                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type)
+                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type,
+                                  decoder=self.decoder)
                 self.messages.append(message)
                 first_msg = False
             else:

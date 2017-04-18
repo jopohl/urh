@@ -74,7 +74,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "RTL-TCP", "FUNcube-Dongle", "SDRPlay", "AirSpy")
+    DEVICE_NAMES = ("AirSpy", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
 
     def __init__(self):
 
@@ -112,6 +112,14 @@ class BackendHandler(object):
     def __usrp_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import uhd
+            return True
+        except ImportError:
+            return False
+
+    @property
+    def __lime_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import limesdr
             return True
         except ImportError:
             return False
@@ -173,6 +181,10 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
+            backends.add(Backends.native)
+
+        if devname.lower() == "limesdr" and self.__lime_native_enabled:
+            supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:

@@ -6,8 +6,8 @@ import time
 import os
 import sys
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QPalette, QIcon
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
 locale.setlocale(locale.LC_ALL, '')
@@ -74,7 +74,7 @@ def main():
     from urh.controller.MainController import MainController
     from urh import constants
 
-    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+    if constants.SETTINGS.value("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(sys.argv)
@@ -86,8 +86,31 @@ def main():
 
     constants.SETTINGS.setValue("default_theme", app.style().objectName())
 
-    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+    if constants.SETTINGS.value("theme_index", 0, int) > 0:
         app.setStyle(QStyleFactory.create("Fusion"))
+
+        if constants.SETTINGS.value("theme_index", 0, int) == 2:
+            palette = QPalette()
+            background_color = QColor(56, 60, 74)
+            text_color = QColor(211, 218, 227).lighter()
+            palette.setColor(QPalette.Window, background_color)
+            palette.setColor(QPalette.WindowText, text_color)
+            palette.setColor(QPalette.Base, background_color)
+            palette.setColor(QPalette.AlternateBase, background_color)
+            palette.setColor(QPalette.ToolTipBase, background_color)
+            palette.setColor(QPalette.ToolTipText, text_color)
+            palette.setColor(QPalette.Text, text_color)
+
+            palette.setColor(QPalette.Button, background_color)
+            palette.setColor(QPalette.ButtonText, text_color)
+
+            palette.setColor(QPalette.BrightText, Qt.red)
+            palette.setColor(QPalette.Disabled, QPalette.Text, Qt.darkGray)
+            palette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.darkGray)
+
+            palette.setColor(QPalette.Highlight, QColor(200, 50, 0))
+            palette.setColor(QPalette.HighlightedText, text_color)
+            app.setPalette(palette)
 
     main_window = MainController()
 

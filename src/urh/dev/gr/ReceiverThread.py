@@ -1,6 +1,8 @@
 
 import numpy as np
 import psutil
+import time
+
 from urh import constants
 import zmq
 from PyQt5.QtCore import pyqtSignal
@@ -37,7 +39,6 @@ class ReceiverThread(AbstractBaseThread):
 
         try:
             while not self.isInterruptionRequested():
-
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
                 except (zmq.error.ContextTerminated, ConnectionResetError):
@@ -56,22 +57,22 @@ class ReceiverThread(AbstractBaseThread):
                 try:
                     tmp = np.fromstring(rcvd, dtype=np.complex64)
 
-                    len_tmp = len(tmp)
+                    num_samples = len(tmp)
                     if self.data is None:
                         # seems to be sometimes None in rare cases
                         self.init_recv_buffer()
 
-                    if self.current_index + len_tmp >= len(self.data):
+                    if self.current_index + num_samples >= len(self.data):
                         if self.is_ringbuffer:
                             self.current_index = 0
-                            if len_tmp >= len(self.data):
+                            if num_samples >= len(self.data):
                                 self.stop("Receiving buffer too small.")
                         else:
                             self.stop("Receiving Buffer is full.")
                             return
-                    self.data[self.current_index:self.current_index + len_tmp] = tmp
-                    self.current_index += len_tmp
-                    self.index_changed.emit(self.current_index - len_tmp,
+                    self.data[self.current_index:self.current_index + num_samples] = tmp
+                    self.current_index += num_samples
+                    self.index_changed.emit(self.current_index - num_samples,
                                             self.current_index)
 
                     rcvd = b""

@@ -32,14 +32,6 @@ class TestHackRF(unittest.TestCase):
 
         return 0
 
-    def test_set_rx(self):
-        hackrf.setup()
-        hackrf.set_freq(433.92e6)
-        print(hackrf.is_streaming())
-        hackrf.start_rx_mode(self.callback_fun)
-        time.sleep(1)
-        hackrf.stop_rx_mode()
-
     def test_fromstring(self):
         buffer = b'\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe'
         r = np.empty(len(buffer) // 2, dtype=np.float32)
@@ -116,3 +108,7 @@ class TestHackRF(unittest.TestCase):
 
         packed = HackRF.pack_complex(unpacked)
         self.assertEqual(received, packed)
+
+
+if __name__ == "__main__":
+    unittest.main()

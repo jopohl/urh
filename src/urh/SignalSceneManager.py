@@ -10,7 +10,6 @@ class SignalSceneManager(SceneManager):
     def __init__(self, signal: Signal, parent):
         super().__init__(parent)
         self.signal = signal
-        self.text_item = self.scene.addText("Loading...", QFont("Helvetica"))
         self.scene_type = 0  # 0 = Analog Signal, 1 = QuadDemodView
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):

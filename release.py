@@ -36,10 +36,18 @@ def cleanup():
     shutil.rmtree(os.path.join(script_dir, "src", "urh.egg-info"), ignore_errors=True)
     shutil.rmtree(os.path.join(script_dir, "src", "urh", "tmp"), ignore_errors=True)
 
-def release():
-    open("/tmp/urh_releasing", "w").close()
 
+def release():
     script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
+    os.chdir(script_dir)
+
+    current_branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("UTF-8").strip()
+
+    if current_branch != "master":
+        print("You can only release from master!")
+        sys.exit(1)
+
+    open("/tmp/urh_releasing", "w").close()
 
     from src.urh import version
     version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))
@@ -53,7 +61,6 @@ def release():
         f.write('VERSION = "{0}" \n'.format(cur_version))
 
     # Publish new version number
-    os.chdir(script_dir)
     call(["git", "add", version_file])
     call(["git", "commit", "-m", "version" + cur_version])
     call(["git", "push"])

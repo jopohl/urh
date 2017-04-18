@@ -40,8 +40,7 @@ class OptionsController(QDialog):
         self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
         self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
 
-        self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
-        self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
+        self.ui.comboBoxTheme.setCurrentIndex(constants.SETTINGS.value("theme_index", 0, int))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(
             not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
@@ -124,7 +123,7 @@ class OptionsController(QDialog):
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
         self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
-        self.ui.checkBoxFallBackTheme.clicked.connect(self.on_checkbox_fallback_theme_clicked)
+        self.ui.comboBoxTheme.currentIndexChanged.connect(self.on_combo_box_theme_index_changed)
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
         self.ui.checkBoxAlignLabels.clicked.connect(self.on_checkbox_align_labels_clicked)
@@ -296,16 +295,16 @@ class OptionsController(QDialog):
         constants.SETTINGS.setValue("ram_threshold", val / 100)
 
     @pyqtSlot(bool)
-    def on_checkbox_fallback_theme_clicked(self, use_fallback: bool):
-        constants.SETTINGS.setValue('use_fallback_theme', use_fallback)
-        if use_fallback:
+    def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
+        constants.SETTINGS.setValue("not_show_close_dialog", not checked)
+
+    @pyqtSlot(int)
+    def on_combo_box_theme_index_changed(self, index: int):
+        constants.SETTINGS.setValue('theme_index', index)
+        if index > 0:
             QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
         else:
             QApplication.instance().setStyle(constants.SETTINGS.value("default_theme", type=str))
-
-    @pyqtSlot(bool)
-    def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
-        constants.SETTINGS.setValue("not_show_close_dialog", not checked)
 
     @pyqtSlot(bool)
     def on_checkbox_hold_shift_to_drag_clicked(self, checked: bool):
@@ -403,6 +402,11 @@ class OptionsController(QDialog):
                                                                  "</font>"
                                                                  "Run URH as root (<b>sudo urh</b>) "
                                                                  "and try again.".format(new_natives, s)))
+            try:
+                os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
+            except OSError:
+                pass
+
 
     @staticmethod
     def write_default_options():

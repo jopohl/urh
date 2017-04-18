@@ -13,7 +13,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     protocol_accepted = pyqtSignal(list)
 
     def __init__(self, project_manager, noise,
-                 center, bit_length, tolerance, modulation_type_index, encodings,
+                 center, bit_length, tolerance, modulation_type_index, encodings, encoding_index=0,
                  parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
@@ -58,6 +58,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
         self.create_connects()
+
+        if encoding_index > -1:
+            self.ui.comboBox_sniff_encoding.setCurrentIndex(encoding_index)
 
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 

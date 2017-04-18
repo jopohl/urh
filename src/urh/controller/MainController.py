@@ -611,7 +611,9 @@ class MainController(QMainWindow):
             center = 0.02
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
-                                            self.compare_frame_controller.decodings, parent=self)
+                                            self.compare_frame_controller.decodings,
+                                            encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
+                                            parent=self)
 
         if psd.has_empty_device_list:
             Errors.no_device()

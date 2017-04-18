@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh import constants
+from urh.ContinuousSceneManager import ContinuousSceneManager
 from urh.LiveSceneManager import LiveSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -106,10 +107,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def init_device(self):
         dev_name = self.ui.cbDevice.currentText()
         self.sniffer.device_name = dev_name
-        self.sniffer.rcv_device.data = np.zeros(5 * 10**6, dtype=np.complex64)
 
         self._create_device_connects()
-        self.scene_manager = LiveSceneManager(np.array([]), parent=self)
+        self.scene_manager = ContinuousSceneManager(np.array([]), parent=self)
 
     def emit_editing_finished_signals(self):
         super().emit_editing_finished_signals()
@@ -127,7 +127,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
-        self.scene_manager.plot_data = self.device.data.real if hasattr(self.device.data, "real") else None
+        self.scene_manager.data_array = self.device.data.real if hasattr(self.device.data, "real") else None
 
         super().on_device_started()
 

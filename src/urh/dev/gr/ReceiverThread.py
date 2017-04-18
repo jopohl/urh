@@ -67,8 +67,6 @@ class ReceiverThread(AbstractBaseThread):
                             self.current_index = 0
                             if num_samples >= len(self.data):
                                 self.stop("Receiving buffer too small.")
-                        elif self.continuous_mode:
-                            self.current_index = 0
                         else:
                             self.stop("Receiving Buffer is full.")
                             return

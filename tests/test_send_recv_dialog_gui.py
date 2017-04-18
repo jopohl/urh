@@ -186,6 +186,7 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        sniff_dialog.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
         port = self.__get_free_port()
 
@@ -206,12 +207,13 @@ class TestSendRecvDialog(QtTestCase):
             self.assertEqual(received, orig + "0" * pad)
 
         sniff_dialog.ui.btnStop.click()
-        target_file = os.path.join(QDir.tempPath(), "sniff_file")
+        target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
         self.assertFalse(os.path.isfile(target_file))
 
         sniff_dialog.ui.btnClear.click()
         QApplication.instance().processEvents()
         sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
+        sniff_dialog.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
         sniff_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())

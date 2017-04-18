@@ -83,7 +83,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 else:
                     lbl.type = None
 
-                self.protol_label_updated.emit(lbl)
+                self.protocol_label_updated.emit(lbl)
 
         return True
 

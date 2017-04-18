@@ -1,20 +1,26 @@
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent
-from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor
-from PyQt5.QtCore import QRectF, Qt
+from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor, QBrush
+from PyQt5.QtCore import QRectF, Qt, QLineF
 
 from urh import constants
 
 from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.signalprocessing.SimulatorRule import SimulatorRule
 
-class SimulatorGraphicsItem(QGraphicsObject):
-    def __init__(self, model_item: SimulatorItem, parent=None):
+class GraphicsItem(QGraphicsObject):
+    def __init__(self, model_item: SimulatorItem, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False, parent=None):
         super().__init__(parent)
         self.model_item = model_item
-        self.setFlags(QGraphicsItem.ItemIsSelectable)
+
+        self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
+
+        self.setAcceptHoverEvents(accept_hover_events)
+        self.setAcceptDrops(accept_drops)
+
         self.hover_active = False
         self.drag_over = False
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
+
         self.bounding_rect = QRectF()
         self.drop_indicator_position = None
         self.item_under_mouse = None
@@ -48,94 +54,35 @@ class SimulatorGraphicsItem(QGraphicsObject):
     def dragMoveEvent(self, event: QDropEvent):
         self.update_drop_indicator(event.pos())
 
-    def find_scene_item(self, model_item):
-        if model_item is None:
-            return None
+    def get_scene_children(self):
+        return [self.scene().model_to_scene(child) for child in self.model_item.children]
 
-        for item in self.childItems():
-            if isinstance(item, SimulatorGraphicsItem):
-                if item.model_item == model_item:
-                    return item
+    def is_selectable(self):
+        return self.flags() & QGraphicsItem.ItemIsSelectable
 
-        print("WHOOPS: Item not found ... :(")
-        return None
-
-    def is_last_item(self):
-        return self == self.scene().get_last_item()
-
-    def is_first_item(self):
-        return self == self.scene().get_first_item()
-
-    def next_sibling(self):
-        result = None
-    
-        if self.parentItem() is None:
-            sim_items = self.scene().sim_items
-        else:
-            sim_items = self.parentItem().sim_items
-
-        index = sim_items.index(self)
-
-        if index < len(sim_items) - 1:
-            result = sim_items[index + 1]
-
-        if isinstance(result, RuleItem):
-            result = result.conditions[0]
-
-        return result
-
-    def prev_sibling(self):
-        result = None
-
-        if self.parentItem() is None:
-            sim_items = self.scene().sim_items
-        else:
-            sim_items = self.parentItem().sim_items
-
-        index = sim_items.index(self)
-
-        if index > 0:
-            result = sim_items[index - 1]
-
-        if isinstance(result, RuleItem):
-            result = result.conditions[-1]
-
-        return result
+    def is_movable(self):
+        return self.flags() & QGraphicsItem.ItemIsMovable
 
     def next(self):
-        if self.children():
-            return self.children()[0]
+        if not self.scene():
+            return None
 
-        curr = self
+        item = self.model_item.next()
 
-        while True:
-            if curr.next_sibling() is not None:
-                return curr.next_sibling()
+        # jump over SimulatorRule item as there is no graphical representation
+        if isinstance(item, SimulatorRule):
+            item = item.next()
 
-            curr = curr.parentItem()
-
-            if curr is None or isinstance(curr, RuleItem):
-                return None
+        return self.scene().model_to_scene(item)
 
     def prev(self):
-        parent = self.parentItem()
+        item = self.model_item.prev()
 
-        curr = self
+        # jump over SimulatorRule item as there is no graphical representation
+        if isinstance(item, SimulatorRule):
+            item = item.prev()
 
-        while True:
-            if curr.prev_sibling() is not None:
-                curr = curr.prev_sibling()
-                break
-            else:
-                return parent
-
-        while curr.children():
-            curr = curr.children()[-1]
-
-        return curr
-
-    def children(self):
-        return []
+        return self.scene().model_to_scene(item)
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -181,7 +128,12 @@ class SimulatorGraphicsItem(QGraphicsObject):
         self.number.setPlainText(self.index)
 
     def mouseMoveEvent(self, event):
-        items = [item for item in self.scene().items(event.scenePos()) if isinstance(item, SimulatorGraphicsItem) and item != self]
+        items = []
+
+        for item in self.scene().items(event.scenePos()):
+            if isinstance(item, GraphicsItem) and item != self and item.acceptDrops():
+                items.append(item)
+
         item = None if len(items) == 0 else items[0]
 
         if self.item_under_mouse and self.item_under_mouse != item:
@@ -203,15 +155,20 @@ class SimulatorGraphicsItem(QGraphicsObject):
         if self.item_under_mouse:
             self.item_under_mouse.dragLeaveEvent(None)
             self.item_under_mouse.setSelected(False)
-            selected_items = self.scene().cut_selected_messages()
+            drag_nodes = self.scene().get_drag_nodes()
 
             ref_item = self.item_under_mouse
             position = self.item_under_mouse.drop_indicator_position
 
-            for item in selected_items:
-                self.scene().insert_at(ref_item, position, item)
-                ref_item = item
-                position = QAbstractItemView.BelowItem
+            new_pos, new_parent = self.scene().insert_at(ref_item, position)
+
+            for drag_node in drag_nodes:
+                if (drag_node.model_item.parent() is new_parent and
+                        drag_node.model_item.get_pos() < new_pos):
+                    new_pos -= 1
+
+                self.scene().move_item(drag_node, new_pos, new_parent)
+                new_pos += 1
                 
             self.item_under_mouse = None
 

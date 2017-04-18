@@ -1,4 +1,4 @@
-from urh.signalprocessing.SimulatorGraphicsItem import SimulatorGraphicsItem
+from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
@@ -7,9 +7,9 @@ from urh import constants
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QGraphicsTextItem
 
-class LabelItem(SimulatorGraphicsItem):
-    def __init__(self, model_item: SimulatorProtocolLabel, parent: MessageItem):
-        super().__init__(model_item, parent)
+class LabelItem(GraphicsItem):
+    def __init__(self, model_item: SimulatorProtocolLabel, parent: MessageItem=None):
+        super().__init__(model_item, parent=parent)
         assert isinstance(model_item, SimulatorProtocolLabel)
         assert isinstance(parent, MessageItem)
 
@@ -24,6 +24,8 @@ class LabelItem(SimulatorGraphicsItem):
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())
+
+        super().paint(painter, option, widget)
 
     def boundingRect(self):
         return self.childrenBoundingRect()

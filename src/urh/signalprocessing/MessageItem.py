@@ -1,4 +1,4 @@
-from urh.signalprocessing.SimulatorGraphicsItem import SimulatorGraphicsItem
+from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.UnlabeledRangeItem import UnlabeledRangeItem
 
@@ -8,12 +8,11 @@ from PyQt5.QtGui import QPen, QPolygonF
 
 import math
 
-class MessageItem(SimulatorGraphicsItem):
+class MessageItem(GraphicsItem):
     def __init__(self, source, destination, model_item: SimulatorItem, parent=None):
-        super().__init__(model_item, parent)
+        super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True, parent=parent)
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
 
         self.arrow = MessageArrowItem(self)
 
@@ -43,10 +42,10 @@ class MessageItem(SimulatorGraphicsItem):
                     result.append(unlabeled_range_items[i])
                     i += 1
 
-                result.append(self.find_scene_item(lbl))
+                result.append(self.scene().model_to_scene(lbl))
                 start = lbl.end
 
-            if start < len(message) - 1:
+            if start < len(message):
                 result.append(unlabeled_range_items[i])
 
         return result
@@ -54,9 +53,7 @@ class MessageItem(SimulatorGraphicsItem):
     def refresh_unlabeled_range_marker(self):
         msg = self.model_item
 
-        for item in self.childItems():
-            if isinstance(item, UnlabeledRangeItem):
-                self.scene().removeItem(item)
+        urm = [item for item in self.childItems() if isinstance(item, UnlabeledRangeItem)]
 
         if len(msg):
             num_unlabeled_ranges = len(msg.message_type.unlabeled_ranges)
@@ -66,8 +63,12 @@ class MessageItem(SimulatorGraphicsItem):
         else:
             num_unlabeled_ranges = 0
 
-        for _ in range(num_unlabeled_ranges):
-            UnlabeledRangeItem(self)
+        if len(urm) < num_unlabeled_ranges:
+            for i in range(num_unlabeled_ranges - len(urm)):
+                UnlabeledRangeItem(self)
+        else:
+            for i in range(len(urm) - num_unlabeled_ranges):
+                self.scene().removeItem(urm[i])
 
     def update_position(self, x_pos, y_pos):
         labels = self.labels()

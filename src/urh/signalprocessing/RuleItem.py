@@ -1,86 +1,41 @@
-from enum import Enum
+from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QAbstractItemView
+from PyQt5.QtCore import Qt, QRectF, QLineF
+from PyQt5.QtGui import QFontDatabase, QFont, QPen
 
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem
-from PyQt5.QtCore import Qt, QRectF
+from urh.signalprocessing.GraphicsItem import GraphicsItem
+from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.signalprocessing.SimulatorRule import ConditionType
 
-from urh.signalprocessing.SimulatorGraphicsItem import SimulatorGraphicsItem
+from urh import constants
 
-class ConditionType(Enum):
-    IF = "if ..."
-    ELSE_IF = "else if ..."
-    ELSE = "else"
+class RuleItem(GraphicsItem):
+    def __init__(self, model_item: SimulatorItem, parent=None):
+        super().__init__(model_item=model_item, parent=parent)
 
-class RuleItem(QGraphicsItem):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.conditions = []
         self.bounding_rect = QRectF()
-        self.conditions.append(RuleConditionItem(ConditionType.IF, self))
 
     def has_else_condition(self):
-        return len([cond for cond in self.conditions if cond.type is ConditionType.ELSE]) == 1
-
-    def get_all_items(self):
-        items = []
-
-        for cond in self.conditions:
-            items.append(cond)
-            items.extend(cond.sim_items)
-
-        return items
-
-    def cut_selected_messages(self):
-        messages = []
-
-        for cond in self.conditions:
-            for item in cond.sim_items[:]:
-                if item.isSelected():
-                    messages.append(item)
-                    cond.sim_items.remove(item)
-
-        return messages
+        return self.model_item.has_else_condition()
 
     def update_numbering(self, index):
         sub_index = 1
 
-        for cond in self.conditions:
-            cond.update_numbering(index + "." + str(sub_index))
+        for child in self.get_scene_children():
+            child.update_numbering(index + "." + str(sub_index))
             sub_index += 1
 
-    def add_else_cond(self):
-        self.conditions.append(RuleConditionItem(ConditionType.ELSE, self))
-
-    def add_else_if_cond(self):
-        if self.has_else_condition():
-            self.conditions.insert(-1, RuleConditionItem(ConditionType.ELSE_IF, self))
-        else:
-            self.conditions.append(RuleConditionItem(ConditionType.ELSE_IF, self))
-
     def setSelected(self, selected):
-        for condition in self.conditions:
-            condition.setSelected(selected)
+        for child in self.get_scene_children():
+            child.setSelected(selected)
 
-    def delete_items(self, items):
-        for condition in self.conditions[:]:
-            if condition in items and condition.type == ConditionType.IF:
-                self.scene().sim_items.remove(self)
-                self.scene().removeItem(self)
-                return
-            elif condition in items:
-                self.conditions.remove(condition)
-                self.scene().removeItem(condition)
-            else:
-                condition.delete_items(items)
-
-    def refresh(self, x_pos, y_pos):
+    def update_position(self, x_pos, y_pos):
         self.setPos(x_pos - 20, y_pos)
 
         start_y = 0
 
-        for cond in self.conditions:
-            cond.refresh(0, start_y)
-            start_y += round(cond.boundingRect().height())
+        for child in self.get_scene_children():
+            child.update_position(0, start_y)
+            start_y += round(child.boundingRect().height())
 
         self.prepareGeometryChange()
         self.bounding_rect = self.childrenBoundingRect()
@@ -91,31 +46,21 @@ class RuleItem(QGraphicsItem):
     def paint(self, painter, option, widget):
         pass
 
-class RuleTextItem(QGraphicsTextItem):
-    def __init__(self, text, color, parent=None):
-        super().__init__(parent)
-        self.color = color
+class RuleConditionItem(GraphicsItem):
+    def __init__(self, model_item: SimulatorItem, parent=None):
+        super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, accept_drops=True, parent=parent)
+        self.text = QGraphicsTextItem(self)
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(10)
         font.setWeight(QFont.DemiBold)
-        self.setFont(font)
-        self.setPlainText(text)
+        self.text.setFont(font)
 
-    def paint(self, painter, option, widget):
-        painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
-        painter.drawRect(self.boundingRect())
-        super().paint(painter, option, widget)
+        self.refresh()
 
-class RuleConditionItem(SimulatorGraphicsItem):
-    def __init__(self, type, parent):
-        super().__init__(parent)
-        self.type = type
-        self.text = RuleTextItem(type.value, QColor.fromRgb(139,148,148), self)
-        self.setFlags(QGraphicsItem.ItemIsSelectable)
-        self.sim_items = []
-        self.ruleset = SimulatorRuleset()
+    def refresh(self):
+        self.text.setPlainText(self.model_item.type.value)
 
-    def refresh(self, x_pos, y_pos):
+    def update_position(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
 
         start_y = 0
@@ -123,11 +68,10 @@ class RuleConditionItem(SimulatorGraphicsItem):
         self.text.setPos(self.number.boundingRect().width(), start_y)
         start_y += round(self.text.boundingRect().height())
 
-        for item in self.sim_items:
-            item.refresh(20, start_y)
-            start_y += round(item.boundingRect().height())
+        for child in self.get_scene_children():
+            child.update_position(20, start_y)
+            start_y += round(child.boundingRect().height())
 
-        visible_participants = [part for part in self.scene().participants if part.isVisible()]
         width = self.scene().items_width()
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 20)
@@ -149,8 +93,8 @@ class RuleConditionItem(SimulatorGraphicsItem):
 
         sub_index = 1
 
-        for item in self.sim_items:
-            item.update_numbering(index + "." + str(sub_index))
+        for child in self.get_scene_children():
+            child.update_numbering(index + "." + str(sub_index))
             sub_index += 1
 
     def paint(self, painter, option, widget):
@@ -178,50 +122,3 @@ class RuleConditionItem(SimulatorGraphicsItem):
             painter.drawRect(rect)
         else:
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))
-
-    def delete_items(self, items):
-        for item in self.sim_items[:]:
-            if item in items:
-                self.sim_items.remove(item)
-                self.scene().removeItem(item)
-
-    def next_sibling(self):
-        result = None
-
-        conditions = self.parentItem().conditions
-        index = self.parentItem().conditions.index(self)
-
-        if index < len(conditions) - 1:
-            result = conditions[index + 1]
-        else:
-            sim_items = self.scene().sim_items
-
-            if sim_items.index(self.parentItem()) < len(sim_items) - 1:
-                result = sim_items[sim_items.index(self.parentItem()) + 1]
-
-        if isinstance(result, RuleItem):
-            result = result.conditions[0]
-
-        return result
-
-    def prev_sibling(self):
-        result = None
-
-        conditions = self.parentItem().conditions
-        index = conditions.index(self)
-
-        if index > 0:
-            result = conditions[index - 1]
-        else:
-            sim_items = self.scene().sim_items
-
-            if sim_items.index(self.parentItem()) > 0:
-                result = sim_items[sim_items.index(self.parentItem()) - 1]
-
-        if isinstance(result, RuleItem):
-            result = result.conditions[-1]
-
-        return result
-
-    def children(self):
-        return self.sim_items

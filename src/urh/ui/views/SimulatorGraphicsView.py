@@ -2,9 +2,12 @@ from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstra
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from urh.ui.SimulatorScene import ParticipantItem, GotoAction, ExternalProgramAction, SimulatorItem
+from urh.ui.SimulatorScene import ParticipantItem, GotoActionItem, ExternalProgramAction
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.RuleItem import RuleConditionItem
+from urh.signalprocessing.GraphicsItem import GraphicsItem
+from urh.signalprocessing.SimulatorRule import ConditionType
+from urh.signalprocessing.MessageType import MessageType
 
 class SimulatorGraphicsView(QGraphicsView):
 
@@ -14,6 +17,7 @@ class SimulatorGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.proto_analyzer = None
+        self.sim_proto_manager = None
 
         self.delete_action = QAction(self.tr("Delete selected items"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)
@@ -30,11 +34,17 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        message_type = [] if not self.sender().data() else self.sender().data()
+        message_type = MessageType("No name") if not self.sender().data() else self.sender().data()
+        plain_bits = []
+
+        if message_type:
+            plain_bits = [False] * message_type[-1].end
 
         ref_item = self.context_menu_item
-        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem 
-        self.scene().add_message(ref_item, position, message_type=message_type)
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+
+        self.scene().add_message(destination=None, plain_bits=plain_bits, pause=1000000, message_type=message_type,
+            decoder=None, source=None, ref_item=ref_item, position=position)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):        
@@ -66,13 +76,13 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_else_if_cond_action_triggered(self):
-        self.context_menu_item.parentItem().add_else_if_cond()
-        self.scene().update_view()
+        rule = self.context_menu_item.parentItem().model_item
+        self.scene().add_rule_condition(rule, ConditionType.ELSE_IF)
 
     @pyqtSlot()
     def on_add_else_cond_action_triggered(self):
-        self.context_menu_item.parentItem().add_else_cond()
-        self.scene().update_view()
+        rule = self.context_menu_item.parentItem().model_item
+        self.scene().add_rule_condition(rule, ConditionType.ELSE)
 
     @pyqtSlot()
     def on_source_action_triggered(self):
@@ -169,7 +179,7 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu.addSeparator()
 
-        if self.scene().sim_items:
+        if len([item for item in self.scene().items() if isinstance(item, GraphicsItem)]):
             #menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
@@ -199,7 +209,7 @@ class SimulatorGraphicsView(QGraphicsView):
             item.setSelected(True)
 
     def contextMenuEvent(self, event):
-        items = [item for item in self.items(event.pos()) if isinstance(item, SimulatorItem)]
+        items = [item for item in self.items(event.pos()) if isinstance(item, GraphicsItem) and item.is_selectable()]
         self.context_menu_item = None if len(items) == 0 else items[0]
 
         if self.context_menu_item:

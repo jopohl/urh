@@ -13,7 +13,7 @@ class MessageComboBoxDelegate(QItemDelegate):
 
         editor.addItem("---Select label---", None)
         for message in self.simulator_scene.get_all_messages():
-            labels = [lbl for lbl in message.labels if not lbl.is_unlabeled_data]
+            labels = [lbl for lbl in message.model_item.message_type]
 
             for label in labels:
                 editor.addItem(message.index + "::" + label.name, label)

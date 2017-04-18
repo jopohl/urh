@@ -624,6 +624,9 @@ class SendRecvDialogController(QDialog):
 
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 
+        if self.device is not None:
+            self.device.data = None
+
         if self.graphics_view is not None:
             self.graphics_view.eliminate()
 

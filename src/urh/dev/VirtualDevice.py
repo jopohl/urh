@@ -333,7 +333,7 @@ class VirtualDevice(QObject):
             else:
                 self.__dev.receive_buffer = value
         else:
-            raise ValueError("Unsupported Backend")
+            logger.warning("{}:{} has no data".format(self.__class__.__name__, self.backend.name))
 
     def free_data(self):
         if self.backend == Backends.grc:

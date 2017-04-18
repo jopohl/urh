@@ -36,8 +36,8 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>387</width>
+         <y>-540</y>
+         <width>392</width>
          <height>1111</height>
         </rect>
        </property>
@@ -880,7 +880,7 @@
         <item row="22" column="0">
          <widget class="QLabel" name="label_sniff_OutputFile">
           <property name="text">
-           <string>Output file:</string>
+           <string>Write bitstream to file:</string>
           </property>
          </widget>
         </item>

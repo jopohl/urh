@@ -107,7 +107,14 @@ class SignalFrameController(QFrame):
             self.show_protocol(refresh=False)
 
         else:
-            self.ui.lSignalTyp.setText("Protocol (*.proto)")
+            suffix = ""
+            if not proto_analyzer.filename:
+                suffix = ""
+            elif proto_analyzer.filename.endswith(".proto"):
+                suffix = " (*.proto)"
+            elif proto_analyzer.filename.endswith(".txt"):
+                suffix = " (*.txt)"
+            self.ui.lSignalTyp.setText("Protocol"+suffix)
 
             scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
 

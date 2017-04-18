@@ -2,7 +2,7 @@ import copy
 import os
 import traceback
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot, QFileInfo, QTimer
+from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication, QCheckBox
@@ -23,6 +23,7 @@ from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
 from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_main import Ui_MainWindow
@@ -201,14 +202,27 @@ class MainController(QMainWindow):
             self.recentFileActionList.append(recent_file_action)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
-    def add_protocol_file(self, filename):
+    def add_plain_bits_from_txt(self, filename: str):
+        protocol = ProtocolAnalyzer(None)
+        protocol.filename = filename
+        with open(filename) as f:
+            for line in f:
+                protocol.messages.append(Message.from_plain_bits_str(line.strip(), {}))
 
+        self.compare_frame_controller.add_protocol(protocol)
+        self.compare_frame_controller.refresh()
+        self.__add_empty_frame_for_filename(protocol, filename)
+
+    def __add_empty_frame_for_filename(self, protocol: ProtocolAnalyzer, filename: str):
+        sf = self.signal_tab_controller.add_empty_frame(filename, protocol)
+        self.signal_protocol_dict[sf] = protocol
+        self.set_frame_numbers()
+        self.file_proxy_model.open_files.add(filename)
+
+    def add_protocol_file(self, filename):
         proto = self.compare_frame_controller.add_protocol_from_file(filename)
         if proto:
-            sf = self.signal_tab_controller.add_empty_frame(filename, proto)
-            self.signal_protocol_dict[sf] = proto
-            self.set_frame_numbers()
-            self.file_proxy_model.open_files.add(filename)
+            self.__add_empty_frame_for_filename(proto, filename)
 
     def add_fuzz_profile(self, filename):
         self.ui.tabWidget.setCurrentIndex(2)
@@ -349,6 +363,8 @@ class MainController(QMainWindow):
                 self.add_signalfile(file, group_id)
             elif file_extension == ".fuzz":
                 self.add_fuzz_profile(file)
+            elif file_extension == ".txt":
+                self.add_plain_bits_from_txt(file)
             else:
                 self.add_signalfile(file, group_id)
 

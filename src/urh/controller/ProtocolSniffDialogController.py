@@ -97,7 +97,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
         self.ui.combox_sniff_Modulation.currentIndexChanged.connect(self.on_modulation_changed)
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
-        self.ui.lineEdit_sniff_OutputFile.textChanged.connect(self.on_line_edit_output_file_text_changed)
+        self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
 
     def set_device_ui_items_visibility(self, device_name: str):
@@ -205,8 +205,13 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def on_device_errors_changed(self, txt: str):
         self.ui.txtEditErrors.append(txt)
 
-    @pyqtSlot(str)
-    def on_line_edit_output_file_text_changed(self, text: str):
+    @pyqtSlot()
+    def on_line_edit_output_file_editing_finished(self):
+        text = self.ui.lineEdit_sniff_OutputFile.text()
+        if text and not text.endswith(".txt"):
+            text += ".txt"
+            self.ui.lineEdit_sniff_OutputFile.setText(text)
+
         self.sniffer.sniff_file = text
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))
 

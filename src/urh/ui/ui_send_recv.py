@@ -566,7 +566,7 @@ class Ui_SendRecvDialog(object):
         self.label_sniff_Center.setText(_translate("SendRecvDialog", "Center:"))
         self.label_7.setText(_translate("SendRecvDialog", "Hint: You can edit the raw signal before sending."))
         self.btnAccept.setToolTip(_translate("SendRecvDialog", "<html><head/><body><p>Accept the sniffed data and load it into <span style=\" font-weight:600;\">Analysis</span> tab.</p></body></html>"))
-        self.btnAccept.setText(_translate("SendRecvDialog", "Accept data"))
+        self.btnAccept.setText(_translate("SendRecvDialog", "Accept data (Open in Analysis)"))
         self.label_y_scale.setText(_translate("SendRecvDialog", "Y-Scale"))
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

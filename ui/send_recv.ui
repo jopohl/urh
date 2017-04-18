@@ -991,7 +991,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the sniffed data and load it into &lt;span style=&quot; font-weight:600;&quot;&gt;Analysis&lt;/span&gt; tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Accept data</string>
+              <string>Accept data (Open in Analysis)</string>
              </property>
              <property name="autoDefault">
               <bool>false</bool>

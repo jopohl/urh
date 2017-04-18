@@ -50,9 +50,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.setWindowTitle(self.tr("Sniff protocol"))
 
-        self.clear_timer = QTimer()
-        self.clear_timer.setInterval(5000)
-
         self.encodings = encodings
         for encoding in self.encodings:
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
@@ -86,8 +83,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
 
-        self.clear_timer.timeout.connect(self.on_clear_timer_timeout)
-
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
         self.sniffer.qt_signals.sniff_device_errors_changed.connect(self.on_device_errors_changed)
 
@@ -111,6 +106,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def init_device(self):
         dev_name = self.ui.cbDevice.currentText()
         self.sniffer.device_name = dev_name
+        self.sniffer.rcv_device.data = np.zeros(5 * 10**6, dtype=np.complex64)
 
         self._create_device_connects()
         self.scene_manager = LiveSceneManager(np.array([]), parent=self)
@@ -137,13 +133,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.ui.btnStart.setEnabled(False)
         self.set_device_ui_items_enabled(False)
-
-        self.clear_timer.start()
-
-    @pyqtSlot()
-    def on_device_stopped(self):
-        super().on_device_stopped()
-        self.clear_timer.stop()
 
     @pyqtSlot()
     def on_noise_edited(self):
@@ -214,14 +203,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
         self.sniffer.sniff_file = text
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))
-
-    @pyqtSlot()
-    def on_clear_timer_timeout(self):
-        self.device.current_index = 0
-        self.scene_manager.end = self.device.current_index
-        self.scene_manager.init_scene()
-        self.scene_manager.show_full_scene()
-        self.graphics_view.update()
 
     @pyqtSlot(int)
     def on_combobox_sniff_encoding_index_changed(self, index: int):

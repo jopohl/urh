@@ -41,6 +41,8 @@ class AbstractBaseThread(QThread):
         self.device = "USRP"
         self.current_index = 0
 
+        self.continuous_mode = False
+
         self.context = None
         self.socket = None
 

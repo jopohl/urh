@@ -28,9 +28,29 @@ class VirtualDevice(QObject):
     sender_needs_restart = pyqtSignal()
 
     def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
-                 gain=None, if_gain=None, baseband_gain=None,
-                 samples_to_send=None,
-                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
+                 gain=None, if_gain=None, baseband_gain=None, samples_to_send=None,
+                 device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, continuous=False,
+                 portnumber=1234):
+        """
+        
+        :param backend_handler: 
+        :param name: 
+        :param mode: 
+        :param freq: 
+        :param sample_rate: 
+        :param bandwidth: 
+        :param gain: 
+        :param if_gain: 
+        :param baseband_gain: 
+        :param samples_to_send: 
+        :param device_ip: 
+        :param sending_repeats: 
+        :param parent: 
+        :param is_ringbuffer: 
+        :param raw_mode: 
+        :param continuous: Select if receiving shall be done in continuous mode: FIFO like behaviour
+        :param portnumber: 
+        """
         super().__init__(parent)
         self.name = name
         self.mode = mode
@@ -76,6 +96,7 @@ class VirtualDevice(QObject):
             self.__dev.started.connect(self.emit_started_signal)
             self.__dev.stopped.connect(self.emit_stopped_signal)
             self.__dev.sender_needs_restart.connect(self.emit_sender_needs_restart)
+            self.__dev.continuous_mode = continuous
         elif self.backend == Backends.native:
             name = self.name.lower()
             if name in map(str.lower, BackendHandler.DEVICE_NAMES):
@@ -95,6 +116,8 @@ class VirtualDevice(QObject):
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
+
+                self.__dev.continuous_mode = continuous
             elif name == "test":
                 # For Unittests Only
                 self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer)

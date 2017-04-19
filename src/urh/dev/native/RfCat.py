@@ -41,7 +41,7 @@ class RFCAT(Device):
                      gain: int, modulation: str, syncmode: int):
         # connect and initialize rtl_tcp
         sdr = RFCAT(center_freq, gain, sample_rate, device_number)
-        sdr.open(data_connection)
+        sdr.open(ctrl_connection, data_connection)
         if sdr.thread_is_open:
             sdr.device_number = device_number
             # Set standard parameter
@@ -152,10 +152,12 @@ class RFCAT(Device):
                     if data_start == -1:
                         logger.info(line)
                     else:
-                        #Data found!
-                        self.data_connection.send_bytes(line[data_start+1:-2])
+                        # Got data!
+                        data = line[data_start+1:-2]
+                        logger.info(data)
+                        self.data_connection.send_bytes(data)
 
-    def open(self, data_connection):
+    def open(self, ctrl_connection, data_connection):
         if not self.thread_is_open:
             self.p = Popen(['rfcat', '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
             self.rq = Queue()
@@ -177,6 +179,7 @@ class RFCAT(Device):
             self.t_main.daemon = True
             self.t_main.start()
 
+            self.ctrl_connection = ctrl_connection
             self.data_connection = data_connection
             self.thread_is_open = True
 
@@ -192,13 +195,17 @@ class RFCAT(Device):
                 logger.info("Could not close threads:1")
 
     def set_parameter(self, param: str, ctrl_connection):  # returns error (True/False)
+        # Wait until ready
         if not self.thread_is_open or not self.initialized or not self.ready:
             while not self.thread_is_open or not self.initialized:
                 time.sleep(0.1)
 
+        # Send data to queue
         try:
             self.wq.put(param)
             self.ready = False
+            ctrl_connection.send(param)
+            logger.info(param)
         except OSError as e:
             logger.info("Could not set parameter {0}:{1} ({2})".format(param, e))
             ctrl_connection.send("Could not set parameter {0} {1} ({2}):1".format(param, e))
@@ -206,17 +213,17 @@ class RFCAT(Device):
         return False
 
     def read_async(self):
-        self.set_parameter("d.RFrecv()[0]", self.child_ctrl_conn)
+        self.set_parameter("d.RFrecv()[0]", self.ctrl_connection)
 
-    @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        """
-        The raw, captured IQ data is 8 bit unsigned data.
-
-        :return:
-        """
-        result = np.empty(nvalues, dtype=np.complex64)
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        result.real = (unpacked['r'] / 127.5) - 1.0
-        result.imag = (unpacked['i'] / 127.5) - 1.0
-        return result
+    # @staticmethod
+    # def unpack_complex(buffer, nvalues: int):
+    #     """
+    #     The raw, captured IQ data is 8 bit unsigned data.
+    #
+    #     :return:
+    #     """
+    #     result = np.empty(nvalues, dtype=np.complex64)
+    #     unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
+    #     result.real = (unpacked['r'] / 127.5) - 1.0
+    #     result.imag = (unpacked['i'] / 127.5) - 1.0
+    #     return result

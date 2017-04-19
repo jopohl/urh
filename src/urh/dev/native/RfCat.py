@@ -33,7 +33,7 @@ import time
 
 
 class RFCAT(Device):
-    DATA_RATE_DIVISOR = 10000
+    DATA_RATE_DIVISOR = 1000
     BYTES_PER_SAMPLE = 1
 
     @staticmethod
@@ -84,6 +84,7 @@ class RFCAT(Device):
 
         elif tag == self.Command.SET_RF_GAIN.name or tag == self.Command.SET_IF_GAIN.name:
             logger.info(">>> d.setMaxPower()")
+            #return self.set_parameter("print(d.reprRadioConfig())", ctrl_connection)  #TODO: Remove, just for testing
             return self.set_parameter("d.setMaxPower()", ctrl_connection)  #Set max power!
 
         elif tag == self.Command.SET_MODULATION.name:
@@ -148,6 +149,7 @@ class RFCAT(Device):
 
                 if self.initialized:
                     self.ready = True
+                    print("DEBUG:", line)
                     data_start = str(line).find("'")
                     if data_start == -1:
                         logger.info(line)
@@ -167,9 +169,10 @@ class RFCAT(Device):
             self.t_stdout.daemon = True
             self.t_stdout.start()
 
+            ## Using this shows all the rfcat errors and exceptions -> unusable
             self.t_stderr = Thread(target=RFCAT.readq, args=(self.p.stderr, self.rq))
             self.t_stderr.daemon = True
-            #self.t_stderr.start()
+            self.t_stderr.start()
 
             self.t_stdin = Thread(target=RFCAT.writeq, args=(self.p.stdin, self.wq))
             self.t_stdin.daemon = True
@@ -214,7 +217,7 @@ class RFCAT(Device):
         return False
 
     def read_async(self):
-        self.set_parameter("d.RFrecv()[0]", self.ctrl_connection, log=False)
+        self.set_parameter("d.RFrecv({})[0]".format(500), self.ctrl_connection, log=False)
 
     # @staticmethod
     # def unpack_complex(buffer, nvalues: int):

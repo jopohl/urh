@@ -33,8 +33,8 @@ import time
 
 
 class RFCAT(Device):
+    DATA_RATE_DIVISOR = 10000
     BYTES_PER_SAMPLE = 1
-    MAXDATASIZE = 65536
 
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
@@ -48,7 +48,7 @@ class RFCAT(Device):
             sdr.set_parameter("d.setMdmModulation({})".format(modulation), ctrl_connection)
             sdr.set_parameter("d.setFreq({})".format(int(center_freq)), ctrl_connection)
             sdr.set_parameter("d.setMdmSyncMode({})".format(syncmode), ctrl_connection)
-            sdr.set_parameter("d.setMdmDRate({})".format(int(sample_rate//1000)), ctrl_connection)
+            sdr.set_parameter("d.setMdmDRate({})".format(int(sample_rate//RFCAT.DATA_RATE_DIVISOR)), ctrl_connection)
             sdr.set_parameter("d.setMaxPower()", ctrl_connection) # we want power
 
             exit_requested = False
@@ -92,7 +92,7 @@ class RFCAT(Device):
 
         elif tag == self.Command.SET_SAMPLE_RATE.name:
             logger.info(">>> d.setMdmDRate({})".format(int(value)))
-            return self.set_parameter("d.setMdmDRate({})".format(int(value//1000)), ctrl_connection)
+            return self.set_parameter("d.setMdmDRate({})".format(int(value//RFCAT.DATA_RATE_DIVISOR)), ctrl_connection)
 
         elif tag == self.Command.SET_SYNCMODE.name:
             logger.info(">>> d.setMdmSyncMode({})".format(value))
@@ -194,7 +194,7 @@ class RFCAT(Device):
             except:
                 logger.info("Could not close threads:1")
 
-    def set_parameter(self, param: str, ctrl_connection):  # returns error (True/False)
+    def set_parameter(self, param: str, ctrl_connection, log=True):  # returns error (True/False)
         # Wait until ready
         if not self.thread_is_open or not self.initialized or not self.ready:
             while not self.thread_is_open or not self.initialized:
@@ -204,8 +204,9 @@ class RFCAT(Device):
         try:
             self.wq.put(param)
             self.ready = False
-            ctrl_connection.send(param)
-            logger.info(param)
+            if log:
+                ctrl_connection.send(param)
+                logger.info(param)
         except OSError as e:
             logger.info("Could not set parameter {0}:{1} ({2})".format(param, e))
             ctrl_connection.send("Could not set parameter {0} {1} ({2}):1".format(param, e))
@@ -213,7 +214,7 @@ class RFCAT(Device):
         return False
 
     def read_async(self):
-        self.set_parameter("d.RFrecv()[0]", self.ctrl_connection)
+        self.set_parameter("d.RFrecv()[0]", self.ctrl_connection, log=False)
 
     # @staticmethod
     # def unpack_complex(buffer, nvalues: int):

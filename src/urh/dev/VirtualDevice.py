@@ -92,6 +92,9 @@ class VirtualDevice(QObject):
                 elif name == "limesdr":
                     from urh.dev.native.LimeSDR import LimeSDR
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
+                elif name == "rfcat":
+                    from urh.dev.native.RfCat import RFCAT
+                    self.__dev = RFCAT(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 
@@ -113,7 +116,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.none:
             self.__dev = None
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def bandwidth(self):
@@ -132,7 +135,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             return True
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def frequency(self):
@@ -141,7 +144,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.native:
             return self.__dev.frequency
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @frequency.setter
     def frequency(self, value):
@@ -152,7 +155,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             pass
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def gain(self):
@@ -225,7 +228,7 @@ class VirtualDevice(QObject):
         elif self.backend in (Backends.native, Backends.network):
             return self.__dev.samples_to_send
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @samples_to_send.setter
     def samples_to_send(self, value):
@@ -236,7 +239,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             self.__dev.samples_to_send = value
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def device_args(self):
@@ -253,7 +256,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.native:
             return self.__dev.device_ip
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @ip.setter
     def ip(self, value):
@@ -264,21 +267,21 @@ class VirtualDevice(QObject):
         elif self.backend in (Backends.none, Backends.network):
             pass
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def port(self):
         if self.backend in (Backends.grc, Backends.native, Backends.network):
             return self.__dev.port
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @port.setter
     def port(self, value):
         if self.backend in (Backends.grc, Backends.native, Backends.network):
             self.__dev.port = value
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def data(self):
@@ -298,7 +301,7 @@ class VirtualDevice(QObject):
                 else:
                     return self.__dev.received_bits
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @data.setter
     def data(self, value):
@@ -323,7 +326,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.none:
             pass
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def num_sending_repeats(self):
@@ -333,7 +336,7 @@ class VirtualDevice(QObject):
             elif self.backend == Backends.native:
                 return self.__dev.sending_repeats
             else:
-                raise ValueError("Unsupported Backend")
+                raise ValueError("Unsupported backend")
 
     @num_sending_repeats.setter
     def num_sending_repeats(self, value):
@@ -345,7 +348,7 @@ class VirtualDevice(QObject):
             elif self.backend in (Backends.native, Backends.network):
                 self.__dev.sending_repeats = value
             else:
-                raise ValueError("Unsupported Backend")
+                raise ValueError("Unsupported backend")
 
     @property
     def current_index(self):
@@ -362,7 +365,7 @@ class VirtualDevice(QObject):
             else:
                 return self.__dev.current_receive_index
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @current_index.setter
     def current_index(self, value):
@@ -379,7 +382,7 @@ class VirtualDevice(QObject):
             else:
                 self.__dev.current_receive_index = value
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def current_iteration(self):
@@ -388,7 +391,7 @@ class VirtualDevice(QObject):
         elif self.backend in (Backends.native, Backends.network):
             return self.__dev.current_sending_repeat
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @current_iteration.setter
     def current_iteration(self, value):
@@ -397,7 +400,7 @@ class VirtualDevice(QObject):
         elif self.backend in (Backends.native, Backends.network):
             self.__dev.current_sending_repeat = value
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def sending_finished(self):
@@ -408,7 +411,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             return self.__dev.current_sent_sample == len(self.samples_to_send)
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     @property
     def spectrum(self):
@@ -444,7 +447,7 @@ class VirtualDevice(QObject):
 
             self.emit_started_signal()
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     def stop(self, msg: str):
         if self.backend == Backends.grc:
@@ -472,7 +475,7 @@ class VirtualDevice(QObject):
             self.__dev.stop_tx_mode("Stop on error")
             self.emit_stopped_signal()
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     def cleanup(self):
         if self.backend == Backends.grc:
@@ -489,7 +492,7 @@ class VirtualDevice(QObject):
             pass
 
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     def emit_stopped_signal(self):
         self.stopped.emit()
@@ -515,7 +518,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             return ""
         else:
-            raise ValueError("Unsupported Backend")
+            raise ValueError("Unsupported backend")
 
     def set_server_port(self, port: int):
         if self.backend == Backends.network:

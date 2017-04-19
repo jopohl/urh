@@ -74,7 +74,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP", "YardStick")
+    DEVICE_NAMES = ("AirSpy", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP", "RfCat")
 
     def __init__(self):
 
@@ -99,7 +99,7 @@ class BackendHandler(object):
     def num_native_backends(self):
         return len([dev for dev, backend_container in self.device_backends.items()
                     if Backends.native in backend_container.avail_backends
-                    and dev.lower() not in ("rtl-tcp", "yardstick")])
+                    and dev.lower() not in ("rtl-tcp", "rfcat")])
 
     @property
     def __hackrf_native_enabled(self) -> bool:
@@ -195,7 +195,7 @@ class BackendHandler(object):
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
-        if devname.lower().replace("-", "") == "yardstick":
+        if devname.lower().replace("-", "") == "rfcat":
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 

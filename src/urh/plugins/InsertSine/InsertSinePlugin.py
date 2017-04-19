@@ -228,3 +228,4 @@ class InsertSinePlugin(SignalEditorPlugin):
     @pyqtSlot()
     def on_dialog_finished(self):
         self.sender().graphicsViewSineWave.eliminate()
+        self.__dialog_ui = None

@@ -23,13 +23,13 @@ class TestAirSpy(unittest.TestCase):
         result = airspy.set_center_frequency(int(433.92e6))
         print("Set center frequency", airspy.error_name(result), result)
 
-        result = airspy.set_lna_gain(5)
+        result = airspy.set_if_rx_gain(5)
         print("Set lna gain", airspy.error_name(result), result)
 
-        result = airspy.set_mixer_gain(8)
+        result = airspy.set_rf_gain(8)
         print("Set mixer gain", airspy.error_name(result), result)
 
-        result = airspy.set_vga_gain(10)
+        result = airspy.set_baseband_gain(10)
         print("Set vga gain", airspy.error_name(result), result)
 
         parent_conn, child_conn = Pipe()

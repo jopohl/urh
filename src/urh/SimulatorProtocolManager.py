@@ -1,13 +1,11 @@
-import copy
-
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
+from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 
 from urh.util.ProjectManager import ProjectManager
 
@@ -19,8 +17,11 @@ class SimulatorProtocolManager(QObject):
     rule_added = pyqtSignal(SimulatorRule)
     rule_condition_added = pyqtSignal(SimulatorRuleCondition)
     goto_action_added = pyqtSignal(SimulatorGotoAction)
+    program_action_added = pyqtSignal(SimulatorProgramAction)
 
     participants_changed = pyqtSignal()
+    label_updated = pyqtSignal(SimulatorProtocolLabel)
+    message_updated = pyqtSignal(SimulatorMessage)
 
     item_deleted = pyqtSignal(SimulatorItem)
     item_moved = pyqtSignal(SimulatorItem)
@@ -71,6 +72,11 @@ class SimulatorProtocolManager(QObject):
         assert isinstance(goto_action, SimulatorGotoAction)
         self.add_item(goto_action, pos, parent_item)
         self.goto_action_added.emit(goto_action)
+
+    def add_program_action(self, program_action: SimulatorProgramAction, pos: int, parent_item: SimulatorItem):
+        assert isinstance(program_action, SimulatorProgramAction)
+        self.add_item(program_action, pos, parent_item)
+        self.program_action_added.emit(program_action)
         
     def add_message(self, msg: SimulatorMessage, pos: int, parent_item: SimulatorItem):
         assert isinstance(msg, SimulatorMessage)
@@ -91,19 +97,22 @@ class SimulatorProtocolManager(QObject):
 
     def get_all_items(self):
         items = []
-        self.__get_all_items(self.rootItem, items)
+
+        for child in self.rootItem.children:
+            self.__get_all_items(child, items)
+
         return items
 
     @staticmethod
     def __get_all_items(node: SimulatorItem, items: list):
+        items.append(node)
+
         for child in node.children:
             SimulatorProtocolManager.__get_all_items(child, items)
 
         if isinstance(node, SimulatorMessage):
             for lbl in node.message_type:
                 items.append(lbl)
-
-        items.append(node)
 
     def delete_item(self, item: SimulatorItem):
         if (isinstance(item, SimulatorRuleCondition) and

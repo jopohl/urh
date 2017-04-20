@@ -9,14 +9,11 @@ from PyQt5.QtGui import QPen, QPolygonF
 import math
 
 class MessageItem(GraphicsItem):
-    def __init__(self, source, destination, model_item: SimulatorItem, parent=None):
+    def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True, parent=parent)
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
-
         self.arrow = MessageArrowItem(self)
-
-        self.refresh(source, destination)
 
     def labels_width(self):
         width = self.number.boundingRect().width()
@@ -97,10 +94,14 @@ class MessageItem(GraphicsItem):
 
         self.arrow.setLine(p_source.x(), start_y, p_destination.x(), start_y)
         super().update_position(x_pos, y_pos)
-        
-    def refresh(self, source, destination):
-        self.source = source
-        self.destination = destination
+
+    @property
+    def source(self):
+        return self.scene().participants_dict[self.model_item.participant]
+
+    @property
+    def destination(self):
+        return self.scene().participants_dict[self.model_item.destination]
 
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):

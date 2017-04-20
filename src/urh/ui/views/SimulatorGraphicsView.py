@@ -1,15 +1,17 @@
 from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView
 from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from urh.ui.SimulatorScene import ParticipantItem, GotoActionItem, ExternalProgramAction
+from urh.ui.SimulatorScene import ParticipantItem, GotoActionItem, ProgramActionItem
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.RuleItem import RuleConditionItem
 from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorRule import ConditionType
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 
 class SimulatorGraphicsView(QGraphicsView):
+    message_updated = pyqtSignal(SimulatorMessage)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -57,10 +59,10 @@ class SimulatorGraphicsView(QGraphicsView):
         self.scene().add_goto_action(ref_item, position)
 
     @pyqtSlot()
-    def on_add_external_program_action_triggered(self):
+    def on_add_program_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-        self.scene().add_external_program_action(ref_item, position)
+        self.scene().add_program_action(ref_item, position)
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
@@ -86,20 +88,21 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_source_action_triggered(self):
-        self.context_menu_item.source = self.sender().data()
-        self.scene().update_view()
+        self.context_menu_item.model_item.participant = self.sender().data()
+        self.message_updated.emit(self.context_menu_item.model_item)
 
     @pyqtSlot()
     def on_destination_action_triggered(self):
-        self.context_menu_item.destination = self.sender().data()
-        self.scene().update_view()
+        self.context_menu_item.model_item.destination = self.sender().data()
+        self.message_updated.emit(self.context_menu_item.model_item)
 
     @pyqtSlot()
     def on_swap_part_action_triggered(self):
-        tmp = self.context_menu_item.source
-        self.context_menu_item.source = self.context_menu_item.destination
-        self.context_menu_item.destination = tmp
-        self.scene().update_view()
+        model_item = self.context_menu_item.model_item
+        tmp = model_item.participant
+        model_item.participant = model_item.destination
+        model_item.destination = tmp
+        self.message_updated.emit(model_item)
 
     def create_context_menu(self):
         menu = QMenu()
@@ -120,8 +123,8 @@ class SimulatorGraphicsView(QGraphicsView):
         action_menu = menu.addMenu("Add action")
         add_goto_action = action_menu.addAction("Goto")
         add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
-        add_external_program_action = action_menu.addAction("External program")
-        add_external_program_action.triggered.connect(self.on_add_external_program_action_triggered)
+        add_program_action = action_menu.addAction("External program")
+        add_program_action.triggered.connect(self.on_add_program_action_triggered)
 
         if isinstance(self.context_menu_item, RuleConditionItem):
             menu.addSeparator()
@@ -153,7 +156,7 @@ class SimulatorGraphicsView(QGraphicsView):
                 if self.context_menu_item.source == particpnt:
                     pa.setChecked(True)
 
-                pa.setData(particpnt)
+                pa.setData(particpnt.model_item)
                 pa.triggered.connect(self.on_source_action_triggered)
 
             destination_group = QActionGroup(self.scene())
@@ -170,7 +173,7 @@ class SimulatorGraphicsView(QGraphicsView):
                 if self.context_menu_item.destination == particpnt:
                     pa.setChecked(True)
 
-                pa.setData(particpnt)
+                pa.setData(particpnt.model_item)
                 pa.triggered.connect(self.on_destination_action_triggered)
 
             if self.context_menu_item.destination != self.scene().broadcast_part:

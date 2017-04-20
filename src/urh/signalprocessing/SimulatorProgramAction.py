@@ -1,10 +1,11 @@
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition
 
-class SimulatorGotoAction(SimulatorItem):
+class SimulatorProgramAction(SimulatorItem):
     def __init__(self):
         super().__init__()
-        self.goto_target = None
+        self.ext_prog = None
+        self.args = None
 
     def set_parent(self, value):
         if value is not None:

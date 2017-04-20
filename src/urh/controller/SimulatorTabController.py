@@ -8,7 +8,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.ui.SimulatorScene import SimulatorScene, GotoActionItem, ExternalProgramAction
+from urh.ui.SimulatorScene import SimulatorScene, GotoActionItem, ProgramActionItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
@@ -16,7 +16,8 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset, SimulatorRulesetItem, Mode
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.RuleItem import RuleConditionItem, RuleItem
-from urh.signalprocessing.SimulatorRule import ConditionType
+from urh.signalprocessing.SimulatorRule import SimulatorRule, ConditionType
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
@@ -93,7 +94,6 @@ class SimulatorTabController(QWidget):
         self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
         self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
-        #self.project_manager.project_updated.connect(self.on_project_updated)
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
         self.ui.rbAllApply.toggled.connect(self.on_cb_rulesetmode_toggled)
         self.ui.rbOneApply.toggled.connect(self.on_cb_rulesetmode_toggled)
@@ -108,22 +108,28 @@ class SimulatorTabController(QWidget):
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
         self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
 
+        self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.label_updated.emit)
+        self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.message_updated.emit)
+
     def update_goto_combobox(self):
-        item = self.simulator_scene.get_first_item()
         goto_combobox = self.ui.goto_combobox
         goto_combobox.clear()
 
         goto_combobox.addItem("---Select target---", None)
 
-        while item:
-            if item != self.selected_item and not (isinstance(item, RuleConditionItem)
-            and (item.type == ConditionType.ELSE or item.type == ConditionType.ELSE_IF)):
-                goto_combobox.addItem(item.index, item)
+        items = self.sim_proto_manager.get_all_items()
 
-            item = item.next()
+        for item in items:
+            if (isinstance(item, SimulatorProtocolLabel) or
+                    isinstance(item, SimulatorRule)):
+                continue
 
-        if self.selected_item.goto_target:
-            goto_combobox.setCurrentText(self.selected_item.goto_target.index)
+            scene_item = self.simulator_scene.model_to_scene(item)
+            goto_combobox.addItem(scene_item.index, item)
+
+        if self.selected_model_item.goto_target:
+            scene_item = self.simulator_scene.model_to_scene(self.selected_model_item.goto_target)
+            goto_combobox.setCurrentText(scene_item.index)
         else:
             goto_combobox.setCurrentIndex(0)
 
@@ -138,7 +144,6 @@ class SimulatorTabController(QWidget):
             self.selected_model_item = self.selected_item.model_item
                 
             self.ui.navLineEdit.setText(self.selected_item.index)
-
             self.ui.btnNextNav.setEnabled(not self.selected_item.next() is None)
             self.ui.btnPrevNav.setEnabled(not self.selected_item.prev() is None)
 
@@ -152,7 +157,8 @@ class SimulatorTabController(QWidget):
                 self.simulator_message_field_model.update()
 
                 self.ui.detail_view_widget.setCurrentIndex(2)
-            elif isinstance(self.selected_item, RuleConditionItem) and self.selected_model_item.type != ConditionType.ELSE:
+            elif (isinstance(self.selected_item, RuleConditionItem) and
+                    self.selected_model_item.type != ConditionType.ELSE):
                 self.ui.btnRemoveRule.setEnabled(len(self.selected_model_item.ruleset) > 0)
                 self.simulator_ruleset_model.ruleset = self.selected_model_item.ruleset
                 self.simulator_ruleset_model.update()
@@ -166,9 +172,9 @@ class SimulatorTabController(QWidget):
                     self.open_ruleset_editors(i)
 
                 self.ui.detail_view_widget.setCurrentIndex(3)
-            elif isinstance(self.selected_item, ExternalProgramAction):
-                self.ui.extProgramLineEdit.setText(self.selected_item.ext_prog)
-                self.ui.cmdLineArgsLineEdit.setText(self.selected_item.args)
+            elif isinstance(self.selected_item, ProgramActionItem):
+                self.ui.extProgramLineEdit.setText(self.selected_model_item.ext_prog)
+                self.ui.cmdLineArgsLineEdit.setText(self.selected_model_item.args)
                 self.ui.detail_view_widget.setCurrentIndex(4)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
@@ -182,7 +188,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_goto_combobox_activated(self):
-        self.selected_item.goto_target = self.ui.goto_combobox.currentData()
+        self.selected_model_item.goto_target = self.ui.goto_combobox.currentData()
 
     @pyqtSlot()
     def on_btn_next_nav_clicked(self):
@@ -203,35 +209,30 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_nav_line_edit_return_pressed(self):
-        items = self.simulator_scene.sim_items
         nav_text = self.ui.navLineEdit.text()
         target_item = None
+
+        curr_item = self.sim_proto_manager.rootItem
 
         if re.match(r"^\d+(\.\d+){0,2}$", nav_text):
             index_list = nav_text.split(".")
             index_list = list(map(int, index_list))
 
             for index in index_list:
-                if not items or index > len(items):
+                if not curr_item or index > curr_item.child_count():
                     break
 
-                target_item = items[index - 1]
+                curr_item = curr_item.children[index - 1]
 
-                if isinstance(target_item, RuleItem):
-                    items = target_item.conditions
-                    target_item =  target_item.conditions[0]
-                elif isinstance(target_item, RuleConditionItem):
-                    items = target_item.sim_items
-                else:
-                    items = None
+            if isinstance(curr_item, SimulatorRule):
+                curr_item = curr_item.children[0]
+
+            target_item = self.simulator_scene.model_to_scene(curr_item)
 
         if target_item:
             self.ui.gvSimulator.jump_to_item(target_item)
         else:
             self.update_ui()
-                    
-    #def on_project_updated(self):
-    #    self.simulator_scene.update_view()
 
     def open_ruleset_editors(self, row):
         self.ui.tblViewSimulatorRuleset.openPersistentEditor(self.simulator_ruleset_model.index(row, 0))
@@ -272,11 +273,11 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_ext_program_line_edit_text_changed(self):
-        self.selected_item.ext_prog = self.ui.extProgramLineEdit.text()
+        self.selected_model_item.ext_prog = self.ui.extProgramLineEdit.text()
 
     @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
-        self.selected_item.args = self.ui.cmdLineArgsLineEdit.text()
+        self.selected__model_item.args = self.ui.cmdLineArgsLineEdit.text()
 
     @pyqtSlot()
     def refresh_tree(self):

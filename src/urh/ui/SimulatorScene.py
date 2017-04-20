@@ -20,6 +20,7 @@ from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
+from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 
 class ActionItem(GraphicsItem):
     def __init__(self, model_item, parent=None):
@@ -50,12 +51,10 @@ class GotoActionItem(ActionItem):
         else:
             self.text.setPlainText("GOTO")
 
-class ExternalProgramAction(ActionItem):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+class ProgramActionItem(ActionItem):
+    def __init__(self, model_item: SimulatorItem, parent=None):
+        super().__init__(model_item=model_item, parent=parent)
         self.text.setPlainText("Start program [/usr/bin/test]")
-        self.ext_prog = None
-        self.args = None
 
 class ParticipantItem(QGraphicsItem):
     def __init__(self, model_item: Participant, parent=None):
@@ -121,11 +120,13 @@ class SimulatorScene(QGraphicsScene):
         self.sim_proto_manager.rule_added.connect(self.on_rule_added)
         self.sim_proto_manager.rule_condition_added.connect(self.on_rule_condition_added)
         self.sim_proto_manager.goto_action_added.connect(self.on_goto_action_added)
+        self.sim_proto_manager.program_action_added.connect(self.on_program_action_added)
         self.sim_proto_manager.participants_changed.connect(self.on_participants_changed)
+
         self.sim_proto_manager.item_deleted.connect(self.on_item_deleted)
         self.sim_proto_manager.item_moved.connect(self.on_item_moved)
-
-        self.controller.simulator_message_field_model.protocol_label_updated.connect(self.on_label_updated)
+        self.sim_proto_manager.label_updated.connect(self.on_label_updated)
+        self.sim_proto_manager.message_updated.connect(self.update_view)
 
     def model_to_scene(self, model_item: SimulatorItem):
         if (model_item is None or
@@ -171,11 +172,13 @@ class SimulatorScene(QGraphicsScene):
         self.insert_item(simulator_goto_action)
         self.update_view()
 
-    def on_message_added(self, msg: SimulatorMessage):
-        source = self.participants_dict[msg.participant]
-        destination = self.participants_dict[msg.destination]
+    def on_program_action_added(self, program_action: SimulatorProgramAction):
+        simulator_program_action = ProgramActionItem(program_action)
+        self.insert_item(simulator_program_action)
+        self.update_view()
 
-        simulator_message = MessageItem(source, destination, msg)
+    def on_message_added(self, msg: SimulatorMessage):
+        simulator_message = MessageItem(msg)
         self.insert_item(simulator_message)
 
         for lbl in msg.message_type:
@@ -194,7 +197,7 @@ class SimulatorScene(QGraphicsScene):
             self.update_view()
         
     def insert_item(self, item: GraphicsItem):
-        parent_scene_item = self.get_parent_scene_item(item.model_item)
+        parent_scene_item = self.get_parent_scene_item(item)
         item.setParentItem(parent_scene_item)
 
         if item not in self.items_dict:
@@ -203,8 +206,8 @@ class SimulatorScene(QGraphicsScene):
         if item not in self.items():
             self.addItem(item)
 
-    def get_parent_scene_item(self, model_item: SimulatorItem):
-        return self.model_to_scene(model_item.parent())
+    def get_parent_scene_item(self, item: GraphicsItem):
+        return self.model_to_scene(item.model_item.parent())
 
     def items_width(self):
         visible_participants = [part for part in self.participants if part.isVisible()]
@@ -264,7 +267,7 @@ class SimulatorScene(QGraphicsScene):
                 participant_item.setVisible(False)
                 self.addItem(participant_item)
                 self.participants_dict[participant] = participant_item
-                self.participants.insert(-1, participant_item)
+                self.participants.insert(-2, participant_item)
 
         self.update_view()
 
@@ -337,10 +340,10 @@ class SimulatorScene(QGraphicsScene):
             ref_item = ref_item.model_item
 
         if ref_item is None:
-            parent_item = None
+            parent_item = self.sim_proto_manager.rootItem
             insert_position = self.sim_proto_manager.n_top_level_items()
         elif insert_rule:
-            parent_item = None
+            parent_item = self.sim_proto_manager.rootItem
 
             while ref_item.parent() != self.sim_proto_manager.rootItem:
                 ref_item = ref_item.parent()
@@ -351,7 +354,7 @@ class SimulatorScene(QGraphicsScene):
                 parent_item = ref_item
                 insert_position = parent_item.child_count()
             else:
-                parent_item = None
+                parent_item = self.sim_proto_manager.rootItem
                 insert_position = ref_item.parent().get_pos()
         else:
             parent_item = ref_item.parent()
@@ -415,20 +418,15 @@ class SimulatorScene(QGraphicsScene):
 
         self.sim_proto_manager.add_rule_condition(rule_condition, pos, rule)
 
-    def add_action(self, ref_item, position, type):
-        action = ActionItem(type)
-        self.insert_at(ref_item, position, action, True)
-        self.update_view()
-
     def add_goto_action(self, ref_item, position):
         goto_action = SimulatorGotoAction()
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_goto_action(goto_action, pos, parent)
 
-    def add_external_program_action(self, ref_item, position):
-        external_program_action = ExternalProgramAction()
-        self.insert_at(ref_item, position, external_program_action, True)
-        self.update_view()
+    def add_program_action(self, ref_item, position):
+        program_action = SimulatorProgramAction()
+        pos, parent = self.insert_at(ref_item, position, False)
+        self.sim_proto_manager.add_program_action(program_action, pos, parent)
 
     def add_message(self, destination, plain_bits, pause, message_type, decoder, source, ref_item, position):
         pos, parent = self.insert_at(ref_item, position)

@@ -26,6 +26,8 @@ class Device(QObject):
         SET_FREQUENCY_CORRECTION = 8
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
+        SET_MODULATION = 11
+        SET_SYNCMODE = 12
 
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)

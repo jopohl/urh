@@ -92,9 +92,12 @@ class ReceiveDialogController(SendRecvDialogController):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        initial_name = "{0} {1}Hz {2}Sps {3}Hz".format(dev.name, big_val(dev.frequency), big_val(dev.sample_rate),
-                                                       big_val(dev.bandwidth)).replace(
-            Formatter.local_decimal_seperator(), "_").replace("_000", "")
+        initial_name = "{0}-{1}Hz-{2}Sps".format(dev.name, big_val(dev.frequency), big_val(dev.sample_rate))
+
+        if dev.bandwidth_is_adjustable:
+            initial_name += "-{}Hz".format(big_val(dev.bandwidth))
+
+        initial_name = initial_name.replace(Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
         filename = FileOperator.save_data_dialog(initial_name + ".complex", data, parent=self)
         self.already_saved = True

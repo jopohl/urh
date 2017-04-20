@@ -6,6 +6,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
+from urh.dev.native.AirSpy import AirSpy
 from urh.dev.native.Device import Device
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.util.Logger import logger
@@ -92,6 +93,8 @@ class VirtualDevice(QObject):
                 elif name == "limesdr":
                     from urh.dev.native.LimeSDR import LimeSDR
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
+                elif name.startswith("airspy"):
+                    self.__dev = AirSpy(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 

@@ -74,7 +74,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
 
     def __init__(self):
 
@@ -112,6 +112,14 @@ class BackendHandler(object):
     def __usrp_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import uhd
+            return True
+        except ImportError:
+            return False
+
+    @property
+    def __airspy_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import airspy
             return True
         except ImportError:
             return False
@@ -160,7 +168,7 @@ class BackendHandler(object):
 
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
-        devname = devname.lower()
+        devname = devname.lower().split(" ")[0]
         has_send_file = False
         has_recv_file = False
         for f in os.listdir(script_path):
@@ -185,6 +193,10 @@ class BackendHandler(object):
 
         if devname.lower() == "limesdr" and self.__lime_native_enabled:
             supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
+        if devname.lower().startswith("airspy") and self.__airspy_native_enabled:
+            supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:

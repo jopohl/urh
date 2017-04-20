@@ -277,7 +277,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
-        self.selected__model_item.args = self.ui.cmdLineArgsLineEdit.text()
+        self.selected_model_item.args = self.ui.cmdLineArgsLineEdit.text()
 
     @pyqtSlot()
     def refresh_tree(self):

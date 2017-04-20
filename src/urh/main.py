@@ -42,12 +42,12 @@ def main():
 
             print("Time for generating UI: %.2f seconds" % (time.time() - t))
         except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script cant be found. This is okay in release.")
+            print("Will not regenerate UI, because script can't be found. This is okay in release.")
 
     urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
 
-    urh_dir = os.path.join(os.path.dirname(urh_exe), "..", "..")
+    urh_dir = os.path.join(os.path.dirname(os.path.realpath(urh_exe)), "..", "..")
     prefix = os.path.abspath(os.path.normpath(urh_dir))
 
     src_dir = os.path.join(prefix, "src")

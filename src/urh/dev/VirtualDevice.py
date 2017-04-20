@@ -314,10 +314,10 @@ class VirtualDevice(QObject):
 
     def free_data(self):
         if self.backend == Backends.grc:
-            del self.__dev.data
+            self.__dev.data = None
         elif self.backend == Backends.native:
-            del self.__dev.samples_to_send
-            del self.__dev.receive_buffer
+            self.__dev.samples_to_send = None
+            self.__dev.receive_buffer = None
         elif self.backend == Backends.network:
             self.__dev.free_data()
         elif self.backend == Backends.none:

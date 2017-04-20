@@ -480,6 +480,11 @@ class SendRecvDialogController(QDialog):
     def on_selected_device_changed(self):
         dev_name = self.ui.cbDevice.currentText()
 
+        if self.device is not None:
+            self.device.free_data()
+
+        self.scene_manager.plot_data = None
+
         self.init_device()
 
         self.graphics_view.scene_manager = self.scene_manager
@@ -625,7 +630,9 @@ class SendRecvDialogController(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 
         if self.device is not None:
-            self.device.data = None
+            self.device.free_data()
+
+        self.scene_manager.eliminate()
 
         if self.graphics_view is not None:
             self.graphics_view.eliminate()

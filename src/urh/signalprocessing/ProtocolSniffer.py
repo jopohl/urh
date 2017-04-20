@@ -102,7 +102,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 myfile.write("\n".join(self.plain_bits_str))
 
         if not self.__store_data:
-            self.messages[:] = []
+            self.messages.clear()
 
     def __demodulate_data(self, data):
         """
@@ -110,8 +110,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         :param data:
         :return:
         """
-        signal = self.signal
-
         if self.__are_bits_in_data(data):
             self.reading_data = True
         elif self.conseq_non_data == 5:
@@ -126,13 +124,13 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif len(self.data_cache) == 0:
             return
 
-        signal._fulldata = np.concatenate(self.data_cache)
-        del self.data_cache[:]
-        signal._qad = None
+        self.signal._fulldata = np.concatenate(self.data_cache)
+        self.data_cache.clear()
+        self.signal._qad = None
 
-        bit_len = signal.bit_len
-        ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
-                                signal.tolerance, signal.modulation_type)
+        bit_len = self.signal.bit_len
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                self.signal.tolerance, self.signal.modulation_type)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
@@ -144,7 +142,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 # Create new Message
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
-                rssi = np.mean(np.abs(signal._fulldata[start:end]))
+                rssi = np.mean(np.abs(self.signal._fulldata[start:end]))
                 message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type,
                                   decoder=self.decoder)
                 self.messages.append(message)
@@ -159,13 +157,12 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             i += 1
 
     def __are_bits_in_data(self, data):
-        signal = self.signal
-        signal._fulldata = data
-        signal._qad = None
+        self.signal._fulldata = data
+        self.signal._qad = None
 
-        bit_len = signal.bit_len
-        ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
-                                signal.tolerance, signal.modulation_type)
+        bit_len = self.signal.bit_len
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                self.signal.tolerance, self.signal.modulation_type)
 
         bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
 
@@ -175,8 +172,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.stop("Stopping receiving due to user interaction")
 
     def clear(self):
-        del self.data_cache[:]
-        del self.messages[:]
+        self.data_cache.clear()
+        self.messages.clear()
 
     def __emit_started(self):
         self.started.emit()

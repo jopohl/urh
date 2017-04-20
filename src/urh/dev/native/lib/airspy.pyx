@@ -25,7 +25,7 @@ cdef int _c_callback_recv(cairspy.airspy_transfer*transfer) with gil:
     try:
         (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
     except OSError as e:
-        logger.warning(str(e))
+        logger.warning("Cython-AirSpy:" + str(e))
     return 0
 
 cpdef open_by_serial(uint64_t serial_number):
@@ -63,19 +63,19 @@ cpdef int set_center_frequency(uint32_t freq_hz):
     """
     return cairspy.airspy_set_freq(_c_device, freq_hz)
 
-cpdef int set_lna_gain(uint8_t lna_gain):
+cpdef int set_baseband_gain(uint8_t lna_gain):
     """
     Shall be between 0 and 15
     """
     return cairspy.airspy_set_lna_gain(_c_device, lna_gain)
 
-cpdef int set_mixer_gain(uint8_t mixer_gain):
+cpdef int set_rf_gain(uint8_t mixer_gain):
     """
     Shall be between 0 and 15
     """
     return cairspy.airspy_set_mixer_gain(_c_device, mixer_gain)
 
-cpdef int set_vga_gain(uint8_t vga_gain):
+cpdef int set_if_rx_gain(uint8_t vga_gain):
     """
     Shall be between 0 and 15
     """

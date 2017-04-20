@@ -2138,9 +2138,9 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_close(int __pyx_ski
 static arrayobject *__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_get_sample_rates(int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_sample_rate(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint32_t, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_center_frequency(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint32_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_lna_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_mixer_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_vga_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_baseband_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_rf_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_if_rx_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_start_rx(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_stop_rx(int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_error_name(enum airspy_error, int __pyx_skip_dispatch); /*proto*/
@@ -2249,6 +2249,7 @@ static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
+static const char __pyx_k_Cython_AirSpy[] = "Cython-AirSpy:";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
@@ -2285,6 +2286,7 @@ static PyObject *__pyx_n_s_ASCII;
 static PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
 static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
 static PyObject *__pyx_kp_s_Cannot_index_with_type_s;
+static PyObject *__pyx_kp_u_Cython_AirSpy;
 static PyObject *__pyx_n_s_Ellipsis;
 static PyObject *__pyx_kp_s_Empty_shape_tuple_for_cython_arr;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
@@ -2377,9 +2379,9 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_4close(CYTHON_UNUS
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_6get_sample_rates(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_8set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint32_t __pyx_v_sample_rate); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_10set_center_frequency(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint32_t __pyx_v_freq_hz); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_baseband_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_rf_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_if_rx_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_18start_rx(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_callback); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_20stop_rx(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_22error_name(CYTHON_UNUSED PyObject *__pyx_self, enum airspy_error __pyx_v_error_code); /* proto */
@@ -2516,7 +2518,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
  *     try:
  *         (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)             # <<<<<<<<<<<<<<
  *     except OSError as e:
- *         logger.warning(str(e))
+ *         logger.warning("Cython-AirSpy:" + str(e))
  */
       __pyx_t_5 = __pyx_v_transfer->samples;
       if (!__pyx_t_5) {
@@ -2606,7 +2608,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
  *     try:
  *         (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
  *     except OSError as e:             # <<<<<<<<<<<<<<
- *         logger.warning(str(e))
+ *         logger.warning("Cython-AirSpy:" + str(e))
  *     return 0
  */
     __pyx_t_10 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_OSError);
@@ -2623,7 +2625,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
         /* "src/urh/dev/native/lib/airspy.pyx":28
  *         (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
  *     except OSError as e:
- *         logger.warning(str(e))             # <<<<<<<<<<<<<<
+ *         logger.warning("Cython-AirSpy:" + str(e))             # <<<<<<<<<<<<<<
  *     return 0
  * 
  */
@@ -2640,46 +2642,49 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
         __pyx_t_13 = __Pyx_PyObject_Call(((PyObject *)(&PyUnicode_Type)), __pyx_t_11, NULL); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 28, __pyx_L16_error)
         __Pyx_GOTREF(__pyx_t_13);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_t_11 = NULL;
+        __pyx_t_11 = __Pyx_PyUnicode_Concat(__pyx_kp_u_Cython_AirSpy, __pyx_t_13); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 28, __pyx_L16_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+        __pyx_t_13 = NULL;
         if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
-          __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_12);
-          if (likely(__pyx_t_11)) {
+          __pyx_t_13 = PyMethod_GET_SELF(__pyx_t_12);
+          if (likely(__pyx_t_13)) {
             PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-            __Pyx_INCREF(__pyx_t_11);
+            __Pyx_INCREF(__pyx_t_13);
             __Pyx_INCREF(function);
             __Pyx_DECREF_SET(__pyx_t_12, function);
           }
         }
-        if (!__pyx_t_11) {
-          __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_13); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L16_error)
-          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+        if (!__pyx_t_13) {
+          __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L16_error)
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_GOTREF(__pyx_t_7);
         } else {
           #if CYTHON_FAST_PYCALL
           if (PyFunction_Check(__pyx_t_12)) {
-            PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_13};
+            PyObject *__pyx_temp[2] = {__pyx_t_13, __pyx_t_11};
             __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L16_error)
-            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
             __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           } else
           #endif
           #if CYTHON_FAST_PYCCALL
           if (__Pyx_PyFastCFunction_Check(__pyx_t_12)) {
-            PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_13};
+            PyObject *__pyx_temp[2] = {__pyx_t_13, __pyx_t_11};
             __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L16_error)
-            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
             __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           } else
           #endif
           {
             __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 28, __pyx_L16_error)
             __Pyx_GOTREF(__pyx_t_14);
-            __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_11); __pyx_t_11 = NULL;
-            __Pyx_GIVEREF(__pyx_t_13);
-            PyTuple_SET_ITEM(__pyx_t_14, 0+1, __pyx_t_13);
-            __pyx_t_13 = 0;
+            __Pyx_GIVEREF(__pyx_t_13); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_13); __pyx_t_13 = NULL;
+            __Pyx_GIVEREF(__pyx_t_11);
+            PyTuple_SET_ITEM(__pyx_t_14, 0+1, __pyx_t_11);
+            __pyx_t_11 = 0;
             __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_14, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L16_error)
             __Pyx_GOTREF(__pyx_t_7);
             __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
@@ -2693,7 +2698,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
  *     try:
  *         (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
  *     except OSError as e:             # <<<<<<<<<<<<<<
- *         logger.warning(str(e))
+ *         logger.warning("Cython-AirSpy:" + str(e))
  *     return 0
  */
       /*finally:*/ {
@@ -2707,8 +2712,8 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
           __pyx_L16_error:;
           __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0;
           __Pyx_PyThreadState_assign
-          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
           __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -2775,7 +2780,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv(airspy_t
 
   /* "src/urh/dev/native/lib/airspy.pyx":29
  *     except OSError as e:
- *         logger.warning(str(e))
+ *         logger.warning("Cython-AirSpy:" + str(e))
  *     return 0             # <<<<<<<<<<<<<<
  * 
  * cpdef open_by_serial(uint64_t serial_number):
@@ -3414,7 +3419,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_center_frequency(__py
  *     """
  *     return cairspy.airspy_set_freq(_c_device, freq_hz)             # <<<<<<<<<<<<<<
  * 
- * cpdef int set_lna_gain(uint8_t lna_gain):
+ * cpdef int set_baseband_gain(uint8_t lna_gain):
  */
   __pyx_r = airspy_set_freq(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, __pyx_v_freq_hz);
   goto __pyx_L0;
@@ -3483,23 +3488,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_10set_center_frequ
 /* "src/urh/dev/native/lib/airspy.pyx":66
  *     return cairspy.airspy_set_freq(_c_device, freq_hz)
  * 
- * cpdef int set_lna_gain(uint8_t lna_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_baseband_gain(uint8_t lna_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_lna_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_baseband_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_lna_gain", 0);
+  __Pyx_RefNannySetupContext("set_baseband_gain", 0);
 
   /* "src/urh/dev/native/lib/airspy.pyx":70
  *     Shall be between 0 and 15
  *     """
  *     return cairspy.airspy_set_lna_gain(_c_device, lna_gain)             # <<<<<<<<<<<<<<
  * 
- * cpdef int set_mixer_gain(uint8_t mixer_gain):
+ * cpdef int set_rf_gain(uint8_t mixer_gain):
  */
   __pyx_r = airspy_set_lna_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, __pyx_v_lna_gain);
   goto __pyx_L0;
@@ -3507,7 +3512,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_lna_gain(__pyx_t_3src
   /* "src/urh/dev/native/lib/airspy.pyx":66
  *     return cairspy.airspy_set_freq(_c_device, freq_hz)
  * 
- * cpdef int set_lna_gain(uint8_t lna_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_baseband_gain(uint8_t lna_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
@@ -3519,36 +3524,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_lna_gain(__pyx_t_3src
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain[] = "\n    Shall be between 0 and 15\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_lna_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_12set_baseband_gain[] = "\n    Shall be between 0 and 15\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_baseband_gain(PyObject *__pyx_self, PyObject *__pyx_arg_lna_gain) {
   __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_lna_gain (wrapper)", 0);
+  __Pyx_RefNannySetupContext("set_baseband_gain (wrapper)", 0);
   assert(__pyx_arg_lna_gain); {
     __pyx_v_lna_gain = __Pyx_PyInt_As_unsigned_char(__pyx_arg_lna_gain); if (unlikely((__pyx_v_lna_gain == (unsigned char)-1) && PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_lna_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_baseband_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_lna_gain));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_baseband_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_lna_gain));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_baseband_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_lna_gain) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_lna_gain", 0);
+  __Pyx_RefNannySetupContext("set_baseband_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_lna_gain(__pyx_v_lna_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_baseband_gain(__pyx_v_lna_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3557,7 +3562,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_lna_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_baseband_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3568,23 +3573,23 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain(CYT
 /* "src/urh/dev/native/lib/airspy.pyx":72
  *     return cairspy.airspy_set_lna_gain(_c_device, lna_gain)
  * 
- * cpdef int set_mixer_gain(uint8_t mixer_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_rf_gain(uint8_t mixer_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_mixer_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_mixer_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_rf_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_mixer_gain", 0);
+  __Pyx_RefNannySetupContext("set_rf_gain", 0);
 
   /* "src/urh/dev/native/lib/airspy.pyx":76
  *     Shall be between 0 and 15
  *     """
  *     return cairspy.airspy_set_mixer_gain(_c_device, mixer_gain)             # <<<<<<<<<<<<<<
  * 
- * cpdef int set_vga_gain(uint8_t vga_gain):
+ * cpdef int set_if_rx_gain(uint8_t vga_gain):
  */
   __pyx_r = airspy_set_mixer_gain(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, __pyx_v_mixer_gain);
   goto __pyx_L0;
@@ -3592,7 +3597,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_mixer_gain(__pyx_t_3s
   /* "src/urh/dev/native/lib/airspy.pyx":72
  *     return cairspy.airspy_set_lna_gain(_c_device, lna_gain)
  * 
- * cpdef int set_mixer_gain(uint8_t mixer_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_rf_gain(uint8_t mixer_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
@@ -3604,36 +3609,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_mixer_gain(__pyx_t_3s
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_mixer_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain[] = "\n    Shall be between 0 and 15\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_mixer_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_14set_rf_gain[] = "\n    Shall be between 0 and 15\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_rf_gain(PyObject *__pyx_self, PyObject *__pyx_arg_mixer_gain) {
   __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_mixer_gain (wrapper)", 0);
+  __Pyx_RefNannySetupContext("set_rf_gain (wrapper)", 0);
   assert(__pyx_arg_mixer_gain); {
     __pyx_v_mixer_gain = __Pyx_PyInt_As_unsigned_char(__pyx_arg_mixer_gain); if (unlikely((__pyx_v_mixer_gain == (unsigned char)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_mixer_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_rf_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_mixer_gain));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_rf_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_mixer_gain));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_rf_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_mixer_gain) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_mixer_gain", 0);
+  __Pyx_RefNannySetupContext("set_rf_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_mixer_gain(__pyx_v_mixer_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_rf_gain(__pyx_v_mixer_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3642,7 +3647,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain(C
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_mixer_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_rf_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3653,16 +3658,16 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain(C
 /* "src/urh/dev/native/lib/airspy.pyx":78
  *     return cairspy.airspy_set_mixer_gain(_c_device, mixer_gain)
  * 
- * cpdef int set_vga_gain(uint8_t vga_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_if_rx_gain(uint8_t vga_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain); /*proto*/
-static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_vga_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain); /*proto*/
+static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_if_rx_gain(__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_vga_gain", 0);
+  __Pyx_RefNannySetupContext("set_if_rx_gain", 0);
 
   /* "src/urh/dev/native/lib/airspy.pyx":82
  *     Shall be between 0 and 15
@@ -3677,7 +3682,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_vga_gain(__pyx_t_3src
   /* "src/urh/dev/native/lib/airspy.pyx":78
  *     return cairspy.airspy_set_mixer_gain(_c_device, mixer_gain)
  * 
- * cpdef int set_vga_gain(uint8_t vga_gain):             # <<<<<<<<<<<<<<
+ * cpdef int set_if_rx_gain(uint8_t vga_gain):             # <<<<<<<<<<<<<<
  *     """
  *     Shall be between 0 and 15
  */
@@ -3689,36 +3694,36 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_vga_gain(__pyx_t_3src
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain); /*proto*/
-static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain[] = "\n    Shall be between 0 and 15\n    ";
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_vga_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain); /*proto*/
+static char __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_16set_if_rx_gain[] = "\n    Shall be between 0 and 15\n    ";
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_if_rx_gain(PyObject *__pyx_self, PyObject *__pyx_arg_vga_gain) {
   __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("set_vga_gain (wrapper)", 0);
+  __Pyx_RefNannySetupContext("set_if_rx_gain (wrapper)", 0);
   assert(__pyx_arg_vga_gain); {
     __pyx_v_vga_gain = __Pyx_PyInt_As_unsigned_char(__pyx_arg_vga_gain); if (unlikely((__pyx_v_vga_gain == (unsigned char)-1) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_vga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_if_rx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_vga_gain));
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_if_rx_gain(__pyx_self, ((__pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t)__pyx_v_vga_gain));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_if_rx_gain(CYTHON_UNUSED PyObject *__pyx_self, __pyx_t_3src_3urh_3dev_6native_3lib_6airspy_uint8_t __pyx_v_vga_gain) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("set_vga_gain", 0);
+  __Pyx_RefNannySetupContext("set_if_rx_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_vga_gain(__pyx_v_vga_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_6airspy_set_if_rx_gain(__pyx_v_vga_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3727,7 +3732,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_vga_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.airspy.set_if_rx_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19861,9 +19866,9 @@ static PyMethodDef __pyx_methods[] = {
   {"get_sample_rates", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_7get_sample_rates, METH_NOARGS, 0},
   {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_9set_sample_rate, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_8set_sample_rate},
   {"set_center_frequency", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_11set_center_frequency, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_10set_center_frequency},
-  {"set_lna_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_lna_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_12set_lna_gain},
-  {"set_mixer_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_mixer_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_14set_mixer_gain},
-  {"set_vga_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_vga_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_16set_vga_gain},
+  {"set_baseband_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_13set_baseband_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_12set_baseband_gain},
+  {"set_rf_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_15set_rf_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_14set_rf_gain},
+  {"set_if_rx_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_17set_if_rx_gain, METH_O, __pyx_doc_3src_3urh_3dev_6native_3lib_6airspy_16set_if_rx_gain},
   {"start_rx", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_19start_rx, METH_O, 0},
   {"stop_rx", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_21stop_rx, METH_NOARGS, 0},
   {"error_name", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_6airspy_23error_name, METH_O, 0},
@@ -19893,6 +19898,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Buffer_view_does_not_expose_stri, __pyx_k_Buffer_view_does_not_expose_stri, sizeof(__pyx_k_Buffer_view_does_not_expose_stri), 0, 0, 1, 0},
   {&__pyx_kp_s_Can_only_create_a_buffer_that_is, __pyx_k_Can_only_create_a_buffer_that_is, sizeof(__pyx_k_Can_only_create_a_buffer_that_is), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_index_with_type_s, __pyx_k_Cannot_index_with_type_s, sizeof(__pyx_k_Cannot_index_with_type_s), 0, 0, 1, 0},
+  {&__pyx_kp_u_Cython_AirSpy, __pyx_k_Cython_AirSpy, sizeof(__pyx_k_Cython_AirSpy), 0, 1, 0, 0},
   {&__pyx_n_s_Ellipsis, __pyx_k_Ellipsis, sizeof(__pyx_k_Ellipsis), 0, 0, 1, 1},
   {&__pyx_kp_s_Empty_shape_tuple_for_cython_arr, __pyx_k_Empty_shape_tuple_for_cython_arr, sizeof(__pyx_k_Empty_shape_tuple_for_cython_arr), 0, 0, 1, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor, __pyx_k_Format_string_allocated_too_shor, sizeof(__pyx_k_Format_string_allocated_too_shor), 0, 1, 0, 0},

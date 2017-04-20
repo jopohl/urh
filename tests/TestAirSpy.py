@@ -1,4 +1,11 @@
 import unittest
+
+import time
+
+from multiprocessing import Queue, Pipe
+
+import numpy as np
+
 from urh.dev.native.lib import airspy
 
 
@@ -25,8 +32,18 @@ class TestAirSpy(unittest.TestCase):
         result = airspy.set_vga_gain(10)
         print("Set vga gain", airspy.error_name(result), result)
 
-        result = airspy.start_rx(print)
+        parent_conn, child_conn = Pipe()
+
+        result = airspy.start_rx(child_conn.send_bytes)
         print("Set start rx", airspy.error_name(result), result)
+
+        time.sleep(0.01)
+        print(np.fromstring(parent_conn.recv_bytes(8*65536), dtype=np.complex64))
+
+        print("Closing")
+
+        parent_conn.close()
+        child_conn.close()
 
         result = airspy.stop_rx()
         print("Set stop rx", airspy.error_name(result), result)

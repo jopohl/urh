@@ -84,7 +84,7 @@ class SendRecvDialogController(QDialog):
         self.timer = QTimer(self)
 
         dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name)
+        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
 
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
@@ -162,7 +162,7 @@ class SendRecvDialogController(QDialog):
             self.ui.spinBoxBasebandGain.setValue(baseband_gain)
             self.ui.spinBoxBasebandGain.valueChanged.emit(baseband_gain)
 
-    def set_device_ui_items_visibility(self, device_name: str):
+    def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
         conf = config.DEVICE_CONFIG[key]
         key_ui_dev_param_map = {"center_freq": "Freq", "sample_rate": "SampleRate", "bandwidth": "Bandwidth"}
@@ -227,6 +227,8 @@ class SendRecvDialogController(QDialog):
                 assert len(gain_values) >= 2
                 spinbox.setMinimum(gain_values[0])
                 spinbox.setMaximum(gain_values[-1])
+                if adjust_gains:
+                    spinbox.setValue(gain_values[len(gain_values) // 2])
                 spinbox.setSingleStep(gain_values[1] - gain_values[0])
                 spinbox.setVisible(True)
 

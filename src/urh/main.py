@@ -10,7 +10,10 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
-locale.setlocale(locale.LC_ALL, '')
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except locale.Error as e:
+    print("Ignoring locale error {}".format(e))
 
 GENERATE_UI = True
 

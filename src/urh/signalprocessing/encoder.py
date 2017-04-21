@@ -596,6 +596,7 @@ class Encoder(object):
             if cnt == 1:
                 output.extend(dst[src.index(inpt[i:i + minimum_item_size])])
             elif cnt < 1:
+                output.extend(inpt[i:i + 1])
                 i += 1
                 errors += 1
                 continue

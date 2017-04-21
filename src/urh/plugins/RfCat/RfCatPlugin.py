@@ -1,12 +1,6 @@
-import numpy as np
-
-from urh.dev.native.Device import Device
-from urh.util.Logger import logger
-
 from subprocess import PIPE, Popen
 from threading import Thread
 from queue import Queue, Empty
-import time
 
 ## rfcat commands
 # freq = 433920000
@@ -31,13 +25,8 @@ import time
 # cmd_preamble = "d.setMdmNumPreamble({})".format(num_preamble)
 # cmd_showconfig = "print d.reprRadioConfig()"
 
-import socketserver
-import threading
-
 import time
-
 import numpy as np
-import psutil
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
@@ -51,7 +40,6 @@ from urh.util.Logger import logger
 
 
 class RfCatPlugin(SDRPlugin):
-    NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
     rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
     show_proto_sniff_dialog_clicked = pyqtSignal()
     sending_status_changed = pyqtSignal(bool)
@@ -190,16 +178,16 @@ class RfCatPlugin(SDRPlugin):
             self.rq = Queue()
             self.wq = Queue()
 
-            self.t_stdout = Thread(target=RFCAT.readq, args=(self.p.stdout, self.rq))
+            self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.p.stdout, self.rq))
             self.t_stdout.daemon = True
             self.t_stdout.start()
 
             ## Using this shows all the rfcat errors and exceptions -> unusable
-            # self.t_stderr = Thread(target=RFCAT.readq, args=(self.p.stderr, self.rq))
+            # self.t_stderr = Thread(target=RfCatPlugin.readq, args=(self.p.stderr, self.rq))
             # self.t_stderr.daemon = True
             # self.t_stderr.start()
 
-            self.t_stdin = Thread(target=RFCAT.writeq, args=(self.p.stdin, self.wq))
+            self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.p.stdin, self.wq))
             self.t_stdin.daemon = True
             self.t_stdin.start()
 
@@ -207,16 +195,14 @@ class RfCatPlugin(SDRPlugin):
             self.t_main.daemon = True
             self.t_main.start()
 
-            # self.ctrl_connection = ctrl_connection
-            # self.data_connection = data_connection
             self.thread_is_open = True
 
     def close_rfcat(self):
-        if self.socket_is_open:
+        if self.thread_is_open:
             try:
                 self.t_main.stop()
                 self.t_stdout.stop()
-                self.t_stderr.stop()
+                # self.t_stderr.stop()
                 self.t_stdin.stop()
                 self.socket_is_open = False
             except:
@@ -352,13 +338,13 @@ class RfCatPlugin(SDRPlugin):
         :return:
         """
         self.__sending_interrupt_requested = False
-        self.sending_thread = threading.Thread(target=self.__send_messages, args=(messages, sample_rates))
+        self.sending_thread = Thread(target=self.__send_messages, args=(messages, sample_rates))
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
-        self.sending_thread = threading.Thread(target=self.send_raw_data, args=(self.samples_to_send, self.sending_repeats))
+        self.sending_thread = Thread(target=self.send_raw_data, args=(self.samples_to_send, self.sending_repeats))
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
@@ -394,12 +380,12 @@ class RfCatPlugin(SDRPlugin):
     #     self.server_port = self.settings_frame.spinBoxServerPort.value()
     #     self.qsettings.setValue('server_port', str(self.server_port))
 
-    def __emit_rcv_index_changed(self):
-        # for updating received bits in protocol sniffer
-        if hasattr(self, "received_bits") and self.received_bits:
-            self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
+    # def __emit_rcv_index_changed(self):
+    #     # for updating received bits in protocol sniffer
+    #     if hasattr(self, "received_bits") and self.received_bits:
+    #         self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
 
-    @pyqtSlot(str)
-    def on_lopenprotosniffer_link_activated(self, link: str):
-        if link == "open_proto_sniffer":
-            self.show_proto_sniff_dialog_clicked.emit()
+    # @pyqtSlot(str)
+    # def on_lopenprotosniffer_link_activated(self, link: str):
+    #     if link == "open_proto_sniffer":
+    #         self.show_proto_sniff_dialog_clicked.emit()

@@ -17,6 +17,7 @@ class Encoder(object):
         MISSING_EXTERNAL_PROGRAM = "Please set external de/encoder program!"
         INVALID_CUTMARK = "cutmark is not valid"
         MISC = "general error"
+        WRONG_PARAMETERS = "wrong parameters"
 
     def __init__(self, chain=None):
         if chain is None:
@@ -31,6 +32,9 @@ class Encoder(object):
         self.carrier = "1_"
         self.cutmark = [True, False]
         self.cutmode = 0  # 0 = before, 1 = after, 2 = before_pos, 3 = after_pos
+        self.morse_low = 1
+        self.morse_high = 3
+        self.morse_wait = 1
         self.__symbol_len = 1
 
         # Configure CC1101 Date Whitening
@@ -141,6 +145,13 @@ class Encoder(object):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("0;1010")
+            elif constants.DECODING_MORSE in names[i]:
+                self.chain.append(self.code_morse)
+                i += 1
+                if i < len(names):
+                    self.chain.append(names[i])
+                else:
+                    self.chain.append("1;3;1")
             i += 1
 
     def get_chain(self):
@@ -180,6 +191,10 @@ class Encoder(object):
                 chainstr.append(self.chain[i])
             elif self.code_cut == self.chain[i]:
                 chainstr.append(constants.DECODING_CUT)
+                i += 1
+                chainstr.append(self.chain[i])
+            elif self.code_morse == self.chain[i]:
+                chainstr.append(constants.DECODING_MORSE)
                 i += 1
                 chainstr.append(self.chain[i])
             i += 1
@@ -269,13 +284,21 @@ class Encoder(object):
                         self.cutmode = 0
                     if self.cutmode == 0 or self.cutmode == 1:
                         self.cutmark = self.str2bit(tmp)
-
                         if len(self.cutmark) == 0: self.cutmark = [True, False, True, False]
                     else:
                         try:
                             self.cutmark = int(tmp)
                         except ValueError:
                             self.cutmark = 1
+            elif self.code_morse == operation:
+                if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 2:
+                    try:
+                        l, h, w = self.chain[i + 1].split(";")
+                        self.morse_low = int(l)
+                        self.morse_high = int(h)
+                        self.morse_wait = int(w)
+                    except ValueError:
+                        self.morse_low, self.morse_high, self.morse_wait = (1, 3, 1)
 
             # Execute Ops
             if callable(operation) and len(temp) > 0:
@@ -604,6 +627,50 @@ class Encoder(object):
 
         return output, errors, self.ErrorState.SUCCESS
 
+    def code_morse(self, decoding, inpt):
+        errors = 0
+        output = []
+
+        if self.morse_low >= self.morse_high:
+            return inpt, 1, self.ErrorState.WRONG_PARAMETERS
+
+        i = 0
+        if decoding:
+            cnt = 0
+            while i < len(inpt):
+                if inpt[i] and i < len(inpt) - 1:
+                    cnt += 1
+                else:
+                    # Consider last value
+                    if i == len(inpt) - 1:
+                        cnt += 1
+
+                    # Evaluate sequence whenever we get a zero
+                    if cnt >= self.morse_high:
+                        output.append(True)
+                    elif cnt > 0 and cnt <= self.morse_low:
+                        output.append(False)
+                    else:
+                        if cnt > 0:
+                            if cnt > (self.morse_high+self.morse_low // 2):
+                                output.append(True)
+                            else:
+                                output.append(False)
+                            errors += 1
+                    cnt = 0
+                i += 1
+        else:
+            while i < len(inpt):
+                output.extend([False] * self.morse_wait)
+                if inpt[i]:
+                    output.extend([True] * self.morse_high)
+                else:
+                    output.extend([True] * self.morse_low)
+                i += 1
+            output.extend([False] * self.morse_wait)
+
+        return output, errors, self.ErrorState.SUCCESS
+
     def code_externalprogram(self, decoding, inpt):
         errors = 0
 
@@ -684,7 +751,6 @@ class Encoder(object):
 
         except IndexError:
             return None
-
 
     @staticmethod
     def enocean_checksum4(inpt):

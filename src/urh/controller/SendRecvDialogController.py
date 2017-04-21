@@ -545,9 +545,7 @@ class SendRecvDialogController(QDialog):
 
             self.on_clear_clicked()
 
-        elif "FATAL: No supported devices found" in new_messages or \
-                        "HACKRF_ERROR_NOT_FOUND" in new_messages or \
-                        "HACKRF_ERROR_LIBUSB" in new_messages:
+        elif any(e in new_messages for e in ("HACKRF_ERROR_NOT_FOUND", "HACKRF_ERROR_LIBUSB", "HackRF not found")):
             self.device.stop_on_error("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()

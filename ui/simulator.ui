@@ -277,7 +277,46 @@
                <string>Message</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_6">
-               <item row="0" column="0">
+               <item row="1" column="2">
+                <widget class="QComboBox" name="cbViewType">
+                 <item>
+                  <property name="text">
+                   <string>Bit</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Hex</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ASCII</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Viewtype:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="0" colspan="4">
                 <widget class="SimulatorMessageTableView" name="tblViewMessage">
                  <attribute name="verticalHeaderVisible">
                   <bool>false</bool>

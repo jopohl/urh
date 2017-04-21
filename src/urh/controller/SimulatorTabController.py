@@ -114,6 +114,8 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.label_updated.emit)
         self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.message_updated.emit)
 
+        self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
+
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
         goto_combobox.clear()
@@ -195,6 +197,12 @@ class SimulatorTabController(QWidget):
             self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
             self.ui.detail_view_widget.setCurrentIndex(0)
 
+    @pyqtSlot()
+    def on_view_type_changed(self):
+        self.simulator_message_table_model.proto_view = self.ui.cbViewType.currentIndex()
+        self.simulator_message_table_model.update()
+        self.ui.tblViewMessage.resize_columns()
+        
     @pyqtSlot()
     def on_goto_combobox_activated(self):
         self.selected_model_item.goto_target = self.ui.goto_combobox.currentData()

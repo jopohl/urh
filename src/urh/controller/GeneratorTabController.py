@@ -14,6 +14,7 @@ from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -53,6 +54,7 @@ class GeneratorTabController(QWidget):
         self.network_sdr_button_orig_tooltip = self.ui.btnNetworkSDRSend.toolTip()
         self.set_network_sdr_send_button_visibility()
         self.network_sdr_plugin = NetworkSDRInterfacePlugin()
+        self.rfcat_plugin = RfCatPlugin()
 
         self.refresh_modulators()
         self.on_selected_modulation_changed()
@@ -118,6 +120,7 @@ class GeneratorTabController(QWidget):
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 
         self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
+        self.ui.btnRfCatSend.clicked.connect(self.on_btn_rfcat_clicked)
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_network_sdr_send_message_changed)
@@ -546,3 +549,14 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def on_network_sdr_send_message_changed(self, message_index: int):
         self.ui.tableMessages.selectRow(message_index)
+
+    @pyqtSlot()
+    def on_btn_rfcat_clicked(self):
+        if not self.rfcat_plugin.is_sending:
+            pass # TODO rfcat
+            # messages = self.table_model.protocol.messages
+            # sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            # self.network_sdr_plugin.start_message_sending_thread(messages, sample_rates)
+        else:
+            pass # TODO rfcat
+            # self.network_sdr_plugin.stop_sending_thread()

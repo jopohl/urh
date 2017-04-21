@@ -200,7 +200,7 @@ class AbstractBaseThread(QThread):
 
         rp = os.path.realpath(os.path.join(rp, "scripts"))
         suffix = "_recv.py" if self._receiving else "_send.py"
-        filename = self.device.lower() + suffix
+        filename = self.device.lower().split(" ")[0] + suffix
 
         if not self.python2_interpreter:
             raise Exception("Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")

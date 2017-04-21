@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FrameSyncCropSettings</class>
- <widget class="QFrame" name="FrameSyncCropSettings">
+ <class>InsertSineWaveSettings</class>
+ <widget class="QFrame" name="RfCatSettings">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>295</width>
-    <height>79</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>33</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>

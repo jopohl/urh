@@ -545,7 +545,7 @@ class SendRecvDialogController(QDialog):
 
             self.on_clear_clicked()
 
-        elif any(e in new_messages for e in ("HACKRF_ERROR_NOT_FOUND", "HACKRF_ERROR_LIBUSB", "HackRF not found")):
+        elif any(e in new_messages for e in ("HACKRF_ERROR_NOT_FOUND", "HACKRF_ERROR_LIBUSB")):
             self.device.stop_on_error("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()

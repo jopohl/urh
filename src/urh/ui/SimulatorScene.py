@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QGraphicsItem, QAction, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QGraphicsItem, QAbstractItemView
 from PyQt5.QtGui import QPen, QDropEvent, QFont, QFontDatabase
-from PyQt5.QtCore import Qt, QSizeF, QSizeF, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal
 
-import weakref
 import copy
 
 from urh.signalprocessing.Participant import Participant
@@ -11,11 +10,8 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset
 from urh.signalprocessing.LabelItem import LabelItem
 from urh.signalprocessing.RuleItem import RuleItem, RuleConditionItem
-from urh.signalprocessing.UnlabeledRangeItem import UnlabeledRangeItem
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
@@ -221,7 +217,10 @@ class SimulatorScene(QGraphicsScene):
         return width        
 
     def delete_selected_items(self):
-        for item in self.selectedItems():
+        items = self.selectedItems()
+        self.clearSelection()
+
+        for item in items:
             self.sim_proto_manager.delete_item(item.model_item)
 
     def move_item(self, item: GraphicsItem, new_pos, new_parent: SimulatorItem):

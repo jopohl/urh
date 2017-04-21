@@ -6,16 +6,16 @@ from PyQt5.QtCore import pyqtSlot, Qt, QDir
 from urh.models.SimulatorRulesetTableModel import SimulatorRulesetTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
+from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.ui.SimulatorScene import SimulatorScene, GotoActionItem, ProgramActionItem
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset, SimulatorRulesetItem, Mode
 from urh.signalprocessing.MessageItem import MessageItem
-from urh.signalprocessing.RuleItem import RuleConditionItem, RuleItem
+from urh.signalprocessing.RuleItem import RuleConditionItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, ConditionType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
@@ -53,6 +53,9 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
         self.update_field_types()
+
+        self.simulator_message_table_model = SimulatorMessageTableModel(self)
+        self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.simulator_scene = SimulatorScene(controller=self)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
@@ -153,6 +156,12 @@ class SimulatorTabController(QWidget):
                 self.update_goto_combobox()
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.selected_item, MessageItem):
+                self.simulator_message_table_model.protocol.messages[:] = []
+                self.simulator_message_table_model.protocol.used_symbols.clear()
+                self.simulator_message_table_model.protocol.messages.append(self.selected_model_item)
+                self.simulator_message_table_model.update()
+                self.ui.tblViewMessage.resize_columns()
+
                 self.simulator_message_field_model.message = self.selected_model_item
                 self.simulator_message_field_model.update()
 

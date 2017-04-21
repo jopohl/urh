@@ -132,17 +132,36 @@ class Ui_SimulatorTab(object):
         self.detail_view_widget.addWidget(self.page_goto_action)
         self.page_message = QtWidgets.QWidget()
         self.page_message.setObjectName("page_message")
-        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page_message)
+        self.verticalLayout_5 = QtWidgets.QGridLayout(self.page_message)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.tblViewFieldValues = QtWidgets.QTableView(self.page_message)
+        self.tabWidget = QtWidgets.QTabWidget(self.page_message)
+        self.tabWidget.setObjectName("tabWidget")
+        self.tab_3 = QtWidgets.QWidget()
+        self.tab_3.setObjectName("tab_3")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.tab_3)
+        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.tblViewFieldValues = QtWidgets.QTableView(self.tab_3)
         self.tblViewFieldValues.setAlternatingRowColors(True)
         self.tblViewFieldValues.setShowGrid(False)
         self.tblViewFieldValues.setObjectName("tblViewFieldValues")
         self.tblViewFieldValues.horizontalHeader().setDefaultSectionSize(150)
         self.tblViewFieldValues.horizontalHeader().setStretchLastSection(True)
         self.tblViewFieldValues.verticalHeader().setVisible(False)
-        self.verticalLayout_5.addWidget(self.tblViewFieldValues)
+        self.gridLayout_4.addWidget(self.tblViewFieldValues, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_3, "")
+        self.tab_4 = QtWidgets.QWidget()
+        self.tab_4.setObjectName("tab_4")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.tab_4)
+        self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.tblViewMessage = SimulatorMessageTableView(self.tab_4)
+        self.tblViewMessage.setObjectName("tblViewMessage")
+        self.tblViewMessage.verticalHeader().setVisible(False)
+        self.gridLayout_6.addWidget(self.tblViewMessage, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_4, "")
+        self.verticalLayout_5.addWidget(self.tabWidget, 1, 0, 1, 1)
         self.detail_view_widget.addWidget(self.page_message)
         self.page_rule = QtWidgets.QWidget()
         self.page_rule.setObjectName("page_rule")
@@ -202,6 +221,7 @@ class Ui_SimulatorTab(object):
 
         self.retranslateUi(SimulatorTab)
         self.detail_view_widget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(SimulatorTab)
 
     def retranslateUi(self, SimulatorTab):
@@ -214,6 +234,8 @@ class Ui_SimulatorTab(object):
         self.btnNextNav.setText(_translate("SimulatorTab", ">"))
         self.lblMsgFieldsValues.setText(_translate("SimulatorTab", "<html><head/><body><p>Detail view for item</p></body></html>"))
         self.label_2.setText(_translate("SimulatorTab", "Goto:"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("SimulatorTab", "Protocol Labels"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("SimulatorTab", "Message"))
         self.rbAllApply.setText(_translate("SimulatorTab", "All rules must apply (AND)"))
         self.rbOneApply.setText(_translate("SimulatorTab", "At least one rule must apply (OR)"))
         self.btnAddRule.setToolTip(_translate("SimulatorTab", "Add ruleset"))
@@ -226,4 +248,5 @@ class Ui_SimulatorTab(object):
 
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
+from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView
 from . import urh_rc

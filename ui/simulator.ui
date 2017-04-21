@@ -240,24 +240,52 @@
           </layout>
          </widget>
          <widget class="QWidget" name="page_message">
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QTableView" name="tblViewFieldValues">
-             <property name="alternatingRowColors">
-              <bool>true</bool>
+          <layout class="QGridLayout" name="verticalLayout_5">
+           <item row="1" column="0">
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="showGrid">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>150</number>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
+             <widget class="QWidget" name="tab_3">
+              <attribute name="title">
+               <string>Protocol Labels</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QTableView" name="tblViewFieldValues">
+                 <property name="alternatingRowColors">
+                  <bool>true</bool>
+                 </property>
+                 <property name="showGrid">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>150</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_4">
+              <attribute name="title">
+               <string>Message</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_6">
+               <item row="0" column="0">
+                <widget class="SimulatorMessageTableView" name="tblViewMessage">
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -397,6 +425,11 @@
    <class>SimulatorGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.SimulatorGraphicsView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SimulatorMessageTableView</class>
+   <extends>QTableView</extends>
+   <header>urh.ui.views.SimulatorMessageTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

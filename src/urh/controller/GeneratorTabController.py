@@ -553,10 +553,10 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_btn_rfcat_clicked(self):
         if not self.rfcat_plugin.is_sending:
-            pass # TODO rfcat
-            # messages = self.table_model.protocol.messages
-            # sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
-            # self.network_sdr_plugin.start_message_sending_thread(messages, sample_rates)
+            pass
+            messages = self.table_model.protocol.messages
+            sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates)
         else:
-            pass # TODO rfcat
-            # self.network_sdr_plugin.stop_sending_thread()
+            pass
+            self.rfcat_plugin.stop_sending_thread()

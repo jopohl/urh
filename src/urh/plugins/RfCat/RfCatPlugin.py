@@ -47,43 +47,15 @@ class RfCatPlugin(SDRPlugin):
     current_send_message_changed = pyqtSignal(int)
 
     def __init__(self, raw_mode=False, spectrum=False):
-        """
-
-        :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
-        """
         super().__init__(name="RfCat")
-        # self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
-        # self.server_ip = ""
-        #
-        # self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
-        # self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
-
-        # self.receive_check_timer = QTimer()
-        # self.receive_check_timer.setInterval(250)
-        # # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
-        # self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
 
         self.thread_is_open = False
         self.initialized = False
         self.ready = True
         self.__is_sending = False
         self.__sending_interrupt_requested = False
-
-        self.sending_repeats = 1  # only used in raw mode
         self.current_sent_sample = 0
         self.current_sending_repeat = 0
-
-        # self.raw_mode = raw_mode
-        # if self.raw_mode:
-        #     if not spectrum:
-        #         # Take 60% of avail memory
-        #         num_samples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (
-        #         psutil.virtual_memory().available / 8)
-        #     else:
-        #         num_samples = constants.SPECTRUM_BUFFER_SIZE
-        #     self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
-        # else:
-        #     self.received_bits = []
 
     @property
     def is_sending(self) -> bool:
@@ -95,44 +67,11 @@ class RfCatPlugin(SDRPlugin):
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
 
-    @property
-    def received_data(self):
-        if self.raw_mode:
-            return self.receive_buffer[:self.current_receive_index]
-        else:
-            return self.received_bits
-
-    @property
-    def current_receive_index(self):
-        if hasattr(self, "server") and hasattr(self.server, "current_receive_index"):
-            return self.server.current_receive_index
-        else:
-            return 0
-
-    @current_receive_index.setter
-    def current_receive_index(self, value):
-        if hasattr(self.server, "current_receive_index"):
-            self.server.current_receive_index = value
-        else:
-            pass
-
     def free_data(self):
         if self.raw_mode:
             self.receive_buffer = np.empty(0)
         else:
             self.received_bits[:] = []
-
-    def create_connects(self):
-        pass
-        # self.settings_frame.lineEditClientIP.setText(self.client_ip)
-        # self.settings_frame.spinBoxClientPort.setValue(self.client_port)
-        # self.settings_frame.spinBoxServerPort.setValue(self.server_port)
-        #
-        # self.settings_frame.lineEditClientIP.editingFinished.connect(self.on_linedit_client_ip_editing_finished)
-        # self.settings_frame.lineEditServerIP.editingFinished.connect(self.on_linedit_server_ip_editing_finished)
-        # self.settings_frame.spinBoxClientPort.editingFinished.connect(self.on_spinbox_client_port_editing_finished)
-        # self.settings_frame.spinBoxServerPort.editingFinished.connect(self.on_spinbox_server_port_editing_finished)
-        # self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     @staticmethod
     def readq(fd, queue):
@@ -228,29 +167,6 @@ class RfCatPlugin(SDRPlugin):
     def read_async(self):
         self.set_parameter("d.RFrecv({})[0]".format(500), log=False)
 
-    # def start_tcp_server_for_receiving(self):
-    #     self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler)
-    #     if self.raw_mode:
-    #         self.server.receive_buffer = self.receive_buffer
-    #         self.server.current_receive_index = 0
-    #     else:
-    #         self.server.received_bits = self.received_bits
-    #
-    #     self.receive_check_timer.start()
-    #
-    #     self.server_thread = threading.Thread(target=self.server.serve_forever)
-    #     self.server_thread.daemon = True
-    #     self.server_thread.start()
-    #
-    # def stop_tcp_server(self):
-    #     self.receive_check_timer.stop()
-    #     if hasattr(self, "server"):
-    #         logger.debug("Shutdown TCP server")
-    #         self.server.shutdown()
-    #         self.server.server_close()
-    #     if hasattr(self, "server_thread"):
-    #         self.server_thread.join()
-
     def send_data(self, data) -> str:
         ### Setup RfCat device
 
@@ -269,6 +185,7 @@ class RfCatPlugin(SDRPlugin):
         self.set_parameter("d.setMdmSyncMode(0)")
 
         # Get values for sample_rate and bitlength, then calculate datarate
+
         sample_rate = 2000000
         bitlength = 500
         self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bitlength)))
@@ -342,12 +259,6 @@ class RfCatPlugin(SDRPlugin):
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
-    def start_raw_sending_thread(self):
-        self.__sending_interrupt_requested = False
-        self.sending_thread = Thread(target=self.send_raw_data, args=(self.samples_to_send, self.sending_repeats))
-        self.sending_thread.daemon = True
-        self.sending_thread.start()
-
     def stop_sending_thread(self):
         self.__sending_interrupt_requested = True
         self.sending_stop_requested.emit()
@@ -360,32 +271,3 @@ class RfCatPlugin(SDRPlugin):
     def bit_str_to_bytearray(bits: str) -> bytearray:
         bits += "0" * ((8 - len(bits) % 8) % 8)
         return bytearray((int(bits[i:i+8], 2) for i in range(0, len(bits), 8)))
-
-    # def on_linedit_client_ip_editing_finished(self):
-    #     ip = self.settings_frame.lineEditClientIP.text()
-    #     self.client_ip = ip
-    #     self.qsettings.setValue('client_ip', self.client_ip)
-    #
-    # def on_linedit_server_ip_editing_finished(self):
-    #     # Does nothing, because field is disabled
-    #     ip = self.settings_frame.lineEditServerIP.text()
-    #     self.server_ip = ip
-    #     self.qsettings.setValue('server_ip', self.server_ip)
-    #
-    # def on_spinbox_client_port_editing_finished(self):
-    #     self.client_port = self.settings_frame.spinBoxClientPort.value()
-    #     self.qsettings.setValue('client_port', str(self.client_port))
-    #
-    # def on_spinbox_server_port_editing_finished(self):
-    #     self.server_port = self.settings_frame.spinBoxServerPort.value()
-    #     self.qsettings.setValue('server_port', str(self.server_port))
-
-    # def __emit_rcv_index_changed(self):
-    #     # for updating received bits in protocol sniffer
-    #     if hasattr(self, "received_bits") and self.received_bits:
-    #         self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
-
-    # @pyqtSlot(str)
-    # def on_lopenprotosniffer_link_activated(self, link: str):
-    #     if link == "open_proto_sniffer":
-    #         self.show_proto_sniff_dialog_clicked.emit()

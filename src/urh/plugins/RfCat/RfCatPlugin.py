@@ -1,6 +1,13 @@
 from subprocess import PIPE, Popen
 from threading import Thread
 from queue import Queue, Empty
+import time
+import numpy as np
+from PyQt5.QtCore import pyqtSignal
+from urh.plugins.Plugin import SDRPlugin
+from urh.signalprocessing.Message import Message
+from urh.util.Errors import Errors
+from urh.util.Logger import logger
 
 ## rfcat commands
 # freq = 433920000
@@ -25,19 +32,6 @@ from queue import Queue, Empty
 # cmd_preamble = "d.setMdmNumPreamble({})".format(num_preamble)
 # cmd_showconfig = "print d.reprRadioConfig()"
 
-import time
-import numpy as np
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSignal
-import socket
-
-from urh import constants
-from urh.plugins.Plugin import SDRPlugin
-from urh.signalprocessing.Message import Message
-from urh.util.Errors import Errors
-from urh.util.Logger import logger
-
 
 class RfCatPlugin(SDRPlugin):
     rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
@@ -56,6 +50,7 @@ class RfCatPlugin(SDRPlugin):
         self.__sending_interrupt_requested = False
         self.current_sent_sample = 0
         self.current_sending_repeat = 0
+        self.modulators = 0
 
     @property
     def is_sending(self) -> bool:
@@ -167,37 +162,24 @@ class RfCatPlugin(SDRPlugin):
     def read_async(self):
         self.set_parameter("d.RFrecv({})[0]".format(500), log=False)
 
-    def send_data(self, data) -> str:
+    def configure_rfcat(self, modulation = "MOD_ASK_OOK", freq = 433920000, sample_rate = 2000000, bit_len = 500):
         ### Setup RfCat device
-
-        # Get current modulation and translate to
-        ## ASK -> "MOD_ASK_OOK"
-        ## FSK -> "MOD_GFSK"    # better MOD_2FSK?
-        ## PSK -> "MOD_MSK"
-        modulation = "MOD_ASK_OOK"
+        # Get current modulation
         self.set_parameter("d.setMdmModulation({})".format(modulation))
-
         # Get current frequency
-        center_freq = 433920000
-        self.set_parameter("d.setFreq({})".format(int(center_freq)))
-
+        self.set_parameter("d.setFreq({})".format(int(freq)))
         # Disable syncword and preamble
         self.set_parameter("d.setMdmSyncMode(0)")
-
         # Get values for sample_rate and bitlength, then calculate datarate
-
-        sample_rate = 2000000
-        bitlength = 500
-        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bitlength)))
-
+        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bit_len)))
         # Set maximum power
         self.set_parameter("d.setMaxPower()")
+        logger.info("Configured RfCat to Modulation={}, Freqency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // bit_len)))
 
+    def send_data(self, data) -> str:
         # Send data
-        #data = '\x8e\x8e\xee\xee\xee\x8e\xee\xee' + '\xee\x88\x88\x88\x80'
-        for line in data:
-            formatted_line = line
-            self.set_parameter("d.RFxmit({})".format(formatted_line))
+        prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
+        self.set_parameter(prepared_data)
 
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
@@ -224,6 +206,20 @@ class RfCatPlugin(SDRPlugin):
         :return:
         """
         self.is_sending = True
+
+        # Open and configure RfCat
+        self.open_rfcat()
+        modulation = self.modulators[messages[0].modulator_indx].modulation_type
+        if modulation == 0:     # ASK
+            modulation = "MOD_ASK_OOK"
+        elif modulation == 1:   # FSK
+            modulation = "MOD_2FSK"
+        elif modulation == 2:   # GFSK
+            modulation = "MOD_GFSK"
+        elif modulation == 3:   # PSK
+            modulation = "MOD_MSK"
+        self.configure_rfcat(modulation=modulation, freq=433920000, sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
+
         for i, msg in enumerate(messages):
             if self.__sending_interrupt_requested:
                 break
@@ -244,8 +240,10 @@ class RfCatPlugin(SDRPlugin):
                 break
         logger.debug("Sending finished")
         self.is_sending = False
+        # Close RfCat
+        self.close_rfcat()
 
-    def start_message_sending_thread(self, messages, sample_rates):
+    def start_message_sending_thread(self, messages, sample_rates, modulators):
         """
 
         :type messages: list of Message
@@ -254,6 +252,7 @@ class RfCatPlugin(SDRPlugin):
                              as the pause for a message is given in samples
         :return:
         """
+        self.modulators = modulators
         self.__sending_interrupt_requested = False
         self.sending_thread = Thread(target=self.__send_messages, args=(messages, sample_rates))
         self.sending_thread.daemon = True

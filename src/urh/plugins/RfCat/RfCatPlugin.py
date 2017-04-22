@@ -32,7 +32,6 @@ from urh.util.Logger import logger
 # cmd_preamble = "d.setMdmNumPreamble({})".format(num_preamble)
 # cmd_showconfig = "print d.reprRadioConfig()"
 
-
 class RfCatPlugin(SDRPlugin):
     rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
     show_proto_sniff_dialog_clicked = pyqtSignal()
@@ -40,7 +39,7 @@ class RfCatPlugin(SDRPlugin):
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
 
-    def __init__(self, raw_mode=False, spectrum=False):
+    def __init__(self):
         super().__init__(name="RfCat")
 
         self.thread_is_open = False
@@ -104,9 +103,8 @@ class RfCatPlugin(SDRPlugin):
                         # Got data!
                         data = line[data_start + 1:-2]
                         logger.info(data)
-                        #self.data_connection.send_bytes(data)
 
-    def open_rfcat(self): #, ctrl_connection, data_connection):
+    def open_rfcat(self):
         if not self.thread_is_open:
             self.p = Popen(['rfcat', '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
             self.rq = Queue()
@@ -218,7 +216,8 @@ class RfCatPlugin(SDRPlugin):
             modulation = "MOD_GFSK"
         elif modulation == 3:   # PSK
             modulation = "MOD_MSK"
-        self.configure_rfcat(modulation=modulation, freq=433920000, sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
+        self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
+                             sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 
         for i, msg in enumerate(messages):
             if self.__sending_interrupt_requested:
@@ -243,7 +242,7 @@ class RfCatPlugin(SDRPlugin):
         # Close RfCat
         self.close_rfcat()
 
-    def start_message_sending_thread(self, messages, sample_rates, modulators):
+    def start_message_sending_thread(self, messages, sample_rates, modulators, project_manager):
         """
 
         :type messages: list of Message
@@ -253,6 +252,7 @@ class RfCatPlugin(SDRPlugin):
         :return:
         """
         self.modulators = modulators
+        self.project_manager = project_manager
         self.__sending_interrupt_requested = False
         self.sending_thread = Thread(target=self.__send_messages, args=(messages, sample_rates))
         self.sending_thread.daemon = True

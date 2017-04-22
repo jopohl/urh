@@ -53,6 +53,7 @@ class GeneratorTabController(QWidget):
 
         self.network_sdr_button_orig_tooltip = self.ui.btnNetworkSDRSend.toolTip()
         self.set_network_sdr_send_button_visibility()
+        self.set_rfcat_button_visibility()
         self.network_sdr_plugin = NetworkSDRInterfacePlugin()
         self.rfcat_plugin = RfCatPlugin()
 
@@ -523,6 +524,11 @@ class GeneratorTabController(QWidget):
         is_plugin_enabled = PluginManager().is_plugin_enabled("NetworkSDRInterface")
         self.ui.btnNetworkSDRSend.setVisible(is_plugin_enabled)
 
+    def set_rfcat_button_visibility(self):
+        is_plugin_enabled = PluginManager().is_plugin_enabled("RfCat")
+        is_plugin_enabled = True # TODO
+        self.ui.btnRfCatSend.setVisible(is_plugin_enabled)
+
     @pyqtSlot()
     def on_btn_network_sdr_clicked(self):
         if not self.network_sdr_plugin.is_sending:
@@ -555,6 +561,6 @@ class GeneratorTabController(QWidget):
         if not self.rfcat_plugin.is_sending:
             messages = self.table_model.protocol.messages
             sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
-            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators)
+            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators, self.project_manager)
         else:
             self.rfcat_plugin.stop_sending_thread()

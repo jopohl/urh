@@ -134,16 +134,12 @@ class RfCatPlugin(SDRPlugin):
                 self.t_main.start()
                 self.thread_is_open = True
                 logger.debug("Successfully opened RfCat ({})".format(rfcat_executable))
-            except:
-                logger.debug("Could not open RfCat!")
+            except Exception as e:
+                logger.debug("Could not open RfCat! ({})".format(e))
 
     def close_rfcat(self):
         if self.thread_is_open:
             try:
-                self.t_main.stop()
-                self.t_stdout.stop()
-                # self.t_stderr.stop()
-                self.t_stdin.stop()
                 self.socket_is_open = False
             except:
                 logger.debug("Could not close threads!")
@@ -211,7 +207,10 @@ class RfCatPlugin(SDRPlugin):
                              as the pause for a message is given in samples
         :return:
         """
-        self.is_sending = True
+        if len(messages):
+            self.is_sending = True
+        else:
+            return False
 
         # Open and configure RfCat
         self.open_rfcat()

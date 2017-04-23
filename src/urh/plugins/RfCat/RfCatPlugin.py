@@ -140,15 +140,17 @@ class RfCatPlugin(SDRPlugin):
         if self.rfcat_is_open:
             try:
                 self.p.kill()
+                self.rq = 0
+                self.wq = 0
                 self.rfcat_is_open = False
             except Exception as e:
                 logger.debug("Could not close rfcat: {}".format(e))
 
     def set_parameter(self, param: str, log=True):  # returns error (True/False)
         # Wait until initialized
-        if not self.initialized:
-            while not self.initialized:
-                time.sleep(0.1)
+        # if not self.initialized:
+        #     while not self.initialized:
+        #         time.sleep(0.1)
 
         # Send data to queue
         try:
@@ -227,12 +229,10 @@ class RfCatPlugin(SDRPlugin):
         else:                   # Fallback
             modulation = "MOD_ASK_OOK"
 
-        logger.debug("Modulation = {}".format(modulation))
-        logger.debug("Frequency = {}".format(self.project_manager.device_conf["frequency"]))
-        logger.debug("Sample rate = {}".format(sample_rates[0]))
-        logger.debug("Bit length = {}".format(messages[0].bit_len))
-        for i in messages:
-            print("MSG:", i)
+        # logger.debug("Modulation = {}".format(modulation))
+        # logger.debug("Frequency = {}".format(self.project_manager.device_conf["frequency"]))
+        # logger.debug("Sample rate = {}".format(sample_rates[0]))
+        # logger.debug("Bit length = {}".format(messages[0].bit_len))
 
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)

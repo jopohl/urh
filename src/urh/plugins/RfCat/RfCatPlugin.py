@@ -151,6 +151,7 @@ class RfCatPlugin(SDRPlugin):
         # if not self.initialized:
         #     while not self.initialized:
         #         time.sleep(0.1)
+        # This seems to make serious problems as rfcat does not give an output back on every system when called via popen...
 
         # Send data to queue
         try:

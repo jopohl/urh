@@ -1,3 +1,4 @@
+import sys
 from subprocess import PIPE, Popen
 from threading import Thread
 from queue import Queue, Empty
@@ -106,28 +107,35 @@ class RfCatPlugin(SDRPlugin):
 
     def open_rfcat(self):
         if not self.thread_is_open:
-            self.p = Popen(['rfcat', '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-            self.rq = Queue()
-            self.wq = Queue()
+            try:
+                if sys.platform == "win32":
+                    rfcat_executable = 'rfcat.exe'
+                else:
+                    rfcat_executable = 'rfcat'
+                self.p = Popen([rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                self.rq = Queue()
+                self.wq = Queue()
 
-            self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.p.stdout, self.rq))
-            self.t_stdout.daemon = True
-            self.t_stdout.start()
+                self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.p.stdout, self.rq))
+                self.t_stdout.daemon = True
+                self.t_stdout.start()
 
-            ## Using this shows all the rfcat errors and exceptions -> unusable
-            # self.t_stderr = Thread(target=RfCatPlugin.readq, args=(self.p.stderr, self.rq))
-            # self.t_stderr.daemon = True
-            # self.t_stderr.start()
+                ## Using this shows all the rfcat errors and exceptions -> unusable
+                # self.t_stderr = Thread(target=RfCatPlugin.readq, args=(self.p.stderr, self.rq))
+                # self.t_stderr.daemon = True
+                # self.t_stderr.start()
 
-            self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.p.stdin, self.wq))
-            self.t_stdin.daemon = True
-            self.t_stdin.start()
+                self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.p.stdin, self.wq))
+                self.t_stdin.daemon = True
+                self.t_stdin.start()
 
-            self.t_main = Thread(target=self.main_thread)  # , args=(data_connection))
-            self.t_main.daemon = True
-            self.t_main.start()
-
-            self.thread_is_open = True
+                self.t_main = Thread(target=self.main_thread)  # , args=(data_connection))
+                self.t_main.daemon = True
+                self.t_main.start()
+                self.thread_is_open = True
+                logger.debug("Successfully opened RfCat ({})".format(rfcat_executable))
+            except:
+                logger.debug("Could not open RfCat!")
 
     def close_rfcat(self):
         if self.thread_is_open:
@@ -138,7 +146,7 @@ class RfCatPlugin(SDRPlugin):
                 self.t_stdin.stop()
                 self.socket_is_open = False
             except:
-                logger.info("Could not close threads:1")
+                logger.debug("Could not close threads!")
 
     def set_parameter(self, param: str, log=True):  # returns error (True/False)
         # Wait until ready

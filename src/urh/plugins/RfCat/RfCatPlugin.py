@@ -42,8 +42,7 @@ class RfCatPlugin(SDRPlugin):
 
     def __init__(self):
         super().__init__(name="RfCat")
-
-        self.thread_is_open = False
+        self.rfcat_is_open = False
         self.initialized = False
         self.ready = True
         self.__is_sending = False
@@ -106,7 +105,7 @@ class RfCatPlugin(SDRPlugin):
                         logger.info(data)
 
     def open_rfcat(self):
-        if not self.thread_is_open:
+        if not self.rfcat_is_open:
             try:
                 if sys.platform == "win32":
                     rfcat_executable = 'rfcat.exe'
@@ -132,22 +131,23 @@ class RfCatPlugin(SDRPlugin):
                 self.t_main = Thread(target=self.main_thread)  # , args=(data_connection))
                 self.t_main.daemon = True
                 self.t_main.start()
-                self.thread_is_open = True
+                self.rfcat_is_open = True
                 logger.debug("Successfully opened RfCat ({})".format(rfcat_executable))
             except Exception as e:
                 logger.debug("Could not open RfCat! ({})".format(e))
 
     def close_rfcat(self):
-        if self.thread_is_open:
+        if self.rfcat_is_open:
             try:
-                self.socket_is_open = False
-            except:
-                logger.debug("Could not close threads!")
+                self.p.kill()
+                self.rfcat_is_open = False
+            except Exception as e:
+                logger.debug("Could not close rfcat: {}".format(e))
 
     def set_parameter(self, param: str, log=True):  # returns error (True/False)
-        # Wait until ready
-        if not self.thread_is_open or not self.initialized or not self.ready:
-            while not self.thread_is_open or not self.initialized:
+        # Wait until initialized
+        if not self.initialized:
+            while not self.initialized:
                 time.sleep(0.1)
 
         # Send data to queue
@@ -181,6 +181,7 @@ class RfCatPlugin(SDRPlugin):
     def send_data(self, data) -> str:
         # Send data
         prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
+        logger.debug("Try to send: {}".format(prepared_data))
         self.set_parameter(prepared_data)
 
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
@@ -225,6 +226,14 @@ class RfCatPlugin(SDRPlugin):
             modulation = "MOD_MSK"
         else:                   # Fallback
             modulation = "MOD_ASK_OOK"
+
+        logger.debug("Modulation = {}".format(modulation))
+        logger.debug("Frequency = {}".format(self.project_manager.device_conf["frequency"]))
+        logger.debug("Sample rate = {}".format(sample_rates[0]))
+        logger.debug("Bit length = {}".format(messages[0].bit_len))
+        for i in messages:
+            print("MSG:", i)
+
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 
@@ -248,8 +257,8 @@ class RfCatPlugin(SDRPlugin):
                 break
         logger.debug("Sending finished")
         self.is_sending = False
-        # Close RfCat
-        self.close_rfcat()
+        # # Close RfCat
+        # self.close_rfcat()
 
     def start_message_sending_thread(self, messages, sample_rates, modulators, project_manager):
         """

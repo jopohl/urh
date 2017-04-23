@@ -224,6 +224,8 @@ class RfCatPlugin(SDRPlugin):
             modulation = "MOD_GFSK"
         elif modulation == 3:   # PSK
             modulation = "MOD_MSK"
+        else:                   # Fallback
+            modulation = "MOD_ASK_OOK"
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 

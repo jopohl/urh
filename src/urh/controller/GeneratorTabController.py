@@ -527,7 +527,6 @@ class GeneratorTabController(QWidget):
 
     def set_rfcat_button_visibility(self):
         is_plugin_enabled = PluginManager().is_plugin_enabled("RfCat")
-        is_plugin_enabled = True # TODO
         self.ui.btnRfCatSend.setVisible(is_plugin_enabled)
 
     @pyqtSlot()

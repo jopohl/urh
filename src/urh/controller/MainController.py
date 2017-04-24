@@ -777,6 +777,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
+        self.generator_tab_controller.set_rfcat_button_visibility()
 
         if "default_view" in changed_options:
             self.apply_default_view(int(changed_options["default_view"]))

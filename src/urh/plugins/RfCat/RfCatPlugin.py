@@ -1,7 +1,6 @@
 import sys
 from subprocess import PIPE, Popen
 from threading import Thread
-from queue import Queue, Empty
 import time
 import numpy as np
 from PyQt5.QtCore import pyqtSignal
@@ -67,42 +66,9 @@ class RfCatPlugin(SDRPlugin):
         else:
             self.received_bits[:] = []
 
-    @staticmethod
-    def readq(fd, queue):
-        while 1:
-            queue.put(fd.readline())
-
-    @staticmethod
-    def writeq(fd, queue):
-        while 1:
-            try:
-                buf = queue.get(timeout=.01)
-                if buf != "":
-                    fd.write(buf.encode("utf8") + b"\n")
-                    fd.flush()
-            except Empty:
-                pass
-
-    def main_thread(self):
-        self.initialized = False
-        while 1:
-            try:
-                line = self.read_queue.get(timeout=.01)  # .get_nowait()
-            except Empty:
-                pass
-            else:
-                if self.initialized == False and not b"Error" in line:
-                    self.initialized = True
-
-                if self.initialized:
-                    self.ready = True
-                    data_start = str(line).find("'")
-                    if data_start == -1:
-                        logger.info(line)
-                    else:
-                        # Got data!
-                        data = line[data_start + 1:-2]
-                        logger.info(data)
+    def write_to_rfcat(self, buf):
+        self.process.stdin.write(buf.encode("utf-8") + b"\n")
+        self.process.stdin.flush()
 
     def open_rfcat(self):
         if not self.rfcat_is_open:
@@ -112,25 +78,6 @@ class RfCatPlugin(SDRPlugin):
                 else:
                     rfcat_executable = 'rfcat'
                 self.process = Popen([rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-                self.read_queue = Queue()
-                self.write_queue = Queue()
-
-                self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.process.stdout, self.read_queue))
-                self.t_stdout.daemon = True
-                self.t_stdout.start()
-
-                ## Using this shows all the rfcat errors and exceptions -> unusable
-                # self.t_stderr = Thread(target=RfCatPlugin.readq, args=(self.p.stderr, self.rq))
-                # self.t_stderr.daemon = True
-                # self.t_stderr.start()
-
-                self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.process.stdin, self.write_queue))
-                self.t_stdin.daemon = True
-                self.t_stdin.start()
-
-                self.t_main = Thread(target=self.main_thread)  # , args=(data_connection))
-                self.t_main.daemon = True
-                self.t_main.start()
                 self.rfcat_is_open = True
                 logger.debug("Successfully opened RfCat ({})".format(rfcat_executable))
             except Exception as e:
@@ -147,18 +94,11 @@ class RfCatPlugin(SDRPlugin):
                 logger.debug("Could not close rfcat: {}".format(e))
 
     def set_parameter(self, param: str, log=True):  # returns error (True/False)
-        # Wait until initialized
-        # if not self.initialized:
-        #     while not self.initialized:
-        #         time.sleep(0.1)
-        # This seems to make serious problems as rfcat does not give an output back on every system when called via popen...
-
-        # Send data to queue
         try:
-            self.write_queue.put(param)
+            self.write_to_rfcat(param)
             self.ready = False
             if log:
-                  logger.info(param)
+                  logger.debug(param)
         except OSError as e:
             logger.info("Could not set parameter {0}:{1} ({2})".format(param, e))
             return True
@@ -168,49 +108,18 @@ class RfCatPlugin(SDRPlugin):
         self.set_parameter("d.RFrecv({})[0]".format(500), log=False)
 
     def configure_rfcat(self, modulation = "MOD_ASK_OOK", freq = 433920000, sample_rate = 2000000, bit_len = 500):
-        ### Setup RfCat device
-        # Get current modulation
-        self.set_parameter("d.setMdmModulation({})".format(modulation))
-        # Get current frequency
-        self.set_parameter("d.setFreq({})".format(int(freq)))
-        # Disable syncword and preamble
-        self.set_parameter("d.setMdmSyncMode(0)")
-        # Get values for sample_rate and bitlength, then calculate datarate
-        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bit_len)))
-        # Set maximum power
-        self.set_parameter("d.setMaxPower()")
+        self.set_parameter("d.setMdmModulation({})".format(modulation), log=False)
+        self.set_parameter("d.setFreq({})".format(int(freq)), log=False)
+        self.set_parameter("d.setMdmSyncMode(0)", log=False)
+        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bit_len)), log=False)
+        self.set_parameter("d.setMaxPower()", log=False)
         logger.info("Configured RfCat to Modulation={}, Freqency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // bit_len)))
 
     def send_data(self, data) -> str:
-        # Send data
         prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
-        logger.debug("Try to send: {}".format(prepared_data))
-        self.set_parameter(prepared_data)
-
-    def send_raw_data(self, data: np.ndarray, num_repeats: int):
-        byte_data = data.tostring()
-
-        if num_repeats == -1:
-            # forever
-            rng = iter(int, 1)
-        else:
-            rng = range(0, num_repeats)
-
-        for _ in rng:
-            self.send_data(byte_data)
-            self.current_sent_sample = len(data)
-            self.current_sending_repeat += 1
-
+        self.set_parameter(prepared_data, log=False)
 
     def __send_messages(self, messages, sample_rates):
-        """
-
-        :type messages: list of Message
-        :type sample_rates: list of int
-        :param sample_rates: Sample Rate for each messages, this is needed to calculate the wait time,
-                             as the pause for a message is given in samples
-        :return:
-        """
         if len(messages):
             self.is_sending = True
         else:
@@ -229,12 +138,6 @@ class RfCatPlugin(SDRPlugin):
             modulation = "MOD_MSK"
         else:                   # Fallback
             modulation = "MOD_ASK_OOK"
-
-        # logger.debug("Modulation = {}".format(modulation))
-        # logger.debug("Frequency = {}".format(self.project_manager.device_conf["frequency"]))
-        # logger.debug("Sample rate = {}".format(sample_rates[0]))
-        # logger.debug("Bit length = {}".format(messages[0].bit_len))
-
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 
@@ -258,18 +161,8 @@ class RfCatPlugin(SDRPlugin):
                 break
         logger.debug("Sending finished")
         self.is_sending = False
-        # # Close RfCat
-        # self.close_rfcat()
 
     def start_message_sending_thread(self, messages, sample_rates, modulators, project_manager):
-        """
-
-        :type messages: list of Message
-        :type sample_rates: list of int
-        :param sample_rates: Sample Rate for each messages, this is needed to calculate the wait time,
-                             as the pause for a message is given in samples
-        :return:
-        """
         self.modulators = modulators
         self.project_manager = project_manager
         self.__sending_interrupt_requested = False

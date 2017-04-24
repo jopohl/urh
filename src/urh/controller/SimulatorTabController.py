@@ -23,6 +23,7 @@ from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.SimulateDialogController import SimulateDialogController
+from urh.controller.ProtocolLabelDialog import ProtocolLabelDialog
 
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.MessageComboBoxDelegate import MessageComboBoxDelegate
@@ -115,6 +116,22 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.message_updated.emit)
 
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
+        self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
+
+    @pyqtSlot(int, int)
+    def create_fuzzing_label(self, start: int, end: int):
+        con = self.simulator_message_table_model.protocol
+        start, end = con.convert_range(start, end, self.ui.cbViewType.currentIndex(), 0, False, 0)
+        lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[0])
+        self.show_protocol_label_dialog(lbl)
+
+    def show_protocol_label_dialog(self, label: SimulatorProtocolLabel):
+        if label is not None:
+            pld = ProtocolLabelDialog(label=label, parent=self)
+            pld.show()
+
+    def refresh_label(self, label: SimulatorProtocolLabel):
+        self.sim_proto_manager.label_updated.emit(label)
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox

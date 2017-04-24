@@ -178,15 +178,17 @@ class SimulatorScene(QGraphicsScene):
         self.insert_item(simulator_message)
 
         for lbl in msg.message_type:
-            self.on_label_added(lbl, msg, refresh=False)
+            self.on_label_added(lbl, refresh=False)
 
         simulator_message.refresh_unlabeled_range_marker()
         self.update_view()
 
-    def on_label_added(self, lbl: SimulatorProtocolLabel, msg: SimulatorMessage, refresh=True):
-        sim_message = self.model_to_scene(msg)
+    def on_label_added(self, lbl: SimulatorProtocolLabel, refresh=True):
+        simulator_label = LabelItem(lbl)
+        self.insert_item(simulator_label)
+ #       sim_message = self.model_to_scene(msg)
 
-        self.items_dict[lbl] = LabelItem(model_item=lbl, parent=sim_message)
+ #       self.items_dict[lbl] = LabelItem(model_item=lbl, parent=sim_message)
 
         if refresh:
             sim_message.refresh_unlabeled_range_marker()
@@ -438,7 +440,9 @@ class SimulatorScene(QGraphicsScene):
 
         for lbl in message_type:
             sim_label = SimulatorProtocolLabel(lbl.name, lbl.start, lbl.end - 1, lbl.color_index, lbl.type)
-            sim_message.message_type.append(sim_label)
+            sim_message.insert_child(-1, sim_label)
+            #sim_message.message_type.append(sim_label)
+        #print("child_count(): ", sim_message.child_count())
 
         self.sim_proto_manager.add_message(sim_message, pos, parent)
 

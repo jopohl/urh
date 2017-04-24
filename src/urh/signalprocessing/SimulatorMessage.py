@@ -8,9 +8,16 @@ class SimulatorMessage(Message, SimulatorItem):
         Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
         SimulatorItem.__init__(self)
         self.destination = destination
+        self.__childItems = self.message_type
 
     def set_parent(self, value):
         if value is not None:
             assert value.parent() is None or isinstance(value, SimulatorRuleCondition)
 
         super().set_parent(value)
+
+    def insert_child(self, pos, child):
+        self.__childItems.append(child)
+        print(len(self.__childItems))
+        print(self.child_count())
+        child.set_parent(self)

@@ -8,10 +8,10 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
-    def __init__(self, model_item: SimulatorProtocolLabel, parent: MessageItem=None):
+    def __init__(self, model_item: SimulatorProtocolLabel, parent=None):
         super().__init__(model_item, parent=parent)
         assert isinstance(model_item, SimulatorProtocolLabel)
-        assert isinstance(parent, MessageItem)
+        #assert isinstance(parent, MessageItem)
 
         self.name = QGraphicsTextItem(self)
 

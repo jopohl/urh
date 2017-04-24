@@ -1,3 +1,5 @@
+import random
+
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
@@ -7,13 +9,14 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 
+from urh import constants
 from urh.util.ProjectManager import ProjectManager
 
 from PyQt5.QtCore import pyqtSignal, QObject
 
 class SimulatorProtocolManager(QObject):
     message_added = pyqtSignal(SimulatorMessage)
-    label_added = pyqtSignal(SimulatorProtocolLabel, SimulatorMessage)
+    label_added = pyqtSignal(SimulatorProtocolLabel)
     rule_added = pyqtSignal(SimulatorRule)
     rule_condition_added = pyqtSignal(SimulatorRuleCondition)
     goto_action_added = pyqtSignal(SimulatorGotoAction)
@@ -83,11 +86,25 @@ class SimulatorProtocolManager(QObject):
         self.add_item(msg, pos, parent_item)
         self.message_added.emit(msg)
 
-    def add_label(self, name: str, start: int, end: int, color_index: int, type: FieldType=None, parent_item: SimulatorMessage=None):
+    def add_label(self, start: int, end: int, name: str = None, color_index: int = None,
+                    type: FieldType=None, parent_item: SimulatorMessage=None):
         assert isinstance(parent_item, SimulatorMessage)
+
+        name = "" if not name else name
+        used_colors = [p.color_index for p in parent_item.message_type]
+        avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
+
+        if color_index is None:
+            if len(avail_colors) > 0:
+                color_index = avail_colors[0]
+            else:
+                color_index = random.randint(0, len(constants.LABEL_COLORS) - 1)
+
         sim_label = SimulatorProtocolLabel(name, start, end - 1, color_index, type)
-        parent_item.message_type.append(sim_label)
-        self.label_added.emit(sim_label, parentItem)
+        self.add_item(sim_label, -1, parent_item)
+        #parent_item.message_type.append(sim_label)
+        self.label_added.emit(sim_label)
+        return sim_label
 
     def n_top_level_items(self):
         return self.rootItem.child_count()

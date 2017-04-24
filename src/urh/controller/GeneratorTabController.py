@@ -122,9 +122,10 @@ class GeneratorTabController(QWidget):
 
         self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
         self.ui.btnRfCatSend.clicked.connect(self.on_btn_rfcat_clicked)
+        self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
-        self.network_sdr_plugin.current_send_message_changed.connect(self.on_network_sdr_send_message_changed)
+        self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -553,7 +554,7 @@ class GeneratorTabController(QWidget):
         self.ui.btnNetworkSDRSend.setEnabled(False)
 
     @pyqtSlot(int)
-    def on_network_sdr_send_message_changed(self, message_index: int):
+    def on_send_message_changed(self, message_index: int):
         self.ui.tableMessages.selectRow(message_index)
 
     @pyqtSlot()

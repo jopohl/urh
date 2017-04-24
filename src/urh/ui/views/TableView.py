@@ -56,14 +56,14 @@ class TableView(QTableView):
         if not self.isVisible():
             return
 
-        w = self.font().pointSize() + 2
+        w = self.font().pointSize()
 
         for i in range(10):
-            self.setColumnWidth(i, 2 * w)
+            self.setColumnWidth(i, 3*w)
 
         QApplication.instance().processEvents()
-        for i in range(10, self.model().columnCount()):
-            self.setColumnWidth(i, w * len(str(i + 1)))
+        for i in range(9, self.model().columnCount()):
+            self.setColumnWidth(i, w * (len(str(i + 1)) + 1))
             if i % 10 == 0:
                 QApplication.instance().processEvents()
 

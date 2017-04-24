@@ -87,7 +87,7 @@ class RfCatPlugin(SDRPlugin):
         self.initialized = False
         while 1:
             try:
-                line = self.rq.get(timeout=.01)  # .get_nowait()
+                line = self.read_queue.get(timeout=.01)  # .get_nowait()
             except Empty:
                 pass
             else:
@@ -111,11 +111,11 @@ class RfCatPlugin(SDRPlugin):
                     rfcat_executable = 'rfcat.exe'
                 else:
                     rfcat_executable = 'rfcat'
-                self.p = Popen([rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-                self.rq = Queue()
-                self.wq = Queue()
+                self.process = Popen([rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                self.read_queue = Queue()
+                self.write_queue = Queue()
 
-                self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.p.stdout, self.rq))
+                self.t_stdout = Thread(target=RfCatPlugin.readq, args=(self.process.stdout, self.read_queue))
                 self.t_stdout.daemon = True
                 self.t_stdout.start()
 
@@ -124,7 +124,7 @@ class RfCatPlugin(SDRPlugin):
                 # self.t_stderr.daemon = True
                 # self.t_stderr.start()
 
-                self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.p.stdin, self.wq))
+                self.t_stdin = Thread(target=RfCatPlugin.writeq, args=(self.process.stdin, self.write_queue))
                 self.t_stdin.daemon = True
                 self.t_stdin.start()
 
@@ -139,9 +139,9 @@ class RfCatPlugin(SDRPlugin):
     def close_rfcat(self):
         if self.rfcat_is_open:
             try:
-                self.p.kill()
-                self.rq = 0
-                self.wq = 0
+                self.process.kill()
+                self.read_queue = 0
+                self.write_queue = 0
                 self.rfcat_is_open = False
             except Exception as e:
                 logger.debug("Could not close rfcat: {}".format(e))
@@ -155,7 +155,7 @@ class RfCatPlugin(SDRPlugin):
 
         # Send data to queue
         try:
-            self.wq.put(param)
+            self.write_queue.put(param)
             self.ready = False
             if log:
                   logger.info(param)

@@ -1,5 +1,9 @@
 # Universal Radio Hacker
-[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh) [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh) [![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
+[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh)
+[![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
+[![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
+[![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
+[![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 

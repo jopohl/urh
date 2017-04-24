@@ -351,18 +351,19 @@ cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
         clusters[center_index].nitems += 1
 
     cdef unsigned long long[::1] cluster_lens = np.array([clusters[i].nitems for i in range(num_centers)], dtype=np.uint64)
-    cdef np.ndarray[np.int64_t, ndim=1] sorted_indexes = np.argsort(cluster_lens)
+    # can't to static typing here, because resulting type of argsort depends on x64/x86
+    sorted_indexes = np.argsort(cluster_lens)
     cdef float center1, center2
     cdef int index1 = sorted_indexes[len(sorted_indexes)-1]
     cdef int index2 = sorted_indexes[len(sorted_indexes)-2]
 
     if clusters[index1].nitems > 0:
-        center1 = clusters[index1].sum / clusters[index1].nitems # Cluster mit den meisten Einträgen
+        center1 = clusters[index1].sum / clusters[index1].nitems # Cluster with most entries
     else:
         center1 = 0
 
     if clusters[index2].nitems > 0:
-        center2 = clusters[index2].sum / clusters[index2].nitems # Cluster mit zweitmeisten Einträgen
+        center2 = clusters[index2].sum / clusters[index2].nitems # Cluster with second most entries
     else:
         center2 = 0
 

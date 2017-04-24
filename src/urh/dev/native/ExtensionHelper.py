@@ -13,6 +13,7 @@ from setuptools import Extension
 USE_RELATIVE_PATHS = False
 
 DEVICES = {
+    "airspy": {"lib": "airspy", "test_function": "open"},
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},

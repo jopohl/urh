@@ -34,6 +34,7 @@ class DecoderWidgetController(QDialog):
         self.old_decoderchain = []
         self.active_message = ""
         self.old_cutmark = ""
+        self.old_morse = (1, 3)
 
         self.project_manager = project_manager
 
@@ -54,6 +55,7 @@ class DecoderWidgetController(QDialog):
 
         # Function lists
         self.ui.basefunctions.addItem(constants.DECODING_EDGE)
+        self.ui.basefunctions.addItem(constants.DECODING_MORSE)
         self.ui.basefunctions.addItem(constants.DECODING_SUBSTITUTION)
         self.ui.basefunctions.addItem(constants.DECODING_EXTERNAL)
         self.ui.additionalfunctions.addItem(constants.DECODING_INVERT)
@@ -126,6 +128,10 @@ class DecoderWidgetController(QDialog):
         self.ui.rB_delafterpos.clicked.connect(self.handle_cut)
         self.ui.cutmark.textEdited.connect(self.handle_cut)
         self.ui.cutmark2.valueChanged.connect(self.handle_cut)
+
+        self.ui.morse_low.valueChanged.connect(self.handle_morse_changed)
+        self.ui.morse_high.valueChanged.connect(self.handle_morse_changed)
+        self.ui.morse_wait.valueChanged.connect(self.handle_morse_changed)
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
@@ -212,10 +218,9 @@ class DecoderWidgetController(QDialog):
         last_i = ""
         for i in chain:
             if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL,
-                     constants.DECODING_REDUNDANCY,
-                     constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE,
-                     constants.DECODING_DATAWHITENING,
-                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT,
+                     constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER, constants.DECODING_BITORDER,
+                     constants.DECODING_EDGE, constants.DECODING_DATAWHITENING, constants.DECODING_SUBSTITUTION,
+                     constants.DECODING_EXTERNAL, constants.DECODING_CUT, constants.DECODING_MORSE,
                      constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
                 self.decoderchainUpdate()
@@ -223,7 +228,8 @@ class DecoderWidgetController(QDialog):
             else:
                 if any(x in last_i for x in [constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER,
                                              constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL,
-                                             constants.DECODING_DATAWHITENING, constants.DECODING_CUT]):
+                                             constants.DECODING_DATAWHITENING, constants.DECODING_CUT,
+                                             constants.DECODING_MORSE]):
                     self.chainoptions[last_i] = i
 
         self.decoderchainUpdate()
@@ -289,6 +295,13 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.chainoptions[op] = ""
                     self.chainstr.append("0;1010")  # Default
+            elif constants.DECODING_MORSE in op:
+                # Add morse parameters
+                if op in self.chainoptions:
+                    self.chainstr.append(self.chainoptions[op])
+                else:
+                    self.chainoptions[op] = ""
+                    self.chainstr.append("1;3;1")  # Default
 
         self.e.set_chain(self.chainstr)
         self.decoder_update()
@@ -534,6 +547,40 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.ui.multiple.setValue(2)
             self.ui.multiple.setEnabled(decoderEdit)
+        elif constants.DECODING_MORSE in element:
+            txt += "If the signal is a morse code, e.g. 00111001001110011100, where information are " \
+                   "transported with long and short sequences of 1 (0 just for padding), then this " \
+                   "decoding evaluates those sequences (Example output: 1011)."
+            self.ui.optionWidget.setCurrentIndex(7)
+            # # Values can only be changed when editing decoder, otherwise default value
+            if not decoderEdit:
+                self.ui.morse_low.setValue(1)
+                self.ui.morse_high.setValue(3)
+                self.ui.morse_wait.setValue(1)
+            else:
+                if element in self.chainoptions:
+                    value = self.chainoptions[element]
+                    if value == "":
+                        self.ui.morse_low.setValue(1)
+                        self.ui.morse_high.setValue(3)
+                        self.ui.morse_wait.setValue(1)
+                    else:
+                        try:
+                            l, h, w = value.split(";")
+                            self.ui.morse_low.setValue(int(l))
+                            self.ui.morse_high.setValue(int(h))
+                            self.ui.morse_wait.setValue(int(w))
+                        except ValueError:
+                            self.ui.morse_low.setValue(1)
+                            self.ui.morse_high.setValue(3)
+                            self.ui.morse_wait.setValue(1)
+                else:
+                    self.ui.morse_low.setValue(1)
+                    self.ui.morse_high.setValue(3)
+                    self.ui.morse_wait.setValue(1)
+            self.ui.morse_low.setEnabled(decoderEdit)
+            self.ui.morse_high.setEnabled(decoderEdit)
+            self.ui.morse_wait.setEnabled(decoderEdit)
         elif constants.DECODING_CARRIER in element:
             txt += "A carrier is a fixed pattern like 1_1_1_1 where the actual data lies in between, e.g. 1a1a1b1. This " \
                    "function extracts the actual bit information (here: aab) from the signal at '_'/'.' positions.\n" \
@@ -733,6 +780,23 @@ class DecoderWidgetController(QDialog):
         # Multiple Spinbox
         val = self.ui.multiple.value()
         self.chainoptions[self.active_message] = val
+        self.decoderchainUpdate()
+
+    @pyqtSlot()
+    def handle_morse_changed(self):
+        # Multiple Spinbox
+        val_low = self.ui.morse_low.value()
+        val_high = self.ui.morse_high.value()
+        val_wait = self.ui.morse_wait.value()
+
+        if val_low >= val_high:
+            self.ui.morse_low.setValue(self.old_morse[0])
+            self.ui.morse_high.setValue(self.old_morse[1])
+            (val_low, val_high) = self.old_morse
+        else:
+            self.old_morse = (val_low, val_high)
+
+        self.chainoptions[self.active_message] = "{};{};{}".format(val_low, val_high, val_wait)
         self.decoderchainUpdate()
 
     @pyqtSlot()

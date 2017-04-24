@@ -92,6 +92,9 @@ class VirtualDevice(QObject):
                 elif name == "limesdr":
                     from urh.dev.native.LimeSDR import LimeSDR
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)
+                elif name.startswith("airspy"):
+                    from urh.dev.native.AirSpy import AirSpy
+                    self.__dev = AirSpy(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, is_ringbuffer=is_ringbuffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 

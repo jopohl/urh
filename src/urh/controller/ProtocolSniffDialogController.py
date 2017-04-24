@@ -96,8 +96,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
 
-    def set_device_ui_items_visibility(self, device_name: str):
-        super().set_device_ui_items_visibility(device_name)
+    def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
+        super().set_device_ui_items_visibility(device_name, adjust_gains)
         visible = device_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         for item in ("spinbox_sniff_Noise", "combox_sniff_Modulation", "label_sniff_Modulation", "graphicsView_sniff_Preview",
                      "spinbox_sniff_Center", "spinbox_sniff_BitLen", "spinbox_sniff_ErrorTolerance",

@@ -19,6 +19,13 @@ class TestWinNativeBackend(QtTestCase):
 
                 # noinspection PyUnresolvedReferences
                 from urh.dev.native.RTLSDR import RTLSDR
+
+                # noinspection PyUnresolvedReferences
+                from urh.dev.native.AirSpy import AirSpy
+
+                # noinspection PyUnresolvedReferences
+                from urh.dev.native.LimeSDR import LimeSDR
+
             else:
                 print("Native Windows device extensions are currently only supported on 64 Bit.")
 

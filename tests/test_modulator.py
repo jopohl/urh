@@ -1,6 +1,7 @@
 import os
 import time
 
+import array
 from PyQt5.QtCore import QDir
 
 from tests.QtTestCase import QtTestCase
@@ -11,7 +12,7 @@ from urh.signalprocessing.Signal import Signal
 
 class TestModulator(QtTestCase):
     def setUp(self):
-        self.modulation_data = [True, False, False, False, True, True, False, True]
+        self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
         self.samples_per_bit = 100
         self.pause = 1000
 

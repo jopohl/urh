@@ -2,6 +2,7 @@ import copy
 import itertools
 from enum import Enum
 
+import array
 import numpy
 
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
@@ -89,7 +90,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             for combination in combinations:
                 cpy_bits = msg.plain_bits[:]
                 for start, end, fuz_val in combination:
-                    cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
+                    cpy_bits[start:end] = array.array("B", map(int, fuz_val))
 
                 pause = default_pause if default_pause is not None else msg.pause
                 fuz_msg = Message(plain_bits=cpy_bits, pause=pause,

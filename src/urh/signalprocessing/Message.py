@@ -10,7 +10,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.encoder import Encoder
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
-
+import array
 
 class Message(object):
     """
@@ -26,7 +26,7 @@ class Message(object):
         """
 
         :param pause: pause AFTER the message in samples
-        :type plain_bits: list[bool]
+        :type plain_bits: list[bool|int]
         :type decoder: Encoder
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
@@ -34,7 +34,7 @@ class Message(object):
         :param fuzz_created: message was created through fuzzing
         :return:
         """
-        self.__plain_bits = plain_bits
+        self.__plain_bits = array.array("B", plain_bits)
         self.pause = pause
         self.modulator_indx = modulator_indx
         self.rssi = rssi
@@ -74,13 +74,13 @@ class Message(object):
     def plain_bits(self):
         """
 
-        :rtype: list[bool]
+        :rtype: array.array
         """
         return self.__plain_bits
 
     @plain_bits.setter
-    def plain_bits(self, value):
-        self.__plain_bits = value
+    def plain_bits(self, value: list):
+        self.__plain_bits = array.array("B", value)
         self.clear_decoded_bits()
         self.clear_encoded_bits()
 
@@ -166,20 +166,9 @@ class Message(object):
     def bits2string(self, bits) -> str:
         """
 
-        :type bits: list[bool]
+        :type bits: array.array
         """
         return "".join("1" if bit else "0" for bit in bits)
-
-    def string2bits(self, string: str):
-        """
-
-        :param string:
-        :rtype: list[bool]
-        """
-        if any(c not in ("0", "1") for c in string):
-            raise ValueError("String2Bits: Only Bits accepted")
-
-        return [True if c == "1" else "0" for c in string]
 
     def __len__(self):
         return len(self.plain_bits)
@@ -205,20 +194,19 @@ class Message(object):
     def encoded_bits(self):
         """
 
-        :rtype: list[bool]
+        :rtype: array.array
         """
         if self.__encoded_bits is None:
-            self.__encoded_bits = []
+            self.__encoded_bits = array.array("B", [])
             start = 0
             encode = self.decoder.encode
             bits = self.plain_bits
 
-            for plabel in self.exclude_from_decoding_labels:
-                tmp = start
-                self.__encoded_bits.extend(encode(bits[tmp:plabel.start]))
-                start = plabel.start if plabel.start > start else start  # Overlapping
-                self.__encoded_bits.extend(bits[start:plabel.end])
-                start = plabel.end if plabel.end > start else start  # Overlapping
+            for label in self.exclude_from_decoding_labels:
+                self.__encoded_bits.extend(encode(bits[start:label.start]))
+                start = label.start if label.start > start else start  # Overlapping
+                self.__encoded_bits.extend(bits[start:label.end])
+                start = label.end if label.end > start else start  # Overlapping
 
             self.__encoded_bits.extend(encode(bits[start:]))
         return self.__encoded_bits
@@ -231,10 +219,10 @@ class Message(object):
     def decoded_bits(self):
         """
 
-        :rtype: list[bool]
+        :rtype: array.array
         """
         if self.__decoded_bits is None:
-            self.__decoded_bits = []
+            self.__decoded_bits = array.array("B", [])
             start = 0
             code = self.decoder.code  # 0 = decoded, 1 = analyzed
             # decode = self.decoder.decode
@@ -243,19 +231,19 @@ class Message(object):
             self.decoding_errors = 0
             states = set()
             self.decoding_state = self.decoder.ErrorState.SUCCESS
-            for plabel in self.exclude_from_decoding_labels:
-                decoded, errors, state = code(True, bits[start:plabel.start])
+            for label in self.exclude_from_decoding_labels:
+                decoded, errors, state = code(True, bits[start:label.start])
                 states.add(state)
                 self.__decoded_bits.extend(decoded)
                 self.decoding_errors += errors
 
-                if plabel.start == -1 or plabel.end == -1:
-                    plabel.start = len(self.__decoded_bits)
-                    plabel.end = plabel.start + (plabel.end - plabel.start)
+                if label.start == -1 or label.end == -1:
+                    label.start = len(self.__decoded_bits)
+                    label.end = label.start + (label.end - label.start)
 
-                start = plabel.start if plabel.start > start else start  # Überlappende Labels -.-
-                self.__decoded_bits.extend(bits[start:plabel.end])
-                start = plabel.end if plabel.end > start else start  # Überlappende Labels FFS >.<
+                start = label.start if label.start > start else start  # Überlappende Labels -.-
+                self.__decoded_bits.extend(bits[start:label.end])
+                start = label.end if label.end > start else start  # Überlappende Labels FFS >.<
 
             decoded, errors, state = code(True, bits[start:])
             states.add(state)
@@ -266,15 +254,11 @@ class Message(object):
             if len(states) > 0:
                 self.decoding_state = sorted(states)[0]
 
-
         return self.__decoded_bits
 
     @decoded_bits.setter
     def decoded_bits(self, val):
-        """
-        :type val: list[bool]
-        """
-        self.__decoded_bits = val
+        self.__decoded_bits = array.array("B", val)
 
     @property
     def decoded_bits_str(self) -> str:
@@ -286,40 +270,38 @@ class Message(object):
 
     @property
     def decoded_bits_buffer(self) -> bytes:
-        bits = [int(b) if isinstance(b, bool) else 1 if b.pulsetype == 1 else 0 for b in self.decoded_bits]
-        # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return np.packbits(bits).tostring()
+        return self.decoded_bits.tobytes()
 
     @property
     def plain_hex_str(self) -> str:
         padded_bitchains = self.split(decode=False)
-        return self.__bitchains_to_hex(padded_bitchains)
+        return self.__bit_chains_to_hex(padded_bitchains)
 
     @property
     def plain_ascii_str(self) -> str:
         padded_bitchains = self.split(decode=False)
-        return self.__bitchains_to_ascii(padded_bitchains)
+        return self.__bit_chains_to_ascii(padded_bitchains)
 
     @property
     def decoded_hex_str(self) -> str:
         padded_bitchains = self.split()
-        return self.__bitchains_to_hex(padded_bitchains)
+        return self.__bit_chains_to_hex(padded_bitchains)
 
     @property
     def decoded_ascii_str(self) -> str:
         padded_bitchains = self.split()
-        return self.__bitchains_to_ascii(padded_bitchains)
+        return self.__bit_chains_to_ascii(padded_bitchains)
 
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if is_hex else 8
         for i in range(len(bits)):
-            if self.__get_hex_ascii_index_from_bit_index(i, decoded, to_hex=is_hex)[0] == from_index:
+            if self.__get_hex_ascii_index_from_bit_index(i, to_hex=is_hex)[0] == from_index:
                 return i, i + factor - 1
 
         return len(bits), len(bits)
 
-    def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
+    def __get_hex_ascii_index_from_bit_index(self, bit_index: int, to_hex: bool) -> tuple:
         factor = 4 if to_hex else 8
         result = 0
 
@@ -343,16 +325,16 @@ class Message(object):
             return self.__get_bit_range_from_hex_or_ascii_index(index, decoded, is_hex=from_view == 1)
         if to_view == 1:
             if from_view == 0:
-                return self.__get_hex_ascii_index_from_bit_index(index, decoded, to_hex=True)
+                return self.__get_hex_ascii_index_from_bit_index(index, to_hex=True)
             elif from_view == 2:
                 bi = self.__get_bit_range_from_hex_or_ascii_index(index, decoded, is_hex=True)[0]
-                return self.__get_hex_ascii_index_from_bit_index(bi, decoded, to_hex=False)
+                return self.__get_hex_ascii_index_from_bit_index(bi, to_hex=False)
         elif to_view == 2:
             if from_view == 0:
-                return self.__get_hex_ascii_index_from_bit_index(index, decoded, to_hex=False)
+                return self.__get_hex_ascii_index_from_bit_index(index, to_hex=False)
             elif from_view == 1:
                 bi = self.__get_bit_range_from_hex_or_ascii_index(index, decoded, is_hex=False)[0]
-                return self.__get_hex_ascii_index_from_bit_index(bi, decoded, to_hex=True)
+                return self.__get_hex_ascii_index_from_bit_index(bi, to_hex=True)
         else:
             raise NotImplementedError("Only Three View Types (Bit/Hex/ASCII)")
 
@@ -363,7 +345,7 @@ class Message(object):
         try:
             return int(start), int(math.ceil(end))
         except TypeError:
-            return 0,0
+            return 0, 0
 
     def get_duration(self, sample_rate: int) -> float:
         if len(self.bit_sample_pos) < 2:
@@ -372,31 +354,33 @@ class Message(object):
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
 
     @staticmethod
-    def __bitchains_to_hex(bitchains) -> str:
+    def __bit_chains_to_hex(bit_chains) -> str:
         """
 
-        :type bitchains: list of str
+        :type bit_chains: list of str
         :return:
         """
         result = []
-        for bitchain in bitchains:
-            result.append("".join("{0:x}".format(int(bitchain[i:i + 4], 2)) for i in range(0, len(bitchain), 4)))
+        for bit_chain in bit_chains:
+            bit_chain += "0" * ((4 - len(bit_chain) % 4) % 4)  # pad hex view
+            result.append("".join("{0:x}".format(int(bit_chain[i:i + 4], 2)) for i in range(0, len(bit_chain), 4)))
+
         return "".join(result)
 
     @staticmethod
-    def __bitchains_to_ascii(bitchains) -> str:
+    def __bit_chains_to_ascii(bit_chains) -> str:
         """
 
-        :type bitchains: list of str
+        :type bit_chains: list of str
         :return:
         """
         result = []
-        for bitchain in bitchains:
-            byte_proto = "".join("{0:x}".format(int(bitchain[i:i + 8], 2)) for i in range(0, len(bitchain), 8))
+        for bit_chain in bit_chains:
+            bit_chain += "0" * ((8 - len(bit_chain) % 8) % 8)  # pad ascii view
+            byte_proto = "".join("{0:x}".format(int(bit_chain[i:i + 8], 2)) for i in range(0, len(bit_chain), 8))
             result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
 
         return "".join(result)
-
 
     def split(self, decode=True):
         """
@@ -407,13 +391,13 @@ class Message(object):
         start = 0
         result = []
         message = self.decoded_bits_str if decode else str(self)
-        self.__bit_alignments = set()
+        bit_alignments = set()
         if self.align_labels:
             for l in self.message_type:
-                self.__bit_alignments.add(l.start)
-                self.__bit_alignments.add(l.end)
+                bit_alignments.add(l.start)
+                bit_alignments.add(l.end)
 
-        self.__bit_alignments = sorted(self.__bit_alignments)
+        self.__bit_alignments = sorted(bit_alignments)
 
         for pos in self.__bit_alignments:
             result.append(message[start:pos])
@@ -458,13 +442,7 @@ class Message(object):
 
     @staticmethod
     def from_plain_bits_str(bits):
-        plain_bits = []
-        for b in bits:
-            if b == "0":
-                plain_bits.append(False)
-            elif b == "1":
-                plain_bits.append(True)
-
+        plain_bits = list(map(int, bits))
         return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
 
     def to_xml(self, decoders=None, include_message_type=False) -> ET.Element:

@@ -19,8 +19,8 @@ class TestFuzzing(QtTestCase):
         decoders = [Encoder(["NRZ"]), Encoder(["NRZ-I", constants.DECODING_INVERT])]
 
         pac = ProtocolAnalyzerContainer([mod1, mod2])
-        pac.messages.append(Message([True, False, False, True, "A"], 100, decoder=decoders[0], message_type=pac.default_message_type))
-        pac.messages.append(Message([False, False, False, False, "A"], 200, decoder=decoders[1], message_type=pac.default_message_type))
+        pac.messages.append(Message([True, False, False, True], 100, decoder=decoders[0], message_type=pac.default_message_type))
+        pac.messages.append(Message([False, False, False, False], 200, decoder=decoders[1], message_type=pac.default_message_type))
         pac.create_fuzzing_label(1, 10, 0)
         pac.to_xml_file(filename)
 

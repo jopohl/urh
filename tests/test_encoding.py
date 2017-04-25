@@ -1,3 +1,5 @@
+import copy
+
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
@@ -12,7 +14,7 @@ class TestDecoding(QtTestCase):
         # Test 1
         e.carrier = "----1....1**"  # or "....1....101", ...
         original_inpt = e.str2bit("000010000100111111111100")
-        inpt = original_inpt.copy()
+        inpt = copy.copy(original_inpt)
         #print("\nOriginal:", inpt)
         output, err, _ = e.code_carrier(True, inpt)
         #print("Decoded: ", output, err)

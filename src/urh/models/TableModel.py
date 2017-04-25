@@ -6,7 +6,6 @@ from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack, QMessageBox
 
 from urh import constants
-from urh.signalprocessing.Symbol import Symbol
 
 
 class TableModel(QAbstractTableModel):
@@ -33,9 +32,6 @@ class TableModel(QAbstractTableModel):
         self.is_writeable = False
         self.locked = False
         self.decode = True  # False for Generator
-
-        self.symbols = {}
-        """:type: dict[str, Symbol] """
 
         self.background_colors = defaultdict(lambda: None)
         self.bold_fonts = defaultdict(lambda: False)
@@ -92,9 +88,6 @@ class TableModel(QAbstractTableModel):
 
     def update(self):
         self.locked = True
-
-        self.symbols.clear()
-        self.symbols = {symbol.name: symbol for symbol in self.protocol.used_symbols}
 
         if self.protocol.num_messages > 0:
             if self.decode:
@@ -231,39 +224,22 @@ class TableModel(QAbstractTableModel):
                         self.update()
                     except IndexError:
                         return False
-                elif value in self.symbols.keys():
-                    try:
-                        self.protocol.messages[i][j] = self.symbols[value]
-                        self.update()
-                    except IndexError:
-                        return False
             elif self.proto_view == 1:
                 if value in hex_chars:
                     index = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
                     bits = "{0:04b}".format(int(value, 16))
                     for k in range(4):
                         try:
-                            if type(self.protocol.messages[i][index + k]) != Symbol:
-                                self.protocol.messages[i][index + k] = bool(int(bits[k]))
-                            else:
-                                break
+                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
                         except IndexError:
                             break
                     self.update()
-                elif value in self.symbols.keys():
-                    QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
             elif self.proto_view == 2 and len(value) == 1:
-                if value in self.symbols.keys():
-                    QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
-
                 index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
                 for k in range(8):
                     try:
-                        if type(self.protocol.messages[i][index + k]) != Symbol:
-                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
-                        else:
-                            break
+                        self.protocol.messages[i][index + k] = bool(int(bits[k]))
                     except IndexError:
                         break
                 self.update()

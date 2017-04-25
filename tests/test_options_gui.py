@@ -11,27 +11,6 @@ class TestOptionsGUI(QtTestCase):
         if self.SHOW:
             self.dialog.show()
 
-    def test_interpretation_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(0)
-
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-
-        self.dialog.ui.chkBoxEnableSymbols.click()
-
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-
-        self.dialog.ui.chkBoxEnableSymbols.click()
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-
     def test_generation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
         self.assertEqual(self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
@@ -46,8 +25,8 @@ class TestOptionsGUI(QtTestCase):
                          self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
 
     def test_plugins_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(4)
-        self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Plugins")
+        self.dialog.ui.tabWidget.setCurrentIndex(3)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(3), "Plugins")
 
         list_view = self.dialog.plugin_controller.ui.listViewPlugins
         model = list_view.model()
@@ -60,8 +39,8 @@ class TestOptionsGUI(QtTestCase):
             self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
 
     def test_device_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(5)
-        self.assertEqual(self.dialog.ui.tabWidget.tabText(5), "Device")
+        self.dialog.ui.tabWidget.setCurrentIndex(4)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
         self.dialog.ui.listWidgetDevices.setCurrentRow(0)
         dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()

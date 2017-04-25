@@ -14,7 +14,7 @@ class TestAutoAssignments(QtTestCase):
         self.protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("decoded_bits.txt")) as f:
             for line in f:
-                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
         # Assign participants
@@ -108,7 +108,7 @@ class TestAutoAssignments(QtTestCase):
         self.undecoded_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("undecoded.txt")) as f:
             for line in f:
-                self.undecoded_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.undecoded_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
 
         self.undecoded_protocol.auto_assign_decodings(self.decodings)
 

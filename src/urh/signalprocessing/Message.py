@@ -7,7 +7,6 @@ import numpy as np
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.Symbol import Symbol
 from urh.signalprocessing.encoder import Encoder
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -27,7 +26,7 @@ class Message(object):
         """
 
         :param pause: pause AFTER the message in samples
-        :type plain_bits: list[bool|Symbol]
+        :type plain_bits: list[bool]
         :type decoder: Encoder
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
@@ -75,7 +74,7 @@ class Message(object):
     def plain_bits(self):
         """
 
-        :rtype: list[bool|Symbol]
+        :rtype: list[bool]
         """
         return self.__plain_bits
 
@@ -100,7 +99,7 @@ class Message(object):
     def __setitem__(self, index: int, value):
         """
 
-        :type value: bool or Symbol
+        :type value: bool
         """
         self.plain_bits[index] = value
         self.clear_decoded_bits()
@@ -167,13 +166,12 @@ class Message(object):
     def bits2string(self, bits) -> str:
         """
 
-        :type bits: list[bool|Symbol]
+        :type bits: list[bool]
         """
-        return "".join(bit.name if type(bit) == Symbol else "1" if bit else "0" for bit in bits)
+        return "".join("1" if bit else "0" for bit in bits)
 
     def string2bits(self, string: str):
         """
-        Does not Accept Symbols!
 
         :param string:
         :rtype: list[bool]
@@ -207,32 +205,22 @@ class Message(object):
     def encoded_bits(self):
         """
 
-        :rtype: list[bool|Symbol]
+        :rtype: list[bool]
         """
         if self.__encoded_bits is None:
             self.__encoded_bits = []
             start = 0
             encode = self.decoder.encode
             bits = self.plain_bits
-            symbol_indexes = [i for i, b in enumerate(self.plain_bits) if type(b) == Symbol]
-            for plabel in self.exclude_from_decoding_labels:
-                symindxs = [i for i in symbol_indexes if i in range(start, plabel.start)]
-                tmp = start
-                for si in symindxs:
-                    self.__encoded_bits.extend(encode(bits[tmp:si]) + [bits[si]])
-                    tmp = si + 1
 
+            for plabel in self.exclude_from_decoding_labels:
+                tmp = start
                 self.__encoded_bits.extend(encode(bits[tmp:plabel.start]))
                 start = plabel.start if plabel.start > start else start  # Overlapping
                 self.__encoded_bits.extend(bits[start:plabel.end])
                 start = plabel.end if plabel.end > start else start  # Overlapping
 
-            symindxs = [i for i in symbol_indexes if i >= start]
-            tmp = start
-            for si in symindxs:
-                self.__encoded_bits.extend(encode(bits[tmp:si]) + [bits[si]])
-                tmp = si + 1
-            self.__encoded_bits.extend(encode(bits[tmp:]))
+            self.__encoded_bits.extend(encode(bits[start:]))
         return self.__encoded_bits
 
     @property
@@ -243,7 +231,7 @@ class Message(object):
     def decoded_bits(self):
         """
 
-        :rtype: list[bool|Symbol]
+        :rtype: list[bool]
         """
         if self.__decoded_bits is None:
             self.__decoded_bits = []
@@ -255,19 +243,8 @@ class Message(object):
             self.decoding_errors = 0
             states = set()
             self.decoding_state = self.decoder.ErrorState.SUCCESS
-            symbol_indexes = [i for i, b in enumerate(self.plain_bits) if type(b) == Symbol]
             for plabel in self.exclude_from_decoding_labels:
-                symindxs = [i for i in symbol_indexes if i in range(start, plabel.start)]
-                tmp = start
-                for si in symindxs:
-                    decoded, errors, state = code(True, bits[tmp:si])
-                    states.add(state)
-                    self.__decoded_bits.extend(decoded + [bits[si]])
-                    self.decoding_errors += errors
-                    tmp = si + 1
-
-
-                decoded, errors, state = code(True, bits[tmp:plabel.start])
+                decoded, errors, state = code(True, bits[start:plabel.start])
                 states.add(state)
                 self.__decoded_bits.extend(decoded)
                 self.decoding_errors += errors
@@ -280,16 +257,7 @@ class Message(object):
                 self.__decoded_bits.extend(bits[start:plabel.end])
                 start = plabel.end if plabel.end > start else start  # Überlappende Labels FFS >.<
 
-            symindxs = [i for i in symbol_indexes if i >= start]
-            tmp = start
-            for si in symindxs:
-                decoded, errors, state = code(True, bits[tmp:si])
-                states.add(state)
-                self.__decoded_bits.extend(decoded + [bits[si]])
-                self.decoding_errors += errors
-                tmp = si + 1
-
-            decoded, errors, state = code(True, bits[tmp:])
+            decoded, errors, state = code(True, bits[start:])
             states.add(state)
             self.__decoded_bits.extend(decoded)
             self.decoding_errors += errors
@@ -304,7 +272,7 @@ class Message(object):
     @decoded_bits.setter
     def decoded_bits(self, val):
         """
-        :type val: list[bool|Symbol]
+        :type val: list[bool]
         """
         self.__decoded_bits = val
 
@@ -352,7 +320,6 @@ class Message(object):
         return len(bits), len(bits)
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, decoded: bool, to_hex: bool) -> tuple:
-        bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if to_hex else 8
         result = 0
 
@@ -365,8 +332,6 @@ class Message(object):
                 break
 
         result += math.floor((bit_index - last_alignment) / factor)
-        nsymbols = len([b for b in bits[:bit_index] if type(b) == Symbol])
-        result += nsymbols
 
         return result, result
 
@@ -415,11 +380,7 @@ class Message(object):
         """
         result = []
         for bitchain in bitchains:
-            if len(bitchain) == 1 and bitchain not in ("0", "1"):
-                # Symbol
-                result.append(bitchain)
-            else:
-                result.append("".join("{0:x}".format(int(bitchain[i:i + 4], 2)) for i in range(0, len(bitchain), 4)))
+            result.append("".join("{0:x}".format(int(bitchain[i:i + 4], 2)) for i in range(0, len(bitchain), 4)))
         return "".join(result)
 
     @staticmethod
@@ -431,12 +392,8 @@ class Message(object):
         """
         result = []
         for bitchain in bitchains:
-            if len(bitchain) == 1 and bitchain not in ("0", "1"):
-                # Symbol
-                result.append(bitchain)
-            else:
-                byte_proto = "".join("{0:x}".format(int(bitchain[i:i + 8], 2)) for i in range(0, len(bitchain), 8))
-                result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
+            byte_proto = "".join("{0:x}".format(int(bitchain[i:i + 8], 2)) for i in range(0, len(bitchain), 8))
+            result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
 
         return "".join(result)
 
@@ -450,7 +407,6 @@ class Message(object):
         start = 0
         result = []
         message = self.decoded_bits_str if decode else str(self)
-        symbol_indexes = [i for i, b in enumerate(message) if b not in ("0", "1")]
         self.__bit_alignments = set()
         if self.align_labels:
             for l in self.message_type:
@@ -460,19 +416,8 @@ class Message(object):
         self.__bit_alignments = sorted(self.__bit_alignments)
 
         for pos in self.__bit_alignments:
-            sym_indx = [i for i in symbol_indexes if i < pos]
-            for si in sym_indx:
-                result.append(message[start:si])
-                result.append(message[si])
-                start = si +1
             result.append(message[start:pos])
             start = pos
-
-        sym_indx = [i for i in symbol_indexes if i >= start]
-        for si in sym_indx:
-            result.append(message[start:si])
-            result.append(message[si])
-            start = si+1
 
         result.append(message[start:])
         return result
@@ -512,19 +457,13 @@ class Message(object):
         self.__encoded_bits = None
 
     @staticmethod
-    def from_plain_bits_str(bits, symbols: dict):
+    def from_plain_bits_str(bits):
         plain_bits = []
         for b in bits:
             if b == "0":
                 plain_bits.append(False)
             elif b == "1":
                 plain_bits.append(True)
-            else:
-                try:
-                    plain_bits.append(symbols[b])
-                except KeyError:
-                    print("[Warning] Did not find symbol name", file=sys.stderr)
-                    plain_bits.append(Symbol(b, 0, 0, 1))
 
         return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
 

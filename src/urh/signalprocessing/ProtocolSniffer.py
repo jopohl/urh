@@ -38,8 +38,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
-        self.rel_symbol_len = self._read_symbol_len()
-
         self.data_cache = []
         self.conseq_non_data = 0
         self.reading_data = False
@@ -89,7 +87,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
             for bit_str in self.rcv_device.data:
-                msg = Message.from_plain_bits_str(bit_str, {})
+                msg = Message.from_plain_bits_str(bit_str)
                 msg.decoder = self.decoder
                 self.messages.append(msg)
 
@@ -132,7 +130,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
                                 self.signal.tolerance, self.signal.modulation_type)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 
         i = 0
         first_msg = True
@@ -164,7 +162,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
                                 self.signal.tolerance, self.signal.modulation_type)
 
-        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len)
 
         return bool(bit_data)
 

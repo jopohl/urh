@@ -55,7 +55,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                   for msg in proto_analyzer.messages if msg]
 
         self.messages[index:0] = messages
-        self.used_symbols |= proto_analyzer.used_symbols
 
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]

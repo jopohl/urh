@@ -511,17 +511,17 @@ class ProtocolAnalyzer(object):
             return 0
 
         assert self.signal is not None
-        freqs = []
+        frequencies = []
         for i, message in enumerate(self.messages):
             for j, msg_bit in enumerate(message.plain_bits):
                 if msg_bit == bit:
-                    start, nsamples = self.get_samplepos_of_bitseq(i, j, i, j + 1, False)
-                    freq = self.signal.estimate_frequency(start, start + nsamples, sample_rate)
-                    freqs.append(freq)
-                    if len(freqs) == nbits:
-                        return np.mean(freqs)
-        if freqs:
-            return np.mean(freqs)
+                    start, num_samples = self.get_samplepos_of_bitseq(i, j, i, j + 1, False)
+                    freq = self.signal.estimate_frequency(start, start + num_samples, sample_rate)
+                    frequencies.append(freq)
+                    if len(frequencies) == nbits:
+                        return np.mean(frequencies)
+        if frequencies:
+            return np.mean(frequencies)
         else:
             return 0
 

@@ -12,6 +12,7 @@ from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 import array
 
+
 class Message(object):
     """
     A protocol message is a single line of a protocol.
@@ -83,7 +84,6 @@ class Message(object):
         self.__plain_bits = array.array("B", value)
         self.clear_decoded_bits()
         self.clear_encoded_bits()
-
 
     @property
     def active_fuzzing_labels(self):
@@ -163,12 +163,8 @@ class Message(object):
         end = self.convert_index(end, 0, 2, decoded=decoded)[0]
         return int(end)
 
-    def bits2string(self, bits) -> str:
-        """
-
-        :type bits: array.array
-        """
-        return "".join("1" if bit else "0" for bit in bits)
+    def bits2string(self, bits: array.array) -> str:
+        return "".join(map(str, bits))
 
     def __len__(self):
         return len(self.plain_bits)
@@ -181,14 +177,12 @@ class Message(object):
     def decoder(self) -> Encoder:
         return self.__decoder
 
-
     @decoder.setter
     def decoder(self, val: Encoder):
         self.__decoder = val
         self.clear_decoded_bits()
         self.clear_encoded_bits()
         self.decoding_errors, self.decoding_state = self.decoder.analyze(self.plain_bits)
-
 
     @property
     def encoded_bits(self):
@@ -406,8 +400,7 @@ class Message(object):
         result.append(message[start:])
         return result
 
-    def view_to_string(self, view: int, decoded: bool, show_pauses=True,
-                       sample_rate: float = None) -> str:
+    def view_to_string(self, view: int, decoded: bool, show_pauses=True, sample_rate: float = None) -> str:
         """
 
         :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
@@ -426,13 +419,11 @@ class Message(object):
         else:
             return proto
 
-
     def get_pause_str(self, sample_rate):
         if sample_rate:
             return ' [<b>Pause:</b> %s]' % (Formatter.science_time(self.pause / sample_rate))
         else:
             return ' [<b>Pause:</b> %d samples]' % (self.pause)
-
 
     def clear_decoded_bits(self):
         self.__decoded_bits = None
@@ -453,7 +444,7 @@ class Message(object):
         if decoders:
             root.set("decoding_index", str(decoders.index(self.decoder)))
         if self.participant is not None:
-            root.set("participant_id",  self.participant.id)
+            root.set("participant_id", self.participant.id)
         if include_message_type:
             root.append(self.message_type.to_xml())
         return root
@@ -487,7 +478,6 @@ class Message(object):
         message_type_tag = tag.find("message_type")
         if message_type_tag:
             self.message_type = MessageType.from_xml(message_type_tag)
-
 
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]

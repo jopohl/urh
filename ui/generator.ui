@@ -30,8 +30,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1088</width>
-        <height>637</height>
+        <width>953</width>
+        <height>653</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -145,43 +145,74 @@
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <item>
-                   <widget class="QPushButton" name="btnFuzz">
-                    <property name="text">
-                     <string>Fuzz</string>
+                   <widget class="QStackedWidget" name="stackedWidgetFuzzing">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="rBSuccessive">
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted &lt;span style=&quot; font-weight:600;&quot;&gt;one-by-one&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <property name="currentIndex">
+                     <number>0</number>
                     </property>
-                    <property name="text">
-                     <string>S&amp;uccessive</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="rbConcurrent">
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the labels are fuzzed &lt;span style=&quot; font-weight:600;&quot;&gt;at the same time&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="text">
-                     <string>&amp;Concurrent</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="rBExhaustive">
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted in &lt;span style=&quot; font-weight:600;&quot;&gt;all possible combinations&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="text">
-                     <string>E&amp;xhaustive</string>
-                    </property>
+                    <widget class="QWidget" name="pageFuzzingUI">
+                     <layout class="QHBoxLayout" name="horizontalLayout_2">
+                      <item>
+                       <widget class="QPushButton" name="btnFuzz">
+                        <property name="text">
+                         <string>Fuzz</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="rBSuccessive">
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted &lt;span style=&quot; font-weight:600;&quot;&gt;one-by-one&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="text">
+                         <string>S&amp;uccessive</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="rbConcurrent">
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the labels are fuzzed &lt;span style=&quot; font-weight:600;&quot;&gt;at the same time&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="text">
+                         <string>&amp;Concurrent</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="rBExhaustive">
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For multiple labels per message the fuzzed values are inserted in &lt;span style=&quot; font-weight:600;&quot;&gt;all possible combinations&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="text">
+                         <string>E&amp;xhaustive</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="pageFuzzingProgressBar">
+                     <layout class="QHBoxLayout" name="horizontalLayout_3">
+                      <item>
+                       <widget class="QProgressBar" name="progressBarFuzzing">
+                        <property name="value">
+                         <number>24</number>
+                        </property>
+                        <property name="format">
+                         <string>%v/%m</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
                   </item>
                  </layout>

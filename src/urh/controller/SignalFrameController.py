@@ -1,7 +1,5 @@
-import locale
 import math
 
-import sip
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
@@ -20,8 +18,6 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
-
-locale.setlocale(locale.LC_ALL, '')
 
 
 class SignalFrameController(QFrame):

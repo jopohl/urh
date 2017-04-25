@@ -1,4 +1,6 @@
 import copy
+import os
+import tempfile
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -26,6 +28,5 @@ class TestPCAP(QtTestCase):
         proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
         proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
 
-
         pcap = PCAP()
-        pcap.write_packets(proto_analyzer.messages, "/tmp/test.pcap", 1e6)
+        pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)

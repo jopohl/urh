@@ -78,16 +78,17 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             if mode == FuzzMode.successive:
                 combinations = [[(l.start, l.end, fuzz_val)] for l in labels for fuzz_val in l.fuzz_values[1:]]
             elif mode == FuzzMode.concurrent:
-                nval = numpy.max([len(l.fuzz_values) for l in labels]) if labels else 0
+                num_values = numpy.max([len(l.fuzz_values) for l in labels]) if labels else 0
                 f = lambda index, label: index if index < len(label.fuzz_values) else 0
-                combinations = [[(l.start, l.end, l.fuzz_values[f(j, l)]) for l in labels] for j in range(1, nval)]
+                combinations = [[(l.start, l.end, l.fuzz_values[f(j, l)]) for l in labels] for j in range(1, num_values)]
             elif mode == FuzzMode.exhaustive:
                 pool = [[(l.start, l.end, fv) for fv in l.fuzz_values[1:]] for l in labels]
                 combinations = itertools.product(*pool) if labels else []
             else:
                 raise ValueError("Unknown fuzz mode")
 
-            for combination in combinations:
+            self.qt_signals.fuzzing_started.emit(len(combinations))
+            for i, combination in enumerate(combinations):
                 cpy_bits = msg.plain_bits[:]
                 for start, end, fuz_val in combination:
                     cpy_bits[start:end] = [True if bit == "1" else False for bit in fuz_val]
@@ -98,9 +99,10 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                   modulator_indx=msg.modulator_indx,
                                   decoder=msg.decoder, fuzz_created=True)
                 appd_result(fuz_msg)
+                self.qt_signals.current_fuzzing_message_changed.emit(i)
 
-        self.messages = result
-        """:type: list of Message """
+        self.qt_signals.fuzzing_finished.emit()
+        self.messages = result  # type: list[Message]
 
     def fuzz_successive(self, default_pause=None):
         """

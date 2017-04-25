@@ -124,3 +124,18 @@ class TestDecoding(QtTestCase):
         calc_crc2 = e.enocean_hash(msg2)
         self.assertTrue(calc_crc1 == crc1)
         self.assertTrue(calc_crc2 == crc2)
+
+    def test_morse(self):
+        e = Encoder()
+        e.morse_low = 3
+        e.morse_high = 5
+        e.morse_wait = 1
+        msg1 = "1111111000111100011111100100001111111111111111111111011"
+        msg2 = "0111110111011111011101111101110"
+
+        encoded = e.str2bit(msg1)
+        compare = e.str2bit(msg2)
+        decoded, err, _ = e.code_morse(decoding=True, inpt=encoded)
+        reencoded, _, _ = e.code_morse(decoding=False, inpt=decoded)
+        self.assertEqual(err, 1)
+        self.assertEqual(reencoded, compare)

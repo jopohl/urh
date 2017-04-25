@@ -24,6 +24,9 @@ class ProtocolAnalyzerSignals(QObject):
     data_sniffed = pyqtSignal(int)
     sniff_device_errors_changed = pyqtSignal(str)
     line_duplicated = pyqtSignal()
+    fuzzing_started = pyqtSignal(int)
+    current_fuzzing_message_changed = pyqtSignal(int)
+    fuzzing_finished = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -37,8 +40,7 @@ class ProtocolAnalyzer(object):
     """
 
     def __init__(self, signal: Signal):
-        self.messages = []
-        """:type: list of Message """
+        self.messages = []  # type: list[Message]
 
         self.signal = signal
         self.filename = self.signal.filename if self.signal is not None else ""

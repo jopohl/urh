@@ -96,6 +96,9 @@ class GeneratorTabController(QWidget):
         self.ui.tableMessages.encodings_updated.connect(self.on_table_selection_changed)
         self.table_model.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
         self.table_model.protocol.qt_signals.line_duplicated.connect(self.refresh_pause_list)
+        self.table_model.protocol.qt_signals.fuzzing_started.connect(self.on_fuzzing_started)
+        self.table_model.protocol.qt_signals.current_fuzzing_message_changed.connect(self.on_current_fuzzing_message_changed)
+        self.table_model.protocol.qt_signals.fuzzing_finished.connect(self.on_fuzzing_finished)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.btnSend.clicked.connect(self.on_btn_send_clicked)
@@ -546,3 +549,19 @@ class GeneratorTabController(QWidget):
     @pyqtSlot(int)
     def on_network_sdr_send_message_changed(self, message_index: int):
         self.ui.tableMessages.selectRow(message_index)
+
+    @pyqtSlot(int)
+    def on_fuzzing_started(self, num_values: int):
+        self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingProgressBar)
+        self.ui.progressBarFuzzing.setMaximum(num_values)
+        self.ui.progressBarFuzzing.setValue(0)
+        QApplication.instance().processEvents()
+
+    @pyqtSlot()
+    def on_fuzzing_finished(self):
+        self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingUI)
+
+    @pyqtSlot(int)
+    def on_current_fuzzing_message_changed(self, current_message: int):
+        self.ui.progressBarFuzzing.setValue(current_message)
+        QApplication.instance().processEvents()

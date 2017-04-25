@@ -102,8 +102,8 @@ class MainController(QMainWindow):
 
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))
         self.ui.fileTree.setToolTip(path)
-        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.Interactive)
+        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.ui.fileTree.setFocus()
 
         self.generator_tab_controller.table_model.cfc = self.compare_frame_controller

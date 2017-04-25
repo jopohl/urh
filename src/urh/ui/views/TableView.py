@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection
-from PyQt5.QtGui import QKeySequence, QKeyEvent
+from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics
 from PyQt5.QtWidgets import QTableView, QApplication
 import numpy
 
@@ -56,7 +56,8 @@ class TableView(QTableView):
         if not self.isVisible():
             return
 
-        w = self.font().pointSize()
+        f = QFontMetrics(self.font())
+        w = f.widthChar("0") + 2
 
         for i in range(10):
             self.setColumnWidth(i, 3*w)

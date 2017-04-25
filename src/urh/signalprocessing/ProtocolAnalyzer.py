@@ -41,7 +41,6 @@ class ProtocolAnalyzer(object):
 
     def __init__(self, signal: Signal):
         self.messages = []  # type: list[Message]
-
         self.signal = signal
         self.filename = self.signal.filename if self.signal is not None else ""
 

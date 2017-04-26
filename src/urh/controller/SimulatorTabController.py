@@ -73,7 +73,7 @@ class SimulatorTabController(QWidget):
         operator_descriptions.sort()
         self.simulator_ruleset_model = SimulatorRulesetTableModel(operator_descriptions, parent=self)
         self.ui.tblViewSimulatorRuleset.setModel(self.simulator_ruleset_model)
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0, MessageComboBoxDelegate(self.simulator_scene, parent=self))
+        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0, MessageComboBoxDelegate(self.sim_proto_manager, parent=self))
         self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
         self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(2, ComboBoxDelegate(operator_descriptions, parent=self))
 

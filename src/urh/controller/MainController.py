@@ -138,8 +138,8 @@ class MainController(QMainWindow):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionOpen_directory.setShortcut(QKeySequence("Ctrl+Shift+O"))
-        self.ui.actionMinimize_all.setShortcut("F10")
-        self.ui.actionMaximize_all.setShortcut("F11")
+
+        self.ui.menuEdit.aboutToShow.connect(self.on_edit_menu_about_to_show)
 
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
@@ -193,6 +193,9 @@ class MainController(QMainWindow):
         self.ui.tabWidget_Project.tabBarDoubleClicked.connect(self.on_project_tab_bar_double_clicked)
 
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_action_triggered)
+
+        self.ui.actionShowFileTree.triggered.connect(self.on_action_show_filetree_triggered)
+        self.ui.actionShowFileTree.setShortcut(QKeySequence("F10"))
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
@@ -671,6 +674,17 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_project_settings_action_triggered(self):
         self.show_project_settings()
+
+    @pyqtSlot()
+    def on_edit_menu_about_to_show(self):
+        self.ui.actionShowFileTree.setChecked(self.ui.splitter.sizes()[0] > 0)
+
+    @pyqtSlot()
+    def on_action_show_filetree_triggered(self):
+        if self.ui.splitter.sizes()[0] > 0:
+            self.ui.splitter.setSizes([0, 1])
+        else:
+            self.ui.splitter.setSizes([1, 1])
 
     @pyqtSlot()
     def on_project_dialog_finished(self):

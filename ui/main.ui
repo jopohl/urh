@@ -200,6 +200,7 @@
     <addaction name="actionDecoding"/>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
+    <addaction name="actionShowFileTree"/>
     <addaction name="actionFullscreen_mode"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -488,14 +489,6 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionShow_file_tree">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Sh&amp;ow file tree</string>
-   </property>
-  </action>
   <action name="actionNew_Project">
    <property name="text">
     <string>&amp;New Project..</string>
@@ -540,6 +533,14 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionShowFileTree">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show file tree</string>
    </property>
   </action>
  </widget>

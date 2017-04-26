@@ -229,9 +229,6 @@ class Ui_MainWindow(object):
         self.actionOptions.setIcon(icon)
         self.actionOptions.setIconVisibleInMenu(True)
         self.actionOptions.setObjectName("actionOptions")
-        self.actionShow_file_tree = QtWidgets.QAction(MainWindow)
-        self.actionShow_file_tree.setCheckable(True)
-        self.actionShow_file_tree.setObjectName("actionShow_file_tree")
         self.actionNew_Project = QtWidgets.QAction(MainWindow)
         self.actionNew_Project.setObjectName("actionNew_Project")
         self.actionSniff_protocol = QtWidgets.QAction(MainWindow)
@@ -251,6 +248,9 @@ class Ui_MainWindow(object):
         self.actionOpen_directory.setObjectName("actionOpen_directory")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
+        self.actionShowFileTree = QtWidgets.QAction(MainWindow)
+        self.actionShowFileTree.setCheckable(True)
+        self.actionShowFileTree.setObjectName("actionShowFileTree")
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionSave_project)
@@ -271,6 +271,7 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.actionDecoding)
         self.menuEdit.addAction(self.actionOptions)
         self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionShowFileTree)
         self.menuEdit.addAction(self.actionFullscreen_mode)
         self.menuHelp.addAction(self.actionAbout_AutomaticHacker)
         self.menuHelp.addAction(self.actionAbout_Qt)
@@ -326,7 +327,6 @@ class Ui_MainWindow(object):
         self.actionRecord.setText(_translate("MainWindow", "&Record signal..."))
         self.actionSpectrum_Analyzer.setText(_translate("MainWindow", "Spectrum &Analyzer..."))
         self.actionOptions.setText(_translate("MainWindow", "&Options..."))
-        self.actionShow_file_tree.setText(_translate("MainWindow", "Sh&ow file tree"))
         self.actionNew_Project.setText(_translate("MainWindow", "&New Project.."))
         self.actionSniff_protocol.setText(_translate("MainWindow", "Sn&iff protocol..."))
         self.actionProject_settings.setText(_translate("MainWindow", "&Project settings..."))
@@ -334,6 +334,7 @@ class Ui_MainWindow(object):
         self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
         self.actionOpen_directory.setText(_translate("MainWindow", "Open &directory..."))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
+        self.actionShowFileTree.setText(_translate("MainWindow", "Show file tree"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

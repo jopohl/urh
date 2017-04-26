@@ -32,6 +32,9 @@ Like to see things in action? Watch URH on YouTube!
 #### Optional
 - librtlsdr (for native RTL-SDR device backend)
 - libhackrf (for native HackRF device backend)
+- libairspy (for native AirSPy device backend)
+- liblimesdr (for native LimeSDR device backend)
+- rfcat (for RfCat plugin to send e.g. with YardStick One)
 - gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
 ### Arch Linux

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>969</width>
+    <width>1011</width>
     <height>669</height>
    </rect>
   </property>
@@ -427,7 +427,55 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0" colspan="8">
+           <item row="2" column="7">
+            <widget class="QLabel" name="lViewType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Viewtype:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>38</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="lEstimatedTime">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Estimated Time: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QToolButton" name="btnSave">
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset theme="document-save">
+               <normaloff/>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="9">
             <widget class="GeneratorTableView" name="tableMessages">
              <property name="acceptDrops">
               <bool>true</bool>
@@ -467,54 +515,23 @@
              </attribute>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QToolButton" name="btnSave">
-             <property name="text">
-              <string>...</string>
+           <item row="0" column="0" colspan="9">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
              </property>
-             <property name="icon">
-              <iconset theme="document-save">
-               <normaloff>.</normaloff>.</iconset>
+             <property name="text">
+              <string>Generated data</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="lEstimatedTime">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Estimated Time: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="5">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>38</width>
-               <height>22</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="6">
-            <widget class="QLabel" name="lViewType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Viewtype:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="7">
+           <item row="2" column="8">
             <widget class="QComboBox" name="cbViewType">
              <item>
               <property name="text">
@@ -533,36 +550,31 @@
              </item>
             </widget>
            </item>
-           <item row="0" column="0" colspan="8">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Generated data</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="1">
             <widget class="QPushButton" name="btnNetworkSDRSend">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send encoded data to your external application via TCP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Send</string>
+              <string>Send via Network</string>
              </property>
              <property name="icon">
               <iconset theme="network-wired">
-               <normaloff>.</normaloff>.</iconset>
+               <normaloff/>
+              </iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnRfCatSend">
+             <property name="text">
+              <string>Send via RfCat</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wireless"/>
              </property>
             </widget>
            </item>
@@ -575,6 +587,7 @@
           <zorder>btnSave</zorder>
           <zorder>horizontalSpacer_3</zorder>
           <zorder>btnNetworkSDRSend</zorder>
+          <zorder>btnRfCatSend</zorder>
          </widget>
         </widget>
        </item>

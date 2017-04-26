@@ -14,6 +14,7 @@ from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -52,7 +53,10 @@ class GeneratorTabController(QWidget):
 
         self.network_sdr_button_orig_tooltip = self.ui.btnNetworkSDRSend.toolTip()
         self.set_network_sdr_send_button_visibility()
+        self.set_rfcat_button_visibility()
         self.network_sdr_plugin = NetworkSDRInterfacePlugin()
+        self.rfcat_plugin = RfCatPlugin()
+        self.init_rfcat_plugin()
 
         self.refresh_modulators()
         self.on_selected_modulation_changed()
@@ -121,9 +125,11 @@ class GeneratorTabController(QWidget):
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 
         self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
+        self.ui.btnRfCatSend.clicked.connect(self.on_btn_rfcat_clicked)
+
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
-        self.network_sdr_plugin.current_send_message_changed.connect(self.on_network_sdr_send_message_changed)
+        self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -173,7 +179,6 @@ class GeneratorTabController(QWidget):
         self.ui.cBoxModulations.setCurrentIndex(current_index)
 
     def show_modulation_info(self):
-
         show = not self.has_default_modulation or self.modulators[0] != Modulator("Modulation")
 
         if not show:
@@ -246,6 +251,12 @@ class GeneratorTabController(QWidget):
         dialog.ui.gVData.auto_fit_view()
         dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
         dialog.ui.gVCarrier.auto_fit_view()
+
+    def init_rfcat_plugin(self):
+        self.set_rfcat_button_visibility()
+        self.rfcat_plugin = RfCatPlugin()
+        self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
+        self.ui.btnRfCatSend.setEnabled(self.rfcat_plugin.rfcat_is_found)
 
     @pyqtSlot()
     def on_undo_stack_index_changed(self):
@@ -523,6 +534,10 @@ class GeneratorTabController(QWidget):
         is_plugin_enabled = PluginManager().is_plugin_enabled("NetworkSDRInterface")
         self.ui.btnNetworkSDRSend.setVisible(is_plugin_enabled)
 
+    def set_rfcat_button_visibility(self):
+        is_plugin_enabled = PluginManager().is_plugin_enabled("RfCat")
+        self.ui.btnRfCatSend.setVisible(is_plugin_enabled)
+
     @pyqtSlot()
     def on_btn_network_sdr_clicked(self):
         if not self.network_sdr_plugin.is_sending:
@@ -547,8 +562,17 @@ class GeneratorTabController(QWidget):
         self.ui.btnNetworkSDRSend.setEnabled(False)
 
     @pyqtSlot(int)
-    def on_network_sdr_send_message_changed(self, message_index: int):
+    def on_send_message_changed(self, message_index: int):
         self.ui.tableMessages.selectRow(message_index)
+
+    @pyqtSlot()
+    def on_btn_rfcat_clicked(self):
+        if not self.rfcat_plugin.is_sending:
+            messages = self.table_model.protocol.messages
+            sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators, self.project_manager)
+        else:
+            self.rfcat_plugin.stop_sending_thread()
 
     @pyqtSlot(int)
     def on_fuzzing_started(self, num_values: int):

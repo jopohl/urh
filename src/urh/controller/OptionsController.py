@@ -213,6 +213,8 @@ class OptionsController(QDialog):
 
         FieldType.save_to_xml(self.field_type_table_model.field_types)
         self.plugin_controller.save_enabled_states()
+        for plugin in self.plugin_controller.model.plugins:
+            plugin.destroy_settings_frame()
 
         self.values_changed.emit(changed_values)
 

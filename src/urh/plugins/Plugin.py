@@ -43,6 +43,9 @@ class Plugin(QObject):
         except Exception as e:
             print(e)
 
+    def destroy_settings_frame(self):
+        self.__settings_frame = None
+
     def create_connects(self):
         pass
 

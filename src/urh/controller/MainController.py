@@ -207,7 +207,7 @@ class MainController(QMainWindow):
         protocol.filename = filename
         with open(filename) as f:
             for line in f:
-                protocol.messages.append(Message.from_plain_bits_str(line.strip(), {}))
+                protocol.messages.append(Message.from_plain_bits_str(line.strip()))
 
         self.compare_frame_controller.add_protocol(protocol)
         self.compare_frame_controller.refresh()
@@ -761,14 +761,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):
-        refresh_protocol_needed = False
-        for key in changed_options:
-            if key == "rel_symbol_length":
-                st = changed_options[key]
-                constants.SETTINGS.setValue('rel_symbol_length', st)
-                refresh_protocol_needed = True
-            elif key == "show_pause_as_time":
-                refresh_protocol_needed = True
+        refresh_protocol_needed = "show_pause_as_time" in changed_options
 
         if refresh_protocol_needed:
             for sf in self.signal_tab_controller.signal_frames:

@@ -117,14 +117,6 @@ HIGHLIGHT_TEXT_FOREGROUND_COLOR = QColor("white")
 
 PEAK_COLOR = QColor("darkRed")
 
-# SYMBOL PARAMETERS
-SYMBOL_NAMES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-                "<", ">", "|", ",", ".", "-", "_", "@", "*", "+", "~", "#", "§",
-                "²", "³", '"', "$", "%", "&", "/", "{", "(", "[", ")", "]", "=",
-                "}", "ß", "?", "`", "¸", "€", "µ", "^", "°", "☠", "♫", "®", "☢"]
-
-
 NUM_CENTERS = 16
 
 SHORTEST_PREAMBLE_IN_BITS = 8

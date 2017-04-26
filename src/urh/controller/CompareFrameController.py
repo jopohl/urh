@@ -520,7 +520,6 @@ class CompareFrameController(QFrame):
 
         # self.protocol_undo_stack.clear()
         self.proto_analyzer.messages[:] = []
-        self.proto_analyzer.used_symbols.clear()
         self.rows_for_protocols.clear()
         align_labels = constants.SETTINGS.value("align_labels", True, bool)
         line = 0
@@ -551,8 +550,6 @@ class CompareFrameController(QFrame):
                     if message.message_type not in self.proto_analyzer.message_types:
                         message.message_type = self.proto_analyzer.default_message_type
                     self.proto_analyzer.messages.append(message)
-
-                self.proto_analyzer.used_symbols |= proto.used_symbols
 
                 line += num_messages
                 rows_for_cur_proto = list(range(prev_line, line))

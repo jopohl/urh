@@ -74,7 +74,6 @@ class OptionsController(QDialog):
         self.refresh_device_tab()
 
         self.create_connects()
-        self.old_symbol_tresh = 10
         self.old_show_pause_as_time = False
 
         self.field_type_table_model = FieldTypeTableModel([], parent=self)
@@ -114,9 +113,7 @@ class OptionsController(QDialog):
         return None
 
     def create_connects(self):
-        self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.on_spinbox_symbol_threshold_value_changed)
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
-        self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
         self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
         self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
@@ -188,9 +185,6 @@ class OptionsController(QDialog):
         self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
         self.ui.checkBoxPauseTime.setChecked(settings.value('show_pause_as_time', type=bool))
 
-        symbol_thresh = (settings.value('rel_symbol_length', type=int) - 100) / (-2)
-        self.ui.spinBoxSymbolTreshold.setValue(symbol_thresh)
-        self.old_symbol_tresh = symbol_thresh
         self.old_show_pause_as_time = bool(self.ui.checkBoxPauseTime.isChecked())
 
         self.field_type_table_model.field_types = FieldType.load_from_xml()
@@ -207,8 +201,6 @@ class OptionsController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
-        if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:
-            changed_values["rel_symbol_length"] = 100 - 2 * self.ui.spinBoxSymbolTreshold.value()
         if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
             changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
         if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
@@ -258,36 +250,6 @@ class OptionsController(QDialog):
                 self.field_type_table_model.field_types.pop()
 
             self.field_type_table_model.update()
-
-    @pyqtSlot()
-    def on_spinbox_symbol_threshold_value_changed(self):
-        val = self.ui.spinBoxSymbolTreshold.value()
-        self.ui.lSymbolLength.setText(str(100 - 2 * val) + "%")
-        if val == 50:
-            txt = self.tr("No symbols will be created")
-            self.ui.chkBoxEnableSymbols.setChecked(False)
-        elif val == 0:
-            txt = self.tr("A symbol will be created in any case")
-            self.ui.chkBoxEnableSymbols.setChecked(True)
-        else:
-            self.ui.chkBoxEnableSymbols.setChecked(True)
-            bit_len = 1000
-            rel_val = val / 100
-            rel_symbol_len = (100 - 2 * val) / 100
-            txt = self.tr(
-                "Custom symbols will be created outside {0:d}%-{1:d}% of selected bit length.\n\n"
-                "Example - With bit length {2:d} following will hold: \n"
-                "{3:d} - {4:d}: \tSymbol A\n"
-                "{5:d} - {6:d}: \tStandard symbol (0 or 1)\n"
-                "{7:d} - {8:d}: \tSymbol B\n"
-                "{9:d} - {10:d}: \tStandard symbol (0 or 1)\n\n"
-                "Note there will be different symbols for various signal levels (e.g. low and high).".format(
-                    100 - val, 100 + val, bit_len,
-                    int((1 - rel_val) * bit_len - rel_symbol_len * bit_len), int((1 - rel_val) * bit_len),
-                    int((1 - rel_val) * bit_len), int((1 + rel_val) * bit_len),
-                    int((1 + rel_val) * bit_len), int((1 + rel_val) * bit_len + rel_symbol_len * bit_len),
-                    int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
-        self.ui.lExplanation.setText(txt)
 
     @pyqtSlot()
     def on_double_spinbox_ram_threshold_value_changed(self):
@@ -340,13 +302,6 @@ class OptionsController(QDialog):
         if Backends.native in self.selected_device.avail_backends:
             self.selected_device.selected_backend = Backends.native
             self.selected_device.write_settings()
-
-    @pyqtSlot(bool)
-    def on_chkbox_enable_symbols_clicked(self, checked: bool):
-        if checked:
-            self.ui.spinBoxSymbolTreshold.setValue(10)
-        else:
-            self.ui.spinBoxSymbolTreshold.setValue(50)
 
     @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
@@ -412,9 +367,6 @@ class OptionsController(QDialog):
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
-
-        if 'rel_symbol_length' not in keys:
-            settings.setValue('rel_symbol_length', 0)
 
         if 'default_view' not in keys:
             settings.setValue('default_view', 0)

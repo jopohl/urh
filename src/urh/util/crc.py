@@ -1,3 +1,6 @@
+import array
+
+
 class crc_generic:
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
@@ -39,7 +42,7 @@ class crc_generic:
         return polynomial
 
     def crc(self, inpt):
-        data = inpt.copy()
+        data = array.array("B", inpt)
         if not len(data) % 8 == 0:
             data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
         len_data = len(data)
@@ -136,7 +139,7 @@ class crc_generic:
             else:
                 self.lsb_first = True
 
-            if self.crc(inpt.copy()) == vrfy_crc:
+            if self.crc(inpt) == vrfy_crc:
                 return True
 
         return False
@@ -181,17 +184,9 @@ class crc_generic:
         return False
 
     @staticmethod
-    def bit2str(inpt, points=False):
-        if not points:
-            return "".join(["1" if x else "0" for x in inpt])
+    def bit2str(inpt):
+        return "".join(["1" if x else "0" for x in inpt])
 
-        bitstring = []
-        for n in range(0, len(inpt)):
-            if n % 4 == 0:
-                bitstring.append(".")
-            bitstring.append("1" if inpt[n] else "0")
-
-        return "".join(bitstring)
 
     @staticmethod
     def str2bit(inpt):

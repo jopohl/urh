@@ -1,3 +1,7 @@
+import copy
+
+import array
+
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
@@ -7,8 +11,8 @@ class TestWhitening(QtTestCase):
 
         # Test 1
         e.data_whitening_sync = e.hex2bit("67686768")
-        original_inpt = e.hex2bit("aaaaaaaa67686768f9ca03909567ba76a8") + [False] # Korrektes Signal, bitgenau
-        inpt = original_inpt.copy()
+        original_inpt = e.hex2bit("aaaaaaaa67686768f9ca03909567ba76a8") + array.array("B", [False]) # Korrektes Signal, bitgenau
+        inpt = copy.copy(original_inpt)
         #print (e.bit2hex(inpt))
         output, err, _ = e.apply_data_whitening(True, inpt)
         #print (e.bit2hex(output), err)

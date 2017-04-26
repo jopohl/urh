@@ -38,24 +38,3 @@ class TestProtocolAnalyzer(QtTestCase):
         self.assertAlmostEqual(1, freq / 10000, places = 1)  # Freq for 1 is 10K
         freq = pa.estimate_frequency_for_zero(1e6)
         self.assertAlmostEqual(3, freq / 10000, places = 1)  # Freq for 0 is 30K
-
-    def test_symbols(self):
-        old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 20)  # Set Symbol length for this test
-        s = Signal(get_path_for_data_file("vw_symbols.complex"), "VW")
-        s.noise_threshold = 0.0111
-        s.qad_center = 0.0470
-        s.bit_len = 500
-        s.modulation_type = 0  # ASK
-        pa = ProtocolAnalyzer(s)
-        pa.get_protocol_from_signal()
-        message = pa.messages[0]
-        for i in range(255):  # First 255 are bits
-            self.assertEqual(type(message[i]), bool)
-        for i in range(255, 261):
-            self.assertNotEqual(type(message[i]), bool)  # 6 Symbols
-            print("Symbol", message[i].name, "NSamples:", message[i].nsamples, "Pulsetype:", message[i].pulsetype)
-        symbols = message.plain_bits_str[255:261]
-        self.assertEqual(symbols, "ABABAB")
-
-        constants.SETTINGS.setValue('rel_symbol_length', old_sym_len)  # Restore Symbol Length

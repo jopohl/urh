@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
 from urh.cythonext import path_creator
-from urh.signalprocessing.Symbol import Symbol
 from urh.ui.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
@@ -147,7 +146,7 @@ class Modulator(object):
             self.data = data
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
-        total_samples = int(sum(bit.nsamples if type(bit) == Symbol else self.samples_per_bit for bit in data) + pause)
+        total_samples = int(len(data) * self.samples_per_bit + pause)
 
         self.modulated_samples = np.zeros(total_samples, dtype=np.complex64)
 
@@ -156,12 +155,8 @@ class Modulator(object):
         sample_pos = 0
 
         for i, bit in enumerate(data):
-            if type(bit) == Symbol:
-                samples_per_bit = int(bit.nsamples)
-                log_bit = True if bit.pulsetype == 1 else False
-            else:
-                log_bit = bit
-                samples_per_bit = int(self.samples_per_bit)
+            log_bit = bit
+            samples_per_bit = int(self.samples_per_bit)
 
             if mod_type == "FSK" or mod_type == "GFSK":
                 param = 1 if log_bit else -1

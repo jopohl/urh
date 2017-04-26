@@ -1,3 +1,7 @@
+import copy
+
+import array
+
 from urh import constants
 from urh.util.crc import crc_generic
 
@@ -30,7 +34,7 @@ class Encoder(object):
         self.src = []  # [[True, True], [True, False], [False, True], [False, False]]
         self.dst = []  # [[False, False], [False, True], [True, False], [True, True]]
         self.carrier = "1_"
-        self.cutmark = [True, False]
+        self.cutmark = array.array("B", [True, False])
         self.cutmode = 0  # 0 = before, 1 = after, 2 = before_pos, 3 = after_pos
         self.morse_low = 1
         self.morse_high = 3
@@ -38,18 +42,18 @@ class Encoder(object):
         self.__symbol_len = 1
 
         # Configure CC1101 Date Whitening
-        polynomial = [False, False, True, False, False, False, False, True]  # x^5+x^0
-        sync_bytes = [True, True, True, False, True, False, False, True, True, True, False, False,
+        polynomial = array.array("B", [False, False, True, False, False, False, False, True])  # x^5+x^0
+        sync_bytes = array.array("B", [True, True, True, False, True, False, False, True, True, True, False, False,
                       True, False, True, False, True, True, True, False, True, False, False, True,
-                      True, True, False, False, True, False, True, False]  # "e9cae9ca"
+                      True, True, False, False, True, False, True, False])  # "e9cae9ca"
         # sync_bytes = self.str2bit("01100111011010000110011101101000") # "67686768" (RWE Default)
         # sync_bytes = self.str2bit("01101001111101100110100111110111") # "69f669f7" (Special RWE)
 
         self.data_whitening_polynomial = polynomial  # Set polynomial
         self.data_whitening_sync = sync_bytes  # Sync Bytes
-        self.data_whitening_crc = [False] * 16  # CRC is 16 Bit long
-        self.data_whitening_preamble = [True, False] * 16  # 010101...
-        self.lfsr_state = []
+        self.data_whitening_crc = array.array("B", [False] * 16)  # CRC is 16 Bit long
+        self.data_whitening_preamble = array.array("B", [True, False] * 16)  # 010101...
+        self.lfsr_state = array.array("B", [])
 
         self.data_whitening_apply_crc = True  # Apply CRC with XOR
         self.data_whitening_preamble_rm = True  # Remove Preamble
@@ -225,8 +229,8 @@ class Encoder(object):
 
         return output
 
-    def code(self, decoding, inputbits):
-        temp = inputbits.copy()
+    def code(self, decoding, inputbits: array.array):
+        temp = array.array("B", inputbits)
         output = temp
         errors = 0
         error_states = []
@@ -284,7 +288,7 @@ class Encoder(object):
                         self.cutmode = 0
                     if self.cutmode == 0 or self.cutmode == 1:
                         self.cutmark = self.str2bit(tmp)
-                        if len(self.cutmark) == 0: self.cutmark = [True, False, True, False]
+                        if len(self.cutmark) == 0: self.cutmark = array.array("B", [True, False, True, False])
                     else:
                         try:
                             self.cutmark = int(tmp)
@@ -322,7 +326,7 @@ class Encoder(object):
         return output, errors, error_state
 
     def lfsr(self, clock):
-        poly = [False]
+        poly = array.array("B", [False])
         poly.extend(self.data_whitening_polynomial)
         len_pol = len(poly)
 
@@ -360,11 +364,6 @@ class Encoder(object):
         if inpt_to < 1 or len_polynomial < 1 or len_sync < 1:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Misc Error
 
-        # Force inpt to contain bool values; overwrite everything else with True
-        for i in range(0, inpt_to):
-            if not isinstance(inpt[i], bool):
-                inpt[i] = True
-
         # Search for whitening start position (after sync bytes)
         whitening_start_pos = inpt_from
         i = inpt_from
@@ -390,7 +389,7 @@ class Encoder(object):
             inpt_to += len(self.data_whitening_crc)
 
         # Prepare keystream
-        self.lfsr_state = []
+        self.lfsr_state = array.array("B", [])
         keystream = self.lfsr(0)
         for i in range(whitening_start_pos, inpt_to, 8):
             keystream.extend(self.lfsr(8))
@@ -436,7 +435,7 @@ class Encoder(object):
                 inpt = self.data_whitening_preamble + inpt
                 inpt_to += len(self.data_whitening_preamble)
             # Duplicate last bit when encoding
-            inpt += [inpt[-1]]
+            inpt += array.array("B", [inpt[-1]])
             inpt_to += 1
 
         return inpt[inpt_from:inpt_to], 0, self.ErrorState.SUCCESS
@@ -457,7 +456,7 @@ class Encoder(object):
             return ""
 
     def code_carrier(self, decoding, inpt):
-        output = []
+        output = array.array("B", [])
         errors = 0
 
         if decoding:
@@ -497,7 +496,7 @@ class Encoder(object):
         return self.apply_data_whitening(decoding, inpt)
 
     def code_lsb_first(self, decoding, inpt):
-        output = inpt.copy()
+        output = array.array("B", inpt)
         errors = len(inpt) % 8
 
         # Change Byteorder to LSB first <-> LSB last
@@ -511,7 +510,7 @@ class Encoder(object):
         return output, errors, self.ErrorState.SUCCESS
 
     def code_redundancy(self, decoding, inpt):
-        output = []
+        output = array.array("B", [])
         errors = 0
 
         if len(inpt) and self.multiple > 1:
@@ -548,10 +547,10 @@ class Encoder(object):
 
     def code_invert(self, decoding, inpt):
         errors = 0
-        return [True if not x else False for x in inpt], errors, self.ErrorState.SUCCESS
+        return array.array("B", [True if not x else False for x in inpt]), errors, self.ErrorState.SUCCESS
 
     def code_differential(self, decoding, inpt):
-        output = [inpt[0]]
+        output = array.array("B", [inpt[0]])
         errors = 0
 
         if decoding:
@@ -579,7 +578,7 @@ class Encoder(object):
 
     def code_edge(self, decoding, inpt):
         errors = 0
-        output = []
+        output = array.array("B", [])
 
         if decoding:
             i = 1
@@ -600,7 +599,7 @@ class Encoder(object):
 
     def code_substitution(self, decoding, inpt):
         errors = 0
-        output = []
+        output = array.array("B", [])
 
         # Every element in src has to have the same size
         src = self.src
@@ -629,7 +628,7 @@ class Encoder(object):
 
     def code_morse(self, decoding, inpt):
         errors = 0
-        output = []
+        output = array.array("B", [])
 
         if self.morse_low >= self.morse_high:
             return inpt, 1, self.ErrorState.WRONG_PARAMETERS
@@ -683,10 +682,10 @@ class Encoder(object):
 
         return output, errors, self.ErrorState.SUCCESS
 
-    def code_cut(self, decoding, inpt):
+    def code_cut(self, decoding, inpt) -> array.array:
         errors = 0
         state = self.ErrorState.SUCCESS
-        output = []
+        output = array.array("B", [])
 
         # cutmark -> [True, False]
         # cutmode -> 0 = before, 1 = after, 2 = before_pos, 3 = after_pos
@@ -753,33 +752,33 @@ class Encoder(object):
             return None
 
     @staticmethod
-    def enocean_checksum4(inpt):
+    def enocean_checksum4(inpt) -> array.array:
         hash = 0
-        val = inpt.copy()
-        val[-4:] = [False, False, False, False]
+        val = copy.copy(inpt)
+        val[-4:] = array.array("B", [False, False, False, False])
         for i in range(0, len(val), 8):
             hash += int("".join(map(str, map(int, val[i:i + 8]))), 2)
         hash = (((hash & 0xf0) >> 4) + (hash & 0x0f)) & 0x0f
-        return list(map(bool, map(int, "{0:04b}".format(hash))))
+        return array.array("B", list(map(bool, map(int, "{0:04b}".format(hash)))))
 
     @staticmethod
-    def enocean_checksum8(inpt):
+    def enocean_checksum8(inpt) -> array.array:
         hash = 0
         for i in range(0, len(inpt) - 8, 8):
             hash += int("".join(map(str, map(int, inpt[i:i + 8]))), 2)
-        return list(map(bool, map(int, "{0:08b}".format(hash % 256))))
+        return array.array("B", list(map(bool, map(int, "{0:08b}".format(hash % 256)))))
 
     @staticmethod
     def enocean_crc8(inpt):
         c = crc_generic(polynomial="8_en")
-        return c.crc(inpt)
+        return array.array("B", c.crc(inpt))
 
     def code_enocean(self, decoding: bool, inpt):
         errors = 0
-        output = []
-        preamble = [True, False, True, False, True, False, True, False]
-        sof = [True, False, False, True]
-        eof = [True, False, True, True]
+        output = array.array("B", [])
+        preamble = array.array("B", [True, False, True, False, True, False, True, False])
+        sof = array.array("B", [True, False, False, True])
+        eof = array.array("B", [True, False, True, True])
 
         if decoding:
             inpt, _, _ = self.code_invert(True, inpt)  # Invert
@@ -859,36 +858,25 @@ class Encoder(object):
     def decode(self, inpt):
         return self.code(True, inpt)[0]
 
-    def applies_for_message(self, msg) -> bool:
+    def applies_for_message(self, msg: array.array) -> bool:
         bit_errors, state = self.analyze(msg)
         return bit_errors == 0 and state == self.ErrorState.SUCCESS
 
     def analyze(self, inpt):
         """
         return number of bit errors and state
-        :param inpt: list of bool
+        :param inpt: array.array
         :rtype: tuple[int, str]
         """
         return self.code(True, inpt)[1:3]
 
     @staticmethod
-    def bit2str(inpt, points=False):
-        if not points:
-            return "".join(["1" if x else "0" for x in inpt])
-        else:
-            bitstring = ""
-            for i in range(0, len(inpt)):
-                if i > 0 and i % 4 == 0:
-                    bitstring += "."
-                if inpt[i]:
-                    bitstring += "1"
-                else:
-                    bitstring += "0"
-            return bitstring
+    def bit2str(inpt):
+        return "".join(map(str, inpt))
 
     @staticmethod
-    def str2bit(inpt):
-        return [True if x == "1" else False for x in inpt]
+    def str2bit(inpt: str):
+        return array.array("B", map(int, inpt))
 
     @staticmethod
     def bit2hex(inpt):
@@ -903,17 +891,17 @@ class Encoder(object):
         return ""
 
     @staticmethod
-    def hex2bit(inpt: str):
+    def hex2bit(inpt: str) -> array:
         if not isinstance(inpt, str):
-            return []
+            return array.array("B", [])
         try:
             bitstring = bin(int(inpt, base=16))[2:]
             if len(bitstring) % 4 != 0:
                 bitstring = "0" * (4 - (len(bitstring) % 4)) + bitstring
-            return [True if x == "1" else False for x in bitstring]
+            return array.array("B", [True if x == "1" else False for x in bitstring])
         except (TypeError, ValueError) as e:
             pass
-        return []
+        return array.array("B", [])
 
     @staticmethod
     def hex2str(inpt):

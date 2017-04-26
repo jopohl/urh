@@ -38,7 +38,6 @@ class RfCatPlugin(SDRPlugin):
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
-    rfcat_enabled_changed = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__(name="RfCat")
@@ -62,6 +61,10 @@ class RfCatPlugin(SDRPlugin):
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
 
+    @property
+    def rfcat_is_found(self):
+        return self.is_rfcat_executable(self.rfcat_executable)
+
     def is_rfcat_executable(self, rfcat_executable):
         fpath, fname = os.path.split(rfcat_executable)
         if fpath:
@@ -78,11 +81,9 @@ class RfCatPlugin(SDRPlugin):
     def enable_or_disable_send_button(self, rfcat_executable):
         if self.is_rfcat_executable(rfcat_executable):
             self.settings_frame.info.setText("Info: Executable can be opened.")
-            self.rfcat_enabled_changed.emit(True)
         else:
             self.settings_frame.info.setText("Info: Executable cannot be opened! Disabling send button.")
             logger.debug("RfCat executable cannot be opened! Disabling send button.")
-            self.rfcat_enabled_changed.emit(False)
 
     def create_connects(self):
         self.settings_frame.rfcat_executable.setText(self.rfcat_executable)

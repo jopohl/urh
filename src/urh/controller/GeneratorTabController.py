@@ -56,6 +56,7 @@ class GeneratorTabController(QWidget):
         self.set_rfcat_button_visibility()
         self.network_sdr_plugin = NetworkSDRInterfacePlugin()
         self.rfcat_plugin = RfCatPlugin()
+        self.init_rfcat_plugin()
 
         self.refresh_modulators()
         self.on_selected_modulation_changed()
@@ -125,8 +126,7 @@ class GeneratorTabController(QWidget):
 
         self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
         self.ui.btnRfCatSend.clicked.connect(self.on_btn_rfcat_clicked)
-        self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
-        self.rfcat_plugin.rfcat_enabled_changed.connect(self.ui.btnRfCatSend.setEnabled)
+
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
@@ -251,6 +251,12 @@ class GeneratorTabController(QWidget):
         dialog.ui.gVData.auto_fit_view()
         dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
         dialog.ui.gVCarrier.auto_fit_view()
+
+    def init_rfcat_plugin(self):
+        self.set_rfcat_button_visibility()
+        self.rfcat_plugin = RfCatPlugin()
+        self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
+        self.ui.btnRfCatSend.setEnabled(self.rfcat_plugin.rfcat_is_found)
 
     @pyqtSlot()
     def on_undo_stack_index_changed(self):

@@ -38,10 +38,6 @@ class PluginController(QFrame):
         for plugin in self.model.plugins:
             constants.SETTINGS.setValue(plugin.name, plugin.enabled)
 
-    def closeEvent(self, event: QCloseEvent):
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
-        super().closeEvent(event)
-
     @pyqtSlot()
     def on_list_selection_changed(self):
         i = self.ui.listViewPlugins.currentIndex().row()

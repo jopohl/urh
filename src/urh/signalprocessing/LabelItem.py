@@ -21,6 +21,9 @@ class LabelItem(GraphicsItem):
 
         self.refresh()
 
+    def update_numbering(self):
+        pass
+
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())

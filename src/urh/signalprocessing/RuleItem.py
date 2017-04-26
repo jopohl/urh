@@ -17,12 +17,9 @@ class RuleItem(GraphicsItem):
     def has_else_condition(self):
         return self.model_item.has_else_condition()
 
-    def update_numbering(self, index):
-        sub_index = 1
-
+    def update_numbering(self):
         for child in self.get_scene_children():
-            child.update_numbering(index + "." + str(sub_index))
-            sub_index += 1
+            child.update_numbering()
 
     def setSelected(self, selected):
         for child in self.get_scene_children():
@@ -87,15 +84,6 @@ class RuleConditionItem(GraphicsItem):
             self.drop_indicator_position = QAbstractItemView.OnItem
 
         self.update()
-
-    def update_numbering(self, index):
-        super().update_numbering(index)
-
-        sub_index = 1
-
-        for child in self.get_scene_children():
-            child.update_numbering(index + "." + str(sub_index))
-            sub_index += 1
 
     def paint(self, painter, option, widget):
         if self.hover_active or self.isSelected():

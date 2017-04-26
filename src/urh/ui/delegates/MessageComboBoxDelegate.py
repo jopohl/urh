@@ -3,20 +3,19 @@ from PyQt5.QtCore import Qt, QModelIndex, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QStandardItem
 
 class MessageComboBoxDelegate(QItemDelegate):
-    def __init__(self, simulator_scene, parent=None):
+    def __init__(self, sim_proto_manager, parent=None):
         super().__init__(parent)
-        self.simulator_scene = simulator_scene
+        self.sim_proto_manager = sim_proto_manager
         
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
         insert_separator = False
 
         editor.addItem("---Select label---", None)
-        for message in self.simulator_scene.get_all_messages():
-            labels = [lbl for lbl in message.model_item.message_type]
 
-            for label in labels:
-                editor.addItem(message.index + "::" + label.name, label)
+        for message in self.sim_proto_manager.get_all_messages():
+            for label in message.children:
+                editor.addItem(message.index() + "::" + label.name, label)
 
         editor.currentIndexChanged.connect(self.currentIndexChanged)
         return editor

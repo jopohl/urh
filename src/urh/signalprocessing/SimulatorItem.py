@@ -4,14 +4,27 @@ class SimulatorItem(object):
         self.__childItems = []
 
     def get_pos(self):
-        if self.__parentItem is not None:
-            return self.__parentItem.__childItems.index(self)
+        if self.parent() is not None:
+            return self.parent().children.index(self)
 
         return 0
 
+    def index(self):
+        if self.parent() is None:
+            return ""
+
+        item = self
+        result = str(item.get_pos() + 1)
+
+        while item.parent().parent() is not None:
+            item = item.parent()
+            result = str(item.get_pos() + 1) + "." + result
+
+        return result
+
     def insert_child(self, pos, child):
-        self.__childItems.insert(pos, child)
         child.set_parent(self)
+        self.children.insert(pos, child)
 
     def delete(self):
         for child in self.children[:]:
@@ -24,7 +37,7 @@ class SimulatorItem(object):
 
     def set_parent(self, value):
         if self.parent() is not None:
-            self.parent().__childItems.remove(self)
+            self.parent().children.remove(self)
 
         self.__parentItem = value
 
@@ -33,7 +46,7 @@ class SimulatorItem(object):
         return self.__childItems
 
     def child_count(self) -> int:
-        return len(self.__childItems)
+        return len(self.children)
 
     def next_sibling(self):
         result = None

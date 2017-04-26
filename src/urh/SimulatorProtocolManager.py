@@ -2,12 +2,10 @@ import random
 
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 
 from urh import constants
 from urh.util.ProjectManager import ProjectManager
@@ -15,19 +13,12 @@ from urh.util.ProjectManager import ProjectManager
 from PyQt5.QtCore import pyqtSignal, QObject
 
 class SimulatorProtocolManager(QObject):
-    message_added = pyqtSignal(SimulatorMessage)
-    label_added = pyqtSignal(SimulatorProtocolLabel)
-    rule_added = pyqtSignal(SimulatorRule)
-    rule_condition_added = pyqtSignal(SimulatorRuleCondition)
-    goto_action_added = pyqtSignal(SimulatorGotoAction)
-    program_action_added = pyqtSignal(SimulatorProgramAction)
-
     participants_changed = pyqtSignal()
-    label_updated = pyqtSignal(SimulatorProtocolLabel)
-    message_updated = pyqtSignal(SimulatorMessage)
 
     item_deleted = pyqtSignal(SimulatorItem)
+    item_updated = pyqtSignal(SimulatorItem)
     item_moved = pyqtSignal(SimulatorItem)
+    item_added = pyqtSignal(SimulatorItem)
 
     def __init__(self, project_manager: ProjectManager):
         super().__init__()
@@ -60,31 +51,22 @@ class SimulatorProtocolManager(QObject):
             parent_item = self.rootItem
 
         parent_item.insert_child(pos, item)
+        self.item_added.emit(item)
 
-    def add_rule(self, rule: SimulatorRule, pos: int, parent_item: SimulatorItem):
-        assert isinstance(rule, SimulatorRule)
-        self.add_item(rule, pos, parent_item)
-        self.rule_added.emit(rule)
+    def delete_item(self, item: SimulatorItem):
+        if (isinstance(item, SimulatorRuleCondition) and
+                item.type == ConditionType.IF):
+            item = item.parent()
 
-    def add_rule_condition(self, rule_condition: SimulatorRuleCondition, pos: int, parent_item: SimulatorItem):
-        assert isinstance(rule_condition, SimulatorRuleCondition)
-        self.add_item(rule_condition, pos, parent_item)
-        self.rule_condition_added.emit(rule_condition)
+        item.delete()
+        self.item_deleted.emit(item)
 
-    def add_goto_action(self, goto_action: SimulatorGotoAction, pos: int, parent_item: SimulatorItem):
-        assert isinstance(goto_action, SimulatorGotoAction)
-        self.add_item(goto_action, pos, parent_item)
-        self.goto_action_added.emit(goto_action)
+    def move_item(self, item: SimulatorItem, new_pos: int, new_parent: SimulatorItem):
+        if new_parent is None:
+            new_parent = self.rootItem
 
-    def add_program_action(self, program_action: SimulatorProgramAction, pos: int, parent_item: SimulatorItem):
-        assert isinstance(program_action, SimulatorProgramAction)
-        self.add_item(program_action, pos, parent_item)
-        self.program_action_added.emit(program_action)
-        
-    def add_message(self, msg: SimulatorMessage, pos: int, parent_item: SimulatorItem):
-        assert isinstance(msg, SimulatorMessage)
-        self.add_item(msg, pos, parent_item)
-        self.message_added.emit(msg)
+        new_parent.insert_child(new_pos, item)
+        self.item_moved.emit(item)
 
     def add_label(self, start: int, end: int, name: str = None, color_index: int = None,
                     type: FieldType=None, parent_item: SimulatorMessage=None):
@@ -102,8 +84,6 @@ class SimulatorProtocolManager(QObject):
 
         sim_label = SimulatorProtocolLabel(name, start, end - 1, color_index, type)
         self.add_item(sim_label, -1, parent_item)
-        #parent_item.message_type.append(sim_label)
-        self.label_added.emit(sim_label)
         return sim_label
 
     def n_top_level_items(self):
@@ -126,23 +106,3 @@ class SimulatorProtocolManager(QObject):
 
         for child in node.children:
             SimulatorProtocolManager.__get_all_items(child, items)
-
-        if isinstance(node, SimulatorMessage):
-            for lbl in node.message_type:
-                items.append(lbl)
-
-    def delete_item(self, item: SimulatorItem):
-        if (isinstance(item, SimulatorRuleCondition) and
-                item.type == ConditionType.IF):
-            item = item.parent()
-
-        item.delete()
-        self.item_deleted.emit(item)
-
-    def move_item(self, item: SimulatorItem, new_pos: int, new_parent: SimulatorItem):
-        if new_parent is None:
-            new_parent = self.rootItem
-
-        item.delete()
-        new_parent.insert_child(new_pos, item)
-        self.item_moved.emit(item)

@@ -6,6 +6,8 @@ from urh import constants
 
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class GraphicsItem(QGraphicsObject):
     def __init__(self, model_item: SimulatorItem, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False, parent=None):
@@ -25,7 +27,6 @@ class GraphicsItem(QGraphicsObject):
         self.drop_indicator_position = None
         self.item_under_mouse = None
         self.number = QGraphicsTextItem(self)
-        self.index = None
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(8)
         font.setWeight(QFont.DemiBold)
@@ -67,22 +68,28 @@ class GraphicsItem(QGraphicsObject):
         if not self.scene():
             return None
 
-        item = self.model_item.next()
+        next_item = self.model_item
 
-        # jump over SimulatorRule item as there is no graphical representation
-        if isinstance(item, SimulatorRule):
-            item = item.next()
+        while next_item is not None:
+            next_item = next_item.next()
 
-        return self.scene().model_to_scene(item)
+            if (not isinstance(next_item, SimulatorProtocolLabel) and
+                    not isinstance(next_item, SimulatorRule)):
+                break
+
+        return self.scene().model_to_scene(next_item)
 
     def prev(self):
-        item = self.model_item.prev()
+        prev_item = self.model_item
 
-        # jump over SimulatorRule item as there is no graphical representation
-        if isinstance(item, SimulatorRule):
-            item = item.prev()
+        while prev_item is not None:
+            prev_item = prev_item.prev()
 
-        return self.scene().model_to_scene(item)
+            if (not isinstance(prev_item, SimulatorProtocolLabel) and
+                    not isinstance(prev_item, SimulatorRule)):
+                break
+
+        return self.scene().model_to_scene(prev_item)
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -120,12 +127,17 @@ class GraphicsItem(QGraphicsObject):
         self.prepareGeometryChange()
         self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height())
 
+    def refresh(self):
+        pass
+
     def boundingRect(self):
         return self.bounding_rect
 
-    def update_numbering(self, index):
-        self.index = index
-        self.number.setPlainText(self.index)
+    def update_numbering(self):
+        self.number.setPlainText(self.model_item.index())
+
+        for child in self.get_scene_children():
+            child.update_numbering()
 
     def mouseMoveEvent(self, event):
         items = []

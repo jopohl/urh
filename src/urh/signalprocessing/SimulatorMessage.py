@@ -8,7 +8,6 @@ class SimulatorMessage(Message, SimulatorItem):
         Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
         SimulatorItem.__init__(self)
         self.destination = destination
-        self.__childItems = self.message_type
 
     def set_parent(self, value):
         if value is not None:
@@ -16,8 +15,10 @@ class SimulatorMessage(Message, SimulatorItem):
 
         super().set_parent(value)
 
+    @property
+    def children(self):
+        return self.message_type
+
     def insert_child(self, pos, child):
-        self.__childItems.append(child)
-        print(len(self.__childItems))
-        print(self.child_count())
+        self.children.append(child)
         child.set_parent(self)

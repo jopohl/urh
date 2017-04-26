@@ -103,7 +103,6 @@ class SimulatorTabController(QWidget):
         self.ui.rbOneApply.toggled.connect(self.on_cb_rulesetmode_toggled)
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
-        self.simulator_scene.items_changed.connect(self.update_ui)
 
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
 
@@ -112,8 +111,8 @@ class SimulatorTabController(QWidget):
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
         self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
 
-        self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.label_updated.emit)
-        self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.message_updated.emit)
+        self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.item_updated.emit)
+        self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.item_updated.emit)
 
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
@@ -146,12 +145,10 @@ class SimulatorTabController(QWidget):
                     isinstance(item, SimulatorRule)):
                 continue
 
-            scene_item = self.simulator_scene.model_to_scene(item)
-            goto_combobox.addItem(scene_item.index, item)
+            goto_combobox.addItem(item.index(), item)
 
         if self.selected_model_item.goto_target:
-            scene_item = self.simulator_scene.model_to_scene(self.selected_model_item.goto_target)
-            goto_combobox.setCurrentText(scene_item.index)
+            goto_combobox.setCurrentText(self.selected_model_item.goto_target.index())
         else:
             goto_combobox.setCurrentIndex(0)
 
@@ -165,21 +162,20 @@ class SimulatorTabController(QWidget):
             self.selected_item = selected_items[0]
             self.selected_model_item = self.selected_item.model_item
                 
-            self.ui.navLineEdit.setText(self.selected_item.index)
+            self.ui.navLineEdit.setText(self.selected_model_item.index())
             self.ui.btnNextNav.setEnabled(not self.selected_item.next() is None)
             self.ui.btnPrevNav.setEnabled(not self.selected_item.prev() is None)
 
-            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.selected_item.index)
+            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.selected_model_item.index())
 
             if isinstance(self.selected_item, GotoActionItem):
                 self.update_goto_combobox()
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.selected_item, MessageItem):
-                self.simulator_message_table_model.protocol.messages[:] = []
-                self.simulator_message_table_model.protocol.used_symbols.clear()
-                self.simulator_message_table_model.protocol.messages.append(self.selected_model_item)
-                self.simulator_message_table_model.update()
-                self.ui.tblViewMessage.resize_columns()
+                #self.simulator_message_table_model.protocol.messages[:] = []
+                #self.simulator_message_table_model.protocol.messages.append(self.selected_model_item)
+                #self.simulator_message_table_model.update()
+                #self.ui.tblViewMessage.resize_columns()
 
                 self.simulator_message_field_model.message = self.selected_model_item
                 self.simulator_message_field_model.update()

@@ -3,7 +3,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
-    QCheckBox
+    QCheckBox, QApplication
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -44,7 +44,9 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
-        self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        fixed_font.setPointSize(QApplication.instance().font().pointSize())
+        self.ui.txtEdProto.setFont(fixed_font)
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.messages = proto_analyzer.messages
 

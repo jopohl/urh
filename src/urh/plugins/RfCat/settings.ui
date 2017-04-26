@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>InsertSineWaveSettings</class>
+ <class>RfCatSettings</class>
  <widget class="QFrame" name="RfCatSettings">
   <property name="geometry">
    <rect>
@@ -23,7 +23,29 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>No settings available.</string>
+      <string>Command to execute 'rfcat'. You can write the full path before 'rfcat' or just 'rfcat' when it is executable from every path.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="rfcat_executable">
+     <property name="text">
+      <string>rfcat</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="info">
+     <property name="font">
+      <font>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

@@ -126,6 +126,7 @@ class GeneratorTabController(QWidget):
         self.ui.btnNetworkSDRSend.clicked.connect(self.on_btn_network_sdr_clicked)
         self.ui.btnRfCatSend.clicked.connect(self.on_btn_rfcat_clicked)
         self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
+        self.rfcat_plugin.rfcat_enabled_changed.connect(self.ui.btnRfCatSend.setEnabled)
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
@@ -178,7 +179,6 @@ class GeneratorTabController(QWidget):
         self.ui.cBoxModulations.setCurrentIndex(current_index)
 
     def show_modulation_info(self):
-
         show = not self.has_default_modulation or self.modulators[0] != Modulator("Modulation")
 
         if not show:
@@ -567,6 +567,7 @@ class GeneratorTabController(QWidget):
             self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators, self.project_manager)
         else:
             self.rfcat_plugin.stop_sending_thread()
+
     @pyqtSlot(int)
     def on_fuzzing_started(self, num_values: int):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingProgressBar)

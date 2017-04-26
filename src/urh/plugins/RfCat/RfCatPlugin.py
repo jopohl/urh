@@ -1,4 +1,4 @@
-import sys
+import os
 from subprocess import PIPE, Popen
 from threading import Thread
 import time
@@ -38,9 +38,11 @@ class RfCatPlugin(SDRPlugin):
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
+    rfcat_enabled_changed = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__(name="RfCat")
+        self.rfcat_executable = self.qsettings.value("rfcat_executable", defaultValue="rfcat", type=str)
         self.rfcat_is_open = False
         self.initialized = False
         self.ready = True
@@ -60,6 +62,39 @@ class RfCatPlugin(SDRPlugin):
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
 
+    def is_rfcat_executable(self, rfcat_executable):
+        fpath, fname = os.path.split(rfcat_executable)
+        if fpath:
+            if os.path.isfile(rfcat_executable) and os.access(rfcat_executable, os.X_OK):
+                return True
+        else:
+            for path in os.environ["PATH"].split(os.pathsep):
+                path = path.strip('"')
+                exe_file = os.path.join(path, rfcat_executable)
+                if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
+                    return True
+        return False
+
+    def enable_or_disable_send_button(self, rfcat_executable):
+        if self.is_rfcat_executable(rfcat_executable):
+            self.settings_frame.info.setText("Info: Executable can be opened.")
+            self.rfcat_enabled_changed.emit(True)
+        else:
+            self.settings_frame.info.setText("Info: Executable cannot be opened! Disabling send button.")
+            logger.debug("RfCat executable cannot be opened! Disabling send button.")
+            self.rfcat_enabled_changed.emit(False)
+
+    def create_connects(self):
+        self.settings_frame.rfcat_executable.setText(self.rfcat_executable)
+        self.settings_frame.rfcat_executable.editingFinished.connect(self.on_edit_rfcat_executable_editing_finished)
+        self.enable_or_disable_send_button(self.rfcat_executable)
+
+    def on_edit_rfcat_executable_editing_finished(self):
+        rfcat_executable = self.settings_frame.rfcat_executable.text()
+        self.enable_or_disable_send_button(rfcat_executable)
+        self.rfcat_executable = rfcat_executable
+        self.qsettings.setValue('rfcat_executable', self.rfcat_executable)
+
     def free_data(self):
         if self.raw_mode:
             self.receive_buffer = np.empty(0)
@@ -73,15 +108,13 @@ class RfCatPlugin(SDRPlugin):
     def open_rfcat(self):
         if not self.rfcat_is_open:
             try:
-                if sys.platform == "win32":
-                    rfcat_executable = 'rfcat.exe'
-                else:
-                    rfcat_executable = 'rfcat'
-                self.process = Popen([rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                self.process = Popen([self.rfcat_executable, '-r'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 self.rfcat_is_open = True
-                logger.debug("Successfully opened RfCat ({})".format(rfcat_executable))
+                logger.debug("Successfully opened RfCat ({})".format(self.rfcat_executable))
+                return True
             except Exception as e:
                 logger.debug("Could not open RfCat! ({})".format(e))
+                return False
 
     def close_rfcat(self):
         if self.rfcat_is_open:
@@ -126,7 +159,8 @@ class RfCatPlugin(SDRPlugin):
             return False
 
         # Open and configure RfCat
-        self.open_rfcat()
+        if not self.open_rfcat():
+            return False
         modulation = self.modulators[messages[0].modulator_indx].modulation_type
         if modulation == 0:     # ASK
             modulation = "MOD_ASK_OOK"

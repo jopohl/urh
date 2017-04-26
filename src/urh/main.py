@@ -54,10 +54,9 @@ def main():
     prefix = os.path.abspath(os.path.normpath(urh_dir))
 
     src_dir = os.path.join(prefix, "src")
-    if os.path.exists(src_dir) and not prefix.startswith("/usr") \
-            and not re.match(r"(?i)c:\\program", prefix):
+    if os.path.exists(src_dir) and not prefix.startswith("/usr") and not re.match(r"(?i)c:\\program", prefix):
         # Started locally, not installed
-        print("Using modules from {0}".format(src_dir))
+        print("Adding {0} to pythonpath. This is only important when running URH from source.".format(src_dir))
         sys.path.insert(0, src_dir)
 
     try:

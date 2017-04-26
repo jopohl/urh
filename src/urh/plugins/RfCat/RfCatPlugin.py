@@ -116,6 +116,8 @@ class RfCatPlugin(SDRPlugin):
             except Exception as e:
                 logger.debug("Could not open RfCat! ({})".format(e))
                 return False
+        else:
+            return True
 
     def close_rfcat(self):
         if self.rfcat_is_open:

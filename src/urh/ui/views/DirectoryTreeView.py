@@ -57,13 +57,14 @@ class DirectoryTreeView(QTreeView):
     @pyqtSlot(QModelIndex)
     def on_double_clicked(self, index: QModelIndex):
         file_path = self.model().get_file_path(index)  # type: str
-        try:
-            content = open(file_path, "r").read()
-        except:
-            return
+
         if file_path.endswith(".txt"):
+            try:
+                content = open(file_path, "r").read()
+            except:
+                return
             d = QDialog(self)
-            d.setWindowTitle(file_path)
+            d.resize(800, 600)
             layout = QVBoxLayout(d)
             text_edit = QPlainTextEdit(content)
             layout.addWidget(text_edit)

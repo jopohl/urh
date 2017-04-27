@@ -159,6 +159,8 @@ class MainController(QMainWindow):
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
 
+        self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
+
         self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
         self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)
         self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
@@ -792,3 +794,11 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_text_edit_project_description_text_changed(self):
         self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()
+
+    @pyqtSlot()
+    def on_btn_file_tree_go_up_clicked(self):
+        cur_dir = self.filemodel.rootDirectory()
+        if cur_dir.cdUp():
+            path = cur_dir.path()
+            self.filemodel.setRootPath(path)
+            self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))

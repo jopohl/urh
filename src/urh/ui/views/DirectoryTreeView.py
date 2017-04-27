@@ -40,7 +40,7 @@ class DirectoryTreeView(QTreeView):
 
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
-        new_dir_action = menu.addAction("New Directory")
+        new_dir_action = menu.addAction("New folder")
         new_dir_action.setIcon(QIcon.fromTheme("folder"))
         new_dir_action.triggered.connect(self.create_directory)
 

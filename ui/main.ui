@@ -527,7 +527,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open &amp;directory...</string>
+    <string>Open &amp;folder...</string>
    </property>
   </action>
   <action name="actionAbout_Qt">

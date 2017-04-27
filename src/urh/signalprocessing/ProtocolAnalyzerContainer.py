@@ -50,7 +50,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
 
-        messages = [Message(plain_bits=copy.copy(msg.decoded_bits), pause=msg.pause,
+        messages = [Message(plain_bits=msg.decoded_bits, pause=msg.pause,
                             message_type=copy.deepcopy(msg.message_type),
                             rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant)
                   for msg in proto_analyzer.messages if msg]

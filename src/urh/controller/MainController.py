@@ -160,6 +160,7 @@ class MainController(QMainWindow):
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
 
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
+        self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
 
         self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
         self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)

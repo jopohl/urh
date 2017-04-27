@@ -65,8 +65,10 @@ class DirectoryTreeView(QTreeView):
                 return
             d = QDialog(self)
             d.resize(800, 600)
+            d.setWindowTitle(file_path)
             layout = QVBoxLayout(d)
             text_edit = QPlainTextEdit(content)
+            text_edit.setReadOnly(True)
             layout.addWidget(text_edit)
             d.setLayout(layout)
             d.show()

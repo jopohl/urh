@@ -469,7 +469,6 @@ class Encoder(object):
                     else:  # Carrier -> 0, 1, *
                         if tmp in ("0", "1"):
                             if (inpt[x] and tmp != "1") or (not inpt[x] and tmp != "0"):
-                                # print("Pos", x, self.carrier[x % cl], inpt[x])
                                 errors += 1
         else:
             # Add carrier if encoding
@@ -598,7 +597,7 @@ class Encoder(object):
         return output, errors, self.ErrorState.SUCCESS
 
     def code_substitution(self, decoding, inpt):
-        errors = 0
+        padded_inpt = copy.copy(inpt)
         output = array.array("B", [])
 
         # Every element in src has to have the same size
@@ -611,14 +610,19 @@ class Encoder(object):
         if not decoding:
             src, dst = dst, src
 
+        # Padding of inpt with zeros to multiple of SRC[0] length (every SRC/DST-length should be the same)
         minimum_item_size = len(src[0])
+        zero_padding = (minimum_item_size - (len(padded_inpt) % minimum_item_size)) % minimum_item_size
+        padded_inpt.extend([False]*zero_padding)
+        errors = zero_padding
+
         i = 0
-        while i < len(inpt):
-            cnt = src.count(inpt[i:i + minimum_item_size])
+        while i < len(padded_inpt):
+            cnt = src.count(padded_inpt[i:i + minimum_item_size])
             if cnt == 1:
-                output.extend(dst[src.index(inpt[i:i + minimum_item_size])])
+                output.extend(dst[src.index(padded_inpt[i:i + minimum_item_size])])
             elif cnt < 1:
-                output.extend(inpt[i:i + 1])
+                output.extend(padded_inpt[i:i + 1])
                 i += 1
                 errors += 1
                 continue

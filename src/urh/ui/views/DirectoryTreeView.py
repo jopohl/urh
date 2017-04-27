@@ -47,17 +47,16 @@ class DirectoryTreeView(QTreeView):
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
         index = self.model().mapToSource(self.currentIndex())  # type: QModelIndex
-        if not index.isValid():
-            return
-        current_index_info = self.model().sourceModel().fileInfo(index)  # type: QFileInfo
-        if current_index_info.isDir():
-            if os.path.isfile(os.path.join(current_index_info.filePath(), constants.PROJECT_FILE)):
-                open_action = menu.addAction("Open project")
-                open_action.setIcon(QIcon(":/icons/data/icons/appicon.png"))
-            else:
-                open_action = menu.addAction("Open folder")
-                open_action.setIcon(QIcon.fromTheme("folder-open"))
-            open_action.triggered.connect(self.on_open_action_triggered)
+        if index.isValid():
+            current_index_info = self.model().sourceModel().fileInfo(index)  # type: QFileInfo
+            if current_index_info.isDir():
+                if os.path.isfile(os.path.join(current_index_info.filePath(), constants.PROJECT_FILE)):
+                    open_action = menu.addAction("Open project")
+                    open_action.setIcon(QIcon(":/icons/data/icons/appicon.png"))
+                else:
+                    open_action = menu.addAction("Open folder")
+                    open_action.setIcon(QIcon.fromTheme("folder-open"))
+                open_action.triggered.connect(self.on_open_action_triggered)
 
         new_dir_action = menu.addAction("New folder")
         new_dir_action.setIcon(QIcon.fromTheme("folder"))

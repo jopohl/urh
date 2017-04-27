@@ -327,33 +327,6 @@ cpdef tuple get_nco_frequency():
     else:
         return -1, 1
 
-cpdef get_vco_range(size_t vco_id):
-    """
-    Get VCO value range.
-    
-    :param vco_id: VCO identifier 
-    :return: Tuple (start, end, step) of vco value range, (-1, -1, -1) on Error
-    """
-    cdef lms_range_t vco_range
-    result = LMS_GetVCORange(_c_device, vco_id, &vco_range)
-    if result == 0:
-        return vco_range.min, vco_range.max, vco_range.step
-    else:
-        return -1, -1, -1
-
-cpdef float_type get_reference_clock_hz():
-    """
-    Get the currently set reference clock
-    
-    :return: ref clock in hz on success else -1
-    """
-    cdef float_type clock_hz = 0.0
-    result = LMS_GetReferenceClock(_c_device, &clock_hz)
-    if result == 0:
-        return clock_hz
-    else:
-        return -1
-
 cpdef float_type get_clock_freq(size_t clk_id):
     cdef float_type clock_hz = 0.0
     result = LMS_GetClockFreq(_c_device, clk_id, &clock_hz)
@@ -364,17 +337,6 @@ cpdef float_type get_clock_freq(size_t clk_id):
 
 cpdef int set_clock_freq(size_t clk_id, float_type frequency_hz):
     return LMS_SetClockFreq(_c_device, clk_id, frequency_hz)
-
-cpdef int set_reference_clock(float_type ref_clock_hz):
-    """
-    Changes device reference clock used by API for various calculations.
-    Normally reference clock should be detected automatically based on device.
-    Use this function in case you have replaced the reference crystal.
- 
-    :param ref_clock_hz: reference clock in Hz
-    :return: 0 on success, (-1) on failure
-    """
-    return LMS_SetReferenceClock(_c_device, ref_clock_hz)
 
 cpdef float_type get_chip_temperature():
     """
@@ -475,10 +437,6 @@ cpdef save_config(str filename):
     filename_byte_string = filename.encode('UTF-8')
     c_filename = <char *> filename_byte_string
     LMS_SaveConfig(_c_device, c_filename)
-
-cpdef perform_register_test():
-    LMS_RegisterTest(_c_device)
-    print_last_error()
 
 cpdef void print_last_error():
     cdef char * error_msg = <char *> malloc(2000 * sizeof(char))

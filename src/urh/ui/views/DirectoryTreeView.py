@@ -1,11 +1,14 @@
-from PyQt5.QtCore import QModelIndex
+from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
+from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu, QWidget, QDialog, QLayout, QTextEdit, \
+    QVBoxLayout, QPlainTextEdit
 
 
 class DirectoryTreeView(QTreeView):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.doubleClicked.connect(self.on_double_clicked)
 
     def create_directory(self):
         index = self.model().mapToSource(self.rootIndex())  # type: QModelIndex
@@ -50,3 +53,19 @@ class DirectoryTreeView(QTreeView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
+
+    @pyqtSlot(QModelIndex)
+    def on_double_clicked(self, index: QModelIndex):
+        file_path = self.model().get_file_path(index)  # type: str
+        try:
+            content = open(file_path, "r").read()
+        except:
+            return
+        if file_path.endswith(".txt"):
+            d = QDialog(self)
+            d.setWindowTitle(file_path)
+            layout = QVBoxLayout(d)
+            text_edit = QPlainTextEdit(content)
+            layout.addWidget(text_edit)
+            d.setLayout(layout)
+            d.show()

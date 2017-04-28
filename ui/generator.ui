@@ -30,8 +30,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>953</width>
-        <height>653</height>
+        <width>1134</width>
+        <height>640</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -370,6 +370,9 @@
                <property name="text">
                 <string>Send data...</string>
                </property>
+               <property name="icon">
+                <iconset theme="media-playback-start"/>
+               </property>
               </widget>
              </item>
              <item row="1" column="0" colspan="3">
@@ -470,8 +473,7 @@
              </property>
              <property name="icon">
               <iconset theme="document-save">
-               <normaloff/>
-              </iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -560,8 +562,7 @@
              </property>
              <property name="icon">
               <iconset theme="network-wired">
-               <normaloff/>
-              </iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -574,7 +575,8 @@
               <string>Send via RfCat</string>
              </property>
              <property name="icon">
-              <iconset theme="network-wireless"/>
+              <iconset theme="network-wireless">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>

@@ -64,16 +64,15 @@ test_script:
   # Run the project tests
   - python -m pytest -s
 
-after_test:
-  # If tests are successful, create binary packages for the project.
-  - python setup.py bdist_wheel
-  - python setup.py bdist_wininst
-  #- python setup.py bdist_msi
-  - ps: "ls dist"
+#after_test:
+#  # If tests are successful, create binary packages for the project.
+#  - python setup.py bdist_wheel
+#  - python setup.py bdist_wininst
+#  - ps: "ls dist"
 
-artifacts:
-  # Archive the generated packages in the ci.appveyor.com build report.
-  - path: dist\*
+#artifacts:
+#  # Archive the generated packages in the ci.appveyor.com build report.
+#  - path: dist\*
 
 #on_success:
 #  - TODO: upload the content of dist/*.whl to a public wheelhouse

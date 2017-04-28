@@ -109,8 +109,8 @@ class MainController(QMainWindow):
 
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))
         self.ui.fileTree.setToolTip(path)
-        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.Interactive)
+        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.ui.fileTree.setFocus()
 
         self.generator_tab_controller.table_model.cfc = self.compare_frame_controller
@@ -145,8 +145,8 @@ class MainController(QMainWindow):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
         self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
         self.ui.actionOpen_directory.setShortcut(QKeySequence("Ctrl+Shift+O"))
-        self.ui.actionMinimize_all.setShortcut("F10")
-        self.ui.actionMaximize_all.setShortcut("F11")
+
+        self.ui.menuEdit.aboutToShow.connect(self.on_edit_menu_about_to_show)
 
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
@@ -165,6 +165,9 @@ class MainController(QMainWindow):
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
+
+        self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
+        self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
 
         self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
         self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)
@@ -201,6 +204,9 @@ class MainController(QMainWindow):
 
         self.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_action_triggered)
 
+        self.ui.actionShowFileTree.triggered.connect(self.on_action_show_filetree_triggered)
+        self.ui.actionShowFileTree.setShortcut(QKeySequence("F10"))
+
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
             recent_file_action = QAction(self)
@@ -214,7 +220,7 @@ class MainController(QMainWindow):
         protocol.filename = filename
         with open(filename) as f:
             for line in f:
-                protocol.messages.append(Message.from_plain_bits_str(line.strip(), {}))
+                protocol.messages.append(Message.from_plain_bits_str(line.strip()))
 
         self.compare_frame_controller.add_protocol(protocol)
         self.compare_frame_controller.refresh()
@@ -681,6 +687,17 @@ class MainController(QMainWindow):
         self.show_project_settings()
 
     @pyqtSlot()
+    def on_edit_menu_about_to_show(self):
+        self.ui.actionShowFileTree.setChecked(self.ui.splitter.sizes()[0] > 0)
+
+    @pyqtSlot()
+    def on_action_show_filetree_triggered(self):
+        if self.ui.splitter.sizes()[0] > 0:
+            self.ui.splitter.setSizes([0, 1])
+        else:
+            self.ui.splitter.setSizes([1, 1])
+
+    @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
             if self.sender().new_project:
@@ -769,14 +786,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot(dict)
     def on_options_changed(self, changed_options: dict):
-        refresh_protocol_needed = False
-        for key in changed_options:
-            if key == "rel_symbol_length":
-                st = changed_options[key]
-                constants.SETTINGS.setValue('rel_symbol_length', st)
-                refresh_protocol_needed = True
-            elif key == "show_pause_as_time":
-                refresh_protocol_needed = True
+        refresh_protocol_needed = "show_pause_as_time" in changed_options
 
         if refresh_protocol_needed:
             for sf in self.signal_tab_controller.signal_frames:
@@ -785,6 +795,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
+        self.generator_tab_controller.init_rfcat_plugin()
         self.simulator_tab_controller.update_field_types()
 
         if "default_view" in changed_options:
@@ -793,3 +804,11 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_text_edit_project_description_text_changed(self):
         self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()
+
+    @pyqtSlot()
+    def on_btn_file_tree_go_up_clicked(self):
+        cur_dir = self.filemodel.rootDirectory()
+        if cur_dir.cdUp():
+            path = cur_dir.path()
+            self.filemodel.setRootPath(path)
+            self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))

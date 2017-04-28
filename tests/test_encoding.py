@@ -1,3 +1,6 @@
+import copy
+import array
+
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
 
@@ -12,7 +15,7 @@ class TestDecoding(QtTestCase):
         # Test 1
         e.carrier = "----1....1**"  # or "....1....101", ...
         original_inpt = e.str2bit("000010000100111111111100")
-        inpt = original_inpt.copy()
+        inpt = copy.copy(original_inpt)
         #print("\nOriginal:", inpt)
         output, err, _ = e.code_carrier(True, inpt)
         #print("Decoded: ", output, err)
@@ -138,4 +141,17 @@ class TestDecoding(QtTestCase):
         decoded, err, _ = e.code_morse(decoding=True, inpt=encoded)
         reencoded, _, _ = e.code_morse(decoding=False, inpt=decoded)
         self.assertEqual(err, 1)
+        self.assertEqual(reencoded, compare)
+
+    def test_substitution(self):
+        e = Encoder()
+        e.src = [array.array("B", [True, True, True, False]), array.array("B", [True, False, False, False])]
+        e.dst = [array.array("B", [True]), array.array("B", [False])]
+
+        # encoded-string with 3 missing trailing zeroes
+        encoded = e.str2bit("1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001")
+        compare = e.str2bit("1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001000")
+        decoded, err, _ = e.code_substitution(decoding=True, inpt=encoded)
+        reencoded, _, _ = e.code_substitution(decoding=False, inpt=decoded)
+        self.assertEqual(err, 3)
         self.assertEqual(reencoded, compare)

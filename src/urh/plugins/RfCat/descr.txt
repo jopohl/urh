@@ -1,0 +1,2 @@
+With this plugin we support sending bytestreams via RfCat (e.g. using YARD Stick One).
+Therefore a new button below generator table will be created.

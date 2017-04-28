@@ -46,7 +46,6 @@ def write_settings():
         settings = constants.SETTINGS
         settings.setValue("not_show_close_dialog", True)  # prevent interactive close questions
         settings.setValue("not_show_save_dialog", True)
-        settings.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
         settings.setValue("NetworkSDRInterface", True)
         settings.setValue("align_labels", True)
 

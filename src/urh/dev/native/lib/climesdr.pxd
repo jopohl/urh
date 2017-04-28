@@ -59,23 +59,12 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_SetGFIRLPF(lms_device_t *device, bool dir_tx, size_t chan, bool enabled, float_type bandwidth)
 
     int LMS_Calibrate(lms_device_t *device, bool dir_tx, size_t chan, double bw, unsigned flags)
-    int LMS_CalibrateInternalADC(lms_device_t *device);
-    int LMS_CalibrateAnalogRSSIDC(lms_device_t *device);
-    int LMS_CalibrateRP_BIAS(lms_device_t *device);
 
     int LMS_SetNCOFrequency(lms_device_t *device, bool dir_tx, size_t chan, const float_type *freq, float_type pho)
     int LMS_GetNCOFrequency(lms_device_t *device, bool dir_tx, size_t chan, float_type *freq, float_type *pho)
 
-    int LMS_GetVCORange(lms_device_t * dev, size_t vco_id, lms_range_t* range)
-    int LMS_SetVCORange(lms_device_t * dev, size_t vco_id, lms_range_t range)
-
     int LMS_GetClockFreq(lms_device_t *dev, size_t clk_id, float_type *freq)
     int LMS_SetClockFreq(lms_device_t *dev, size_t clk_id, float_type freq)
-
-    int LMS_GetReferenceClock(lms_device_t* device, float_type* clock_Hz)
-    int LMS_SetReferenceClock(lms_device_t* device, float_type clock_Hz)
-
-    int LMS_RegisterTest(lms_device_t *device)
 
     ctypedef char lms_name_t[16]
     int LMS_GetAntennaList(lms_device_t *device, bool dir_tx, size_t chan, lms_name_t *list)

@@ -32,6 +32,6 @@ class TestMaincontrollerGUI(QtTestCase):
 
     def test_options_changed(self):
         self.add_signal_to_form("esaver.complex")
-        self.form.on_options_changed({"rel_symbol_length": 0, "show_pause_as_time": True, "default_view": 2})
+        self.form.on_options_changed({"show_pause_as_time": True, "default_view": 2})
         QApplication.instance().processEvents()
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 2)

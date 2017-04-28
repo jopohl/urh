@@ -3,6 +3,8 @@ import sys
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
+    if sys.version_info[0] < 3:
+        print("try running with python3 {}".format(" ".join(sys.argv)))
     sys.exit(1)
 
 try:

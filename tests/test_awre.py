@@ -29,7 +29,7 @@ class TestAWRE(QtTestCase):
         self.protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("awre_consistent_addresses.txt")) as f:
             for line in f:
-                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
         # Assign participants
@@ -44,7 +44,7 @@ class TestAWRE(QtTestCase):
         self.zero_crc_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("awre_zeroed_crc.txt")) as f:
             for line in f:
-                self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 self.zero_crc_protocol.messages[-1].message_type = self.protocol.default_message_type
 
         for i, message in enumerate(self.zero_crc_protocol.messages):
@@ -131,7 +131,7 @@ class TestAWRE(QtTestCase):
         enocean_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("enocean_bits.txt")) as f:
             for line in f:
-                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type
 
 

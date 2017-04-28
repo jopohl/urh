@@ -30,32 +30,56 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="childrenCollapsible">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,3,0">
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLineEdit" name="lnEdtTreeFilter">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="acceptDrops">
-           <bool>false</bool>
-          </property>
-          <property name="inputMethodHints">
-           <set>Qt::ImhDialableCharactersOnly</set>
-          </property>
-          <property name="placeholderText">
-           <string>Filter</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLineEdit" name="lnEdtTreeFilter">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="acceptDrops">
+             <bool>false</bool>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhDialableCharactersOnly</set>
+            </property>
+            <property name="placeholderText">
+             <string>Filter</string>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnFileTreeGoUp">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-up"/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="DirectoryTreeView" name="fileTree">
@@ -206,6 +230,7 @@
     <addaction name="actionDecoding"/>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
+    <addaction name="actionShowFileTree"/>
     <addaction name="actionFullscreen_mode"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -494,14 +519,6 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionShow_file_tree">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Sh&amp;ow file tree</string>
-   </property>
-  </action>
   <action name="actionNew_Project">
    <property name="text">
     <string>&amp;New Project..</string>
@@ -540,12 +557,20 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open &amp;directory...</string>
+    <string>Open &amp;folder...</string>
    </property>
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionShowFileTree">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show file tree</string>
    </property>
   </action>
  </widget>

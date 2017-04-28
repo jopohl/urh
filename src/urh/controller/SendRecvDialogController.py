@@ -1,7 +1,7 @@
 import locale
 import time
 
-from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal, Qt
 from PyQt5.QtGui import QCloseEvent, QRegExpValidator, QIcon, QTransform
 from PyQt5.QtWidgets import QDialog, QGraphicsView, QLabel, QSlider, QSpinBox, QComboBox
 
@@ -25,7 +25,7 @@ class SendRecvDialogController(QDialog):
         self.is_tx = is_tx
         self.update_interval = 25
 
-
+        self.setWindowFlags(Qt.Window)
         self.testing_mode = testing_mode
 
         self.ui = Ui_SendRecvDialog()

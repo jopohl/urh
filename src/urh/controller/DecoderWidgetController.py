@@ -463,9 +463,9 @@ class DecoderWidgetController(QDialog):
                    "- Low to High (01) is 1\n" \
                    "- High to Low (10) is 0"
         elif constants.DECODING_SUBSTITUTION in element:
-            txt += "A set of manual defined signal sequences FROM (e.g. 10, 01) is replaced by another set of " \
-                   "sequences TO (e.g. 01, 10). Note that all source entries must have the same length, otherwise " \
-                   "the result is unpredictable."
+            txt += "A set of manual defined signal sequences FROM (e.g. 110, 100) is replaced by another set of " \
+                   "sequences TO (e.g. 01, 10). Note that all FROM entries must have the same length, otherwise " \
+                   "the result is unpredictable! (For TX: all TO entries must have the same length)"
             self.ui.optionWidget.setCurrentIndex(3)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:

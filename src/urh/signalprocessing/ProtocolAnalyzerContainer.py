@@ -4,6 +4,7 @@ from enum import Enum
 
 import array
 import numpy
+import time
 
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Message import Message
@@ -49,13 +50,17 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         return any(len(msg.active_fuzzing_labels) > 1 for msg in self.messages)
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
-
-        messages = [Message(plain_bits=msg.decoded_bits, pause=msg.pause,
-                            message_type=copy.deepcopy(msg.message_type),
-                            rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant)
-                  for msg in proto_analyzer.messages if msg]
-
-        self.messages[index:0] = messages
+        t = time.time()
+        copy_time = 0
+        for msg in reversed(proto_analyzer.messages):
+            ct = time.time()
+            mt = copy.deepcopy(msg.message_type)
+            copy_time += time.time()-ct
+            self.messages.insert(index, Message(plain_bits=msg.decoded_bits, pause=msg.pause,
+                            message_type=mt,
+                            rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder, bit_len=msg.bit_len, participant=msg.participant))
+        print("Total insert time", time.time()-t)
+        print("Copy time", copy_time)
 
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]

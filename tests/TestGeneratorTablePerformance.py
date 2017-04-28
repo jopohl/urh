@@ -1,7 +1,10 @@
 import time
+from collections import deque
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message
@@ -9,35 +12,52 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class TestGeneratorTable(QtTestCase):
-    NUM_MESSAGES = 100
+    NUM_MESSAGES = 2**16
     BITS_PER_MESSAGE = 100
-    NUM_LABELS = 25
+    NUM_LABELS = 3
 
     def setUp(self):
         super().setUp()
+
+    def test_performance(self):
         self.cframe = self.form.compare_frame_controller
         self.gframe = self.form.generator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(2)
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
         self.gframe.ui.cbViewType.setCurrentIndex(0)
 
+        t = time.time()
         proto = self.__build_protocol()
+        print("Time for building protocol:", time.time()-t)
+        t = time.time()
         self.cframe.add_protocol(proto)
+        print("Time for adding protocol:", time.time()-t)
+        t = time.time()
         proto.qt_signals.protocol_updated.emit()
-
+        print("Time for emitting signal", time.time()-t)
         self.assertEqual(self.cframe.protocol_model.row_count, self.NUM_MESSAGES)
         self.assertEqual(self.cframe.protocol_model.col_count, self.BITS_PER_MESSAGE)
 
+        t = time.time()
         self.__add_labels()
+        print("time for adding labels", time.time()-t)
 
-    def test_performance(self):
+
+
+
+        t = time.time()
         item = self.gframe.tree_model.rootItem.children[0].children[0]
         index = self.gframe.tree_model.createIndex(0, 0, item)
         rect = self.gframe.ui.treeProtocols.visualRect(index)
         QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos = rect.center())
+        print("{0}: {1} µs".format("Time for making selection", (time.time() - t) * 10**6))
+
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
+        t  = time.time()
+        #with PyCallGraph(output=GraphvizOutput()):
         self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))
+        print("{0}: {1} s".format("Time for dropping mimedata", (time.time() - t)))
         self.assertEqual(self.gframe.table_model.row_count, self.NUM_MESSAGES)
 
         indx = self.gframe.table_model.createIndex(int(self.NUM_MESSAGES / 2), int(self.BITS_PER_MESSAGE / 2))
@@ -51,6 +71,27 @@ class TestGeneratorTable(QtTestCase):
             if role == Qt.DisplayRole:
                 time_for_display = microseconds
             print("{0}: {1} µs".format(self.__role_to_str(role), microseconds))
+
+
+    def test_insert_performance(self):
+        NUM_INSERTS = 2**20
+        l = list(range(100))
+
+        t = time.time()
+        for i in range(NUM_INSERTS):
+            l.insert(50, i)
+
+        print("list", time.time() - t)
+
+        d = deque(range(100))
+
+        t = time.time()
+        for i in range(NUM_INSERTS):
+            d.insert(50, i)
+
+        print("deque", time.time() - t)
+
+
 
     def __build_protocol(self):
         result = ProtocolAnalyzer(signal=None)

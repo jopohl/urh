@@ -18,6 +18,9 @@ class ProtocolLabel(object):
     DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
+    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",
+                 "fuzz_created", "__type", "display_format_index", "auto_created")
+
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
                  auto_created=False, type:FieldType=None):
         self.__name = name

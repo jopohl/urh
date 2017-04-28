@@ -83,7 +83,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
-            <widget class="QTabWidget" name="tabWidget_2">
+            <widget class="QTabWidget" name="tabWidget">
              <property name="currentIndex">
               <number>0</number>
              </property>
@@ -217,7 +217,26 @@
                 </spacer>
                </item>
                <item row="0" column="0" colspan="3">
-                <widget class="SimulatorMessageTableView" name="tblViewMessage"/>
+                <widget class="SimulatorMessageTableView" name="tblViewMessage">
+                 <property name="alternatingRowColors">
+                  <bool>true</bool>
+                 </property>
+                 <property name="verticalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
+                 <property name="showGrid">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderHighlightSections">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="verticalHeaderHighlightSections">
+                  <bool>false</bool>
+                 </attribute>
+                </widget>
                </item>
               </layout>
              </widget>

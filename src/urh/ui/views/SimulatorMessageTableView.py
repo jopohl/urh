@@ -8,7 +8,7 @@ from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from PyQt5.QtCore import pyqtSignal
 
 class SimulatorMessageTableView(TableView):
-    create_fuzzing_label_clicked = pyqtSignal(int, int)
+    create_fuzzing_label_clicked = pyqtSignal(int, int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -35,4 +35,4 @@ class SimulatorMessageTableView(TableView):
 
     def on_create_label_action_triggered(self):
         _, _, start, end = self.selection_range()
-        self.create_fuzzing_label_clicked.emit(start, end)
+        self.create_fuzzing_label_clicked.emit(self.rowAt(self.context_menu_pos.y()), start, end)

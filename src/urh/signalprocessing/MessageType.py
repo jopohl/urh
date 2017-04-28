@@ -150,9 +150,3 @@ class MessageType(list):
 
         return result
 
-    def copy_for_fuzzing(self):
-        result = deepcopy(self)
-        for lbl in result:
-            lbl.fuzz_values = []
-            lbl.fuzz_created = True
-        return result

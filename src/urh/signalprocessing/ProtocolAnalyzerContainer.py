@@ -56,7 +56,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                                 message_type=copy.copy(msg.message_type),
                                                 rssi=msg.rssi, modulator_indx=0, decoder=msg.decoder,
                                                 bit_len=msg.bit_len, participant=msg.participant))
-
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
 
@@ -89,18 +88,27 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 raise ValueError("Unknown fuzz mode")
 
             self.qt_signals.fuzzing_started.emit(len(combinations))
-            for i, combination in enumerate(combinations):
+
+            message_type = copy.copy(msg.message_type)
+            for lbl in labels:
+                lbl = copy.copy(lbl)
+                lbl.fuzz_values = []
+                lbl.fuzz_created = True
+                message_type[message_type.index(lbl)] = lbl
+
+            for j, combination in enumerate(combinations):
                 cpy_bits = msg.plain_bits[:]
                 for start, end, fuz_val in combination:
                     cpy_bits[start:end] = array.array("B", map(int, fuz_val))
 
                 pause = default_pause if default_pause is not None else msg.pause
                 fuz_msg = Message(plain_bits=cpy_bits, pause=pause,
-                                  rssi=msg.rssi, message_type=msg.message_type.copy_for_fuzzing(),
+                                  rssi=msg.rssi, message_type=message_type,
                                   modulator_indx=msg.modulator_indx,
                                   decoder=msg.decoder, fuzz_created=True)
                 appd_result(fuz_msg)
-                self.qt_signals.current_fuzzing_message_changed.emit(i)
+                if j % 100 == 0:
+                    self.qt_signals.current_fuzzing_message_changed.emit(j)
 
         self.qt_signals.fuzzing_finished.emit()
         self.messages = result  # type: list[Message]

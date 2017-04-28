@@ -3,23 +3,21 @@ from collections import defaultdict
 import numpy
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QUndoStack, QMessageBox
+from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class TableModel(QAbstractTableModel):
     def __init__(self, participants, parent=None):
         super().__init__(parent)
-        self.controller = None
-        """:type: CompareFrameController or GeneratorTabController """
-        self.protocol = None # Reimplement in Child classes
-        """:type: ProtocolAnalyzer """
+        self.controller = None  # :type: CompareFrameController|GeneratorTabController
+        self.protocol = None  # type: ProtocolAnalyzer
 
         self.col_count = 0
         self.row_count = 0
-        self.display_data = None
-        """:type: list[str] """
+        self.display_data = None  # type: list[str]
 
         self.search_results = []
         self.search_value = ""
@@ -40,8 +38,7 @@ class TableModel(QAbstractTableModel):
         self.vertical_header_text = defaultdict(lambda: None)
         self.vertical_header_colors = defaultdict(lambda: None)
 
-        self._diffs = defaultdict(set)
-        """:type: dict[int, set[int]] """
+        self._diffs = defaultdict(set)  # type: dict[int, set[int]]
 
         self.undo_stack = QUndoStack()
 
@@ -92,20 +89,20 @@ class TableModel(QAbstractTableModel):
         if self.protocol.num_messages > 0:
             if self.decode:
                 if self.proto_view == 0:
-                    self.display_data = self.protocol.decoded_proto_bits_str
+                    self.display_data = list(map(list, self.protocol.decoded_proto_bits_str))
                 elif self.proto_view == 1:
-                    self.display_data = self.protocol.decoded_hex_str
+                    self.display_data = list(map(list, self.protocol.decoded_hex_str))
                 elif self.proto_view == 2:
-                    self.display_data = self.protocol.decoded_ascii_str
+                    self.display_data = list(map(list, self.protocol.decoded_ascii_str))
             else:
                 #
                 # Generator Model
                 if self.proto_view == 0:
-                    self.display_data = self.protocol.plain_bits_str
+                    self.display_data = list(map(list, self.protocol.plain_bits_str))
                 elif self.proto_view == 1:
-                    self.display_data = self.protocol.plain_hex_str
+                    self.display_data = list(map(list, self.protocol.plain_hex_str))
                 else:
-                    self.display_data = self.protocol.plain_ascii_str
+                    self.display_data = list(map(list, self.protocol.plain_ascii_str))
 
             visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
             if len(visible_messages) == 0:
@@ -221,7 +218,7 @@ class TableModel(QAbstractTableModel):
                 if value in ("0", "1"):
                     try:
                         self.protocol.messages[i][j] = bool(int(value))
-                        self.update()
+                        self.display_data[i][j] = value
                     except IndexError:
                         return False
             elif self.proto_view == 1:
@@ -233,7 +230,7 @@ class TableModel(QAbstractTableModel):
                             self.protocol.messages[i][index + k] = bool(int(bits[k]))
                         except IndexError:
                             break
-                    self.update()
+                    self.display_data[i][j] = value
             elif self.proto_view == 2 and len(value) == 1:
                 index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
@@ -242,7 +239,7 @@ class TableModel(QAbstractTableModel):
                         self.protocol.messages[i][index + k] = bool(int(bits[k]))
                     except IndexError:
                         break
-                self.update()
+                self.display_data[i][j] = value
         return True
 
     def find_protocol_value(self, value):

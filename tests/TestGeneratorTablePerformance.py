@@ -9,7 +9,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class TestGeneratorTable(QtTestCase):
-    NUM_MESSAGES = 2**14
+    NUM_MESSAGES = 2**16
     BITS_PER_MESSAGE = 100
     NUM_LABELS = 3
 

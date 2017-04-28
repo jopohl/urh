@@ -253,6 +253,7 @@ class TableModel(QAbstractTableModel):
             if i in self.hidden_rows:
                 continue
 
+            message = "".join(message)
             j = message.find(value)
             while j != -1:
                 self.search_results.append((i, j))

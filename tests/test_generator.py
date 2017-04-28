@@ -47,8 +47,8 @@ class TestGenerator(QtTestCase):
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
-        self.assertEqual(proto_inv, gframe.table_model.display_data[0])
-        self.assertNotEqual(proto, gframe.table_model.display_data[0])
+        self.assertEqual(list(proto_inv), gframe.table_model.display_data[0])
+        self.assertNotEqual(list(proto), gframe.table_model.display_data[0])
 
         # Generate Datafile
         modulator = gframe.modulators[0]

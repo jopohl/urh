@@ -85,7 +85,6 @@ class TableModel(QAbstractTableModel):
 
     def update(self):
         self.locked = True
-        import time
 
         if self.protocol.num_messages > 0:
             if self.decode:

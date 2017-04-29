@@ -396,8 +396,10 @@ class GeneratorTabController(QWidget):
         elif self.ui.rBExhaustive.isChecked():
             fuz_mode = "Exhaustive"
 
+        self.setCursor(Qt.WaitCursor)
         fuzz_action = Fuzz(self.table_model.protocol, fuz_mode)
         self.table_model.undo_stack.push(fuzz_action)
+        self.unsetCursor()
 
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
@@ -484,7 +486,6 @@ class GeneratorTabController(QWidget):
     def on_view_type_changed(self):
         self.setCursor(Qt.WaitCursor)
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
-        self.table_model.update()
         self.ui.tableMessages.resize_columns()
         self.unsetCursor()
 

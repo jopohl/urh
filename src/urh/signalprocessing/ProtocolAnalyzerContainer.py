@@ -107,7 +107,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                   modulator_indx=msg.modulator_indx,
                                   decoder=msg.decoder, fuzz_created=True)
                 appd_result(fuz_msg)
-                if j % 100 == 0:
+                if j % 10000 == 0:
                     self.qt_signals.current_fuzzing_message_changed.emit(j)
 
         self.qt_signals.fuzzing_finished.emit()

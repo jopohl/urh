@@ -2,6 +2,7 @@ import locale
 import traceback
 
 import numpy
+import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics, QFont
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
@@ -348,22 +349,27 @@ class GeneratorTabController(QWidget):
 
     def modulate_data(self):
         pos = 0
-        modulated_samples = []
         container = self.table_model.protocol
         self.ui.prBarGeneration.show()
         self.ui.prBarGeneration.setValue(0)
         self.ui.prBarGeneration.setMaximum(self.table_model.row_count)
+
+        total_samples = sum(int(len(msg.encoded_bits) * self.modulators[msg.modulator_indx].samples_per_bit + msg.pause)
+                            for msg in container.messages)
+        result = np.zeros(total_samples, dtype=np.complex64)
+
         for i in range(0, self.table_model.row_count):
             message = container.messages[i]
             modulator = self.modulators[message.modulator_indx]
-            modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
-            modulated_samples.append(modulator.modulated_samples)
-            pos += len(modulator.modulated_samples)
+            # We do not need to modulate the pause extra, as result is already initialized with zeros
+            modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
+            result[pos:pos+len(modulator.modulated_samples)] = modulator.modulated_samples
+            pos += len(modulator.modulated_samples) + message.pause
             self.ui.prBarGeneration.setValue(i + 1)
             QApplication.instance().processEvents()
 
         self.ui.prBarGeneration.hide()
-        return numpy.concatenate(modulated_samples).astype(numpy.complex64)
+        return result
 
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):

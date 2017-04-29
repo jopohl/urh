@@ -2,7 +2,6 @@ import locale
 import traceback
 
 import numpy
-import time
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics, QFont
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
@@ -140,12 +139,8 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_table(self):
-        t = time.time()
         self.table_model.update()
-        print("Table refresh", time.time()-t)
-        t = time.time()
         self.ui.tableMessages.resize_columns()
-        print("Resize columns", time.time()-t)
         is_data_there = self.table_model.display_data is not None and len(self.table_model.display_data) > 0
         self.ui.btnSend.setEnabled(is_data_there)
         self.ui.btnGenerate.setEnabled(is_data_there)

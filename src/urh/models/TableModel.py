@@ -96,16 +96,13 @@ class TableModel(QAbstractTableModel):
                 elif self.proto_view == 2:
                     self.display_data = [msg.decoded_ascii_array for msg in self.protocol.messages]
             else:
-                #
                 # Generator Model
-                t = time.time()
                 if self.proto_view == 0:
                     self.display_data = [msg.plain_bits for msg in self.protocol.messages]
                 elif self.proto_view == 1:
                     self.display_data = [msg.plain_hex_array for msg in self.protocol.messages]
                 else:
                     self.display_data = [msg.plain_ascii_array for msg in self.protocol.messages]
-                print("Convert time", time.time() - t)
 
             visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
             if len(visible_messages) == 0:

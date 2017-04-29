@@ -487,9 +487,11 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_view_type_changed(self):
+        self.setCursor(Qt.WaitCursor)
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.table_model.update()
         self.ui.tableMessages.resize_columns()
+        self.unsetCursor()
 
     @pyqtSlot()
     def on_btn_send_clicked(self):

@@ -1,3 +1,4 @@
+import array
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
@@ -31,7 +32,7 @@ class TestFuzzingDialog(QtTestCase):
         self.form.compare_frame_controller.set_decoding(decoding)
 
         # CRC Check
-        self.assertEqual(self.form.compare_frame_controller.protocol_model.display_data[0][-4:], list("0000"))
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.display_data[0][-4:], array.array("B", [0,0,0,0]))
 
         # Serial Part 1: Bits 207-226 (Dezimal: 91412) (20 Bits)
         self.form.compare_frame_controller.add_protocol_label(start=206, end=225, messagenr=0, proto_view=0,

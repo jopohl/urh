@@ -85,24 +85,27 @@ class TableModel(QAbstractTableModel):
 
     def update(self):
         self.locked = True
+        import time
 
         if self.protocol.num_messages > 0:
             if self.decode:
                 if self.proto_view == 0:
-                    self.display_data = list(map(list, self.protocol.decoded_proto_bits_str))
+                    self.display_data = [msg.decoded_bits for msg in self.protocol.messages]
                 elif self.proto_view == 1:
-                    self.display_data = list(map(list, self.protocol.decoded_hex_str))
+                    self.display_data = [msg.decoded_hex_array for msg in self.protocol.messages]
                 elif self.proto_view == 2:
-                    self.display_data = list(map(list, self.protocol.decoded_ascii_str))
+                    self.display_data = [msg.decoded_ascii_array for msg in self.protocol.messages]
             else:
                 #
                 # Generator Model
+                t = time.time()
                 if self.proto_view == 0:
-                    self.display_data = list(map(list, self.protocol.plain_bits_str))
+                    self.display_data = [msg.plain_bits for msg in self.protocol.messages]
                 elif self.proto_view == 1:
-                    self.display_data = list(map(list, self.protocol.plain_hex_str))
+                    self.display_data = [msg.plain_hex_array for msg in self.protocol.messages]
                 else:
-                    self.display_data = list(map(list, self.protocol.plain_ascii_str))
+                    self.display_data = [msg.plain_ascii_array for msg in self.protocol.messages]
+                print("Convert time", time.time() - t)
 
             visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
             if len(visible_messages) == 0:
@@ -181,7 +184,12 @@ class TableModel(QAbstractTableModel):
         j = index.column()
         if role == Qt.DisplayRole and self.display_data:
             try:
-                return self.display_data[i][j]
+                if self.proto_view == 0:
+                    return self.display_data[i][j]
+                elif self.proto_view == 1:
+                    return "{0:x}".format(self.display_data[i][j])
+                elif self.proto_view == 2:
+                    return chr(self.display_data[i][j])
             except IndexError:
                 return None
 
@@ -218,7 +226,7 @@ class TableModel(QAbstractTableModel):
                 if value in ("0", "1"):
                     try:
                         self.protocol.messages[i][j] = bool(int(value))
-                        self.display_data[i][j] = value
+                        self.display_data[i][j] = int(value)
                     except IndexError:
                         return False
             elif self.proto_view == 1:
@@ -230,7 +238,7 @@ class TableModel(QAbstractTableModel):
                             self.protocol.messages[i][index + k] = bool(int(bits[k]))
                         except IndexError:
                             break
-                    self.display_data[i][j] = value
+                    self.display_data[i][j] = int(value, 16)
             elif self.proto_view == 2 and len(value) == 1:
                 index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
@@ -239,24 +247,24 @@ class TableModel(QAbstractTableModel):
                         self.protocol.messages[i][index + k] = bool(int(bits[k]))
                     except IndexError:
                         break
-                self.display_data[i][j] = value
+                self.display_data[i][j] = ord(value)
         return True
 
     def find_protocol_value(self, value):
-        self.search_results[:] = []
+        self.search_results.clear()
         self.search_value = value
 
         if len(value) == 0:
             return 0
 
-        for i, message in enumerate(self.display_data):
+        for i, message in enumerate(self.protocol.messages):
             if i in self.hidden_rows:
                 continue
 
-            message = "".join(message)
-            j = message.find(value)
+            data = message.view_to_string(self.proto_view, self.decode)
+            j = data.find(value)
             while j != -1:
                 self.search_results.append((i, j))
-                j = message.find(value, j + 1)
+                j = data.find(value, j + 1)
 
         return len(self.search_results)

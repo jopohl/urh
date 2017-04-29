@@ -87,7 +87,7 @@ class SimulatorTabController(QWidget):
 
     def update_field_name_column(self):
         field_types = [ft.caption for ft in self.field_types]
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False))
 
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
@@ -142,6 +142,8 @@ class SimulatorTabController(QWidget):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[msg_index])
+        index = self.simulator_message_field_model.message_type.index(lbl)
+        self.ui.tblViewFieldValues.edit(self.simulator_message_field_model.createIndex(index, 0))
         #self.show_protocol_label_dialog(lbl)
 
     def show_protocol_label_dialog(self, label: SimulatorProtocolLabel):
@@ -176,7 +178,7 @@ class SimulatorTabController(QWidget):
 
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.active_item, SimulatorMessage):
-                self.simulator_message_field_model.message = self.active_item
+                self.simulator_message_field_model.message_type = self.active_item.message_type
                 self.simulator_message_field_model.update()
 
                 self.ui.detail_view_widget.setCurrentIndex(2)

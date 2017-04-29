@@ -177,8 +177,7 @@ class SimulatorScene(QGraphicsScene):
         parent_scene_item = self.get_parent_scene_item(item)
         item.setParentItem(parent_scene_item)
 
-        if item not in self.items_dict:
-            self.items_dict[item.model_item] = item
+        self.items_dict[item.model_item] = item
 
         if item not in self.items():
             self.addItem(item)

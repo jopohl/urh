@@ -98,8 +98,8 @@ class SimulatorTabController(QWidget):
         self.ui.rbAllApply.toggled.connect(self.on_cb_rulesetmode_toggled)
         self.ui.rbOneApply.toggled.connect(self.on_cb_rulesetmode_toggled)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
-        self.ui.btnNextNav.clicked.connect(self.on_btn_next_nav_clicked)
-        self.ui.btnPrevNav.clicked.connect(self.on_btn_prev_nav_clicked)
+        self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
+        self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
         self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -115,20 +115,14 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.item_updated.emit)
 
         self.sim_proto_manager.item_added.connect(self.refresh_message_table)
-        self.sim_proto_manager.item_updated.connect(self.on_item_updated)
+        self.sim_proto_manager.item_updated.connect(self.refresh_message_table)
         self.sim_proto_manager.item_moved.connect(self.refresh_message_table)
         self.sim_proto_manager.item_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
 
-    def on_item_updated(self, item: SimulatorItem):
-        if isinstance(item, SimulatorMessage):
-            self.update_vertical_table_header()
-        elif isinstance(item, SimulatorProtocolLabel):
-            self.reload_messages()
-
     def on_selected_tab_changed(self, index: int):
         if index == 0:
-            if self.active_item:
+            if self.active_item is not None:
                 scene_item = self.simulator_scene.model_to_scene(self.active_item)
                 self.ui.gvSimulator.jump_to_item(scene_item)
             else:
@@ -137,22 +131,16 @@ class SimulatorTabController(QWidget):
             self.ui.tblViewMessage.resize_columns()
             self.update_vertical_table_header()
 
-    def reload_messages(self):
+    def refresh_message_table(self, item: SimulatorItem):
         self.simulator_message_table_model.protocol.messages[:] = self.sim_proto_manager.get_all_messages()
         self.simulator_message_table_model.update()
         self.ui.tblViewMessage.resize_columns()
-
-    def refresh_message_table(self, item: SimulatorItem):
-        if (isinstance(item, SimulatorMessage) or
-                isinstance(item, SimulatorProtocolLabel)):
-            self.reload_messages()
-            
-        self.active_item_updated()
+        self.update_ui()
 
     @pyqtSlot(int, int, int)
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol
-        start, end = con.convert_range(start, end, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
+        start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[msg_index])
         #self.show_protocol_label_dialog(lbl)
 
@@ -176,68 +164,13 @@ class SimulatorTabController(QWidget):
 
             goto_combobox.addItem(item.index(), item)
 
-        if self.active_item.goto_target:
+        if self.active_item.goto_target is not None:
             goto_combobox.setCurrentText(self.active_item.goto_target.index())
         else:
             goto_combobox.setCurrentIndex(0)
 
     def update_ui(self):
-        if self.active_item:
-            scene_item = self.simulator_scene.model_to_scene(self.active_item)
-            self.ui.navLineEdit.setText(self.active_item.index())
-            self.ui.btnNextNav.setEnabled(not scene_item.next() is None)
-            self.ui.btnPrevNav.setEnabled(not scene_item.prev() is None)
-
-            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.active_item.index())
-        else:
-            self.ui.navLineEdit.clear()
-            self.ui.btnNextNav.setEnabled(False)
-            self.ui.btnPrevNav.setEnabled(False)
-
-            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
-
-    def update_vertical_table_header(self):
-        self.simulator_message_table_model.refresh_vertical_header()
-        self.ui.tblViewMessage.resize_vertical_header()
-
-    @pyqtSlot()
-    def on_view_type_changed(self):
-        self.simulator_message_table_model.proto_view = self.ui.cbViewType.currentIndex()
-        self.simulator_message_table_model.update()
-        self.ui.tblViewMessage.resize_columns()
-        
-    @pyqtSlot()
-    def on_goto_combobox_activated(self):
-        self.selected_model_item.goto_target = self.ui.goto_combobox.currentData()
-
-    @pyqtSlot()
-    def on_btn_next_nav_clicked(self):
-        self.ui.gvSimulator.navigate_forward()
-
-    @pyqtSlot()
-    def on_btn_prev_nav_clicked(self):
-        self.ui.gvSimulator.navigate_backward()
-
-    @pyqtSlot()
-    def on_simulator_scene_selection_changed(self):
-        selected_items = self.simulator_scene.selectedItems()
-        self.active_item = selected_items[0].model_item if selected_items else None     
-        self.active_item_updated()
-
-    @pyqtSlot()
-    def on_table_selection_changed(self):
-        selection = self.ui.tblViewMessage.selectionModel().selection()
-
-        if selection.isEmpty():
-            self.active_item = None
-        else:
-            min_row = numpy.min([rng.top() for rng in selection])
-            self.active_item = self.simulator_message_table_model.protocol.messages[min_row]
-
-        self.active_item_updated()
-
-    def active_item_updated(self):
-        if self.active_item:
+        if self.active_item is not None:
             if isinstance(self.active_item, SimulatorGotoAction):
                 self.update_goto_combobox()
 
@@ -269,8 +202,52 @@ class SimulatorTabController(QWidget):
                 self.ui.detail_view_widget.setCurrentIndex(4)
             else:
                 self.ui.detail_view_widget.setCurrentIndex(0)
+
+            scene_item = self.simulator_scene.model_to_scene(self.active_item)
+            self.ui.navLineEdit.setText(self.active_item.index())
+            self.ui.btnNextNav.setEnabled(not scene_item.next() is None)
+            self.ui.btnPrevNav.setEnabled(not scene_item.prev() is None)
+
+            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.active_item.index())
         else:
             self.ui.detail_view_widget.setCurrentIndex(0)
+
+            self.ui.navLineEdit.clear()
+            self.ui.btnNextNav.setEnabled(False)
+            self.ui.btnPrevNav.setEnabled(False)
+
+            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
+
+    def update_vertical_table_header(self):
+        self.simulator_message_table_model.refresh_vertical_header()
+        self.ui.tblViewMessage.resize_vertical_header()
+
+    @pyqtSlot()
+    def on_view_type_changed(self):
+        self.simulator_message_table_model.proto_view = self.ui.cbViewType.currentIndex()
+        self.simulator_message_table_model.update()
+        self.ui.tblViewMessage.resize_columns()
+        
+    @pyqtSlot()
+    def on_goto_combobox_activated(self):
+        self.active_item.goto_target = self.ui.goto_combobox.currentData()
+
+    @pyqtSlot()
+    def on_simulator_scene_selection_changed(self):
+        selected_items = self.simulator_scene.selectedItems()
+        self.active_item = selected_items[0].model_item if selected_items else None
+
+        self.update_ui()
+
+    @pyqtSlot()
+    def on_table_selection_changed(self):
+        selection = self.ui.tblViewMessage.selectionModel().selection()
+
+        if selection.isEmpty():
+            self.active_item = None
+        else:
+            min_row = numpy.min([rng.top() for rng in selection])
+            self.active_item = self.simulator_message_table_model.protocol.messages[min_row]
 
         self.update_ui()
 
@@ -286,12 +263,13 @@ class SimulatorTabController(QWidget):
 
         curr_item = self.sim_proto_manager.rootItem
 
-        if re.match(r"^\d+(\.\d+){0,2}$", nav_text):
+        if re.match(r"^\d+(\.\d+)*$", nav_text):
             index_list = nav_text.split(".")
             index_list = list(map(int, index_list))
 
             for index in index_list:
-                if not curr_item or index > curr_item.child_count():
+                if (curr_item is None or index > curr_item.child_count()
+                        or isinstance(curr_item, SimulatorMessage)):
                     break
 
                 curr_item = curr_item.children[index - 1]
@@ -301,7 +279,7 @@ class SimulatorTabController(QWidget):
 
             target_item = self.simulator_scene.model_to_scene(curr_item)
 
-        if target_item:
+        if target_item is not None:
             self.ui.gvSimulator.jump_to_item(target_item)
         else:
             self.update_ui()
@@ -337,7 +315,7 @@ class SimulatorTabController(QWidget):
     def on_btn_choose_ext_prog_clicked(self):
         file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
 
-        if file_name and ok:
+        if file_name is not None and ok:
             self.ui.extProgramLineEdit.setText(file_name)
 
     @pyqtSlot()

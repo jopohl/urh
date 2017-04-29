@@ -82,7 +82,7 @@ class SimulatorProtocolManager(QObject):
             else:
                 color_index = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        sim_label = SimulatorProtocolLabel(name, start, end - 1, color_index, type)
+        sim_label = SimulatorProtocolLabel(name, start, end, color_index, type)
         self.add_item(sim_label, -1, parent_item)
         return sim_label
 

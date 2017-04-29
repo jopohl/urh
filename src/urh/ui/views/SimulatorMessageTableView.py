@@ -6,12 +6,16 @@ from urh.ui.views.TableView import TableView
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QHeaderView
 
 class SimulatorMessageTableView(TableView):
     create_fuzzing_label_clicked = pyqtSignal(int, int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
     def model(self) -> SimulatorMessageTableModel:
         return super().model()

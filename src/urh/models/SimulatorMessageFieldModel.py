@@ -5,7 +5,7 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class SimulatorMessageFieldModel(QAbstractTableModel):
-    header_labels = ['Name', 'Value']
+    header_labels = ['Name', 'Value type', 'Value']
 
     protocol_label_updated = pyqtSignal(SimulatorProtocolLabel)
 
@@ -45,6 +45,8 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             if j == 0:
                 return label.name
             elif j == 1:
+                return label.VALUE_TYPES[label.value_type_index]
+            elif j == 2:
                 return "1::seq"
         elif role == Qt.FontRole:
             if j == 0:
@@ -64,6 +66,8 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     label.type = self.controller.field_types_by_caption[value]
                 else:
                     label.type = None
+            elif j == 1:
+                label.value_type_index = value
 
                 self.protocol_label_updated.emit(label)
 
@@ -73,7 +77,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         flags = super().flags(index)
         column = index.column()
 
-        if column == 0:
+        if column == 0 or column == 1:
             flags |= Qt.ItemIsEditable
 
         return flags

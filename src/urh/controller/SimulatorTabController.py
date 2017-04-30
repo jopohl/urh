@@ -55,6 +55,7 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self))
         self.update_field_types()
 
         self.simulator_message_table_model = SimulatorMessageTableModel(self)
@@ -87,7 +88,7 @@ class SimulatorTabController(QWidget):
 
     def update_field_name_column(self):
         field_types = [ft.caption for ft in self.field_types]
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
 
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)

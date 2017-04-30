@@ -25,6 +25,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
+        editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         editor.addItems(self.items)
 
         if self.is_editable:

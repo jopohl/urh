@@ -18,6 +18,8 @@ class ComboBoxDelegate(QStyledItemDelegate):
         self.colors = colors
         self.return_index = return_index
         self.is_editable = is_editable
+        self.current_edit_text = ""
+
         if colors:
             assert len(items) == len(colors)
 
@@ -28,6 +30,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
         if self.is_editable:
             editor.setEditable(True)
             editor.setInsertPolicy(QComboBox.NoInsert)
+
+        if self.current_edit_text:
+            editor.setEditText(self.current_edit_text)
 
         if self.colors:
             img = QImage(16, 16, QImage.Format_RGB32)
@@ -42,6 +47,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
             del painter
         editor.currentIndexChanged.connect(self.currentIndexChanged)
+        editor.editTextChanged.connect(self.on_edit_text_changed)
         return editor
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
@@ -63,3 +69,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
     @pyqtSlot()
     def currentIndexChanged(self):
         self.commitData.emit(self.sender())
+
+    @pyqtSlot(str)
+    def on_edit_text_changed(self, text: str):
+        self.current_edit_text = text

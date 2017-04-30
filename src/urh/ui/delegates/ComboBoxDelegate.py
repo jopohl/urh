@@ -1,9 +1,9 @@
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
 
-class ComboBoxDelegate(QItemDelegate):
+class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, items, colors=None, is_editable=False, return_index=True, parent=None):
         """
 

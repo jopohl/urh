@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
-from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
 
 
-class CheckBoxDelegate(QItemDelegate):
+class CheckBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.enabled = True

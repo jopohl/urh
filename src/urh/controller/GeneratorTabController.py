@@ -356,6 +356,7 @@ class GeneratorTabController(QWidget):
 
         total_samples = sum(int(len(msg.encoded_bits) * self.modulators[msg.modulator_indx].samples_per_bit + msg.pause)
                             for msg in container.messages)
+        logger.debug("Allocating {0:.2f}MB for modulated samples".format((total_samples*8) / (1024**2)))
         result = np.zeros(total_samples, dtype=np.complex64)
 
         for i in range(0, self.table_model.row_count):

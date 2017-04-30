@@ -23,6 +23,9 @@ class SimulatorMessageTableModel(TableModel):
 
         for i, message in enumerate(self.protocol.messages):
             for lbl in message.message_type:
+                if lbl.value_type_index == 0:
+                    continue
+
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
 
                 for j in range(start, end):

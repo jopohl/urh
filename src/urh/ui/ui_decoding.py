@@ -10,7 +10,7 @@ class Ui_Decoder(object):
     def setupUi(self, Decoder):
         Decoder.setObjectName("Decoder")
         Decoder.setWindowModality(QtCore.Qt.WindowModal)
-        Decoder.resize(800, 570)
+        Decoder.resize(1018, 570)
         Decoder.setModal(True)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(Decoder)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -231,7 +231,7 @@ class Ui_Decoder(object):
         self.datawhitening_polynomial.setGeometry(QtCore.QRect(0, 30, 171, 23))
         self.datawhitening_polynomial.setObjectName("datawhitening_polynomial")
         self.label_14 = QtWidgets.QLabel(self.page_data_whitening)
-        self.label_14.setGeometry(QtCore.QRect(180, 30, 291, 21))
+        self.label_14.setGeometry(QtCore.QRect(180, 30, 341, 21))
         self.label_14.setObjectName("label_14")
         self.datawhitening_applycrc = QtWidgets.QCheckBox(self.page_data_whitening)
         self.datawhitening_applycrc.setGeometry(QtCore.QRect(0, 60, 261, 21))
@@ -342,7 +342,7 @@ class Ui_Decoder(object):
         self.verticalLayout_4.addLayout(self.gridLayout_2)
 
         self.retranslateUi(Decoder)
-        self.optionWidget.setCurrentIndex(7)
+        self.optionWidget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(Decoder)
 
     def retranslateUi(self, Decoder):
@@ -367,7 +367,7 @@ class Ui_Decoder(object):
         self.label_12.setText(_translate("Decoder", "Encoder"))
         self.btnChooseEncoder.setText(_translate("Decoder", "..."))
         self.label_13.setText(_translate("Decoder", "Synchronization bytes (hex coded)"))
-        self.label_14.setText(_translate("Decoder", "Data whitening polynomial (LFSR, hex coded)"))
+        self.label_14.setText(_translate("Decoder", "Data whitening polynomial (LFSR, hex, w/o first bit)"))
         self.datawhitening_applycrc.setText(_translate("Decoder", "Compute and apply CRC-16 via XOR"))
         self.datawhitening_preamble_rm.setText(_translate("Decoder", "Remove Preamble (1010...)"))
         self.datawhitening_sync_rm.setText(_translate("Decoder", "Remove Synchronization bytes"))

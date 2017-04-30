@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1018</width>
     <height>570</height>
    </rect>
   </property>
@@ -288,7 +288,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="page_empty"/>
             <widget class="QWidget" name="page_redundancy">
@@ -476,12 +476,12 @@
                <rect>
                 <x>180</x>
                 <y>30</y>
-                <width>291</width>
+                <width>341</width>
                 <height>21</height>
                </rect>
               </property>
               <property name="text">
-               <string>Data whitening polynomial (LFSR, hex coded)</string>
+               <string>Data whitening polynomial (LFSR, hex, w/o first bit)</string>
               </property>
              </widget>
              <widget class="QCheckBox" name="datawhitening_applycrc">

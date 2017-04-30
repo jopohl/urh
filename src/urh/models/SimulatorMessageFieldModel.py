@@ -69,7 +69,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 1:
                 label.value_type_index = value
 
-                self.protocol_label_updated.emit(label)
+            self.protocol_label_updated.emit(label)
 
         return True
 

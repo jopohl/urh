@@ -396,8 +396,6 @@ class ModulatorDialogController(QDialog):
         if self.__cur_selected_mod_type() == "ASK":
             self.ui.lParameterfor0.setText(self.tr("Amplitude for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Amplitude for 1:"))
-            self.ui.spinBoxParameter0.auto_suffix = False
-            self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.spinBoxParameter0.setMaximum(100)
             self.ui.spinBoxParameter0.setMinimum(0)
             self.ui.spinBoxParameter0.setDecimals(0)
@@ -414,8 +412,8 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
         elif self.__cur_selected_mod_type() in ("FSK", "GFSK"):
-            self.ui.spinBoxParameter0.auto_suffix = True
-            self.ui.spinBoxParameter1.auto_suffix = True
+            self.ui.spinBoxParameter0.setSuffix("")
+            self.ui.spinBoxParameter1.setSuffix("")
             self.ui.lParameterfor0.setText(self.tr("Frequency for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Frequency for 1:"))
             self.ui.spinBoxParameter0.setMaximum(1e12)
@@ -431,8 +429,6 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
         elif self.__cur_selected_mod_type() == "PSK":
-            self.ui.spinBoxParameter0.auto_suffix = False
-            self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.lParameterfor0.setText(self.tr("Phase (degree) for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Phase (degree) for 1:"))
             self.ui.spinBoxParameter0.setMaximum(360)

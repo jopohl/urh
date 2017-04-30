@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
@@ -56,7 +58,8 @@ class TestLabels(QtTestCase):
         self.assertEqual(len(labels), 2)
 
         # Fuzz Label
-        lbl = self.gframe.table_model.protocol.messages[0].message_type[1]
+        lbl = copy.deepcopy(self.gframe.table_model.protocol.messages[0].message_type[1])
+        self.gframe.table_model.protocol.messages[0].message_type[1] = lbl
         lbl.fuzz_values.append("1")
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
@@ -93,8 +96,6 @@ class TestLabels(QtTestCase):
     def __check_background_is_drawn(self, lbl, lbl_start, lbl_end):
         pac = self.gframe.table_model.protocol
         for i in range(self.gframe.table_model.row_count):
-            labels_for_message = pac.messages[i].message_type
-            self.assertIn(lbl, labels_for_message)
             start, end = pac.messages[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
             self.assertEqual(start, lbl_start)
             self.assertEqual(end, lbl_end + 1)

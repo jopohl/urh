@@ -267,24 +267,40 @@ class Message(object):
         return self.decoded_bits.tobytes()
 
     @property
-    def plain_hex_str(self) -> str:
+    def plain_hex_array(self) -> array.array:
         padded_bitchains = self.split(decode=False)
         return self.__bit_chains_to_hex(padded_bitchains)
+
+    @property
+    def plain_hex_str(self) -> str:
+        return "".join(map(lambda h: "{0:x}".format(h), self.plain_hex_array))
+
+    @property
+    def plain_ascii_array(self) -> array.array:
+        padded_bitchains = self.split(decode=False)
+        return self.__bit_chains_to_ascii(padded_bitchains)
 
     @property
     def plain_ascii_str(self) -> str:
-        padded_bitchains = self.split(decode=False)
-        return self.__bit_chains_to_ascii(padded_bitchains)
+        return "".join(map(chr, self.plain_ascii_array))
 
     @property
-    def decoded_hex_str(self) -> str:
+    def decoded_hex_array(self) -> array.array:
         padded_bitchains = self.split()
         return self.__bit_chains_to_hex(padded_bitchains)
 
     @property
-    def decoded_ascii_str(self) -> str:
+    def decoded_hex_str(self) -> str:
+        return "".join(map(lambda h: "{0:x}".format(h), self.decoded_hex_array))
+
+    @property
+    def decoded_ascii_array(self) -> array.array:
         padded_bitchains = self.split()
         return self.__bit_chains_to_ascii(padded_bitchains)
+
+    @property
+    def decoded_ascii_str(self) -> str:
+        return "".join(map(chr, self.decoded_ascii_array))
 
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
@@ -348,43 +364,42 @@ class Message(object):
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
 
     @staticmethod
-    def __bit_chains_to_hex(bit_chains) -> str:
+    def __bit_chains_to_hex(bit_chains) -> array.array:
         """
 
-        :type bit_chains: list of str
+        :type bit_chains: list of array.array
         :return:
         """
-        result = []
-        for bit_chain in bit_chains:
-            bit_chain += "0" * ((4 - len(bit_chain) % 4) % 4)  # pad hex view
-            result.append("".join("{0:x}".format(int(bit_chain[i:i + 4], 2)) for i in range(0, len(bit_chain), 4)))
+        result = array.array("B", [])
+        for bc in bit_chains:
+            bc += array.array("B", [0] * ((4 - len(bc) % 4) % 4))  # pad hex view
+            result.extend((8*bc[i]+4*bc[i+1]+2*bc[i+2]+bc[i+3]) for i in range(0, len(bc), 4))
 
-        return "".join(result)
+        return result
 
     @staticmethod
-    def __bit_chains_to_ascii(bit_chains) -> str:
+    def __bit_chains_to_ascii(bit_chains) -> array.array:
         """
 
-        :type bit_chains: list of str
+        :type bit_chains: list of array.array
         :return:
         """
-        result = []
-        for bit_chain in bit_chains:
-            bit_chain += "0" * ((8 - len(bit_chain) % 8) % 8)  # pad ascii view
-            byte_proto = "".join("{0:x}".format(int(bit_chain[i:i + 8], 2)) for i in range(0, len(bit_chain), 8))
-            result.append("".join(chr(int(byte_proto[i:i + 2], 16)) for i in range(0, len(byte_proto) - 1, 2)))
-
-        return "".join(result)
+        result = array.array("B", [])
+        for bc in bit_chains:
+            bc += array.array("B", [0] * ((8 - len(bc) % 8) % 8))  # pad ascii view
+            result.extend((128*bc[i]+64*bc[i+1]+32*bc[i+2]+16*bc[i+3]+8*bc[i+4]+4*bc[i+5]+2*bc[i+6]+bc[i+7])
+                          for i in range(0, len(bc), 8))
+        return result
 
     def split(self, decode=True):
         """
         Für das Bit-Alignment (neu Ausrichten von Hex, ASCII-View)
 
-        :rtype: list of str
+        :rtype: list of array.array
         """
         start = 0
         result = []
-        message = self.decoded_bits_str if decode else str(self)
+        message = self.decoded_bits if decode else self.plain_bits
         bit_alignments = set()
         if self.align_labels:
             for l in self.message_type:

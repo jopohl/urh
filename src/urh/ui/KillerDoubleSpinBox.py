@@ -20,7 +20,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         # Cant connect to value changed, as it would delete the number when changing a digit
         # see: https://github.com/jopohl/urh/issues/129
         self.editingFinished.connect(self.adjust_step)
-        self.auto_suffix = True
 
     def setValue(self, value: float):
         if isinstance(self.allowed_values, list) and value not in self.allowed_values:

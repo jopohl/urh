@@ -8,6 +8,7 @@ from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
+from urh import constants
 
 ## rfcat commands
 # freq = 433920000
@@ -50,6 +51,9 @@ class RfCatPlugin(SDRPlugin):
         self.current_sent_sample = 0
         self.current_sending_repeat = 0
         self.modulators = 0
+
+    def __del__(self):
+        self.close_rfcat()
 
     @property
     def is_sending(self) -> bool:
@@ -123,8 +127,6 @@ class RfCatPlugin(SDRPlugin):
         if self.rfcat_is_open:
             try:
                 self.process.kill()
-                self.read_queue = 0
-                self.write_queue = 0
                 self.rfcat_is_open = False
             except Exception as e:
                 logger.debug("Could not close rfcat: {}".format(e))
@@ -178,24 +180,30 @@ class RfCatPlugin(SDRPlugin):
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 
-        for i, msg in enumerate(messages):
-            if self.__sending_interrupt_requested:
-                break
-            assert isinstance(msg, Message)
-            wait_time = msg.pause / sample_rates[i]
-
-            self.current_send_message_changed.emit(i)
-            error = self.send_data(self.bit_str_to_bytearray(msg.encoded_bits_str))
-            if not error:
-                logger.debug("Sent message {0}/{1}".format(i+1, len(messages)))
-                logger.debug("Waiting message pause: {0:.2f}s".format(wait_time))
+        repeats_from_settings = constants.SETTINGS.value('num_sending_repeats', type=int)
+        repeats = repeats_from_settings if repeats_from_settings > 0 else -1
+        while (repeats > 0 or repeats == -1) and self.__sending_interrupt_requested == False:
+            logger.debug("Start iteration ({} left)".format(repeats if repeats > 0 else "infinite"))
+            for i, msg in enumerate(messages):
                 if self.__sending_interrupt_requested:
                     break
-                time.sleep(wait_time)
-            else:
-                self.is_sending = False
-                Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port), msg=error)
-                break
+                assert isinstance(msg, Message)
+                wait_time = msg.pause / sample_rates[i]
+
+                self.current_send_message_changed.emit(i)
+                error = self.send_data(self.bit_str_to_bytearray(msg.encoded_bits_str))
+                if not error:
+                    logger.debug("Sent message {0}/{1}".format(i+1, len(messages)))
+                    logger.debug("Waiting message pause: {0:.2f}s".format(wait_time))
+                    if self.__sending_interrupt_requested:
+                        break
+                    time.sleep(wait_time)
+                else:
+                    self.is_sending = False
+                    Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port), msg=error)
+                    break
+            if repeats > 0:
+                repeats -= 1
         logger.debug("Sending finished")
         self.is_sending = False
 

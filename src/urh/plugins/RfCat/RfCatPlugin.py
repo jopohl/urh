@@ -183,6 +183,7 @@ class RfCatPlugin(SDRPlugin):
         repeats_from_settings = constants.SETTINGS.value('num_sending_repeats', type=int)
         repeats = repeats_from_settings if repeats_from_settings > 0 else -1
         while (repeats > 0 or repeats == -1) and self.__sending_interrupt_requested == False:
+            logger.debug("Start iteration ({} left)".format(repeats if repeats > 0 else "infinite"))
             for i, msg in enumerate(messages):
                 if self.__sending_interrupt_requested:
                     break

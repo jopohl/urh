@@ -30,6 +30,7 @@ from urh.controller.ProtocolLabelDialog import ProtocolLabelDialog
 
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.MessageComboBoxDelegate import MessageComboBoxDelegate
+#from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -56,6 +57,7 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
         self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self))
+        #self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ProtocolValueDelegate(parent=self))
         self.update_field_types()
 
         self.simulator_message_table_model = SimulatorMessageTableModel(self)

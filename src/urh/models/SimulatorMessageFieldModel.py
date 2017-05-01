@@ -47,12 +47,15 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 1:
                 return label.VALUE_TYPES[label.value_type_index]
             elif j == 2:
-                return "1::seq"
+                return label.value
         elif role == Qt.FontRole:
             if j == 0:
                 font = QFont()
                 font.setItalic(label.type is None)
                 return font
+        elif role == Qt.EditRole:
+            if j == 2:
+                return label.value
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
@@ -68,6 +71,8 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     label.type = None
             elif j == 1:
                 label.value_type_index = value
+            elif j == 2:
+                label.value = value
 
             self.protocol_label_updated.emit(label)
 
@@ -75,9 +80,9 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        column = index.column()
+        #column = index.column()
 
-        if column == 0 or column == 1:
-            flags |= Qt.ItemIsEditable
+        #if column == 0 or column == 1:
+        flags |= Qt.ItemIsEditable
 
         return flags

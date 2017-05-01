@@ -417,6 +417,9 @@ class SimulatorScene(QGraphicsScene):
         sim_message = SimulatorMessage(destination=destination, plain_bits=plain_bits, pause=pause,
                         message_type=MessageType(message_type.name), decoder=decoder, source=source)
 
+        assert destination is self.sim_proto_manager.broadcast_part
+        assert source is None
+
         for lbl in message_type:
             sim_label = SimulatorProtocolLabel(lbl.name, lbl.start, lbl.end - 1, lbl.color_index, lbl.type)
             sim_message.insert_child(-1, sim_label)
@@ -457,9 +460,9 @@ class SimulatorScene(QGraphicsScene):
         source = None
         destination = self.sim_proto_manager.broadcast_part
 
-        if len(participants) == 1:
+        if len(participants) == 2:
             source = participants[0]
-        elif len(participants) > 1:
+        elif len(participants) > 2:
             if message.participant:
                 source = message.participant
                 destination = participants[0] if message.participant == participants[1] else participants[1]

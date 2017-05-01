@@ -18,7 +18,7 @@ class Ui_GeneratorTab(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1160, 638))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1100, 637))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -356,8 +356,9 @@ class Ui_GeneratorTab(object):
         self.cbViewType.setItemText(0, _translate("GeneratorTab", "Bit"))
         self.cbViewType.setItemText(1, _translate("GeneratorTab", "Hex"))
         self.cbViewType.setItemText(2, _translate("GeneratorTab", "ASCII"))
-        self.btnNetworkSDRSend.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>Send encoded data to your external application via TCP.</p></body></html>"))
+        self.btnNetworkSDRSend.setToolTip(_translate("GeneratorTab", "<html><head/><body><p><span style=\" font-weight:600;\">Send encoded data to your external application via TCP.</span></p></body></html>"))
         self.btnNetworkSDRSend.setText(_translate("GeneratorTab", "Send via Network"))
+        self.btnRfCatSend.setToolTip(_translate("GeneratorTab", "<html><head/><body><p><span style=\" font-weight:600;\">Send encoded data via RfCat. </span></p><p><span style=\" font-style:italic;\">Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:</span></p><p><span style=\" font-style:italic;\">Edit-&gt;Options-&gt;Device-&gt;\'Device sending repetitions\'</span></p></body></html>"))
         self.btnRfCatSend.setText(_translate("GeneratorTab", "Send via RfCat"))
 
 from urh.ui.GeneratorListWidget import GeneratorListWidget

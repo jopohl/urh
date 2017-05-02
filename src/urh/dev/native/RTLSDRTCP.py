@@ -17,7 +17,7 @@ class RTLSDRTCP(Device):
 
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str, port: int):
+                     bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str, port: int):
         # connect and initialize rtl_tcp
         sdr = RTLSDRTCP(center_freq, gain, sample_rate, device_number)
         sdr.open(ctrl_connection, device_ip, port)
@@ -25,7 +25,7 @@ class RTLSDRTCP(Device):
             sdr.device_number = device_number
             sdr.set_parameter("centerFreq", int(center_freq), ctrl_connection)
             sdr.set_parameter("sampleRate", int(sample_rate), ctrl_connection)
-            sdr.set_parameter("bandwidth", int(sample_rate), ctrl_connection)  # set bandwidth equal to sample_rate
+            sdr.set_parameter("bandwidth", int(bandwidth), ctrl_connection)
             sdr.set_parameter("tunerGain", 10 * int(gain),
                               ctrl_connection)  # gain is multiplied by 10 because of rtlsdr-API
             sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
@@ -97,7 +97,7 @@ class RTLSDRTCP(Device):
     @property
     def receive_process_arguments(self):
         return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
-               self.gain, self.freq_correction, self.direct_sampling_mode, self.device_ip, self.port
+               self.bandwidth, self.gain, self.freq_correction, self.direct_sampling_mode, self.device_ip, self.port
 
     def open(self, ctrl_connection, hostname="127.0.0.1", port=1234):
         if not self.socket_is_open:

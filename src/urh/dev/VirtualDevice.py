@@ -88,7 +88,7 @@ class VirtualDevice(QObject):
                     self.__dev = RTLSDR(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
-                    self.__dev = RTLSDRTCP(freq, gain, sample_rate, device_number=0, is_ringbuffer=is_ringbuffer)
+                    self.__dev = RTLSDRTCP(freq, gain, sample_rate, bandwidth, device_number=0, is_ringbuffer=is_ringbuffer)
                 elif name == "limesdr":
                     from urh.dev.native.LimeSDR import LimeSDR
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain, is_ringbuffer=is_ringbuffer)

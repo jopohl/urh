@@ -85,7 +85,7 @@ class RTLSDRTCP(Device):
             return self.set_parameter("directSampling", int(value), ctrl_connection)
 
     def __init__(self, freq, gain, srate, bandwidth, device_number, is_ringbuffer=False):
-        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
+        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=bandwidth,
                          gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
 
         # default class parameters

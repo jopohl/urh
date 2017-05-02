@@ -678,9 +678,9 @@ class Encoder(object):
         errors = 0
 
         if decoding and self.external_decoder != "":
-            output = self.str2bit(self.run_command(self.external_decoder, self.bit2str(inpt)))
+            output = self.charstr2bit(self.run_command(self.external_decoder, self.bit2str(inpt)))
         elif not decoding and self.external_encoder != "":
-            output = self.str2bit(self.run_command(self.external_encoder, self.bit2str(inpt)))
+            output = self.charstr2bit(self.run_command(self.external_encoder, self.bit2str(inpt)))
         else:
             return [], 1, self.ErrorState.MISSING_EXTERNAL_PROGRAM
 
@@ -881,6 +881,16 @@ class Encoder(object):
     @staticmethod
     def str2bit(inpt: str):
         return array.array("B", map(int, inpt))
+
+    @staticmethod
+    def charstr2bit(inpt: str):
+        output = array.array("B", [])
+        for i in inpt:
+            if i == '0':
+                output.append(False)
+            elif i == '1':
+                output.append(True)
+        return output
 
     @staticmethod
     def bit2hex(inpt):

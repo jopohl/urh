@@ -35,11 +35,8 @@ class ProtocolValueDelegate(QItemDelegate):
         model = index.model()
         row = index.row()
 
-        label = model.message_type[row]
-
-        if label.value_type_index == 3:
-            editor = ExternalProgramWidget(parent)
-            return editor
+        if model.message_type[row].value_type_index == 3:
+            return ExternalProgramWidget(parent)
         else:
             return super().createEditor(parent, option, index)
 

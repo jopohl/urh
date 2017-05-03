@@ -88,7 +88,7 @@ class SimulatorTabController(QWidget):
         self.reload_field_types()
 
         for msg in self.sim_proto_manager.get_all_messages():
-            for lbl in msg.message_type:
+            for lbl in (lbl for lbl in msg.message_type if lbl.type is not None):
                 if lbl.type.id not in self.field_types_by_id:
                     lbl.type = None
                 else:

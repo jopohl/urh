@@ -15,18 +15,21 @@ class RTLSDR(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
         Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
+        Device.Command.SET_BANDWIDTH.name: "set_tuner_bandwidth",
         Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
         Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
     })
 
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     gain: int, freq_correction: int, direct_sampling_mode: int):
+                     bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int):
         ret = rtlsdr.open(device_number)
         ctrl_connection.send("OPEN:" + str(ret))
 
         RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY.name, center_freq), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_connection, False)
+        if RTLSDR.get_bandwidth_is_adjustable():
+            RTLSDR.process_command((RTLSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN.name, 10 * gain), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY_CORRECTION.name, freq_correction), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_DIRECT_SAMPLING_MODE.name, direct_sampling_mode), ctrl_connection,
@@ -62,18 +65,21 @@ class RTLSDR(Device):
 
         self.receive_process_function = RTLSDR.receive_sync
 
-        self.bandwidth_is_adjustable = hasattr(rtlsdr,
-                                               "set_tuner_bandwidth")  # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable() # e.g. not in Manjaro Linux / Ubuntu 14.04
 
         self.device_number = device_number
+
+    @staticmethod
+    def get_bandwidth_is_adjustable():
+        return hasattr(rtlsdr, "set_tuner_bandwidth")
 
     @property
     def receive_process_arguments(self):
         return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
-               self.gain, self.freq_correction, self.direct_sampling_mode
+               self.bandwidth, self.gain, self.freq_correction, self.direct_sampling_mode
 
     def set_device_bandwidth(self, bandwidth):
-        if hasattr(rtlsdr, "set_tuner_bandwidth"):
+        if self.bandwidth_is_adjustable:
             super().set_device_bandwidth(bandwidth)
         else:
             logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")

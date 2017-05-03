@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
 [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
-[![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 

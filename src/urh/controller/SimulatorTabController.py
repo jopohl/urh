@@ -59,7 +59,8 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.DISPLAY_FORMATS, parent=self))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(parent=self))
-        self.update_field_types()
+        self.reload_field_types()
+        self.update_field_name_column()
 
         self.simulator_message_table_model = SimulatorMessageTableModel(self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
@@ -83,11 +84,23 @@ class SimulatorTabController(QWidget):
 
         self.create_connects(compare_frame_controller)
 
-    def update_field_types(self):
+    def refresh_field_types_for_labels(self):
+        self.reload_field_types()
+
+        for msg in self.sim_proto_manager.get_all_messages():
+            for lbl in msg.message_type:
+                if lbl.type.id not in self.field_types_by_id:
+                    lbl.type = None
+                else:
+                    lbl.type = self.field_types_by_id[lbl.type.id]
+
+        self.update_field_name_column()
+        self.update_ui()
+
+    def reload_field_types(self):
         self.field_types = FieldType.load_from_xml()
         self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
-        self.update_field_name_column()
 
     def update_field_name_column(self):
         field_types = [ft.caption for ft in self.field_types]

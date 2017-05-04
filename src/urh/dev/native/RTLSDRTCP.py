@@ -26,10 +26,11 @@ class RTLSDRTCP(Device):
             sdr.set_parameter("centerFreq", int(center_freq), ctrl_connection)
             sdr.set_parameter("sampleRate", int(sample_rate), ctrl_connection)
             sdr.set_parameter("bandwidth", int(bandwidth), ctrl_connection)
-            sdr.set_parameter("tunerGain", 10 * int(gain),
-                              ctrl_connection)  # gain is multiplied by 10 because of rtlsdr-API
             sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
             sdr.set_parameter("directSampling", int(direct_sampling_mode), ctrl_connection)
+            # Gain has to be set last, otherwise it does not get considered by RTL-SDR
+            sdr.set_parameter("tunerGain", 10 * int(gain),
+                              ctrl_connection)  # gain is multiplied by 10 because of rtlsdr-API
             exit_requested = False
 
             while not exit_requested:

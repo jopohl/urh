@@ -18,7 +18,7 @@ class SendDialogController(SendRecvDialogController):
         super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewSend
-        self.ui.stackedWidget.setCurrentIndex(1)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_send)
         self.hide_receive_ui_items()
 
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
@@ -52,7 +52,6 @@ class SendDialogController(SendRecvDialogController):
 
         self.graphics_view.save_as_clicked.connect(self.on_graphics_view_save_as_clicked)
         self.scene_manager.signal.data_edited.connect(self.on_signal_data_edited)
-        self.ui.spinBoxNRepeat.editingFinished.connect(self.on_num_repeats_changed)
 
     def __update_send_indicator(self, width: int):
         y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
@@ -123,10 +122,6 @@ class SendDialogController(SendRecvDialogController):
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-pause"))
         self.set_device_ui_items_enabled(False)
-
-    @pyqtSlot()
-    def on_num_repeats_changed(self):
-        self.device.num_sending_repeats = self.ui.spinBoxNRepeat.value()
 
     @pyqtSlot()
     def on_clear_clicked(self):

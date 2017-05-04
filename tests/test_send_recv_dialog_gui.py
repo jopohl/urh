@@ -2,19 +2,21 @@ import os
 import socket
 
 import numpy as np
-import sip
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.Message import Message
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
@@ -43,6 +45,17 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 
+    def __get_continuous_send_dialog(self):
+        messages = [Message([True]*100, 1000, self.form.compare_frame_controller.active_message_type) for _ in range(10)]
+        modulators = [Modulator("Test")]
+
+        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager, messages, modulators,
+                                                                parent=self.form, testing_mode=True)
+        if self.SHOW:
+            continuous_send_dialog.show()
+
+        return continuous_send_dialog
+
     def __get_spectrum_dialog(self):
         spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
         if self.SHOW:
@@ -65,6 +78,7 @@ class TestSendRecvDialog(QtTestCase):
     def __get_all_dialogs(self):
         yield self.__get_recv_dialog()
         yield self.__get_send_dialog()
+        yield self.__get_continuous_send_dialog()
         yield self.__get_spectrum_dialog()
         yield self.__get_sniff_dialog()
 
@@ -325,7 +339,7 @@ class TestSendRecvDialog(QtTestCase):
 
             dialog.ui.spinBoxNRepeat.setValue(10)
             dialog.ui.spinBoxNRepeat.editingFinished.emit()
-            if isinstance(dialog, SendDialogController):
+            if dialog.is_tx:
                 self.assertEqual(dialog.device.num_sending_repeats, 10)
             else:
                 self.assertEqual(dialog.device.num_sending_repeats, None)

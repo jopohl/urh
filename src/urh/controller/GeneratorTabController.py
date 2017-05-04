@@ -8,6 +8,7 @@ from PyQt5.QtGui import QFontMetrics, QFont
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh.controller.CompareFrameController import CompareFrameController
+from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
 from urh.controller.SendDialogController import SendDialogController
@@ -86,6 +87,11 @@ class GeneratorTabController(QWidget):
     @property
     def modulators(self):
         return self.table_model.protocol.modulators
+
+    @property
+    def total_modulated_samples(self) -> int:
+        return sum(int(len(msg.encoded_bits) * self.modulators[msg.modulator_indx].samples_per_bit + msg.pause)
+                   for msg in  self.table_model.protocol.messages)
 
     @modulators.setter
     def modulators(self, value):
@@ -341,36 +347,48 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def generate_file(self):
         try:
-            modulated_samples = self.modulate_data()
+            # TODO: Handle memory error here
+            buffer = self.prepare_modulation_buffer()
+            modulated_samples = self.modulate_data(buffer)
             FileOperator.save_data_dialog("", modulated_samples, parent=self)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    def modulate_data(self):
-        pos = 0
-        container = self.table_model.protocol
+    def prepare_modulation_buffer(self, show_error=True) -> np.ndarray:
+        total_samples = self.total_modulated_samples
+        memory_size_for_buffer = (total_samples*8) / (1024**2)
+        logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer))
+        try:
+            return np.zeros(total_samples, dtype=np.complex64)
+        except MemoryError:
+            if show_error:
+                Errors.not_enough_ram_for_sending_precache(memory_size_for_buffer)
+            return None
+
+    def modulate_data(self, buffer: np.ndarray) -> np.ndarray:
+        """
+        
+        :param buffer: Buffer in which the modulated data shall be written, initialized with zeros
+        :return: 
+        """
         self.ui.prBarGeneration.show()
         self.ui.prBarGeneration.setValue(0)
         self.ui.prBarGeneration.setMaximum(self.table_model.row_count)
 
-        total_samples = sum(int(len(msg.encoded_bits) * self.modulators[msg.modulator_indx].samples_per_bit + msg.pause)
-                            for msg in container.messages)
-        logger.debug("Allocating {0:.2f}MB for modulated samples".format((total_samples*8) / (1024**2)))
-        result = np.zeros(total_samples, dtype=np.complex64)
-
+        pos = 0
         for i in range(0, self.table_model.row_count):
-            message = container.messages[i]
+            message = self.table_model.protocol.messages[i]
             modulator = self.modulators[message.modulator_indx]
             # We do not need to modulate the pause extra, as result is already initialized with zeros
             modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
-            result[pos:pos+len(modulator.modulated_samples)] = modulator.modulated_samples
+            buffer[pos:pos+len(modulator.modulated_samples)] = modulator.modulated_samples
             pos += len(modulator.modulated_samples) + message.pause
             self.ui.prBarGeneration.setValue(i + 1)
             QApplication.instance().processEvents()
 
         self.ui.prBarGeneration.hide()
-        return result
+        return buffer
 
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):
@@ -499,9 +517,19 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_btn_send_clicked(self):
         try:
-            modulated_data = self.modulate_data()
+            buffer = self.prepare_modulation_buffer()
+            if buffer is not None:
+                modulated_data = self.modulate_data(buffer)
+            else:
+                # Enter continuous mode
+                modulated_data = None
+
             try:
-                dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                if modulated_data is not None:
+                    dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                else:
+                    dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,
+                                                            self.modulators, parent=self)
             except OSError as e:
                 logger.error(repr(e))
                 return

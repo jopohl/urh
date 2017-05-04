@@ -3,12 +3,13 @@ from PyQt5.QtWidgets import QMessageBox, QWidget
 
 
 class Errors:
-
     @staticmethod
-    def generic_error(title: str, msg: str, detailed_msg:str=None):
+    def generic_error(title: str, msg: str, detailed_msg: str = None):
         w = QWidget()
         if detailed_msg:
-            msg = "Error: <b>"+msg.replace("\n","<br>")+"</b>" +"<br><br>----------<br><br>" + detailed_msg.replace("\n", "<br>")
+            msg = "Error: <b>" + msg.replace("\n",
+                                             "<br>") + "</b>" + "<br><br>----------<br><br>" + detailed_msg.replace(
+                "\n", "<br>")
         QMessageBox.critical(w, title, msg)
 
     @staticmethod
@@ -43,14 +44,14 @@ class Errors:
 
         if sys.platform == "win32":
             msg = "Could not connect to HackRF. Try these solutions:" \
-                                           "<br/><br/> 1. Ensure HackRF is plugged in." \
-                                           "<br/> 2. <b>Install HackRF USB driver</b> with <a href='http://zadig.akeo.ie/'>Zadig</a>."
+                  "<br/><br/> 1. Ensure HackRF is plugged in." \
+                  "<br/> 2. <b>Install HackRF USB driver</b> with <a href='http://zadig.akeo.ie/'>Zadig</a>."
         else:
             msg = "Could not connect to HackRF. Try these solutions:" \
-                                           "<br/><br/> 1. Ensure HackRF is plugged in." \
-                                           "<br/> 2. Run the command <b>hackrf_info</b> in terminal as root." \
-                                           "<br/> 3. If 2. works for you, follow the instructions "\
-                                           "<a href='https://github.com/mossmann/hackrf/wiki/FAQ'>here</a>."\
+                  "<br/><br/> 1. Ensure HackRF is plugged in." \
+                  "<br/> 2. Run the command <b>hackrf_info</b> in terminal as root." \
+                  "<br/> 3. If 2. works for you, follow the instructions " \
+                  "<a href='https://github.com/mossmann/hackrf/wiki/FAQ'>here</a>."
 
         QMessageBox.critical(w, w.tr("HackRF not found"),
                              w.tr(msg))
@@ -78,4 +79,15 @@ class Errors:
     def network_sdr_send_is_elsewhere():
         w = QWidget()
         QMessageBox.information(w, "This feature is elsewhere", "You can send your data with the network SDR by "
-                                                                   "using the button below the generator table.")
+                                                                "using the button below the generator table.")
+
+    @staticmethod
+    def not_enough_ram_for_sending_precache(memory_size_mb):
+        w = QWidget()
+        QMessageBox.information(w, w.tr("Not enough RAM for precaching"),
+                                w.tr("Precaching all your modulated data would take {0:.2f}MB of memory. "
+                                     "This does not fit into your RAM, "
+                                     "so sending will be done in <b>continuous mode</b>.<br>"
+                                     "This means, modulation will be performed live during sending.<br><br>"
+                                     "If you experience problems, "
+                                     "consider sending less messages or upgrade your RAM.".format(memory_size_mb)))

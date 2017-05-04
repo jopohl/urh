@@ -1,7 +1,7 @@
 import re
 import numpy
 
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog
 from PyQt5.QtCore import pyqtSlot, Qt, QDir
 
 from urh.models.SimulatorRulesetTableModel import SimulatorRulesetTableModel
@@ -14,6 +14,7 @@ from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.SimulatorRuleset import SimulatorRulesetItem, Mode
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -130,6 +131,7 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.item_updated.emit)
         self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.item_updated.emit)
+        self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
 
         self.sim_proto_manager.item_added.connect(self.refresh_message_table)
         self.sim_proto_manager.item_updated.connect(self.refresh_message_table)
@@ -137,6 +139,29 @@ class SimulatorTabController(QWidget):
         self.sim_proto_manager.item_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
 
+    def add_message_type(self, message: SimulatorMessage):
+        names = set(message_type.name for message_type in self.proto_analyzer.message_types)
+        name = "Message type #"
+        i = 0
+
+        while True:
+            i += 1
+
+            if name + str(i) not in names:
+                break
+
+        msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"), self.tr("Name:"), text=name + str(i))
+
+        if ok:
+            msg_type = MessageType(name=msg_type_name)
+
+            for lbl in message.message_type:
+                msg_type.append(ProtocolLabel(name=lbl.name, start=lbl.start, end=lbl.end - 1, color_index=lbl.color_index, type=lbl.type))
+
+            self.proto_analyzer.message_types.append(msg_type)
+            self.compare_frame_controller.fill_message_type_combobox()
+            self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
+            
     def on_selected_tab_changed(self, index: int):
         if index == 0:
             if self.active_item is not None:

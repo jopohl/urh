@@ -12,6 +12,7 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 
 class SimulatorGraphicsView(QGraphicsView):
     message_updated = pyqtSignal(SimulatorMessage)
+    new_messagetype_clicked = pyqtSignal(SimulatorMessage)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -104,6 +105,10 @@ class SimulatorGraphicsView(QGraphicsView):
         model_item.destination = tmp
         self.message_updated.emit(model_item)
 
+    @pyqtSlot()
+    def on_new_message_type_action_triggered(self):
+        self.new_messagetype_clicked.emit(self.context_menu_item.model_item)
+
     def create_context_menu(self):
         menu = QMenu()
 
@@ -179,6 +184,10 @@ class SimulatorGraphicsView(QGraphicsView):
             if self.context_menu_item.destination != self.scene().broadcast_part:
                 swap_part_action = menu.addAction("Swap source and destination")
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
+
+            if len(self.context_menu_item.model_item.message_type):
+                new_message_type_action = menu.addAction("Create new message type based on this message ...")
+                new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
 
         menu.addSeparator()
 

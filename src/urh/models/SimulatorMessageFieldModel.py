@@ -39,13 +39,13 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         start, end = message.get_label_range(label, label.display_format_index % 3, True)
 
         if label.display_format_index == 0:
-            return message.decoded_bits_str[start:end]
+            return message.plain_bits_str[start:end]
         elif label.display_format_index == 1:
-            return message.decoded_hex_str[start:end]
+            return message.plain_hex_str[start:end]
         elif label.display_format_index == 2:
-            return message.decoded_ascii_str[start:end]
+            return message.plain_ascii_str[start:end]
         elif label.display_format_index == 3:
-            return int(message.decoded_bits_str[start:end], 2)
+            return int(message.plain_bits_str[start:end], 2)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i, j = index.row(), index.column()

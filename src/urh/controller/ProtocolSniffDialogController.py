@@ -21,7 +21,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.set_sniff_ui_items_visible(True)
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
-        self.ui.stackedWidget.setCurrentIndex(2)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_sniff)
         self.hide_send_ui_items()
         self.hide_receive_ui_items()
         self.ui.sliderYscale.hide()

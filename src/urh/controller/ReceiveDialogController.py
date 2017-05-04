@@ -19,7 +19,7 @@ class ReceiveDialogController(SendRecvDialogController):
             return
 
         self.graphics_view = self.ui.graphicsViewReceive
-        self.ui.stackedWidget.setCurrentIndex(0)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_receive)
         self.hide_send_ui_items()
         self.already_saved = True
         self.recorded_files = []

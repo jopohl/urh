@@ -36,7 +36,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-149</y>
+         <y>0</y>
          <width>392</width>
          <height>1111</height>
         </rect>
@@ -967,7 +967,14 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="page">
+         <widget class="QWidget" name="page_continuous_send">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="LiveGraphicView" name="graphicsViewContinuousSend"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_sniff">
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <widget class="LiveGraphicView" name="graphicsView_sniff_Preview"/>

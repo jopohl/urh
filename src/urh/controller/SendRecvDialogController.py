@@ -354,6 +354,8 @@ class SendRecvDialogController(QDialog):
         self.ui.cbDevice.currentIndexChanged.connect(self.on_selected_device_changed)
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
 
+        self.ui.spinBoxNRepeat.editingFinished.connect(self.on_num_repeats_changed)
+
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.sync_gain_sliders()
@@ -460,6 +462,10 @@ class SendRecvDialogController(QDialog):
             self.ui.sliderIFGain.setValue(dev_conf[self.rx_tx_prefix + "if_gain"].index(value))
         except (ValueError, KeyError):
             pass
+
+    @pyqtSlot()
+    def on_num_repeats_changed(self):
+        self.device.num_sending_repeats = self.ui.spinBoxNRepeat.value()
 
     @pyqtSlot()
     def on_spinbox_baseband_gain_editing_finished(self):

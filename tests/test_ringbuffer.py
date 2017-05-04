@@ -50,10 +50,12 @@ class TestRingBuffer(unittest.TestCase):
 
     def test_will_fit(self):
         ring_buffer = RingBuffer(size=8, dtype=np.complex64)
+        self.assertEqual(ring_buffer.space_left, 8)
         self.assertTrue(ring_buffer.will_fit(4))
         self.assertTrue(ring_buffer.will_fit(8))
         self.assertFalse(ring_buffer.will_fit(9))
         ring_buffer.push(np.array([1, 2, 3, 4], dtype=np.complex64))
+        self.assertEqual(ring_buffer.space_left, 4)
         self.assertTrue(ring_buffer.will_fit(3))
         self.assertTrue(ring_buffer.will_fit(4))
         self.assertFalse(ring_buffer.will_fit(5))

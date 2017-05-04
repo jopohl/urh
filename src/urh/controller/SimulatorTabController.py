@@ -1,5 +1,6 @@
 import re
 import numpy
+import itertools
 
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog
 from PyQt5.QtCore import pyqtSlot, Qt, QDir
@@ -142,21 +143,17 @@ class SimulatorTabController(QWidget):
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
         name = "Message type #"
-        i = 0
+        i = next(i for i in itertools.count(start=1) if name+str(i) not in names)
 
-        while True:
-            i += 1
-
-            if name + str(i) not in names:
-                break
-
-        msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"), self.tr("Name:"), text=name + str(i))
+        msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"),
+                                                 self.tr("Name:"), text=name + str(i))
 
         if ok:
             msg_type = MessageType(name=msg_type_name)
 
             for lbl in message.message_type:
-                msg_type.append(ProtocolLabel(name=lbl.name, start=lbl.start, end=lbl.end - 1, color_index=lbl.color_index, type=lbl.type))
+                msg_type.append(ProtocolLabel(name=lbl.name, start=lbl.start, end=lbl.end - 1,
+                                              color_index=lbl.color_index, type=lbl.type))
 
             self.proto_analyzer.message_types.append(msg_type)
             self.compare_frame_controller.fill_message_type_combobox()

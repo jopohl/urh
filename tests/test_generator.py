@@ -3,7 +3,6 @@ import os
 import array
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 
@@ -55,7 +54,8 @@ class TestGenerator(QtTestCase):
         modulator = gframe.modulators[0]
         modulator.modulation_type = 0
         modulator.samples_per_bit = 295
-        modulated_data = gframe.modulate_data()
+        buffer = gframe.prepare_modulation_buffer(show_error=False)
+        modulated_data = gframe.modulate_data(buffer)
         filename = os.path.join(QDir.tempPath(), "generator_test.complex")
         modulated_data.tofile(filename)
 

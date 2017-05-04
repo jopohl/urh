@@ -15,6 +15,10 @@ class RingBuffer(object):
     def is_full(self) -> bool:
         return self.current_index == self.size
 
+    @property
+    def space_left(self):
+        return self.size - self.current_index
+
     def __getitem__(self, index):
         return self.__data[index]
 
@@ -28,7 +32,7 @@ class RingBuffer(object):
                 self.current_index = self.size
 
     def will_fit(self, number_values: int) -> bool:
-        return self.current_index + number_values <= self.size
+        return number_values <= self.space_left
 
     def push(self, values: np.ndarray):
         """

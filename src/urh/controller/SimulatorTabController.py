@@ -152,8 +152,8 @@ class SimulatorTabController(QWidget):
             msg_type = MessageType(name=msg_type_name)
 
             for lbl in message.message_type:
-                msg_type.append(ProtocolLabel(name=lbl.name, start=lbl.start, end=lbl.end - 1,
-                                              color_index=lbl.color_index, type=lbl.type))
+                msg_type.add_protocol_label(start=lbl.start, end=lbl.end - 1, name=lbl.name,
+                                            color_ind=lbl.color_index, type=lbl.type)
 
             self.proto_analyzer.message_types.append(msg_type)
             self.compare_frame_controller.fill_message_type_combobox()

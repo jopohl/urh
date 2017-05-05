@@ -66,12 +66,16 @@ class Device(QObject):
             ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
 
     @classmethod
-    def setup_device(cls, ctrl_connection: Connection):
+    def setup_device(cls, ctrl_connection: Connection, device_identifier):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
-        if cls.setup_device(ctrl_connection):
+        if "identifier" in parameters:
+            identifier = parameters["identifier"]
+        else:
+            identifier = None
+        if cls.setup_device(ctrl_connection, device_identifier=identifier):
             for parameter, value in parameters.items():
                 cls.process_command((parameter, value), ctrl_connection, is_tx)
             return True
@@ -87,7 +91,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def prepare_sync_receive(cls):
+    def prepare_sync_receive(cls, ctrl_connection: Connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -106,7 +110,6 @@ class Device(QObject):
     def send_sync(cls, data):
         raise NotImplementedError("Overwrite this method in subclass!")
 
-
     @classmethod
     def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
@@ -115,7 +118,7 @@ class Device(QObject):
         if cls.ASYNCHRONOUS:
             cls.enter_async_receive_mode(data_connection)
         else:
-            cls.prepare_sync_receive()
+            cls.prepare_sync_receive(ctrl_connection)
 
         exit_requested = False
 
@@ -123,7 +126,7 @@ class Device(QObject):
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                cls.receive_sync()
+                data_connection.send_bytes(cls.receive_sync())
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
                 if result == cls.Command.STOP.name:
@@ -217,8 +220,8 @@ class Device(QObject):
         self.error_codes = {}
         self.device_messages = []
 
-        self.receive_process_function = None
-        self.send_process_function = None
+        self.receive_process_function = self.device_receive
+        self.send_process_function = self.device_send
 
         self.parent_data_conn, self.child_data_conn = Pipe()
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()

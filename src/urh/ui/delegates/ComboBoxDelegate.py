@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QCompleter
 
 
 class ComboBoxDelegate(QStyledItemDelegate):
@@ -31,6 +31,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
         if self.is_editable:
             editor.setEditable(True)
             editor.setInsertPolicy(QComboBox.NoInsert)
+            editor.completer().setCompletionMode(QCompleter.PopupCompletion)
 
         if self.current_edit_text:
             editor.setEditText(self.current_edit_text)

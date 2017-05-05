@@ -359,8 +359,20 @@
            </item>
            <item row="5" column="0" rowspan="4" colspan="3">
             <widget class="QTableView" name="tblViewSimulatorRuleset">
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>150</number>
+             </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
              </attribute>
             </widget>
            </item>

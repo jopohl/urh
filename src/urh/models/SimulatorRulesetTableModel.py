@@ -3,10 +3,11 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 class SimulatorRulesetTableModel(QAbstractTableModel):
     header_labels = ["Variable", "Viewtype", "Operator", "Value"]
 
-    def __init__(self, operator_descriptions: list, ruleset=[], parent=None):
-        self.ruleset = ruleset
-        self.operator_descriptions = operator_descriptions
+    def __init__(self, operator_descriptions: list, controller, ruleset=[], parent=None):
         super().__init__(parent)
+        self.ruleset = ruleset
+        self.controller = controller # type: SimulatorTabController
+        self.operator_descriptions = operator_descriptions
 
     def update(self):
         self.beginResetModel()
@@ -35,7 +36,7 @@ class SimulatorRulesetTableModel(QAbstractTableModel):
             if j == 0:
                 return rule.variable
             elif j == 1:
-                return rule.value_type
+                return rule.VIEW_TYPES[rule.value_type]
             elif j == 2:
                 return rule.operator_description
             elif j == 3:
@@ -48,9 +49,12 @@ class SimulatorRulesetTableModel(QAbstractTableModel):
 
             try:
                 if j == 0:
-                    rule.variable = value
+                    if value in self.controller.sim_formula_parser.label_list:
+                        rule.variable = value
+                    else:
+                        return False
                 elif j == 1:
-                    rule.value_type = value
+                        rule.value_type = value
                 elif j == 2:
                     rule.operator_description = self.operator_descriptions[int(value)]
                 elif j == 3:

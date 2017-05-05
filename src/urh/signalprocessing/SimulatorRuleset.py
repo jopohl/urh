@@ -1,5 +1,4 @@
 import operator
-import weakref
 from enum import Enum
 
 from urh.util.Logger import logger
@@ -12,23 +11,14 @@ class Mode(Enum):
     atleast_one_applies = 1
 
 class SimulatorRulesetItem(object):
+    VIEW_TYPES = ["Bit", "Hex", "ASCII"]
+
     def __init__(self, variable, operator: str, target_value: str, value_type: int):
         assert operator in OPERATIONS
-        self.__variable = weakref.ref(variable) if variable else None
+        self.variable = variable
         self.__value_type = value_type
         self.operator = operator
         self.target_value = target_value
-
-    @property
-    def variable(self):
-        if not self.__variable or not self.__variable():
-            return None
-        else:
-            return self.__variable()
-
-    @variable.setter
-    def variable(self, value):
-        self.__variable = weakref.ref(value) if value else None
 
     @property
     def operator_description(self):

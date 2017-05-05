@@ -48,9 +48,10 @@ class TestRTLSDR(unittest.TestCase):
         print("Sample Rate", rtlsdr.get_sample_rate())
         read_samples = rtlsdr.read_sync(1024)
         print(read_samples)
+        rtlsdr.close()
 
     def test_receive(self):
-        rtlsdr_class = RTLSDR(0, 0, 0, device_number=0)
+        rtlsdr_class = RTLSDR(433.92e6, 20, 2e6, device_number=0)
         self.assertEqual(rtlsdr_class.current_recv_index, 0)
         rtlsdr_class.start_rx_mode()
         time.sleep(2)

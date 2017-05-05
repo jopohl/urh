@@ -62,8 +62,11 @@ class Device(QObject):
             method_name = None
 
         if method_name:
-            ret = getattr(cls.DEVICE_LIB, method_name)(value)
-            ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
+            try:
+                ret = getattr(cls.DEVICE_LIB, method_name)(value)
+                ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
+            except AttributeError as e:
+                logger.warning(str(e))
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):

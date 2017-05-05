@@ -95,8 +95,21 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, parameters: OrderedDict):
-        if not cls.init_device(ctrl_connection, is_tx=False, parameters=parameters):
+    def enter_async_send_mode(cls, callback: object):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def prepare_sync_send(cls):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def send_sync(cls, data):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+
+    @classmethod
+    def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
+        if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
             return False
 
         if cls.ASYNCHRONOUS:
@@ -119,6 +132,63 @@ class Device(QObject):
 
         cls.shutdown_device(ctrl_connection)
         data_connection.close()
+        ctrl_connection.close()
+
+    @classmethod
+    def device_send(cls, ctrl_connection: Connection, send_buffer, current_sent_index, current_sending_repeat,
+                    sending_repeats, dev_parameters: OrderedDict):
+        def sending_is_finished():
+            if sending_repeats == 0:  # 0 = infinity
+                return False
+
+            return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
+
+        def get_data_to_send(buffer_length: int):
+            try:
+                if sending_is_finished():
+                    return b""
+
+                result = send_buffer[current_sent_index.value:current_sent_index.value + buffer_length]
+                current_sent_index.value += buffer_length
+                if current_sent_index.value >= len(send_buffer) - 1:
+                    current_sending_repeat.value += 1
+                    if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
+                        current_sent_index.value = 0
+                    else:
+                        current_sent_index.value = len(send_buffer)
+
+                return result
+            except (BrokenPipeError, EOFError):
+                return b""
+
+        if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
+            return False
+
+        if cls.ASYNCHRONOUS:
+            cls.enter_async_send_mode(get_data_to_send)
+        else:
+            cls.prepare_sync_send()
+
+        exit_requested = False
+
+        while not exit_requested and not sending_is_finished():
+            if cls.ASYNCHRONOUS:
+                time.sleep(0.5)
+            else:
+                cls.send_sync(get_data_to_send(cls.SEND_BUFFER_SIZE))  # SEND_BUFFER_SIZE = LimeSDR.SEND_SAMPLES for LimeSDR
+
+            while ctrl_connection.poll():
+                result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
+                if result == cls.Command.STOP.name:
+                    exit_requested = True
+                    break
+
+        if exit_requested:
+            logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
+        if sending_is_finished():
+            logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
+
+        cls.shutdown_device(ctrl_connection)
         ctrl_connection.close()
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):

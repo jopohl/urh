@@ -3,6 +3,8 @@ from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
 
+from urh.util.Logger import logger
+
 TIMEOUT = 0.2
 
 cdef object f
@@ -10,8 +12,12 @@ from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
     global f
-    (<object> f)(transfer.buffer[0:transfer.valid_length])
-    return 0
+    try:
+        (<object> f)(transfer.buffer[0:transfer.valid_length])
+        return 0
+    except Exception as e:
+        logger.error("Cython-HackRF:" + str(e))
+        return -1
 
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f

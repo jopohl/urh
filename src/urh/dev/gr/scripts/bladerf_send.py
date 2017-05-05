@@ -56,8 +56,7 @@ class top_block(gr.top_block):
         self.osmosdr_sink_0.set_antenna("", 0)
         self.osmosdr_sink_0.set_bandwidth(bw, 0)
 
-        self.zeromq_pull_source_0 = zeromq.pull_source(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:' + str(port), 100,
-                                                       False)
+        self.zeromq_pull_source_0 = zeromq.pull_source(gr.sizeof_gr_complex, 1, 'tcp://127.0.0.1:' + str(port))
 
         ##################################################
         # Connections

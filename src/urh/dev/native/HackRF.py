@@ -18,7 +18,7 @@ class HackRF(Device):
     })
 
     @classmethod
-    def setup_device(cls, ctrl_connection: Connection):
+    def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = hackrf.setup()
         ctrl_connection.send("SETUP:" + str(ret))
         return ret == 0
@@ -46,9 +46,6 @@ class HackRF(Device):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
                          gain=gain, if_gain=if_gain, baseband_gain=baseband_gain, is_ringbuffer=is_ringbuffer)
         self.success = 0
-
-        self.receive_process_function = HackRF.device_receive
-        self.send_process_function = HackRF.device_send
 
         self.error_codes = {
             0: "HACKRF_SUCCESS",

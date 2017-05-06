@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QColor
 
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -49,29 +49,34 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i, j = index.row(), index.column()
-        label = self.message_type[i]
+        lbl = self.message_type[i]
 
         if role == Qt.DisplayRole or role == Qt.EditRole:
             if j == 0:
-                return label.name
+                return lbl.name
             elif j == 1:
-                return label.DISPLAY_FORMATS[label.display_format_index]
+                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                return label.VALUE_TYPES[label.value_type_index]
+                return lbl.VALUE_TYPES[lbl.value_type_index]
             elif j == 3:
-                if label.value_type_index == 0:
-                    return self.value_str(label)
-                elif label.value_type_index in [1, 4]:
+                if lbl.value_type_index == 0:
+                    return self.value_str(lbl)
+                elif lbl.value_type_index in [1, 4]:
                     return "-"
-                elif label.value_type_index == 2:
-                    return label.formula
-                elif label.value_type_index == 3:
-                    return label.external_program
+                elif lbl.value_type_index == 2:
+                    return lbl.formula
+                elif lbl.value_type_index == 3:
+                    return lbl.external_program
         elif role == Qt.FontRole:
             if j == 0:
                 font = QFont()
-                font.setItalic(label.type is None)
+                font.setItalic(lbl.type is None)
                 return font
+        elif role == Qt.BackgroundRole:
+            if j == 3:
+                if (lbl.value_type_index == 2 and
+                        not self.controller.sim_formula_parser.validate_exp(lbl.formula)):
+                    return QColor.fromRgb(245, 12, 12, 125)
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:

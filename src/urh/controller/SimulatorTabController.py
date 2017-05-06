@@ -108,7 +108,8 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
 
     def update_label_name_column(self):
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0, ComboBoxDelegate(self.sim_formula_parser.label_list, is_editable=True, return_index=False, parent=self))
+        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0,
+                ComboBoxDelegate(self.sim_formula_parser.label_list, is_editable=True, return_index=False, parent=self))
 
     def create_connects(self, compare_frame_controller):
         self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)

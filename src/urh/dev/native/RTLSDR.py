@@ -30,10 +30,11 @@ class RTLSDR(Device):
         RTLSDR.process_command((RTLSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_connection, False)
         if RTLSDR.get_bandwidth_is_adjustable():
             RTLSDR.process_command((RTLSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN.name, 10 * gain), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY_CORRECTION.name, freq_correction), ctrl_connection, False)
         RTLSDR.process_command((RTLSDR.Command.SET_DIRECT_SAMPLING_MODE.name, direct_sampling_mode), ctrl_connection,
                                False)
+        # Gain has to be set last, otherwise it does not get considered by RTL-SDR
+        RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN.name, 10 * gain), ctrl_connection, False)
 
         ret = rtlsdr.reset_buffer()
         ctrl_connection.send("RESET_BUFFER:" + str(ret))

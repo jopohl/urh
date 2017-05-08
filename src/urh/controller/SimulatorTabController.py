@@ -60,7 +60,7 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
         self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.DISPLAY_FORMATS, parent=self))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(parent=self))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self, parent=self))
         self.reload_field_types()
         self.update_field_name_column()
 

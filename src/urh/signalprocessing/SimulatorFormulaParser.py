@@ -30,9 +30,6 @@ class SimulatorFormulaParser(object):
         self.sim_proto_manager.item_deleted.connect(self.update_label_list)
 
     def validate_exp(self, expr):
-        if expr == "":
-            return True
-
         try:
             node = ast.parse(expr, mode='eval').body
         except SyntaxError:

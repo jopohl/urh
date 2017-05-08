@@ -183,12 +183,7 @@ class Device(QObject):
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                est_duration = cls.SEND_BUFFER_SIZE / dev_parameters[cls.Command.SET_SAMPLE_RATE.name]
-                t = time.time()
                 cls.send_sync(send_buffer[current_sent_index.value:current_sent_index.value + cls.SEND_BUFFER_SIZE])
-                duration = time.time() - t
-                if duration < est_duration:
-                    time.sleep(est_duration - duration)
                 progress_send_buffer(cls.SEND_BUFFER_SIZE)
 
             while ctrl_connection.poll():

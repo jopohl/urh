@@ -39,8 +39,8 @@ class RTLSDR(Device):
         return ret == 0
 
     @classmethod
-    def receive_sync(cls):
-        return rtlsdr.read_sync()
+    def receive_sync(cls, data_conn: Connection):
+        data_conn.send_bytes(rtlsdr.read_sync())
 
     @classmethod
     def shutdown_device(cls, ctrl_connection):

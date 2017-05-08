@@ -21,6 +21,7 @@ cpdef bool get_tx():
 cpdef set_channel(size_t channel):
     global CHANNEL
     CHANNEL = <size_t>channel
+    return 0
 
 cpdef size_t get_channel():
     return CHANNEL

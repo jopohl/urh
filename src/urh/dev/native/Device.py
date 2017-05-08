@@ -98,7 +98,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def receive_sync(cls):
+    def receive_sync(cls, data_conn: Connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -129,7 +129,7 @@ class Device(QObject):
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                data_connection.send_bytes(cls.receive_sync())
+                cls.receive_sync(data_connection)
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
                 if result == cls.Command.STOP.name:

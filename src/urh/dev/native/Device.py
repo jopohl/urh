@@ -106,7 +106,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def prepare_sync_send(cls):
+    def prepare_sync_send(cls, ctrl_connection: Connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -149,20 +149,22 @@ class Device(QObject):
 
             return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
 
+        def progress_send_buffer(buffer_length: int):
+            current_sent_index.value += buffer_length
+            if current_sent_index.value >= len(send_buffer) - 1:
+                current_sending_repeat.value += 1
+                if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
+                    current_sent_index.value = 0
+                else:
+                    current_sent_index.value = len(send_buffer)
+
         def get_data_to_send(buffer_length: int):
             try:
                 if sending_is_finished():
                     return b""
 
                 result = send_buffer[current_sent_index.value:current_sent_index.value + buffer_length]
-                current_sent_index.value += buffer_length
-                if current_sent_index.value >= len(send_buffer) - 1:
-                    current_sending_repeat.value += 1
-                    if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
-                        current_sent_index.value = 0
-                    else:
-                        current_sent_index.value = len(send_buffer)
-
+                progress_send_buffer(buffer_length)
                 return result
             except (BrokenPipeError, EOFError):
                 return b""
@@ -173,7 +175,7 @@ class Device(QObject):
         if cls.ASYNCHRONOUS:
             cls.enter_async_send_mode(get_data_to_send)
         else:
-            cls.prepare_sync_send()
+            cls.prepare_sync_send(ctrl_connection)
 
         exit_requested = False
 
@@ -181,7 +183,13 @@ class Device(QObject):
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                cls.send_sync(get_data_to_send(cls.SEND_BUFFER_SIZE))  # SEND_BUFFER_SIZE = LimeSDR.SEND_SAMPLES for LimeSDR
+                est_duration = cls.SEND_BUFFER_SIZE / dev_parameters[cls.Command.SET_SAMPLE_RATE.name]
+                t = time.time()
+                cls.send_sync(send_buffer[current_sent_index.value:current_sent_index.value + cls.SEND_BUFFER_SIZE])
+                duration = time.time() - t
+                if duration < est_duration:
+                    time.sleep(est_duration - duration)
+                progress_send_buffer(cls.SEND_BUFFER_SIZE)
 
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)

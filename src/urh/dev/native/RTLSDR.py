@@ -53,7 +53,7 @@ class RTLSDR(Device):
                          gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
 
         self.success = 0
-        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable() # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable()  # e.g. not in Manjaro Linux / Ubuntu 14.04
 
         self.device_number = device_number
 
@@ -62,14 +62,13 @@ class RTLSDR(Device):
         return hasattr(rtlsdr, "set_tuner_bandwidth")
 
     @property
-    def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, \
-               OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
+    def device_parameters(self):
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
                             (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
-                            (self.Command.SET_RF_GAIN.name, 10*self.gain),
+                            (self.Command.SET_RF_GAIN.name, 10 * self.gain),
                             ("identifier", self.device_number)])
 
     def set_device_bandwidth(self, bandwidth):

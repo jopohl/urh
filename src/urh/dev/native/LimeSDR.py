@@ -101,35 +101,23 @@ class LimeSDR(Device):
 
     @property
     def current_sent_sample(self):
-        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
+        # We can pass the complex samples directly to the LimeSDR Send API
         return self._current_sent_sample.value
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
-        # We can pass samples directly to LimeSDR API and do not need to convert to bytes
+        # We can pass the complex samples directly to the LimeSDR Send API
         self._current_sent_sample.value = value
 
     @property
-    def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, \
-               OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
+    def device_parameters(self):
+        return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
                             # Set Antenna needs to be called before other stuff!!!
                             (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
                             (self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01)])
-
-    @property
-    def send_process_arguments(self):
-        return self.child_ctrl_conn, self.samples_to_send, self._current_sent_sample, self._current_sending_repeat, \
-               self.sending_repeats, OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
-                                                  # Set Antenna needs to be called before other stuff!!!
-                                                  (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
-                                                  (self.Command.SET_FREQUENCY.name, self.frequency),
-                                                  (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                                                  (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                                                  (self.Command.SET_RF_GAIN.name, self.gain * 0.01)])
 
     @staticmethod
     def unpack_complex(buffer, nvalues: int):
@@ -141,6 +129,5 @@ class LimeSDR(Device):
 
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
-        assert complex_samples.dtype == np.complex64
-        # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return complex_samples.view(np.float32).tostring()
+        # We can pass the complex samples directly to the LimeSDR Send API
+        return complex_samples

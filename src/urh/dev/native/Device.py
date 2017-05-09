@@ -206,6 +206,7 @@ class Device(QObject):
         self.__direct_sampling_mode = 0
         self.bandwidth_is_adjustable = True
 
+        self.sending_is_continuous = False
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
@@ -273,8 +274,10 @@ class Device(QObject):
 
     @property
     def send_config(self) -> SendConfig:
+        data_conn = self.child_data_conn if self.sending_is_continuous else None
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
-                          len(self.send_buffer), self.sending_repeats)
+                          len(self.send_buffer), self.sending_repeats,
+                          continuous=self.sending_is_continuous, data_connection=data_conn)
 
     @property
     def receive_process_arguments(self):
@@ -526,9 +529,13 @@ class Device(QObject):
                 self.receive_process.join()
                 self.child_ctrl_conn.close()
                 self.child_data_conn.close()
+        self.parent_ctrl_conn.close()
+        self.parent_data_conn.close()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+        if self.sending_is_continuous:
+            self.parent_data_conn, self.child_data_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
         self.is_transmitting = True
 
@@ -557,6 +564,9 @@ class Device(QObject):
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.child_ctrl_conn.close()
+                self.child_data_conn.close()
+        self.parent_data_conn.close()
+        self.parent_ctrl_conn.close()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):

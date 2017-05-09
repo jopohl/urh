@@ -75,5 +75,4 @@ class HackRF(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
-        # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-        return (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8).tostring()
+        return (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)

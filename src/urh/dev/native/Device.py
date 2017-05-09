@@ -11,6 +11,7 @@ import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh import constants
+from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
 
 
@@ -141,30 +142,15 @@ class Device(QObject):
         ctrl_connection.close()
 
     @classmethod
-    def device_send(cls, ctrl_connection: Connection, send_buffer, current_sent_index, current_sending_repeat,
-                    sending_repeats, dev_parameters: OrderedDict):
-        def sending_is_finished():
-            if sending_repeats == 0:  # 0 = infinity
-                return False
-
-            return current_sending_repeat.value >= sending_repeats and current_sent_index.value >= len(send_buffer)
-
-        def progress_send_buffer(buffer_length: int):
-            current_sent_index.value += buffer_length
-            if current_sent_index.value >= len(send_buffer) - 1:
-                current_sending_repeat.value += 1
-                if current_sending_repeat.value < sending_repeats or sending_repeats == 0:  # 0 = infinity
-                    current_sent_index.value = 0
-                else:
-                    current_sent_index.value = len(send_buffer)
-
+    def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
         def get_data_to_send(buffer_length: int):
             try:
-                if sending_is_finished():
+                if send_config.sending_is_finished():
                     return b""
 
-                result = send_buffer[current_sent_index.value:current_sent_index.value + buffer_length]
-                progress_send_buffer(buffer_length)
+                result = send_config.send_buffer[
+                         send_config.current_sent_index.value:send_config.current_sent_index.value + buffer_length]
+                send_config.progress_send_status(buffer_length)
                 return result
             except (BrokenPipeError, EOFError):
                 return b""
@@ -179,12 +165,13 @@ class Device(QObject):
 
         exit_requested = False
 
-        while not exit_requested and not sending_is_finished():
+        while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                cls.send_sync(send_buffer[current_sent_index.value:current_sent_index.value + cls.SEND_BUFFER_SIZE])
-                progress_send_buffer(cls.SEND_BUFFER_SIZE)
+                cls.send_sync(send_config.send_buffer[
+                              send_config.current_sent_index.value:send_config.current_sent_index.value + cls.SEND_BUFFER_SIZE])
+                send_config.progress_send_status(cls.SEND_BUFFER_SIZE)
 
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
@@ -194,7 +181,7 @@ class Device(QObject):
 
         if exit_requested:
             logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
-        if sending_is_finished():
+        if send_config.sending_is_finished():
             logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
 
         cls.shutdown_device(ctrl_connection)
@@ -261,11 +248,11 @@ class Device(QObject):
 
     @property
     def current_sent_sample(self):
-        return self._current_sent_sample.value // self.BYTES_PER_SAMPLE
+        return self._current_sent_sample.value // 2
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
-        self._current_sent_sample.value = value * self.BYTES_PER_SAMPLE
+        self._current_sent_sample.value = value * 2
 
     @property
     def current_sending_repeat(self):
@@ -276,9 +263,8 @@ class Device(QObject):
         self._current_sending_repeat.value = value
 
     @property
-    def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, \
-               OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
+    def device_parameters(self) -> OrderedDict:
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
@@ -286,14 +272,17 @@ class Device(QObject):
                             (self.Command.SET_BB_GAIN.name, self.baseband_gain)])
 
     @property
+    def send_config(self) -> SendConfig:
+        return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
+                          len(self.send_buffer), self.sending_repeats)
+
+    @property
+    def receive_process_arguments(self):
+        return self.child_data_conn, self.child_ctrl_conn, self.device_parameters
+
+    @property
     def send_process_arguments(self):
-        return self.child_ctrl_conn, self.send_buffer, self._current_sent_sample, self._current_sending_repeat, \
-               self.sending_repeats, OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                                                  (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                                                  (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                                                  (self.Command.SET_RF_GAIN.name, self.gain),
-                                                  (self.Command.SET_IF_GAIN.name, self.if_gain),
-                                                  (self.Command.SET_BB_GAIN.name, self.baseband_gain)])
+        return self.child_ctrl_conn, self.send_config, self.device_parameters
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:

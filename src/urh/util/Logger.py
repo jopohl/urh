@@ -1,7 +1,7 @@
 import logging
 from urh.constants import color
 
-logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s')
+logging.basicConfig(level=logging.WARNING, format='[%(levelname)s::%(filename)s::%(funcName)s] %(message)s')
 
 logging_colors_per_level = {
     logging.WARNING: color.YELLOW,

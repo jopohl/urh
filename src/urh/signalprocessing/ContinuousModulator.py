@@ -33,29 +33,38 @@ class ContinuousModulator(object):
         self.thread = Thread(target=self.modulate_continuously)
         self.thread.daemon = True
 
+        self.data_connection = None
+
     def start(self):
-        self.thread.start()
+        try:
+            self.thread.start()
+        except RuntimeError as e:
+            logger.debug(str(e))
 
     def stop(self):
         self.abort = True
-        self.thread.join()
+        try:
+            self.thread.join()
+        except RuntimeError as e:
+            logger.debug(str(e))
         logger.debug("Stopped continuous modulation")
 
     def modulate_continuously(self):
         pos = 0
-        for i, message in enumerate(self.messages):
-            if self.abort:
-                return
-
-            self.current_message_index = i
-            modulator = self.modulators[message.modulator_indx]  # type: Modulator
-            modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
-            while not self.ring_buffer.will_fit(len(modulator.modulated_samples)):
+        while True:
+            for i, message in enumerate(self.messages):
                 if self.abort:
                     return
 
-                # Wait till there is space in buffer
-                # TODO: Make this more sophisticated -> If buffer is empty and message does not fit, split modulation of message
-                time.sleep(self.WAIT_TIMEOUT)
-            self.ring_buffer.push(modulator.modulated_samples)
-            pos += len(modulator.modulated_samples)
+                self.current_message_index = i
+                modulator = self.modulators[message.modulator_indx]  # type: Modulator
+                modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
+                while not self.ring_buffer.will_fit(len(modulator.modulated_samples)):
+                    if self.abort:
+                        return
+
+                    # Wait till there is space in buffer
+                    # TODO: Make this more sophisticated -> If buffer is empty and message does not fit, split modulation of message
+                    time.sleep(self.WAIT_TIMEOUT)
+                self.ring_buffer.push(modulator.modulated_samples)
+                pos += len(modulator.modulated_samples)

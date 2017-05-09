@@ -158,6 +158,48 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
+    def total_samples_to_send(self):
+        if self.backend == Backends.native:
+            return self.__dev.total_samples_to_send
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @total_samples_to_send.setter
+    def total_samples_to_send(self, value):
+        if self.backend == Backends.native:
+            self.__dev.total_samples_to_send = value
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @property
+    def is_send_continuous(self) -> bool:
+        if self.backend == Backends.native:
+            return self.__dev.sending_is_continuous
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @is_send_continuous.setter
+    def is_send_continuous(self, value: bool):
+        if self.backend == Backends.native:
+            self.__dev.sending_is_continuous = value
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @property
+    def continuous_send_ring_buffer(self):
+        if self.backend == Backends.native:
+            return self.__dev.continuous_send_ring_buffer
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @continuous_send_ring_buffer.setter
+    def continuous_send_ring_buffer(self, value):
+        if self.backend == Backends.native:
+            self.__dev.continuous_send_ring_buffer = value
+        else:
+            raise ValueError("Continuous send mode is only supported for native backend")
+
+    @property
     def gain(self):
         return self.__dev.gain
 

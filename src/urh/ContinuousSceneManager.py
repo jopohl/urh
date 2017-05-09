@@ -1,20 +1,20 @@
 from urh.SceneManager import SceneManager
+from urh.util.RingBuffer import RingBuffer
 
 
 class ContinuousSceneManager(SceneManager):
-    def __init__(self, data_array, parent, window_length=5 * 10**6):
+    def __init__(self, ring_buffer: RingBuffer, parent):
         super().__init__(parent)
-        self.data_array = data_array
+        self.ring_buffer = ring_buffer
         self.__start = 0
         self.__end = 0
-        self.window_length = window_length
 
         self.minimum = -1
         self.maximum = 1
 
     @property
     def plot_data(self):
-        return self.data_array[self.__start:self.end]
+        return self.ring_buffer.data.real
 
     @plot_data.setter
     def plot_data(self, value):
@@ -22,12 +22,8 @@ class ContinuousSceneManager(SceneManager):
 
     @property
     def end(self):
-        return self.__end
+        return self.ring_buffer.size
 
     @end.setter
     def end(self, value):
-        if value > self.window_length:
-            self.__start = value - self.window_length
-        else:
-            self.__start = 0
-        self.__end = value
+        pass

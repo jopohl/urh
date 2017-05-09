@@ -100,16 +100,6 @@ class LimeSDR(Device):
         super().set_device_gain(gain * 0.01)
 
     @property
-    def current_sent_sample(self):
-        # We can pass the complex samples directly to the LimeSDR Send API
-        return self._current_sent_sample.value
-
-    @current_sent_sample.setter
-    def current_sent_sample(self, value: int):
-        # We can pass the complex samples directly to the LimeSDR Send API
-        self._current_sent_sample.value = value
-
-    @property
     def device_parameters(self):
         return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
                             # Set Antenna needs to be called before other stuff!!!
@@ -130,4 +120,4 @@ class LimeSDR(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the LimeSDR Send API
-        return complex_samples
+        return complex_samples.view(np.float32)

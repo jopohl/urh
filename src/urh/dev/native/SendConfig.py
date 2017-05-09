@@ -3,7 +3,8 @@ from multiprocessing.connection import Connection
 
 class SendConfig(object):
     def __init__(self,  send_buffer, current_sent_index: Value, current_sending_repeat: Value,
-                 total_samples: int, sending_repeats: int, continuous: bool = False, data_connection: Connection = None):
+                 total_samples: int, sending_repeats: int, continuous: bool = False, data_connection: Connection = None,
+                 pack_complex_method: callable = None):
         self.send_buffer = send_buffer
         self.current_sent_index = current_sent_index
         self.current_sending_repeat = current_sending_repeat
@@ -11,6 +12,7 @@ class SendConfig(object):
         self.sending_repeats = sending_repeats
         self.continuous = continuous
         self.data_connection = data_connection
+        self.pack_complex_method = pack_complex_method
 
         if self.continuous:
             assert self.data_connection is not None
@@ -21,11 +23,11 @@ class SendConfig(object):
                 return b""
 
             if self.continuous:
-                result = self.data_connection.recv()
+                result = self.pack_complex_method(self.data_connection.recv())
             else:
                 result = self.send_buffer[
                          self.current_sent_index.value:self.current_sent_index.value + buffer_length]
-            self.progress_send_status(buffer_length)
+            self.progress_send_status(len(result))
             return result
         except (BrokenPipeError, EOFError):
             return b""

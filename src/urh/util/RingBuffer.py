@@ -19,6 +19,10 @@ class RingBuffer(object):
     def space_left(self):
         return self.size - self.current_index
 
+    @property
+    def data(self):
+        return self.__data
+
     def __getitem__(self, index):
         return self.__data[index]
 

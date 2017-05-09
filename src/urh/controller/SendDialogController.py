@@ -25,27 +25,28 @@ class SendDialogController(SendRecvDialogController):
         self.setWindowTitle("Send signal")
         self.ui.btnStart.setToolTip("Send data")
         self.ui.btnStop.setToolTip("Stop sending")
-        self.ui.progressBar.setMaximum(len(modulated_data))
-
         self.device_is_sending = False
 
-        samp_rate = self.ui.spinBoxSampleRate.value()
-        signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
-        self.scene_manager = SignalSceneManager(signal, parent=self)
-        self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
-                                                               QPen(QColor(Qt.transparent), Qt.FlatCap),
-                                                               QBrush(constants.SEND_INDICATOR_COLOR))
-        self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
-        self.scene_manager.init_scene()
-        self.graphics_view.set_signal(signal)
-        self.graphics_view.sample_rate = samp_rate
+        if modulated_data is not None:
+            # modulated_data is none in continuous send mode
+            self.ui.progressBar.setMaximum(len(modulated_data))
+            samp_rate = self.ui.spinBoxSampleRate.value()
+            signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
+            self.scene_manager = SignalSceneManager(signal, parent=self)
+            self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
+                                                                   QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                   QBrush(constants.SEND_INDICATOR_COLOR))
+            self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
+            self.scene_manager.init_scene()
+            self.graphics_view.set_signal(signal)
+            self.graphics_view.sample_rate = samp_rate
 
-        self.init_device()
+            self.init_device()
 
-        self.graphics_view.setScene(self.scene_manager.scene)
-        self.graphics_view.scene_manager = self.scene_manager
+            self.graphics_view.setScene(self.scene_manager.scene)
+            self.graphics_view.scene_manager = self.scene_manager
 
-        self.create_connects()
+            self.create_connects()
 
     def create_connects(self):
         super().create_connects()
@@ -53,13 +54,13 @@ class SendDialogController(SendRecvDialogController):
         self.graphics_view.save_as_clicked.connect(self.on_graphics_view_save_as_clicked)
         self.scene_manager.signal.data_edited.connect(self.on_signal_data_edited)
 
-    def __update_send_indicator(self, width: int):
+    def _update_send_indicator(self, width: int):
         y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
         self.send_indicator.setRect(0, y - h, width, 2 * h + abs(y))
 
     def update_view(self):
         if super().update_view():
-            self.__update_send_indicator(self.device.current_index)
+            self._update_send_indicator(self.device.current_index)
             if not self.device.sending_finished:
                 self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
             else:
@@ -125,5 +126,5 @@ class SendDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_clear_clicked(self):
-        self.__update_send_indicator(0)
+        self._update_send_indicator(0)
         self.reset()

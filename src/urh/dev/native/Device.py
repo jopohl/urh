@@ -143,23 +143,11 @@ class Device(QObject):
 
     @classmethod
     def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
-        def get_data_to_send(buffer_length: int):
-            try:
-                if send_config.sending_is_finished():
-                    return b""
-
-                result = send_config.send_buffer[
-                         send_config.current_sent_index.value:send_config.current_sent_index.value + buffer_length]
-                send_config.progress_send_status(buffer_length)
-                return result
-            except (BrokenPipeError, EOFError):
-                return b""
-
         if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
             return False
 
         if cls.ASYNCHRONOUS:
-            cls.enter_async_send_mode(get_data_to_send)
+            cls.enter_async_send_mode(send_config.get_data_to_send)
         else:
             cls.prepare_sync_send(ctrl_connection)
 
@@ -207,6 +195,8 @@ class Device(QObject):
         self.bandwidth_is_adjustable = True
 
         self.sending_is_continuous = False
+        self.continuous_send_ring_buffer = None
+        self.total_samples_to_send = None # None = get automatically. This value needs to be known in continuous send mode
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
@@ -247,6 +237,11 @@ class Device(QObject):
         self.read_dev_msg_thread.daemon = True
         self.read_dev_msg_thread.start()
 
+    def _start_continuous_send_thread(self):
+        self.continuous_send_thread = threading.Thread(target=self.read_continuous_send_ring_buffer)
+        self.continuous_send_thread.daemon = True
+        self.continuous_send_thread.start()
+
     @property
     def current_sent_sample(self):
         return self._current_sent_sample.value // 2
@@ -275,9 +270,10 @@ class Device(QObject):
     @property
     def send_config(self) -> SendConfig:
         data_conn = self.child_data_conn if self.sending_is_continuous else None
+        total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
-                          len(self.send_buffer), self.sending_repeats,
-                          continuous=self.sending_is_continuous, data_connection=data_conn)
+                          total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
+                          data_connection=data_conn, pack_complex_method=self.pack_complex)
 
     @property
     def receive_process_arguments(self):
@@ -533,13 +529,16 @@ class Device(QObject):
         self.parent_data_conn.close()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
+        self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         if self.sending_is_continuous:
             self.parent_data_conn, self.child_data_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
-        self.is_transmitting = True
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
+
+        if self.sending_is_continuous:
+            self._start_continuous_send_thread()
 
         self.transmit_process = Process(target=self.send_process_function,
                                         args=self.send_process_arguments)
@@ -627,6 +626,15 @@ class Device(QObject):
             time.sleep(0.01)
 
         logger.debug("Exiting read_receive_queue thread.")
+
+    def read_continuous_send_ring_buffer(self):
+        while self.is_transmitting:
+            try:
+                self.parent_data_conn.send(self.continuous_send_ring_buffer.pop(32768))
+            except ConnectionResetError:
+                break
+            time.sleep(0.01)
+        logger.debug("Exiting read_continuous_send_ring_buffer thread.")
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:

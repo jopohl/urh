@@ -348,15 +348,15 @@ class GeneratorTabController(QWidget):
     def generate_file(self):
         try:
             # TODO: Handle memory error here
-            buffer = self.prepare_modulation_buffer()
+            total_samples = self.total_modulated_samples
+            buffer = self.prepare_modulation_buffer(total_samples)
             modulated_samples = self.modulate_data(buffer)
             FileOperator.save_data_dialog("", modulated_samples, parent=self)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    def prepare_modulation_buffer(self, show_error=True) -> np.ndarray:
-        total_samples = self.total_modulated_samples
+    def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> np.ndarray:
         memory_size_for_buffer = (total_samples*8) / (1024**2)
         logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer))
         try:
@@ -517,7 +517,8 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_btn_send_clicked(self):
         try:
-            buffer = self.prepare_modulation_buffer()
+            total_samples = self.total_modulated_samples
+            buffer = self.prepare_modulation_buffer(total_samples)
             if buffer is not None:
                 modulated_data = self.modulate_data(buffer)
             else:
@@ -529,7 +530,7 @@ class GeneratorTabController(QWidget):
                     dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
                 else:
                     dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,
-                                                            self.modulators, parent=self)
+                                                            self.modulators, total_samples, parent=self)
             except OSError as e:
                 logger.error(repr(e))
                 return

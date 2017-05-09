@@ -50,6 +50,7 @@ class TestSendRecvDialog(QtTestCase):
         modulators = [Modulator("Test")]
 
         continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager, messages, modulators,
+                                                                self.form.generator_tab_controller.total_modulated_samples,
                                                                 parent=self.form, testing_mode=True)
         if self.SHOW:
             continuous_send_dialog.show()

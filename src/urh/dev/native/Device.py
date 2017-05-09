@@ -516,8 +516,8 @@ class Device(QObject):
         self.is_receiving = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
-        except BrokenPipeError:
-            pass
+        except (BrokenPipeError, OSError) as e:
+            logger.debug("Closing parent control connection: " + str(e))
 
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -552,8 +552,8 @@ class Device(QObject):
         self.is_transmitting = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
-        except BrokenPipeError:
-            pass
+        except (BrokenPipeError, OSError) as e:
+            logger.debug("Closing parent control connection: " + str(e))
 
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 

@@ -161,6 +161,7 @@ class SimulatorScene(QGraphicsScene):
             scene_item = ProgramActionItem(item)
         elif isinstance(item, SimulatorMessage):
             scene_item = MessageItem(scene_mode=self.mode, model_item=item)
+            scene_item.refresh_unlabeled_range_marker()
         elif isinstance(item, SimulatorProtocolLabel):
             scene_item = LabelItem(scene_mode=self.mode, model_item=item)
             scene_message = self.get_parent_scene_item(scene_item)

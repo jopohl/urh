@@ -133,6 +133,7 @@ class SimulatorScene(QGraphicsScene):
     def on_item_moved(self, item: SimulatorItem):
         scene_item = self.model_to_scene(item)
         self.insert_item(scene_item)
+        self.update_view()
 
     def on_item_added(self, item: SimulatorItem, refresh=True):
         if isinstance(item, SimulatorRule):
@@ -145,25 +146,21 @@ class SimulatorScene(QGraphicsScene):
             scene_item = ProgramActionItem(item)
         elif isinstance(item, SimulatorMessage):
             scene_item = MessageItem(item)
-            refresh = False
         elif isinstance(item, SimulatorProtocolLabel):
             scene_item = LabelItem(item)
-
-            if refresh:
-                scene_message = self.get_parent_scene_item(scene_item)
-                scene_message.refresh_unlabeled_range_marker()
+            scene_message = self.get_parent_scene_item(scene_item)
+            scene_message.refresh_unlabeled_range_marker()
         else:
             print("WHOOPS ... Unknown item type!")
             return
 
-        self.insert_item(scene_item, refresh)
+        self.insert_item(scene_item)
 
-        # add labels to scene ...
-        if isinstance(item, SimulatorMessage):
-            for child in item.children:
-                self.on_item_added(child, refresh=False)
+        # add children to scene ...
+        for child in item.children:
+            self.on_item_added(child, refresh=False)
 
-            scene_item.refresh_unlabeled_range_marker()
+        if refresh:
             self.update_view()
 
     def model_to_scene(self, model_item: SimulatorItem):
@@ -173,7 +170,7 @@ class SimulatorScene(QGraphicsScene):
 
         return self.items_dict[model_item]
         
-    def insert_item(self, item: GraphicsItem, refresh=True):
+    def insert_item(self, item: GraphicsItem):
         parent_scene_item = self.get_parent_scene_item(item)
         item.setParentItem(parent_scene_item)
 
@@ -181,9 +178,6 @@ class SimulatorScene(QGraphicsScene):
 
         if item not in self.items():
             self.addItem(item)
-
-        if refresh:
-            self.update_view()
 
     def get_parent_scene_item(self, item: GraphicsItem):
         return self.model_to_scene(item.model_item.parent())

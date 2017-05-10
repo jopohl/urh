@@ -1,5 +1,5 @@
 from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.UnlabeledRangeItem import UnlabeledRangeItem
 
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsLineItem
@@ -9,8 +9,14 @@ from PyQt5.QtGui import QPen, QPolygonF
 import math
 
 class MessageItem(GraphicsItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
-        super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True, parent=parent)
+    def __init__(self, scene_mode: int, model_item: SimulatorMessage, parent=None):
+        assert isinstance(model_item, SimulatorMessage)
+
+        if scene_mode == 0:
+            super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True,
+                                accept_drops=True, parent=parent)
+        else:
+            super().__init__(model_item=model_item, parent=parent)
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)

@@ -96,17 +96,10 @@
     </widget>
    </item>
    <item row="1" column="1" rowspan="7">
-    <widget class="SimulatorGraphicsView" name="graphicsView"/>
+    <widget class="QGraphicsView" name="gvSimulator"/>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SimulatorGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>urh.ui.views.SimulatorGraphicsView.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

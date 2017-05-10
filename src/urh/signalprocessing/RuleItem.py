@@ -3,13 +3,14 @@ from PyQt5.QtCore import Qt, QRectF, QLineF
 from PyQt5.QtGui import QFontDatabase, QFont, QPen
 
 from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import ConditionType
+from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
 from urh import constants
 
 class RuleItem(GraphicsItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
+    def __init__(self, model_item: SimulatorRule, parent=None):
+        assert isinstance(model_item, SimulatorRule)
+
         super().__init__(model_item=model_item, parent=parent)
 
         self.bounding_rect = QRectF()
@@ -40,8 +41,14 @@ class RuleItem(GraphicsItem):
         pass
 
 class RuleConditionItem(GraphicsItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
-        super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, accept_drops=True, parent=parent)
+    def __init__(self, scene_mode: int, model_item: SimulatorRuleCondition, parent=None):
+        assert isinstance(model_item, SimulatorRuleCondition)
+
+        if scene_mode == 0:
+            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, accept_drops=True, parent=parent)
+        else:
+            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, parent=parent)
+
         self.text = QGraphicsTextItem(self)
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(10)

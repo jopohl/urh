@@ -14,7 +14,7 @@ class SimulatorRule(SimulatorItem):
         super().set_parent(value)
 
     def has_else_condition(self):
-        return len([child for child in self.children if child.type is ConditionType.ELSE]) == 1
+        return any(child.type is ConditionType.ELSE for child in self.children)
 
 class ConditionType(Enum):
     IF = "if ..."

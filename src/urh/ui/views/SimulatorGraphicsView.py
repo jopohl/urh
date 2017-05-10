@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstra
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from urh.ui.SimulatorScene import ParticipantItem, GotoActionItem, ProgramActionItem
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.RuleItem import RuleConditionItem
 from urh.signalprocessing.GraphicsItem import GraphicsItem
@@ -20,7 +19,6 @@ class SimulatorGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.proto_analyzer = None
-        self.sim_proto_manager = None
 
         self.delete_action = QAction(self.tr("Delete selected items"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)

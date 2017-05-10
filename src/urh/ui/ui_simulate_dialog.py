@@ -48,9 +48,9 @@ class Ui_SimulateDialog(object):
         self.pushButton.setIcon(icon)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 8, 0, 1, 2)
-        self.graphicsView = SimulatorGraphicsView(SimulateDialog)
-        self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout.addWidget(self.graphicsView, 1, 1, 7, 1)
+        self.gvSimulator = QtWidgets.QGraphicsView(SimulateDialog)
+        self.gvSimulator.setObjectName("gvSimulator")
+        self.gridLayout.addWidget(self.gvSimulator, 1, 1, 7, 1)
 
         self.retranslateUi(SimulateDialog)
         QtCore.QMetaObject.connectSlotsByName(SimulateDialog)
@@ -69,4 +69,3 @@ class Ui_SimulateDialog(object):
         self.label_5.setText(_translate("SimulateDialog", "Log settings:"))
         self.pushButton.setText(_translate("SimulateDialog", "Simulate"))
 
-from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView

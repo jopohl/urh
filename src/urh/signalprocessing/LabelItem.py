@@ -1,5 +1,4 @@
 from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
@@ -8,10 +7,13 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
-    def __init__(self, model_item: SimulatorProtocolLabel, parent=None):
-        super().__init__(model_item, parent=parent)
+    def __init__(self, scene_mode: int, model_item: SimulatorProtocolLabel, parent=None):
         assert isinstance(model_item, SimulatorProtocolLabel)
-        #assert isinstance(parent, MessageItem)
+
+        if scene_mode == 0:
+            super().__init__(model_item=model_item, parent=parent)
+        else:
+            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, parent=parent)
 
         self.name = QGraphicsTextItem(self)
 

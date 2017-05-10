@@ -67,12 +67,11 @@ class SimulatorTabController(QWidget):
         self.simulator_message_table_model = SimulatorMessageTableModel(self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
-        self.simulator_scene = SimulatorScene(controller=self)
+        self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
-        self.ui.gvSimulator.sim_proto_manager = self.sim_proto_manager
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()
@@ -290,7 +289,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        s = SimulateDialogController(project_manager=self.project_manager, scene=self.simulator_scene, parent=self)
+        s = SimulateDialogController(project_manager=self.project_manager, sim_proto_manager=self.sim_proto_manager, parent=self)
         s.show()
 
     @pyqtSlot()

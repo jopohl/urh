@@ -1,10 +1,13 @@
 from multiprocessing import Value
 from multiprocessing.connection import Connection
 
+from urh.util.RingBuffer import RingBuffer
+
+
 class SendConfig(object):
     def __init__(self,  send_buffer, current_sent_index: Value, current_sending_repeat: Value,
                  total_samples: int, sending_repeats: int, continuous: bool = False, data_connection: Connection = None,
-                 pack_complex_method: callable = None):
+                 pack_complex_method: callable = None, continuous_send_ring_buffer: RingBuffer = None):
         self.send_buffer = send_buffer
         self.current_sent_index = current_sent_index
         self.current_sending_repeat = current_sending_repeat
@@ -13,6 +16,7 @@ class SendConfig(object):
         self.continuous = continuous
         self.data_connection = data_connection
         self.pack_complex_method = pack_complex_method
+        self.continuous_send_ring_buffer = continuous_send_ring_buffer
 
         if self.continuous:
             assert self.data_connection is not None
@@ -23,7 +27,7 @@ class SendConfig(object):
                 return b""
 
             if self.continuous:
-                result = self.pack_complex_method(self.data_connection.recv())
+                result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
             else:
                 result = self.send_buffer[
                          self.current_sent_index.value:self.current_sent_index.value + buffer_length]

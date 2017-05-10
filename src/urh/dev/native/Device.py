@@ -235,11 +235,6 @@ class Device(QObject):
         self.read_dev_msg_thread.daemon = True
         self.read_dev_msg_thread.start()
 
-    def _start_continuous_send_thread(self):
-        self.continuous_send_thread = threading.Thread(target=self.read_continuous_send_ring_buffer)
-        self.continuous_send_thread.daemon = True
-        self.continuous_send_thread.start()
-
     @property
     def current_sent_sample(self):
         return self._current_sent_sample.value // 2
@@ -271,7 +266,8 @@ class Device(QObject):
         total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          data_connection=data_conn, pack_complex_method=self.pack_complex)
+                          data_connection=data_conn, pack_complex_method=self.pack_complex,
+                          continuous_send_ring_buffer=self.continuous_send_ring_buffer)
 
     @property
     def receive_process_arguments(self):
@@ -535,9 +531,6 @@ class Device(QObject):
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
 
-        if self.sending_is_continuous:
-            self._start_continuous_send_thread()
-
         self.transmit_process = Process(target=self.send_process_function,
                                         args=self.send_process_arguments)
 
@@ -625,15 +618,6 @@ class Device(QObject):
             time.sleep(0.01)
 
         logger.debug("Exiting read_receive_queue thread.")
-
-    def read_continuous_send_ring_buffer(self):
-        while self.is_transmitting:
-            try:
-                self.parent_data_conn.send(self.continuous_send_ring_buffer.pop(32768))
-            except ConnectionResetError:
-                break
-            time.sleep(0.01)
-        logger.debug("Exiting read_continuous_send_ring_buffer thread.")
 
     def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:

@@ -1,6 +1,8 @@
 import time
 from threading import Thread
 
+from multiprocessing import Process
+
 from urh.signalprocessing.Modulator import Modulator
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
@@ -30,23 +32,29 @@ class ContinuousModulator(object):
         self.current_message_index = 0
 
         self.abort = False
-        self.thread = Thread(target=self.modulate_continuously)
-        self.thread.daemon = True
+        self.process = Process(target=self.modulate_continuously)
+        self.process.daemon = True
 
         self.data_connection = None
 
     def start(self):
         try:
-            self.thread.start()
+            self.process.start()
         except RuntimeError as e:
             logger.debug(str(e))
 
     def stop(self):
         self.abort = True
+
         try:
-            self.thread.join()
+            self.process.join(0.1)
         except RuntimeError as e:
             logger.debug(str(e))
+
+        if self.process.is_alive():
+            self.process.terminate()
+            self.process.join()
+
         logger.debug("Stopped continuous modulation")
 
     def modulate_continuously(self):

@@ -526,7 +526,7 @@ class GeneratorTabController(QWidget):
                 modulated_data = None
 
             try:
-                if modulated_data is not None:
+                if modulated_data is not None and False:
                     dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
                 else:
                     dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,

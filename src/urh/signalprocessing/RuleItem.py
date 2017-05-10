@@ -21,10 +21,6 @@ class RuleItem(GraphicsItem):
         for child in self.get_scene_children():
             child.update_numbering()
 
-    def setSelected(self, selected):
-        for child in self.get_scene_children():
-            child.setSelected(selected)
-
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos - 20, y_pos)
 

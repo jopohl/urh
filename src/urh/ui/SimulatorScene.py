@@ -206,7 +206,7 @@ class SimulatorScene(QGraphicsScene):
     def select_all_items(self):
         for item in self.sim_proto_manager.rootItem.children:
             scene_item = self.model_to_scene(item)
-            scene_item.setSelected(True)
+            scene_item.select_all()
 
     def update_numbering(self):
         for item in self.sim_proto_manager.rootItem.children:

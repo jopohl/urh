@@ -64,6 +64,12 @@ class GraphicsItem(QGraphicsObject):
     def is_movable(self):
         return self.flags() & QGraphicsItem.ItemIsMovable
 
+    def select_all(self):
+        self.setSelected(True)
+
+        for child in self.get_scene_children():
+            child.select_all()
+
     def next(self):
         if not self.scene():
             return None

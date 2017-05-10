@@ -360,8 +360,8 @@ class GeneratorTabController(QWidget):
             self.unsetCursor()
 
     def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> np.ndarray:
-        memory_size_for_buffer = (total_samples*8) / (1024**2)
-        logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer))
+        memory_size_for_buffer = total_samples*8
+        logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024**2) ))
         try:
             return np.zeros(total_samples, dtype=np.complex64)
         except MemoryError:
@@ -529,7 +529,7 @@ class GeneratorTabController(QWidget):
                 modulated_data = None
 
             try:
-                if modulated_data is not None and False:
+                if modulated_data is not None:
                     dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
                 else:
                     dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,

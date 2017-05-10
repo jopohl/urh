@@ -16,13 +16,13 @@ class TestContinuousModulator(unittest.TestCase):
         modulator = Modulator("Test")
         continuous_modulator = ContinuousModulator(self.__create_messages(), [modulator])
 
-        self.assertEqual(continuous_modulator.current_message_index, 0)
+        self.assertEqual(continuous_modulator.current_message_index.value, 0)
         self.assertTrue(continuous_modulator.ring_buffer.is_empty)
         continuous_modulator.start()
         self.assertTrue(continuous_modulator.process.is_alive())
         time.sleep(0.5)
         self.assertFalse(continuous_modulator.ring_buffer.is_empty)
-        self.assertGreater(continuous_modulator.current_message_index, 0)
+        self.assertGreater(continuous_modulator.current_message_index.value, 0)
         continuous_modulator.stop()
         self.assertFalse(continuous_modulator.process.is_alive())
 

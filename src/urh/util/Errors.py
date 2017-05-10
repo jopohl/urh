@@ -1,6 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
+from urh.util.Formatter import Formatter
+
 
 class Errors:
     @staticmethod
@@ -82,12 +84,13 @@ class Errors:
                                                                 "using the button below the generator table.")
 
     @staticmethod
-    def not_enough_ram_for_sending_precache(memory_size_mb):
+    def not_enough_ram_for_sending_precache(memory_size_bytes):
         w = QWidget()
         QMessageBox.information(w, w.tr("Not enough RAM for precaching"),
-                                w.tr("Precaching all your modulated data would take {0:.2f}MB of memory. "
+                                w.tr("Precaching all your modulated data would take <b>{0}B</b> of memory.<br>"
                                      "This does not fit into your RAM, "
-                                     "so sending will be done in <b>continuous mode</b>.<br>"
+                                     "so sending will be done in <b>continuous mode</b>.<br><br>"
                                      "This means, modulation will be performed live during sending.<br><br>"
                                      "If you experience problems, "
-                                     "consider sending less messages or upgrade your RAM.".format(memory_size_mb)))
+                                     "consider sending less messages or upgrade your RAM."
+                                     .format(Formatter.big_value_with_suffix(memory_size_bytes))))

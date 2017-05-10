@@ -123,6 +123,10 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(dialog.path, test_path)
         dialog.ui.btnOK.click()
 
+        self.form.ui.tabWidget.setCurrentWidget(self.form.ui.tab_protocol)
+        self.form.compare_frame_controller.ui.tabWidget.setCurrentWidget(self.form.compare_frame_controller.ui.tab_participants)
+        self.assertGreater(self.form.compare_frame_controller.participant_list_model.rowCount(), 0)
+
         self.assertTrue(os.path.isdir(test_path))
 
         self.form.project_manager.from_dialog(dialog)
@@ -134,3 +138,4 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(dialog.ui.spinBoxGain.value(), gain)
         self.assertEqual(dialog.ui.txtEdDescription.toPlainText(), descr)
         self.assertFalse(dialog.ui.lineEdit_Path.isEnabled())
+

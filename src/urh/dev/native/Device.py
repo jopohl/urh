@@ -157,9 +157,7 @@ class Device(QObject):
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                cls.send_sync(send_config.send_buffer[
-                              send_config.current_sent_index.value:send_config.current_sent_index.value + cls.SEND_BUFFER_SIZE])
-                send_config.progress_send_status(cls.SEND_BUFFER_SIZE)
+                cls.send_sync(send_config.get_data_to_send(cls.SEND_BUFFER_SIZE))
 
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)

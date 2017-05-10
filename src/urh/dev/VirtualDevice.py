@@ -27,6 +27,9 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
+    native_only_msg = "Continuous send mode is only supported for native backend. " \
+                      "You can change the configured device backend in options."
+
     def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
                  gain=None, if_gain=None, baseband_gain=None, samples_to_send=None,
                  device_ip=None, sending_repeats=1, parent=None, is_ringbuffer=False, raw_mode=True, portnumber=1234):
@@ -64,7 +67,7 @@ class VirtualDevice(QObject):
                 self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                           parent=parent)
                 self.__dev.data = samples_to_send
-                self.__dev.samples_per_transmission = len(samples_to_send)
+                self.__dev.samples_per_transmission = len(samples_to_send) if samples_to_send is not None else 2**15
             elif mode == Mode.spectrum:
                 from urh.dev.gr.SpectrumThread import SpectrumThread
                 self.__dev = SpectrumThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
@@ -162,42 +165,42 @@ class VirtualDevice(QObject):
         if self.backend == Backends.native:
             return self.__dev.total_samples_to_send
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError()
 
     @total_samples_to_send.setter
     def total_samples_to_send(self, value):
         if self.backend == Backends.native:
             self.__dev.total_samples_to_send = value
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError(self.native_only_msg)
 
     @property
     def is_send_continuous(self) -> bool:
         if self.backend == Backends.native:
             return self.__dev.sending_is_continuous
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError(self.native_only_msg)
 
     @is_send_continuous.setter
     def is_send_continuous(self, value: bool):
         if self.backend == Backends.native:
             self.__dev.sending_is_continuous = value
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError(self.native_only_msg)
 
     @property
     def continuous_send_ring_buffer(self):
         if self.backend == Backends.native:
             return self.__dev.continuous_send_ring_buffer
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError(self.native_only_msg)
 
     @continuous_send_ring_buffer.setter
     def continuous_send_ring_buffer(self, value):
         if self.backend == Backends.native:
             self.__dev.continuous_send_ring_buffer = value
         else:
-            raise ValueError("Continuous send mode is only supported for native backend")
+            raise ValueError(self.native_only_msg)
 
     @property
     def gain(self):

@@ -40,7 +40,7 @@ class ContinuousSendDialogController(SendDialogController):
 
     def update_view(self):
         super().update_view()
-        self.ui.progressBar.setValue(self.continuous_modulator.current_message_index.value)
+        self.ui.progressBar.setValue(self.continuous_modulator.current_message_index.value+1)
         self.scene_manager.init_scene()
         self.scene_manager.show_full_scene()
         self.graphics_view.update()
@@ -51,11 +51,13 @@ class ContinuousSendDialogController(SendDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
+        self.graphics_view.show()
         super().on_device_started()
 
     @pyqtSlot()
     def on_device_stopped(self):
         super().on_device_stopped()
+        self.graphics_view.hide()
         self.continuous_modulator.stop(clear_buffer=False)
 
     @pyqtSlot()
@@ -69,6 +71,10 @@ class ContinuousSendDialogController(SendDialogController):
         if not self.device_is_sending:
             self.continuous_modulator.start()
         super().on_start_clicked()
+
+    def on_selected_device_changed(self):
+        self.ui.txtEditErrors.clear()
+        super().on_selected_device_changed()
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()

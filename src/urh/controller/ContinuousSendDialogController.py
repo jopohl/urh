@@ -1,4 +1,5 @@
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QCloseEvent
 
 from urh.ContinuousSceneManager import ContinuousSceneManager
 from urh.controller.SendDialogController import SendDialogController
@@ -17,7 +18,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_continuous_send)
 
         self.total_samples = total_samples
-        self.ui.progressBar.setMaximum(total_samples)
+        self.ui.progressBar.setMaximum(len(messages))
 
         self.continuous_modulator = ContinuousModulator(messages, modulators)
         self.scene_manager = ContinuousSceneManager(ring_buffer=self.continuous_modulator.ring_buffer, parent=self)
@@ -25,6 +26,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.graphics_view.setScene(self.scene_manager.scene)
 
         self.setWindowTitle("Send data (continuous mode)")
+        self.ui.lSamplesSentText.setText("Progress:")
 
         self.init_device()
 
@@ -38,19 +40,35 @@ class ContinuousSendDialogController(SendDialogController):
 
     def update_view(self):
         super().update_view()
+        self.ui.progressBar.setValue(self.continuous_modulator.current_message_index.value)
         self.scene_manager.init_scene()
         self.scene_manager.show_full_scene()
         self.graphics_view.update()
 
+    def closeEvent(self, event: QCloseEvent):
+        self.continuous_modulator.stop()
+        super().closeEvent(event)
+
     @pyqtSlot()
     def on_device_started(self):
-        self.continuous_modulator.start()
         super().on_device_started()
 
     @pyqtSlot()
     def on_device_stopped(self):
-        self.continuous_modulator.stop()
         super().on_device_stopped()
+        self.continuous_modulator.stop(clear_buffer=False)
+
+    @pyqtSlot()
+    def on_stop_clicked(self):
+        super().on_stop_clicked()
+        self.continuous_modulator.stop()
+        self.continuous_modulator.current_message_index.value = 0
+
+    @pyqtSlot()
+    def on_start_clicked(self):
+        if not self.device_is_sending:
+            self.continuous_modulator.start()
+        super().on_start_clicked()
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()

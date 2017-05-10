@@ -47,6 +47,9 @@ class RingBuffer(object):
             if self.current_index > self.size:
                 self.current_index = self.size
 
+    def clear(self):
+        self.current_index = 0
+
     def will_fit(self, number_values: int) -> bool:
         return number_values <= self.space_left
 

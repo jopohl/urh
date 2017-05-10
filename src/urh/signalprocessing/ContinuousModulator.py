@@ -1,7 +1,6 @@
 import time
-from threading import Thread
 
-from multiprocessing import Process
+from multiprocessing import Process, Value
 
 from urh.signalprocessing.Modulator import Modulator
 from urh.util.Logger import logger
@@ -29,22 +28,29 @@ class ContinuousModulator(object):
 
         self.ring_buffer = RingBuffer(int(self.BUFFER_SIZE_MB*10**6)//8)
 
-        self.current_message_index = 0
+        self.current_message_index = Value("L", 0)
 
-        self.abort = False
+        self.abort = Value("i", 0)
         self.process = Process(target=self.modulate_continuously)
         self.process.daemon = True
 
         self.data_connection = None
 
     def start(self):
+        self.abort.value = 0
         try:
+            self.process = Process(target=self.modulate_continuously)
+            self.process.daemon = True
             self.process.start()
         except RuntimeError as e:
             logger.debug(str(e))
 
-    def stop(self):
-        self.abort = True
+    def stop(self, clear_buffer=True):
+        self.abort.value = 1
+        if clear_buffer:
+            self.ring_buffer.clear()
+        if not self.process.is_alive():
+            return
 
         try:
             self.process.join(0.1)
@@ -60,19 +66,20 @@ class ContinuousModulator(object):
     def modulate_continuously(self):
         pos = 0
         while True:
-            for i, message in enumerate(self.messages):
-                if self.abort:
+            start = self.current_message_index.value
+            for i in range(start, len(self.messages)):
+                if self.abort.value:
                     return
 
-                self.current_message_index = i
+                message = self.messages[i]
+                self.current_message_index.value = i
                 modulator = self.modulators[message.modulator_indx]  # type: Modulator
                 modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
                 while not self.ring_buffer.will_fit(len(modulator.modulated_samples)):
-                    if self.abort:
+                    if self.abort.value:
                         return
 
                     # Wait till there is space in buffer
-                    # TODO: Make this more sophisticated -> If buffer is empty and message does not fit, split modulation of message
                     time.sleep(self.WAIT_TIMEOUT)
                 self.ring_buffer.push(modulator.modulated_samples)
                 pos += len(modulator.modulated_samples)

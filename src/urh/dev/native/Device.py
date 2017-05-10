@@ -584,6 +584,7 @@ class Device(QObject):
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
+                time.sleep(0.1)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False
@@ -630,7 +631,7 @@ class Device(QObject):
     def read_continuous_send_ring_buffer(self):
         while self.is_transmitting:
             try:
-                self.parent_data_conn.send(self.continuous_send_ring_buffer.pop(2*32768))
+                self.parent_data_conn.send(self.continuous_send_ring_buffer.pop(32768))
             except ConnectionResetError:
                 break
             time.sleep(0.01)

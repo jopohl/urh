@@ -347,9 +347,12 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def generate_file(self):
         try:
-            # TODO: Handle memory error here
             total_samples = self.total_modulated_samples
-            buffer = self.prepare_modulation_buffer(total_samples)
+            buffer = self.prepare_modulation_buffer(total_samples, show_error=False)
+            if buffer is None:
+                Errors.generic_error(self.tr("File too big"), self.tr("This file would get too big to save."))
+                self.unsetCursor()
+                return
             modulated_samples = self.modulate_data(buffer)
             FileOperator.save_data_dialog("", modulated_samples, parent=self)
         except Exception as e:
@@ -526,7 +529,7 @@ class GeneratorTabController(QWidget):
                 modulated_data = None
 
             try:
-                if modulated_data is not None:
+                if modulated_data is not None and False:
                     dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
                 else:
                     dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,

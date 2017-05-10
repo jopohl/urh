@@ -1,11 +1,23 @@
 import numpy as np
+from multiprocessing import Value, Array
 
 
 class RingBuffer(object):
-    def __init__(self, size: int, dtype=np.complex64):
-        self.__data = np.zeros(size, dtype=dtype)
+    """
+    A RingBuffer containing complex values.
+    """
+    def __init__(self, size: int):
+        self.__data = Array("f", 2*size)
         self.size = size
-        self.current_index = 0
+        self.__current_index = Value("L", 0)
+
+    @property
+    def current_index(self):
+        return self.__current_index.value
+
+    @current_index.setter
+    def current_index(self, value):
+        self.__current_index.value = value
 
     @property
     def is_empty(self) -> bool:
@@ -21,13 +33,13 @@ class RingBuffer(object):
 
     @property
     def data(self):
-        return self.__data
+        return np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
 
     def __getitem__(self, index):
-        return self.__data[index]
+        return self.data[index]
 
     def __repr__(self):
-        return "RingBuffer " + str(self.__data)
+        return "RingBuffer " + str(self.data)
 
     def __increase_current_index_by(self, n: int):
         if not self.is_full:
@@ -45,8 +57,10 @@ class RingBuffer(object):
         :return: 
         """
         n = len(values)
-        self.__data = np.roll(self.__data, n)
-        self.__data[0:n] = values
+        with self.__data.get_lock():
+            data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+            data[:] = np.roll(data, n)
+            data[0:n] = values
 
         self.__increase_current_index_by(n)
 
@@ -58,6 +72,6 @@ class RingBuffer(object):
         if number > self.current_index:
             number = self.current_index
 
-        result = self.__data[self.current_index-number:self.current_index]
+        result = self.data[self.current_index-number:self.current_index]
         self.current_index -= number
         return result

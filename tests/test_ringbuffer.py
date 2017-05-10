@@ -7,7 +7,7 @@ from urh.util.RingBuffer import RingBuffer
 
 class TestRingBuffer(unittest.TestCase):
     def test_push(self):
-        ring_buffer = RingBuffer(size=10, dtype=np.complex64)
+        ring_buffer = RingBuffer(size=10)
         self.assertFalse(ring_buffer.is_full)
         self.assertEqual(0, ring_buffer.current_index)
 
@@ -24,7 +24,7 @@ class TestRingBuffer(unittest.TestCase):
         self.assertTrue(np.array_equal(ring_buffer[6:10], add1[:-1]))
 
     def test_pop(self):
-        ring_buffer = RingBuffer(size=5, dtype=np.complex64)
+        ring_buffer = RingBuffer(size=5)
         add1 = np.array([1, 2, 3], dtype=np.complex64)
         ring_buffer.push(add1)
         self.assertTrue(np.array_equal(add1, ring_buffer.pop(40)))
@@ -41,7 +41,7 @@ class TestRingBuffer(unittest.TestCase):
         self.assertFalse(ring_buffer.is_empty)
 
     def test_big_buffer(self):
-        ring_buffer = RingBuffer(size=5, dtype=np.complex64)
+        ring_buffer = RingBuffer(size=5)
         try:
             ring_buffer.push(np.array([1, 2, 3, 4, 5, 6, 7], dtype=np.complex64))
             self.assertTrue(False)
@@ -49,7 +49,7 @@ class TestRingBuffer(unittest.TestCase):
             self.assertTrue(True)
 
     def test_will_fit(self):
-        ring_buffer = RingBuffer(size=8, dtype=np.complex64)
+        ring_buffer = RingBuffer(size=8)
         self.assertEqual(ring_buffer.space_left, 8)
         self.assertTrue(ring_buffer.will_fit(4))
         self.assertTrue(ring_buffer.will_fit(8))

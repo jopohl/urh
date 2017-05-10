@@ -141,7 +141,9 @@ def main():
         timer.timeout.connect(app.quit)
         timer.start(1000)
 
-    os._exit(app.exec_())  # sys.exit() is not enough on Windows and will result in crash on exit
+    return_code = app.exec_()
+    app.closeAllWindows()
+    os._exit(return_code)  # sys.exit() is not enough on Windows and will result in crash on exit
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 class SimulatorProtocolManager(QObject):
     participants_changed = pyqtSignal()
 
-    item_deleted = pyqtSignal(SimulatorItem)
+    items_deleted = pyqtSignal(list)
     item_updated = pyqtSignal(SimulatorItem)
     item_moved = pyqtSignal(SimulatorItem)
     item_added = pyqtSignal(SimulatorItem)
@@ -33,12 +33,12 @@ class SimulatorProtocolManager(QObject):
 
     def on_project_updated(self):
         self.broadcast_part.address_hex = self.project_manager.broadcast_address_hex
+        participants = self.participants
 
-        messages = [msg for msg in self.get_all_messages() if ((msg.participant and msg.participant not in self.participants) or
-                    (msg.destination and msg.destination not in self.participants))]
+        messages = [msg for msg in self.get_all_messages() if ((msg.participant and msg.participant not in participants) or
+                    (msg.destination and msg.destination not in participants))]
 
-        for msg in messages:
-            self.delete_item(msg)
+        self.delete_items(messages)
 
         self.participants_changed.emit()
 
@@ -53,13 +53,15 @@ class SimulatorProtocolManager(QObject):
         parent_item.insert_child(pos, item)
         self.item_added.emit(item)
 
-    def delete_item(self, item: SimulatorItem):
-        if (isinstance(item, SimulatorRuleCondition) and
-                item.type == ConditionType.IF):
-            item = item.parent()
+    def delete_items(self, items):
+        for i, _ in enumerate(items):
+            if (isinstance(items[i], SimulatorRuleCondition) and
+                    items[i].type == ConditionType.IF):
+                items[i] = items[i].parent()
 
-        item.delete()
-        self.item_deleted.emit(item)
+            items[i].delete()
+
+        self.items_deleted.emit(items)
 
     def move_item(self, item: SimulatorItem, new_pos: int, new_parent: SimulatorItem):
         if new_parent is None:

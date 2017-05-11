@@ -22,13 +22,15 @@ class MessageItem(GraphicsItem):
         self.arrow = MessageArrowItem(self)
 
     def labels_width(self):
+        labels = self.labels()
         width = self.number.boundingRect().width()
         #width += 5
-        width += sum([lbl.boundingRect().width() for lbl in self.labels()])
-        width += 5 * (len(self.labels()) - 1)
+        width += sum([lbl.boundingRect().width() for lbl in labels])
+        width += 5 * (len(labels) - 1)
         return width
 
     def labels(self):
+        self.refresh_unlabeled_range_marker()
         unlabeled_range_items = [uri for uri in self.childItems() if isinstance(uri, UnlabeledRangeItem)]
         result = []
 

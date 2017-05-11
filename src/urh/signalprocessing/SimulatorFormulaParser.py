@@ -27,7 +27,7 @@ class SimulatorFormulaParser(object):
         self.sim_proto_manager.item_added.connect(self.update_label_list)
         self.sim_proto_manager.item_moved.connect(self.update_label_list)
         self.sim_proto_manager.item_updated.connect(self.update_label_list)
-        self.sim_proto_manager.item_deleted.connect(self.update_label_list)
+        self.sim_proto_manager.items_deleted.connect(self.update_label_list)
 
     def validate_exp(self, expr):
         try:

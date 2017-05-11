@@ -117,26 +117,18 @@ class SimulatorScene(QGraphicsScene):
     def create_connects(self):
         self.sim_proto_manager.participants_changed.connect(self.update_participants)
 
-        self.sim_proto_manager.item_deleted.connect(self.on_item_deleted)
+        self.sim_proto_manager.items_deleted.connect(self.on_items_deleted)
         self.sim_proto_manager.item_updated.connect(self.on_item_updated)
         self.sim_proto_manager.item_moved.connect(self.on_item_moved)
         self.sim_proto_manager.item_added.connect(self.on_item_added)
 
-    def on_item_deleted(self, item: SimulatorItem):
-        try:
+    def on_items_deleted(self, items):
+        for item in items:
             scene_item = self.model_to_scene(item)
-        except KeyError:
-            return
 
-        if isinstance(scene_item, LabelItem):
-            scene_message = self.get_parent_scene_item(scene_item)
+            if scene_item in self.items():
+                self.removeItem(scene_item)
 
-            try:
-                scene_message.refresh_unlabeled_range_marker()
-            except AttributeError:
-                return
-
-        self.removeItem(scene_item)
         self.update_items_dict()
         self.update_view()
 
@@ -150,6 +142,12 @@ class SimulatorScene(QGraphicsScene):
         self.insert_item(scene_item)
         self.update_view()
 
+    def on_items_added(self, items):
+        for item in items:
+            self.on_item_added(item)
+
+        self.update_view()
+
     def on_item_added(self, item: SimulatorItem, refresh=True):
         if isinstance(item, SimulatorRule):
             scene_item = RuleItem(model_item=item)
@@ -161,11 +159,8 @@ class SimulatorScene(QGraphicsScene):
             scene_item = ProgramActionItem(item)
         elif isinstance(item, SimulatorMessage):
             scene_item = MessageItem(scene_mode=self.mode, model_item=item)
-            scene_item.refresh_unlabeled_range_marker()
         elif isinstance(item, SimulatorProtocolLabel):
             scene_item = LabelItem(scene_mode=self.mode, model_item=item)
-            scene_message = self.get_parent_scene_item(scene_item)
-            scene_message.refresh_unlabeled_range_marker()
         else:
             print("WHOOPS ... Unknown item type!")
             return
@@ -213,8 +208,7 @@ class SimulatorScene(QGraphicsScene):
         items = self.selectedItems()
         self.clearSelection()
 
-        for item in items:
-            self.sim_proto_manager.delete_item(item.model_item)
+        self.sim_proto_manager.delete_items([item.model_item for item in items])
 
     def move_item(self, item: GraphicsItem, new_pos, new_parent: SimulatorItem):
         self.sim_proto_manager.move_item(item.model_item, new_pos, new_parent)
@@ -434,9 +428,7 @@ class SimulatorScene(QGraphicsScene):
         self.sim_proto_manager.add_item(sim_message, pos, parent)
 
     def clear_all(self):
-        for item in self.items():
-            if isinstance(item, GraphicsItem):
-                self.sim_proto_manager.delete_item(item.model_item)
+        self.sim_proto_manager.delete_items([item for item in self.sim_proto_manager.rootItem.children])
 
     def add_protocols(self, ref_item, position, protocols_to_add: list):
         for protocol in protocols_to_add:

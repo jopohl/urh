@@ -139,7 +139,7 @@ class SimulatorTabController(QWidget):
         self.sim_proto_manager.item_added.connect(self.refresh_message_table)
         self.sim_proto_manager.item_updated.connect(self.refresh_message_table)
         self.sim_proto_manager.item_moved.connect(self.refresh_message_table)
-        self.sim_proto_manager.item_deleted.connect(self.refresh_message_table)
+        self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
 
     def add_message_type(self, message: SimulatorMessage):
@@ -172,7 +172,7 @@ class SimulatorTabController(QWidget):
             self.ui.tblViewMessage.resize_columns()
             self.update_vertical_table_header()
 
-    def refresh_message_table(self, item: SimulatorItem):
+    def refresh_message_table(self):
         self.simulator_message_table_model.protocol.messages[:] = self.sim_proto_manager.get_all_messages()
         self.simulator_message_table_model.update()
         self.ui.tblViewMessage.resize_columns()

@@ -86,11 +86,15 @@ class Errors:
     @staticmethod
     def not_enough_ram_for_sending_precache(memory_size_bytes):
         w = QWidget()
-        QMessageBox.information(w, w.tr("Not enough RAM for precaching"),
-                                w.tr("Precaching all your modulated data would take <b>{0}B</b> of memory.<br>"
-                                     "This does not fit into your RAM, "
-                                     "so sending will be done in <b>continuous mode</b>.<br><br>"
-                                     "This means, modulation will be performed live during sending.<br><br>"
-                                     "If you experience problems, "
-                                     "consider sending less messages or upgrade your RAM."
-                                     .format(Formatter.big_value_with_suffix(memory_size_bytes))))
+        if memory_size_bytes:
+            msg = "Precaching all your modulated data would take <b>{0}B</b> of memory, " \
+                  "which does not fit into your RAM.<br>".format(Formatter.big_value_with_suffix(memory_size_bytes))
+        else:
+            msg = ""
+
+        msg += "Sending will be done in <b>continuous mode</b>.<br><br>" \
+               "This means, modulation will be performed live during sending.<br><br>" \
+               "If you experience problems, " \
+               "consider sending less messages or upgrade your RAM."
+
+        QMessageBox.information(w, w.tr("Entering continuous send mode"), w.tr(msg))

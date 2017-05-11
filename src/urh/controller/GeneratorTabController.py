@@ -530,7 +530,15 @@ class GeneratorTabController(QWidget):
 
             try:
                 if modulated_data is not None:
-                    dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                    try:
+                        dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                    except MemoryError:
+                        # Not enough memory for device buffer so we need to create a continuous send dialog
+                        del modulated_data
+                        Errors.not_enough_ram_for_sending_precache(None)
+                        dialog = ContinuousSendDialogController(self.project_manager,
+                                                                self.table_model.protocol.messages,
+                                                                self.modulators, total_samples, parent=self)
                 else:
                     dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,
                                                             self.modulators, total_samples, parent=self)

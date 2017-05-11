@@ -8,20 +8,18 @@ from urh.util.RingBuffer import RingBuffer
 class TestRingBuffer(unittest.TestCase):
     def test_push(self):
         ring_buffer = RingBuffer(size=10)
-        self.assertFalse(ring_buffer.is_full)
         self.assertEqual(0, ring_buffer.current_index)
 
         add1 = np.array([1, 2, 3, 4, 5], dtype=np.complex64)
         ring_buffer.push(add1)
         self.assertEqual(5, ring_buffer.current_index)
-        self.assertFalse(ring_buffer.is_full)
         self.assertTrue(np.array_equal(ring_buffer[0:5], add1))
 
         add2 = np.array([10, 20, 30, 40, 50, 60], dtype=np.complex64)
-        ring_buffer.push(add2)
-        self.assertTrue(ring_buffer.is_full)
-        self.assertTrue(np.array_equal(ring_buffer[0:6], add2))
-        self.assertTrue(np.array_equal(ring_buffer[6:10], add1[:-1]))
+        self.assertFalse(ring_buffer.will_fit(len(add2)))
+        ring_buffer.push(add2[:-1])
+        self.assertTrue(np.array_equal(ring_buffer[5:10], add2[:-1]))
+        self.assertTrue(np.array_equal(ring_buffer[0:5], add1))
 
     def test_pop(self):
         ring_buffer = RingBuffer(size=5)
@@ -37,8 +35,20 @@ class TestRingBuffer(unittest.TestCase):
 
         add3 = np.array([1, 2], dtype=np.complex64)
         ring_buffer.push(add3)
-        self.assertTrue(np.array_equal(add3[1:], ring_buffer.pop(1)))
+        popped_item = ring_buffer.pop(1)
+        self.assertTrue(np.array_equal(add3[0:1], popped_item), msg=popped_item)
         self.assertFalse(ring_buffer.is_empty)
+
+    def test_continuous_pop(self):
+        ring_buffer = RingBuffer(size=10)
+        values = np.array(list(range(10)), dtype=np.complex64)
+        ring_buffer.push(values)
+        retrieved = np.array([], dtype=np.complex64)
+
+        for i in range(10):
+            retrieved = np.append(retrieved, ring_buffer.pop(1))
+
+        self.assertTrue(np.array_equal(values, retrieved))
 
     def test_big_buffer(self):
         ring_buffer = RingBuffer(size=5)

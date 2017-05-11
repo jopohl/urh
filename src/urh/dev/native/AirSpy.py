@@ -38,9 +38,11 @@ class AirSpy(Device):
     def enter_async_receive_mode(cls, data_connection: Connection):
         airspy.start_rx(data_connection.send_bytes)
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
+                 resume_on_full_receive_buffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain, is_ringbuffer=is_ringbuffer)
+                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
+                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
         self.success = 0
 
         self.bandwidth_is_adjustable = False
@@ -58,4 +60,3 @@ class AirSpy(Device):
         assert complex_samples.dtype == np.complex64
         # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
         return complex_samples.view(np.float32).tostring()
-

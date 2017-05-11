@@ -48,9 +48,10 @@ class RTLSDR(Device):
         ret = rtlsdr.close()
         ctrl_connection.send("CLOSE:" + str(ret))
 
-    def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
+    def __init__(self, freq, gain, srate, device_number, resume_on_full_receive_buffer=False):
         super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
-                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
+                         gain=gain, if_gain=1, baseband_gain=1,
+                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
 
         self.success = 0
         self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable()  # e.g. not in Manjaro Linux / Ubuntu 14.04

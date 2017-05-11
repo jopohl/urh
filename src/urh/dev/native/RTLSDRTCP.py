@@ -17,7 +17,8 @@ class RTLSDRTCP(Device):
 
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str, port: int):
+                     bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str,
+                     port: int):
         # connect and initialize rtl_tcp
         sdr = RTLSDRTCP(center_freq, gain, sample_rate, bandwidth, device_number)
         sdr.open(ctrl_connection, device_ip, port)
@@ -85,9 +86,10 @@ class RTLSDRTCP(Device):
             logger.info("RTLSDRTCP: Set direct sampling mode to {0}".format(int(value)))
             return self.set_parameter("directSampling", int(value), ctrl_connection)
 
-    def __init__(self, freq, gain, srate, bandwidth, device_number, is_ringbuffer=False):
+    def __init__(self, freq, gain, srate, bandwidth, device_number, resume_on_full_receive_buffer=False):
         super().__init__(center_freq=freq, sample_rate=srate, bandwidth=bandwidth,
-                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
+                         gain=gain, if_gain=1, baseband_gain=1,
+                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
 
         # default class parameters
         self.receive_process_function = self.receive_sync

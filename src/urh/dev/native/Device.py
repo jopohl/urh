@@ -1,18 +1,17 @@
 import threading
 import time
 from collections import OrderedDict
-from multiprocessing.connection import Connection
-from multiprocessing import Value, Process, Pipe
-from pickle import UnpicklingError
 from enum import Enum
+from multiprocessing import Value, Process, Pipe
+from multiprocessing.connection import Connection
+from pickle import UnpicklingError
 
 import numpy as np
-import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from urh import constants
 from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class Device(QObject):
@@ -173,7 +172,8 @@ class Device(QObject):
         cls.shutdown_device(ctrl_connection)
         ctrl_connection.close()
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
+                 resume_on_full_receive_buffer=False):
         super().__init__()
 
         self.error_not_open = -4242
@@ -192,9 +192,10 @@ class Device(QObject):
         self.__direct_sampling_mode = 0
         self.bandwidth_is_adjustable = True
 
+        self.is_in_spectrum_mode = False
         self.sending_is_continuous = False
         self.continuous_send_ring_buffer = None
-        self.total_samples_to_send = None # None = get automatically. This value needs to be known in continuous send mode
+        self.total_samples_to_send = None  # None = get automatically. This value needs to be known in continuous send mode
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
@@ -213,7 +214,7 @@ class Device(QObject):
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
-        self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Spectrum Analyzer or Protocol Sniffing
+        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
         self.current_recv_index = 0
         self.is_receiving = False
         self.is_transmitting = False
@@ -279,15 +280,9 @@ class Device(QObject):
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            if self.is_ringbuffer:
-                num_samples = constants.SPECTRUM_BUFFER_SIZE
-            else:
-                # Take 60% of avail memory
-                threshold = constants.SETTINGS.value('ram_threshold', 0.6, float)
-                num_samples = threshold * (psutil.virtual_memory().available / 8)
+            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                                self.is_in_spectrum_mode)
             self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
-            logger.info(
-                "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -587,26 +582,25 @@ class Device(QObject):
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
 
-                nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
-                if nsamples > 0:
-                    if self.current_recv_index + nsamples >= len(self.receive_buffer):
-                        if self.is_ringbuffer:
+                n_samples = len(byte_buffer) // self.BYTES_PER_SAMPLE
+                if n_samples > 0:
+                    if self.current_recv_index + n_samples >= len(self.receive_buffer):
+                        if self.resume_on_full_receive_buffer:
                             self.current_recv_index = 0
-                            if nsamples >= len(self.receive_buffer):
-                                # logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples - len(self.receive_buffer)))
-                                nsamples = len(self.receive_buffer) - 1
+                            if n_samples >= len(self.receive_buffer):
+                                n_samples = len(self.receive_buffer) - 1
                         else:
                             self.stop_rx_mode(
-                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples,
+                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
                                                                           len(self.receive_buffer)))
                             return
 
-                    end = nsamples * self.BYTES_PER_SAMPLE
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
-                        self.unpack_complex(byte_buffer[:end], nsamples)
+                    end = n_samples * self.BYTES_PER_SAMPLE
+                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = \
+                        self.unpack_complex(byte_buffer[:end], n_samples)
 
                     old_index = self.current_recv_index
-                    self.current_recv_index += nsamples
+                    self.current_recv_index += n_samples
 
                     self.rcv_index_changed.emit(old_index, self.current_recv_index)
             except (BrokenPipeError, OSError):

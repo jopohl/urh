@@ -57,7 +57,7 @@ class TestPlugins(QtTestCase):
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], "10110010010110110110110110110110111")
 
     def test_sdr_interface_plugin(self):
-        si = NetworkSDRInterfacePlugin()
+        si = NetworkSDRInterfacePlugin(resume_on_full_receive_buffer=True)
         test_bits = [
             "10101011111",
             "1010100011000111110001011001010101010101",

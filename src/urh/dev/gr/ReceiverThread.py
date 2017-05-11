@@ -1,30 +1,25 @@
-
 import numpy as np
-import psutil
-import time
-
-from urh import constants
 import zmq
 from PyQt5.QtCore import pyqtSignal
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class ReceiverThread(AbstractBaseThread):
     index_changed = pyqtSignal(int, int)
 
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
-                 parent=None,  is_ringbuffer=False):
+                 parent=None, resume_on_full_receive_buffer=False):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
 
-        self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Live Sniffing
+        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
         self.data = None
 
     def init_recv_buffer(self):
-        # Take 60% of free memory
-        nsamples = int(constants.SETTINGS.value('ram_threshold', 0.6, float) * (psutil.virtual_memory().available / 8))
-        self.data = np.zeros(nsamples, dtype=np.complex64)
+        n_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
+        self.data = np.zeros(n_samples, dtype=np.complex64)
 
     def run(self):
         if self.data is None:
@@ -44,7 +39,7 @@ class ReceiverThread(AbstractBaseThread):
                 except (zmq.error.ContextTerminated, ConnectionResetError):
                     self.stop("Stopped receiving, because connection was reset.")
                     return
-                except OSError as e:   # https://github.com/jopohl/urh/issues/131
+                except OSError as e:  # https://github.com/jopohl/urh/issues/131
                     logger.warning("Error occurred", str(e))
 
                 if len(rcvd) < 8:
@@ -63,7 +58,7 @@ class ReceiverThread(AbstractBaseThread):
                         self.init_recv_buffer()
 
                     if self.current_index + num_samples >= len(self.data):
-                        if self.is_ringbuffer:
+                        if self.resume_on_full_receive_buffer:
                             self.current_index = 0
                             if num_samples >= len(self.data):
                                 self.stop("Receiving buffer too small.")

@@ -12,7 +12,7 @@ class LimeSDR(Device):
 
     RECV_FIFO_SIZE = 1048576
     SEND_FIFO_SIZE = 8 * SEND_SAMPLES
-    SEND_BUFFER_SIZE = SEND_SAMPLES  # for compatibility with API
+    SEND_BUFFER_SIZE = 2 * SEND_SAMPLES  # for compatibility with API
 
     LIME_TIMEOUT_RECEIVE_MS = 10
     LIME_TIMEOUT_SEND_MS = 500

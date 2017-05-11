@@ -48,7 +48,6 @@ class LimeSDR(Device):
             return False
 
         limesdr.set_tx(is_tx)
-        limesdr.enable_channel(True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name])
 
         for parameter, value in parameters.items():
             cls.process_command((parameter, value), ctrl_connection, is_tx)
@@ -57,6 +56,8 @@ class LimeSDR(Device):
         ctrl_connection.send("Current normalized gain is {0:.2f}".format(limesdr.get_normalized_gain()))
         ctrl_connection.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_connection.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))
+
+        limesdr.enable_channel(True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name])
 
         return True
 

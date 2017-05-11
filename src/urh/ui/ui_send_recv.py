@@ -430,6 +430,7 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.graphicsViewContinuousSend = LiveGraphicView(self.page_continuous_send)
+        self.graphicsViewContinuousSend.setRenderHints(QtGui.QPainter.Antialiasing|QtGui.QPainter.TextAntialiasing)
         self.graphicsViewContinuousSend.setObjectName("graphicsViewContinuousSend")
         self.verticalLayout_6.addWidget(self.graphicsViewContinuousSend)
         self.stackedWidget.addWidget(self.page_continuous_send)

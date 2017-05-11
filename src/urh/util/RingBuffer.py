@@ -24,10 +24,6 @@ class RingBuffer(object):
         return self.current_index == 0
 
     @property
-    def is_full(self) -> bool:
-        return self.current_index == self.size
-
-    @property
     def space_left(self):
         return self.size - self.current_index
 
@@ -42,10 +38,9 @@ class RingBuffer(object):
         return "RingBuffer " + str(self.data)
 
     def __increase_current_index_by(self, n: int):
-        if not self.is_full:
-            self.current_index += n
-            if self.current_index > self.size:
-                self.current_index = self.size
+        self.current_index += n
+        if self.current_index > self.size:
+            self.current_index = self.size
 
     def clear(self):
         self.current_index = 0
@@ -60,10 +55,10 @@ class RingBuffer(object):
         :return: 
         """
         n = len(values)
+
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-            data[:] = np.roll(data, n)
-            data[0:n] = values
+            data[self.current_index:self.current_index+n] = values
 
         self.__increase_current_index_by(n)
 
@@ -75,6 +70,10 @@ class RingBuffer(object):
         if number > self.current_index:
             number = self.current_index
 
-        result = self.data[self.current_index-number:self.current_index]
-        self.current_index -= number
+        with self.__data.get_lock():
+            self.current_index -= number
+            result = np.copy(self.data[0:number])
+            data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+            data[:] = np.roll(data, -number)
+
         return result

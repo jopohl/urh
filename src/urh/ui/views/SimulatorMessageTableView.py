@@ -38,5 +38,5 @@ class SimulatorMessageTableView(TableView):
         return menu
 
     def on_create_label_action_triggered(self):
-        _, _, start, end = self.selection_range()
-        self.create_fuzzing_label_clicked.emit(self.rowAt(self.context_menu_pos.y()), start, end)
+        min_row, _, start, end = self.selection_range()
+        self.create_fuzzing_label_clicked.emit(min_row, start, end)

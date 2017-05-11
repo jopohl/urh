@@ -182,6 +182,7 @@ class SimulatorTabController(QWidget):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[msg_index])
+        self.simulator_message_field_model.update()
         index = self.simulator_message_field_model.message_type.index(lbl)
         self.ui.tblViewFieldValues.edit(self.simulator_message_field_model.createIndex(index, 0))
 

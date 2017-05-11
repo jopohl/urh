@@ -57,12 +57,8 @@ class SimulatorProtocolManager(QObject):
         self.items_added.emit(items)
 
     def delete_items(self, items):
-        for i, _ in enumerate(items):
-            if (isinstance(items[i], SimulatorRuleCondition) and
-                    items[i].type == ConditionType.IF):
-                items[i] = items[i].parent()
-
-            items[i].delete()
+        for item in items:
+            item.delete()
 
         self.items_deleted.emit(items)
 
@@ -94,7 +90,7 @@ class SimulatorProtocolManager(QObject):
                 color_index = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
         sim_label = SimulatorProtocolLabel(name, start, end, color_index, type)
-        self.add_item(sim_label, -1, parent_item)
+        self.add_items([sim_label], -1, parent_item)
         return sim_label
 
     def n_top_level_items(self):

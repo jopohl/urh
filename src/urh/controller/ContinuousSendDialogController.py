@@ -24,6 +24,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.scene_manager = ContinuousSceneManager(ring_buffer=self.continuous_modulator.ring_buffer, parent=self)
         self.scene_manager.init_scene()
         self.graphics_view.setScene(self.scene_manager.scene)
+        self.graphics_view.scene_manager = self.scene_manager
 
         self.setWindowTitle("Send data (continuous mode)")
         self.ui.lSamplesSentText.setText("Progress:")
@@ -51,13 +52,11 @@ class ContinuousSendDialogController(SendDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
-        self.graphics_view.show()
         super().on_device_started()
 
     @pyqtSlot()
     def on_device_stopped(self):
         super().on_device_stopped()
-        self.graphics_view.hide()
         self.continuous_modulator.stop(clear_buffer=False)
 
     @pyqtSlot()
@@ -65,12 +64,20 @@ class ContinuousSendDialogController(SendDialogController):
         super().on_stop_clicked()
         self.continuous_modulator.stop()
         self.continuous_modulator.current_message_index.value = 0
+        self.scene_manager.clear_path()
 
     @pyqtSlot()
     def on_start_clicked(self):
         if not self.device_is_sending:
             self.continuous_modulator.start()
         super().on_start_clicked()
+
+    @pyqtSlot()
+    def on_clear_clicked(self):
+        self.continuous_modulator.stop()
+        self.continuous_modulator.current_message_index.value = 0
+        self.scene_manager.clear_path()
+        self.reset()
 
     def on_selected_device_changed(self):
         self.ui.txtEditErrors.clear()

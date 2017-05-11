@@ -970,7 +970,11 @@
          <widget class="QWidget" name="page_continuous_send">
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="LiveGraphicView" name="graphicsViewContinuousSend"/>
+            <widget class="LiveGraphicView" name="graphicsViewContinuousSend">
+             <property name="renderHints">
+              <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

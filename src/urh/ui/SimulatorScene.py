@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QGraphicsItem, QAbstractItemView
 from PyQt5.QtGui import QPen, QDropEvent, QFont, QFontDatabase
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt
 
 import copy
 

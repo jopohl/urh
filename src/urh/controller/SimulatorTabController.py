@@ -19,7 +19,6 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.SimulatorRuleset import SimulatorRulesetItem, Mode
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction

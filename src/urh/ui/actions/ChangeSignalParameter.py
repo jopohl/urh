@@ -17,7 +17,14 @@ class ChangeSignalParameter(QUndoCommand):
         self.parameter_name = parameter_name
         self.parameter_value = parameter_value
         self.orig_value = getattr(self.signal, self.parameter_name)
-        self.setText("Change {0} of {1} from {2} to {3}".format(parameter_name, signal.name, self.orig_value, parameter_value))
+
+        fmt2 = "d" if isinstance(self.orig_value, int) else ".4n"
+        fmt3 = "d" if isinstance(parameter_value, int) else ".4n"
+        signal_name = signal.name[:10] + "..." if len(signal.name) > 10 else signal.name
+
+        self.setText(("change {0} of {1} from {2:" + fmt2 + "} to {3:" + fmt3 + "}").format(parameter_name, signal_name,
+                                                                                          self.orig_value,
+                                                                                          parameter_value))
 
         self.protocol = protocol
         self.orig_messages = copy.deepcopy(self.protocol.messages)
@@ -32,7 +39,6 @@ class ChangeSignalParameter(QUndoCommand):
                 msg.participant = msg_params[1]
                 msg.message_type = msg_params[2]
             self.protocol.qt_signals.protocol_updated.emit()
-
 
     def undo(self):
         block_proto_update = self.signal.block_protocol_update

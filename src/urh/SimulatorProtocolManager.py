@@ -17,8 +17,8 @@ class SimulatorProtocolManager(QObject):
 
     items_deleted = pyqtSignal(list)
     item_updated = pyqtSignal(SimulatorItem)
-    item_moved = pyqtSignal(SimulatorItem)
-    item_added = pyqtSignal(SimulatorItem)
+    items_moved = pyqtSignal(list)
+    items_added = pyqtSignal(list)
 
     def __init__(self, project_manager: ProjectManager):
         super().__init__()
@@ -46,12 +46,15 @@ class SimulatorProtocolManager(QObject):
     def participants(self):
         return self.project_manager.participants + [self.broadcast_part]
 
-    def add_item(self, item: SimulatorItem, pos: int, parent_item: SimulatorItem):
+    def add_items(self, items, pos: int, parent_item: SimulatorItem):
         if parent_item is None:
             parent_item = self.rootItem
 
-        parent_item.insert_child(pos, item)
-        self.item_added.emit(item)
+        for item in items:
+            parent_item.insert_child(pos, item)
+            pos += 1
+
+        self.items_added.emit(items)
 
     def delete_items(self, items):
         for i, _ in enumerate(items):
@@ -63,12 +66,18 @@ class SimulatorProtocolManager(QObject):
 
         self.items_deleted.emit(items)
 
-    def move_item(self, item: SimulatorItem, new_pos: int, new_parent: SimulatorItem):
+    def move_items(self, items, new_pos: int, new_parent: SimulatorItem):
         if new_parent is None:
             new_parent = self.rootItem
 
-        new_parent.insert_child(new_pos, item)
-        self.item_moved.emit(item)
+        for item in items:
+            if item.parent() is new_parent and item.get_pos() < new_pos:
+                new_pos -= 1
+
+            new_parent.insert_child(new_pos, item)
+            new_pos += 1
+
+        self.items_moved.emit(items)
 
     def add_label(self, start: int, end: int, name: str = None, color_index: int = None,
                     type: FieldType=None, parent_item: SimulatorMessage=None):

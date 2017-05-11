@@ -136,9 +136,9 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.item_updated.emit)
         self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
 
-        self.sim_proto_manager.item_added.connect(self.refresh_message_table)
+        self.sim_proto_manager.items_added.connect(self.refresh_message_table)
         self.sim_proto_manager.item_updated.connect(self.refresh_message_table)
-        self.sim_proto_manager.item_moved.connect(self.refresh_message_table)
+        self.sim_proto_manager.items_moved.connect(self.refresh_message_table)
         self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
 

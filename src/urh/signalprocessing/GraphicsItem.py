@@ -178,16 +178,8 @@ class GraphicsItem(QGraphicsObject):
             ref_item = self.item_under_mouse
             position = self.item_under_mouse.drop_indicator_position
 
-            new_pos, new_parent = self.scene().insert_at(ref_item, position)
+            self.scene().move_items(drag_nodes, ref_item, position)
 
-            for drag_node in drag_nodes:
-                if (drag_node.model_item.parent() is new_parent and
-                        drag_node.model_item.get_pos() < new_pos):
-                    new_pos -= 1
-
-                self.scene().move_item(drag_node, new_pos, new_parent)
-                new_pos += 1
-                
             self.item_under_mouse = None
 
         super().mouseReleaseEvent(event)

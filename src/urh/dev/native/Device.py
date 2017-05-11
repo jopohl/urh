@@ -15,6 +15,9 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class Device(QObject):
+    SEND_BUFFER_SIZE = 0
+    CONTINUOUS_SEND_BUFFER_SIZE = 0
+
     class Command(Enum):
         STOP = 0
         SET_FREQUENCY = 1
@@ -151,12 +154,15 @@ class Device(QObject):
             cls.prepare_sync_send(ctrl_connection)
 
         exit_requested = False
+        buffer_size = cls.CONTINUOUS_SEND_BUFFER_SIZE if send_config.continuous else cls.SEND_BUFFER_SIZE
+        if not cls.ASYNCHRONOUS and buffer_size == 0:
+            logger.warning("Send buffer size is zero!")
 
         while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:
                 time.sleep(0.5)
             else:
-                cls.send_sync(send_config.get_data_to_send(cls.SEND_BUFFER_SIZE))
+                cls.send_sync(send_config.get_data_to_send(buffer_size))
 
             while ctrl_connection.poll():
                 result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)

@@ -30,7 +30,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -75,7 +75,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset theme="go-up"/>
+             <iconset theme="go-up">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -205,6 +206,7 @@
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_directory"/>
+    <addaction name="separator"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
     <addaction name="actionSpectrum_Analyzer"/>
@@ -376,6 +378,9 @@
    </property>
   </action>
   <action name="actionClose_all">
+   <property name="icon">
+    <iconset theme="window-close"/>
+   </property>
    <property name="text">
     <string>&amp;Close all</string>
    </property>
@@ -486,6 +491,9 @@
    </property>
   </action>
   <action name="actionRecord">
+   <property name="icon">
+    <iconset theme="media-record"/>
+   </property>
    <property name="text">
     <string>&amp;Record signal...</string>
    </property>

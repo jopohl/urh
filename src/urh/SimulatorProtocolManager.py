@@ -57,8 +57,12 @@ class SimulatorProtocolManager(QObject):
         self.items_added.emit(items)
 
     def delete_items(self, items):
-        for item in items:
-            item.delete()
+        for i, item in enumerate(items):
+            if (isinstance(item, SimulatorRuleCondition) and
+                    item.type == ConditionType.IF):
+                items[i] = item.parent()
+
+            items[i].delete()
 
         self.items_deleted.emit(items)
 

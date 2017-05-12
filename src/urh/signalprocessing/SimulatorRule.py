@@ -32,9 +32,3 @@ class SimulatorRuleCondition(SimulatorItem):
             assert isinstance(value, SimulatorRule)
 
         super().set_parent(value)
-
-    def delete(self):
-        if self.type == ConditionType.IF:
-            self.parent().delete()
-        else:
-            super().delete()

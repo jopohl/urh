@@ -57,9 +57,9 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.DISPLAY_FORMATS, parent=self))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self, parent=self))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.DISPLAY_FORMATS, parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self, parent=self.ui.tblViewFieldValues))
         self.reload_field_types()
         self.update_field_name_column()
 
@@ -103,7 +103,7 @@ class SimulatorTabController(QWidget):
 
     def update_field_name_column(self):
         field_types = [ft.caption for ft in self.field_types]
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self.ui.tblViewFieldValues))
 
     def update_label_name_column(self):
         self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0,
@@ -174,6 +174,10 @@ class SimulatorTabController(QWidget):
     def refresh_message_table(self):
         self.simulator_message_table_model.protocol.messages[:] = self.sim_proto_manager.get_all_messages()
         self.simulator_message_table_model.update()
+
+        if isinstance(self.active_item, SimulatorMessage):
+            self.simulator_message_field_model.update()
+
         self.ui.tblViewMessage.resize_columns()
         self.update_ui()
 
@@ -182,9 +186,12 @@ class SimulatorTabController(QWidget):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[msg_index])
-        self.simulator_message_field_model.update()
-        index = self.simulator_message_field_model.message_type.index(lbl)
-        self.ui.tblViewFieldValues.edit(self.simulator_message_field_model.createIndex(index, 0))
+
+        try:
+            index = self.simulator_message_field_model.message_type.index(lbl)
+            self.ui.tblViewFieldValues.edit(self.simulator_message_field_model.createIndex(index, 0))
+        except ValueError:
+            pass
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
@@ -213,10 +220,7 @@ class SimulatorTabController(QWidget):
 
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.active_item, SimulatorMessage):
-                self.simulator_message_field_model.message_type = self.active_item.message_type
-                self.simulator_message_field_model.update()
-
-                self.ui.detail_view_widget.setCurrentIndex(2)
+                    self.ui.detail_view_widget.setCurrentIndex(2)
             elif (isinstance(self.active_item, SimulatorRuleCondition) and
                     self.active_item.type != ConditionType.ELSE):
                 self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
@@ -278,14 +282,15 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_table_selection_changed(self):
         selection = self.ui.tblViewMessage.selectionModel().selection()
-
+        old_active = self.active_item
         if selection.isEmpty():
             self.active_item = None
         else:
-            min_row = numpy.min([rng.top() for rng in selection])
-            self.active_item = self.simulator_message_table_model.protocol.messages[min_row]
+            max_row = numpy.max([rng.bottom() for rng in selection])
+            self.active_item = self.simulator_message_table_model.protocol.messages[max_row]
 
-        self.update_ui()
+        if old_active is not self.active_item:
+            self.update_ui()
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):

@@ -18,6 +18,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
     def update(self):
         self.beginResetModel()
+        self.message_type = self.controller.active_item.message_type
         self.endResetModel()
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):

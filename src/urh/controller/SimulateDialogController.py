@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QGraphicsView
 from PyQt5.QtCore import Qt
 
 from urh.ui.SimulatorScene import SimulatorScene
@@ -18,7 +18,7 @@ class SimulateDialogController(QDialog):
 
         self.simulator_scene = SimulatorScene(mode=1, sim_proto_manager=self.sim_proto_manager)
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.ui.gvSimulator.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.simulate_list_model = SimulateListModel(self.project_manager.participants)
         self.ui.listViewSimulate.setModel(self.simulate_list_model)

@@ -4,6 +4,8 @@ from PyQt5.QtGui import QColor
 from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
+from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.signalprocessing.encoder import Encoder
 from urh.ui.actions.Clear import Clear
@@ -109,10 +111,14 @@ class GeneratorTableModel(TableModel):
         self.update()
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):
-        self.protocol.insert_empty_message(row=row_index+1,
-                                           pause=constants.SETTINGS.value("default_fuzzing_pause", 10**6, int),
-                                           num_bits=num_bits)
-        self.update()
+        message = Message(plain_bits=[0]*num_bits,
+                          pause=constants.SETTINGS.value("default_fuzzing_pause", 10**6, int),
+                          message_type=self.protocol.default_message_type)
+
+        tmp_protocol = ProtocolAnalyzer(None)
+        tmp_protocol.messages = [message]
+        undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
+        self.undo_stack.push(undo_action)
 
     def get_selected_label_index(self, row: int, column: int):
         if self.row_count == 0:

@@ -149,31 +149,37 @@ class GeneratorTableView(TableView):
 
         if self.model().row_count > 0:
             if selected_label_index == -1:
-                fuzzing_action = menu.addAction("Create Fuzzing Label...")
+                fuzzing_action = menu.addAction("Create fuzzing Label...")
+                fuzzing_action.setIcon(QIcon.fromTheme("list-add"))
             else:
-                fuzzing_action = menu.addAction("Edit Fuzzing Label...")
+                fuzzing_action = menu.addAction("Edit fuzzing Label...")
+                fuzzing_action.setIcon(QIcon.fromTheme("configure"))
 
             fuzzing_action.triggered.connect(self.on_fuzzing_action_triggered)
             menu.addSeparator()
 
         add_message_action = menu.addAction("Add empty message...")
-        add_message_action.setIcon(QIcon.fromTheme("list-add"))
+        add_message_action.setIcon(QIcon.fromTheme("edit-table-insert-row-below"))
         add_message_action.triggered.connect(self.on_add_message_action_triggered)
 
         if self.model().row_count > 0:
-            column_menu = menu.addMenu("Add column")
+            duplicate_action = menu.addAction("Duplicate line")
+            duplicate_action.setIcon(QIcon.fromTheme("edit-table-insert-row-under"))
+            duplicate_action.triggered.connect(self.on_duplicate_action_triggered)
+
+            column_menu = menu.addMenu("Insert column")
 
             insert_column_left_action = column_menu.addAction("on the left")
             insert_column_left_action.triggered.connect(self.on_insert_column_left_action_triggered)
+            insert_column_left_action.setIcon(QIcon.fromTheme("edit-table-insert-column-left"))
             insert_column_right_action = column_menu.addAction("on the right")
+            insert_column_right_action.setIcon(QIcon.fromTheme("edit-table-insert-column-right"))
             insert_column_right_action.triggered.connect(self.on_insert_column_right_action_triggered)
 
-            duplicate_action = menu.addAction("Duplicate Line")
-            duplicate_action.triggered.connect(self.on_duplicate_action_triggered)
-
             menu.addSeparator()
-            clear_action = menu.addAction("Clear Table")
+            clear_action = menu.addAction("Clear table")
             clear_action.triggered.connect(self.on_clear_action_triggered)
+            clear_action.setIcon(QIcon.fromTheme("edit-clear"))
 
         self.encoding_actions = {}
 
@@ -245,5 +251,3 @@ class GeneratorTableView(TableView):
                                            self.tr("Number of bits:"), 42, 1)
         if ok:
             self.model().add_empty_row_behind(row, num_bits)
-            if self.model().rowCount() == 1:
-                self.resize_columns()

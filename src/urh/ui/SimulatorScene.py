@@ -407,7 +407,7 @@ class SimulatorScene(QGraphicsScene):
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_items([program_action], pos, parent)
 
-    def add_message(self, destination, plain_bits, pause, message_type, decoder, source, ref_item, position):
+    def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None, destination=None):
         message = self.create_message(destination, plain_bits, pause, message_type, decoder, source)
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_items([message], pos, parent)

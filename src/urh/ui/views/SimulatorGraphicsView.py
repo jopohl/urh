@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
@@ -35,17 +35,16 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        message_type = MessageType("No name") if not self.sender().data() else self.sender().data()
-        plain_bits = []
+        num_bits, ok = QInputDialog.getInt(self, self.tr("How many bits shall the new message have?"),
+                                           self.tr("Number of bits:"), 42, 1)
 
-        if message_type:
-            plain_bits = [False] * message_type[-1].end
+        if ok:
+            message_type = MessageType("default") if not self.sender().data() else self.sender().data()
+            ref_item = self.context_menu_item
+            position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
 
-        ref_item = self.context_menu_item
-        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-
-        self.scene().add_message(destination=None, plain_bits=plain_bits, pause=1000000, message_type=message_type,
-            decoder=None, source=None, ref_item=ref_item, position=position)
+            self.scene().add_message(plain_bits=[0]*num_bits, pause=1000000, message_type=message_type,
+                                     ref_item=ref_item, position=position)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):        
@@ -110,10 +109,10 @@ class SimulatorGraphicsView(QGraphicsView):
     def create_context_menu(self):
         menu = QMenu()
 
-        add_message_action = menu.addAction("Add empty message")
+        add_message_action = menu.addAction("Add empty message...")
         add_message_action.triggered.connect(self.on_add_message_action_triggered)
 
-        message_type_menu = menu.addMenu("Add message with message type ...")
+        message_type_menu = menu.addMenu("Add empty message with message type...")
 
         for message_type in self.proto_analyzer.message_types:
             action = message_type_menu.addAction(message_type.name)

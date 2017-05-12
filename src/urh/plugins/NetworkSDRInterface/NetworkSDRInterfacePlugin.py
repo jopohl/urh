@@ -73,7 +73,11 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if self.raw_mode:
             num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                 self.is_in_spectrum_mode)
-            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
+            try:
+                self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
+            except MemoryError:
+                logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
+                self.receive_buffer = np.zeros(num_samples // 2, dtype=np.complex64, order='C')
         else:
             self.received_bits = []
 

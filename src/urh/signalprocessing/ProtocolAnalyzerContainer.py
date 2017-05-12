@@ -67,13 +67,6 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         except Exception as e:
             logger.error("Duplicating line ", str(e))
 
-    def insert_empty_message(self, row: int, pause: int, num_bits: int):
-        try:
-            msg = Message([0]*num_bits, pause=pause, message_type=self.default_message_type)
-            self.messages.insert(row, msg)
-        except Exception as e:
-            logger.error(str(e))
-
     def fuzz(self, mode: FuzzMode, default_pause=None):
         result = []
         appd_result = result.append

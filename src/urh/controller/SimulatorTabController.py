@@ -220,7 +220,9 @@ class SimulatorTabController(QWidget):
 
                 self.ui.detail_view_widget.setCurrentIndex(1)
             elif isinstance(self.active_item, SimulatorMessage):
-                    self.ui.detail_view_widget.setCurrentIndex(2)
+                self.simulator_message_field_model.update()
+
+                self.ui.detail_view_widget.setCurrentIndex(2)
             elif (isinstance(self.active_item, SimulatorRuleCondition) and
                     self.active_item.type != ConditionType.ELSE):
                 self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
@@ -282,15 +284,14 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_table_selection_changed(self):
         selection = self.ui.tblViewMessage.selectionModel().selection()
-        old_active = self.active_item
+
         if selection.isEmpty():
             self.active_item = None
         else:
             max_row = numpy.max([rng.bottom() for rng in selection])
             self.active_item = self.simulator_message_table_model.protocol.messages[max_row]
 
-        if old_active is not self.active_item:
-            self.update_ui()
+        self.update_ui()
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):

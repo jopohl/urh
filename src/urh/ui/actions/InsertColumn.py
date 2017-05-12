@@ -13,15 +13,18 @@ class InsertColumn(QUndoCommand):
         self.nbits = 1 if view == 0 else 4 if view == 1 else 8
         self.rows = rows
 
-        self.orig_messages = copy.deepcopy(self.proto_analyzer_container.messages)
+        self.saved_messages = {}
 
         self.setText("Insert column at {0:d}".format(index))
 
     def redo(self):
         for i in self.rows:
             msg = self.proto_analyzer_container.messages[i]
+            self.saved_messages[i] = copy.deepcopy(msg)
             for j in range(self.nbits):
                 msg.insert(self.index + j, False)
 
     def undo(self):
-        self.proto_analyzer_container.messages = self.orig_messages
+        for i in self.rows:
+            self.proto_analyzer_container.messages[i] = self.saved_messages[i]
+        self.saved_messages.clear()

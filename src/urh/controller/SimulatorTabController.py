@@ -63,7 +63,7 @@ class SimulatorTabController(QWidget):
         self.reload_field_types()
         self.update_field_name_column()
 
-        self.simulator_message_table_model = SimulatorMessageTableModel(self)
+        self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller.decodings, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)

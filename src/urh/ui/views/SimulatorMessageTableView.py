@@ -1,5 +1,6 @@
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMenu
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QMenu, QActionGroup
 
 from urh.ui.views.TableView import TableView
 
@@ -35,8 +36,36 @@ class SimulatorMessageTableView(TableView):
         create_label_action.setEnabled(not self.selection_is_empty)
         create_label_action.triggered.connect(self.on_create_label_action_triggered)
 
+        if not self.selection_is_empty:
+            selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
+
+            for i in self.selected_rows:
+                if self.model().protocol.messages[i].decoder != selected_encoding:
+                    selected_encoding = None
+                    break
+
+            encoding_group = QActionGroup(self)
+            encoding_menu = menu.addMenu("Enforce encoding")
+
+            for decoding in self.model().decodings:
+                ea = encoding_menu.addAction(decoding.name)
+                ea.setCheckable(True)
+                ea.setActionGroup(encoding_group)
+
+                if selected_encoding == decoding:
+                    ea.setChecked(True)
+
+                ea.setData(decoding)
+                ea.triggered.connect(self.on_encoding_action_triggered)
+
         return menu
 
+    @pyqtSlot()
+    def on_encoding_action_triggered(self):
+        for row in self.selected_rows:
+            self.model().protocol.messages[row].decoder = self.sender().data()
+
+    @pyqtSlot()
     def on_create_label_action_triggered(self):
         min_row, _, start, end = self.selection_range()
         self.create_fuzzing_label_clicked.emit(min_row, start, end)

@@ -6,10 +6,11 @@ from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 class SimulatorMessageTableModel(TableModel):
-    def __init__(self, parent=None):
+    def __init__(self, decodings, parent=None):
         super().__init__(None, parent)
         self.protocol = ProtocolAnalyzer(None)
 
+        self.decodings = decodings
         self.decode = False
 
         self.label_mask = defaultdict(lambda: False)

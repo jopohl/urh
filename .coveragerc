@@ -6,6 +6,8 @@ omit =
        src/urh/dev/*
        src/urh/ui/xtra_icons_rc.py
        src/urh/main.py
+       src/urh/util/Errors.py
+       src/urh/plugins/RfCat/RfCatPlugin.py
 
 [report]
 sort = Miss

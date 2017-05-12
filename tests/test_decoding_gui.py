@@ -24,13 +24,20 @@ class TestDecodingGUI(QtTestCase):
 
     def test_build_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        chain = [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL,
-                 constants.DECODING_REDUNDANCY,
-                 constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE,
-                 constants.DECODING_DATAWHITENING,
-                 constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT]
+        chain = [(constants.DECODING_INVERT,),
+                 (constants.DECODING_ENOCEAN,),
+                 (constants.DECODING_DIFFERENTIAL,),
+                 (constants.DECODING_CARRIER,),
+                 (constants.DECODING_BITORDER,),
+                 (constants.DECODING_EDGE,),
+                 (constants.DECODING_DATAWHITENING,),
+                 (constants.DECODING_REDUNDANCY, "2"),
+                 (constants.DECODING_MORSE, "1;3;1"),
+                 (constants.DECODING_SUBSTITUTION, "0:1;1:0;"),
+                 (constants.DECODING_EXTERNAL, "./;./"),
+                 (constants.DECODING_CUT, "0;1010")]
 
-        decoding = Encoder(chain=chain)
+        decoding = Encoder(chain=[c for chain_item in chain for c in chain_item])
         self.dialog.decodings[4] = decoding
         self.dialog.set_e()
 
@@ -39,7 +46,7 @@ class TestDecodingGUI(QtTestCase):
         for i in range(0, self.dialog.ui.decoderchain.count()):
             self.dialog.ui.decoderchain.setCurrentRow(i)
             self.dialog.set_information(2)
-            self.assertIn(chain[i], self.dialog.ui.info.text())
+            self.assertIn(chain[i][0], self.dialog.ui.info.text())
 
     def test_set_signal(self):
         self.dialog.ui.combobox_signals.currentIndexChanged.emit(0)

@@ -1,5 +1,8 @@
+from collections import OrderedDict
+
 import numpy as np
 
+from multiprocessing.connection import Connection
 from urh.dev.native.Device import Device
 
 try:
@@ -12,6 +15,7 @@ from urh.util.Logger import logger
 class RTLSDR(Device):
     BYTES_PER_SAMPLE = 2  # RTLSDR device produces 8 bit unsigned IQ data
     DEVICE_LIB = rtlsdr
+    ASYNCHRONOUS = False
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
         Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
@@ -20,53 +24,37 @@ class RTLSDR(Device):
         Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
     })
 
-    @staticmethod
-    def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
-                     bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int):
+    @classmethod
+    def setup_device(cls, ctrl_connection: Connection, device_identifier):
+        # identifier gets set in self.receive_process_arguments
+        device_number = int(device_identifier)
         ret = rtlsdr.open(device_number)
         ctrl_connection.send("OPEN:" + str(ret))
+        return ret == 0
 
-        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY.name, center_freq), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_SAMPLE_RATE.name, sample_rate), ctrl_connection, False)
-        if RTLSDR.get_bandwidth_is_adjustable():
-            RTLSDR.process_command((RTLSDR.Command.SET_BANDWIDTH.name, bandwidth), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_FREQUENCY_CORRECTION.name, freq_correction), ctrl_connection, False)
-        RTLSDR.process_command((RTLSDR.Command.SET_DIRECT_SAMPLING_MODE.name, direct_sampling_mode), ctrl_connection,
-                               False)
-        # Gain has to be set last, otherwise it does not get considered by RTL-SDR
-        RTLSDR.process_command((RTLSDR.Command.SET_RF_GAIN.name, 10 * gain), ctrl_connection, False)
-
+    @classmethod
+    def prepare_sync_receive(cls, ctrl_connection: Connection):
         ret = rtlsdr.reset_buffer()
         ctrl_connection.send("RESET_BUFFER:" + str(ret))
+        return ret == 0
 
-        exit_requested = False
+    @classmethod
+    def receive_sync(cls, data_conn: Connection):
+        data_conn.send_bytes(rtlsdr.read_sync())
 
-        while not exit_requested:
-            while ctrl_connection.poll():
-                result = RTLSDR.process_command(ctrl_connection.recv(), ctrl_connection, False)
-                if result == RTLSDR.Command.STOP.name:
-                    exit_requested = True
-                    break
-
-            if not exit_requested:
-                data_connection.send_bytes(rtlsdr.read_sync())
-
+    @classmethod
+    def shutdown_device(cls, ctrl_connection):
         logger.debug("RTLSDR: closing device")
         ret = rtlsdr.close()
         ctrl_connection.send("CLOSE:" + str(ret))
 
-        data_connection.close()
-        ctrl_connection.close()
-
-    def __init__(self, freq, gain, srate, device_number, is_ringbuffer=False):
+    def __init__(self, freq, gain, srate, device_number, resume_on_full_receive_buffer=False):
         super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
-                         gain=gain, if_gain=1, baseband_gain=1, is_ringbuffer=is_ringbuffer)
+                         gain=gain, if_gain=1, baseband_gain=1,
+                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
 
         self.success = 0
-
-        self.receive_process_function = RTLSDR.receive_sync
-
-        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable() # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable()  # e.g. not in Manjaro Linux / Ubuntu 14.04
 
         self.device_number = device_number
 
@@ -75,9 +63,14 @@ class RTLSDR(Device):
         return hasattr(rtlsdr, "set_tuner_bandwidth")
 
     @property
-    def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.device_number, self.frequency, self.sample_rate, \
-               self.bandwidth, self.gain, self.freq_correction, self.direct_sampling_mode
+    def device_parameters(self):
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
+                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                            (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
+                            (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
+                            (self.Command.SET_RF_GAIN.name, 10 * self.gain),
+                            ("identifier", self.device_number)])
 
     def set_device_bandwidth(self, bandwidth):
         if self.bandwidth_is_adjustable:

@@ -14,7 +14,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
         self.graphics_view = self.ui.graphicsViewReceive
         self.update_interval = 1
-        self.ui.stackedWidget.setCurrentIndex(0)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_receive)
         self.hide_receive_ui_items()
         self.hide_send_ui_items()
 

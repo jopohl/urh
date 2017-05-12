@@ -10,8 +10,7 @@ class DeleteBitsAndPauses(QUndoCommand):
                  start: int, end: int, view: int, decoded: bool, subprotos=None):
         super().__init__()
 
-        self.subprotos = [] if subprotos is None else subprotos
-        """:type: list of ProtocolAnalyzer """
+        self.sub_protocols = [] if subprotos is None else subprotos  # type: list[ProtocolAnalyzer]
         self.view = view
         self.end = end
         self.start = start
@@ -19,18 +18,29 @@ class DeleteBitsAndPauses(QUndoCommand):
         self.start_message = start_message
         self.proto_analyzer = proto_analyzer
         self.decoded = decoded
-        self.orig_messages = copy.deepcopy(self.proto_analyzer.messages)
-        self.subproto_hist = {}  # for CFC
-        for subproto in self.subprotos:
-            self.subproto_hist[subproto] = copy.deepcopy(subproto.messages)
+        self.saved_messages = []
+        self.removed_message_indices = []
+        self.sub_protocol_history = {}  # for CFC
+        for sub_protocol in self.sub_protocols:
+            self.sub_protocol_history[sub_protocol] = sub_protocol.messages
 
-
-        self.setText("Delete Bits")
+        self.setText("Delete")
 
     def redo(self):
-        self.proto_analyzer.delete_messages(self.start_message, self.end_message, self.start, self.end, self.view, self.decoded)
+        self.saved_messages = copy.deepcopy(self.proto_analyzer.messages[self.start_message:self.end_message+1])
+        self.removed_message_indices = self.proto_analyzer.delete_messages(self.start_message, self.end_message,
+                                                                           self.start, self.end,
+                                                                           self.view, self.decoded)
 
     def undo(self):
-        self.proto_analyzer.messages = self.orig_messages
-        for subproto in self.subproto_hist.keys():
-            subproto.messages = self.subproto_hist[subproto]
+        for i in reversed(range(self.start_message, self.end_message+1)):
+            if i in self.removed_message_indices:
+                self.proto_analyzer.messages.insert(i, self.saved_messages[i-self.start_message])
+            else:
+                self.proto_analyzer.messages[i] = self.saved_messages[i-self.start_message]
+
+        for sub_protocol in self.sub_protocol_history.keys():
+            sub_protocol.messages = self.sub_protocol_history[sub_protocol]
+
+        self.saved_messages.clear()
+        self.removed_message_indices.clear()

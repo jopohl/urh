@@ -407,6 +407,8 @@ class ProtocolAnalyzer(object):
         for i in reversed(removable_msg_indices):
             del self.messages[i]
 
+        return removable_msg_indices
+
     def convert_index(self, index: int, from_view: int, to_view: int, decoded: bool, message_indx=-1) -> tuple:
         """
         Konvertiert einen Index aus der einen Sicht (z.B. Bit) in eine andere (z.B. Hex)

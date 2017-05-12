@@ -32,7 +32,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
-                                        is_ringbuffer=False, raw_mode=False)
+                                        resume_on_full_receive_buffer=True, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
@@ -69,7 +69,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
-                                            is_ringbuffer=False, raw_mode=False)
+                                            resume_on_full_receive_buffer=True, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)

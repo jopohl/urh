@@ -15,11 +15,12 @@ from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
-    rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
+    rcv_index_changed = pyqtSignal(int, int)  # int arguments are just for compatibility with native and grc backend
     show_proto_sniff_dialog_clicked = pyqtSignal()
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
@@ -32,16 +33,17 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             while received:
                 received = self.request.recv(4096)
                 self.data += received
-            #print("{} wrote:".format(self.client_address[0]))
-            #print(self.data)
+            # print("{} wrote:".format(self.client_address[0]))
+            # print(self.data)
             if hasattr(self.server, "received_bits"):
                 self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
             else:
                 received = np.frombuffer(self.data, dtype=np.complex64)
-                self.server.receive_buffer[self.server.current_receive_index:self.server.current_receive_index+len(received)] = received
+                self.server.receive_buffer[
+                self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
                 self.server.current_receive_index += len(received)
 
-    def __init__(self, raw_mode=False, spectrum=False):
+    def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False):
         """
 
         :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
@@ -58,6 +60,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
         self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
 
+        self.is_in_spectrum_mode = spectrum
+        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer
         self.__is_sending = False
         self.__sending_interrupt_requested = False
 
@@ -67,13 +71,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.raw_mode = raw_mode
         if self.raw_mode:
-            if not spectrum:
-                # Take 60% of avail memory
-                num_samples = constants.SETTINGS.value('ram_threshold', 0.6, float) * (
-                psutil.virtual_memory().available / 8)
-            else:
-                num_samples = constants.SPECTRUM_BUFFER_SIZE
-            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
+            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                                self.is_in_spectrum_mode)
+            try:
+                self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
+            except MemoryError:
+                logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
+                self.receive_buffer = np.zeros(num_samples // 2, dtype=np.complex64, order='C')
         else:
             self.received_bits = []
 
@@ -174,7 +178,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.current_sent_sample = len(data)
             self.current_sending_repeat += 1
 
-
     def __send_messages(self, messages, sample_rates):
         """
 
@@ -194,7 +197,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.current_send_message_changed.emit(i)
             error = self.send_data(self.bit_str_to_bytearray(msg.encoded_bits_str))
             if not error:
-                logger.debug("Sent message {0}/{1}".format(i+1, len(messages)))
+                logger.debug("Sent message {0}/{1}".format(i + 1, len(messages)))
                 logger.debug("Waiting message pause: {0:.2f}s".format(wait_time))
                 if self.__sending_interrupt_requested:
                     break
@@ -222,14 +225,14 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
-        self.sending_thread = threading.Thread(target=self.send_raw_data, args=(self.samples_to_send, self.sending_repeats))
+        self.sending_thread = threading.Thread(target=self.send_raw_data,
+                                               args=(self.samples_to_send, self.sending_repeats))
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
     def stop_sending_thread(self):
         self.__sending_interrupt_requested = True
         self.sending_stop_requested.emit()
-
 
     @staticmethod
     def bytearray_to_bit_str(arr: bytearray) -> str:
@@ -238,7 +241,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     @staticmethod
     def bit_str_to_bytearray(bits: str) -> bytearray:
         bits += "0" * ((8 - len(bits) % 8) % 8)
-        return bytearray((int(bits[i:i+8], 2) for i in range(0, len(bits), 8)))
+        return bytearray((int(bits[i:i + 8], 2) for i in range(0, len(bits), 8)))
 
     def on_linedit_client_ip_editing_finished(self):
         ip = self.settings_frame.lineEditClientIP.text()

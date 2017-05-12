@@ -3,7 +3,6 @@ import os
 import array
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 
@@ -55,7 +54,8 @@ class TestGenerator(QtTestCase):
         modulator = gframe.modulators[0]
         modulator.modulation_type = 0
         modulator.samples_per_bit = 295
-        modulated_data = gframe.modulate_data()
+        buffer = gframe.prepare_modulation_buffer(gframe.total_modulated_samples, show_error=False)
+        modulated_data = gframe.modulate_data(buffer)
         filename = os.path.join(QDir.tempPath(), "generator_test.complex")
         modulated_data.tofile(filename)
 
@@ -106,11 +106,11 @@ class TestGenerator(QtTestCase):
         self.assertEqual(1, 1)
 
     def test_create_table_context_menu(self):
-        # Context menu should be empty if table is empty
+        # Context menu should only contain one item (add new message)
         self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
         self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
-        self.assertEqual(len(menu.actions()), 0)
+        self.assertEqual(len(menu.actions()), 1)
 
         # Add data to test entries in context menu
         self.add_signal_to_form("ask.complex")
@@ -122,12 +122,34 @@ class TestGenerator(QtTestCase):
         self.assertGreater(self.form.generator_tab_controller.table_model.rowCount(), 0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
         n_items = len(menu.actions())
-        self.assertGreater(n_items, 0)
+        self.assertGreater(n_items, 1)
 
         # If there is a selection, additional items should be present in context menu
         gframe.ui.tableMessages.selectRow(0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
         self.assertGreater(len(menu.actions()), n_items)
+
+    def test_add_empty_row_behind(self):
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(0)
+        gframe.table_model.add_empty_row_behind(-1, 30)
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 1)
+
+        # Add data to test
+        self.add_signal_to_form("ask.complex")
+
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 2)
+        self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[1]), 30)
+        gframe.table_model.add_empty_row_behind(0, 30)
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 3)
+        self.assertEqual(len(self.form.generator_tab_controller.table_model.display_data[1]), 30)
+        self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[2]), 30)
+
+
 
     def test_create_fuzzing_list_view_context_menu(self):
         # Context menu should be empty if table is empty

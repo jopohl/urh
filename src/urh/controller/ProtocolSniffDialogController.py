@@ -1,9 +1,9 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh import constants
-from urh.ContinuousSceneManager import ContinuousSceneManager
+from urh.SniffSceneManager import SniffSceneManager
 from urh.LiveSceneManager import LiveSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -21,7 +21,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.set_sniff_ui_items_visible(True)
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
-        self.ui.stackedWidget.setCurrentIndex(2)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_sniff)
         self.hide_send_ui_items()
         self.hide_receive_ui_items()
         self.ui.sliderYscale.hide()
@@ -109,7 +109,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.sniffer.device_name = dev_name
 
         self._create_device_connects()
-        self.scene_manager = ContinuousSceneManager(np.array([]), parent=self)
+        self.scene_manager = SniffSceneManager(np.array([]), parent=self)
 
     def emit_editing_finished_signals(self):
         super().emit_editing_finished_signals()

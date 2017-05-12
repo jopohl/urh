@@ -83,7 +83,9 @@ class SceneManager(QObject):
 
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
         self.scene.setBackgroundBrush(constants.BGCOLOR)
-        self.line_item.setLine(0, 0, self.num_samples, 0)
+
+        if self.line_item is not None:
+            self.line_item.setLine(0, 0, self.num_samples, 0)
 
     def clear_path(self):
         for item in self.scene.items():

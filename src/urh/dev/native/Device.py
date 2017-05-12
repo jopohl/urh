@@ -1,19 +1,23 @@
 import threading
 import time
-from multiprocessing import Pipe
-from multiprocessing import Value, Process
-from pickle import UnpicklingError
+from collections import OrderedDict
 from enum import Enum
+from multiprocessing import Value, Process, Pipe
+from multiprocessing.connection import Connection
+from pickle import UnpicklingError
 
 import numpy as np
-import psutil
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from urh import constants
+from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class Device(QObject):
+    SEND_BUFFER_SIZE = 0
+    CONTINUOUS_SEND_BUFFER_SIZE = 0
+
     class Command(Enum):
         STOP = 0
         SET_FREQUENCY = 1
@@ -29,6 +33,8 @@ class Device(QObject):
 
     BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
+
+    ASYNCHRONOUS = False
 
     DEVICE_LIB = None
     DEVICE_METHODS = {
@@ -59,10 +65,121 @@ class Device(QObject):
             method_name = None
 
         if method_name:
-            ret = getattr(cls.DEVICE_LIB, method_name)(value)
-            ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
+            try:
+                ret = getattr(cls.DEVICE_LIB, method_name)(value)
+                ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
+            except AttributeError as e:
+                logger.warning(str(e))
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1, is_ringbuffer=False):
+    @classmethod
+    def setup_device(cls, ctrl_connection: Connection, device_identifier):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+        if "identifier" in parameters:
+            identifier = parameters["identifier"]
+        else:
+            identifier = None
+        if cls.setup_device(ctrl_connection, device_identifier=identifier):
+            for parameter, value in parameters.items():
+                cls.process_command((parameter, value), ctrl_connection, is_tx)
+            return True
+        else:
+            return False
+
+    @classmethod
+    def shutdown_device(cls, ctrl_connection):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def enter_async_receive_mode(cls, data_connection: Connection):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def prepare_sync_receive(cls, ctrl_connection: Connection):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def receive_sync(cls, data_conn: Connection):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def enter_async_send_mode(cls, callback: object):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def prepare_sync_send(cls, ctrl_connection: Connection):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def send_sync(cls, data):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
+    def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
+        if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
+            return False
+
+        if cls.ASYNCHRONOUS:
+            cls.enter_async_receive_mode(data_connection)
+        else:
+            cls.prepare_sync_receive(ctrl_connection)
+
+        exit_requested = False
+
+        while not exit_requested:
+            if cls.ASYNCHRONOUS:
+                time.sleep(0.5)
+            else:
+                cls.receive_sync(data_connection)
+            while ctrl_connection.poll():
+                result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
+                if result == cls.Command.STOP.name:
+                    exit_requested = True
+                    break
+
+        cls.shutdown_device(ctrl_connection)
+        data_connection.close()
+        ctrl_connection.close()
+
+    @classmethod
+    def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
+        if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
+            return False
+
+        if cls.ASYNCHRONOUS:
+            cls.enter_async_send_mode(send_config.get_data_to_send)
+        else:
+            cls.prepare_sync_send(ctrl_connection)
+
+        exit_requested = False
+        buffer_size = cls.CONTINUOUS_SEND_BUFFER_SIZE if send_config.continuous else cls.SEND_BUFFER_SIZE
+        if not cls.ASYNCHRONOUS and buffer_size == 0:
+            logger.warning("Send buffer size is zero!")
+
+        while not exit_requested and not send_config.sending_is_finished():
+            if cls.ASYNCHRONOUS:
+                time.sleep(0.5)
+            else:
+                cls.send_sync(send_config.get_data_to_send(buffer_size))
+
+            while ctrl_connection.poll():
+                result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
+                if result == cls.Command.STOP.name:
+                    exit_requested = True
+                    break
+
+        if exit_requested:
+            logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
+        if send_config.sending_is_finished():
+            logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
+
+        cls.shutdown_device(ctrl_connection)
+        ctrl_connection.close()
+
+    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
+                 resume_on_full_receive_buffer=False):
         super().__init__()
 
         self.error_not_open = -4242
@@ -81,6 +198,10 @@ class Device(QObject):
         self.__direct_sampling_mode = 0
         self.bandwidth_is_adjustable = True
 
+        self.is_in_spectrum_mode = False
+        self.sending_is_continuous = False
+        self.continuous_send_ring_buffer = None
+        self.total_samples_to_send = None  # None = get automatically. This value needs to be known in continuous send mode
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
@@ -88,8 +209,8 @@ class Device(QObject):
         self.error_codes = {}
         self.device_messages = []
 
-        self.receive_process_function = None
-        self.send_process_function = None
+        self.receive_process_function = self.device_receive
+        self.send_process_function = self.device_send
 
         self.parent_data_conn, self.child_data_conn = Pipe()
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
@@ -99,7 +220,7 @@ class Device(QObject):
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
-        self.is_ringbuffer = is_ringbuffer  # Ringbuffer for Spectrum Analyzer or Protocol Sniffing
+        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
         self.current_recv_index = 0
         self.is_receiving = False
         self.is_transmitting = False
@@ -123,11 +244,11 @@ class Device(QObject):
 
     @property
     def current_sent_sample(self):
-        return self._current_sent_sample.value // self.BYTES_PER_SAMPLE
+        return self._current_sent_sample.value // 2
 
     @current_sent_sample.setter
     def current_sent_sample(self, value: int):
-        self._current_sent_sample.value = value * self.BYTES_PER_SAMPLE
+        self._current_sent_sample.value = value * 2
 
     @property
     def current_sending_repeat(self):
@@ -138,26 +259,36 @@ class Device(QObject):
         self._current_sending_repeat.value = value
 
     @property
+    def device_parameters(self) -> OrderedDict:
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
+                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                            (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_IF_GAIN.name, self.if_gain),
+                            (self.Command.SET_BB_GAIN.name, self.baseband_gain)])
+
+    @property
+    def send_config(self) -> SendConfig:
+        data_conn = self.child_data_conn if self.sending_is_continuous else None
+        total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
+        return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
+                          total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
+                          data_connection=data_conn, pack_complex_method=self.pack_complex,
+                          continuous_send_ring_buffer=self.continuous_send_ring_buffer)
+
+    @property
     def receive_process_arguments(self):
-        return self.child_data_conn, self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, self.gain, self.if_gain, self.baseband_gain
+        return self.child_data_conn, self.child_ctrl_conn, self.device_parameters
 
     @property
     def send_process_arguments(self):
-        return self.child_ctrl_conn, self.frequency, self.sample_rate, self.bandwidth, \
-               self.gain, self.if_gain, self.baseband_gain, self.send_buffer, \
-               self._current_sent_sample, self._current_sending_repeat, self.sending_repeats
+        return self.child_ctrl_conn, self.send_config, self.device_parameters
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            if self.is_ringbuffer:
-                num_samples = constants.SPECTRUM_BUFFER_SIZE
-            else:
-                # Take 60% of avail memory
-                threshold = constants.SETTINGS.value('ram_threshold', 0.6, float)
-                num_samples = threshold * (psutil.virtual_memory().available / 8)
+            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                                self.is_in_spectrum_mode)
             self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
-            logger.info(
-                "Initialized receiving buffer with size {0:.2f}MB".format(self.receive_buffer.nbytes / (1024 * 1024)))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -171,7 +302,8 @@ class Device(QObject):
             logger.info(formatted_message)
         else:
             if msg:
-                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode, msg)
+                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg,
+                                                                      retcode, msg)
             else:
                 formatted_message = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
             logger.error(formatted_message)
@@ -206,7 +338,7 @@ class Device(QObject):
     def set_device_bandwidth(self, bw):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_BANDWIDTH.name, int(bw)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -222,7 +354,7 @@ class Device(QObject):
     def set_device_frequency(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY.name, int(value)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -238,7 +370,7 @@ class Device(QObject):
     def set_device_gain(self, gain):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, int(gain)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -254,7 +386,7 @@ class Device(QObject):
     def set_device_if_gain(self, if_gain):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, int(if_gain)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -270,7 +402,7 @@ class Device(QObject):
     def set_device_baseband_gain(self, baseband_gain):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, int(baseband_gain)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -286,7 +418,7 @@ class Device(QObject):
     def set_device_sample_rate(self, sample_rate):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE.name, int(sample_rate)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -302,7 +434,7 @@ class Device(QObject):
     def set_device_channel_index(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_CHANNEL_INDEX.name, int(value)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -318,7 +450,7 @@ class Device(QObject):
     def set_device_antenna_index(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_ANTENNA_INDEX.name, int(value)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -334,7 +466,7 @@ class Device(QObject):
     def set_device_freq_correction(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY_CORRECTION.name, int(value)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     @property
@@ -350,7 +482,7 @@ class Device(QObject):
     def set_device_direct_sampling_mode(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_DIRECT_SAMPLING_MODE.name, int(value)))
-        except BrokenPipeError:
+        except (BrokenPipeError, OSError):
             pass
 
     def start_rx_mode(self):
@@ -375,8 +507,8 @@ class Device(QObject):
         self.is_receiving = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
-        except BrokenPipeError:
-            pass
+        except (BrokenPipeError, OSError) as e:
+            logger.debug("Closing parent control connection: " + str(e))
 
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -388,11 +520,15 @@ class Device(QObject):
                 self.receive_process.join()
                 self.child_ctrl_conn.close()
                 self.child_data_conn.close()
+        self.parent_ctrl_conn.close()
+        self.parent_data_conn.close()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
-        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-        self.init_send_parameters(samples_to_send, repeats, resume=resume)
         self.is_transmitting = True
+        self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
+        if self.sending_is_continuous:
+            self.parent_data_conn, self.child_data_conn = Pipe()
+        self.init_send_parameters(samples_to_send, repeats, resume=resume)
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
 
@@ -407,8 +543,8 @@ class Device(QObject):
         self.is_transmitting = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
-        except BrokenPipeError:
-            pass
+        except (BrokenPipeError, OSError) as e:
+            logger.debug("Closing parent control connection: " + str(e))
 
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 
@@ -419,6 +555,9 @@ class Device(QObject):
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.child_ctrl_conn.close()
+                self.child_data_conn.close()
+        self.parent_data_conn.close()
+        self.parent_ctrl_conn.close()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):
@@ -437,6 +576,7 @@ class Device(QObject):
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
+                time.sleep(0.1)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False
@@ -448,29 +588,28 @@ class Device(QObject):
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
 
-                nsamples = len(byte_buffer) // self.BYTES_PER_SAMPLE
-                if nsamples > 0:
-                    if self.current_recv_index + nsamples >= len(self.receive_buffer):
-                        if self.is_ringbuffer:
+                n_samples = len(byte_buffer) // self.BYTES_PER_SAMPLE
+                if n_samples > 0:
+                    if self.current_recv_index + n_samples >= len(self.receive_buffer):
+                        if self.resume_on_full_receive_buffer:
                             self.current_recv_index = 0
-                            if nsamples >= len(self.receive_buffer):
-                                #logger.warning("Receive buffer too small, skipping {0:d} samples".format(nsamples - len(self.receive_buffer)))
-                                nsamples = len(self.receive_buffer) - 1
+                            if n_samples >= len(self.receive_buffer):
+                                n_samples = len(self.receive_buffer) - 1
                         else:
                             self.stop_rx_mode(
-                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + nsamples,
+                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
                                                                           len(self.receive_buffer)))
                             return
 
-                    end = nsamples * self.BYTES_PER_SAMPLE
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + nsamples] = \
-                        self.unpack_complex(byte_buffer[:end], nsamples)
+                    end = n_samples * self.BYTES_PER_SAMPLE
+                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = \
+                        self.unpack_complex(byte_buffer[:end], n_samples)
 
                     old_index = self.current_recv_index
-                    self.current_recv_index += nsamples
+                    self.current_recv_index += n_samples
 
                     self.rcv_index_changed.emit(old_index, self.current_recv_index)
-            except BrokenPipeError:
+            except (BrokenPipeError, OSError):
                 pass
             except EOFError:
                 logger.info("EOF Error: Ending receive thread")

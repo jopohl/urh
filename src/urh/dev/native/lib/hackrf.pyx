@@ -3,6 +3,8 @@ from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
 
+from urh.util.Logger import logger
+
 TIMEOUT = 0.2
 
 cdef object f
@@ -10,12 +12,17 @@ from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
     global f
-    (<object> f)(transfer.buffer[0:transfer.valid_length])
-    return 0
+    try:
+        (<object> f)(transfer.buffer[0:transfer.valid_length])
+        return 0
+    except Exception as e:
+        logger.error("Cython-HackRF:" + str(e))
+        return -1
 
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f
-    cdef bytes bytebuf = (<object> f)(transfer.valid_length)
+    # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
+    cdef bytes bytebuf = (<object> f)(transfer.valid_length).tostring()
     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
     return 0
 

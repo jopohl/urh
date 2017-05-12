@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 
+from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -105,6 +106,12 @@ class GeneratorTableModel(TableModel):
 
     def duplicate_row(self, row: int):
         self.protocol.duplicate_line(row)
+        self.update()
+
+    def add_empty_row_behind(self, row_index: int, num_bits: int):
+        self.protocol.insert_empty_message(row=row_index+1,
+                                           pause=constants.SETTINGS.value("default_fuzzing_pause", 10**6, int),
+                                           num_bits=num_bits)
         self.update()
 
     def get_selected_label_index(self, row: int, column: int):

@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
-    QContextMenuEvent
-from PyQt5.QtWidgets import QActionGroup
+    QContextMenuEvent, QIcon
+from PyQt5.QtWidgets import QActionGroup, QInputDialog
 
 from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
 
@@ -156,6 +156,11 @@ class GeneratorTableView(TableView):
             fuzzing_action.triggered.connect(self.on_fuzzing_action_triggered)
             menu.addSeparator()
 
+        add_message_action = menu.addAction("Add empty message...")
+        add_message_action.setIcon(QIcon.fromTheme("list-add"))
+        add_message_action.triggered.connect(self.on_add_message_action_triggered)
+
+        if self.model().row_count > 0:
             column_menu = menu.addMenu("Add column")
 
             insert_column_left_action = column_menu.addAction("on the left")
@@ -232,3 +237,13 @@ class GeneratorTableView(TableView):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.encoding_actions[self.sender()]
         self.encodings_updated.emit()
+
+    @pyqtSlot()
+    def on_add_message_action_triggered(self):
+        row = self.rowAt(self.context_menu_pos.y())
+        num_bits, ok = QInputDialog.getInt(self, self.tr("How many bits shall the new message have?"),
+                                           self.tr("Number of bits:"), 42, 1)
+        if ok:
+            self.model().add_empty_row_behind(row, num_bits)
+            if self.model().rowCount() == 1:
+                self.resize_columns()

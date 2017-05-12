@@ -192,6 +192,7 @@ class SimulatorGraphicsView(QGraphicsView):
             #menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
+            clear_all_action.setIcon(QIcon.fromTheme("edit-clear"))
 
         return menu
 

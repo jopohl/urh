@@ -197,19 +197,18 @@ class SimulatorTabController(QWidget):
         goto_combobox = self.ui.goto_combobox
         goto_combobox.clear()
 
-        goto_combobox.addItem("---Select target---", None)
-
         items = self.sim_proto_manager.get_all_items()
+        goto_combobox.addItem("Select item ...", None)
 
         for item in items:
             if (isinstance(item, SimulatorProtocolLabel) or
                     isinstance(item, SimulatorRule)):
                 continue
 
-            goto_combobox.addItem(item.index(), item)
+            goto_combobox.addItem("item" + item.index().replace(".", "_"))
 
         if self.active_item.goto_target is not None:
-            goto_combobox.setCurrentText(self.active_item.goto_target.index())
+            goto_combobox.setCurrentText(self.active_item.goto_target)
         else:
             goto_combobox.setCurrentIndex(0)
 
@@ -272,7 +271,8 @@ class SimulatorTabController(QWidget):
         
     @pyqtSlot()
     def on_goto_combobox_activated(self):
-        self.active_item.goto_target = self.ui.goto_combobox.currentData()
+        self.active_item.goto_target = self.ui.goto_combobox.currentText()
+        self.sim_proto_manager.item_updated.emit(self.active_item)
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):

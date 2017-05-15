@@ -17,9 +17,9 @@ class SimulatorRule(SimulatorItem):
         return any(child.type is ConditionType.ELSE for child in self.children)
 
 class ConditionType(Enum):
-    IF = "if ..."
-    ELSE_IF = "else if ..."
-    ELSE = "else"
+    IF = "IF"
+    ELSE_IF = "ELSE IF"
+    ELSE = "ELSE"
 
 class SimulatorRuleCondition(SimulatorItem):
     def __init__(self, type: ConditionType):

@@ -7,13 +7,9 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
-    def __init__(self, scene_mode: int, model_item: SimulatorProtocolLabel, parent=None):
+    def __init__(self, model_item: SimulatorProtocolLabel, parent=None):
         assert isinstance(model_item, SimulatorProtocolLabel)
-
-        if scene_mode == 0:
-            super().__init__(model_item=model_item, parent=parent)
-        else:
-            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, parent=parent)
+        super().__init__(model_item=model_item, parent=parent)
 
         self.name = QGraphicsTextItem(self)
 
@@ -21,7 +17,11 @@ class LabelItem(GraphicsItem):
         font.setPointSize(8)
         self.name.setFont(font)
 
-        self.refresh()
+    def update_flags(self):
+        if self.scene().mode == 0:
+            self.set_flags()
+        else:
+            self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def update_numbering(self):
         pass
@@ -36,4 +36,9 @@ class LabelItem(GraphicsItem):
         return self.childrenBoundingRect()
 
     def refresh(self):
-        self.name.setPlainText(self.model_item.name)
+        if self.scene().mode == 1 and self.model_item.logging_active:
+            text = "[L] " + self.model_item.name
+        else:
+            text = self.model_item.name
+
+        self.name.setPlainText(text)

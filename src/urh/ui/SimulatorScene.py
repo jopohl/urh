@@ -1,89 +1,36 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QGraphicsItem, QAbstractItemView
-from PyQt5.QtGui import QPen, QDropEvent, QFont, QFontDatabase
-from PyQt5.QtCore import Qt
-
 import copy
 
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt5.QtGui import QDropEvent
+from PyQt5.QtCore import Qt
+
+from urh.signalprocessing.Message import Message
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.LabelItem import LabelItem
-from urh.signalprocessing.RuleItem import RuleItem, RuleConditionItem
-from urh.signalprocessing.MessageItem import MessageItem
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.signalprocessing.LabelItem import LabelItem
+from urh.signalprocessing.ActionItem import ActionItem, GotoActionItem, ProgramActionItem
+from urh.signalprocessing.RuleItem import RuleItem, RuleConditionItem
+from urh.signalprocessing.MessageItem import MessageItem
+from urh.signalprocessing.ParticipantItem import ParticipantItem
+from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
-class ActionItem(GraphicsItem):
-    def __init__(self, model_item, parent=None):
-        super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True, parent=parent)
-        self.text = QGraphicsTextItem(self)
-
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(8)
-        font.setWeight(QFont.DemiBold)
-        self.text.setFont(font)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
-
-    def update_position(self, x_pos, y_pos):
-        self.setPos(x_pos, y_pos)
-        self.number.setPos(0, 0)
-        self.text.setPos(self.number.boundingRect().width(), 0)
-        super().update_position(x_pos, y_pos)
-
-class GotoActionItem(ActionItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
-        super().__init__(model_item=model_item, parent=parent)
-        self.text.setPlainText("GOTO")
-
-    def refresh(self):
-        if self.model_item.goto_target:
-            self.text.setPlainText("GOTO " + self.model_item.goto_target.index())
-        else:
-            self.text.setPlainText("GOTO")
-
-class ProgramActionItem(ActionItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
-        super().__init__(model_item=model_item, parent=parent)
-        self.text.setPlainText("Start program [/usr/bin/test]")
-
-class ParticipantItem(QGraphicsItem):
-    def __init__(self, model_item: Participant, parent=None):
-        super().__init__(parent)
-
-        self.model_item = model_item
-        self.text = QGraphicsTextItem(self)
-        self.line = QGraphicsLineItem(self)
-        self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
-        self.refresh()
-
-    def update(self, x_pos = -1, y_pos = -1):
-        if x_pos == -1:
-            x_pos = self.line.line().x1()
-
-        if y_pos == -1:
-            y_pos = self.line.line().y2()
-
-        self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
-        self.line.setLine(x_pos, 30, x_pos, y_pos)
-        super().update()
-
-    def refresh(self):
-        self.text.setPlainText("?" if not self.model_item else self.model_item.shortname)
-
-    def boundingRect(self):
-        return self.childrenBoundingRect()
-
-    def paint(self, painter, option, widget):
-        pass
-
 class SimulatorScene(QGraphicsScene):
+    model_to_scene_class_mapping = {
+        SimulatorRule: RuleItem,
+        SimulatorRuleCondition: RuleConditionItem,
+        SimulatorGotoAction: GotoActionItem,
+        SimulatorProgramAction: ProgramActionItem,
+        SimulatorMessage: MessageItem,
+        SimulatorProtocolLabel: LabelItem
+    }
+
     def __init__(self, mode: int, sim_proto_manager: SimulatorProtocolManager, parent=None):
         super().__init__(parent)
         self.mode = mode
@@ -140,22 +87,7 @@ class SimulatorScene(QGraphicsScene):
         self.update_view()
 
     def on_item_added(self, item: SimulatorItem):
-        if isinstance(item, SimulatorRule):
-            scene_item = RuleItem(model_item=item)
-        elif isinstance(item, SimulatorRuleCondition):
-            scene_item = RuleConditionItem(scene_mode=self.mode, model_item=item)
-        elif isinstance(item, SimulatorGotoAction):
-            scene_item = GotoActionItem(item)
-        elif isinstance(item, SimulatorProgramAction):
-            scene_item = ProgramActionItem(item)
-        elif isinstance(item, SimulatorMessage):
-            scene_item = MessageItem(scene_mode=self.mode, model_item=item)
-        elif isinstance(item, SimulatorProtocolLabel):
-            scene_item = LabelItem(scene_mode=self.mode, model_item=item)
-        else:
-            print("WHOOPS ... Unknown item type!")
-            return
-
+        scene_item = self.model_to_scene_class_mapping[type(item)](model_item=item)
         self.insert_item(scene_item)
 
         # add children to scene ...
@@ -169,7 +101,7 @@ class SimulatorScene(QGraphicsScene):
 
         return self.items_dict[model_item]
 
-    def insert_participant(self, participant):
+    def insert_participant(self, participant: Participant):
         scene_part = ParticipantItem(participant)
         scene_part.setVisible(False)
         self.participants.insert(-2, scene_part)
@@ -187,6 +119,9 @@ class SimulatorScene(QGraphicsScene):
         if item not in self.items():
             self.addItem(item)
 
+        item.update_flags()
+        item.refresh()
+
     def get_parent_scene_item(self, item: GraphicsItem):
         return self.model_to_scene(item.model_item.parent())
 
@@ -197,9 +132,14 @@ class SimulatorScene(QGraphicsScene):
             width = visible_participants[-1].line.line().x1()
             width -= visible_participants[0].line.line().x1()
         else:
-            width = 40
+            width = 0
+            items = [item for item in self.items() if isinstance(item, ActionItem)]
 
-        return width        
+            for item in items:
+                if item.labels_width() > width:
+                    width = item.labels_width()
+
+        return width
 
     def delete_selected_items(self):
         items = self.selectedItems()
@@ -257,33 +197,28 @@ class SimulatorScene(QGraphicsScene):
             if key not in sim_items:
                 del self.items_dict[key]
 
-    def get_all_messages(self):
+    def arrange_participants(self):
         messages = [item for item in self.items() if isinstance(item, MessageItem)]
 
-        return messages
-
-    def arrange_participants(self):
         for participant in self.participants:
-            for msg in self.get_all_messages():
-                if msg.source == participant or msg.destination == participant:
-                    participant.setVisible(True)
-                    break
+            if any(msg.source == participant or msg.destination == participant for msg in messages):
+                participant.setVisible(True)
             else:
                 participant.setVisible(False)
-                participant.update(x_pos = 30)
+                participant.update_position(x_pos = 30)
 
         visible_participants = [part for part in self.participants if part.isVisible()]
 
         if not visible_participants:
             return
 
-        visible_participants[0].update(x_pos = 0)
+        visible_participants[0].update_position(x_pos = 0)
 
         for i in range(1, len(visible_participants)):
             curr_participant = visible_participants[i]
             participants_left = visible_participants[:i]
 
-            items = [msg for msg in self.get_all_messages()
+            items = [msg for msg in messages
                     if ((msg.source == curr_participant and msg.destination in participants_left)
                     or (msg.source in participants_left and msg.destination == curr_participant))]
 
@@ -296,7 +231,7 @@ class SimulatorScene(QGraphicsScene):
                 if x > x_max:
                     x_max = x
 
-            curr_participant.update(x_pos = x_max)
+            curr_participant.update_position(x_pos = x_max)
 
     def arrange_items(self):
         x_pos = 0
@@ -308,7 +243,7 @@ class SimulatorScene(QGraphicsScene):
             y_pos += round(scene_item.boundingRect().height())
 
         for participant in self.participants:
-            participant.update(y_pos = max(y_pos, 50))
+            participant.update_position(y_pos = max(y_pos, 50))
 
     def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
         super().dragMoveEvent(event)
@@ -379,6 +314,12 @@ class SimulatorScene(QGraphicsScene):
         position = None if ref_item is None else item.drop_indicator_position
         self.add_protocols(ref_item, position, protocols_to_add)
         super().dropEvent(event)
+
+    def mousePressEvent(self, event):
+        if event.button != Qt.LeftButton:
+            event.accept()
+
+        super().mousePressEvent(event)
 
     def add_rule(self, ref_item, position):
         rule = SimulatorRule()

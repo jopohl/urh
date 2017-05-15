@@ -181,6 +181,7 @@ class SimulatorGraphicsView(QGraphicsView):
             if self.context_menu_item.destination != self.scene().broadcast_part:
                 swap_part_action = menu.addAction("Swap source and destination")
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
+                swap_part_action.setIcon(QIcon.fromTheme("object-flip-horizontal"))
 
             if len(self.context_menu_item.model_item.message_type):
                 new_message_type_action = menu.addAction("Create new message type based on this message ...")

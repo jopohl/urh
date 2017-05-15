@@ -9,17 +9,18 @@ from PyQt5.QtGui import QPen, QPolygonF
 import math
 
 class MessageItem(GraphicsItem):
-    def __init__(self, scene_mode: int, model_item: SimulatorMessage, parent=None):
+    def __init__(self, model_item: SimulatorMessage, parent=None):
         assert isinstance(model_item, SimulatorMessage)
-
-        if scene_mode == 0:
-            super().__init__(model_item=model_item, is_selectable=True, is_movable=True, accept_hover_events=True,
-                                accept_drops=True, parent=parent)
-        else:
-            super().__init__(model_item=model_item, parent=parent)
+        super().__init__(model_item=model_item, parent=parent)
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
+
+    def update_flags(self):
+        if self.scene().mode == 0:
+            self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
+        else:
+            self.set_flags()
 
     def labels_width(self):
         labels = self.labels()

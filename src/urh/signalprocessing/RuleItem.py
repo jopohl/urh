@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QAbstractItemView
 from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QFontDatabase, QFont, QPen
+from PyQt5.QtGui import QFontDatabase, QFont, QPen, QColor
 
 from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
@@ -10,7 +10,6 @@ from urh import constants
 class RuleItem(GraphicsItem):
     def __init__(self, model_item: SimulatorRule, parent=None):
         assert isinstance(model_item, SimulatorRule)
-
         super().__init__(model_item=model_item, parent=parent)
 
         self.bounding_rect = QRectF()
@@ -29,10 +28,10 @@ class RuleItem(GraphicsItem):
 
         for child in self.get_scene_children():
             child.update_position(0, start_y)
-            start_y += round(child.boundingRect().height())
+            start_y += round(child.boundingRect().height()) - 1
 
         self.prepareGeometryChange()
-        self.bounding_rect = self.childrenBoundingRect()
+        self.bounding_rect = self.childrenBoundingRect().adjusted(0, 0, 0, 5)
 
     def boundingRect(self):
         return self.bounding_rect
@@ -41,21 +40,32 @@ class RuleItem(GraphicsItem):
         pass
 
 class RuleConditionItem(GraphicsItem):
-    def __init__(self, scene_mode: int, model_item: SimulatorRuleCondition, parent=None):
+    def __init__(self, model_item: SimulatorRuleCondition, parent=None):
         assert isinstance(model_item, SimulatorRuleCondition)
+        super().__init__(model_item=model_item, parent=parent)
 
-        if scene_mode == 0:
-            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, accept_drops=True, parent=parent)
-        else:
-            super().__init__(model_item=model_item, is_selectable=True, accept_hover_events=True, parent=parent)
-
-        self.text = QGraphicsTextItem(self)
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(10)
         font.setWeight(QFont.DemiBold)
+
+        self.text = QGraphicsTextItem(self)
         self.text.setFont(font)
+        self.number.setFont(font)
+
+        font2 = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        font2.setPointSize(8)
+        #font2.setWeight(QFont.DemiBold)
+        self.desc = QGraphicsTextItem(self)
+        self.desc.setPlainText("item1.seq > 5")
+        self.desc.setFont(font2)
 
         self.refresh()
+
+    def update_flags(self):
+        if self.scene().mode == 0:
+            self.set_flags(is_selectable=True, accept_hover_events=True, accept_drops=True)
+        else:
+            self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def refresh(self):
         self.text.setPlainText(self.model_item.type.value)
@@ -64,9 +74,14 @@ class RuleConditionItem(GraphicsItem):
         self.setPos(x_pos, y_pos)
 
         start_y = 0
-        self.number.setPos(0, start_y)
-        self.text.setPos(self.number.boundingRect().width(), start_y)
-        start_y += round(self.text.boundingRect().height())
+        start_x = ((self.scene().items_width() + 40) - (self.number.boundingRect().width() + self.text.boundingRect().width())) / 2
+        self.number.setPos(start_x, start_y)
+        start_x += self.number.boundingRect().width()
+        self.text.setPos(start_x, start_y)
+        start_y += round(self.number.boundingRect().height())
+        start_x = ((self.scene().items_width() + 40) - self.desc.boundingRect().width()) / 2
+        self.desc.setPos(start_x, start_y)
+        start_y += round(self.desc.boundingRect().height()) + 5
 
         for child in self.get_scene_children():
             child.update_position(20, start_y)
@@ -74,7 +89,7 @@ class RuleConditionItem(GraphicsItem):
 
         width = self.scene().items_width()
         self.prepareGeometryChange()
-        self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 20)
+        self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 5)
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
@@ -89,14 +104,16 @@ class RuleConditionItem(GraphicsItem):
         self.update()
 
     def paint(self, painter, option, widget):
+        painter.setOpacity(constants.SELECTION_OPACITY)
+
         if self.hover_active or self.isSelected():
-            painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)
         else:
-            painter.setOpacity(0.8)
-            painter.setBrush(constants.LABEL_COLORS[-3])
+            painter.setBrush(QColor.fromRgb(204, 204, 204, 255))
 
-        painter.setPen(QPen(Qt.darkGray, 1, Qt.DotLine, Qt.RoundCap, Qt.RoundJoin))
+        painter.drawRect(QRectF(0, 0, self.boundingRect().width(), self.desc.boundingRect().height() + self.number.boundingRect().height()))
+
+        painter.setBrush(Qt.NoBrush)
         painter.drawRect(self.boundingRect())
 
         if self.drag_over:

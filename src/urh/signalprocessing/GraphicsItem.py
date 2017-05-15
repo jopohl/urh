@@ -10,15 +10,9 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class GraphicsItem(QGraphicsObject):
-    def __init__(self, model_item: SimulatorItem, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False, parent=None):
+    def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(parent)
         self.model_item = model_item
-
-        self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
-        self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
-
-        self.setAcceptHoverEvents(accept_hover_events)
-        self.setAcceptDrops(accept_drops)
 
         self.hover_active = False
         self.drag_over = False
@@ -32,6 +26,15 @@ class GraphicsItem(QGraphicsObject):
         font.setWeight(QFont.DemiBold)
         self.number.setFont(font)
 
+    def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
+        self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
+        self.setAcceptHoverEvents(accept_hover_events)
+        self.setAcceptDrops(accept_drops)
+
+    def update_flags(self):
+        pass
+        
     def hoverEnterEvent(self, event):
         self.hover_active = True
         self.update()
@@ -165,7 +168,7 @@ class GraphicsItem(QGraphicsObject):
             self.item_under_mouse.update_drop_indicator(self.mapToItem(self.item_under_mouse, event.pos()))
         elif item:
             self.item_under_mouse = item
-            self.item_under_mouse.dragEnterEvent(None)          
+            self.item_under_mouse.dragEnterEvent(None)
 
         super().mouseMoveEvent(event)
 

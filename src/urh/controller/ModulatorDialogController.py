@@ -88,6 +88,11 @@ class ModulatorDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+
+        for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated, self.ui.gVOriginalSignal):
+            # Eliminate graphic views to prevent segfaults
+            gv.eliminate()
+
         super().closeEvent(event)
 
     @property

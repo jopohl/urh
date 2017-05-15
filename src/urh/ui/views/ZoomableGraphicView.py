@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QAction, QGraphicsScene
 
 from urh.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
+from urh.util.Logger import logger
 
 
 class ZoomableGraphicView(SelectableGraphicView):
@@ -49,8 +50,11 @@ class ZoomableGraphicView(SelectableGraphicView):
         return 0  # gets overwritten in Epic Graphic View
 
     def scrollContentsBy(self, dx: int, dy: int):
-        super().scrollContentsBy(dx, dy)
-        self.redraw_timer.start(0)
+        try:
+            super().scrollContentsBy(dx, dy)
+            self.redraw_timer.start(0)
+        except RuntimeError as e:
+            logger.warning("Graphic View already closed: " + str(e))
 
     def zoom(self, factor, zoom_to_mouse_cursor=True, cursor_pos=None):
         if factor > 1 and self.view_rect().width() / factor < 300:

@@ -509,7 +509,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_show_field_types_config_action_triggered(self):
-        self.show_options_dialog_specific_tab(tab_index=3)
+        self.show_options_dialog_specific_tab(tab_index=2)
 
     @pyqtSlot()
     def on_open_recent_action_triggered(self):

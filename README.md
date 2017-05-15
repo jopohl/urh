@@ -1,6 +1,6 @@
 # Universal Radio Hacker
 [![Linux/OSX Build Status](https://img.shields.io/travis/jopohl/urh/master.svg?label=Linux/OSX)](https://travis-ci.org/jopohl/urh)
-[![Windows Build status](https://img.shields.io/appveyor/ci/es128/chokidar/master.svg?label=Windows)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
+[![Windows Build status](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
 [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)

@@ -1215,6 +1215,7 @@ class CompareFrameController(QFrame):
     def on_undo_stack_index_changed(self, index: int):
         self.protocol_model.update()
         self.protocol_label_list_model.update()
+        self.search()
 
     @pyqtSlot(ProtocolLabel)
     def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):

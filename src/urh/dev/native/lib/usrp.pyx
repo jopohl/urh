@@ -14,6 +14,12 @@ np.import_array()
 cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
 
+cpdef bool IS_TX = False
+
+cpdef set_tx(bool is_tx):
+    global IS_TX
+    IS_TX = is_tx
+
 cpdef find_devices(device_args):
     """
     Find all connected USRP devices.
@@ -40,7 +46,7 @@ cpdef uhd_error open(str device_args):
 cpdef uhd_error close():
     return uhd_usrp_free(&_c_device)
 
-cpdef uhd_error setup_stream(bool is_tx):
+cpdef uhd_error setup_stream():
     cdef uhd_stream_args_t stream_args
     # https://files.ettus.com/manual/structuhd_1_1stream__args__t.html
     byte_string_cpu_format = "fc32".encode("UTF-8")
@@ -58,7 +64,7 @@ cpdef uhd_error setup_stream(bool is_tx):
 
     cdef size_t num_channels = 0
 
-    if not is_tx:
+    if not IS_TX:
         uhd_rx_streamer_make(&rx_streamer_handle)
         uhd_usrp_get_rx_stream(_c_device, &stream_args, rx_streamer_handle)
 
@@ -70,8 +76,8 @@ cpdef uhd_error setup_stream(bool is_tx):
     else:
         raise NotImplementedError("ToDo")
 
-cpdef uhd_error destroy_stream(bool is_tx):
-    if not is_tx:
+cpdef uhd_error destroy_stream():
+    if not IS_TX:
         return  uhd_rx_streamer_free(&rx_streamer_handle)
     else:
         raise NotImplementedError("ToDo")
@@ -95,12 +101,15 @@ cpdef uhd_error recv_stream(connection, size_t num_samples):
 
     uhd_rx_metadata_free(&metadata_handle)
 
-    print("Received items:", items_received)
     if items_received > 0:
         connection.send_bytes(<float[:2*items_received]>buff)
     else:
         logger.warning("USRP: Failed to receive stream")
 
 
-
+cpdef str get_device_representation():
+    cdef size_t size = 3000
+    cdef char * result = <char *> malloc(size * sizeof(char))
+    uhd_usrp_get_pp_string(_c_device, result, size)
+    return result.decode("UTF-8")
 

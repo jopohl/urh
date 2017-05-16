@@ -9,18 +9,22 @@ class TestUSRP(unittest.TestCase):
         print(ret_code, devices)
         self.assertEqual(ret_code, 0)
 
+        usrp.set_tx(False)
+
         return_code = usrp.open("addr=192.168.10.2")
         print("open", return_code)
 
-        usrp.setup_stream(False)
+        usrp.setup_stream()
         print("Made rx_streame handler")
+
+        print(usrp.get_device_representation())
 
         parent_conn, child_conn = Pipe()
         for _ in range(3):
             usrp.recv_stream(child_conn, 8192)
             print(parent_conn.recv_bytes())
 
-        usrp.destroy_stream(False)
+        usrp.destroy_stream()
         print("Freed rx streamer handler")
 
         return_code = usrp.close()

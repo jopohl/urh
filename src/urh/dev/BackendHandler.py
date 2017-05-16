@@ -111,7 +111,7 @@ class BackendHandler(object):
     @property
     def __usrp_native_enabled(self) -> bool:
         try:
-            from urh.dev.native.lib import uhd
+            from urh.dev.native.lib import usrp
             return True
         except ImportError:
             return False

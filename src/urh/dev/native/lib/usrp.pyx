@@ -13,6 +13,7 @@ np.import_array()
 
 cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
+cdef uhd_tx_streamer_handle tx_streamer_handle
 
 cpdef bool IS_TX = False
 cpdef size_t CHANNEL = 0
@@ -54,15 +55,9 @@ cpdef uhd_error close():
 cpdef uhd_error setup_stream():
     cdef uhd_stream_args_t stream_args
     # https://files.ettus.com/manual/structuhd_1_1stream__args__t.html
-    byte_string_cpu_format = "fc32".encode("UTF-8")
-    cdef char* cpu_format = byte_string_cpu_format
-    stream_args.cpu_format = cpu_format
-    byte_string_otw_format = "sc16".encode("UTF-8")
-    cdef char* otw_format = byte_string_otw_format
-    stream_args.otw_format = otw_format
-    byte_string_other_stream_args = "".encode("UTF-8")
-    cdef char* other_stream_args = byte_string_other_stream_args
-    stream_args.args = other_stream_args
+    stream_args.cpu_format = "fc32"
+    stream_args.otw_format = "sc16"
+    stream_args.args = ""
     cdef size_t channel = 0
     stream_args.channel_list = &channel
     stream_args.n_channels = 1
@@ -91,7 +86,10 @@ cpdef uhd_error recv_stream(connection, size_t num_samples):
     cdef uhd_stream_cmd_t stream_cmd
     stream_cmd.stream_mode = uhd_stream_mode_t.UHD_STREAM_MODE_NUM_SAMPS_AND_DONE
     stream_cmd.num_samps = num_samples
-    stream_cmd.stream_now = 1
+    stream_cmd.stream_now = True
+
+    #cdef size_t max_num_samps
+    #uhd_rx_streamer_max_num_samps(rx_streamer_handle, &max_num_samps)
 
     cdef float* buff = <float *>malloc(num_samples * 2 * sizeof(float))
     cdef void ** buffs = <void **> &buff
@@ -102,7 +100,7 @@ cpdef uhd_error recv_stream(connection, size_t num_samples):
     cdef size_t items_received
 
     uhd_rx_streamer_issue_stream_cmd(rx_streamer_handle, &stream_cmd)
-    uhd_rx_streamer_recv(rx_streamer_handle, buffs, num_samples, &metadata_handle, 1, 0, &items_received)
+    uhd_rx_streamer_recv(rx_streamer_handle, buffs, num_samples, &metadata_handle, 3.0, 0, &items_received)
 
     uhd_rx_metadata_free(&metadata_handle)
 
@@ -156,3 +154,13 @@ cpdef uhd_error set_center_freq(double center_freq):
     print("USRP target frequency", tune_result.target_rf_freq, "actual frequency", tune_result.actual_rf_freq)
 
     return result
+
+cpdef str get_last_error():
+    cdef char * error_msg = <char *> malloc(200 * sizeof(char))
+
+    if IS_TX:
+        uhd_tx_streamer_last_error(tx_streamer_handle, error_msg, 200)
+    else:
+        uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
+    error_msg_py = error_msg.decode("UTF-8")
+    return error_msg_py

@@ -169,6 +169,7 @@ cdef extern from "uhd/usrp/usrp.h":
                                    uhd_rx_metadata_handle *md, double timeout, bool one_packet, size_t *items_recvd)
     uhd_error uhd_rx_streamer_issue_stream_cmd(uhd_rx_streamer_handle h, const uhd_stream_cmd_t *stream_cmd)
     uhd_error uhd_rx_streamer_last_error(uhd_rx_streamer_handle h, char* error_out, size_t strbuffer_len)
+    uhd_error uhd_tx_streamer_last_error(uhd_tx_streamer_handle h, char* error_out, size_t strbuffer_len)
 
     uhd_error uhd_usrp_get_pp_string(uhd_usrp_handle h, char* pp_string_out, size_t strbuffer_len)
 

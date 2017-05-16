@@ -1,5 +1,6 @@
 from multiprocessing.connection import Pipe
 
+from urh.dev.native.USRP import USRP
 from urh.dev.native.lib import usrp
 import unittest
 
@@ -27,7 +28,9 @@ class TestUSRP(unittest.TestCase):
         parent_conn, child_conn = Pipe()
         for _ in range(3):
             usrp.recv_stream(child_conn, 8192)
-            print(parent_conn.recv_bytes())
+            received_bytes = parent_conn.recv_bytes()
+            print(received_bytes)
+            #print(USRP.unpack_complex(received_bytes, len(received_bytes) // 8))
 
         usrp.destroy_stream()
         print("Freed rx streamer handler")

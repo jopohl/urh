@@ -53,6 +53,9 @@ class USRP(Device):
         self.device_args = ""
         self.success = 0
 
+    def set_device_gain(self, gain):
+        super().set_device_gain(gain * 0.01)
+
     @property
     def device_parameters(self):
         return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
@@ -61,7 +64,7 @@ class USRP(Device):
                             (self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
                             ("identifier", self.device_args)])
 
 

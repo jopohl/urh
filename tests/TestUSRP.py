@@ -19,6 +19,11 @@ class TestUSRP(unittest.TestCase):
 
         print(usrp.get_device_representation())
 
+        print("Set sample rate", usrp.set_sample_rate(2e6))
+        print("Set freq", usrp.set_center_freq(433.92e6))
+        print("Set bandwidth", usrp.set_bandwidth(1e6))
+        print("Set gain", usrp.set_rf_gain(0.5))
+
         parent_conn, child_conn = Pipe()
         for _ in range(3):
             usrp.recv_stream(child_conn, 8192)

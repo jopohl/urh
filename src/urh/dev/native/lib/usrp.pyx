@@ -15,10 +15,15 @@ cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
 
 cpdef bool IS_TX = False
+cpdef size_t CHANNEL = 0
 
 cpdef set_tx(bool is_tx):
     global IS_TX
     IS_TX = is_tx
+
+cpdef set_channel(size_t channel):
+    global CHANNEL
+    CHANNEL = channel
 
 cpdef find_devices(device_args):
     """
@@ -113,3 +118,41 @@ cpdef str get_device_representation():
     uhd_usrp_get_pp_string(_c_device, result, size)
     return result.decode("UTF-8")
 
+cpdef uhd_error set_sample_rate(double sample_rate):
+    if IS_TX:
+        return uhd_usrp_set_tx_rate(_c_device, sample_rate, CHANNEL)
+    else:
+        return uhd_usrp_set_rx_rate(_c_device, sample_rate, CHANNEL)
+
+cpdef uhd_error set_bandwidth(double bandwidth):
+    if IS_TX:
+        return uhd_usrp_set_tx_bandwidth(_c_device, bandwidth, CHANNEL)
+    else:
+        return uhd_usrp_set_rx_bandwidth(_c_device, bandwidth, CHANNEL)
+
+cpdef uhd_error set_rf_gain(double normalized_gain):
+    """
+    Normalized gain must be between 0 and 1
+    :param normalized_gain: 
+    :return: 
+    """
+    if IS_TX:
+        return uhd_usrp_set_normalized_tx_gain(_c_device, normalized_gain, CHANNEL)
+    else:
+        return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)
+
+cpdef uhd_error set_center_freq(double center_freq):
+    cdef uhd_tune_request_t tune_request
+    tune_request.target_freq = center_freq
+    tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
+    tune_request.dsp_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
+
+    cdef uhd_tune_result_t tune_result
+    if IS_TX:
+        result = uhd_usrp_set_tx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
+    else:
+        result = uhd_usrp_set_tx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
+
+    print("USRP target frequency", tune_result.target_rf_freq, "actual frequency", tune_result.actual_rf_freq)
+
+    return result

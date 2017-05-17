@@ -8,7 +8,7 @@ from multiprocessing.connection import Connection
 
 class USRP(Device):
     READ_SAMPLES = 16384
-    SEND_SAMPLES = 16384
+    SEND_SAMPLES = 16384 * 2
 
     BYTES_PER_SAMPLE = 8
     DEVICE_LIB = usrp

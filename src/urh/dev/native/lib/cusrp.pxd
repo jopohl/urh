@@ -29,7 +29,9 @@ cdef extern from "uhd/types/metadata.h":
 
 
     uhd_error uhd_rx_metadata_make(uhd_rx_metadata_handle* handle)
+    uhd_error uhd_tx_metadata_make(uhd_tx_metadata_handle* handle, bool has_time_spec, time_t full_secs, double frac_secs, bool start_of_burst, bool end_of_burst)
     uhd_error uhd_rx_metadata_free(uhd_rx_metadata_handle* handle)
+    uhd_error uhd_tx_metadata_free(uhd_tx_metadata_handle* handle)
     uhd_error uhd_rx_metadata_to_pp_string(uhd_rx_metadata_handle h, char* pp_string_out, size_t strbuffer_len)
 
 cdef extern from "uhd/error.h":
@@ -162,11 +164,16 @@ cdef extern from "uhd/usrp/usrp.h":
     uhd_error uhd_usrp_get_tx_stream(uhd_usrp_handle h, uhd_stream_args_t *stream_args, uhd_tx_streamer_handle h_out)
 
     uhd_error uhd_rx_streamer_make(uhd_rx_streamer_handle *h)
+    uhd_error uhd_tx_streamer_make(uhd_tx_streamer_handle *h)
     uhd_error uhd_rx_streamer_free(uhd_rx_streamer_handle *h)
+    uhd_error uhd_tx_streamer_free(uhd_tx_streamer_handle *h)
     uhd_error uhd_rx_streamer_num_channels(uhd_rx_streamer_handle h, size_t *num_channels_out)
+    uhd_error uhd_tx_streamer_num_channels(uhd_tx_streamer_handle h, size_t *num_channels_out)
     uhd_error uhd_rx_streamer_max_num_samps(uhd_rx_streamer_handle h, size_t *max_num_samps_out)
+    uhd_error uhd_tx_streamer_max_num_samps(uhd_tx_streamer_handle h, size_t *max_num_samps_out)
     uhd_error uhd_rx_streamer_recv(uhd_rx_streamer_handle h, void** buffs, size_t samps_per_buff,
                                    uhd_rx_metadata_handle *md, double timeout, bool one_packet, size_t *items_recvd)
+    uhd_error uhd_tx_streamer_send(uhd_tx_streamer_handle h, const void **buffs, size_t samps_per_buff, uhd_tx_metadata_handle *md, double timeout, size_t *items_sent)
     uhd_error uhd_rx_streamer_issue_stream_cmd(uhd_rx_streamer_handle h, const uhd_stream_cmd_t *stream_cmd)
     uhd_error uhd_rx_streamer_last_error(uhd_rx_streamer_handle h, char* error_out, size_t strbuffer_len)
     uhd_error uhd_tx_streamer_last_error(uhd_tx_streamer_handle h, char* error_out, size_t strbuffer_len)

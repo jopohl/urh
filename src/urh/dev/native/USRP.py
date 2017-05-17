@@ -8,10 +8,14 @@ from multiprocessing.connection import Connection
 
 class USRP(Device):
     READ_SAMPLES = 16384
+    SEND_SAMPLES = 16384
 
     BYTES_PER_SAMPLE = 8
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
+
+    SEND_BUFFER_SIZE = SEND_SAMPLES
+    CONTINUOUS_SEND_BUFFER_SIZE = SEND_SAMPLES * 64
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -46,6 +50,17 @@ class USRP(Device):
     @classmethod
     def receive_sync(cls, data_conn: Connection):
         usrp.recv_stream(data_conn, USRP.READ_SAMPLES)
+
+    @classmethod
+    def prepare_sync_send(cls, ctrl_connection: Connection):
+        ctrl_connection.send("Initializing stream...")
+        usrp.setup_stream()
+        ret = usrp.start_stream(0)
+        ctrl_connection.send("Initialize stream:{0}".format(ret))
+
+    @classmethod
+    def send_sync(cls, data):
+        usrp.send_stream(data)
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

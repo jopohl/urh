@@ -1,27 +1,21 @@
 import os
-import sys
-import platform
-
 import pickle
+import platform
+import sys
 import tempfile
+from subprocess import call
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel
-
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QHeaderView
-from PyQt5.QtWidgets import QStyleFactory
-from subprocess import call
-
-from urh.dev.native import ExtensionHelper
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory
 
 from urh import constants
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
+from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
 
@@ -46,8 +40,7 @@ class OptionsController(QDialog):
         self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
         self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
 
-        self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value("align_labels", True, bool))
-        self.ui.checkBoxFallBackTheme.setChecked(constants.SETTINGS.value('use_fallback_theme', False, bool))
+        self.ui.comboBoxTheme.setCurrentIndex(constants.SETTINGS.value("theme_index", 0, int))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(
             not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
@@ -81,7 +74,6 @@ class OptionsController(QDialog):
         self.refresh_device_tab()
 
         self.create_connects()
-        self.old_symbol_tresh = 10
         self.old_show_pause_as_time = False
 
         self.field_type_table_model = FieldTypeTableModel([], parent=self)
@@ -96,6 +88,11 @@ class OptionsController(QDialog):
 
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
         self.ui.labelRebuildNativeStatus.setText("")
+
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
 
     @property
     def selected_device(self) -> BackendContainer:
@@ -116,16 +113,14 @@ class OptionsController(QDialog):
         return None
 
     def create_connects(self):
-        self.ui.spinBoxSymbolTreshold.valueChanged.connect(self.on_spinbox_symbol_threshold_value_changed)
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
-        self.ui.chkBoxEnableSymbols.clicked.connect(self.on_chkbox_enable_symbols_clicked)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
         self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
         self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
         self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
         self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
-        self.ui.checkBoxFallBackTheme.clicked.connect(self.on_checkbox_fallback_theme_clicked)
+        self.ui.comboBoxTheme.currentIndexChanged.connect(self.on_combo_box_theme_index_changed)
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
         self.ui.checkBoxAlignLabels.clicked.connect(self.on_checkbox_align_labels_clicked)
@@ -190,9 +185,6 @@ class OptionsController(QDialog):
         self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
         self.ui.checkBoxPauseTime.setChecked(settings.value('show_pause_as_time', type=bool))
 
-        symbol_thresh = (settings.value('rel_symbol_length', type=int) - 100) / (-2)
-        self.ui.spinBoxSymbolTreshold.setValue(symbol_thresh)
-        self.old_symbol_tresh = symbol_thresh
         self.old_show_pause_as_time = bool(self.ui.checkBoxPauseTime.isChecked())
 
         self.field_type_table_model.field_types = FieldType.load_from_xml()
@@ -209,8 +201,6 @@ class OptionsController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
-        if self.ui.spinBoxSymbolTreshold.value() != self.old_symbol_tresh:
-            changed_values["rel_symbol_length"] = 100 - 2 * self.ui.spinBoxSymbolTreshold.value()
         if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
             changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
         if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
@@ -223,10 +213,13 @@ class OptionsController(QDialog):
 
         FieldType.save_to_xml(self.field_type_table_model.field_types)
         self.plugin_controller.save_enabled_states()
+        for plugin in self.plugin_controller.model.plugins:
+            plugin.destroy_settings_frame()
 
         self.values_changed.emit(changed_values)
 
-        event.accept()
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        super().closeEvent(event)
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
@@ -261,51 +254,21 @@ class OptionsController(QDialog):
             self.field_type_table_model.update()
 
     @pyqtSlot()
-    def on_spinbox_symbol_threshold_value_changed(self):
-        val = self.ui.spinBoxSymbolTreshold.value()
-        self.ui.lSymbolLength.setText(str(100 - 2 * val) + "%")
-        if val == 50:
-            txt = self.tr("No symbols will be created")
-            self.ui.chkBoxEnableSymbols.setChecked(False)
-        elif val == 0:
-            txt = self.tr("A symbol will be created in any case")
-            self.ui.chkBoxEnableSymbols.setChecked(True)
-        else:
-            self.ui.chkBoxEnableSymbols.setChecked(True)
-            bit_len = 1000
-            rel_val = val / 100
-            rel_symbol_len = (100 - 2 * val) / 100
-            txt = self.tr(
-                "Custom symbols will be created outside {0:d}%-{1:d}% of selected bit length.\n\n"
-                "Example - With bit length {2:d} following will hold: \n"
-                "{3:d} - {4:d}: \tSymbol A\n"
-                "{5:d} - {6:d}: \tStandard symbol (0 or 1)\n"
-                "{7:d} - {8:d}: \tSymbol B\n"
-                "{9:d} - {10:d}: \tStandard symbol (0 or 1)\n\n"
-                "Note there will be different symbols for various signal levels (e.g. low and high).".format(
-                    100 - val, 100 + val, bit_len,
-                    int((1 - rel_val) * bit_len - rel_symbol_len * bit_len), int((1 - rel_val) * bit_len),
-                    int((1 - rel_val) * bit_len), int((1 + rel_val) * bit_len),
-                    int((1 + rel_val) * bit_len), int((1 + rel_val) * bit_len + rel_symbol_len * bit_len),
-                    int((2 - rel_val) * bit_len), int((2 + rel_val) * bit_len)))
-        self.ui.lExplanation.setText(txt)
-
-    @pyqtSlot()
     def on_double_spinbox_ram_threshold_value_changed(self):
         val = self.ui.doubleSpinBoxRAMThreshold.value()
         constants.SETTINGS.setValue("ram_threshold", val / 100)
 
     @pyqtSlot(bool)
-    def on_checkbox_fallback_theme_clicked(self, use_fallback: bool):
-        constants.SETTINGS.setValue('use_fallback_theme', use_fallback)
-        if use_fallback:
-            QApplication.setStyle(QStyleFactory.create("Fusion"))
-        else:
-            QApplication.setStyle(constants.SETTINGS.value("default_theme", type=str))
-
-    @pyqtSlot(bool)
     def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
         constants.SETTINGS.setValue("not_show_close_dialog", not checked)
+
+    @pyqtSlot(int)
+    def on_combo_box_theme_index_changed(self, index: int):
+        constants.SETTINGS.setValue('theme_index', index)
+        if index > 0:
+            QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
+        else:
+            QApplication.instance().setStyle(constants.SETTINGS.value("default_theme", type=str))
 
     @pyqtSlot(bool)
     def on_checkbox_hold_shift_to_drag_clicked(self, checked: bool):
@@ -343,13 +306,6 @@ class OptionsController(QDialog):
             self.selected_device.write_settings()
 
     @pyqtSlot(bool)
-    def on_chkbox_enable_symbols_clicked(self, checked: bool):
-        if checked:
-            self.ui.spinBoxSymbolTreshold.setValue(10)
-        else:
-            self.ui.spinBoxSymbolTreshold.setValue(50)
-
-    @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
         constants.SETTINGS.setValue("align_labels", checked)
 
@@ -371,7 +327,8 @@ class OptionsController(QDialog):
 
     @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):
-        library_dirs = None if not self.ui.lineEditLibDirs.text() else ",".split(self.ui.lineEditLibDirs.text())
+        library_dirs = None if not self.ui.lineEditLibDirs.text() \
+                            else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
         num_natives = self.backend_handler.num_native_backends
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
@@ -382,11 +339,14 @@ class OptionsController(QDialog):
         else:
             s = "s" if new_natives > 1 else ""
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-            QApplication.processEvents()
             pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
             target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
-            rc = call([sys.executable, os.path.realpath(ExtensionHelper.__file__),
-                  "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()])
+            build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                         "build_ext", "-b", target_dir,
+                         "-t", tempfile.gettempdir()]
+            if library_dirs:
+                build_cmd.extend(["-L", ":".join(library_dirs)])
+            rc = call(build_cmd)
 
             if rc == 0:
                 self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
@@ -399,14 +359,16 @@ class OptionsController(QDialog):
                                                                  "</font>"
                                                                  "Run URH as root (<b>sudo urh</b>) "
                                                                  "and try again.".format(new_natives, s)))
+            try:
+                os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
+            except OSError:
+                pass
+
 
     @staticmethod
     def write_default_options():
         settings = constants.SETTINGS
         keys = settings.allKeys()
-
-        if 'rel_symbol_length' not in keys:
-            settings.setValue('rel_symbol_length', 0)
 
         if 'default_view' not in keys:
             settings.setValue('default_view', 0)

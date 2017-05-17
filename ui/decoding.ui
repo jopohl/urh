@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
-    <height>685</height>
+    <width>1018</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -288,7 +288,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="page_empty"/>
             <widget class="QWidget" name="page_redundancy">
@@ -476,12 +476,12 @@
                <rect>
                 <x>180</x>
                 <y>30</y>
-                <width>291</width>
+                <width>341</width>
                 <height>21</height>
                </rect>
               </property>
               <property name="text">
-               <string>Data whitening polynomial (LFSR, hex coded)</string>
+               <string>Data whitening polynomial (LFSR, hex, w/o first bit)</string>
               </property>
              </widget>
              <widget class="QCheckBox" name="datawhitening_applycrc">
@@ -640,6 +640,95 @@
               </property>
               <property name="text">
                <string>Position (in bit)</string>
+              </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="page_morse">
+             <widget class="QLabel" name="label_17">
+              <property name="geometry">
+               <rect>
+                <x>70</x>
+                <y>10</y>
+                <width>341</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Maximum (&lt;=) length of 1-sequence for: Low (0)</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="morse_low">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>56</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_18">
+              <property name="geometry">
+               <rect>
+                <x>70</x>
+                <y>40</y>
+                <width>351</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Minimum (&gt;=) length of 1-sequence for: High (1)</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="morse_high">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>40</y>
+                <width>56</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>3</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_19">
+              <property name="geometry">
+               <rect>
+                <x>70</x>
+                <y>70</y>
+                <width>371</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Number of 0s between 1-sequences (just for encoding)</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="morse_wait">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>70</y>
+                <width>56</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>1</number>
               </property>
              </widget>
             </widget>

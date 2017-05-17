@@ -1,11 +1,9 @@
-import locale
 import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
-from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
+from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
-    QApplication, QCheckBox
+    QCheckBox, QApplication
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -20,8 +18,6 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
-
-locale.setlocale(locale.LC_ALL, '')
 
 
 class SignalFrameController(QFrame):
@@ -48,7 +44,9 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
-        self.ui.txtEdProto.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        fixed_font.setPointSize(QApplication.instance().font().pointSize())
+        self.ui.txtEdProto.setFont(fixed_font)
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.messages = proto_analyzer.messages
 
@@ -107,7 +105,14 @@ class SignalFrameController(QFrame):
             self.show_protocol(refresh=False)
 
         else:
-            self.ui.lSignalTyp.setText("Protocol (*.proto)")
+            suffix = ""
+            if not proto_analyzer.filename:
+                suffix = ""
+            elif proto_analyzer.filename.endswith(".proto"):
+                suffix = " (*.proto)"
+            elif proto_analyzer.filename.endswith(".txt"):
+                suffix = " (*.txt)"
+            self.ui.lSignalTyp.setText("Protocol"+suffix)
 
             scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
 
@@ -235,7 +240,10 @@ class SignalFrameController(QFrame):
     def update_number_selected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
         self.__set_duration()
-        sel_messages = self.ui.gvSignal.selected_messages
+        try:
+            sel_messages = self.ui.gvSignal.selected_messages
+        except AttributeError:
+            sel_messages = []
         if len(sel_messages) == 1:
             self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
         else:
@@ -335,20 +343,20 @@ class SignalFrameController(QFrame):
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
 
     def draw_signal(self, full_signal=False):
-        gvs = self.ui.gvSignal
         gv_legend = self.ui.gvLegend
         gv_legend.ysep = -self.signal.qad_center
 
         # Save current visible region for restoring it after drawing
-        y, h = gvs.sceneRect().y(), gvs.sceneRect().height()
-        x, w = gvs.view_rect().x(), gvs.view_rect().width()
+        y, h = self.ui.gvSignal.sceneRect().y(), self.ui.gvSignal.sceneRect().height()
+        vr = self.ui.gvSignal.view_rect()
+        x, w = vr.x(), vr.width()
 
         self.scene_manager.scene_type = self.ui.cbSignalView.currentIndex()
         self.scene_manager.init_scene()
         if full_signal:
-            gvs.show_full_scene()
+            self.ui.gvSignal.show_full_scene()
         else:
-            gvs.redraw_view()
+            self.ui.gvSignal.redraw_view()
 
         legend = LegendScene()
         legend.setBackgroundBrush(constants.BGCOLOR)
@@ -360,16 +368,16 @@ class SignalFrameController(QFrame):
         num_samples = self.signal.num_samples
         self.ui.spinBoxSelectionStart.setMaximum(num_samples)
         self.ui.spinBoxSelectionEnd.setMaximum(num_samples)
-        gvs.nsamples = num_samples
+        self.ui.gvSignal.nsamples = num_samples
 
-        gvs.sel_area_active = True
-        gvs.y_sep = -self.signal.qad_center
+        self.ui.gvSignal.sel_area_active = True
+        self.ui.gvSignal.y_sep = -self.signal.qad_center
 
         if not full_signal:
             # Restore Zoom
             w = w if w < self.signal.num_samples else self.signal.num_samples
-            gvs.fitInView(QRectF(x, y, w, h))
-            gvs.centerOn(x + w / 2, gvs.y_center)
+            self.ui.gvSignal.fitInView(QRectF(x, y, w, h))
+            self.ui.gvSignal.centerOn(x + w / 2, self.ui.gvSignal.y_center)
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
         if old_protoview == self.proto_view:
@@ -408,8 +416,6 @@ class SignalFrameController(QFrame):
 
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
-        QApplication.processEvents()
-
         self.proto_analyzer.get_protocol_from_signal()
 
     def show_protocol(self, old_view=-1, refresh=False):
@@ -467,9 +473,36 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
             # self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            try:    # Without try/except: segfault (TypeError) when changing sample_rate in info dialog of signal
+                self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
+            except TypeError:
+                pass
 
             self.ui.txtEdProto.blockSignals(False)
+
+    def eliminate(self):
+        self.proto_selection_timer.stop()
+        self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
+
+        if self.signal is not None:
+            # Avoid memory leaks
+            self.scene_manager.eliminate()
+            self.signal.eliminate()
+            self.proto_analyzer.eliminate()
+            self.ui.gvSignal.scene_manager.eliminate()
+
+        self.ui.gvLegend.eliminate()
+        self.ui.gvSignal.eliminate()
+
+        self.scene_manager = None
+        self.signal = None
+        self.proto_analyzer = None
+
+        self.ui.layoutWidget.setParent(None)
+        self.ui.layoutWidget.deleteLater()
+
+        self.setParent(None)
+        self.deleteLater()
 
     @pyqtSlot()
     def on_signal_zoomed(self):
@@ -528,9 +561,7 @@ class SignalFrameController(QFrame):
     def on_protocol_updated(self):
         self.ui.gvSignal.redraw_view()  # Participants may have changed
         self.ui.txtEdProto.setEnabled(True)
-        cur_scroll = self.ui.txtEdProto.verticalScrollBar().value()
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
-        self.ui.txtEdProto.verticalScrollBar().setValue(cur_scroll)
 
     @pyqtSlot(float)
     def update_legend(self, y_sep):
@@ -573,7 +604,6 @@ class SignalFrameController(QFrame):
         else:
             self.ui.gvLegend.hide()
 
-        QApplication.processEvents()
         self.ui.gvSignal.auto_fit_view()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()
@@ -753,7 +783,7 @@ class SignalFrameController(QFrame):
     def update_protocol_selection_from_roi(self):
         protocol = self.proto_analyzer
 
-        if protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
+        if protocol is None or protocol.messages is None or not self.ui.chkBoxShowProtocol.isChecked():
             return
 
         start = self.ui.gvSignal.selection_area.x
@@ -810,11 +840,10 @@ class SignalFrameController(QFrame):
         self.jump_sync = True
 
     def refresh_signal(self, draw_full_signal=False):
-        gvs = self.ui.gvSignal
-        gvs.sel_area_active = False
+        self.ui.gvSignal.sel_area_active = False
         self.draw_signal(draw_full_signal)
 
-        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
+        self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
         self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
 
         selected = 0
@@ -825,7 +854,7 @@ class SignalFrameController(QFrame):
         self.__set_duration()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
-        gvs.sel_area_active = True
+        self.ui.gvSignal.sel_area_active = True
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):

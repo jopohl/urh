@@ -1,8 +1,9 @@
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 
-from urh.models.PluginListModel import PluginListModel
 from urh import constants
+from urh.models.PluginListModel import PluginListModel
 from urh.ui.ui_plugins import Ui_FramePlugins
 
 
@@ -21,6 +22,12 @@ class PluginController(QFrame):
         self.ui.groupBoxSettings.setLayout(self.settings_layout)
         self.create_connects()
 
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
+
+
     def create_connects(self):
         self.ui.listViewPlugins.selectionModel().selectionChanged.connect(self.on_list_selection_changed)
         for plugin in self.model.plugins:
@@ -35,9 +42,10 @@ class PluginController(QFrame):
     def on_list_selection_changed(self):
         i = self.ui.listViewPlugins.currentIndex().row()
         self.ui.txtEditPluginDescription.setText(self.model.plugins[i].description)
-        self.model.plugins[i].load_settings_frame()
 
         if self.settings_layout.count() > 0:
-            self.settings_layout.takeAt(0).widget().setParent(None)
+            widget = self.settings_layout.takeAt(0).widget()
+            self.settings_layout.removeWidget(widget)
+            widget.setParent(None)
 
         self.settings_layout.addWidget(self.model.plugins[i].settings_frame)

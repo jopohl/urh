@@ -6,11 +6,14 @@ import time
 import os
 import sys
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QPalette, QIcon
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
-locale.setlocale(locale.LC_ALL, '')
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except locale.Error as e:
+    print("Ignoring locale error {}".format(e))
 
 GENERATE_UI = True
 
@@ -42,19 +45,18 @@ def main():
 
             print("Time for generating UI: %.2f seconds" % (time.time() - t))
         except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script cant be found. This is okay in release.")
+            print("Will not regenerate UI, because script can't be found. This is okay in release.")
 
     urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
 
-    urh_dir = os.path.join(os.path.dirname(urh_exe), "..", "..")
+    urh_dir = os.path.join(os.path.dirname(os.path.realpath(urh_exe)), "..", "..")
     prefix = os.path.abspath(os.path.normpath(urh_dir))
 
     src_dir = os.path.join(prefix, "src")
-    if os.path.exists(src_dir) and not prefix.startswith("/usr") \
-            and not re.match(r"(?i)c:\\program", prefix):
+    if os.path.exists(src_dir) and not prefix.startswith("/usr") and not re.match(r"(?i)c:\\program", prefix):
         # Started locally, not installed
-        print("Using modules from {0}".format(src_dir))
+        print("Adding {0} to pythonpath. This is only important when running URH from source.".format(src_dir))
         sys.path.insert(0, src_dir)
 
     try:
@@ -74,19 +76,43 @@ def main():
     from urh.controller.MainController import MainController
     from urh import constants
 
-    if constants.SETTINGS.value("use_fallback_theme", False, bool):
+    if constants.SETTINGS.value("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
 
     # noinspection PyUnresolvedReferences
     import urh.ui.xtra_icons_rc  # Use oxy theme always
     QIcon.setThemeName("oxy")
 
-    constants.SETTINGS.setValue("default_theme", QApplication.style().objectName())
+    constants.SETTINGS.setValue("default_theme", app.style().objectName())
 
-    if constants.SETTINGS.value("use_fallback_theme", False, bool):
-        QApplication.setStyle(QStyleFactory.create("Fusion"))
+    if constants.SETTINGS.value("theme_index", 0, int) > 0:
+        app.setStyle(QStyleFactory.create("Fusion"))
+
+        if constants.SETTINGS.value("theme_index", 0, int) == 2:
+            palette = QPalette()
+            background_color = QColor(56, 60, 74)
+            text_color = QColor(211, 218, 227).lighter()
+            palette.setColor(QPalette.Window, background_color)
+            palette.setColor(QPalette.WindowText, text_color)
+            palette.setColor(QPalette.Base, background_color)
+            palette.setColor(QPalette.AlternateBase, background_color)
+            palette.setColor(QPalette.ToolTipBase, background_color)
+            palette.setColor(QPalette.ToolTipText, text_color)
+            palette.setColor(QPalette.Text, text_color)
+
+            palette.setColor(QPalette.Button, background_color)
+            palette.setColor(QPalette.ButtonText, text_color)
+
+            palette.setColor(QPalette.BrightText, Qt.red)
+            palette.setColor(QPalette.Disabled, QPalette.Text, Qt.darkGray)
+            palette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.darkGray)
+
+            palette.setColor(QPalette.Highlight, QColor(200, 50, 0))
+            palette.setColor(QPalette.HighlightedText, text_color)
+            app.setPalette(palette)
 
     main_window = MainController()
 
@@ -115,7 +141,9 @@ def main():
         timer.timeout.connect(app.quit)
         timer.start(1000)
 
-    os._exit(app.exec_())  # sys.exit() is not enough on Windows and will result in crash on exit
+    return_code = app.exec_()
+    app.closeAllWindows()
+    os._exit(return_code)  # sys.exit() is not enough on Windows and will result in crash on exit
 
 
 if __name__ == "__main__":

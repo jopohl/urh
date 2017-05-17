@@ -3,6 +3,8 @@ import sys
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
+    if sys.version_info[0] < 3:
+        print("try running with python3 {}".format(" ".join(sys.argv)))
     sys.exit(1)
 
 try:
@@ -75,7 +77,9 @@ def get_package_data():
 
     # Bundle headers
     package_data["urh.dev.native.includes"] = ["*.h"]
-    package_data["urh.dev.native.includes.libhackrf"] = ["*.h"]
+    for dirpath, dirnames, filenames in os.walk("src/urh/dev/native/includes"):
+        for dir_name in dirnames:
+            package_data["urh.dev.native.includes."+dir_name] = ["*.h"]
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows

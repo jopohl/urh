@@ -1,18 +1,21 @@
-import unittest
+import copy
+import array
 
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
-from urh.util.crc import crc_generic
 
 
-class TestDecoding(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestDecoding(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_carrier(self):
         e = Encoder()
 
         # Test 1
         e.carrier = "----1....1**"  # or "....1....101", ...
         original_inpt = e.str2bit("000010000100111111111100")
-        inpt = original_inpt.copy()
+        inpt = copy.copy(original_inpt)
         #print("\nOriginal:", inpt)
         output, err, _ = e.code_carrier(True, inpt)
         #print("Decoded: ", output, err)
@@ -124,3 +127,31 @@ class TestDecoding(unittest.TestCase):
         calc_crc2 = e.enocean_hash(msg2)
         self.assertTrue(calc_crc1 == crc1)
         self.assertTrue(calc_crc2 == crc2)
+
+    def test_morse(self):
+        e = Encoder()
+        e.morse_low = 3
+        e.morse_high = 5
+        e.morse_wait = 1
+        msg1 = "1111111000111100011111100100001111111111111111111111011"
+        msg2 = "0111110111011111011101111101110"
+
+        encoded = e.str2bit(msg1)
+        compare = e.str2bit(msg2)
+        decoded, err, _ = e.code_morse(decoding=True, inpt=encoded)
+        reencoded, _, _ = e.code_morse(decoding=False, inpt=decoded)
+        self.assertEqual(err, 1)
+        self.assertEqual(reencoded, compare)
+
+    def test_substitution(self):
+        e = Encoder()
+        e.src = [array.array("B", [True, True, True, False]), array.array("B", [True, False, False, False])]
+        e.dst = [array.array("B", [True]), array.array("B", [False])]
+
+        # encoded-string with 3 missing trailing zeroes
+        encoded = e.str2bit("1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001")
+        compare = e.str2bit("1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001000")
+        decoded, err, _ = e.code_substitution(decoding=True, inpt=encoded)
+        reencoded, _, _ = e.code_substitution(decoding=False, inpt=decoded)
+        self.assertEqual(err, 3)
+        self.assertEqual(reencoded, compare)

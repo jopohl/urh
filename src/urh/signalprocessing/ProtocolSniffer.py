@@ -1,9 +1,7 @@
 import os
-import time
 
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
-from PyQt5.QtWidgets import QApplication
 
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -22,7 +20,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, testing_mode=False):
+                 modulation_type: int, device: str, backend_handler: BackendHandler):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -32,15 +30,13 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
-        self.backend_handler = BackendHandler(testing_mode=testing_mode)
+        self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
-                                        is_ringbuffer=False, raw_mode=False)
+                                        resume_on_full_receive_buffer=True, raw_mode=False)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
-
-        self.rel_symbol_len = self._read_symbol_len()
 
         self.data_cache = []
         self.conseq_non_data = 0
@@ -51,15 +47,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.__sniff_file = ""
         self.__store_data = True
 
-    def plain_to_string(self, view: int, show_pauses=True, start=0) -> str:
-        """
-
-        :param start: First message to begin with
-        :param show_pauses: Show pauses in output?
-        :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
-        """
-        return '\n'.join(msg.view_to_string(view, False, show_pauses) for
-                         msg in self.messages[start:])
+    def decoded_to_string(self, view: int, start=0):
+        return '\n'.join(msg.view_to_string(view, decoded=True, show_pauses=False) for msg in self.messages[start:])
 
     @property
     def sniff_file(self):
@@ -79,8 +68,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def device_name(self, value: str):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
-            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive,
-                                            device_ip="192.168.10.2", is_ringbuffer=False, raw_mode=False)
+            self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
+                                            resume_on_full_receive_buffer=True, raw_mode=False)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
@@ -98,7 +87,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
             for bit_str in self.rcv_device.data:
-                self.messages.append(Message.from_plain_bits_str(bit_str, {}))
+                msg = Message.from_plain_bits_str(bit_str)
+                msg.decoder = self.decoder
+                self.messages.append(msg)
 
             self.rcv_device.free_data()  # do not store received bits twice
 
@@ -109,7 +100,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 myfile.write("\n".join(self.plain_bits_str))
 
         if not self.__store_data:
-            self.messages[:] = []
+            self.messages.clear()
 
     def __demodulate_data(self, data):
         """
@@ -117,8 +108,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         :param data:
         :return:
         """
-        signal = self.signal
-
         if self.__are_bits_in_data(data):
             self.reading_data = True
         elif self.conseq_non_data == 5:
@@ -133,15 +122,15 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         elif len(self.data_cache) == 0:
             return
 
-        signal._fulldata = np.concatenate(self.data_cache)
-        del self.data_cache[:]
-        signal._qad = None
+        self.signal._fulldata = np.concatenate(self.data_cache)
+        self.data_cache.clear()
+        self.signal._qad = None
 
-        bit_len = signal.bit_len
-        ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
-                                signal.tolerance, signal.modulation_type)
+        bit_len = self.signal.bit_len
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                self.signal.tolerance, self.signal.modulation_type)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 
         i = 0
         first_msg = True
@@ -151,8 +140,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 # Create new Message
                 middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
                 start, end = middle_bit_pos, middle_bit_pos + bit_len
-                rssi = np.mean(np.abs(signal._fulldata[start:end]))
-                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type)
+                rssi = np.mean(np.abs(self.signal._fulldata[start:end]))
+                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type,
+                                  decoder=self.decoder)
                 self.messages.append(message)
                 first_msg = False
             else:
@@ -165,26 +155,23 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             i += 1
 
     def __are_bits_in_data(self, data):
-        signal = self.signal
-        signal._fulldata = data
-        signal._qad = None
+        self.signal._fulldata = data
+        self.signal._qad = None
 
-        bit_len = signal.bit_len
-        ppseq = grab_pulse_lens(signal.qad, signal.qad_center,
-                                signal.tolerance, signal.modulation_type)
+        bit_len = self.signal.bit_len
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                self.signal.tolerance, self.signal.modulation_type)
 
-        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len, self.rel_symbol_len)
+        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len)
 
         return bool(bit_data)
 
     def stop(self):
         self.rcv_device.stop("Stopping receiving due to user interaction")
-        QApplication.processEvents()
-        time.sleep(0.1)
 
     def clear(self):
-        del self.data_cache[:]
-        del self.messages[:]
+        self.data_cache.clear()
+        self.messages.clear()
 
     def __emit_started(self):
         self.started.emit()

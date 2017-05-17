@@ -1,23 +1,21 @@
-import unittest
+from PyQt5.QtCore import QPoint
 
-import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file
+from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
-from urh.controller.MainController import MainController
 from urh.signalprocessing.encoder import Encoder
 
-app = tests.utils_testing.app
-
-
-class TestDecodingGUI(unittest.TestCase):
+class TestDecodingGUI(QtTestCase):
     def setUp(self):
-        self.form = MainController()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
+        super().setUp()
+        self.add_signal_to_form("esaver.complex")
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[self.signal],
+                                              signals=[signal], parent=self.form,
                                               project_manager=self.form.project_manager)
+
+        if self.SHOW:
+            self.dialog.show()
 
     def test_edit_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(1)  # NRZI
@@ -26,13 +24,20 @@ class TestDecodingGUI(unittest.TestCase):
 
     def test_build_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        chain = [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL,
-                 constants.DECODING_REDUNDANCY,
-                 constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE,
-                 constants.DECODING_DATAWHITENING,
-                 constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT]
+        chain = [(constants.DECODING_INVERT,),
+                 (constants.DECODING_ENOCEAN,),
+                 (constants.DECODING_DIFFERENTIAL,),
+                 (constants.DECODING_CARRIER,),
+                 (constants.DECODING_BITORDER,),
+                 (constants.DECODING_EDGE,),
+                 (constants.DECODING_DATAWHITENING,),
+                 (constants.DECODING_REDUNDANCY, "2"),
+                 (constants.DECODING_MORSE, "1;3;1"),
+                 (constants.DECODING_SUBSTITUTION, "0:1;1:0;"),
+                 (constants.DECODING_EXTERNAL, "./;./"),
+                 (constants.DECODING_CUT, "0;1010")]
 
-        decoding = Encoder(chain=chain)
+        decoding = Encoder(chain=[c for chain_item in chain for c in chain_item])
         self.dialog.decodings[4] = decoding
         self.dialog.set_e()
 
@@ -41,7 +46,7 @@ class TestDecodingGUI(unittest.TestCase):
         for i in range(0, self.dialog.ui.decoderchain.count()):
             self.dialog.ui.decoderchain.setCurrentRow(i)
             self.dialog.set_information(2)
-            self.assertIn(chain[i], self.dialog.ui.info.text())
+            self.assertIn(chain[i][0], self.dialog.ui.info.text())
 
     def test_set_signal(self):
         self.dialog.ui.combobox_signals.currentIndexChanged.emit(0)
@@ -55,3 +60,16 @@ class TestDecodingGUI(unittest.TestCase):
         for i in range(0, self.dialog.ui.additionalfunctions.count()):
             self.dialog.ui.additionalfunctions.setCurrentRow(i)
             self.assertIn(self.dialog.ui.additionalfunctions.currentItem().text(), self.dialog.ui.info.text())
+
+    def test_context_menu(self):
+        self.dialog.ui.combobox_decodings.setCurrentIndex(4)
+        decoding = Encoder(chain=[constants.DECODING_INVERT])
+        self.dialog.decodings[4] = decoding
+        self.dialog.set_e()
+
+        self.assertEqual(1, self.dialog.ui.decoderchain.count())
+
+        self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
+        menu = self.dialog.ui.decoderchain.create_context_menu()
+        menu_actions = [action.text() for action in menu.actions() if action.text()]
+        self.assertEqual(3, len(menu_actions))

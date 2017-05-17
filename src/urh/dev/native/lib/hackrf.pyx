@@ -3,19 +3,26 @@ from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
 
-TIMEOUT = 0.15
+from urh.util.Logger import logger
+
+TIMEOUT = 0.2
 
 cdef object f
 from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
     global f
-    (<object> f)(transfer.buffer[0:transfer.valid_length])
-    return 0
+    try:
+        (<object> f)(transfer.buffer[0:transfer.valid_length])
+        return 0
+    except Exception as e:
+        logger.error("Cython-HackRF:" + str(e))
+        return -1
 
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f
-    cdef bytes bytebuf = (<object> f)(transfer.valid_length)
+    # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
+    cdef bytes bytebuf = (<object> f)(transfer.valid_length).tostring()
     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
     return 0
 
@@ -37,7 +44,6 @@ cpdef open():
     return chackrf.hackrf_open(&_c_device)
 
 cpdef close():
-    time.sleep(TIMEOUT)
     return chackrf.hackrf_close(_c_device)
 
 cpdef start_rx_mode(callback):
@@ -46,6 +52,7 @@ cpdef start_rx_mode(callback):
     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
 
 cpdef stop_rx_mode():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_rx(_c_device)
 
 cpdef start_tx_mode(callback):
@@ -54,6 +61,7 @@ cpdef start_tx_mode(callback):
     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
 
 cpdef stop_tx_mode():
+    time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_tx(_c_device)
 
 cpdef board_id_read():
@@ -104,11 +112,6 @@ cpdef set_baseband_gain(value):
     """ Sets the vga gain, in 2db steps, maximum value of 62 """
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_vga_gain(_c_device, value)
-
-cpdef set_antenna_enable(value):
-    time.sleep(TIMEOUT)
-    cdef bint val = 1 if value else 0
-    return chackrf.hackrf_set_antenna_enable(_c_device, val)
 
 cpdef set_sample_rate(sample_rate):
     time.sleep(TIMEOUT)

@@ -17,14 +17,8 @@ class FFTSceneManager(SceneManager):
         self.scene = GridScene(parent=graphic_view)
         self.scene.setBackgroundBrush(constants.BGCOLOR)
 
-        self.init_scene(draw_grid=False)
-
-        self.peak_item = self.scene.addPath(QPainterPath(), QPen(constants.PEAK_COLOR, Qt.FlatCap))
-        """:type: QGraphicsPathItem """
-
-        font = QFont("Helvetica")
-        font.setStyleHint(QFont.SansSerif, QFont.OpenGLCompatible)
-        self.text_item = self.scene.addText("", font)
+        self.peak_item = self.scene.addPath(QPainterPath(),
+                                            QPen(constants.PEAK_COLOR, Qt.FlatCap))  # type: QGraphicsPathItem
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         start = int(x1) if x1 > 0 else 0
@@ -43,7 +37,6 @@ class FFTSceneManager(SceneManager):
         self.scene.draw_grid = draw_grid
         minimum = -4.5
         maximum = 2
-        # minimum = -np.log10(np.max(self.y)))
 
         self.peak = self.plot_data if len(self.peak) < self.num_samples else np.maximum(self.peak, self.plot_data)
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
@@ -57,8 +50,10 @@ class FFTSceneManager(SceneManager):
 
     def clear_peak(self):
         self.peak = []
-        self.peak_item.setPath(QPainterPath())
+        if self.peak_item:
+            self.peak_item.setPath(QPainterPath())
 
-    def set_text(self, text):
-        self.scene.draw_grid = False
-        super().set_text(text)
+    def eliminate(self):
+        super().eliminate()
+        self.peak = None
+        self.peak_item = None

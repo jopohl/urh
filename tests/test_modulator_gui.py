@@ -1,26 +1,29 @@
-import unittest
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
-
-app = tests.utils_testing.app
+from tests.QtTestCase import QtTestCase
+from urh.util.Logger import logger
 
 
-class TestModulatorGUI(unittest.TestCase):
+class TestModulatorGUI(QtTestCase):
+    
     def setUp(self):
-        self.form = MainController()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
-        self.gframe = self.form.generator_tab_controller
+        super().setUp()
         self.form.ui.tabWidget.setCurrentIndex(2)
 
-        self.dialog, _ = self.gframe.prepare_modulation_dialog()
-        self.gframe.initialize_modulation_dialog("1111", self.dialog)
+        logger.debug("Preparing Modulation dialog")
+        self.dialog, _ = self.form.generator_tab_controller.prepare_modulation_dialog()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
+
+        logger.debug("Initializing Modulation dialog")
+        self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
+        logger.debug("Preparation success")
+
+        if self.SHOW:
+            self.dialog.show()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
@@ -28,7 +31,7 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnAddModulation.click()
         self.assertEqual(len(self.dialog.modulators), 3)
-        app.processEvents()
+        self.app.processEvents()
         self.dialog.ui.btnRemoveModulation.click()
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnRemoveModulation.click()
@@ -108,20 +111,20 @@ class TestModulatorGUI(unittest.TestCase):
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
-        #self.dialog.show()   # if on KDE
+        self.add_signal_to_form("esaver.complex")
+        signal = self.form.signal_tab_controller.signal_frames[0].signal
+
         tree_view = self.dialog.ui.treeViewSignals
         tree_model = tree_view.model()
         item = tree_model.rootItem.children[0].children[0]
         index = tree_model.createIndex(0, 0, item)
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.LeftButton, pos=rect.center())
-        tree_view.selectAll()
-        self.assertEqual(tree_view.selectedIndexes()[0], index)
-        mime_data = tree_model.mimeData(tree_view.selectedIndexes())
+        mime_data = tree_model.mimeData([index])
         drag_drop = QDropEvent(rect.center(), Qt.CopyAction|Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)
         drag_drop.acceptProposedAction()
         self.dialog.ui.gVOriginalSignal.dropEvent(drag_drop)
-        self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), self.signal.num_samples)
+        self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples)
 
         self.dialog.ui.cbShowDataBitsOnly.click()
         self.dialog.ui.chkBoxLockSIV.click()

@@ -1,5 +1,9 @@
 # Universal Radio Hacker
-[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh) [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh) [![Dependency Status](https://gemnasium.com/badges/github.com/jopohl/urh.svg)](https://gemnasium.com/github.com/jopohl/urh)
+[![Linux/OSX Build Status](https://img.shields.io/travis/jopohl/urh/master.svg?label=Linux/OSX)](https://travis-ci.org/jopohl/urh)
+[![Windows Build status](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
+[![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
+[![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 
@@ -28,6 +32,9 @@ Like to see things in action? Watch URH on YouTube!
 #### Optional
 - librtlsdr (for native RTL-SDR device backend)
 - libhackrf (for native HackRF device backend)
+- libairspy (for native AirSPy device backend)
+- liblimesdr (for native LimeSDR device backend)
+- rfcat (for RfCat plugin to send e.g. with YardStick One)
 - gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
 ### Arch Linux
@@ -61,11 +68,22 @@ sudo pip3 install urh
 5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
 
 ### Mac OS X
-1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/).
+1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 
+   _If you experience issues with preinstalled Python, make sure you update to a recent version using the given link._
 2. (Optional) Install desired native libs e.g. ``` brew install librtlsdr ``` for 
 corresponding native device support.
 3. In a terminal, type: ``` pip3 install urh ```.
 4. Type ``` urh ``` in a terminal to get it started.
+
+### Updating
+If you installed URH via pip you can keep it up to date with
+```bash
+pip3 install --upgrade urh
+```
+If this shouldn't work you can try:
+```bash
+python3 -m pip install --upgrade urh
+```
 
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.

@@ -1,29 +1,22 @@
 import os
-import unittest
-
 import time
 
+import array
 from PyQt5.QtCore import QDir
 
-from urh import constants
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestModulator(unittest.TestCase):
+class TestModulator(QtTestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', 0, type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
-        self.modulation_data = [True, False, False, False, True, True, False, True]
+        self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
         self.samples_per_bit = 100
         self.pause = 1000
 
         self.total_samples = len(self.modulation_data) * self.samples_per_bit + self.pause
-
-    def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
 
     def test_ask_fsk_psk_modulation(self):
         modulations = ["ASK", "FSK", "PSK"]

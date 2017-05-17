@@ -1,7 +1,5 @@
-import unittest
-from audioop import reverse
-from collections import defaultdict
-
+from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.components.Address import Address
@@ -12,13 +10,12 @@ from urh.awre.components.Preamble import Preamble
 from urh.awre.components.SequenceNumber import SequenceNumber
 from urh.awre.components.Type import Type
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
-from tests.utils_testing import get_path_for_data_file
 
-class TestAWRE(unittest.TestCase):
+class TestAWRE(QtTestCase):
     def setUp(self):
         self.field_types = FieldType.default_field_types()
 
@@ -32,7 +29,7 @@ class TestAWRE(unittest.TestCase):
         self.protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("awre_consistent_addresses.txt")) as f:
             for line in f:
-                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 self.protocol.messages[-1].message_type = self.protocol.default_message_type
 
         # Assign participants
@@ -47,7 +44,7 @@ class TestAWRE(unittest.TestCase):
         self.zero_crc_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("awre_zeroed_crc.txt")) as f:
             for line in f:
-                self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                self.zero_crc_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 self.zero_crc_protocol.messages[-1].message_type = self.protocol.default_message_type
 
         for i, message in enumerate(self.zero_crc_protocol.messages):
@@ -134,7 +131,7 @@ class TestAWRE(unittest.TestCase):
         enocean_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("enocean_bits.txt")) as f:
             for line in f:
-                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", ""), {}))
+                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type
 
 

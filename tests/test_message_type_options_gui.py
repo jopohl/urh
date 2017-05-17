@@ -1,18 +1,17 @@
-import unittest
-
 from PyQt5.QtCore import Qt
 
-import tests.utils_testing
+from tests.QtTestCase import QtTestCase
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
 from urh.signalprocessing.MessageType import MessageType
 
-app = tests.utils_testing.app
 
-
-class TestMessageTypeOptionsGUI(unittest.TestCase):
+class TestMessageTypeOptionsGUI(QtTestCase):
     def setUp(self):
         self.message_type = MessageType(name="Test")
         self.dialog = MessageTypeDialogController(self.message_type)
+
+        if self.SHOW:
+            self.dialog.show()
 
     def test_message_type_dialog_parameters(self):
         self.assertEqual(self.message_type.name, self.dialog.windowTitle())

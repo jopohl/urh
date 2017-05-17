@@ -1,24 +1,16 @@
-import unittest
+import copy
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
-import tests.utils_testing
-from urh import constants
-from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
-
-app = tests.utils_testing.app
+from tests.QtTestCase import QtTestCase
+from urh.util.Logger import logger
 
 
-class TestLabels(unittest.TestCase):
+class TestLabels(QtTestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0) # Disable Symbols for this Test
-
-        self.form = MainController()
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
-        self.sframe = self.form.signal_tab_controller.signal_frames[0]
+        super().setUp()
+        self.add_signal_to_form("esaver.complex")
         self.cframe = self.form.compare_frame_controller
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
         self.gframe = self.form.generator_tab_controller
@@ -30,9 +22,6 @@ class TestLabels(unittest.TestCase):
         self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name = False)  # FuzzBit
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
-
-    def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)
@@ -69,7 +58,8 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(len(labels), 2)
 
         # Fuzz Label
-        lbl = self.gframe.table_model.protocol.messages[0].message_type[1]
+        lbl = copy.deepcopy(self.gframe.table_model.protocol.messages[0].message_type[1])
+        self.gframe.table_model.protocol.messages[0].message_type[1] = lbl
         lbl.fuzz_values.append("1")
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
@@ -106,8 +96,6 @@ class TestLabels(unittest.TestCase):
     def __check_background_is_drawn(self, lbl, lbl_start, lbl_end):
         pac = self.gframe.table_model.protocol
         for i in range(self.gframe.table_model.row_count):
-            labels_for_message = pac.messages[i].message_type
-            self.assertIn(lbl, labels_for_message)
             start, end = pac.messages[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
             self.assertEqual(start, lbl_start)
             self.assertEqual(end, lbl_end + 1)

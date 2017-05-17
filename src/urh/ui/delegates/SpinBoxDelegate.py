@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
 
 
-class SpinBoxDelegate(QItemDelegate):
+class SpinBoxDelegate(QStyledItemDelegate):
     def __init__(self, minimum, maximum, parent=None):
         super().__init__(parent)
         self.minimum = minimum

@@ -1,27 +1,18 @@
-import os
-import random
-import unittest
-
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh import constants
-from urh.controller.ProjectDialogController import ProjectDialogController
-from urh.controller.MainController import MainController
-from urh.controller.ProtocolLabelController import ProtocolLabelController
-from urh.signalprocessing.Modulator import Modulator
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+from urh.controller.ProtocolLabelController import ProtocolLabelController
 
+class TestProtocolLabelDialog(QtTestCase):
 
-class TestProtocolLabelDialog(unittest.TestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("align_labels", True)
-
-        self.form = MainController()
+        super().setUp()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
+
         self.cframe = self.form.compare_frame_controller
 
         self.cframe.add_protocol_label(9, 19, 0, 0, edit_label_name=False)  # equals 10-20 in view
@@ -31,6 +22,9 @@ class TestProtocolLabelDialog(unittest.TestCase):
         self.dialog = ProtocolLabelController(preselected_index=1,
                                               message=self.cframe.proto_analyzer.messages[0],
                                               viewtype=0, parent=self.cframe)
+
+        if self.SHOW:
+            self.dialog.show()
 
     def test_protocol_label_dialog(self):
         self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())

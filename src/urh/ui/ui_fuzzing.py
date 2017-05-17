@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_FuzzingDialog(object):
     def setupUi(self, FuzzingDialog):
         FuzzingDialog.setObjectName("FuzzingDialog")
-        FuzzingDialog.resize(840, 810)
+        FuzzingDialog.resize(800, 491)
         self.gridLayout_5 = QtWidgets.QGridLayout(FuzzingDialog)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.lFuzzingLabel = QtWidgets.QLabel(FuzzingDialog)

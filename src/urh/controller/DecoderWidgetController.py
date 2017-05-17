@@ -1,14 +1,10 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QDir, Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication, QFileDialog, QInputDialog, \
+    QLineEdit, QMessageBox
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -30,6 +26,7 @@ class DecoderWidgetController(QDialog):
         super().__init__(parent)
         self.ui = Ui_Decoder()
         self.ui.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         # Variables
         self.old_inpt_txt = ""
@@ -37,6 +34,7 @@ class DecoderWidgetController(QDialog):
         self.old_decoderchain = []
         self.active_message = ""
         self.old_cutmark = ""
+        self.old_morse = (1, 3)
 
         self.project_manager = project_manager
 
@@ -57,6 +55,7 @@ class DecoderWidgetController(QDialog):
 
         # Function lists
         self.ui.basefunctions.addItem(constants.DECODING_EDGE)
+        self.ui.basefunctions.addItem(constants.DECODING_MORSE)
         self.ui.basefunctions.addItem(constants.DECODING_SUBSTITUTION)
         self.ui.basefunctions.addItem(constants.DECODING_EXTERNAL)
         self.ui.additionalfunctions.addItem(constants.DECODING_INVERT)
@@ -86,6 +85,11 @@ class DecoderWidgetController(QDialog):
 
         # Connects
         self.create_connects()
+
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
 
     def create_connects(self):
         self.ui.inpt.textChanged.connect(self.decoder_update)
@@ -124,6 +128,14 @@ class DecoderWidgetController(QDialog):
         self.ui.rB_delafterpos.clicked.connect(self.handle_cut)
         self.ui.cutmark.textEdited.connect(self.handle_cut)
         self.ui.cutmark2.valueChanged.connect(self.handle_cut)
+
+        self.ui.morse_low.valueChanged.connect(self.handle_morse_changed)
+        self.ui.morse_high.valueChanged.connect(self.handle_morse_changed)
+        self.ui.morse_wait.valueChanged.connect(self.handle_morse_changed)
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        super().closeEvent(event)
 
     def choose_decoder(self):
         f, ok = QFileDialog.getOpenFileName(self, self.tr("Choose decoder program"), QDir.homePath())
@@ -206,10 +218,9 @@ class DecoderWidgetController(QDialog):
         last_i = ""
         for i in chain:
             if i in [constants.DECODING_INVERT, constants.DECODING_ENOCEAN, constants.DECODING_DIFFERENTIAL,
-                     constants.DECODING_REDUNDANCY,
-                     constants.DECODING_CARRIER, constants.DECODING_BITORDER, constants.DECODING_EDGE,
-                     constants.DECODING_DATAWHITENING,
-                     constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL, constants.DECODING_CUT,
+                     constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER, constants.DECODING_BITORDER,
+                     constants.DECODING_EDGE, constants.DECODING_DATAWHITENING, constants.DECODING_SUBSTITUTION,
+                     constants.DECODING_EXTERNAL, constants.DECODING_CUT, constants.DECODING_MORSE,
                      constants.DECODING_DISABLED_PREFIX]:
                 self.ui.decoderchain.addItem(i)
                 self.decoderchainUpdate()
@@ -217,7 +228,8 @@ class DecoderWidgetController(QDialog):
             else:
                 if any(x in last_i for x in [constants.DECODING_REDUNDANCY, constants.DECODING_CARRIER,
                                              constants.DECODING_SUBSTITUTION, constants.DECODING_EXTERNAL,
-                                             constants.DECODING_DATAWHITENING, constants.DECODING_CUT]):
+                                             constants.DECODING_DATAWHITENING, constants.DECODING_CUT,
+                                             constants.DECODING_MORSE]):
                     self.chainoptions[last_i] = i
 
         self.decoderchainUpdate()
@@ -283,6 +295,13 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.chainoptions[op] = ""
                     self.chainstr.append("0;1010")  # Default
+            elif constants.DECODING_MORSE in op:
+                # Add morse parameters
+                if op in self.chainoptions:
+                    self.chainstr.append(self.chainoptions[op])
+                else:
+                    self.chainoptions[op] = ""
+                    self.chainstr.append("1;3;1")  # Default
 
         self.e.set_chain(self.chainstr)
         self.decoder_update()
@@ -387,6 +406,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_base_functions_current_row_changed(self, index: int):
         if self.ui.basefunctions.currentItem().text() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(0)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -395,6 +415,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot(int)
     def on_additional_functions_current_row_changed(self, index: int):
         if self.ui.additionalfunctions.currentItem() is not None:
+            self.ui.decoderchain.setCurrentRow(-1)
             self.set_information(1)
         else:
             self.ui.optionWidget.setCurrentIndex(0)
@@ -442,8 +463,9 @@ class DecoderWidgetController(QDialog):
                    "- Low to High (01) is 1\n" \
                    "- High to Low (10) is 0"
         elif constants.DECODING_SUBSTITUTION in element:
-            txt += "A set of manual defined signal sequences FROM (e.g. 10, 01) is replaced by another set of " \
-                   "sequences TO (e.g. 01, 10)."
+            txt += "A set of manual defined signal sequences FROM (e.g. 110, 100) is replaced by another set of " \
+                   "sequences TO (e.g. 01, 10). Note that all FROM entries must have the same length, otherwise " \
+                   "the result is unpredictable! (For TX: all TO entries must have the same length)"
             self.ui.optionWidget.setCurrentIndex(3)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
@@ -525,6 +547,40 @@ class DecoderWidgetController(QDialog):
                 else:
                     self.ui.multiple.setValue(2)
             self.ui.multiple.setEnabled(decoderEdit)
+        elif constants.DECODING_MORSE in element:
+            txt += "If the signal is a morse code, e.g. 00111001001110011100, where information are " \
+                   "transported with long and short sequences of 1 (0 just for padding), then this " \
+                   "decoding evaluates those sequences (Example output: 1011)."
+            self.ui.optionWidget.setCurrentIndex(7)
+            # # Values can only be changed when editing decoder, otherwise default value
+            if not decoderEdit:
+                self.ui.morse_low.setValue(1)
+                self.ui.morse_high.setValue(3)
+                self.ui.morse_wait.setValue(1)
+            else:
+                if element in self.chainoptions:
+                    value = self.chainoptions[element]
+                    if value == "":
+                        self.ui.morse_low.setValue(1)
+                        self.ui.morse_high.setValue(3)
+                        self.ui.morse_wait.setValue(1)
+                    else:
+                        try:
+                            l, h, w = value.split(";")
+                            self.ui.morse_low.setValue(int(l))
+                            self.ui.morse_high.setValue(int(h))
+                            self.ui.morse_wait.setValue(int(w))
+                        except ValueError:
+                            self.ui.morse_low.setValue(1)
+                            self.ui.morse_high.setValue(3)
+                            self.ui.morse_wait.setValue(1)
+                else:
+                    self.ui.morse_low.setValue(1)
+                    self.ui.morse_high.setValue(3)
+                    self.ui.morse_wait.setValue(1)
+            self.ui.morse_low.setEnabled(decoderEdit)
+            self.ui.morse_high.setEnabled(decoderEdit)
+            self.ui.morse_wait.setEnabled(decoderEdit)
         elif constants.DECODING_CARRIER in element:
             txt += "A carrier is a fixed pattern like 1_1_1_1 where the actual data lies in between, e.g. 1a1a1b1. This " \
                    "function extracts the actual bit information (here: aab) from the signal at '_'/'.' positions.\n" \
@@ -599,8 +655,8 @@ class DecoderWidgetController(QDialog):
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
                    "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
                    "Example:\n" \
-                   "- Cut before '1010' would delete everything before first '1010' bits.\n"
-
+                   "- Cut before '1010' would delete everything before first '1010' bits.\n" \
+                   "- Cut before Position = 3 (in bit) would delete the first three bits.\n"
             self.ui.optionWidget.setCurrentIndex(6)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
@@ -611,13 +667,17 @@ class DecoderWidgetController(QDialog):
                 self.ui.rB_delafter.setChecked(False)
                 self.ui.rB_delbeforepos.setChecked(False)
                 self.ui.rB_delafterpos.setChecked(False)
+                self.ui.cutmark.setEnabled(False)
+                self.ui.cutmark2.setEnabled(False)
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
                         self.ui.cutmark.setText("1010")
+                        self.ui.cutmark.setEnabled(True)
                         self.old_cutmark = self.ui.cutmark.text()
                         self.ui.cutmark2.setValue(1)
+                        self.ui.cutmark2.setEnabled(False)
                         self.ui.rB_delbefore.setChecked(True)
                         self.ui.rB_delafter.setChecked(False)
                         self.ui.rB_delbeforepos.setChecked(False)
@@ -723,6 +783,23 @@ class DecoderWidgetController(QDialog):
         self.decoderchainUpdate()
 
     @pyqtSlot()
+    def handle_morse_changed(self):
+        # Multiple Spinbox
+        val_low = self.ui.morse_low.value()
+        val_high = self.ui.morse_high.value()
+        val_wait = self.ui.morse_wait.value()
+
+        if val_low >= val_high:
+            self.ui.morse_low.setValue(self.old_morse[0])
+            self.ui.morse_high.setValue(self.old_morse[1])
+            (val_low, val_high) = self.old_morse
+        else:
+            self.old_morse = (val_low, val_high)
+
+        self.chainoptions[self.active_message] = "{};{};{}".format(val_low, val_high, val_wait)
+        self.decoderchainUpdate()
+
+    @pyqtSlot()
     def handle_carrier_changed(self):
         # Only allow {0, 1}
         carrier_txt = self.ui.carrier.text()
@@ -796,9 +873,8 @@ class DecoderWidgetController(QDialog):
 
         tmp_scene = QGraphicsScene()
         tmp_scene.addText(self.tr("Loading Signal..."))
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.ui.graphicsView_signal.setScene(tmp_scene)
-        QApplication.processEvents()
 
         if signal is not None:
             last_message = pa.messages[-1]
@@ -808,4 +884,4 @@ class DecoderWidgetController(QDialog):
             self.ui.graphicsView_signal.plot_data(plot_data)
 
         self.ui.graphicsView_signal.centerOn(0, 0)
-        QApplication.restoreOverrideCursor()
+        QApplication.instance().restoreOverrideCursor()

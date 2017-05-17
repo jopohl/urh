@@ -1,11 +1,20 @@
-from PyQt5.QtCore import QModelIndex
+import os
+
+from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
+from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu, QWidget, QDialog, QLayout, QTextEdit, \
+    QVBoxLayout, QPlainTextEdit
+
+from urh import constants
 
 
 class DirectoryTreeView(QTreeView):
+    directory_open_wanted = pyqtSignal(str)
+
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.doubleClicked.connect(self.on_double_clicked)
 
     def create_directory(self):
         index = self.model().mapToSource(self.rootIndex())  # type: QModelIndex
@@ -37,7 +46,19 @@ class DirectoryTreeView(QTreeView):
 
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
-        new_dir_action = menu.addAction("New Directory")
+        index = self.model().mapToSource(self.currentIndex())  # type: QModelIndex
+        if index.isValid():
+            current_index_info = self.model().sourceModel().fileInfo(index)  # type: QFileInfo
+            if current_index_info.isDir():
+                if os.path.isfile(os.path.join(current_index_info.filePath(), constants.PROJECT_FILE)):
+                    open_action = menu.addAction("Open project")
+                    open_action.setIcon(QIcon(":/icons/data/icons/appicon.png"))
+                else:
+                    open_action = menu.addAction("Open folder")
+                    open_action.setIcon(QIcon.fromTheme("folder-open"))
+                open_action.triggered.connect(self.on_open_action_triggered)
+
+        new_dir_action = menu.addAction("New folder")
         new_dir_action.setIcon(QIcon.fromTheme("folder"))
         new_dir_action.triggered.connect(self.create_directory)
 
@@ -50,3 +71,26 @@ class DirectoryTreeView(QTreeView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
+
+    @pyqtSlot()
+    def on_open_action_triggered(self):
+        self.directory_open_wanted.emit(self.model().get_file_path(self.currentIndex()))
+
+    @pyqtSlot(QModelIndex)
+    def on_double_clicked(self, index: QModelIndex):
+        file_path = self.model().get_file_path(index)  # type: str
+
+        if file_path.endswith(".txt"):
+            try:
+                content = open(file_path, "r").read()
+            except:
+                return
+            d = QDialog(self)
+            d.resize(800, 600)
+            d.setWindowTitle(file_path)
+            layout = QVBoxLayout(d)
+            text_edit = QPlainTextEdit(content)
+            text_edit.setReadOnly(True)
+            layout.addWidget(text_edit)
+            d.setLayout(layout)
+            d.show()

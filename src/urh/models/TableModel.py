@@ -3,24 +3,21 @@ from collections import defaultdict
 import numpy
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QUndoStack, QMessageBox
+from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
-from urh.cythonext.signalFunctions import Symbol
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class TableModel(QAbstractTableModel):
     def __init__(self, participants, parent=None):
         super().__init__(parent)
-        self.controller = None
-        """:type: CompareFrameController or GeneratorTabController """
-        self.protocol = None # Reimplement in Child classes
-        """:type: ProtocolAnalyzer """
+        self.controller = None  # :type: CompareFrameController|GeneratorTabController
+        self.protocol = None  # type: ProtocolAnalyzer
 
         self.col_count = 0
         self.row_count = 0
-        self.display_data = None
-        """:type: list[str] """
+        self.display_data = None  # type: list[str]
 
         self.search_results = []
         self.search_value = ""
@@ -34,9 +31,6 @@ class TableModel(QAbstractTableModel):
         self.locked = False
         self.decode = True  # False for Generator
 
-        self.symbols = {}
-        """:type: dict[str, Symbol] """
-
         self.background_colors = defaultdict(lambda: None)
         self.bold_fonts = defaultdict(lambda: False)
         self.text_colors = defaultdict(lambda: None)
@@ -44,8 +38,7 @@ class TableModel(QAbstractTableModel):
         self.vertical_header_text = defaultdict(lambda: None)
         self.vertical_header_colors = defaultdict(lambda: None)
 
-        self._diffs = defaultdict(set)
-        """:type: dict[int, set[int]] """
+        self._diffs = defaultdict(set)  # type: dict[int, set[int]]
 
         self.undo_stack = QUndoStack()
 
@@ -93,26 +86,22 @@ class TableModel(QAbstractTableModel):
     def update(self):
         self.locked = True
 
-        self.symbols.clear()
-        self.symbols = {symbol.name: symbol for symbol in self.protocol.used_symbols}
-
         if self.protocol.num_messages > 0:
             if self.decode:
                 if self.proto_view == 0:
-                    self.display_data = self.protocol.decoded_proto_bits_str
+                    self.display_data = [msg.decoded_bits for msg in self.protocol.messages]
                 elif self.proto_view == 1:
-                    self.display_data = self.protocol.decoded_hex_str
+                    self.display_data = [msg.decoded_hex_array for msg in self.protocol.messages]
                 elif self.proto_view == 2:
-                    self.display_data = self.protocol.decoded_ascii_str
+                    self.display_data = [msg.decoded_ascii_array for msg in self.protocol.messages]
             else:
-                #
                 # Generator Model
                 if self.proto_view == 0:
-                    self.display_data = self.protocol.plain_bits_str
+                    self.display_data = [msg.plain_bits for msg in self.protocol.messages]
                 elif self.proto_view == 1:
-                    self.display_data = self.protocol.plain_hex_str
+                    self.display_data = [msg.plain_hex_array for msg in self.protocol.messages]
                 else:
-                    self.display_data = self.protocol.plain_ascii_str
+                    self.display_data = [msg.plain_ascii_array for msg in self.protocol.messages]
 
             visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
             if len(visible_messages) == 0:
@@ -191,7 +180,12 @@ class TableModel(QAbstractTableModel):
         j = index.column()
         if role == Qt.DisplayRole and self.display_data:
             try:
-                return self.display_data[i][j]
+                if self.proto_view == 0:
+                    return self.display_data[i][j]
+                elif self.proto_view == 1:
+                    return "{0:x}".format(self.display_data[i][j])
+                elif self.proto_view == 2:
+                    return chr(self.display_data[i][j])
             except IndexError:
                 return None
 
@@ -228,13 +222,7 @@ class TableModel(QAbstractTableModel):
                 if value in ("0", "1"):
                     try:
                         self.protocol.messages[i][j] = bool(int(value))
-                        self.update()
-                    except IndexError:
-                        return False
-                elif value in self.symbols.keys():
-                    try:
-                        self.protocol.messages[i][j] = self.symbols[value]
-                        self.update()
+                        self.display_data[i][j] = int(value)
                     except IndexError:
                         return False
             elif self.proto_view == 1:
@@ -243,46 +231,36 @@ class TableModel(QAbstractTableModel):
                     bits = "{0:04b}".format(int(value, 16))
                     for k in range(4):
                         try:
-                            if type(self.protocol.messages[i][index + k]) != Symbol:
-                                self.protocol.messages[i][index + k] = bool(int(bits[k]))
-                            else:
-                                break
+                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
                         except IndexError:
                             break
-                    self.update()
-                elif value in self.symbols.keys():
-                    QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
+                    self.display_data[i][j] = int(value, 16)
             elif self.proto_view == 2 and len(value) == 1:
-                if value in self.symbols.keys():
-                    QMessageBox.information(None, "Setting symbol", "You can only set custom bit symbols in bit view!")
-
                 index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
                 for k in range(8):
                     try:
-                        if type(self.protocol.messages[i][index + k]) != Symbol:
-                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
-                        else:
-                            break
+                        self.protocol.messages[i][index + k] = bool(int(bits[k]))
                     except IndexError:
                         break
-                self.update()
+                self.display_data[i][j] = ord(value)
         return True
 
     def find_protocol_value(self, value):
-        self.search_results[:] = []
+        self.search_results.clear()
         self.search_value = value
 
         if len(value) == 0:
             return 0
 
-        for i, message in enumerate(self.display_data):
+        for i, message in enumerate(self.protocol.messages):
             if i in self.hidden_rows:
                 continue
 
-            j = message.find(value)
+            data = message.view_to_string(self.proto_view, self.decode)
+            j = data.find(value)
             while j != -1:
                 self.search_results.append((i, j))
-                j = message.find(value, j + 1)
+                j = data.find(value, j + 1)
 
         return len(self.search_results)

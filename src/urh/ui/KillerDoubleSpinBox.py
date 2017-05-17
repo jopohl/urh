@@ -1,7 +1,9 @@
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDoubleSpinBox
+
 
 class KillerDoubleSpinBox(QDoubleSpinBox):
     """
@@ -18,7 +20,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         # Cant connect to value changed, as it would delete the number when changing a digit
         # see: https://github.com/jopohl/urh/issues/129
         self.editingFinished.connect(self.adjust_step)
-        self.auto_suffix = True
 
     def setValue(self, value: float):
         if isinstance(self.allowed_values, list) and value not in self.allowed_values:

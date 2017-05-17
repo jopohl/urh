@@ -1,8 +1,9 @@
 import numpy
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QResizeEvent, QKeyEvent
+from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
+from urh import constants
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
@@ -40,11 +41,15 @@ class ModulatorDialogController(QDialog):
 
         self.ui.chkBoxLockSIV.setDisabled(True)
 
-        self.create_connects()
-        self.on_modulation_type_changed()
-
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
+
+        self.create_connects()
+
+        try:
+            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+        except TypeError:
+            pass
 
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()
@@ -80,6 +85,15 @@ class ModulatorDialogController(QDialog):
 
         self.ui.spinBoxGaussFilterWidth.setValue(self.current_modulator.gauss_filter_width)
         self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)
+
+    def closeEvent(self, event: QCloseEvent):
+        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+
+        for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated, self.ui.gVOriginalSignal):
+            # Eliminate graphic views to prevent segfaults
+            gv.eliminate()
+
+        super().closeEvent(event)
 
     @property
     def current_modulator(self):
@@ -387,8 +401,6 @@ class ModulatorDialogController(QDialog):
         if self.__cur_selected_mod_type() == "ASK":
             self.ui.lParameterfor0.setText(self.tr("Amplitude for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Amplitude for 1:"))
-            self.ui.spinBoxParameter0.auto_suffix = False
-            self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.spinBoxParameter0.setMaximum(100)
             self.ui.spinBoxParameter0.setMinimum(0)
             self.ui.spinBoxParameter0.setDecimals(0)
@@ -405,8 +417,8 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
         elif self.__cur_selected_mod_type() in ("FSK", "GFSK"):
-            self.ui.spinBoxParameter0.auto_suffix = True
-            self.ui.spinBoxParameter1.auto_suffix = True
+            self.ui.spinBoxParameter0.setSuffix("")
+            self.ui.spinBoxParameter1.setSuffix("")
             self.ui.lParameterfor0.setText(self.tr("Frequency for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Frequency for 1:"))
             self.ui.spinBoxParameter0.setMaximum(1e12)
@@ -422,8 +434,6 @@ class ModulatorDialogController(QDialog):
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
         elif self.__cur_selected_mod_type() == "PSK":
-            self.ui.spinBoxParameter0.auto_suffix = False
-            self.ui.spinBoxParameter1.auto_suffix = False
             self.ui.lParameterfor0.setText(self.tr("Phase (degree) for 0:"))
             self.ui.lParameterfor1.setText(self.tr("Phase (degree) for 1:"))
             self.ui.spinBoxParameter0.setMaximum(360)

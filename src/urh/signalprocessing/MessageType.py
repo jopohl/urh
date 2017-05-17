@@ -1,5 +1,6 @@
 import random
-import string
+import uuid
+import xml.etree.ElementTree as ET
 from copy import deepcopy
 
 from urh import constants
@@ -7,7 +8,6 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
 from urh.util.Logger import logger
-import xml.etree.ElementTree as ET
 
 
 class MessageType(list):
@@ -23,8 +23,7 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
-        self.__id = ''.join(
-            random.choice(string.ascii_letters + string.digits) for _ in range(50)) if id is None else id
+        self.__id = str(uuid.uuid4()) if id is None else id
 
         self.assigned_by_logic_analyzer = False
         self.assigned_by_ruleset = False
@@ -115,7 +114,7 @@ class MessageType(list):
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
-            self.add_protocol_label(lbl.start, lbl.end, name=lbl.name, color_ind=lbl.color_index)
+            self.add_protocol_label(lbl.start, lbl.end-1, name=lbl.name, color_ind=lbl.color_index)
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:
@@ -151,9 +150,3 @@ class MessageType(list):
 
         return result
 
-    def copy_for_fuzzing(self):
-        result = deepcopy(self)
-        for lbl in result:
-            lbl.fuzz_values = []
-            lbl.fuzz_created = True
-        return result

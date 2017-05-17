@@ -8,14 +8,15 @@ from urh.util.Formatter import Formatter
 
 
 class LiveGraphicView(ZoomableGraphicView):
-    zoomed = pyqtSignal(float)
     freq_clicked = pyqtSignal(float)
+    wheel_event_triggered = pyqtSignal(QWheelEvent)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.capturing_data = True
 
     def wheelEvent(self, event: QWheelEvent):
+        self.wheel_event_triggered.emit(event)
         if self.capturing_data:
             return
 
@@ -35,5 +36,8 @@ class LiveGraphicView(ZoomableGraphicView):
                 self.freq_clicked.emit(freq)
 
     def update(self, *__args):
-        super().update(*__args)
-        super().show_full_scene()
+        try:
+            super().update(*__args)
+            super().show_full_scene()
+        except RuntimeError:
+            pass

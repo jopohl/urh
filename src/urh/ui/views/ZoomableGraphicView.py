@@ -1,15 +1,10 @@
-from PyQt5.QtCore import QTimer, pyqtSlot
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtGui import QWheelEvent
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
+from PyQt5.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor
+from PyQt5.QtWidgets import QAction, QGraphicsScene
 
 from urh.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
+from urh.util.Logger import logger
 
 
 class ZoomableGraphicView(SelectableGraphicView):
@@ -41,7 +36,6 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.redraw_timer.timeout.connect(self.redraw_view)
 
         self.zoomed.connect(self.on_signal_zoomed)
-        self.horizontalScrollBar().valueChanged.connect(self.on_signal_scrolled)
 
     @property
     def y_center(self):
@@ -55,30 +49,37 @@ class ZoomableGraphicView(SelectableGraphicView):
     def scene_type(self):
         return 0  # gets overwritten in Epic Graphic View
 
-    def zoom(self, factor, suppress_signal=False, event: QWheelEvent = None):
+    def scrollContentsBy(self, dx: int, dy: int):
+        try:
+            super().scrollContentsBy(dx, dy)
+            self.redraw_timer.start(0)
+        except RuntimeError as e:
+            logger.warning("Graphic View already closed: " + str(e))
+
+    def zoom(self, factor, zoom_to_mouse_cursor=True, cursor_pos=None):
         if factor > 1 and self.view_rect().width() / factor < 300:
             factor = self.view_rect().width() / 300
 
-        old_pos = self.mapToScene(event.pos()) if event is not None else None
+        if zoom_to_mouse_cursor:
+            pos = self.mapFromGlobal(QCursor.pos()) if cursor_pos is None else cursor_pos
+        else:
+            pos = None
+        old_pos = self.mapToScene(pos) if pos is not None else None
 
         if self.view_rect().width() / factor > self.sceneRect().width():
             self.show_full_scene()
             factor = 1
 
         self.scale(factor, 1)
+        self.zoomed.emit(factor)
 
-        if not suppress_signal:
-            self.zoomed.emit(factor)
-
-        if event:
-            move = self.mapToScene(event.pos()) - old_pos
+        if pos is not None:
+            move = self.mapToScene(pos) - old_pos
             self.translate(move.x(), 0)
-        else:
-            self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
 
     def wheelEvent(self, event: QWheelEvent):
         zoom_factor = 1.001 ** event.angleDelta().y()
-        self.zoom(zoom_factor, event=event)
+        self.zoom(zoom_factor, cursor_pos=event.pos())
 
     def resizeEvent(self, event):
         if self.sceneRect().width() == 0:
@@ -112,12 +113,13 @@ class ZoomableGraphicView(SelectableGraphicView):
             return
 
         x_factor = self.view_rect().width() / (end - start)
-        self.zoom(x_factor)
+        self.zoom(x_factor, zoom_to_mouse_cursor=False)
         self.centerOn(start + (end - start) / 2, self.y_center)
 
     def setScene(self, scene: QGraphicsScene):
         super().setScene(scene)
-        self.margin = 0.25 * self.scene().height()
+        if self.scene() is not None:
+            self.margin = 0.25 * self.scene().height()
 
     def plot_data(self, data):
         if self.scene_manager is None:
@@ -133,6 +135,7 @@ class ZoomableGraphicView(SelectableGraphicView):
             self.scene_manager.scene_type = self.scene_type
             if reinitialize:
                 self.scene_manager.init_scene()
+
             vr = self.view_rect()
             start, end = vr.x(), vr.x() + vr.width()
             self.scene_manager.show_scene_section(start, end, *self._get_sub_path_ranges_and_colors(start, end))
@@ -141,13 +144,13 @@ class ZoomableGraphicView(SelectableGraphicView):
         # Overwritten in Epic Graphic View
         return None, None
 
+    def eliminate(self):
+        self.redraw_timer.stop()
+        super().eliminate()
+
     @pyqtSlot()
     def on_signal_zoomed(self):
         self.redraw_timer.start(30)
-
-    @pyqtSlot()
-    def on_signal_scrolled(self):
-        self.redraw_timer.start(0)
 
     @pyqtSlot()
     def on_zoom_in_action_triggered(self):

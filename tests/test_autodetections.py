@@ -1,10 +1,13 @@
 import unittest
 
-from urh.signalprocessing.Signal import Signal
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh.signalprocessing.Signal import Signal
 
-class TestAutodetections(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestAutodetections(QtTestCase):
+    def setUp(self):
+        pass
+
     def test_auto_detect_esaver(self):
         signal = Signal(get_path_for_data_file("esaver.complex"), "ESaver")
         signal.modulation_type = 1

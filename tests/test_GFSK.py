@@ -1,13 +1,20 @@
-import unittest
+import os
+import tempfile
+
 import numpy as np
 
+from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
+class GFSK(QtTestCase):
+    def setUp(self):
+        pass
 
-class GFSK(unittest.TestCase):
     def test_gfsk(self):
+        target_file = os.path.join(tempfile.gettempdir(), "test.complex")
+
         modulator = Modulator("gfsk")
         modulator.modulation_type_str = "FSK"
         modulator.samples_per_bit = 100
@@ -21,7 +28,7 @@ class GFSK(unittest.TestCase):
         modulator.modulate([True, False, True, False], 8457) #, start=len(s))
         s = np.concatenate((s, modulator.modulated_samples))
 
-        s.tofile("/tmp/test.complex")
+        s.tofile(target_file)
 
-        pa = ProtocolAnalyzer(Signal("/tmp/test.complex", "test", modulation="FSK"))
+        pa = ProtocolAnalyzer(Signal(target_file, "test", modulation="FSK"))
         pa.get_protocol_from_signal()

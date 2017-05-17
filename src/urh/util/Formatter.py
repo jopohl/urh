@@ -1,7 +1,4 @@
 import locale
-
-
-# locale.setlocale(locale.LC_ALL, '')
 from urh.util.Logger import logger
 
 

@@ -1,22 +1,19 @@
 import hashlib
-import unittest
-import tempfile
 import os
 import tarfile
+import tempfile
 from zipfile import ZipFile
 
 import numpy as np
 from PyQt5.QtCore import QDir
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh.controller.MainController import MainController
-
+from tests.QtTestCase import QtTestCase
 from urh.util import FileOperator
 
-app = tests.utils_testing.app
 
-
-class TestFileOperator(unittest.TestCase):
+class TestFileOperator(QtTestCase):
     def test_save_wav(self):
         temp_dir = tempfile.gettempdir()
         os.chdir(temp_dir)
@@ -41,22 +38,23 @@ class TestFileOperator(unittest.TestCase):
                 data.tofile(name)
                 zip.write(name)
 
-        form = MainController()
-        form.add_files(FileOperator.uncompress_archives(["test.tar.gz", "test.zip"], QDir.tempPath()))
-        self.assertEqual(len(form.signal_tab_controller.signal_frames), 5)
+        QApplication.instance().processEvents()
+        QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
+        self.form.add_files(FileOperator.uncompress_archives(["test.tar.gz", "test.zip"], QDir.tempPath()))
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 5)
 
         tar_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.tar.gz"), 'rb').read()).hexdigest()
-        form.signal_tab_controller.signal_frames[0].signal._fulldata = np.ones(5, dtype=np.complex64)
-        form.signal_tab_controller.signal_frames[0].signal.changed = True
-        form.signal_tab_controller.signal_frames[0].ui.btnSaveSignal.click()
+        self.form.signal_tab_controller.signal_frames[0].signal._fulldata = np.ones(5, dtype=np.complex64)
+        self.form.signal_tab_controller.signal_frames[0].signal.changed = True
+        self.form.signal_tab_controller.signal_frames[0].ui.btnSaveSignal.click()
 
         tar_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.tar.gz"), 'rb').read()).hexdigest()
         self.assertNotEqual(tar_md5, tar_md5_after_save)
 
         zip_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
-        form.signal_tab_controller.signal_frames[4].signal._fulldata = np.ones(5, dtype=np.complex64)
-        form.signal_tab_controller.signal_frames[4].signal.changed = True
-        form.signal_tab_controller.signal_frames[4].ui.btnSaveSignal.click()
+        self.form.signal_tab_controller.signal_frames[4].signal._fulldata = np.ones(5, dtype=np.complex64)
+        self.form.signal_tab_controller.signal_frames[4].signal.changed = True
+        self.form.signal_tab_controller.signal_frames[4].ui.btnSaveSignal.click()
 
         zip_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
         self.assertNotEqual(zip_md5, zip_md5_after_save)

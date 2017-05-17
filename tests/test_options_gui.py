@@ -1,41 +1,15 @@
-import os
-import unittest
-
-
-import tests.utils_testing
-from urh.controller.MainController import MainController
+from tests.QtTestCase import QtTestCase
 from urh.controller.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
-app = tests.utils_testing.app
-
-
-class TestOptionsGUI(unittest.TestCase):
+class TestOptionsGUI(QtTestCase):
     def setUp(self):
-        self.form = MainController()
+        super().setUp()
         self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
 
-    def test_interpretation_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(0)
-
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-
-        self.dialog.ui.chkBoxEnableSymbols.click()
-
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-
-        self.dialog.ui.chkBoxEnableSymbols.click()
-        if self.dialog.ui.chkBoxEnableSymbols.isChecked():
-            self.assertNotEqual(self.dialog.ui.lSymbolLength.text(), "0%")
-        else:
-            self.assertEqual(self.dialog.ui.lSymbolLength.text(), "0%")
+        if self.SHOW:
+            self.dialog.show()
 
     def test_generation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
@@ -51,8 +25,8 @@ class TestOptionsGUI(unittest.TestCase):
                          self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
 
     def test_plugins_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(4)
-        self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Plugins")
+        self.dialog.ui.tabWidget.setCurrentIndex(3)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(3), "Plugins")
 
         list_view = self.dialog.plugin_controller.ui.listViewPlugins
         model = list_view.model()
@@ -65,8 +39,8 @@ class TestOptionsGUI(unittest.TestCase):
             self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
 
     def test_device_tab(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(5)
-        self.assertEqual(self.dialog.ui.tabWidget.tabText(5), "Device")
+        self.dialog.ui.tabWidget.setCurrentIndex(4)
+        self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
         self.dialog.ui.listWidgetDevices.setCurrentRow(0)
         dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()

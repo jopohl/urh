@@ -1,11 +1,11 @@
 import locale
 import os
+import time
 
 import numpy
-import time
-from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, QModelIndex
+from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QApplication, QMenu
+from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu, QApplication
 
 from urh import constants
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -17,12 +17,12 @@ from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.encoder import Encoder
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.signalprocessing.encoder import Encoder
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis_frame import Ui_FAnalysis
 from urh.util import FileOperator
@@ -209,16 +209,13 @@ class CompareFrameController(QFrame):
         if message:
             errors = message.decoding_errors
             percent = 100 * (errors / len(message))
-            color = "green" if errors == 0 else "red"
-            self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
-            self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%)", (errors, percent)))
-
             state = message.decoding_state if message.decoding_state != message.decoder.ErrorState.SUCCESS else ""
-            self.ui.labelDecodingState.setText(state)
-            self.ui.labelDecodingState.setStyleSheet("color: red")
+            color = "green" if errors == 0 and state == "" else "red"
+
+            self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
+            self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%) %s", (errors, percent, state)))
         else:
             self.ui.lDecodingErrorsValue.setText("")
-            self.ui.labelDecodingState.setText("")
 
             # self.ui.lSupport.setStyleSheet("color: green")
 
@@ -512,7 +509,6 @@ class CompareFrameController(QFrame):
         # Instant Visual Refresh of Tree
         self.proto_tree_model.update()
         self.ui.treeViewProtocols.expandAll()
-        QApplication.processEvents()
 
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         relative_hidden_row_positions = {}
@@ -524,7 +520,6 @@ class CompareFrameController(QFrame):
 
         # self.protocol_undo_stack.clear()
         self.proto_analyzer.messages[:] = []
-        self.proto_analyzer.used_symbols.clear()
         self.rows_for_protocols.clear()
         align_labels = constants.SETTINGS.value("align_labels", True, bool)
         line = 0
@@ -555,8 +550,6 @@ class CompareFrameController(QFrame):
                     if message.message_type not in self.proto_analyzer.message_types:
                         message.message_type = self.proto_analyzer.default_message_type
                     self.proto_analyzer.messages.append(message)
-
-                self.proto_analyzer.used_symbols |= proto.used_symbols
 
                 line += num_messages
                 rows_for_cur_proto = list(range(prev_line, line))
@@ -645,10 +638,10 @@ class CompareFrameController(QFrame):
         self.updateUI()
 
     def reset(self):
-        self.proto_tree_model.rootItem.clearChilds()
-        self.proto_tree_model.rootItem.addGroup()
         for message_type in self.proto_analyzer.message_types:
             message_type.clear()
+        self.proto_tree_model.rootItem.clearChilds()
+        self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
     def show_protocol_label_dialog(self, preselected_index: int):
@@ -1222,6 +1215,7 @@ class CompareFrameController(QFrame):
     def on_undo_stack_index_changed(self, index: int):
         self.protocol_model.update()
         self.protocol_label_list_model.update()
+        self.search()
 
     @pyqtSlot(ProtocolLabel)
     def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):
@@ -1367,11 +1361,10 @@ class CompareFrameController(QFrame):
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
             for i, tree_item in enumerate(tree_items):
                 proto = tree_item.protocol
-                if proto.show and any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
-                    # index = self.proto_tree_model.createIndex(i, 0, tree_item)
-                    # selection.select(index, index)
-                    active_group_ids.add(group)
-                    self.selected_protocols.add(proto)
+                if proto.show and proto in self.rows_for_protocols:
+                    if any(i in self.rows_for_protocols[proto] for i in range(min_row, max_row + 1)):
+                        active_group_ids.add(group)
+                        self.selected_protocols.add(proto)
 
         if active_group_ids != set(self.active_group_ids):
             self.active_group_ids = list(active_group_ids)

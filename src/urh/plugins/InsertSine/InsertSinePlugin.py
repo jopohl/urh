@@ -1,17 +1,10 @@
 import os
-import threading
 
 import numpy as np
 from PyQt5 import uic
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QBrush
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QPen
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
+from PyQt5.QtWidgets import QApplication, QDialog
 
 from urh.SceneManager import SceneManager
 from urh.plugins.Plugin import SignalEditorPlugin
@@ -20,16 +13,14 @@ from urh.util.Formatter import Formatter
 
 class InsertSinePlugin(SignalEditorPlugin):
     insert_sine_wave_clicked = pyqtSignal()
-    sine_wave_updated = pyqtSignal()
 
     INSERT_INDICATOR_COLOR = QColor(0, 255, 0, 80)
 
     def __init__(self):
-        dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
-        self.dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))  # type: QDialog
-        self.dialog_ui.setModal(True)
 
+        self.__dialog_ui = None  # type: QDialog
         self.complex_wave = None
+
         self.__amplitude = 0.5
         self.__frequency = 10
         self.__phase = 0
@@ -40,22 +31,33 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.draw_data = None
         self.position = 0
 
-        self.dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
-        self.dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
-        self.dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
-        self.dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
-        self.dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
-        self.dialog_ui.lineEditTime.setValidator(QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
-        scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
-        self.dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
-        self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
-                                                            QPen(QColor(Qt.transparent), Qt.FlatCap),
-                                                            QBrush(self.INSERT_INDICATOR_COLOR))
-        self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
-
-        self.set_time()
-
         super().__init__(name="InsertSine")
+
+    @property
+    def dialog_ui(self) -> QDialog:
+        if self.__dialog_ui is None:
+            dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
+            self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
+            self.__dialog_ui.setModal(True)
+            self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
+            self.__dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
+            self.__dialog_ui.doubleSpinBoxPhase.setValue(self.__phase)
+            self.__dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
+            self.__dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
+            self.__dialog_ui.lineEditTime.setValidator(
+                QRegExpValidator(QRegExp("[0-9]+([nmµ]*|([\.,][0-9]{1,3}[nmµ]*))?$")))
+
+            scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
+            self.__dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
+            self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
+                                                                QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                QBrush(self.INSERT_INDICATOR_COLOR))
+            self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
+
+            self.set_time()
+
+        return self.__dialog_ui
 
     @property
     def amplitude(self) -> float:
@@ -125,7 +127,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.lineEditTime.editingFinished.connect(self.on_line_edit_time_editing_finished)
         self.dialog_ui.btnAbort.clicked.connect(self.on_btn_abort_clicked)
         self.dialog_ui.btnOK.clicked.connect(self.on_btn_ok_clicked)
-        self.sine_wave_updated.connect(self.on_sine_wave_updated)
+        self.__dialog_ui.finished.connect(self.on_dialog_finished)
 
     def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
         self.create_dialog_connects()
@@ -149,23 +151,17 @@ class InsertSinePlugin(SignalEditorPlugin):
         if self.dialog_ui.graphicsViewSineWave.scene_manager:
             self.dialog_ui.graphicsViewSineWave.scene_manager.clear_path()
 
-        sine_thread = threading.Thread(target=self.__update_sine_wave)
-        sine_thread.setDaemon(True)
-        sine_thread.start()
-
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         self.__set_status_of_editable_elements(enabled=False)
-
-    def __update_sine_wave(self):
         t = np.arange(0, self.num_samples) / self.sample_rate
         arg = ((2 * np.pi * self.frequency * t + self.phase) * 1j).astype(np.complex64)
         self.complex_wave = self.amplitude * np.exp(arg)  # type: np.ndarray
         self.draw_data = np.insert(self.original_data, self.position, self.complex_wave).imag.astype(np.float32)
         y, h = self.dialog_ui.graphicsViewSineWave.view_rect().y(), self.dialog_ui.graphicsViewSineWave.view_rect().height()
         self.insert_indicator.setRect(self.position, y - h, self.num_samples, 2 * h + abs(y))
-        self.sine_wave_updated.emit()
 
-    def on_sine_wave_updated(self):
         self.__set_status_of_editable_elements(enabled=True)
+        QApplication.instance().restoreOverrideCursor()
         self.dialog_ui.graphicsViewSineWave.plot_data(self.draw_data)
         self.dialog_ui.graphicsViewSineWave.show_full_scene()
 
@@ -228,3 +224,8 @@ class InsertSinePlugin(SignalEditorPlugin):
     def on_btn_ok_clicked(self):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
+
+    @pyqtSlot()
+    def on_dialog_finished(self):
+        self.sender().graphicsViewSineWave.eliminate()
+        self.__dialog_ui = None

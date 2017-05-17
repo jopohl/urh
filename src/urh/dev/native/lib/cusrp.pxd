@@ -29,7 +29,9 @@ cdef extern from "uhd/types/metadata.h":
 
 
     uhd_error uhd_rx_metadata_make(uhd_rx_metadata_handle* handle)
+    uhd_error uhd_tx_metadata_make(uhd_tx_metadata_handle* handle, bool has_time_spec, time_t full_secs, double frac_secs, bool start_of_burst, bool end_of_burst)
     uhd_error uhd_rx_metadata_free(uhd_rx_metadata_handle* handle)
+    uhd_error uhd_tx_metadata_free(uhd_tx_metadata_handle* handle)
     uhd_error uhd_rx_metadata_to_pp_string(uhd_rx_metadata_handle h, char* pp_string_out, size_t strbuffer_len)
 
 cdef extern from "uhd/error.h":
@@ -80,6 +82,27 @@ cdef extern from "uhd/error.h":
         # An unknown error was thrown.
         UHD_ERROR_UNKNOWN = 100
 
+cdef extern from "uhd/types/tune_request.h":
+    ctypedef enum uhd_tune_request_policy_t:
+        UHD_TUNE_REQUEST_POLICY_NONE   = 78
+        UHD_TUNE_REQUEST_POLICY_AUTO   = 65
+        UHD_TUNE_REQUEST_POLICY_MANUAL = 77
+
+    ctypedef struct uhd_tune_request_t:
+        double target_freq
+        uhd_tune_request_policy_t rf_freq_policy
+        double rf_freq
+        uhd_tune_request_policy_t dsp_freq_policy
+        double dsp_freq
+        char* args
+
+cdef extern from "uhd/types/tune_result.h":
+    ctypedef struct uhd_tune_result_t:
+        double clipped_rf_freq
+        double target_rf_freq
+        double actual_rf_freq
+        double target_dsp_freq
+        double actual_dsp_freq
 
 cdef extern from "uhd/types/string_vector.h":
     ctypedef struct uhd_string_vector_t:
@@ -141,10 +164,45 @@ cdef extern from "uhd/usrp/usrp.h":
     uhd_error uhd_usrp_get_tx_stream(uhd_usrp_handle h, uhd_stream_args_t *stream_args, uhd_tx_streamer_handle h_out)
 
     uhd_error uhd_rx_streamer_make(uhd_rx_streamer_handle *h)
+    uhd_error uhd_tx_streamer_make(uhd_tx_streamer_handle *h)
     uhd_error uhd_rx_streamer_free(uhd_rx_streamer_handle *h)
+    uhd_error uhd_tx_streamer_free(uhd_tx_streamer_handle *h)
     uhd_error uhd_rx_streamer_num_channels(uhd_rx_streamer_handle h, size_t *num_channels_out)
+    uhd_error uhd_tx_streamer_num_channels(uhd_tx_streamer_handle h, size_t *num_channels_out)
     uhd_error uhd_rx_streamer_max_num_samps(uhd_rx_streamer_handle h, size_t *max_num_samps_out)
+    uhd_error uhd_tx_streamer_max_num_samps(uhd_tx_streamer_handle h, size_t *max_num_samps_out)
     uhd_error uhd_rx_streamer_recv(uhd_rx_streamer_handle h, void** buffs, size_t samps_per_buff,
                                    uhd_rx_metadata_handle *md, double timeout, bool one_packet, size_t *items_recvd)
+    uhd_error uhd_tx_streamer_send(uhd_tx_streamer_handle h, const void **buffs, size_t samps_per_buff, uhd_tx_metadata_handle *md, double timeout, size_t *items_sent)
     uhd_error uhd_rx_streamer_issue_stream_cmd(uhd_rx_streamer_handle h, const uhd_stream_cmd_t *stream_cmd)
     uhd_error uhd_rx_streamer_last_error(uhd_rx_streamer_handle h, char* error_out, size_t strbuffer_len)
+    uhd_error uhd_tx_streamer_last_error(uhd_tx_streamer_handle h, char* error_out, size_t strbuffer_len)
+
+    uhd_error uhd_usrp_get_pp_string(uhd_usrp_handle h, char* pp_string_out, size_t strbuffer_len)
+
+    uhd_error uhd_usrp_set_rx_rate(uhd_usrp_handle h, double rate,size_t chan)
+    uhd_error uhd_usrp_get_rx_rate(uhd_usrp_handle h, size_t chan, double *rate_out)
+    uhd_error uhd_usrp_set_tx_rate(uhd_usrp_handle h, double rate,size_t chan)
+    uhd_error uhd_usrp_get_tx_rate(uhd_usrp_handle h, size_t chan, double *rate_out)
+
+    uhd_error uhd_usrp_set_rx_freq(uhd_usrp_handle h, uhd_tune_request_t *tune_request, size_t chan, uhd_tune_result_t *tune_result)
+    uhd_error uhd_usrp_get_rx_freq(uhd_usrp_handle h, size_t chan, double *freq_out)
+    uhd_error uhd_usrp_set_tx_freq(uhd_usrp_handle h, uhd_tune_request_t *tune_request, size_t chan, uhd_tune_result_t *tune_result)
+    uhd_error uhd_usrp_get_tx_freq(uhd_usrp_handle h, size_t chan, double *freq_out)
+
+    uhd_error uhd_usrp_set_normalized_rx_gain(uhd_usrp_handle h, double gain, size_t chan)
+    uhd_error uhd_usrp_get_normalized_rx_gain(uhd_usrp_handle h, size_t chan, double *gain_out)
+    uhd_error uhd_usrp_set_normalized_tx_gain(uhd_usrp_handle h, double gain, size_t chan)
+    uhd_error uhd_usrp_get_normalized_tx_gain(uhd_usrp_handle h, size_t chan, double *gain_out)
+
+    uhd_error uhd_usrp_set_rx_bandwidth(uhd_usrp_handle h, double bandwidth, size_t chan)
+    uhd_error uhd_usrp_get_rx_bandwidth(uhd_usrp_handle h, size_t chan, double *bandwidth_out)
+    uhd_error uhd_usrp_set_tx_bandwidth(uhd_usrp_handle h, double bandwidth, size_t chan)
+    uhd_error uhd_usrp_get_tx_bandwidth(uhd_usrp_handle h, size_t chan, double *bandwidth_out)
+
+    uhd_error uhd_usrp_set_rx_antenna(uhd_usrp_handle h, const char* ant, size_t chan)
+    uhd_error uhd_usrp_get_rx_antenna(uhd_usrp_handle h, size_t chan, char* ant_out, size_t strbuffer_len)
+    uhd_error uhd_usrp_get_rx_antennas(uhd_usrp_handle h, size_t chan, uhd_string_vector_handle *antennas_out)
+    uhd_error uhd_usrp_set_tx_antenna(uhd_usrp_handle h, const char* ant, size_t chan)
+    uhd_error uhd_usrp_get_tx_antenna(uhd_usrp_handle h, size_t chan, char* ant_out, size_t strbuffer_len)
+    uhd_error uhd_usrp_get_tx_antennas(uhd_usrp_handle h, size_t chan, uhd_string_vector_handle *antennas_out)

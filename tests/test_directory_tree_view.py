@@ -1,17 +1,14 @@
 import os
-import unittest
 
 from PyQt5.QtCore import QDir
 
+from tests.QtTestCase import QtTestCase
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileSystemModel import FileSystemModel
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
-import tests.utils_testing
-
-app = tests.utils_testing.app
 
 
-class TestDirectoryTreeView(unittest.TestCase):
+class TestDirectoryTreeView(QtTestCase):
     def test_remove_file(self):
         self.directory_tree_view = DirectoryTreeView()
         file_model = FileSystemModel()

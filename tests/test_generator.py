@@ -1,23 +1,13 @@
 import os
-import unittest
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+import array
+from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
-import tests.utils_testing
-from urh import constants
-from urh.controller.MainController import MainController
-from tests.utils_testing import get_path_for_data_file
-app = tests.utils_testing.app
+from tests.QtTestCase import QtTestCase
 
 
-class TestGenerator(unittest.TestCase):
-    def setUp(self):
-        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        self.form = MainController()
-
+class TestGenerator(QtTestCase):
     def test_generation(self):
         """
         Complex test including much functionality
@@ -29,7 +19,7 @@ class TestGenerator(unittest.TestCase):
 
         """
         # Load a Signal
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -57,19 +47,20 @@ class TestGenerator(unittest.TestCase):
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
-        self.assertEqual(proto_inv, gframe.table_model.display_data[0])
-        self.assertNotEqual(proto, gframe.table_model.display_data[0])
+        self.assertEqual(array.array("B", list(map(int, proto_inv))), gframe.table_model.display_data[0])
+        self.assertNotEqual(array.array("B", list(map(int, proto))), gframe.table_model.display_data[0])
 
         # Generate Datafile
         modulator = gframe.modulators[0]
         modulator.modulation_type = 0
         modulator.samples_per_bit = 295
-        modulated_data = gframe.modulate_data()
+        buffer = gframe.prepare_modulation_buffer(gframe.total_modulated_samples, show_error=False)
+        modulated_data = gframe.modulate_data(buffer)
         filename = os.path.join(QDir.tempPath(), "generator_test.complex")
         modulated_data.tofile(filename)
 
         # Reload datafile and see if bits match
-        self.form.add_signalfile(filename)
+        self.add_signal_to_form(filename)
         sframe = self.form.signal_tab_controller.signal_frames[1]
         sframe.ui.cbProtoView.setCurrentIndex(0)
         self.assertEqual(sframe.ui.lineEditSignalName.text(), "generator_test")
@@ -87,7 +78,7 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue(proto.startswith(gen_proto))
 
     def test_close_signal(self):
-        self.form.add_signalfile(get_path_for_data_file("ask.complex"))
+        self.add_signal_to_form("ask.complex")
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
         sframe.ui.spinBoxInfoLen.setValue(295)
@@ -114,12 +105,74 @@ class TestGenerator(unittest.TestCase):
         self.form.on_selected_tab_changed(2)
         self.assertEqual(1, 1)
 
-    def test_create_context_menu(self):
-        # Context menu should be empty if table is empty
+    def test_create_table_context_menu(self):
+        # Context menu should only contain one item (add new message)
         self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
         self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
         menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        self.assertEqual(len(menu.actions()), 1)
+
+        # Add data to test entries in context menu
+        self.add_signal_to_form("ask.complex")
+        gframe = self.form.generator_tab_controller
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+
+        self.assertGreater(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        n_items = len(menu.actions())
+        self.assertGreater(n_items, 1)
+
+        # If there is a selection, additional items should be present in context menu
+        gframe.ui.tableMessages.selectRow(0)
+        menu = self.form.generator_tab_controller.ui.tableMessages.create_context_menu()
+        self.assertGreater(len(menu.actions()), n_items)
+
+    def test_add_empty_row_behind(self):
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(0)
+        gframe.table_model.add_empty_row_behind(-1, 30)
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 1)
+
+        # Add data to test
+        self.add_signal_to_form("ask.complex")
+
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 2)
+        self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[1]), 30)
+        gframe.table_model.add_empty_row_behind(0, 30)
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 3)
+        self.assertEqual(len(self.form.generator_tab_controller.table_model.display_data[1]), 30)
+        self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[2]), 30)
+
+
+
+    def test_create_fuzzing_list_view_context_menu(self):
+        # Context menu should be empty if table is empty
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
+        menu = self.form.generator_tab_controller.ui.listViewProtoLabels.create_context_menu()
         self.assertEqual(len(menu.actions()), 0)
+
+        # Add data to test entries in context menu
+        self.add_signal_to_form("fsk.complex")
+        self.form.compare_frame_controller.add_protocol_label(0, 10, 0, 0, False)
+        self.assertEqual(1, len(self.form.compare_frame_controller.proto_analyzer.protocol_labels))
+        gframe = self.form.generator_tab_controller
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+
+        self.assertGreater(self.form.generator_tab_controller.table_model.rowCount(), 0)
+        # Select a row so there is a message for that fuzzing labels can be shown
+        self.form.generator_tab_controller.ui.tableMessages.selectRow(0)
+        menu = self.form.generator_tab_controller.ui.listViewProtoLabels.create_context_menu()
+        n_items = len(menu.actions())
+        self.assertGreater(n_items, 0)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

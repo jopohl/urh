@@ -74,10 +74,9 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("Bladerf", "HackRF", "USRP", "RTL-SDR", "RTL-TCP", "FUNcube-Dongle", "SDRPlay", "AirSpy")
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
 
-    def __init__(self, testing_mode=False):
-        self.testing_mode = testing_mode  # Ensure we get some device backends for unit tests
+    def __init__(self):
 
         self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
@@ -85,9 +84,6 @@ class BackendHandler(object):
 
         self.gnuradio_installed = False
         self.set_gnuradio_installed_status()
-
-        if self.testing_mode:
-            self.gnuradio_installed = True
 
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
@@ -115,7 +111,23 @@ class BackendHandler(object):
     @property
     def __usrp_native_enabled(self) -> bool:
         try:
-            from urh.dev.native.lib import uhd
+            from urh.dev.native.lib import usrp
+            return True
+        except ImportError:
+            return False
+
+    @property
+    def __airspy_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import airspy
+            return True
+        except ImportError:
+            return False
+
+    @property
+    def __lime_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import limesdr
             return True
         except ImportError:
             return False
@@ -145,8 +157,10 @@ class BackendHandler(object):
                 return
         else:
             # we are on a nice unix with gnuradio installed to default python path
+            devnull = "NUL" if os.name == "nt" else "/dev/null"
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-                self.gnuradio_installed = call([self.python2_exe, "-c", "import gnuradio"], stderr=DEVNULL) == 0
+                # Subprocess.call gives memory error, so we use os.system
+                self.gnuradio_installed = os.system(self.python2_exe + " -c 'import gnuradio' 2>" + devnull) == 0
                 constants.SETTINGS.setValue("python2_exe", self.python2_exe)
             else:
                 self.gnuradio_installed = False
@@ -154,7 +168,7 @@ class BackendHandler(object):
 
     def __device_has_gr_scripts(self, devname: str):
         script_path = os.path.join(self.path, "gr", "scripts")
-        devname = devname.lower()
+        devname = devname.lower().split(" ")[0]
         has_send_file = False
         has_recv_file = False
         for f in os.listdir(script_path):
@@ -177,6 +191,14 @@ class BackendHandler(object):
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
             backends.add(Backends.native)
 
+        if devname.lower() == "limesdr" and self.__lime_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
+        if devname.lower().startswith("airspy") and self.__airspy_native_enabled:
+            supports_rx, supports_tx = True, False
+            backends.add(Backends.native)
+
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
             backends.add(Backends.native)
 
@@ -191,8 +213,6 @@ class BackendHandler(object):
         for device_name in self.DEVICE_NAMES:
             ab, rx_suprt, tx_suprt = self.__avail_backends_for_device(device_name)
             container = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
-            if self.testing_mode:
-                container.is_enabled = True
             self.device_backends[device_name.lower()] = container
 
     def __get_python2_interpreter(self):

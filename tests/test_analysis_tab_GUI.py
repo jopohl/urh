@@ -1,38 +1,27 @@
-import unittest
-
 import copy
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
 
-import tests.utils_testing
-from urh import constants
-from urh.controller.MainController import MainController
-
-from tests.utils_testing import get_path_for_data_file
-
-app = tests.utils_testing.app
+from tests.QtTestCase import QtTestCase
 
 
-class TestAnalysisTabGUI(unittest.TestCase):
+class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
-        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        self.form = MainController()
+        super().setUp()
+        self.add_signal_to_form("two_participants.complex")
         self.cfc = self.form.compare_frame_controller
-        self.form.add_signalfile(get_path_for_data_file("two_participants.complex"))
-        self.signal = self.form.signal_tab_controller.signal_frames[0].signal
-        self.signal.noise_threshold = 0.0175
-        self.signal.qad_center = 0
-        self.signal.bit_len = 100
-        self.signal.tolerance = 5
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
 
     def test_analyze_button_fsk(self):
-        self.form.add_signalfile(get_path_for_data_file("fsk.complex"))
+        self.add_signal_to_form("fsk.complex")
         self.cfc.ui.btnAnalyze.click()
         self.assertTrue(True)
 
     def test_analyze_button_enocean(self):
-        self.form.add_signalfile(get_path_for_data_file("enocean.complex"))
+        self.add_signal_to_form("enocean.complex")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
         QTest.keyClick(w, Qt.Key_Enter)
@@ -45,20 +34,20 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_table_selection(self):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
-        self.cfc.ui.btnAnalyze.click()
-
         self.cfc.ui.tblViewProtocol.selectRow(1)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(self.cfc.ui.lBitsSelection.text(), self.cfc.proto_analyzer.messages[1].plain_bits_str)
 
         self.cfc.ui.tblViewProtocol.clearSelection()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual("", self.cfc.ui.lBitsSelection.text())
 
         self.cfc.ui.tblViewProtocol.select(0, 0, 0, 3)
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual("1010", self.cfc.ui.lBitsSelection.text())
         self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        QApplication.instance().processEvents()
+
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
         self.assertEqual(min_row, 0)
         self.assertEqual(max_row, 0)
@@ -94,6 +83,15 @@ class TestAnalysisTabGUI(unittest.TestCase):
 
         self.assertEqual(hidden_rows, [0, 5, 6, 10, 13, 14, 16, 17])
 
+    def test_search_hex(self):
+        search_str = "aaaaaaaa"
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        self.cfc.ui.tblViewProtocol.clearSelection()
+        self.cfc.ui.lineEditSearch.setText(search_str)
+        self.cfc.ui.btnSearchSelectFilter.click()
+
+        self.assertEqual(self.cfc.ui.lSearchTotal.text(), "18")
+
     def test_show_diff(self):
         hidden_columns_before = [i for i in range(self.cfc.protocol_model.col_count)
                                  if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
@@ -118,17 +116,22 @@ class TestAnalysisTabGUI(unittest.TestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
+        self.cfc.ui.btnRemoveMessagetype.click()
+        self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):
         # Add protocol label should be disabled if table is empty
-        self.form.close_all()
-        app.processEvents()
-        QTest.qWait(500)
+        self.cfc.proto_tree_model.rootItem.child(0).show = False
+        QApplication.instance().processEvents()
+
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
+        QApplication.instance().processEvents()
+
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
 
         create_label_action = next(a for a in menu.actions() if a.text() == "Add protocol label")
+
         self.assertFalse(create_label_action.isEnabled())
 
     def test_show_in_interpretation(self):
@@ -155,11 +158,9 @@ class TestAnalysisTabGUI(unittest.TestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        app.processEvents()
-        QTest.qWait(100)
+        QApplication.instance().processEvents()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        app.processEvents()
-        QTest.qWait(100)
+        QApplication.instance().processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 
@@ -191,8 +192,32 @@ class TestAnalysisTabGUI(unittest.TestCase):
     def test_tree_view_selection_changed(self):
         self.cfc.proto_tree_model.addGroup()
         self.cfc.proto_tree_model.addGroup()
-        app.processEvents()
+        QApplication.instance().processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
         self.cfc.ui.treeViewProtocols.selectAll()
-        app.processEvents()
+        self.cfc.ui.treeViewProtocols.selection_changed.emit()
+        QApplication.instance().processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
+
+    def test_label_selection_changed(self):
+        self.assertEqual(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
+        self.cfc.add_protocol_label(40, 60, 2, 0, edit_label_name=False)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
+        self.cfc.ui.listViewLabelNames.selectAll()
+        self.assertEqual(len(self.cfc.ui.listViewLabelNames.selectedIndexes()), 1)
+        self.assertGreater(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
+
+    def test_remove_label(self):
+        self.cfc.add_protocol_label(10, 20, 2, 0, edit_label_name=False)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
+        self.cfc.protocol_label_list_model.delete_label_at(0)
+        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 0)
+
+    def test_protocol_tree_context_menu(self):
+        self.cfc.ui.treeViewProtocols.context_menu_pos = QPoint(0, 0)
+        menu = self.cfc.ui.treeViewProtocols.create_context_menu()
+        actions = ["Create a new group", "Sort Group Elements", "Delete group"]
+        menu_action_names = [action.text() for action in menu.actions() if action.text()]
+        print(menu_action_names)
+        for action in menu_action_names:
+            self.assertIn(action, actions)

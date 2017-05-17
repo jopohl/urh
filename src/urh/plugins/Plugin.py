@@ -2,6 +2,7 @@ import os
 
 from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QUndoCommand, QUndoStack
 
 
@@ -14,8 +15,15 @@ class Plugin(QObject):
         self.name = name
         self.plugin_path = ""
         self.description = ""
-        self.settings_frame = None
+        self.__settings_frame = None
         self.qsettings = QSettings(QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin")
+
+    @property
+    def settings_frame(self):
+        if self.__settings_frame is None:
+            self.__settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
+            self.create_connects()
+        return self.__settings_frame
 
     @property
     def enabled(self) -> bool:
@@ -35,12 +43,11 @@ class Plugin(QObject):
         except Exception as e:
             print(e)
 
+    def destroy_settings_frame(self):
+        self.__settings_frame = None
+
     def create_connects(self):
         pass
-
-    def load_settings_frame(self):
-        self.settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
-        self.create_connects()
 
 
 class ProtocolPlugin(Plugin):

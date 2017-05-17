@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection
-from PyQt5.QtGui import QKeySequence, QKeyEvent
+from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics
 from PyQt5.QtWidgets import QTableView, QApplication
 import numpy
 
@@ -56,16 +56,17 @@ class TableView(QTableView):
         if not self.isVisible():
             return
 
-        w = self.font().pointSize() + 2
+        f = QFontMetrics(self.font())
+        w = f.widthChar("0") + 2
 
         for i in range(10):
-            self.setColumnWidth(i, 2 * w)
+            self.setColumnWidth(i, 3*w)
 
-        QApplication.processEvents()
-        for i in range(10, self.model().columnCount()):
-            self.setColumnWidth(i, w * len(str(i + 1)))
+        QApplication.instance().processEvents()
+        for i in range(9, self.model().columnCount()):
+            self.setColumnWidth(i, w * (len(str(i + 1)) + 1))
             if i % 10 == 0:
-                QApplication.processEvents()
+                QApplication.instance().processEvents()
 
     def resize_vertical_header(self):
         num_rows = self.model().rowCount()
@@ -81,7 +82,7 @@ class TableView(QTableView):
                 self.verticalHeader().resizeSection(i, w)
                 self.setRowHeight(i, rh)
                 if i % 10 == 0:
-                    QApplication.processEvents()
+                    QApplication.instance().processEvents()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
@@ -115,7 +116,7 @@ class TableView(QTableView):
                 if cell.data():
                     text += str(cell.data())
 
-            QApplication.clipboard().setText(text)
+            QApplication.instance().clipboard().setText(text)
             return
 
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \

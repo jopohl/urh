@@ -1,12 +1,12 @@
 import struct
-
+# noinspection PyUnresolvedReferences
+cimport numpy as np
+import numpy as np
 from PyQt5.QtCore import QByteArray, QDataStream
 from PyQt5.QtGui import QPainterPath
 
-# noinspection PyUnresolvedReferences
-import numpy as np
-cimport numpy as np
-import  cython
+np.import_array()
+
 from cython.parallel import prange
 
 from urh import constants
@@ -81,28 +81,29 @@ cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
 
      All values are big endian--pack using struct.pack('>d') or struct.pack('>i')
     """
-    path = QPainterPath()
     cdef long long n = x.shape[0]
     # create empty array, pad with extra space on either end
-    arr = np.empty(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
+    arr = np.zeros(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
     #arr = arr.byteswap().newbyteorder() # force native byteorder
+
     # write first two integers
-    byteview = arr.view(dtype=np.uint8)
-    byteview[:12] = 0
-    byteview.data[12:20] = struct.pack('>ii', n, 0)
+    byte_view = arr.view(dtype=np.uint8)
+    byte_view[:12] = 0
+    byte_view.data[12:20] = struct.pack('>ii', n, 0)
 
     arr[1:-1]['x'] = x
     arr[1:-1]['y'] = np.negative(y)  # y negieren, da Koordinatensystem umgedreht
     arr[1:-1]['c'] = 1
 
-    cdef long long lastInd = 20 * (n + 1)
-    byteview.data[lastInd:lastInd + 4] = struct.pack('>i', 0)
+    cdef long long last_index = 20 * (n + 1)
+    byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)
 
     try:
-        buf = QByteArray.fromRawData(byteview.data[12:lastInd + 4])
+        buf = QByteArray.fromRawData(byte_view.data[12:last_index + 4])
     except TypeError:
-        buf = QByteArray(byteview.data[12:lastInd + 4])
+        buf = QByteArray(byte_view.data[12:last_index + 4])
 
+    path = QPainterPath()
     ds = QDataStream(buf)
     ds >> path
 

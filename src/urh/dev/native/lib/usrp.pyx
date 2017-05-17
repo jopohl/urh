@@ -16,35 +16,18 @@ cdef uhd_tx_streamer_handle tx_streamer_handle
 cdef uhd_rx_metadata_handle rx_metadata_handle
 cdef uhd_tx_metadata_handle tx_metadata_handle
 
-cpdef bool IS_TX = False
+cpdef bint IS_TX = False
 cpdef size_t CHANNEL = 0
 cdef size_t max_num_rx_samples = 300
 cdef size_t max_num_tx_samples = 300
 
-cpdef set_tx(bool is_tx):
+cpdef set_tx(bint is_tx):
     global IS_TX
     IS_TX = is_tx
 
 cpdef set_channel(size_t channel):
     global CHANNEL
     CHANNEL = channel
-
-cpdef find_devices(device_args):
-    """
-    Find all connected USRP devices.
-    """
-
-    cdef uhd_string_vector_handle output
-    uhd_string_vector_make(&output)
-
-    py_byte_string = device_args.encode('UTF-8')
-    cdef char* args = py_byte_string
-
-    ret_code = uhd_usrp_find(args, &output)
-    result = output.string_vector_cpp
-    uhd_string_vector_free(&output)
-
-    return ret_code, result
 
 cpdef uhd_error open(str device_args):
     py_byte_string = device_args.encode('UTF-8')

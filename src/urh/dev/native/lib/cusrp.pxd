@@ -1,7 +1,4 @@
-from libcpp.string cimport string
-from libcpp.vector cimport vector
 from libc.time cimport time_t
-from libcpp cimport bool
 
 cdef extern from "uhd/types/metadata.h":
     struct uhd_rx_metadata_t
@@ -29,7 +26,7 @@ cdef extern from "uhd/types/metadata.h":
 
 
     uhd_error uhd_rx_metadata_make(uhd_rx_metadata_handle* handle)
-    uhd_error uhd_tx_metadata_make(uhd_tx_metadata_handle* handle, bool has_time_spec, time_t full_secs, double frac_secs, bool start_of_burst, bool end_of_burst)
+    uhd_error uhd_tx_metadata_make(uhd_tx_metadata_handle* handle, bint has_time_spec, time_t full_secs, double frac_secs, bint start_of_burst, bint end_of_burst)
     uhd_error uhd_rx_metadata_free(uhd_rx_metadata_handle* handle)
     uhd_error uhd_tx_metadata_free(uhd_tx_metadata_handle* handle)
     uhd_error uhd_rx_metadata_to_pp_string(uhd_rx_metadata_handle h, char* pp_string_out, size_t strbuffer_len)
@@ -105,10 +102,7 @@ cdef extern from "uhd/types/tune_result.h":
         double actual_dsp_freq
 
 cdef extern from "uhd/types/string_vector.h":
-    ctypedef struct uhd_string_vector_t:
-        vector[string] string_vector_cpp
-        string last_error
-
+    ctypedef struct uhd_string_vector_t
     ctypedef uhd_string_vector_t* uhd_string_vector_handle;
     uhd_error uhd_string_vector_make(uhd_string_vector_handle *h)
     uhd_error uhd_string_vector_free(uhd_string_vector_handle *h)
@@ -138,7 +132,7 @@ cdef extern from "uhd/usrp/usrp.h":
         # Number of samples
         size_t num_samps;
         # Stream now?
-        bool stream_now;
+        bint stream_now;
         # If not now, then full seconds into future to stream
         time_t time_spec_full_secs;
         # If not now, then fractional seconds into future to stream
@@ -172,7 +166,7 @@ cdef extern from "uhd/usrp/usrp.h":
     uhd_error uhd_rx_streamer_max_num_samps(uhd_rx_streamer_handle h, size_t *max_num_samps_out)
     uhd_error uhd_tx_streamer_max_num_samps(uhd_tx_streamer_handle h, size_t *max_num_samps_out)
     uhd_error uhd_rx_streamer_recv(uhd_rx_streamer_handle h, void** buffs, size_t samps_per_buff,
-                                   uhd_rx_metadata_handle *md, double timeout, bool one_packet, size_t *items_recvd)
+                                   uhd_rx_metadata_handle *md, double timeout, bint one_packet, size_t *items_recvd)
     uhd_error uhd_tx_streamer_send(uhd_tx_streamer_handle h, const void **buffs, size_t samps_per_buff, uhd_tx_metadata_handle *md, double timeout, size_t *items_sent)
     uhd_error uhd_rx_streamer_issue_stream_cmd(uhd_rx_streamer_handle h, const uhd_stream_cmd_t *stream_cmd)
     uhd_error uhd_rx_streamer_last_error(uhd_rx_streamer_handle h, char* error_out, size_t strbuffer_len)

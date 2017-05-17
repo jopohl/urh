@@ -73,7 +73,7 @@ def get_package_data():
 
     is_release = os.path.isfile("/tmp/urh_releasing")  # make sure precompiled binding are uploaded to PyPi
 
-    package_data["urh.dev.native.lib"] = ["*.cpp", "*.pyx", "*.pxd"]
+    package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
 
     # Bundle headers
     package_data["urh.dev.native.includes"] = ["*.h"]

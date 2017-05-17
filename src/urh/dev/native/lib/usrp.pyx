@@ -14,6 +14,7 @@ np.import_array()
 cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
 cdef uhd_tx_streamer_handle tx_streamer_handle
+cdef uhd_rx_metadata_handle metadata_handle
 
 cpdef bool IS_TX = False
 cpdef size_t CHANNEL = 0
@@ -73,8 +74,25 @@ cpdef uhd_error setup_stream():
         print("Num channels", num_channels)
 
 
+
+
     else:
         raise NotImplementedError("ToDo")
+
+cpdef uhd_error start_stream(int num_samples):
+    cdef uhd_stream_cmd_t stream_cmd
+    stream_cmd.stream_mode = uhd_stream_mode_t.UHD_STREAM_MODE_START_CONTINUOUS
+    stream_cmd.num_samps = 0
+    stream_cmd.stream_now = True
+
+    uhd_rx_metadata_make(&metadata_handle)
+    return uhd_rx_streamer_issue_stream_cmd(rx_streamer_handle, &stream_cmd)
+
+cpdef uhd_error stop_stream():
+    cdef uhd_stream_cmd_t stream_cmd
+    stream_cmd.stream_mode = uhd_stream_mode_t.UHD_STREAM_MODE_STOP_CONTINUOUS
+    uhd_rx_metadata_free(&metadata_handle)
+    uhd_rx_streamer_issue_stream_cmd(rx_streamer_handle, &stream_cmd)
 
 cpdef uhd_error destroy_stream():
     if not IS_TX:
@@ -82,32 +100,43 @@ cpdef uhd_error destroy_stream():
     else:
         raise NotImplementedError("ToDo")
 
-cpdef uhd_error recv_stream(connection, size_t num_samples):
-    cdef uhd_stream_cmd_t stream_cmd
-    stream_cmd.stream_mode = uhd_stream_mode_t.UHD_STREAM_MODE_NUM_SAMPS_AND_DONE
-    stream_cmd.num_samps = num_samples
-    stream_cmd.stream_now = True
+cpdef uhd_error recv_stream(connection, int num_samples):
 
-    #cdef size_t max_num_samps
-    #uhd_rx_streamer_max_num_samps(rx_streamer_handle, &max_num_samps)
+    cdef size_t max_num_samps
+    uhd_rx_streamer_max_num_samps(rx_streamer_handle, &max_num_samps)
 
-    cdef float* buff = <float *>malloc(num_samples * 2 * sizeof(float))
+
+    num_samples = (<int>(num_samples / max_num_samps) + 1) * max_num_samps
+    cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+    cdef int current_index = 0
+    cdef int i = 0
+
+
+    cdef float* buff = <float *>malloc(max_num_samps * 2 * sizeof(float))
     cdef void ** buffs = <void **> &buff
-
-    cdef uhd_rx_metadata_handle metadata_handle
-    uhd_rx_metadata_make(&metadata_handle)
-
     cdef size_t items_received
 
-    uhd_rx_streamer_issue_stream_cmd(rx_streamer_handle, &stream_cmd)
-    uhd_rx_streamer_recv(rx_streamer_handle, buffs, num_samples, &metadata_handle, 3.0, 0, &items_received)
+    cdef uhd_rx_metadata_error_code_t error_code
+    cdef char * error_msg = <char *> malloc(500 * sizeof(char))
 
-    uhd_rx_metadata_free(&metadata_handle)
+    while current_index < 2*num_samples:
+        uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_samps, &metadata_handle, 3.0, False, &items_received)
+        uhd_rx_metadata_to_pp_string(metadata_handle, error_msg, 500)
+        error = "\n".join(error_msg.decode("UTF8").split("\n")[1:])
 
-    if items_received > 0:
-        connection.send_bytes(<float[:2*items_received]>buff)
-    else:
-        logger.warning("USRP: Failed to receive stream")
+        if error:
+            print("Metadata Error", error)
+
+        if items_received == 0:
+            logger.warning("USRP: Failed to receive")
+            continue
+
+        for i in range(current_index, current_index+2*items_received):
+            result[i] = buff[i-current_index]
+
+        current_index += 2*items_received
+
+    connection.send_bytes(<float[:2*num_samples]>result)
 
 
 cpdef str get_device_representation():

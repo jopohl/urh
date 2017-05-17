@@ -7,7 +7,7 @@ from urh.dev.native.lib import usrp
 from multiprocessing.connection import Connection
 
 class USRP(Device):
-    READ_SAMPLES = 8192
+    READ_SAMPLES = 16384
 
     BYTES_PER_SAMPLE = 8
     DEVICE_LIB = usrp
@@ -30,6 +30,7 @@ class USRP(Device):
 
     @classmethod
     def shutdown_device(cls, ctrl_connection):
+        usrp.stop_stream()
         usrp.destroy_stream()
         ret = usrp.close()
         ctrl_connection.send("CLOSE:" + str(ret))
@@ -39,6 +40,7 @@ class USRP(Device):
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
+        usrp.start_stream(USRP.READ_SAMPLES)
         ctrl_connection.send("Initialized stream")
 
     @classmethod

@@ -25,12 +25,26 @@ class TestUSRP(unittest.TestCase):
         print("Set bandwidth", usrp.set_bandwidth(1e6))
         print("Set gain", usrp.set_rf_gain(0.5))
 
+
+
+        buffer = bytearray()
+
+        num_samples = 32768 // 2
+
+        usrp.start_stream(num_samples)
         parent_conn, child_conn = Pipe()
-        for _ in range(3):
-            usrp.recv_stream(child_conn, 8192)
+
+        for i in range(500):
+            usrp.recv_stream(child_conn, num_samples)
             received_bytes = parent_conn.recv_bytes()
-            print(received_bytes)
+            #print(received_bytes)
+            print(i)
+            buffer.extend(received_bytes)
             #print(USRP.unpack_complex(received_bytes, len(received_bytes) // 8))
+
+        f = open("/tmp/test.complex", "wb")
+        f.write(buffer)
+        f.close()
 
         usrp.destroy_stream()
         print("Freed rx streamer handler")

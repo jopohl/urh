@@ -106,7 +106,7 @@ cpdef uhd_error destroy_stream():
     if not IS_TX:
         return uhd_rx_streamer_free(&rx_streamer_handle)
     else:
-        raise uhd_tx_streamer_free(&tx_streamer_handle)
+        return uhd_tx_streamer_free(&tx_streamer_handle)
 
 cpdef uhd_error recv_stream(connection, int num_samples):
     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
@@ -139,14 +139,14 @@ cpdef uhd_error send_stream(float[::1] samples):
     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
     cdef const void ** buffs = <const void **> &buff
 
-    for i in range(0, sample_count, 2):
+    for i in range(0, sample_count):
         buff[index] = samples[i]
-        buff[index+1] = samples[i+1]
-        index += 2
-        if index >= max_num_tx_samples:
+        index += 1
+        if index >= 2*max_num_tx_samples:
             index = 0
             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
 
+    uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
 
 
 cpdef str get_device_representation():

@@ -1308,9 +1308,6 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
 static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed,
     const char *name, int exact);
 
-/* RaiseException.proto */
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
-
 /* PyCFunctionFastCall.proto */
 #if CYTHON_FAST_PYCCALL
 static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
@@ -1392,6 +1389,9 @@ static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
          const char* cstring, Py_ssize_t start, Py_ssize_t stop,
          const char* encoding, const char* errors,
          PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors));
+
+/* RaiseException.proto */
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
 /* DictGetItem.proto */
 #if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
@@ -1675,6 +1675,9 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_uhd_error(uhd_error value);
 static CYTHON_INLINE PyObject *__pyx_memview_get_float(const char *itemp);
 static CYTHON_INLINE int __pyx_memview_set_float(const char *itemp, PyObject *obj);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
 /* RealImag.proto */
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
@@ -1797,9 +1800,6 @@ static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(__Pyx_TypeInfo *type)
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *);
@@ -3333,7 +3333,6 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_destroy_stream(CYTHON
   uhd_error __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("destroy_stream", 0);
 
   /* "src/urh/dev/native/lib/usrp.pyx":106
@@ -3351,7 +3350,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_destroy_stream(CYTHON
  *     if not IS_TX:
  *         return uhd_rx_streamer_free(&rx_streamer_handle)             # <<<<<<<<<<<<<<
  *     else:
- *         raise uhd_tx_streamer_free(&tx_streamer_handle)
+ *         return uhd_tx_streamer_free(&tx_streamer_handle)
  */
     __pyx_r = uhd_rx_streamer_free((&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_rx_streamer_handle));
     goto __pyx_L0;
@@ -3368,16 +3367,13 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_destroy_stream(CYTHON
   /* "src/urh/dev/native/lib/usrp.pyx":109
  *         return uhd_rx_streamer_free(&rx_streamer_handle)
  *     else:
- *         raise uhd_tx_streamer_free(&tx_streamer_handle)             # <<<<<<<<<<<<<<
+ *         return uhd_tx_streamer_free(&tx_streamer_handle)             # <<<<<<<<<<<<<<
  * 
  * cpdef uhd_error recv_stream(connection, int num_samples):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyInt_From_uhd_error(uhd_tx_streamer_free((&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_Raise(__pyx_t_2, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 109, __pyx_L1_error)
+    __pyx_r = uhd_tx_streamer_free((&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle));
+    goto __pyx_L0;
   }
 
   /* "src/urh/dev/native/lib/usrp.pyx":105
@@ -3389,10 +3385,6 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_destroy_stream(CYTHON
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_WriteUnraisable("src.urh.dev.native.lib.usrp.destroy_stream", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_r = (uhd_error) 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -3435,7 +3427,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_16destroy_stream(CYT
 }
 
 /* "src/urh/dev/native/lib/usrp.pyx":111
- *         raise uhd_tx_streamer_free(&tx_streamer_handle)
+ *         return uhd_tx_streamer_free(&tx_streamer_handle)
  * 
  * cpdef uhd_error recv_stream(connection, int num_samples):             # <<<<<<<<<<<<<<
  *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
@@ -3625,7 +3617,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_recv_stream(PyObject 
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "src/urh/dev/native/lib/usrp.pyx":111
- *         raise uhd_tx_streamer_free(&tx_streamer_handle)
+ *         return uhd_tx_streamer_free(&tx_streamer_handle)
  * 
  * cpdef uhd_error recv_stream(connection, int num_samples):             # <<<<<<<<<<<<<<
  *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
@@ -3752,8 +3744,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
   size_t __pyx_t_3;
   int __pyx_t_4;
   Py_ssize_t __pyx_t_5;
-  Py_ssize_t __pyx_t_6;
-  int __pyx_t_7;
+  int __pyx_t_6;
   __Pyx_RefNannySetupContext("send_stream", 0);
 
   /* "src/urh/dev/native/lib/usrp.pyx":134
@@ -3801,87 +3792,86 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
  *     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
  *     cdef const void ** buffs = <const void **> &buff             # <<<<<<<<<<<<<<
  * 
- *     for i in range(0, sample_count, 2):
+ *     for i in range(0, sample_count):
  */
   __pyx_v_buffs = ((void const **)(&__pyx_v_buff));
 
   /* "src/urh/dev/native/lib/usrp.pyx":142
  *     cdef const void ** buffs = <const void **> &buff
  * 
- *     for i in range(0, sample_count, 2):             # <<<<<<<<<<<<<<
+ *     for i in range(0, sample_count):             # <<<<<<<<<<<<<<
  *         buff[index] = samples[i]
- *         buff[index+1] = samples[i+1]
+ *         index += 1
  */
   __pyx_t_3 = __pyx_v_sample_count;
-  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=2) {
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
     /* "src/urh/dev/native/lib/usrp.pyx":143
  * 
- *     for i in range(0, sample_count, 2):
+ *     for i in range(0, sample_count):
  *         buff[index] = samples[i]             # <<<<<<<<<<<<<<
- *         buff[index+1] = samples[i+1]
- *         index += 2
+ *         index += 1
+ *         if index >= 2*max_num_tx_samples:
  */
     __pyx_t_5 = __pyx_v_i;
     (__pyx_v_buff[__pyx_v_index]) = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_5)) )));
 
     /* "src/urh/dev/native/lib/usrp.pyx":144
- *     for i in range(0, sample_count, 2):
+ *     for i in range(0, sample_count):
  *         buff[index] = samples[i]
- *         buff[index+1] = samples[i+1]             # <<<<<<<<<<<<<<
- *         index += 2
- *         if index >= max_num_tx_samples:
+ *         index += 1             # <<<<<<<<<<<<<<
+ *         if index >= 2*max_num_tx_samples:
+ *             index = 0
  */
-    __pyx_t_6 = (__pyx_v_i + 1);
-    (__pyx_v_buff[(__pyx_v_index + 1)]) = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_6)) )));
+    __pyx_v_index = (__pyx_v_index + 1);
 
     /* "src/urh/dev/native/lib/usrp.pyx":145
  *         buff[index] = samples[i]
- *         buff[index+1] = samples[i+1]
- *         index += 2             # <<<<<<<<<<<<<<
- *         if index >= max_num_tx_samples:
- *             index = 0
- */
-    __pyx_v_index = (__pyx_v_index + 2);
-
-    /* "src/urh/dev/native/lib/usrp.pyx":146
- *         buff[index+1] = samples[i+1]
- *         index += 2
- *         if index >= max_num_tx_samples:             # <<<<<<<<<<<<<<
+ *         index += 1
+ *         if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
  *             index = 0
  *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
  */
-    __pyx_t_7 = ((__pyx_v_index >= __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples) != 0);
-    if (__pyx_t_7) {
+    __pyx_t_6 = ((__pyx_v_index >= (2 * __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples)) != 0);
+    if (__pyx_t_6) {
 
-      /* "src/urh/dev/native/lib/usrp.pyx":147
- *         index += 2
- *         if index >= max_num_tx_samples:
+      /* "src/urh/dev/native/lib/usrp.pyx":146
+ *         index += 1
+ *         if index >= 2*max_num_tx_samples:
  *             index = 0             # <<<<<<<<<<<<<<
  *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
  * 
  */
       __pyx_v_index = 0;
 
-      /* "src/urh/dev/native/lib/usrp.pyx":148
- *         if index >= max_num_tx_samples:
+      /* "src/urh/dev/native/lib/usrp.pyx":147
+ *         if index >= 2*max_num_tx_samples:
  *             index = 0
  *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
  * 
- * 
+ *     uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
  */
       uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples, (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
 
-      /* "src/urh/dev/native/lib/usrp.pyx":146
- *         buff[index+1] = samples[i+1]
- *         index += 2
- *         if index >= max_num_tx_samples:             # <<<<<<<<<<<<<<
+      /* "src/urh/dev/native/lib/usrp.pyx":145
+ *         buff[index] = samples[i]
+ *         index += 1
+ *         if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
  *             index = 0
  *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
  */
     }
   }
+
+  /* "src/urh/dev/native/lib/usrp.pyx":149
+ *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+ * 
+ *     uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, ((size_t)(((long)__pyx_v_index) / 2)), (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
 
   /* "src/urh/dev/native/lib/usrp.pyx":133
  *     connection.send_bytes(<float[:2*num_samples]>result)
@@ -21225,171 +21215,8 @@ static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, in
     return 0;
 }
 
-/* RaiseException */
-#if PY_MAJOR_VERSION < 3
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
-                        CYTHON_UNUSED PyObject *cause) {
-    __Pyx_PyThreadState_declare
-    Py_XINCREF(type);
-    if (!value || value == Py_None)
-        value = NULL;
-    else
-        Py_INCREF(value);
-    if (!tb || tb == Py_None)
-        tb = NULL;
-    else {
-        Py_INCREF(tb);
-        if (!PyTraceBack_Check(tb)) {
-            PyErr_SetString(PyExc_TypeError,
-                "raise: arg 3 must be a traceback or None");
-            goto raise_error;
-        }
-    }
-    if (PyType_Check(type)) {
-#if CYTHON_COMPILING_IN_PYPY
-        if (!value) {
-            Py_INCREF(Py_None);
-            value = Py_None;
-        }
-#endif
-        PyErr_NormalizeException(&type, &value, &tb);
-    } else {
-        if (value) {
-            PyErr_SetString(PyExc_TypeError,
-                "instance exception may not have a separate value");
-            goto raise_error;
-        }
-        value = type;
-        type = (PyObject*) Py_TYPE(type);
-        Py_INCREF(type);
-        if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
-            PyErr_SetString(PyExc_TypeError,
-                "raise: exception class must be a subclass of BaseException");
-            goto raise_error;
-        }
-    }
-    __Pyx_PyThreadState_assign
-    __Pyx_ErrRestore(type, value, tb);
-    return;
-raise_error:
-    Py_XDECREF(value);
-    Py_XDECREF(type);
-    Py_XDECREF(tb);
-    return;
-}
-#else
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
-    PyObject* owned_instance = NULL;
-    if (tb == Py_None) {
-        tb = 0;
-    } else if (tb && !PyTraceBack_Check(tb)) {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: arg 3 must be a traceback or None");
-        goto bad;
-    }
-    if (value == Py_None)
-        value = 0;
-    if (PyExceptionInstance_Check(type)) {
-        if (value) {
-            PyErr_SetString(PyExc_TypeError,
-                "instance exception may not have a separate value");
-            goto bad;
-        }
-        value = type;
-        type = (PyObject*) Py_TYPE(value);
-    } else if (PyExceptionClass_Check(type)) {
-        PyObject *instance_class = NULL;
-        if (value && PyExceptionInstance_Check(value)) {
-            instance_class = (PyObject*) Py_TYPE(value);
-            if (instance_class != type) {
-                int is_subclass = PyObject_IsSubclass(instance_class, type);
-                if (!is_subclass) {
-                    instance_class = NULL;
-                } else if (unlikely(is_subclass == -1)) {
-                    goto bad;
-                } else {
-                    type = instance_class;
-                }
-            }
-        }
-        if (!instance_class) {
-            PyObject *args;
-            if (!value)
-                args = PyTuple_New(0);
-            else if (PyTuple_Check(value)) {
-                Py_INCREF(value);
-                args = value;
-            } else
-                args = PyTuple_Pack(1, value);
-            if (!args)
-                goto bad;
-            owned_instance = PyObject_Call(type, args, NULL);
-            Py_DECREF(args);
-            if (!owned_instance)
-                goto bad;
-            value = owned_instance;
-            if (!PyExceptionInstance_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                             "calling %R should have returned an instance of "
-                             "BaseException, not %R",
-                             type, Py_TYPE(value));
-                goto bad;
-            }
-        }
-    } else {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: exception class must be a subclass of BaseException");
-        goto bad;
-    }
-#if PY_VERSION_HEX >= 0x03030000
-    if (cause) {
-#else
-    if (cause && cause != Py_None) {
-#endif
-        PyObject *fixed_cause;
-        if (cause == Py_None) {
-            fixed_cause = NULL;
-        } else if (PyExceptionClass_Check(cause)) {
-            fixed_cause = PyObject_CallObject(cause, NULL);
-            if (fixed_cause == NULL)
-                goto bad;
-        } else if (PyExceptionInstance_Check(cause)) {
-            fixed_cause = cause;
-            Py_INCREF(fixed_cause);
-        } else {
-            PyErr_SetString(PyExc_TypeError,
-                            "exception causes must derive from "
-                            "BaseException");
-            goto bad;
-        }
-        PyException_SetCause(value, fixed_cause);
-    }
-    PyErr_SetObject(type, value);
-    if (tb) {
-#if CYTHON_COMPILING_IN_PYPY
-        PyObject *tmp_type, *tmp_value, *tmp_tb;
-        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
-        Py_INCREF(tb);
-        PyErr_Restore(tmp_type, tmp_value, tb);
-        Py_XDECREF(tmp_tb);
-#else
-        PyThreadState *tstate = PyThreadState_GET();
-        PyObject* tmp_tb = tstate->curexc_traceback;
-        if (tb != tmp_tb) {
-            Py_INCREF(tb);
-            tstate->curexc_traceback = tb;
-            Py_XDECREF(tmp_tb);
-        }
-#endif
-    }
-bad:
-    Py_XDECREF(owned_instance);
-    return;
-}
-#endif
-
 /* PyCFunctionFastCall */
-  #if CYTHON_FAST_PYCCALL
+#if CYTHON_FAST_PYCCALL
 static CYTHON_INLINE PyObject * __Pyx_PyCFunction_FastCall(PyObject *func_obj, PyObject **args, Py_ssize_t nargs) {
     PyCFunctionObject *func = (PyCFunctionObject*)func_obj;
     PyCFunction meth = PyCFunction_GET_FUNCTION(func);
@@ -21407,7 +21234,7 @@ static CYTHON_INLINE PyObject * __Pyx_PyCFunction_FastCall(PyObject *func_obj, P
 #endif  // CYTHON_FAST_PYCCALL
 
 /* PyFunctionFastCall */
-  #if CYTHON_FAST_PYCALL
+#if CYTHON_FAST_PYCALL
 #include "frameobject.h"
 static PyObject* __Pyx_PyFunction_FastCallNoKw(PyCodeObject *co, PyObject **args, Py_ssize_t na,
                                                PyObject *globals) {
@@ -21527,7 +21354,7 @@ done:
 #endif  // CYTHON_FAST_PYCALL
 
 /* PyObjectCallMethO */
-  #if CYTHON_COMPILING_IN_CPYTHON
+#if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
     PyObject *self, *result;
     PyCFunction cfunc;
@@ -21547,7 +21374,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 #endif
 
 /* PyObjectCallOneArg */
-  #if CYTHON_COMPILING_IN_CPYTHON
+#if CYTHON_COMPILING_IN_CPYTHON
 static PyObject* __Pyx__PyObject_CallOneArg(PyObject *func, PyObject *arg) {
     PyObject *result;
     PyObject *args = PyTuple_New(1);
@@ -21591,7 +21418,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 #endif
 
 /* RaiseArgTupleInvalid */
-    static void __Pyx_RaiseArgtupleInvalid(
+  static void __Pyx_RaiseArgtupleInvalid(
     const char* func_name,
     int exact,
     Py_ssize_t num_min,
@@ -21617,7 +21444,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 }
 
 /* RaiseDoubleKeywords */
-    static void __Pyx_RaiseDoubleKeywordsError(
+  static void __Pyx_RaiseDoubleKeywordsError(
     const char* func_name,
     PyObject* kw_name)
 {
@@ -21631,7 +21458,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 }
 
 /* ParseKeywords */
-    static int __Pyx_ParseOptionalKeywords(
+  static int __Pyx_ParseOptionalKeywords(
     PyObject *kwds,
     PyObject **argnames[],
     PyObject *kwds2,
@@ -21733,7 +21560,7 @@ bad:
 }
 
 /* BufferFormatCheck */
-    static CYTHON_INLINE int __Pyx_IsLittleEndian(void) {
+  static CYTHON_INLINE int __Pyx_IsLittleEndian(void) {
   unsigned int n = 1;
   return *(unsigned char*)(&n) != 0;
 }
@@ -22283,7 +22110,7 @@ static CYTHON_INLINE void __Pyx_SafeReleaseBuffer(Py_buffer* info) {
 }
 
 /* MemviewSliceInit */
-      static int
+    static int
 __Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
                         int ndim,
                         __Pyx_memviewslice *memviewslice,
@@ -22418,7 +22245,7 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
 }
 
 /* decode_c_string */
-      static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
+    static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
          const char* cstring, Py_ssize_t start, Py_ssize_t stop,
          const char* encoding, const char* errors,
          PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors)) {
@@ -22449,6 +22276,169 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
         return PyUnicode_Decode(cstring, length, encoding, errors);
     }
 }
+
+/* RaiseException */
+    #if PY_MAJOR_VERSION < 3
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
+                        CYTHON_UNUSED PyObject *cause) {
+    __Pyx_PyThreadState_declare
+    Py_XINCREF(type);
+    if (!value || value == Py_None)
+        value = NULL;
+    else
+        Py_INCREF(value);
+    if (!tb || tb == Py_None)
+        tb = NULL;
+    else {
+        Py_INCREF(tb);
+        if (!PyTraceBack_Check(tb)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: arg 3 must be a traceback or None");
+            goto raise_error;
+        }
+    }
+    if (PyType_Check(type)) {
+#if CYTHON_COMPILING_IN_PYPY
+        if (!value) {
+            Py_INCREF(Py_None);
+            value = Py_None;
+        }
+#endif
+        PyErr_NormalizeException(&type, &value, &tb);
+    } else {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto raise_error;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(type);
+        Py_INCREF(type);
+        if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: exception class must be a subclass of BaseException");
+            goto raise_error;
+        }
+    }
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrRestore(type, value, tb);
+    return;
+raise_error:
+    Py_XDECREF(value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+    return;
+}
+#else
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
+    PyObject* owned_instance = NULL;
+    if (tb == Py_None) {
+        tb = 0;
+    } else if (tb && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto bad;
+    }
+    if (value == Py_None)
+        value = 0;
+    if (PyExceptionInstance_Check(type)) {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto bad;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(value);
+    } else if (PyExceptionClass_Check(type)) {
+        PyObject *instance_class = NULL;
+        if (value && PyExceptionInstance_Check(value)) {
+            instance_class = (PyObject*) Py_TYPE(value);
+            if (instance_class != type) {
+                int is_subclass = PyObject_IsSubclass(instance_class, type);
+                if (!is_subclass) {
+                    instance_class = NULL;
+                } else if (unlikely(is_subclass == -1)) {
+                    goto bad;
+                } else {
+                    type = instance_class;
+                }
+            }
+        }
+        if (!instance_class) {
+            PyObject *args;
+            if (!value)
+                args = PyTuple_New(0);
+            else if (PyTuple_Check(value)) {
+                Py_INCREF(value);
+                args = value;
+            } else
+                args = PyTuple_Pack(1, value);
+            if (!args)
+                goto bad;
+            owned_instance = PyObject_Call(type, args, NULL);
+            Py_DECREF(args);
+            if (!owned_instance)
+                goto bad;
+            value = owned_instance;
+            if (!PyExceptionInstance_Check(value)) {
+                PyErr_Format(PyExc_TypeError,
+                             "calling %R should have returned an instance of "
+                             "BaseException, not %R",
+                             type, Py_TYPE(value));
+                goto bad;
+            }
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: exception class must be a subclass of BaseException");
+        goto bad;
+    }
+#if PY_VERSION_HEX >= 0x03030000
+    if (cause) {
+#else
+    if (cause && cause != Py_None) {
+#endif
+        PyObject *fixed_cause;
+        if (cause == Py_None) {
+            fixed_cause = NULL;
+        } else if (PyExceptionClass_Check(cause)) {
+            fixed_cause = PyObject_CallObject(cause, NULL);
+            if (fixed_cause == NULL)
+                goto bad;
+        } else if (PyExceptionInstance_Check(cause)) {
+            fixed_cause = cause;
+            Py_INCREF(fixed_cause);
+        } else {
+            PyErr_SetString(PyExc_TypeError,
+                            "exception causes must derive from "
+                            "BaseException");
+            goto bad;
+        }
+        PyException_SetCause(value, fixed_cause);
+    }
+    PyErr_SetObject(type, value);
+    if (tb) {
+#if CYTHON_COMPILING_IN_PYPY
+        PyObject *tmp_type, *tmp_value, *tmp_tb;
+        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
+        Py_INCREF(tb);
+        PyErr_Restore(tmp_type, tmp_value, tb);
+        Py_XDECREF(tmp_tb);
+#else
+        PyThreadState *tstate = PyThreadState_GET();
+        PyObject* tmp_tb = tstate->curexc_traceback;
+        if (tb != tmp_tb) {
+            Py_INCREF(tb);
+            tstate->curexc_traceback = tb;
+            Py_XDECREF(tmp_tb);
+        }
+#endif
+    }
+bad:
+    Py_XDECREF(owned_instance);
+    return;
+}
+#endif
 
 /* RaiseTooManyValuesToUnpack */
       static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
@@ -23604,6 +23594,37 @@ static CYTHON_INLINE int __pyx_memview_set_float(const char *itemp, PyObject *ob
     return 1;
 }
 
+/* CIntToPy */
+        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
 /* Declarations */
         #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
@@ -24463,37 +24484,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-/* CIntToPy */
-        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
 }
 
 /* CIntFromPy */

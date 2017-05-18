@@ -12,8 +12,6 @@ class RuleItem(GraphicsItem):
         assert isinstance(model_item, SimulatorRule)
         super().__init__(model_item=model_item, parent=parent)
 
-        self.bounding_rect = QRectF()
-
     def has_else_condition(self):
         return self.model_item.has_else_condition()
 
@@ -24,14 +22,14 @@ class RuleItem(GraphicsItem):
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos - 20, y_pos)
 
-        start_y = 0
+        start_y = 5
 
         for child in self.get_scene_children():
             child.update_position(0, start_y)
             start_y += round(child.boundingRect().height()) - 1
 
         self.prepareGeometryChange()
-        self.bounding_rect = self.childrenBoundingRect().adjusted(0, 0, 0, 5)
+        self.bounding_rect = self.childrenBoundingRect().adjusted(0, 0, 0, 10)
 
     def boundingRect(self):
         return self.bounding_rect
@@ -56,7 +54,7 @@ class RuleConditionItem(GraphicsItem):
         font2.setPointSize(8)
         #font2.setWeight(QFont.DemiBold)
         self.desc = QGraphicsTextItem(self)
-        self.desc.setPlainText("item1.seq > 5")
+        self.text.setPlainText(self.model_item.type.value)
         self.desc.setFont(font2)
 
         self.refresh()
@@ -64,11 +62,15 @@ class RuleConditionItem(GraphicsItem):
     def update_flags(self):
         if self.scene().mode == 0:
             self.set_flags(is_selectable=True, accept_hover_events=True, accept_drops=True)
-        else:
-            self.set_flags(is_selectable=True, accept_hover_events=True)
+
+    def labels_width(self):
+        return max(self.number.boundingRect().width() + self.text.boundingRect().width(), self.desc.boundingRect().width())
 
     def refresh(self):
-        self.text.setPlainText(self.model_item.type.value)
+        if len(self.model_item.ruleset):
+            self.desc.setPlainText(str(self.model_item.ruleset[0]))
+        else:
+            self.desc.setPlainText("item2.preamble > 5")
 
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)

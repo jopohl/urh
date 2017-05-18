@@ -3,7 +3,8 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
 
-from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFontDatabase, QPen, QColor, QFont
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
@@ -18,9 +19,7 @@ class LabelItem(GraphicsItem):
         self.name.setFont(font)
 
     def update_flags(self):
-        if self.scene().mode == 0:
-            self.set_flags()
-        else:
+        if self.scene().mode == 1:
             self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def update_numbering(self):
@@ -28,17 +27,15 @@ class LabelItem(GraphicsItem):
 
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
-        painter.drawRect(self.boundingRect())
 
+        if self.model_item.logging_active and self.scene().mode == 1:
+            painter.setPen(QPen(Qt.darkBlue, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+
+        painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
     def boundingRect(self):
         return self.childrenBoundingRect()
 
     def refresh(self):
-        if self.scene().mode == 1 and self.model_item.logging_active:
-            text = "[L] " + self.model_item.name
-        else:
-            text = self.model_item.name
-
-        self.name.setPlainText(text)
+        self.name.setPlainText(self.model_item.name)

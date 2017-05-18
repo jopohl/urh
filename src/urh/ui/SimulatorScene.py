@@ -54,7 +54,7 @@ class SimulatorScene(QGraphicsScene):
         self.sim_proto_manager.participants_changed.connect(self.update_participants)
 
         self.sim_proto_manager.items_deleted.connect(self.on_items_deleted)
-        self.sim_proto_manager.item_updated.connect(self.on_item_updated)
+        self.sim_proto_manager.items_updated.connect(self.on_items_updated)
         self.sim_proto_manager.items_moved.connect(self.on_items_moved)
         self.sim_proto_manager.items_added.connect(self.on_items_added)
 
@@ -68,9 +68,12 @@ class SimulatorScene(QGraphicsScene):
         self.update_items_dict()
         self.update_view()
 
-    def on_item_updated(self, item: SimulatorItem):
-        scene_item = self.model_to_scene(item)
-        scene_item.refresh()
+    def on_items_updated(self, items):
+        scene_items = [self.model_to_scene(item) for item in items]
+
+        for scene_item in scene_items:
+            scene_item.refresh()
+
         self.update_view()
 
     def on_items_moved(self, items):
@@ -125,19 +128,25 @@ class SimulatorScene(QGraphicsScene):
     def get_parent_scene_item(self, item: GraphicsItem):
         return self.model_to_scene(item.model_item.parent())
 
+    def min_items_width(self):
+        width = 0
+        items = [item for item in self.items() if (isinstance(item, ActionItem)
+                 or isinstance(item, RuleConditionItem))]
+
+        for item in items:
+            if item.labels_width() > width:
+                width = item.labels_width()
+
+        return width
+
     def items_width(self):
-        visible_participants = [part for part in self.participants if part.isVisible()]
+        vp = self.visible_participants
 
-        if len(visible_participants) >= 2:
-            width = visible_participants[-1].line.line().x1()
-            width -= visible_participants[0].line.line().x1()
+        if len(vp) >= 2:
+            width = vp[-1].x_pos()
+            width -= vp[0].x_pos()
         else:
-            width = 0
-            items = [item for item in self.items() if isinstance(item, ActionItem)]
-
-            for item in items:
-                if item.labels_width() > width:
-                    width = item.labels_width()
+            width = self.min_items_width()
 
         return width
 
@@ -146,6 +155,19 @@ class SimulatorScene(QGraphicsScene):
         self.clearSelection()
 
         self.sim_proto_manager.delete_items([item.model_item for item in items])
+
+    def log_selected_items(self, logging_active: bool):
+        items = self.selectedItems()
+
+        for item in items:
+            item.model_item.logging_active = logging_active
+
+        self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
+
+    def log_all_items(self, logging_active: bool):
+        self.select_all_items()
+        self.log_selected_items(logging_active)
+        self.clearSelection()
 
     def move_items(self, items, ref_item, position):
         new_pos, new_parent = self.insert_at(ref_item, position)
@@ -197,8 +219,32 @@ class SimulatorScene(QGraphicsScene):
             if key not in sim_items:
                 del self.items_dict[key]
 
+    def get_all_messages(self):
+        return [item for item in self.items() if isinstance(item, MessageItem)]
+
+    def select_messages_with_participant(self, participant: ParticipantItem, from_part=True):
+        messages = self.get_all_messages()
+        self.clearSelection()
+
+        for msg in messages:
+            if ((from_part and msg.source is participant) or
+                    (not from_part and msg.destination is participant)):
+                msg.select_all()
+
+    def select_messages_to(self, participant: ParticipantItem):
+        messages = self.get_all_messages()
+        self.clearSelection()
+
+        for msg in messages:
+            if msg.destination is participant:
+                msg.select_all()
+
+    @property
+    def visible_participants(self):
+        return [part for part in self.participants if part.isVisible()]
+
     def arrange_participants(self):
-        messages = [item for item in self.items() if isinstance(item, MessageItem)]
+        messages = self.get_all_messages()
 
         for participant in self.participants:
             if any(msg.source == participant or msg.destination == participant for msg in messages):
@@ -207,29 +253,35 @@ class SimulatorScene(QGraphicsScene):
                 participant.setVisible(False)
                 participant.update_position(x_pos = 30)
 
-        visible_participants = [part for part in self.participants if part.isVisible()]
+        vp = self.visible_participants
 
-        if not visible_participants:
+        if not vp:
             return
 
-        visible_participants[0].update_position(x_pos = 0)
+        vp[0].update_position(x_pos = 0)
 
-        for i in range(1, len(visible_participants)):
-            curr_participant = visible_participants[i]
-            participants_left = visible_participants[:i]
+        for i in range(1, len(vp)):
+            curr_participant = vp[i]
+            participants_left = vp[:i]
 
             items = [msg for msg in messages
                     if ((msg.source == curr_participant and msg.destination in participants_left)
                     or (msg.source in participants_left and msg.destination == curr_participant))]
 
-            x_max = visible_participants[i - 1].line.line().x1() + 50
+            x_max = vp[i - 1].x_pos()
+            x_max += (vp[i - 1].width() + curr_participant.width()) / 2
+            x_max += 10
 
             for msg in items:
-                x = msg.labels_width() + 30
-                x += msg.source.line.line().x1() if msg.source != curr_participant else msg.destination.line.line().x1()
+                x = msg.width() + 30
+                x += msg.source.x_pos() if msg.source != curr_participant else msg.destination.x_pos()
 
                 if x > x_max:
                     x_max = x
+
+            if i == len(vp) - 1:
+                if self.min_items_width() > x_max:
+                    x_max = self.min_items_width()
 
             curr_participant.update_position(x_pos = x_max)
 
@@ -316,8 +368,9 @@ class SimulatorScene(QGraphicsScene):
         super().dropEvent(event)
 
     def mousePressEvent(self, event):
-        if event.button != Qt.LeftButton:
+        if event.button() != Qt.LeftButton:
             event.accept()
+            return
 
         super().mousePressEvent(event)
 

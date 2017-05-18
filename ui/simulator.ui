@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -256,7 +256,29 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="0" colspan="7">
+       <item row="0" column="0" colspan="7">
+        <widget class="QLabel" name="lblMsgFieldsValues">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Detail view for item</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QStackedWidget" name="detail_view_widget">
          <property name="currentIndex">
           <number>0</number>
@@ -326,81 +348,37 @@
           </layout>
          </widget>
          <widget class="QWidget" name="page_rule">
-          <layout class="QGridLayout" name="verticalLayout_2">
-           <item row="0" column="0">
-            <widget class="QRadioButton" name="rbAllApply">
-             <property name="text">
-              <string>All rules must apply (AND)</string>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="checked">
+             <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QRadioButton" name="rbOneApply">
-             <property name="text">
-              <string>At least one rule must apply (OR)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <spacer name="horizontalSpacer_3">
+           <item row="1" column="0">
+            <spacer name="verticalSpacer_3">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
             </spacer>
            </item>
-           <item row="5" column="0" rowspan="4" colspan="3">
-            <widget class="QTableView" name="tblViewSimulatorRuleset">
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="showGrid">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>150</number>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-            </widget>
-           </item>
-           <item row="5" column="3">
-            <widget class="QToolButton" name="btnAddRule">
-             <property name="toolTip">
-              <string>Add ruleset</string>
-             </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="list-add">
-               <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="3">
-            <widget class="QToolButton" name="btnRemoveRule">
-             <property name="toolTip">
-              <string>Remove ruleset</string>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="list-remove">
-               <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+              <string>Condition:</string>
              </property>
             </widget>
            </item>
@@ -454,28 +432,6 @@
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="7">
-        <widget class="QLabel" name="lblMsgFieldsValues">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Detail view for item</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
         </widget>
        </item>
       </layout>

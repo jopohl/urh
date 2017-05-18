@@ -31,6 +31,9 @@ class SimulatorRulesetItem(object):
                 self.operator = key
                 return
 
+    def __str__(self):
+        return self.variable + " " + self.operator + " " + self.target_value
+
     @property
     def value_type(self):
         return int(self.__value_type)

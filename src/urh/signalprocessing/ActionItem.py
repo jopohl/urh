@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsTextItem
 from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt5.QtCore import Qt, QRectF
 
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
@@ -11,6 +12,7 @@ class ActionItem(GraphicsItem):
         super().__init__(model_item=model_item, parent=parent)
 
         self.text = QGraphicsTextItem(self)
+        self.setFlag(QGraphicsTextItem.ItemIsPanel, True)
 
         font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         font.setPointSize(8)
@@ -20,8 +22,6 @@ class ActionItem(GraphicsItem):
     def update_flags(self):
         if self.scene().mode == 0:
             self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
-        else:
-            self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
@@ -29,7 +29,11 @@ class ActionItem(GraphicsItem):
         self.number.setPos(start_x, 0)
         start_x += self.number.boundingRect().width()
         self.text.setPos(start_x, 0)
-        super().update_position(x_pos, y_pos)
+
+        width = self.scene().items_width()
+        self.prepareGeometryChange()
+        self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height() + 5)
+        #super().update_position(x_pos, y_pos)
 
     def labels_width(self):
         width = self.number.boundingRect().width()
@@ -43,13 +47,12 @@ class GotoActionItem(ActionItem):
         super().__init__(model_item=model_item, parent=parent)
 
     def refresh(self):
-        if self.model_item.goto_target:
-            self.text.setPlainText("GOTO: " + self.model_item.goto_target)
-        else:
-            self.text.setPlainText("GOTO: ...")
+        text = "GOTO: "
+        text += "..." if self.model_item.goto_target is None else self.model_item.goto_target
+        self.text.setPlainText(text)
 
 class ProgramActionItem(ActionItem):
     def __init__(self, model_item: SimulatorItem, parent=None):
         assert isinstance(model_item, SimulatorProgramAction)
         super().__init__(model_item=model_item, parent=parent)
-        self.text.setPlainText("Start program [/usr/bin/test]")
+        self.text.setPlainText("External program")

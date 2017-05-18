@@ -19,10 +19,8 @@ class MessageItem(GraphicsItem):
     def update_flags(self):
         if self.scene().mode == 0:
             self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
-        else:
-            self.set_flags()
 
-    def labels_width(self):
+    def width(self):
         labels = self.labels()
         width = self.number.boundingRect().width()
         #width += 5
@@ -86,7 +84,7 @@ class MessageItem(GraphicsItem):
         arrow_width = abs(p_source.x() - p_destination.x())
 
         start_x = min(p_source.x(), p_destination.x())
-        start_x += (arrow_width - self.labels_width()) / 2
+        start_x += (arrow_width - self.width()) / 2
         start_y = 0
 
         self.number.setPos(start_x, start_y)
@@ -118,7 +116,7 @@ class MessageArrowItem(QGraphicsLineItem):
         self.setPen(QPen(Qt.black, 1, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):
-        return super().boundingRect().adjusted(0, -7, 0, 7)
+        return super().boundingRect().adjusted(0, -5, 0, 5)
 
     def paint(self, painter, option, widget):
         if self.line().length() == 0:

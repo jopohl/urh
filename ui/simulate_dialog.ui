@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
-    <height>616</height>
+    <width>743</width>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,59 +17,118 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="17" column="1">
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>Log all</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" rowspan="15" colspan="2">
-    <widget class="QGraphicsView" name="gvSimulator"/>
-   </item>
-   <item row="16" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>In case of an unexpected/overdue response:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Timeout (in seconds):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
-    <widget class="QSpinBox" name="spinBox">
-     <property name="specialValueText">
-      <string>Infinite</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Simulate:</string>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Simulate:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListView" name="listViewSimulate"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Repeat:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox">
+         <property name="specialValueText">
+          <string>Infinite</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Timeout (in seconds):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_2"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>In case of an unexpected/overdue response:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox">
+         <item>
+          <property name="text">
+           <string>Resend last message</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Stop simulation</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Restart simulation</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Log settings:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="LoggingGraphicsView" name="gvSimulator"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="btnLogAll">
+         <property name="text">
+          <string>Log all</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="btnLogNone">
+         <property name="text">
+          <string>Log none</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item row="17" column="2">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>Log none</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Log settings:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="18" column="0" colspan="3">
+   <item row="1" column="0">
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Simulate</string>
@@ -80,40 +139,15 @@
      </property>
     </widget>
    </item>
-   <item row="17" column="0">
-    <widget class="QComboBox" name="comboBox">
-     <item>
-      <property name="text">
-       <string>Resend last message</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Stop simulation</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Restart simulation</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="15" column="0">
-    <widget class="QSpinBox" name="spinBox_2"/>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Repeat:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" rowspan="10">
-    <widget class="QListView" name="listViewSimulate"/>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LoggingGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.LoggingGraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -23,6 +23,7 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 from urh.signalprocessing.SimulatorFormulaParser import SimulatorFormulaParser
+from urh.signalprocessing.SimulatorItem import SimulatorItem
 
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
@@ -72,12 +73,12 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
-        operator_descriptions = list(OPERATION_DESCRIPTION.values())
-        operator_descriptions.sort()
-        self.simulator_ruleset_model = SimulatorRulesetTableModel(operator_descriptions, controller=self, parent=self)
-        self.ui.tblViewSimulatorRuleset.setModel(self.simulator_ruleset_model)
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorRulesetItem.VIEW_TYPES, parent=self))
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(2, ComboBoxDelegate(operator_descriptions, parent=self))
+#        operator_descriptions = list(OPERATION_DESCRIPTION.values())
+#        operator_descriptions.sort()
+#        self.simulator_ruleset_model = SimulatorRulesetTableModel(operator_descriptions, controller=self, parent=self)
+#        self.ui.tblViewSimulatorRuleset.setModel(self.simulator_ruleset_model)
+#        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorRulesetItem.VIEW_TYPES, parent=self))
+#        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(2, ComboBoxDelegate(operator_descriptions, parent=self))
 
         self.active_item = None
 
@@ -105,18 +106,18 @@ class SimulatorTabController(QWidget):
         field_types = [ft.caption for ft in self.field_types]
         self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self.ui.tblViewFieldValues))
 
-    def update_label_name_column(self):
-        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0,
-                ComboBoxDelegate(self.sim_formula_parser.label_list, is_editable=True, return_index=False, parent=self))
+#    def update_label_name_column(self):
+#        self.ui.tblViewSimulatorRuleset.setItemDelegateForColumn(0,
+#                ComboBoxDelegate(self.sim_formula_parser.label_list, is_editable=True, return_index=False, parent=self))
 
     def create_connects(self, compare_frame_controller):
-        self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
-        self.ui.btnRemoveRule.clicked.connect(self.on_btn_remove_rule_clicked)
+#        self.ui.btnAddRule.clicked.connect(self.on_btn_add_rule_clicked)
+#        self.ui.btnRemoveRule.clicked.connect(self.on_btn_remove_rule_clicked)
         self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
         self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
-        self.ui.rbAllApply.toggled.connect(self.on_cb_rulesetmode_toggled)
-        self.ui.rbOneApply.toggled.connect(self.on_cb_rulesetmode_toggled)
+#        self.ui.rbAllApply.toggled.connect(self.on_cb_rulesetmode_toggled)
+#        self.ui.rbOneApply.toggled.connect(self.on_cb_rulesetmode_toggled)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
         self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
         self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
@@ -131,12 +132,12 @@ class SimulatorTabController(QWidget):
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
 
-        self.simulator_message_field_model.protocol_label_updated.connect(self.sim_proto_manager.item_updated.emit)
-        self.ui.gvSimulator.message_updated.connect(self.sim_proto_manager.item_updated.emit)
+        self.simulator_message_field_model.protocol_label_updated.connect(self.item_updated)
+        self.ui.gvSimulator.message_updated.connect(self.item_updated)
         self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
 
         self.sim_proto_manager.items_added.connect(self.refresh_message_table)
-        self.sim_proto_manager.item_updated.connect(self.refresh_message_table)
+        self.sim_proto_manager.items_updated.connect(self.refresh_message_table)
         self.sim_proto_manager.items_moved.connect(self.refresh_message_table)
         self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
@@ -224,16 +225,16 @@ class SimulatorTabController(QWidget):
                 self.ui.detail_view_widget.setCurrentIndex(2)
             elif (isinstance(self.active_item, SimulatorRuleCondition) and
                     self.active_item.type != ConditionType.ELSE):
-                self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
-                self.simulator_ruleset_model.ruleset = self.active_item.ruleset
-                self.simulator_ruleset_model.update()
+#                self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
+#                self.simulator_ruleset_model.ruleset = self.active_item.ruleset
+#                self.simulator_ruleset_model.update()
 
-                if self.active_item.ruleset.mode == Mode.all_apply:
-                    self.ui.rbAllApply.setChecked(True)
-                else:
-                    self.ui.rbOneApply.setChecked(True)
+#                if self.active_item.ruleset.mode == Mode.all_apply:
+#                    self.ui.rbAllApply.setChecked(True)
+#                else:
+#                    self.ui.rbOneApply.setChecked(True)
 
-                self.update_label_name_column()
+#                self.update_label_name_column()
 
                 self.ui.detail_view_widget.setCurrentIndex(3)
             elif isinstance(self.active_item, SimulatorProgramAction):
@@ -271,8 +272,8 @@ class SimulatorTabController(QWidget):
         
     @pyqtSlot()
     def on_goto_combobox_activated(self):
-        self.active_item.goto_target = self.ui.goto_combobox.currentText()
-        self.sim_proto_manager.item_updated.emit(self.active_item)
+        self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
+        self.item_updated(self.active_item)
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
@@ -326,25 +327,27 @@ class SimulatorTabController(QWidget):
         else:
             self.update_ui()
 
-    @pyqtSlot(bool)
-    def on_cb_rulesetmode_toggled(self, checked: bool):
-        self.active_item.ruleset.mode = Mode(0) if self.ui.rbAllApply.isChecked() else Mode(1)
+#    @pyqtSlot(bool)
+#    def on_cb_rulesetmode_toggled(self, checked: bool):
+#        self.active_item.ruleset.mode = Mode(0) if self.ui.rbAllApply.isChecked() else Mode(1)
 
-    @pyqtSlot()
-    def on_btn_add_rule_clicked(self):
-        self.ui.btnRemoveRule.setEnabled(True)
-        rule = SimulatorRulesetItem(variable="", operator="=", target_value="1", value_type=0)
-        self.active_item.ruleset.append(rule)
-        self.simulator_ruleset_model.update()
+#    @pyqtSlot()
+#    def on_btn_add_rule_clicked(self):
+#        self.ui.btnRemoveRule.setEnabled(True)
+#        rule = SimulatorRulesetItem(variable="", operator="=", target_value="1", value_type=0)
+#        self.active_item.ruleset.append(rule)
+#        self.active_item_updated()
+#        self.simulator_ruleset_model.update()
 
-        index = self.active_item.ruleset.index(rule)
-        self.ui.tblViewSimulatorRuleset.edit(self.simulator_ruleset_model.createIndex(index, 0))
+#        index = self.active_item.ruleset.index(rule)
+#        self.ui.tblViewSimulatorRuleset.edit(self.simulator_ruleset_model.createIndex(index, 0))
 
-    @pyqtSlot()
-    def on_btn_remove_rule_clicked(self):
-        self.active_item.ruleset.remove(self.active_item.ruleset[-1])
-        self.simulator_ruleset_model.update()
-        self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
+#    @pyqtSlot()
+#    def on_btn_remove_rule_clicked(self):
+#        self.active_item.ruleset.remove(self.active_item.ruleset[-1])
+#        self.simulator_ruleset_model.update()
+#        self.active_item_updated()
+#        self.ui.btnRemoveRule.setEnabled(len(self.active_item.ruleset) > 0)
 
     @pyqtSlot()
     def on_btn_choose_ext_prog_clicked(self):
@@ -356,10 +359,15 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_ext_program_line_edit_text_changed(self):
         self.active_item.ext_prog = self.ui.extProgramLineEdit.text()
+        self.item_updated(self.active_item)
 
     @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
         self.active_item.args = self.ui.cmdLineArgsLineEdit.text()
+        self.item_updated(self.active_item)
+
+    def item_updated(self, item: SimulatorItem):
+        self.sim_proto_manager.items_updated.emit([item])
 
     @pyqtSlot()
     def refresh_tree(self):

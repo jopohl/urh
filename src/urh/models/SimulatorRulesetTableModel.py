@@ -62,6 +62,7 @@ class SimulatorRulesetTableModel(QAbstractTableModel):
             except ValueError:
                 return False
 
+            self.controller.active_item_updated()
             return True
 
     def flags(self, index: QModelIndex):

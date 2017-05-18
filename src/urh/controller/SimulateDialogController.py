@@ -18,14 +18,25 @@ class SimulateDialogController(QDialog):
 
         self.simulator_scene = SimulatorScene(mode=1, sim_proto_manager=self.sim_proto_manager)
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        self.ui.gvSimulator.setDragMode(QGraphicsView.RubberBandDrag)
+        #self.ui.gvSimulator.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.simulate_list_model = SimulateListModel(self.project_manager.participants)
         self.ui.listViewSimulate.setModel(self.simulate_list_model)
 
+        self.create_connects()
+
     def create_connects(self):
         self.project_manager.project_updated.connect(self.on_project_updated)
+
+        self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
+        self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
 
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
         self.simulate_list_model.update()
+
+    def on_btn_log_all_clicked(self):
+        self.simulator_scene.log_all_items(True)
+
+    def on_btn_log_none_clicked(self):
+        self.simulator_scene.log_all_items(False)

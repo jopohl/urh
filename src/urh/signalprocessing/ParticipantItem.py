@@ -19,13 +19,19 @@ class ParticipantItem(QGraphicsItem):
 
     def update_position(self, x_pos = -1, y_pos = -1):
         if x_pos == -1:
-            x_pos = self.line.line().x1()
+            x_pos = self.x_pos()
 
         if y_pos == -1:
             y_pos = self.line.line().y2()
 
         self.text.setPos(x_pos - (self.text.boundingRect().width() / 2), 0)
         self.line.setLine(x_pos, 30, x_pos, y_pos)
+
+    def x_pos(self):
+        return self.line.line().x1()
+
+    def width(self):
+        return self.boundingRect().width()
 
     def refresh(self):
         self.text.setPlainText("?" if not self.model_item else self.model_item.shortname)

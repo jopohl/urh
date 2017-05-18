@@ -4,7 +4,7 @@ from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition
 class SimulatorGotoAction(SimulatorItem):
     def __init__(self):
         super().__init__()
-        self.goto_target = ""
+        self.goto_target = None
 
     def set_parent(self, value):
         if value is not None:

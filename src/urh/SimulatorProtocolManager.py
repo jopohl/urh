@@ -16,7 +16,7 @@ class SimulatorProtocolManager(QObject):
     participants_changed = pyqtSignal()
 
     items_deleted = pyqtSignal(list)
-    item_updated = pyqtSignal(SimulatorItem)
+    items_updated = pyqtSignal(list)
     items_moved = pyqtSignal(list)
     items_added = pyqtSignal(list)
 

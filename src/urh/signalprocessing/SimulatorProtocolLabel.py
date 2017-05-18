@@ -13,6 +13,7 @@ class SimulatorProtocolLabel(ProtocolLabel, SimulatorItem):
         self.value_type_index = 0
         self.external_program = ""
         self.formula = ""
+        self.logging_active = False
 
     def set_parent(self, value):
         if value is not None:

@@ -19,13 +19,14 @@ class BackendContainer(object):
         self.avail_backends = avail_backends
         settings = constants.SETTINGS
         self.selected_backend = Backends[settings.value(name + "_selected_backend", "none")]
+        if self.selected_backend not in self.avail_backends:
+            self.selected_backend = Backends.none
+
         if self.selected_backend == Backends.none:
             if Backends.native in self.avail_backends:
                 self.selected_backend = Backends.native
             elif Backends.grc in self.avail_backends:
                 self.selected_backend = Backends.grc
-        elif self.selected_backend not in self.avail_backends:
-            self.selected_backend = Backends.none
 
         self.is_enabled = settings.value(name + "_is_enabled", True, bool)
         self.__supports_rx = supports_rx
@@ -63,7 +64,14 @@ class BackendContainer(object):
     def write_settings(self):
         settings = constants.SETTINGS
         settings.setValue(self.name + "_is_enabled", self.is_enabled)
-        settings.setValue(self.name + "_selected_backend", self.selected_backend.name)
+
+        if self.selected_backend == Backends.grc and len(self.avail_backends) == 1:
+            # if GNU Radio is the only backend available we do not save it to ini,
+            # in order to auto enable native backend if a native extension is built afterwards
+            # see: https://github.com/jopohl/urh/issues/270
+            pass
+        else:
+            settings.setValue(self.name + "_selected_backend", self.selected_backend.name)
 
 
 class BackendHandler(object):

@@ -296,12 +296,14 @@ class OptionsController(QDialog):
     @pyqtSlot()
     def on_rb_gnuradio_backend_clicked(self):
         if Backends.grc in self.selected_device.avail_backends:
+            self.ui.rbGnuradioBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.grc
             self.selected_device.write_settings()
 
     @pyqtSlot()
     def on_rb_native_backend_clicked(self):
         if Backends.native in self.selected_device.avail_backends:
+            self.ui.rbNativeBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.native
             self.selected_device.write_settings()
 

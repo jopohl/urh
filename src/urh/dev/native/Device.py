@@ -369,7 +369,8 @@ class Device(QObject):
 
     def set_device_gain(self, gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, int(gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, gain))
         except (BrokenPipeError, OSError):
             pass
 
@@ -385,7 +386,8 @@ class Device(QObject):
 
     def set_device_if_gain(self, if_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, int(if_gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, if_gain))
         except (BrokenPipeError, OSError):
             pass
 
@@ -401,7 +403,8 @@ class Device(QObject):
 
     def set_device_baseband_gain(self, baseband_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, int(baseband_gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, baseband_gain))
         except (BrokenPipeError, OSError):
             pass
 

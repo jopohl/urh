@@ -13,7 +13,7 @@ class ActionItem(GraphicsItem):
         self.setFlag(QGraphicsTextItem.ItemIsPanel, True)
 
         self.text = QGraphicsTextItem(self)
-        self.text.setFont(self.font)
+        self.text.setFont(GraphicsItem.font)
 
     def update_flags(self):
         if self.scene().mode == 0:

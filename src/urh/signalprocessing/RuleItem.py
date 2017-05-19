@@ -42,7 +42,7 @@ class RuleConditionItem(GraphicsItem):
         assert isinstance(model_item, SimulatorRuleCondition)
         super().__init__(model_item=model_item, parent=parent)
 
-        font_10_bold = QFont(self.font)
+        font_10_bold = QFont(GraphicsItem.font)
         font_10_bold.setPointSize(10)
         font_10_bold.setWeight(QFont.DemiBold)
 
@@ -53,7 +53,7 @@ class RuleConditionItem(GraphicsItem):
         self.text.setFont(font_10_bold)
 
         self.desc = QGraphicsTextItem(self)
-        self.desc.setFont(self.font)
+        self.desc.setFont(GraphicsItem.font)
 
     def update_flags(self):
         if self.scene().mode == 0:

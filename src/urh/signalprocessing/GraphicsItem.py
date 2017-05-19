@@ -10,6 +10,8 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class GraphicsItem(QGraphicsObject):
+    font = None
+
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(parent)
         self.model_item = model_item
@@ -21,10 +23,10 @@ class GraphicsItem(QGraphicsObject):
         self.drop_indicator_position = None
         self.item_under_mouse = None
 
-        self.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        self.font.setPointSize(8)
+        GraphicsItem.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        GraphicsItem.font.setPointSize(8)
 
-        font_bold = QFont(self.font)
+        font_bold = QFont(GraphicsItem.font)
         font_bold.setWeight(QFont.DemiBold)
 
         self.number = QGraphicsTextItem(self)

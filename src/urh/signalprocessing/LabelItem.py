@@ -13,7 +13,7 @@ class LabelItem(GraphicsItem):
         super().__init__(model_item=model_item, parent=parent)
 
         self.name = QGraphicsTextItem(self)
-        self.name.setFont(self.font)
+        self.name.setFont(GraphicsItem.font)
 
     def update_flags(self):
         if self.scene().mode == 1:

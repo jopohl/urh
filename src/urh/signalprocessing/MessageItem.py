@@ -17,7 +17,7 @@ class MessageItem(GraphicsItem):
         self.arrow = MessageArrowItem(self)
 
         self.message_type_text = QGraphicsTextItem(self)
-        self.message_type_text.setFont(self.font)
+        self.message_type_text.setFont(GraphicsItem.font)
 
     def update_flags(self):
         if self.scene().mode == 0:

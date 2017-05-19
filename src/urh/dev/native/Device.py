@@ -187,8 +187,6 @@ class Device(QObject):
             logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
 
         cls.shutdown_device(ctrl_connection)
-        if send_config.data_connection:
-            send_config.data_connection.close()
         ctrl_connection.close()
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
@@ -282,11 +280,10 @@ class Device(QObject):
 
     @property
     def send_config(self) -> SendConfig:
-        data_conn = self.child_data_conn if self.sending_is_continuous else None
         total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          data_connection=data_conn, pack_complex_method=self.pack_complex,
+                          pack_complex_method=self.pack_complex,
                           continuous_send_ring_buffer=self.continuous_send_ring_buffer)
 
     @property
@@ -542,8 +539,6 @@ class Device(QObject):
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-        if self.sending_is_continuous:
-            self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
@@ -571,8 +566,6 @@ class Device(QObject):
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.child_ctrl_conn.close()
-                self.child_data_conn.close()
-        self.parent_data_conn.close()
         self.parent_ctrl_conn.close()
 
     @staticmethod

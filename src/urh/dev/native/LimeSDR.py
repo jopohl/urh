@@ -34,6 +34,7 @@ class LimeSDR(Device):
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
         cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
+        cls.RECV_FIFO_SIZE = 16 * cls.READ_SAMPLES
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):

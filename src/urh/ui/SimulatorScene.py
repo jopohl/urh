@@ -231,14 +231,6 @@ class SimulatorScene(QGraphicsScene):
                     (not from_part and msg.destination is participant)):
                 msg.select_all()
 
-    def select_messages_to(self, participant: ParticipantItem):
-        messages = self.get_all_messages()
-        self.clearSelection()
-
-        for msg in messages:
-            if msg.destination is participant:
-                msg.select_all()
-
     @property
     def visible_participants(self):
         return [part for part in self.participants if part.isVisible()]

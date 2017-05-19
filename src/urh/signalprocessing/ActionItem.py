@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsTextItem
-from PyQt5.QtGui import QFont, QFontDatabase
-from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtCore import QRectF
 
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
@@ -11,13 +10,10 @@ class ActionItem(GraphicsItem):
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(model_item=model_item, parent=parent)
 
-        self.text = QGraphicsTextItem(self)
         self.setFlag(QGraphicsTextItem.ItemIsPanel, True)
 
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(8)
-        #font.setWeight(QFont.DemiBold)
-        self.text.setFont(font)
+        self.text = QGraphicsTextItem(self)
+        self.text.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 0:

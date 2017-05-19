@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
 from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QFontDatabase, QFont, QPen, QColor
+from PyQt5.QtGui import QFont, QPen, QColor
 
 from urh.signalprocessing.GraphicsItem import GraphicsItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
@@ -42,22 +42,18 @@ class RuleConditionItem(GraphicsItem):
         assert isinstance(model_item, SimulatorRuleCondition)
         super().__init__(model_item=model_item, parent=parent)
 
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(10)
-        font.setWeight(QFont.DemiBold)
+        font_10_bold = QFont(self.font)
+        font_10_bold.setPointSize(10)
+        font_10_bold.setWeight(QFont.DemiBold)
+
+        self.number.setFont(font_10_bold)
 
         self.text = QGraphicsTextItem(self)
-        self.text.setFont(font)
-        self.number.setFont(font)
-
-        font2 = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font2.setPointSize(8)
-        #font2.setWeight(QFont.DemiBold)
-        self.desc = QGraphicsTextItem(self)
         self.text.setPlainText(self.model_item.type.value)
-        self.desc.setFont(font2)
+        self.text.setFont(font_10_bold)
 
-        self.refresh()
+        self.desc = QGraphicsTextItem(self)
+        self.desc.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 0:

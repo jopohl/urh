@@ -18,7 +18,6 @@ class SimulateDialogController(QDialog):
 
         self.simulator_scene = SimulatorScene(mode=1, sim_proto_manager=self.sim_proto_manager)
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        #self.ui.gvSimulator.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.simulate_list_model = SimulateListModel(self.project_manager.participants)
         self.ui.listViewSimulate.setModel(self.simulate_list_model)

@@ -4,7 +4,7 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QPen, QColor, QFont
+from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
@@ -13,10 +13,7 @@ class LabelItem(GraphicsItem):
         super().__init__(model_item=model_item, parent=parent)
 
         self.name = QGraphicsTextItem(self)
-
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(8)
-        self.name.setFont(font)
+        self.name.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 1:

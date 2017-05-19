@@ -20,11 +20,15 @@ class GraphicsItem(QGraphicsObject):
         self.bounding_rect = QRectF()
         self.drop_indicator_position = None
         self.item_under_mouse = None
+
+        self.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        self.font.setPointSize(8)
+
+        font_bold = QFont(self.font)
+        font_bold.setWeight(QFont.DemiBold)
+
         self.number = QGraphicsTextItem(self)
-        font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        font.setPointSize(8)
-        font.setWeight(QFont.DemiBold)
-        self.number.setFont(font)
+        self.number.setFont(font_bold)
 
     def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
         self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)

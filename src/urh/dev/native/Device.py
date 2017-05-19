@@ -89,6 +89,10 @@ class Device(QObject):
             return False
 
     @classmethod
+    def adapt_num_read_samples_to_sample_rate(cls, sample_rate: float):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
     def shutdown_device(cls, ctrl_connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
@@ -120,6 +124,13 @@ class Device(QObject):
     def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
             return False
+
+        try:
+            cls.adapt_num_read_samples_to_sample_rate(dev_parameters[cls.Command.SET_SAMPLE_RATE.name])
+        except NotImplementedError:
+            # Many SDRs like HackRF or AirSpy do not need to calculate READ_SAMPLES
+            # as default values are either fine or given by the hardware
+            pass
 
         if cls.ASYNCHRONOUS:
             cls.enter_async_receive_mode(data_connection)

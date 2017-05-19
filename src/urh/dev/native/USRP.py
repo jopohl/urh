@@ -18,6 +18,10 @@ class USRP(Device):
     CONTINUOUS_SEND_BUFFER_SIZE = SEND_SAMPLES * 64
 
     @classmethod
+    def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
+        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
+
+    @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = usrp.open(device_identifier)
         ctrl_connection.send("OPEN:" + str(ret))
@@ -44,12 +48,12 @@ class USRP(Device):
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
-        usrp.start_stream(USRP.READ_SAMPLES)
+        usrp.start_stream(cls.READ_SAMPLES)
         ctrl_connection.send("Initialized stream")
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        usrp.recv_stream(data_conn, USRP.READ_SAMPLES)
+        usrp.recv_stream(data_conn, cls.READ_SAMPLES)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):

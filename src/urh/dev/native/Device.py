@@ -176,6 +176,8 @@ class Device(QObject):
             logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
 
         cls.shutdown_device(ctrl_connection)
+        if send_config.data_connection:
+            send_config.data_connection.close()
         ctrl_connection.close()
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
@@ -212,7 +214,7 @@ class Device(QObject):
         self.receive_process_function = self.device_receive
         self.send_process_function = self.device_send
 
-        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
@@ -490,7 +492,7 @@ class Device(QObject):
 
     def start_rx_mode(self):
         self.init_recv_buffer()
-        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
         self.is_receiving = True
@@ -530,7 +532,7 @@ class Device(QObject):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         if self.sending_is_continuous:
-            self.parent_data_conn, self.child_data_conn = Pipe()
+            self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))

@@ -6,7 +6,7 @@ from urh.util.RingBuffer import RingBuffer
 
 class SendConfig(object):
     def __init__(self,  send_buffer, current_sent_index: Value, current_sending_repeat: Value,
-                 total_samples: int, sending_repeats: int, continuous: bool = False, data_connection: Connection = None,
+                 total_samples: int, sending_repeats: int, continuous: bool = False,
                  pack_complex_method: callable = None, continuous_send_ring_buffer: RingBuffer = None):
         self.send_buffer = send_buffer
         self.current_sent_index = current_sent_index
@@ -14,12 +14,8 @@ class SendConfig(object):
         self.total_samples = total_samples
         self.sending_repeats = sending_repeats
         self.continuous = continuous
-        self.data_connection = data_connection
         self.pack_complex_method = pack_complex_method
         self.continuous_send_ring_buffer = continuous_send_ring_buffer
-
-        if self.continuous:
-            assert self.data_connection is not None
 
     def get_data_to_send(self, buffer_length: int):
         try:

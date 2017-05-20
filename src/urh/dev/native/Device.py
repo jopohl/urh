@@ -89,6 +89,10 @@ class Device(QObject):
             return False
 
     @classmethod
+    def adapt_num_read_samples_to_sample_rate(cls, sample_rate: float):
+        raise NotImplementedError("Overwrite this method in subclass!")
+
+    @classmethod
     def shutdown_device(cls, ctrl_connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
@@ -120,6 +124,13 @@ class Device(QObject):
     def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
             return False
+
+        try:
+            cls.adapt_num_read_samples_to_sample_rate(dev_parameters[cls.Command.SET_SAMPLE_RATE.name])
+        except NotImplementedError:
+            # Many SDRs like HackRF or AirSpy do not need to calculate READ_SAMPLES
+            # as default values are either fine or given by the hardware
+            pass
 
         if cls.ASYNCHRONOUS:
             cls.enter_async_receive_mode(data_connection)
@@ -212,7 +223,7 @@ class Device(QObject):
         self.receive_process_function = self.device_receive
         self.send_process_function = self.device_send
 
-        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
@@ -269,11 +280,10 @@ class Device(QObject):
 
     @property
     def send_config(self) -> SendConfig:
-        data_conn = self.child_data_conn if self.sending_is_continuous else None
         total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          data_connection=data_conn, pack_complex_method=self.pack_complex,
+                          pack_complex_method=self.pack_complex,
                           continuous_send_ring_buffer=self.continuous_send_ring_buffer)
 
     @property
@@ -369,7 +379,8 @@ class Device(QObject):
 
     def set_device_gain(self, gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, int(gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_RF_GAIN.name, gain))
         except (BrokenPipeError, OSError):
             pass
 
@@ -385,7 +396,8 @@ class Device(QObject):
 
     def set_device_if_gain(self, if_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, int(if_gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_IF_GAIN.name, if_gain))
         except (BrokenPipeError, OSError):
             pass
 
@@ -401,7 +413,8 @@ class Device(QObject):
 
     def set_device_baseband_gain(self, baseband_gain):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, int(baseband_gain)))
+            # Do not cast gain to int here, as it may be float e.g. for normalized USRP gain or LimeSDR gain
+            self.parent_ctrl_conn.send((self.Command.SET_BB_GAIN.name, baseband_gain))
         except (BrokenPipeError, OSError):
             pass
 
@@ -487,7 +500,7 @@ class Device(QObject):
 
     def start_rx_mode(self):
         self.init_recv_buffer()
-        self.parent_data_conn, self.child_data_conn = Pipe()
+        self.parent_data_conn, self.child_data_conn = Pipe(duplex=False)
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
 
         self.is_receiving = True
@@ -526,8 +539,6 @@ class Device(QObject):
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
-        if self.sending_is_continuous:
-            self.parent_data_conn, self.child_data_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
@@ -555,8 +566,6 @@ class Device(QObject):
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.child_ctrl_conn.close()
-                self.child_data_conn.close()
-        self.parent_data_conn.close()
         self.parent_ctrl_conn.close()
 
     @staticmethod

@@ -46,5 +46,7 @@ before_script:
 
 script:
   - pytest -s -v --cov=src/urh tests
+  - pip3 install .
+  - python3 -m urh.main autoclose
 
 after_success: codeclimate-test-reporter

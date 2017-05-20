@@ -64,7 +64,7 @@ test_script:
   # Run the project tests
   - python -m pytest -s
   - pip install .
-  - python -m urh.main autoclose
+  - urh autoclose
 
 #after_test:
 #  # If tests are successful, create binary packages for the project.

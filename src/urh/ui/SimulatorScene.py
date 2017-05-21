@@ -130,8 +130,7 @@ class SimulatorScene(QGraphicsScene):
 
     def min_items_width(self):
         width = 0
-        items = [item for item in self.items() if (isinstance(item, ActionItem)
-                 or isinstance(item, RuleConditionItem))]
+        items = [item for item in self.items() if isinstance(item, (RuleConditionItem, ActionItem))]
 
         for item in items:
             if item.labels_width() > width:

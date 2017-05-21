@@ -91,7 +91,7 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         row = index.row()
 
         if model.message_type[row].value_type_index == 2:
-            return FormulaLineEdit(self.controller.sim_formula_parser.label_list, parent)
+            return FormulaLineEdit(self.controller.sim_expression_parser.label_list, parent)
         elif model.message_type[row].value_type_index == 3:
             return ExternalProgramWidget(parent)
         else:

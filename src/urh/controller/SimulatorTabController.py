@@ -5,7 +5,6 @@ import itertools
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog
 from PyQt5.QtCore import pyqtSlot, Qt, QDir
 
-from urh.models.SimulatorRulesetTableModel import SimulatorRulesetTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
@@ -13,16 +12,14 @@ from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.Ruleset import OPERATION_DESCRIPTION
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.SimulatorRuleset import SimulatorRulesetItem, Mode
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.SimulatorFormulaParser import SimulatorFormulaParser
+from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
@@ -43,7 +40,7 @@ class SimulatorTabController(QWidget):
         self.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.sim_proto_manager = SimulatorProtocolManager(self.project_manager)
-        self.sim_formula_parser = SimulatorFormulaParser(self.sim_proto_manager)
+        self.sim_expression_parser = SimulatorExpressionParser(self.sim_proto_manager)
 
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)

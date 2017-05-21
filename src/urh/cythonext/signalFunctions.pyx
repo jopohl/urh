@@ -3,7 +3,9 @@ cimport numpy as np
 import numpy as np
 from libcpp cimport bool
 
-np.import_array()
+# As we do not use any numpy C API functions we do no import_array here,
+# because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
+# np.import_array()
 
 from urh.cythonext import util
 

@@ -73,13 +73,15 @@ def get_package_data():
 
     is_release = os.path.isfile("/tmp/urh_releasing")  # make sure precompiled binding are uploaded to PyPi
 
-    package_data["urh.dev.native.lib"] = ["*.cpp", "*.pyx", "*.pxd"]
+    package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
 
     # Bundle headers
     package_data["urh.dev.native.includes"] = ["*.h"]
-    for dirpath, dirnames, filenames in os.walk("src/urh/dev/native/includes"):
+    include_dir = "src/urh/dev/native/includes"
+    for dirpath, dirnames, filenames in os.walk(include_dir):
         for dir_name in dirnames:
-            package_data["urh.dev.native.includes."+dir_name] = ["*.h"]
+            rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
+            package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
 
     if sys.platform == "win32" or is_release:
         # we use precompiled device backends on windows

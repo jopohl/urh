@@ -1,6 +1,3 @@
-# noinspection PyUnresolvedReferences
-cimport numpy as np
-import numpy as np
 cimport cairspy
 import time
 from cpython cimport array

@@ -17,6 +17,8 @@ DEVICES = {
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
+    # Use C only for USRP to avoid boost dependency
+    "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
 }
 
 FALLBACKS = {
@@ -116,7 +118,12 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
 
 
 def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list, use_cython=False):
-    file_ext = "pyx" if use_cython else "cpp"
+    try:
+        language = DEVICES[dev_name]["language"]
+    except KeyError:
+        language = "c++"
+
+    file_ext = "pyx" if use_cython else "cpp" if language == "c++" else "c"
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     if USE_RELATIVE_PATHS:
         # We need relative paths on windows
@@ -127,7 +134,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
     return Extension("urh.dev.native.lib." + dev_name,
                      [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
-                     include_dirs=include_dirs, language="c++")
+                     include_dirs=include_dirs, language=language)
 
 
 if __name__ == "__main__":

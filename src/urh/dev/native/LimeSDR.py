@@ -32,6 +32,11 @@ class LimeSDR(Device):
     })
 
     @classmethod
+    def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
+        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
+        cls.RECV_FIFO_SIZE = 16 * cls.READ_SAMPLES
+
+    @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = limesdr.open()
         ctrl_connection.send("OPEN:" + str(ret))
@@ -75,24 +80,24 @@ class LimeSDR(Device):
     @classmethod
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
-        limesdr.setup_stream(LimeSDR.RECV_FIFO_SIZE)
+        limesdr.setup_stream(cls.RECV_FIFO_SIZE)
         ret = limesdr.start_stream()
         ctrl_connection.send("Initialize stream:{0}".format(ret))
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        limesdr.recv_stream(data_conn, LimeSDR.READ_SAMPLES, LimeSDR.LIME_TIMEOUT_RECEIVE_MS)
+        limesdr.recv_stream(data_conn, cls.READ_SAMPLES, cls.LIME_TIMEOUT_RECEIVE_MS)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
-        limesdr.setup_stream(LimeSDR.SEND_FIFO_SIZE)
+        limesdr.setup_stream(cls.SEND_FIFO_SIZE)
         ret = limesdr.start_stream()
         ctrl_connection.send("Initialize stream:{0}".format(ret))
 
     @classmethod
     def send_sync(cls, data):
-        limesdr.send_stream(data, LimeSDR.LIME_TIMEOUT_SEND_MS)
+        limesdr.send_stream(data, cls.LIME_TIMEOUT_SEND_MS)
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

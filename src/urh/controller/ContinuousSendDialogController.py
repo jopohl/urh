@@ -68,7 +68,7 @@ class ContinuousSendDialogController(SendDialogController):
 
     @pyqtSlot()
     def on_start_clicked(self):
-        if not self.device_is_sending:
+        if not self.continuous_modulator.is_running:
             self.continuous_modulator.start()
         super().on_start_clicked()
 

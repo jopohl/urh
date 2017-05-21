@@ -2,7 +2,9 @@
 cimport numpy as np
 import numpy as np
 
-np.import_array()
+# As we do not use any numpy C API functions we do no import_array here,
+# because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
+# np.import_array()
 
 cpdef tuple minmax(float[:] arr):
     cdef long long i, ns = len(arr)

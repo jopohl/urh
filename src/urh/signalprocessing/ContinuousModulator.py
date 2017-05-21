@@ -34,7 +34,9 @@ class ContinuousModulator(object):
         self.process = Process(target=self.modulate_continuously)
         self.process.daemon = True
 
-        self.data_connection = None
+    @property
+    def is_running(self):
+        return self.process.is_alive()
 
     def start(self):
         self.abort.value = 0

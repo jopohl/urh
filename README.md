@@ -34,6 +34,7 @@ Like to see things in action? Watch URH on YouTube!
 - libhackrf (for native HackRF device backend)
 - libairspy (for native AirSPy device backend)
 - liblimesdr (for native LimeSDR device backend)
+- libuhd (for native USRP device backend)
 - rfcat (for RfCat plugin to send e.g. with YardStick One)
 - gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
@@ -43,12 +44,17 @@ yaourt -S urh
 ```
 
 ### Ubuntu/Debian
-If you want to use native backends for _RTL-SDR_ or _HackRF_ and installed these drivers using your packet manager, 
-you need to create the appropriate symlink:
+If you want to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is:
+- AirSpy: ``` libairspy-dev ```
+- HackRF: ``` libhackrf-dev ```
+- RTL-SDR: ``` librtlsdr-dev  ```
+- USRP: ``` libuhd-dev  ```
+
+If your device does not have a ``` -dev ``` package, e.g. LimeSDR, you need to manually create a symlink to the ``` .so ```, like this:
 ```bash
-sudo ln -s /usr/lib/x86_64-linux-gnu/librtlsdr.so.0 /usr/lib/x86_64-linux-gnu/librtlsdr.so
-sudo ln -s /usr/lib/x86_64-linux-gnu/libhackrf.so.0 /usr/lib/x86_64-linux-gnu/libhackrf.so
+sudo ln -s /usr/lib/x86_64-linux-gnu/libLimeSuite.so.17.02.2 /usr/lib/x86_64-linux-gnu/libLimeSuite.so
 ```
+
 
 __before__ installing URH, using:
 

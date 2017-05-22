@@ -28,7 +28,7 @@ from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.SimulateDialogController import SimulateDialogController
 
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
-from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
+from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate, FormulaLineEdit
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -63,6 +63,9 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller.decodings, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
+
+        self.rule_condition_line_edit = FormulaLineEdit(self.sim_expression_parser.label_list)
+        self.ui.ruleCondComboBox.setLineEdit(self.rule_condition_line_edit)
 
         self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
@@ -208,6 +211,7 @@ class SimulatorTabController(QWidget):
             elif (isinstance(self.active_item, SimulatorRuleCondition) and
                     self.active_item.type != ConditionType.ELSE):
 
+                self.rule_condition_line_edit.completer.model().setStringList(self.sim_expression_parser.label_list)
                 self.ui.detail_view_widget.setCurrentIndex(3)
             elif isinstance(self.active_item, SimulatorProgramAction):
                 self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)

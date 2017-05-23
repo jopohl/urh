@@ -63,10 +63,13 @@ class RuleConditionItem(GraphicsItem):
         return max(self.number.boundingRect().width() + self.text.boundingRect().width(), self.desc.boundingRect().width())
 
     def refresh(self):
-        if len(self.model_item.ruleset):
-            self.desc.setPlainText(str(self.model_item.ruleset[0]))
-        else:
-            self.desc.setPlainText("item2.preamble > 5")
+        if len(self.model_item.condition):
+            if len(self.model_item.condition) > 20:
+                self.desc.setPlainText(self.model_item.condition[:21] + "...")
+            else:
+                self.desc.setPlainText(self.model_item.condition)
+        elif self.model_item.type != ConditionType.ELSE:
+            self.desc.setPlainText("<Condition>")
 
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
@@ -79,7 +82,11 @@ class RuleConditionItem(GraphicsItem):
         start_y += round(self.number.boundingRect().height())
         start_x = ((self.scene().items_width() + 40) - self.desc.boundingRect().width()) / 2
         self.desc.setPos(start_x, start_y)
-        start_y += round(self.desc.boundingRect().height()) + 5
+
+        if self.model_item.type != ConditionType.ELSE:
+            start_y += round(self.desc.boundingRect().height())
+
+        start_y += 5
 
         for child in self.get_scene_children():
             child.update_position(20, start_y)
@@ -109,7 +116,12 @@ class RuleConditionItem(GraphicsItem):
         else:
             painter.setBrush(QColor.fromRgb(204, 204, 204, 255))
 
-        painter.drawRect(QRectF(0, 0, self.boundingRect().width(), self.desc.boundingRect().height() + self.number.boundingRect().height()))
+        height = self.number.boundingRect().height()
+
+        if self.model_item.type != ConditionType.ELSE:
+            height += self.desc.boundingRect().height()
+
+        painter.drawRect(QRectF(0, 0, self.boundingRect().width(), height))
 
         painter.setBrush(Qt.NoBrush)
         painter.drawRect(self.boundingRect())

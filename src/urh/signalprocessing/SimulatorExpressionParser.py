@@ -1,9 +1,12 @@
 import ast
 import operator as op
 
+from PyQt5.QtCore import pyqtSignal, QObject
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
-class SimulatorExpressionParser(object):
+class SimulatorExpressionParser(QObject):
+    label_list_updated = pyqtSignal()
+
     operators_formula = {
                             ast.Add: op.add,
                             ast.Sub: op.sub,
@@ -30,6 +33,8 @@ class SimulatorExpressionParser(object):
                           }
 
     def __init__(self, sim_proto_manager: SimulatorProtocolManager):
+        super().__init__()
+
         self.sim_proto_manager = sim_proto_manager
         self.label_list = []
         self.create_connects()
@@ -40,21 +45,13 @@ class SimulatorExpressionParser(object):
         self.sim_proto_manager.items_updated.connect(self.update_label_list)
         self.sim_proto_manager.items_deleted.connect(self.update_label_list)
 
-    def validate_condition(self, expr):
+    def validate_expression(self, expr, is_formula=True):
         try:
             node = ast.parse(expr, mode='eval').body
         except SyntaxError:
             return False
 
-        return self.validate_condition_node(node)
-
-    def validate_formula(self, expr):
-        try:
-            node = ast.parse(expr, mode='eval').body
-        except SyntaxError:
-            return False
-
-        return self.validate_formula_node(node)
+        return self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
 
     def validate_formula_node(self, node):
         if isinstance(node, ast.Num):
@@ -106,3 +103,5 @@ class SimulatorExpressionParser(object):
             for lbl in msg.children:
                 label_name = "item" + msg.index().replace(".", "_") + "." + lbl.name.replace(" ", "_")
                 self.label_list.append(label_name)
+
+        self.label_list_updated.emit()

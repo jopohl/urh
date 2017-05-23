@@ -24,7 +24,7 @@ class LabelItem(GraphicsItem):
 
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
-
+        # alpha-wert
         if self.model_item.logging_active and self.scene().mode == 1:
             painter.setPen(QPen(Qt.darkBlue, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
 
@@ -35,4 +35,7 @@ class LabelItem(GraphicsItem):
         return self.childrenBoundingRect()
 
     def refresh(self):
-        self.name.setPlainText(self.model_item.name)
+        if self.model_item.logging_active and self.scene().mode == 1:
+            self.name.setHtml("<b>" +self.model_item.name + "</b>")
+        else:
+            self.name.setPlainText(self.model_item.name)

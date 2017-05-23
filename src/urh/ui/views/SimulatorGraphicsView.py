@@ -112,7 +112,7 @@ class SimulatorGraphicsView(QGraphicsView):
         add_message_action = menu.addAction("Add empty message...")
         add_message_action.triggered.connect(self.on_add_message_action_triggered)
 
-        message_type_menu = menu.addMenu("Add empty message with message type...")
+        message_type_menu = menu.addMenu("Add message with type...")
 
         for message_type in self.proto_analyzer.message_types:
             action = message_type_menu.addAction(message_type.name)

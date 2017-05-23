@@ -185,20 +185,14 @@ class Ui_SimulatorTab(object):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_rule)
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.ruleCondComboBox = QtWidgets.QComboBox(self.page_rule)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.ruleCondComboBox.sizePolicy().hasHeightForWidth())
-        self.ruleCondComboBox.setSizePolicy(sizePolicy)
-        self.ruleCondComboBox.setEditable(True)
-        self.ruleCondComboBox.setObjectName("ruleCondComboBox")
-        self.gridLayout_2.addWidget(self.ruleCondComboBox, 0, 1, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem4, 1, 0, 1, 1)
+        self.ruleCondLineEdit = ExpressionLineEdit(self.page_rule)
+        self.ruleCondLineEdit.setObjectName("ruleCondLineEdit")
+        self.gridLayout_2.addWidget(self.ruleCondLineEdit, 1, 1, 1, 1)
         self.label_6 = QtWidgets.QLabel(self.page_rule)
         self.label_6.setObjectName("label_6")
-        self.gridLayout_2.addWidget(self.label_6, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label_6, 1, 0, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem4, 3, 0, 1, 2)
         self.detail_view_widget.addWidget(self.page_rule)
         self.page_ext_prog_action = QtWidgets.QWidget()
         self.page_ext_prog_action.setObjectName("page_ext_prog_action")
@@ -253,6 +247,7 @@ class Ui_SimulatorTab(object):
         self.label_3.setText(_translate("SimulatorTab", "External program:"))
         self.btnChooseExtProg.setText(_translate("SimulatorTab", "..."))
 
+from urh.ui.delegates.ProtocolValueDelegate import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView

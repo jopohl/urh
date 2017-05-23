@@ -349,20 +349,17 @@
          </widget>
          <widget class="QWidget" name="page_rule">
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="1">
-            <widget class="QComboBox" name="ruleCondComboBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="editable">
-              <bool>true</bool>
+           <item row="1" column="1">
+            <widget class="ExpressionLineEdit" name="ruleCondLineEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Condition:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0" colspan="2">
             <spacer name="verticalSpacer_3">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -374,13 +371,6 @@
               </size>
              </property>
             </spacer>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Condition:</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -455,6 +445,11 @@
    <class>SimulatorMessageTableView</class>
    <extends>QTableView</extends>
    <header>urh.ui.views.SimulatorMessageTableView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ExpressionLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>urh.ui.delegates/ProtocolValueDelegate.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -2,8 +2,8 @@ import re
 import numpy
 import itertools
 
-from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog
-from PyQt5.QtCore import pyqtSlot, Qt, QDir
+from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter
+from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
 
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
@@ -28,7 +28,9 @@ from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.SimulateDialogController import SimulateDialogController
 
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
-from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate, FormulaLineEdit
+from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
+from urh.ui.ExpressionLineEdit import ExpressionLineEdit
+from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -64,8 +66,9 @@ class SimulatorTabController(QWidget):
         self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller.decodings, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
-        self.rule_condition_line_edit = FormulaLineEdit(self.sim_expression_parser.label_list)
-        self.ui.ruleCondComboBox.setLineEdit(self.rule_condition_line_edit)
+        self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
+        self.completer_model = QStringListModel(self.sim_expression_parser.label_list, self.ui.ruleCondLineEdit)
+        self.ui.ruleCondLineEdit.setCompleter(QCompleter(self.completer_model, self.ui.ruleCondLineEdit))
 
         self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
@@ -73,7 +76,7 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
-        self.active_item = None
+        self.__active_item = None
 
         self.create_connects(compare_frame_controller)
 
@@ -103,6 +106,7 @@ class SimulatorTabController(QWidget):
         self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
         self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
+        self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_changed)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
         self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
         self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
@@ -127,6 +131,8 @@ class SimulatorTabController(QWidget):
         self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
 
+        self.sim_expression_parser.label_list_updated.connect(self.on_label_list_updated)
+
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
         name = "Message type #"
@@ -145,7 +151,10 @@ class SimulatorTabController(QWidget):
             self.proto_analyzer.message_types.append(msg_type)
             self.compare_frame_controller.fill_message_type_combobox()
             self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
-            
+
+    def on_label_list_updated(self):
+        self.completer_model.setStringList(self.sim_expression_parser.label_list)
+
     def on_selected_tab_changed(self, index: int):
         if index == 0:
             if self.active_item is not None:
@@ -200,27 +209,6 @@ class SimulatorTabController(QWidget):
 
     def update_ui(self):
         if self.active_item is not None:
-            if isinstance(self.active_item, SimulatorGotoAction):
-                self.update_goto_combobox()
-
-                self.ui.detail_view_widget.setCurrentIndex(1)
-            elif isinstance(self.active_item, SimulatorMessage):
-                self.simulator_message_field_model.update()
-
-                self.ui.detail_view_widget.setCurrentIndex(2)
-            elif (isinstance(self.active_item, SimulatorRuleCondition) and
-                    self.active_item.type != ConditionType.ELSE):
-
-                self.rule_condition_line_edit.completer.model().setStringList(self.sim_expression_parser.label_list)
-                self.ui.detail_view_widget.setCurrentIndex(3)
-            elif isinstance(self.active_item, SimulatorProgramAction):
-                self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)
-                self.ui.cmdLineArgsLineEdit.setText(self.active_item.args)
-
-                self.ui.detail_view_widget.setCurrentIndex(4)
-            else:
-                self.ui.detail_view_widget.setCurrentIndex(0)
-
             scene_item = self.simulator_scene.model_to_scene(self.active_item)
             self.ui.navLineEdit.setText(self.active_item.index())
             self.ui.btnNextNav.setEnabled(not scene_item.next() is None)
@@ -228,8 +216,6 @@ class SimulatorTabController(QWidget):
 
             self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.active_item.index())
         else:
-            self.ui.detail_view_widget.setCurrentIndex(0)
-
             self.ui.navLineEdit.clear()
             self.ui.btnNextNav.setEnabled(False)
             self.ui.btnPrevNav.setEnabled(False)
@@ -239,6 +225,11 @@ class SimulatorTabController(QWidget):
     def update_vertical_table_header(self):
         self.simulator_message_table_model.refresh_vertical_header()
         self.ui.tblViewMessage.resize_vertical_header()
+
+    @pyqtSlot()
+    def on_rule_cond_line_edit_changed(self):
+        self.active_item.condition = self.ui.ruleCondLineEdit.text()
+        self.item_updated(self.active_item)
 
     @pyqtSlot()
     def on_view_type_changed(self):
@@ -267,6 +258,36 @@ class SimulatorTabController(QWidget):
         else:
             max_row = numpy.max([rng.bottom() for rng in selection])
             self.active_item = self.simulator_message_table_model.protocol.messages[max_row]
+
+        self.update_ui()
+
+    @property
+    def active_item(self):
+        return self.__active_item
+
+    @active_item.setter
+    def active_item(self, value):
+        self.__active_item = value
+
+        if isinstance(self.active_item, SimulatorGotoAction):
+            self.update_goto_combobox()
+
+            self.ui.detail_view_widget.setCurrentIndex(1)
+        elif isinstance(self.active_item, SimulatorMessage):
+            self.simulator_message_field_model.update()
+
+            self.ui.detail_view_widget.setCurrentIndex(2)
+        elif (isinstance(self.active_item, SimulatorRuleCondition) and
+              self.active_item.type != ConditionType.ELSE):
+            self.ui.ruleCondLineEdit.setText(self.active_item.condition)
+            self.ui.detail_view_widget.setCurrentIndex(3)
+        elif isinstance(self.active_item, SimulatorProgramAction):
+            self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)
+            self.ui.cmdLineArgsLineEdit.setText(self.active_item.args)
+
+            self.ui.detail_view_widget.setCurrentIndex(4)
+        else:
+            self.ui.detail_view_widget.setCurrentIndex(0)
 
         self.update_ui()
 

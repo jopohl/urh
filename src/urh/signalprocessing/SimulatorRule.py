@@ -1,7 +1,6 @@
 from enum import Enum
 
 from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRuleset import SimulatorRuleset
 
 class SimulatorRule(SimulatorItem):
     def __init__(self):
@@ -25,7 +24,7 @@ class SimulatorRuleCondition(SimulatorItem):
     def __init__(self, type: ConditionType):
         super().__init__()
         self.type = type
-        self.ruleset = SimulatorRuleset()
+        self.condition = ""
 
     def set_parent(self, value):
         if value is not None:

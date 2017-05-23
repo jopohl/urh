@@ -1,5 +1,8 @@
 from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QFileDialog, QLineEdit, QHBoxLayout, QToolButton, QCompleter
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, QDir, Qt, pyqtSlot, QStringListModel
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, QDir, Qt, pyqtSlot
+
+from urh.ui.ExpressionLineEdit import ExpressionLineEdit
+from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
 class ExternalProgramWidget(QWidget):
     def __init__(self, parent=None):
@@ -26,61 +29,6 @@ class ExternalProgramWidget(QWidget):
         if file_name is not None and ok:
             self.extProgramLineEdit.setText(file_name)
 
-class FormulaLineEdit(QLineEdit):
-    fld_abbrev_chars = ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
-
-    def __init__(self, completer_strings, parent=None):
-        super().__init__(parent)
-        
-        self.completer_model = QStringListModel(completer_strings, self)
-        self.setCompleter(QCompleter(self.completer_model, self))
-
-    def setCompleter(self, completer):
-        self.completer = completer
-
-        self.completer.setWidget(self)
-        self.completer.activated.connect(self.insert_completion)
-
-    def keyPressEvent(self, event):
-        super().keyPressEvent(event)
-
-        start, end = self.get_token_under_cursor()
-        token_word = self.text()[start:end]
-
-        self.completer.setCompletionPrefix(token_word)
-
-        if (len(token_word) < 1 or (self.completer.completionCount() == 1 and
-                self.completer.currentCompletion() == token_word)):
-            self.completer.popup().hide()
-            return
-
-        cr = self.cursorRect()
-        cr.setWidth(self.completer.popup().sizeHintForColumn(0) +
-                    self.completer.popup().verticalScrollBar().sizeHint().width())
-
-        self.completer.complete(cr)
-
-    def get_token_under_cursor(self):
-        if self.selectionStart() >= 0:
-            return (0, 0)
-
-        start = self.cursorPosition()
-        end = start
-
-        while start > 0 and self.text()[start - 1] in self.fld_abbrev_chars:
-            start -= 1
-
-        while end < len(self.text()) and self.text()[end] in self.fld_abbrev_chars:
-            end += 1
-
-        return (start, end)
-
-    def insert_completion(self, completion_text):
-        start, end = self.get_token_under_cursor()
-        new_text = self.text()[:start] + completion_text + self.text()[end:]
-        self.setText(new_text)
-        self.setCursorPosition(start + len(completion_text))
-
 class ProtocolValueDelegate(QStyledItemDelegate):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
@@ -91,7 +39,10 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         row = index.row()
 
         if model.message_type[row].value_type_index == 2:
-            return FormulaLineEdit(self.controller.sim_expression_parser.label_list, parent)
+            line_edit = ExpressionLineEdit(parent)
+            line_edit.setCompleter(QCompleter(self.controller.completer_model, line_edit))
+            line_edit.setValidator(RuleExpressionValidator(self.controller.sim_expression_parser))
+            return line_edit
         elif model.message_type[row].value_type_index == 3:
             return ExternalProgramWidget(parent)
         else:

@@ -371,3 +371,17 @@ cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
 
     free(clusters)
     return (center1 + center2)/2
+
+cpdef np.ndarray[np.complex64_t, ndim=1] fir_filter(float complex[::1] input_samples, float complex[::1] filter_taps):
+    cdef int i, j
+    cdef int N = len(input_samples)
+    cdef int M = len(filter_taps)
+    cdef np.ndarray[np.complex64_t, ndim=1] output = np.zeros(N+M-1, dtype=np.complex64)
+
+
+    for i in range(N):
+        for j in range(M):
+            output[i+j] += input_samples[i] * filter_taps[j]
+
+
+    return output[:N]

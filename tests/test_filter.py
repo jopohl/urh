@@ -18,5 +18,9 @@ class TestFilter(QtTestCase):
 
         self.assertTrue(np.array_equal(filtered_signal, expected_filtered_signal))
 
+    def test_filter_full_signal(self):
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()

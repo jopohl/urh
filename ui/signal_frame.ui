@@ -844,7 +844,8 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
             <string>-</string>
            </property>
            <property name="icon">
-            <iconset theme="arrow-down-double"/>
+            <iconset theme="arrow-down-double">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -1001,6 +1002,38 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </item>
          <item>
           <widget class="QSpinBox" name="spinBoxSelectionEnd"/>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnFilter">
+           <property name="text">
+            <string>Filter (moving average)</string>
+           </property>
+           <property name="icon">
+            <iconset theme="view-filter"/>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::NoArrow</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer name="horizontalSpacer_2">

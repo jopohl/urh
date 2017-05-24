@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal
-from PyQt5.QtGui import QContextMenuEvent, QIcon
+from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
+from PyQt5.QtGui import QContextMenuEvent, QIcon, QDesktopServices
 from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu, QWidget, QDialog, QLayout, QTextEdit, \
     QVBoxLayout, QPlainTextEdit
 
@@ -66,6 +66,10 @@ class DirectoryTreeView(QTreeView):
         del_action.setIcon(QIcon.fromTheme("edit-delete"))
         del_action.triggered.connect(self.remove)
 
+        menu.addSeparator()
+        open_in_explorer_action = menu.addAction("Open in file manager...")
+        open_in_explorer_action.triggered.connect(self.on_open_explorer_action_triggered)
+
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
@@ -94,3 +98,8 @@ class DirectoryTreeView(QTreeView):
             layout.addWidget(text_edit)
             d.setLayout(layout)
             d.show()
+
+    @pyqtSlot()
+    def on_open_explorer_action_triggered(self):
+        file_path = self.model().get_file_path(self.rootIndex())
+        QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))

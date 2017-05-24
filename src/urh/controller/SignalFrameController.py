@@ -92,7 +92,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.setScene(self.scene_manager.scene)
 
             self.jump_sync = True
-            self.on_show_hide_start_end_clicked()
+            self.on_btn_show_hide_start_end_clicked()
 
             self.refresh_signal_information(block=True)
             self.create_connects()
@@ -135,7 +135,7 @@ class SignalFrameController(QFrame):
         self.ui.btnReplay.clicked.connect(self.on_btn_replay_clicked)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
-        self.ui.btnShowHideStartEnd.clicked.connect(self.on_show_hide_start_end_clicked)
+        self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
         self.ui.btnMinimize.clicked.connect(self.minimize_maximize)
 
         if self.signal is not None:
@@ -992,9 +992,9 @@ class SignalFrameController(QFrame):
             self.ui.gvLegend.translate(0, 1)  # Resize verschiebt sonst Pfeile
 
     @pyqtSlot()
-    def on_show_hide_start_end_clicked(self):
-        if self.ui.btnShowHideStartEnd.text() == "+":
-            self.ui.btnShowHideStartEnd.setText("-")
+    def on_btn_show_hide_start_end_clicked(self):
+        if self.ui.btnShowHideStartEnd.isChecked():
+            self.ui.btnShowHideStartEnd.setIcon(QIcon.fromTheme("arrow-down-double"))
             self.ui.verticalLayout.insertItem(2, self.ui.additionalInfos)
             self.ui.lStart.show()
             self.ui.lEnd.show()
@@ -1006,7 +1006,7 @@ class SignalFrameController(QFrame):
             self.ui.spinBoxSelectionEnd.show()
 
         else:
-            self.ui.btnShowHideStartEnd.setText("+")
+            self.ui.btnShowHideStartEnd.setIcon(QIcon.fromTheme("arrow-up-double"))
             self.ui.lStart.hide()
             self.ui.lEnd.hide()
             self.ui.lSamplesInView.hide()

@@ -69,6 +69,14 @@ class SignalFrameController(QFrame):
         self.ui.btnMinimize.hide()
 
         if self.signal is not None:
+            self.filter_menu = QMenu()
+            self.apply_filter_to_selection_only = self.filter_menu.addAction(self.tr("Apply only to selection"))
+            self.apply_filter_to_selection_only.setCheckable(True)
+            self.apply_filter_to_selection_only.setChecked(False)
+            self.configure_filter_action = self.filter_menu.addAction("Configure filter...")
+            self.configure_filter_action.setIcon(QIcon.fromTheme("configure"))
+            self.ui.btnFilter.setMenu(self.filter_menu)
+
             if self.signal.qad_demod_file_loaded:
                 self.ui.lSignalTyp.setText("Quad-Demod Signal (*.wav)")
             elif self.signal.wav_mode:
@@ -105,6 +113,7 @@ class SignalFrameController(QFrame):
             self.show_protocol(refresh=False)
 
         else:
+            self.ui.btnFilter.setDisabled(True)
             suffix = ""
             if not proto_analyzer.filename:
                 suffix = ""
@@ -998,6 +1007,7 @@ class SignalFrameController(QFrame):
             self.ui.verticalLayout.insertItem(2, self.ui.additionalInfos)
             self.ui.lStart.show()
             self.ui.lEnd.show()
+            self.ui.btnFilter.show()
             self.ui.lSamplesInView.show()
             self.ui.lStrich.show()
             self.ui.lSamplesTotal.show()
@@ -1012,6 +1022,7 @@ class SignalFrameController(QFrame):
             self.ui.lSamplesInView.hide()
             self.ui.lStrich.hide()
             self.ui.lSamplesTotal.hide()
+            self.ui.btnFilter.hide()
             self.ui.lSamplesViewText.hide()
             self.ui.spinBoxSelectionStart.hide()
             self.ui.spinBoxSelectionEnd.hide()

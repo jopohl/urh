@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 
+from urh import constants
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
@@ -73,8 +74,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 font = QFont()
                 font.setItalic(lbl.type is None)
                 return font
-        elif role == Qt.BackgroundRole:
-            if j == 3:
+        elif role == Qt.BackgroundColorRole:
+            if j == 0:
+                return constants.LABEL_COLORS[lbl.color_index]
+            elif j == 3:
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
                     return QColor.fromRgb(255, 175, 175)

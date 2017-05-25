@@ -114,16 +114,6 @@ class SignalTabController(QWidget):
         for i, f in enumerate(self.signal_frames):
             f.ui.lSignalNr.setText("{0:d}:".format(i + 1))
 
-    def minimize_all(self):
-        for f in self.signal_frames:
-            f.is_minimized = False
-            f.minimize_maximize()
-
-    def maximize_all(self):
-        for f in self.signal_frames:
-            f.is_minimized = True
-            f.minimize_maximize()
-
     @pyqtSlot()
     def save_all(self):
         if self.num_frames == 0:

@@ -7,8 +7,10 @@ from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGrid
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
+from urh.controller.FilterDialogController import FilterDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
+from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.LegendScene import LegendScene
@@ -52,13 +54,15 @@ class SignalFrameController(QFrame):
 
         self.ui.gvSignal.participants = project_manager.participants
 
-        self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
-        self.is_minimized = False
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
 
         self.proto_analyzer = proto_analyzer
         self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
+
+        self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
+        self.set_filter_button_caption()
+        self.filter_dialog = FilterDialogController(self.dsp_filter, parent=self)
 
         self.proto_selection_timer = QTimer()  # For Update Proto Selection from ROI
         self.proto_selection_timer.setSingleShot(True)
@@ -66,7 +70,6 @@ class SignalFrameController(QFrame):
 
         # Disabled because never used (see also set_protocol_visibilty())
         self.ui.chkBoxSyncSelection.hide()
-        self.ui.btnMinimize.hide()
 
         if self.signal is not None:
             self.filter_menu = QMenu()
@@ -75,6 +78,7 @@ class SignalFrameController(QFrame):
             self.apply_filter_to_selection_only.setChecked(False)
             self.configure_filter_action = self.filter_menu.addAction("Configure filter...")
             self.configure_filter_action.setIcon(QIcon.fromTheme("configure"))
+            self.configure_filter_action.triggered.connect(self.on_configure_filter_action_triggered)
             self.ui.btnFilter.setMenu(self.filter_menu)
 
             if self.signal.qad_demod_file_loaded:
@@ -137,7 +141,6 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.sel_area_active = True
 
             self.ui.btnSaveSignal.hide()
-            self.minimize_maximize()
 
     def create_connects(self):
         self.ui.btnCloseSignal.clicked.connect(self.on_btn_close_signal_clicked)
@@ -145,7 +148,7 @@ class SignalFrameController(QFrame):
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
         self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
-        self.ui.btnMinimize.clicked.connect(self.minimize_maximize)
+        self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -171,6 +174,8 @@ class SignalFrameController(QFrame):
 
             self.ui.lineEditSignalName.editingFinished.connect(self.change_signal_name)
             self.proto_analyzer.qt_signals.protocol_updated.connect(self.on_protocol_updated)
+
+            self.ui.btnFilter.clicked.connect(self.on_btn_filter_clicked)
 
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
@@ -244,7 +249,6 @@ class SignalFrameController(QFrame):
         self.ui.cbSignalView.hide()
         self.ui.cbModulationType.hide()
         self.ui.btnSaveSignal.hide()
-        self.ui.btnMinimize.hide()
 
     def update_number_selected_samples(self):
         self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
@@ -295,6 +299,9 @@ class SignalFrameController(QFrame):
             drag.setMimeData(mimeData)
 
             drag.exec_()
+
+    def set_filter_button_caption(self):
+        self.ui.btnFilter.setText("Filter ({0})".format(self.dsp_filter.filter_type.value))
 
     def dragMoveEvent(self, event):
         event.accept()
@@ -884,49 +891,6 @@ class SignalFrameController(QFrame):
             self.undo_stack.push(noise_action)
             self.disable_auto_detection()
 
-    def minimize_maximize(self):
-        elements = vars(self.ui)
-
-        if not self.is_minimized:
-            for name, widget in elements.items():
-                if name != "btnMinimize" and type(widget) not in (QHBoxLayout, QVBoxLayout, QGridLayout) \
-                        and name not in (
-                                "lSignalNr", "lineEditSignalName", "btnCloseSignal", "lSignalTyp", "btnSaveSignal"):
-                    widget.hide()
-
-            self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/uparrow.png"))
-            self.is_minimized = True
-            self.setFixedHeight(65)
-        else:
-            show_start_end = self.ui.btnShowHideStartEnd.text() == "-"
-            for name, widget in elements.items():
-                if type(widget) in (QHBoxLayout, QVBoxLayout, QGridLayout):
-                    continue
-                if not self.ui.chkBoxShowProtocol.isChecked() and name in ("txtEdProto", "chkBoxSyncSelection"):
-                    continue
-                if not show_start_end and name in (
-                        "lStart", "spinBoxSelectionStart", "lEnd", "spinBoxSelectionEnd", "lSamplesInView",
-                        "lStrich", "lSamplesTotal", "lSamplesViewText", "btnSaveSignal"):
-                    continue
-
-                if not self.signal.changed and name == "btnSaveSignal":
-                    continue
-
-                if name == "gvLegend":
-                    continue
-
-                widget.show()
-
-            self.ui.btnMinimize.setIcon(QIcon(":/icons/data/icons/downarrow.png"))
-            self.is_minimized = False
-            self.setMinimumHeight(0)
-            self.setMaximumHeight(20000)
-
-            if self.ui.cbSignalView.currentIndex() > 0:
-                self.ui.gvLegend.refresh()
-            if self.signal is None:
-                self.set_empty_frame_visibilities()
-
     def set_qad_tooltip(self, noise_threshold):
         self.ui.cbSignalView.setToolTip(
             "<html><head/><body><p>Choose the view of your signal.</p><p>The quadrature demodulation uses a <span style=\" text-decoration: underline;\">threshold of magnitude,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this threshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" text-decoration: underline;\">context menu</span>.</p><p>Current noise threshold is: <b>" + str(
@@ -1065,3 +1029,23 @@ class SignalFrameController(QFrame):
         self.refresh_signal(draw_full_signal=draw_full_signal)
         self.refresh_signal_information(block=True)
         self.show_protocol(refresh=True)
+
+    @pyqtSlot()
+    def on_btn_filter_clicked(self):
+        if self.apply_filter_to_selection_only.isChecked():
+            start, end = self.ui.gvSignal.selection_area.start, self.ui.gvSignal.selection_area.end
+        else:
+            start, end = 0, self.signal.num_samples
+
+        self.signal.filter_range(int(start), int(end), self.dsp_filter)
+
+    @pyqtSlot()
+    def on_configure_filter_action_triggered(self):
+        self.filter_dialog.set_dsp_filter(self.dsp_filter)
+        self.filter_dialog.exec()
+
+    @pyqtSlot(Filter)
+    def on_filter_dialog_filter_accepted(self, dsp_filter: Filter):
+        if dsp_filter is not None:
+            self.dsp_filter = dsp_filter
+            self.set_filter_button_caption()

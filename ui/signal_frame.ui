@@ -374,41 +374,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      </item>
      <item row="0" column="0" colspan="2">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="9">
-        <widget class="QToolButton" name="btnMinimize">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../urh.qrc">
-           <normaloff>:/icons/data/icons/uparrow.png</normaloff>:/icons/data/icons/uparrow.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="3">
         <widget class="QToolButton" name="btnSaveSignal">
          <property name="minimumSize">
@@ -445,7 +410,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </property>
         </spacer>
        </item>
-       <item row="0" column="10">
+       <item row="0" column="9">
         <widget class="QToolButton" name="btnCloseSignal">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1022,7 +987,8 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
             <string>Filter (moving average)</string>
            </property>
            <property name="icon">
-            <iconset theme="view-filter"/>
+            <iconset theme="view-filter">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="popupMode">
             <enum>QToolButton::MenuButtonPopup</enum>
@@ -1136,7 +1102,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
  <tabstops>
   <tabstop>btnSaveSignal</tabstop>
   <tabstop>btnInfo</tabstop>
-  <tabstop>btnMinimize</tabstop>
   <tabstop>btnCloseSignal</tabstop>
   <tabstop>lineEditSignalName</tabstop>
   <tabstop>spinBoxNoiseTreshold</tabstop>

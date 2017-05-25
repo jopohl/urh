@@ -113,15 +113,12 @@ class MainController(QMainWindow):
         undo_action = self.undo_group.createUndoAction(self)
         undo_action.setIcon(QIcon.fromTheme("edit-undo"))
         undo_action.setShortcut(QKeySequence.Undo)
-        self.ui.menuEdit.insertAction(self.ui.actionMinimize_all, undo_action)
 
         redo_action = self.undo_group.createRedoAction(self)
         redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         redo_action.setShortcut(QKeySequence.Redo)
 
         self.ui.splitter.setSizes([0, 1])
-
-        self.ui.menuEdit.insertAction(self.ui.actionMinimize_all, redo_action)
         self.refresh_main_menu()
 
         self.apply_default_view(constants.SETTINGS.value('default_view', type=int))
@@ -129,10 +126,6 @@ class MainController(QMainWindow):
 
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
-
-        # Disabled because never used
-        self.ui.actionMinimize_all.setVisible(False)
-        self.ui.actionMaximize_all.setVisible(False)
 
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
@@ -162,8 +155,6 @@ class MainController(QMainWindow):
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
 
-        self.ui.actionMinimize_all.triggered.connect(self.signal_tab_controller.minimize_all)
-        self.ui.actionMaximize_all.triggered.connect(self.signal_tab_controller.maximize_all)
         self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
         self.signal_tab_controller.signal_created.connect(self.add_signal)
         self.signal_tab_controller.ui.scrollArea.files_dropped.connect(self.on_files_dropped)

@@ -16,9 +16,6 @@ class MessageItem(GraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
 
-        self.message_type_text = QGraphicsTextItem(self)
-        self.message_type_text.setFont(GraphicsItem.font)
-
     def update_flags(self):
         if self.scene().mode == 0:
             self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
@@ -26,7 +23,6 @@ class MessageItem(GraphicsItem):
     def width(self):
         labels = self.labels()
         width = self.number.boundingRect().width()
-        width += self.message_type_text.boundingRect().width()
         #width += 5
         width += sum([lbl.boundingRect().width() for lbl in labels])
         width += 5 * (len(labels) - 1)
@@ -93,8 +89,6 @@ class MessageItem(GraphicsItem):
 
         self.number.setPos(start_x, start_y)
         start_x += self.number.boundingRect().width()
-        self.message_type_text.setPos(start_x, start_y)
-        start_x += self.message_type_text.boundingRect().width()
 
         for label in labels:
             label.setPos(start_x, start_y)
@@ -107,9 +101,6 @@ class MessageItem(GraphicsItem):
 
         self.arrow.setLine(p_source.x(), start_y, p_destination.x(), start_y)
         super().update_position(x_pos, y_pos)
-
-    def refresh(self):
-        self.message_type_text.setPlainText(self.model_item.message_type.name)
 
     @property
     def source(self):

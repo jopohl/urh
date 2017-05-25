@@ -214,7 +214,12 @@ class SimulatorTabController(QWidget):
             self.ui.btnNextNav.setEnabled(not scene_item.next() is None)
             self.ui.btnPrevNav.setEnabled(not scene_item.prev() is None)
 
-            self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item #") + self.active_item.index())
+            text = self.tr("Detail view for item #") + self.active_item.index()
+
+            if isinstance(self.active_item, SimulatorMessage):
+                text += " (" + self.active_item.message_type.name + ")"
+
+            self.ui.lblMsgFieldsValues.setText(text)
         else:
             self.ui.navLineEdit.clear()
             self.ui.btnNextNav.setEnabled(False)

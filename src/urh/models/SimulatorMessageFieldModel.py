@@ -76,7 +76,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         elif role == Qt.BackgroundRole:
             if j == 3:
                 if (lbl.value_type_index == 2 and
-                        not self.controller.sim_expression_parser.validate_expression(lbl.formula)):
+                        not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
                     return QColor.fromRgb(255, 175, 175)
 
     def setData(self, index: QModelIndex, value, role=None):

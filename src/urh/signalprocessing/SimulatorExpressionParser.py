@@ -46,55 +46,81 @@ class SimulatorExpressionParser(QObject):
         self.sim_proto_manager.items_deleted.connect(self.update_label_list)
 
     def validate_expression(self, expr, is_formula=True):
+        valid = True
+        message = ""
+
         try:
             node = ast.parse(expr, mode='eval').body
-        except SyntaxError:
-            return False
+            self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
+        except SyntaxError as err:
+            valid = False
+            message = expr + "\n" + " " * err.offset + "^" + "\n" + str(err)
 
-        return self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
+        return (valid, message)
 
     def validate_formula_node(self, node):
         if isinstance(node, ast.Num):
-            return True
+            return
         elif isinstance(node, ast.BinOp):
-            return (type(node.op) in self.operators_formula and self.validate_formula_node(node.left) and
-                        self.validate_formula_node(node.right))
+            if type(node.op) not in self.operators_formula:
+                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+
+            self.validate_formula_node(node.left)
+            self.validate_formula_node(node.right)
         elif isinstance(node, ast.Attribute):
             return self.check_attribute_node(node)
         else:
-            return False
+            self.raise_syntax_error("", node.lineno, node.col_offset)
 
     def validate_condition_node(self, node):
         if isinstance(node, ast.UnaryOp):
-            return (type(node.op) in self.operators_condition and
-                    self.validate_condition_node(node.operand))
+            if type(node.op) not in self.operators_condition:
+                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+
+            self.validate_condition_node(node.operand)
         elif isinstance(node, ast.Compare):
-            return (len(node.ops) == 1 and len(node.comparators) == 1 and
-                    type(node.ops[0]) in self.operators_condition and
-                    self.check_compare_nodes(node.left, node.comparators[0]))
+            if not (len(node.ops) == 1 and len(node.comparators) == 1):
+                self.raise_syntax_error("", node.lineno, node.col_offset)
+
+            if type(node.ops[0]) not in self.operators_condition:
+                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+
+            self.check_compare_nodes(node.left, node.comparators[0])
         elif isinstance(node, ast.BoolOp):
-            return (type(node.op) in self.operators_condition and
-                    all(self.validate_condition_node(node) for node in node.values))
+            for node in node.values:
+                self.validate_condition_node(node)
         else:
-            return False
+            self.raise_syntax_error("", node.lineno, node.col_offset)
 
     def check_compare_nodes(self, left, right):
-        if (not (isinstance(left, ast.Attribute) and
-                self.check_attribute_node(left))):
-            return False
+        if not isinstance(left, ast.Attribute):
+            self.raise_syntax_error("the left-hand side of a comparison must be a label identifier",
+                left.lineno, left.col_offset)
+
+        self.check_attribute_node(left)
 
         if not isinstance(right, (ast.Num, ast.Str, ast.Attribute)):
-            return False
+            self.raise_syntax_error("the right-hand side of a comparison must be a number, a string or a label identifier",
+                right.lineno, right.col_offset)
 
-        if (isinstance(right, ast.Attribute) and not
-            self.check_attribute_node(right)):
-            return False
-
-        return True
+        if isinstance(right, ast.Attribute):
+            self.check_attribute_node(right)
 
     def check_attribute_node(self, node):
-        return (isinstance(node.value, ast.Name) and
-                    (node.value.id + "." + node.attr in self.label_list))
+        if not isinstance(node.value, ast.Name):
+            self.raise_syntax_error("", node.lineno, node.col_offset)
+
+        label_identifier = node.value.id + "." + node.attr
+
+        if label_identifier not in self.label_list:
+            self.raise_syntax_error("'" + label_identifier + "' is not a valid label identifier",
+                node.lineno, node.col_offset)
+
+    def raise_syntax_error(self, message, lineno, col_offset):
+        if message == "":
+            message = "_invalid syntax"
+
+        raise SyntaxError(message, ("<unknown>", lineno, col_offset, ""))
 
     def update_label_list(self):
         self.label_list.clear()

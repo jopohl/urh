@@ -11,6 +11,7 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class GraphicsItem(QGraphicsObject):
     font = None
+    font_bold = None
 
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(parent)
@@ -26,11 +27,11 @@ class GraphicsItem(QGraphicsObject):
         GraphicsItem.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         GraphicsItem.font.setPointSize(8)
 
-        font_bold = QFont(GraphicsItem.font)
-        font_bold.setWeight(QFont.DemiBold)
+        GraphicsItem.font_bold = QFont(GraphicsItem.font)
+        GraphicsItem.font_bold.setWeight(QFont.DemiBold)
 
         self.number = QGraphicsTextItem(self)
-        self.number.setFont(font_bold)
+        self.number.setFont(GraphicsItem.font_bold)
 
     def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
         self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)

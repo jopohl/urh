@@ -4,10 +4,12 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPen
+from PyQt5.QtGui import QPen, QFont
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
+    font_bold_italic = None
+
     def __init__(self, model_item: SimulatorProtocolLabel, parent=None):
         assert isinstance(model_item, SimulatorProtocolLabel)
         super().__init__(model_item=model_item, parent=parent)
@@ -24,10 +26,6 @@ class LabelItem(GraphicsItem):
 
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
-        # alpha-wert
-        if self.model_item.logging_active and self.scene().mode == 1:
-            painter.setPen(QPen(Qt.darkBlue, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
-
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
@@ -36,6 +34,8 @@ class LabelItem(GraphicsItem):
 
     def refresh(self):
         if self.model_item.logging_active and self.scene().mode == 1:
-            self.name.setHtml("<b>" +self.model_item.name + "</b>")
+            self.name.setFont(GraphicsItem.font_bold)
         else:
-            self.name.setPlainText(self.model_item.name)
+            self.name.setFont(GraphicsItem.font)
+
+        self.name.setPlainText(self.model_item.name)

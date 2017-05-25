@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtGui import QValidator
+import html
 
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
@@ -19,8 +20,10 @@ class ExpressionLineEdit(QLineEdit):
         validator.validation_status_changed.connect(self.on_validation_status_changed)
         super().setValidator(validator)
 
-    def on_validation_status_changed(self, status):
+    def on_validation_status_changed(self, status, message):
         style_sheet = 'QLineEdit { background-color: rgba(255, 175, 175) }' if status == QValidator.Intermediate else ''
+        message = html.escape(message)
+        self.setToolTip("<pre>" + message + "</pre>")
         self.setStyleSheet(style_sheet)
 
     def keyPressEvent(self, event):

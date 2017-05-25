@@ -9,6 +9,7 @@ class ExpressionLineEdit(QLineEdit):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setClearButtonEnabled(True)
 
     def setCompleter(self, completer):
         self.completer = completer

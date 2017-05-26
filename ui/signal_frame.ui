@@ -138,12 +138,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
        <property name="acceptDrops">
         <bool>false</bool>
        </property>

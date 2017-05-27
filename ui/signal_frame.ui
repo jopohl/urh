@@ -787,12 +787,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>15</width>
-             <height>0</height>
-            </size>
-           </property>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
@@ -827,7 +821,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
             <string>Number of currently selected samples.</string>
            </property>
            <property name="text">
-            <string>samples selected</string>
+            <string>selected</string>
            </property>
           </widget>
          </item>
@@ -866,6 +860,77 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
            </property>
            <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnFilter">
+           <property name="text">
+            <string>Filter (moving average)</string>
+           </property>
+           <property name="icon">
+            <iconset theme="view-filter">
+             <normaloff>.</normaloff>.</iconset>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::NoArrow</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="additionalInfos">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lStart">
+           <property name="text">
+            <string>Start:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxSelectionStart">
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>99999999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lEnd">
+           <property name="text">
+            <string>End:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxSelectionEnd">
+           <property name="maximum">
+            <number>99999999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -931,70 +996,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="additionalInfos">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lStart">
-           <property name="text">
-            <string>Start:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBoxSelectionStart">
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lEnd">
-           <property name="text">
-            <string>End:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBoxSelectionEnd"/>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="btnFilter">
-           <property name="text">
-            <string>Filter (moving average)</string>
-           </property>
-           <property name="icon">
-            <iconset theme="view-filter">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::MenuButtonPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-           <property name="arrowType">
-            <enum>Qt::NoArrow</enum>
-           </property>
-          </widget>
-         </item>
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
@@ -1032,7 +1033,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <item>
           <widget class="QLabel" name="lSamplesViewText">
            <property name="text">
-            <string>Samples in View</string>
+            <string>Samples in view</string>
            </property>
           </widget>
          </item>
@@ -1112,7 +1113,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   <tabstop>btnShowHideStartEnd</tabstop>
   <tabstop>spinBoxSelectionStart</tabstop>
   <tabstop>spinBoxSelectionEnd</tabstop>
-  <tabstop>spinBoxXZoom</tabstop>
  </tabstops>
  <resources>
   <include location="../urh.qrc"/>

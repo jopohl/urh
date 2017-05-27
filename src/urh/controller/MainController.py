@@ -113,10 +113,12 @@ class MainController(QMainWindow):
         undo_action = self.undo_group.createUndoAction(self)
         undo_action.setIcon(QIcon.fromTheme("edit-undo"))
         undo_action.setShortcut(QKeySequence.Undo)
+        self.ui.menuEdit.addAction(undo_action)
 
         redo_action = self.undo_group.createRedoAction(self)
         redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         redo_action.setShortcut(QKeySequence.Redo)
+        self.ui.menuEdit.addAction(redo_action)
 
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()

@@ -3,6 +3,7 @@ import copy
 import numpy as np
 from PyQt5.QtWidgets import QUndoCommand
 
+from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
@@ -17,12 +18,13 @@ class EditAction(Enum):
     delete = 3
     paste = 4
     insert = 5
+    filter = 6
 
 
 class EditSignalAction(QUndoCommand):
     def __init__(self, signal: Signal, mode: EditAction,
                  start: int = 0, end: int = 0, position: int = 0,
-                 data_to_insert: np.ndarray=None,
+                 data_to_insert: np.ndarray=None, dsp_filter: Filter=None,
                  protocol: ProtocolAnalyzer=None, cache_qad=True):
         """
 
@@ -46,6 +48,7 @@ class EditSignalAction(QUndoCommand):
         self.data_to_insert = data_to_insert
         self.protocol = protocol
         self.cache_qad = cache_qad
+        self.dsp_filter = dsp_filter
 
         if self.mode == EditAction.crop:
             self.setText("Crop Signal")
@@ -54,8 +57,11 @@ class EditSignalAction(QUndoCommand):
             if self.cache_qad:
                 self.pre_crop_qad = self.signal._qad[0:self.start]
                 self.post_crop_qad = self.signal._qad[self.end:]
-        elif self.mode == EditAction.mute:
-            self.setText("Mute Signal")
+        elif self.mode == EditAction.mute or self.mode == EditAction.filter:
+            if self.mode == EditAction.mute:
+                self.setText("Mute Signal")
+            elif self.mode == EditAction.filter:
+                self.setText("Filter Signal")
             self.orig_data_part = copy.copy(self.signal._fulldata[self.start:self.end])
             if self.cache_qad:
                 self.orig_qad_part = copy.copy(self.signal._qad[self.start:self.end])
@@ -108,6 +114,8 @@ class EditSignalAction(QUndoCommand):
             self.signal.insert_data(self.position, self.data_to_insert)
             if self.protocol:
                 keep_msg_indices = self.__get_keep_msg_indices_for_paste()
+        elif self.mode == EditAction.filter:
+            self.signal.filter_range(self.start, self.end, self.dsp_filter)
 
         # Restore old msg data
         if self.protocol:
@@ -130,7 +138,7 @@ class EditSignalAction(QUndoCommand):
             if self.cache_qad:
                 self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
 
-        elif self.mode == EditAction.mute:
+        elif self.mode == EditAction.mute or self.mode == EditAction.filter:
             self.signal._fulldata[self.start:self.end] = self.orig_data_part
             if self.cache_qad:
                 self.signal._qad[self.start:self.end] = self.orig_qad_part

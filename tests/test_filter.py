@@ -1,22 +1,17 @@
 import unittest
 
 import numpy as np
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.FilterDialogController import FilterDialogController
-from urh.signalprocessing.Filter import Filter, FilterType
+from urh.signalprocessing.Filter import Filter
 
 
 class TestFilter(QtTestCase):
     def setUp(self):
         super().setUp()
 
-
         self.add_signal_to_form("unaveraged.complex")
         self.sig_frame = self.form.signal_tab_controller.signal_frames[0]
-
 
     def test_fir_filter(self):
         input_signal = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 42], dtype=np.complex64)
@@ -56,7 +51,9 @@ class TestFilter(QtTestCase):
 
         old_signal = self.sig_frame.signal._fulldata.copy()
 
+        self.assertFalse(self.sig_frame.undo_stack.canUndo())
         self.sig_frame.ui.btnFilter.click()
+        self.assertTrue(self.sig_frame.undo_stack.canUndo())
 
         filtered_signal = self.sig_frame.signal._fulldata
         self.assertEqual(len(old_signal), len(filtered_signal))
@@ -66,6 +63,12 @@ class TestFilter(QtTestCase):
                 self.assertNotEqual(old_sample, filtered_sample, msg=str(i))
             else:
                 self.assertEqual(old_sample, filtered_sample, msg=str(i))
+
+        self.sig_frame.undo_stack.command(0).undo()
+        self.assertTrue(np.array_equal(old_signal, self.sig_frame.signal.data))
+
+        self.sig_frame.undo_stack.command(0).redo()
+        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.data))
 
     def test_filter_caption(self):
         self.assertIn("moving average", self.sig_frame.ui.btnFilter.text())
@@ -77,6 +80,7 @@ class TestFilter(QtTestCase):
         self.sig_frame.filter_dialog.ui.buttonBox.accepted.emit()
 
         self.assertIn("custom", self.sig_frame.ui.btnFilter.text())
+
 
 if __name__ == '__main__':
     unittest.main()

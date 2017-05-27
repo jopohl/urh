@@ -2,8 +2,9 @@ import math
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout, QMenu, QWidget, QUndoStack, \
+from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
     QCheckBox, QApplication
+from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -966,31 +967,19 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_btn_show_hide_start_end_clicked(self):
-        if self.ui.btnShowHideStartEnd.isChecked():
+        show = self.ui.btnShowHideStartEnd.isChecked()
+        if show:
             self.ui.btnShowHideStartEnd.setIcon(QIcon.fromTheme("arrow-down-double"))
             self.ui.verticalLayout.insertItem(2, self.ui.additionalInfos)
-            self.ui.lStart.show()
-            self.ui.lEnd.show()
-            self.ui.btnFilter.show()
-            self.ui.lSamplesInView.show()
-            self.ui.lStrich.show()
-            self.ui.lSamplesTotal.show()
-            self.ui.lSamplesViewText.show()
-            self.ui.spinBoxSelectionStart.show()
-            self.ui.spinBoxSelectionEnd.show()
-
         else:
             self.ui.btnShowHideStartEnd.setIcon(QIcon.fromTheme("arrow-up-double"))
-            self.ui.lStart.hide()
-            self.ui.lEnd.hide()
-            self.ui.lSamplesInView.hide()
-            self.ui.lStrich.hide()
-            self.ui.lSamplesTotal.hide()
-            self.ui.btnFilter.hide()
-            self.ui.lSamplesViewText.hide()
-            self.ui.spinBoxSelectionStart.hide()
-            self.ui.spinBoxSelectionEnd.hide()
             self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
+
+        for i in range(self.ui.additionalInfos.count()):
+            try:
+                self.ui.additionalInfos.itemAt(i).widget().setVisible(show)
+            except AttributeError:
+                pass
 
     @pyqtSlot()
     def on_spinbox_tolerance_editing_finished(self):
@@ -1037,7 +1026,9 @@ class SignalFrameController(QFrame):
         else:
             start, end = 0, self.signal.num_samples
 
-        self.signal.filter_range(int(start), int(end), self.dsp_filter)
+        filter_action = EditSignalAction(signal=self.signal, mode=EditAction.filter, start=start, end=end,
+                                         dsp_filter=self.dsp_filter, protocol=self.proto_analyzer)
+        self.undo_stack.push(filter_action)
 
     @pyqtSlot()
     def on_configure_filter_action_triggered(self):

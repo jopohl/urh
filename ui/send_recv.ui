@@ -36,9 +36,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>392</width>
-         <height>1111</height>
+         <y>-604</y>
+         <width>387</width>
+         <height>1186</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -520,12 +520,6 @@
            </item>
            <item row="12" column="0">
             <widget class="QLabel" name="lTimeText">
-             <property name="font">
-              <font>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
-             </property>
              <property name="text">
               <string>Time (in seconds):</string>
              </property>
@@ -538,12 +532,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
              </property>
              <property name="text">
               <string>Samples captured:</string>
@@ -712,12 +700,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
              </property>
              <property name="text">
               <string>Signal size (in MiB):</string>

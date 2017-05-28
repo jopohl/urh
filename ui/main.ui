@@ -199,7 +199,7 @@
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -226,9 +226,6 @@
     <property name="title">
      <string>Edi&amp;t</string>
     </property>
-    <addaction name="actionMinimize_all"/>
-    <addaction name="actionMaximize_all"/>
-    <addaction name="separator"/>
     <addaction name="actionDecoding"/>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
@@ -385,26 +382,11 @@
   </action>
   <action name="actionClose_all">
    <property name="icon">
-    <iconset theme="window-close"/>
+    <iconset theme="window-close">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Close all</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionMinimize_all">
-   <property name="text">
-    <string>&amp;Minimize all</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionMaximize_all">
-   <property name="text">
-    <string>Maximize &amp;all</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -498,7 +480,8 @@
   </action>
   <action name="actionRecord">
    <property name="icon">
-    <iconset theme="media-record"/>
+    <iconset theme="media-record">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Record signal...</string>

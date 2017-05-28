@@ -98,9 +98,9 @@ class TestSignalTabGUI(QtTestCase):
     def test_show_hide_start_end(self):
         self.add_signal_to_form("esaver.complex")
         frame = self.form.signal_tab_controller.signal_frames[0]
-        self.assertEqual(frame.ui.btnShowHideStartEnd.text(), "+")
+        self.assertFalse(frame.ui.btnShowHideStartEnd.isChecked())
         frame.ui.btnShowHideStartEnd.click()
-        self.assertEqual(frame.ui.btnShowHideStartEnd.text(), "-")
+        self.assertTrue(frame.ui.btnShowHideStartEnd.isChecked())
 
     def test_apply_to_all(self):
         self.add_signal_to_form("esaver.complex")

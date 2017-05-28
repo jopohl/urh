@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>439</height>
+    <height>490</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -137,12 +137,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <width>16777215</width>
          <height>16777215</height>
         </size>
-       </property>
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
        </property>
        <property name="acceptDrops">
         <bool>false</bool>
@@ -374,41 +368,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      </item>
      <item row="0" column="0" colspan="2">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="9">
-        <widget class="QToolButton" name="btnMinimize">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../urh.qrc">
-           <normaloff>:/icons/data/icons/uparrow.png</normaloff>:/icons/data/icons/uparrow.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="3">
         <widget class="QToolButton" name="btnSaveSignal">
          <property name="minimumSize">
@@ -445,7 +404,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          </property>
         </spacer>
        </item>
-       <item row="0" column="10">
+       <item row="0" column="9">
         <widget class="QToolButton" name="btnCloseSignal">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -821,24 +780,12 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QPushButton" name="btnShowHideStartEnd">
+          <widget class="QToolButton" name="btnShowHideStartEnd">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>15</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>15</width>
-             <height>32</height>
-            </size>
            </property>
            <property name="autoFillBackground">
             <bool>false</bool>
@@ -849,14 +796,12 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
            <property name="text">
             <string>-</string>
            </property>
-           <property name="autoDefault">
-            <bool>false</bool>
+           <property name="icon">
+            <iconset theme="arrow-down-double">
+             <normaloff>.</normaloff>.</iconset>
            </property>
-           <property name="default">
-            <bool>false</bool>
-           </property>
-           <property name="flat">
-            <bool>false</bool>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -876,7 +821,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
             <string>Number of currently selected samples.</string>
            </property>
            <property name="text">
-            <string>samples selected</string>
+            <string>selected</string>
            </property>
           </widget>
          </item>
@@ -915,6 +860,77 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
            </property>
            <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnFilter">
+           <property name="text">
+            <string>Filter (moving average)</string>
+           </property>
+           <property name="icon">
+            <iconset theme="view-filter">
+             <normaloff>.</normaloff>.</iconset>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::NoArrow</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="additionalInfos">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lStart">
+           <property name="text">
+            <string>Start:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxSelectionStart">
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>99999999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lEnd">
+           <property name="text">
+            <string>End:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxSelectionEnd">
+           <property name="maximum">
+            <number>99999999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -980,37 +996,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="additionalInfos">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lStart">
-           <property name="text">
-            <string>Start:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBoxSelectionStart">
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lEnd">
-           <property name="text">
-            <string>End:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBoxSelectionEnd"/>
-         </item>
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
@@ -1048,7 +1033,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <item>
           <widget class="QLabel" name="lSamplesViewText">
            <property name="text">
-            <string>Samples in View</string>
+            <string>Samples in view</string>
            </property>
           </widget>
          </item>
@@ -1112,7 +1097,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
  <tabstops>
   <tabstop>btnSaveSignal</tabstop>
   <tabstop>btnInfo</tabstop>
-  <tabstop>btnMinimize</tabstop>
   <tabstop>btnCloseSignal</tabstop>
   <tabstop>lineEditSignalName</tabstop>
   <tabstop>spinBoxNoiseTreshold</tabstop>
@@ -1129,7 +1113,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
   <tabstop>btnShowHideStartEnd</tabstop>
   <tabstop>spinBoxSelectionStart</tabstop>
   <tabstop>spinBoxSelectionEnd</tabstop>
-  <tabstop>spinBoxXZoom</tabstop>
  </tabstops>
  <resources>
   <include location="../urh.qrc"/>

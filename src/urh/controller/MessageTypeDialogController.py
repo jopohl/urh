@@ -19,7 +19,8 @@ class MessageTypeDialogController(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogMessageType()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        # May lead to segfaults
+        # self.setAttribute(Qt.WA_DeleteOnClose)
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()

@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -286,30 +286,17 @@
          <widget class="QWidget" name="page_empty"/>
          <widget class="QWidget" name="page_goto_action">
           <layout class="QGridLayout" name="verticalLayout_6">
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
               <string>Goto:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="1">
             <widget class="QComboBox" name="goto_combobox"/>
            </item>
-           <item row="2" column="0">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="2">
+           <item row="0" column="2">
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -318,6 +305,19 @@
               <size>
                <width>40</width>
                <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="0" colspan="3">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
             </spacer>
@@ -349,17 +349,14 @@
          </widget>
          <widget class="QWidget" name="page_rule">
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="1" column="1">
-            <widget class="ExpressionLineEdit" name="ruleCondLineEdit"/>
-           </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
               <string>Condition:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0" colspan="2">
+           <item row="1" column="0" colspan="2">
             <spacer name="verticalSpacer_3">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -371,6 +368,13 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="0" column="1">
+            <widget class="ExpressionLineEdit" name="ruleCondLineEdit">
+             <property name="placeholderText">
+              <string>not (item1.crc == 0b1010 and item2.length &gt;=3)</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -390,19 +394,6 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="extProgramLineEdit">
              <property name="readOnly">
@@ -419,6 +410,19 @@
               <string>...</string>
              </property>
             </widget>
+           </item>
+           <item row="4" column="0" colspan="5">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -449,7 +453,7 @@
   <customwidget>
    <class>ExpressionLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>urh.ui.delegates/ProtocolValueDelegate.h</header>
+   <header>urh.ui.ExpressionLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

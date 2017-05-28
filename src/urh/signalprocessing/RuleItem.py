@@ -65,7 +65,7 @@ class RuleConditionItem(GraphicsItem):
     def refresh(self):
         if len(self.model_item.condition):
             if len(self.model_item.condition) > 20:
-                self.desc.setPlainText(self.model_item.condition[:21] + "...")
+                self.desc.setPlainText(self.model_item.condition[:20] + "...")
             else:
                 self.desc.setPlainText(self.model_item.condition)
         elif self.model_item.type != ConditionType.ELSE:

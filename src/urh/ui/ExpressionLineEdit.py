@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtGui import QValidator
-import html
 
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
@@ -12,10 +11,10 @@ class ExpressionLineEdit(QLineEdit):
         self.setClearButtonEnabled(True)
 
     def setCompleter(self, completer):
-        self.completer = completer
+        self.e_completer = completer
 
-        self.completer.setWidget(self)
-        self.completer.activated.connect(self.insert_completion)
+        self.e_completer.setWidget(self)
+        self.e_completer.activated.connect(self.insert_completion)
 
     def setValidator(self, validator: RuleExpressionValidator):
         validator.validation_status_changed.connect(self.on_validation_status_changed)
@@ -23,8 +22,8 @@ class ExpressionLineEdit(QLineEdit):
 
     def on_validation_status_changed(self, status, message):
         style_sheet = 'QLineEdit { background-color: rgba(255, 175, 175) }' if status == QValidator.Intermediate else ''
-        message = html.escape(message)
-        self.setToolTip("<pre>" + message + "</pre>")
+
+        self.setToolTip(message)
         self.setStyleSheet(style_sheet)
 
     def keyPressEvent(self, event):
@@ -33,18 +32,18 @@ class ExpressionLineEdit(QLineEdit):
         start, end = self.get_token_under_cursor()
         token_word = self.text()[start:end]
 
-        self.completer.setCompletionPrefix(token_word)
+        self.e_completer.setCompletionPrefix(token_word)
 
-        if (len(token_word) < 1 or (self.completer.completionCount() == 1 and
-                self.completer.currentCompletion() == token_word)):
-            self.completer.popup().hide()
+        if (len(token_word) < 1 or (self.e_completer.completionCount() == 1 and
+                self.e_completer.currentCompletion() == token_word)):
+            self.e_completer.popup().hide()
             return
 
         cr = self.cursorRect()
-        cr.setWidth(self.completer.popup().sizeHintForColumn(0) +
-                    self.completer.popup().verticalScrollBar().sizeHint().width())
+        cr.setWidth(self.e_completer.popup().sizeHintForColumn(0) +
+                    self.e_completer.popup().verticalScrollBar().sizeHint().width())
 
-        self.completer.complete(cr)
+        self.e_completer.complete(cr)
 
     def get_token_under_cursor(self):
         if self.selectionStart() >= 0:

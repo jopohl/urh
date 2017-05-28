@@ -1,4 +1,5 @@
 import ast
+import html
 import operator as op
 
 from PyQt5.QtCore import pyqtSignal, QObject
@@ -6,6 +7,10 @@ from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 class SimulatorExpressionParser(QObject):
     label_list_updated = pyqtSignal()
+
+    formula_help = "<html><head/><body><p><b>Formula</b></p><p><u>Operators:</u> <code>+</code> (Addition), <code>-</code> (Subtraction), <code>*</code> (Multiplication), <code>/</code> (Division)</p><p><u>Bitwise operations:</u> <code>|</code> (Or), <code>^</code> (Exclusive Or), <code>&amp;</code> (And), <code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift), <code>~</code> (Inversion)</p><p><u>Numeric literals:</u> <code>14</code> (dec), <code>0xe</code> (hex), <code>0b1110</code> (bin), <code>0o16</code> (oct)</p><u>Examples:</u><ul><li><code>item1.sequence_number + 1</code></li><li><code>~ (item1.preamble ^ 0b1110)</code></li></ul></body></html>"
+
+    rule_condition_help = "<html><head/><body><p><b>Rule condition</b></p><p><u>Boolean operations:</u> <code>and</code>, <code>or</code>, <code>not</code></p><p><u>Comparison operations:</u> <code>==</code> (equal), <code>!=</code> (not equal), <code>&lt;</code> (lower), <code>&lt;=</code> (lower equal), <code>&gt;</code> (greater), <code>&gt;=</code> (greater equal)</p><p><u>Numeric literals:</u> <code>14</code> (dec), <code>0xe</code> (hex), <code>0b1110</code> (bin), <code>0o16</code> (oct)</p><p><u>String literals:</u> <code>&quot;abc&quot;</code> or <code>'abc'</code></p><p><u>Examples:</u></p><ul><li><code>item1.data == &quot;abc&quot;</code></li><li><code>not (item3.source_address == 0x123 or item1.length &gt;= 5)</code></li></ul></body></html>"
 
     operators_formula = {
                             ast.Add: op.add,
@@ -47,14 +52,19 @@ class SimulatorExpressionParser(QObject):
 
     def validate_expression(self, expr, is_formula=True):
         valid = True
-        message = ""
 
         try:
-            node = ast.parse(expr, mode='eval').body
-            self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
+            if len(expr):
+                node = ast.parse(expr, mode='eval').body
+                self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
         except SyntaxError as err:
             valid = False
-            message = expr + "\n" + " " * err.offset + "^" + "\n" + str(err)
+            message = "<pre>" + html.escape(expr) + "<br/>" + " " * err.offset + "^</pre>" + str(err)
+        else:
+            if is_formula:
+                message = self.formula_help
+            else:
+                message = self.rule_condition_help
 
         return (valid, message)
 
@@ -67,6 +77,11 @@ class SimulatorExpressionParser(QObject):
 
             self.validate_formula_node(node.left)
             self.validate_formula_node(node.right)
+        elif isinstance(node, ast.UnaryOp):
+            if type(node.op) not in self.operators_formula:
+                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+
+            self.validate_formula_node(node.operand)
         elif isinstance(node, ast.Attribute):
             return self.check_attribute_node(node)
         else:
@@ -120,7 +135,7 @@ class SimulatorExpressionParser(QObject):
         if message == "":
             message = "_invalid syntax"
 
-        raise SyntaxError(message, ("<unknown>", lineno, col_offset, ""))
+        raise SyntaxError(message, ("", lineno, col_offset, ""))
 
     def update_label_list(self):
         self.label_list.clear()

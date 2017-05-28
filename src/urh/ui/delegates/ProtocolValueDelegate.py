@@ -40,8 +40,10 @@ class ProtocolValueDelegate(QStyledItemDelegate):
 
         if model.message_type[row].value_type_index == 2:
             line_edit = ExpressionLineEdit(parent)
+            line_edit.setPlaceholderText("(item1.length + 3) ^ 0x12")
             line_edit.setCompleter(QCompleter(self.controller.completer_model, line_edit))
             line_edit.setValidator(RuleExpressionValidator(self.controller.sim_expression_parser))
+            line_edit.setToolTip(self.controller.sim_expression_parser.formula_help)
             return line_edit
         elif model.message_type[row].value_type_index == 3:
             return ExternalProgramWidget(parent)

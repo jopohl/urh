@@ -67,8 +67,9 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
-        self.completer_model = QStringListModel(self.sim_expression_parser.label_list, self.ui.ruleCondLineEdit)
+        self.completer_model = QStringListModel(self.sim_expression_parser.label_list)
         self.ui.ruleCondLineEdit.setCompleter(QCompleter(self.completer_model, self.ui.ruleCondLineEdit))
+        self.ui.ruleCondLineEdit.setToolTip(self.sim_expression_parser.rule_condition_help)
 
         self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
@@ -106,7 +107,7 @@ class SimulatorTabController(QWidget):
         self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
         self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
-        self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_changed)
+        self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
         self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
         self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
@@ -232,7 +233,7 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.resize_vertical_header()
 
     @pyqtSlot()
-    def on_rule_cond_line_edit_changed(self):
+    def on_rule_cond_line_edit_text_changed(self):
         self.active_item.condition = self.ui.ruleCondLineEdit.text()
         self.item_updated(self.active_item)
 

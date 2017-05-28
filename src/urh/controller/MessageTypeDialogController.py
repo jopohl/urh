@@ -19,8 +19,7 @@ class MessageTypeDialogController(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogMessageType()
         self.ui.setupUi(self)
-        # May lead to segfaults
-        # self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()
@@ -73,6 +72,8 @@ class MessageTypeDialogController(QDialog):
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 3))
 
     def closeEvent(self, event: QCloseEvent):
+        self.ui.tblViewRuleset.setItemDelegateForColumn(2, None)
+        self.ui.tblViewRuleset.setItemDelegateForColumn(3, None)
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 

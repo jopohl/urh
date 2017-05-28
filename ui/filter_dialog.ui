@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>469</width>
+    <height>327</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Configure filter</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Number of taps:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="3" column="1">
     <widget class="QSpinBox" name="spinBoxNumTaps">
      <property name="minimum">
       <number>1</number>
@@ -34,14 +34,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="6" column="0">
     <widget class="QRadioButton" name="radioButtonCustomTaps">
      <property name="text">
       <string>Custom taps:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="11" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -54,7 +54,7 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <widget class="QLineEdit" name="lineEditCustomTaps">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can configure custom filter taps here either explicit using [0.1, 0.2, 0.3] or with &lt;span style=&quot; font-weight:600;&quot;&gt;python programming shortcuts&lt;/span&gt; like [0.1] * 3 + [0.2] * 4 will result in [0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -64,7 +64,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <widget class="QRadioButton" name="radioButtonMovingAverage">
      <property name="text">
       <string>Moving average filter</string>
@@ -74,7 +74,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="10" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -87,7 +87,22 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps.  By default we use 10 taps with each tap set to 0.1 producing a moving average filter.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -95,7 +110,7 @@
       </font>
      </property>
      <property name="text">
-      <string>You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps. These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here.</string>
+      <string>These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

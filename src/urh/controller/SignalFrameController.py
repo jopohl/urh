@@ -363,11 +363,6 @@ class SignalFrameController(QFrame):
         gv_legend = self.ui.gvLegend
         gv_legend.ysep = -self.signal.qad_center
 
-        # Save current visible region for restoring it after drawing
-        y, h = self.ui.gvSignal.sceneRect().y(), self.ui.gvSignal.sceneRect().height()
-        vr = self.ui.gvSignal.view_rect()
-        x, w = vr.x(), vr.width()
-
         self.scene_manager.scene_type = self.ui.cbSignalView.currentIndex()
         self.scene_manager.init_scene()
         if full_signal:
@@ -389,12 +384,6 @@ class SignalFrameController(QFrame):
 
         self.ui.gvSignal.sel_area_active = True
         self.ui.gvSignal.y_sep = -self.signal.qad_center
-
-        if not full_signal:
-            # Restore Zoom
-            w = w if w < self.signal.num_samples else self.signal.num_samples
-            self.ui.gvSignal.fitInView(QRectF(x, y, w, h))
-            self.ui.gvSignal.centerOn(x + w / 2, self.ui.gvSignal.y_center)
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
         if old_protoview == self.proto_view:
@@ -489,10 +478,10 @@ class SignalFrameController(QFrame):
                     read_pause = False
 
             self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
-            # self.ui.txtEdProto.setPlainText(self.proto_analyzer.plain_to_string(self.proto_view))
-            try:    # Without try/except: segfault (TypeError) when changing sample_rate in info dialog of signal
+            try:
                 self.restore_protocol_selection(sel_start, sel_end, start_message, end_message, old_view)
             except TypeError:
+                # Without try/except: segfault (TypeError) when changing sample_rate in info dialog of signal
                 pass
 
             self.ui.txtEdProto.blockSignals(False)
@@ -651,8 +640,7 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(int, int)
     def update_selection_area(self, start, end):
-        self.ui.lNumSelectedSamples.setText(str(end - start))
-        self.__set_duration()
+        self.update_number_selected_samples()
         self.ui.spinBoxSelectionStart.blockSignals(True)
         self.ui.spinBoxSelectionStart.setValue(start)
         self.ui.spinBoxSelectionStart.blockSignals(False)
@@ -718,6 +706,9 @@ class SignalFrameController(QFrame):
         text_edit = self.ui.txtEdProto
         end_pos = text_edit.textCursor().selectionEnd()
         start_pos = text_edit.textCursor().selectionStart()
+        if start_pos == end_pos == -1:
+            return
+
         forward_selection = text_edit.textCursor().anchor() <= text_edit.textCursor().position()
 
         if start_pos > end_pos:
@@ -863,12 +854,7 @@ class SignalFrameController(QFrame):
         self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
         self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
 
-        selected = 0
-        if not self.ui.gvSignal.selection_area.is_empty:
-            selected = self.ui.gvSignal.selection_area.width
-
-        self.ui.lNumSelectedSamples.setText(str(selected))
-        self.__set_duration()
+        self.update_number_selected_samples()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
         self.ui.gvSignal.sel_area_active = True

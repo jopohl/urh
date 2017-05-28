@@ -28,6 +28,7 @@ class FilterDialogController(QDialog):
     def create_connects(self):
         self.ui.radioButtonMovingAverage.clicked.connect(self.on_radio_button_moving_average_clicked)
         self.ui.radioButtonCustomTaps.clicked.connect(self.on_radio_button_custom_taps_clicked)
+        self.ui.spinBoxNumTaps.valueChanged.connect(self.set_error_status)
         self.ui.lineEditCustomTaps.textEdited.connect(self.set_error_status)
         self.ui.buttonBox.accepted.connect(self.on_accept_clicked)
         self.ui.buttonBox.rejected.connect(self.reject)
@@ -53,9 +54,13 @@ class FilterDialogController(QDialog):
                 return None
 
     def set_error_status(self):
-        if self.build_filter() is None:
+        dsp_filter = self.build_filter()
+        if dsp_filter is None:
             self.ui.lineEditCustomTaps.setStyleSheet("background: red")
             self.ui.lineEditCustomTaps.setToolTip(self.error_message)
+        elif len(dsp_filter.taps) != self.ui.spinBoxNumTaps.value():
+            self.ui.lineEditCustomTaps.setStyleSheet("background: yellow")
+            self.ui.lineEditCustomTaps.setToolTip("The number of the filter taps does not match the configured number of taps. I will use your configured filter taps.")
         else:
             self.ui.lineEditCustomTaps.setStyleSheet("")
             self.ui.lineEditCustomTaps.setToolTip("")

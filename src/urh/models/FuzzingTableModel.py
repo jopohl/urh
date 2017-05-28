@@ -79,12 +79,12 @@ class FuzzingTableModel(QAbstractTableModel):
             self.update()
         elif self.proto_view == 1 and value in hex_chars:
             l = list(self.data[i])
-            l[j:4 * (j + 1)] = "{0:04b}".format(int(value, 16))
+            l[4*j : 4 * (j + 1)] = "{0:04b}".format(int(value, 16))
             self.data[i] = ''.join(l)
             self.update()
         elif self.proto_view == 2 and len(value) == 1:
             l = list(self.data[i])
-            l[j:8 * (j + 1)] = "{0:08b}".format(ord(value))
+            l[8*j : 8 * (j + 1)] = "{0:08b}".format(ord(value))
             self.data[i] = ''.join(l)
             self.update()
 
@@ -93,46 +93,46 @@ class FuzzingTableModel(QAbstractTableModel):
     def flags(self, QModelIndex):
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
-    def add_range(self, start: int, end: int, step: int, labels=None):
-        if labels is None:
-            labels = [self.fuzzing_label]
-
-        for l in labels:
-            e = end if end < l.fuzz_maximum else l.fuzz_maximum
-            for i in range(start, e, step):
-                l.add_decimal_fuzz_value(i)
+    def add_range(self, start: int, end: int, step: int):
+        lbl = self.fuzzing_label
+        e = end if end < lbl.fuzz_maximum else lbl.fuzz_maximum
+        for i in range(start, e, step):
+            lbl.add_decimal_fuzz_value(i)
 
         self.update()
 
-    def add_boundaries(self, lower: int, upper: int, num_vals:int, labels=None):
-        if labels is None:
-            labels = [self.fuzzing_label]
-
+    def add_boundaries(self, lower: int, upper: int, num_vals:int):
+        lbl = self.fuzzing_label
 
         if lower > -1:
-            for l in labels:
-                low = lower if lower < l.fuzz_maximum + num_vals else l.fuzz_maximum - num_vals
-                for i in range(low, low + num_vals):
-                    l.add_decimal_fuzz_value(i)
+            low = lower if lower < lbl.fuzz_maximum + num_vals else lbl.fuzz_maximum - num_vals
+            for i in range(low, low + num_vals):
+                lbl.add_decimal_fuzz_value(i)
 
         if upper > -1:
-            for l in labels:
-                up = upper if upper < l.fuzz_maximum + 1 else l.fuzz_maximum - 1
-                for i in range(up - num_vals + 1, up + 1):
-                    l.add_decimal_fuzz_value(i)
+            up = upper if upper < lbl.fuzz_maximum + 1 else lbl.fuzz_maximum - 1
+            for i in range(up - num_vals + 1, up + 1):
+                lbl.add_decimal_fuzz_value(i)
 
         self.update()
 
-    def add_random(self, number: int, minimum: int, maximum: int, labels=None):
-        if labels is None:
-            labels = [self.fuzzing_label]
+    def add_random(self, number: int, minimum: int, maximum: int):
+        lbl = self.fuzzing_label
+        mini = minimum if minimum < lbl.fuzz_maximum else lbl.fuzz_maximum
+        maxi = maximum if maximum < lbl.fuzz_maximum else lbl.fuzz_maximum
 
-        for l in labels:
-            mini = minimum if minimum < l.fuzz_maximum else l.fuzz_maximum
-            maxi = maximum if maximum < l.fuzz_maximum else l.fuzz_maximum
-
-            random_vals = numpy.random.randint(mini, maxi + 1, number)
-            for val in random_vals:
-                l.add_decimal_fuzz_value(val)
+        random_vals = numpy.random.randint(mini, maxi + 1, number)
+        for val in random_vals:
+            lbl.add_decimal_fuzz_value(val)
 
         self.update()
+
+    def repeat_fuzzing_values(self, start: int, end: int, times: int):
+        lbl = self.fuzzing_label
+        for i in reversed(range(start, end)):
+            val = lbl.fuzz_values[i]
+            for _ in range(times):
+                lbl.fuzz_values.insert(i, val)
+
+        self.update()
+

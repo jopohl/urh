@@ -74,3 +74,4 @@ class FilterDialogController(QDialog):
     def on_accept_clicked(self):
         dsp_filter = self.build_filter()
         self.filter_accepted.emit(dsp_filter)
+        self.accept()

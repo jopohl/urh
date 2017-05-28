@@ -163,6 +163,14 @@ class SimulatorScene(QGraphicsScene):
 
         self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
 
+    def log_toggle_selected_items(self):
+        items = self.selectedItems()
+
+        for item in items:
+            item.model_item.logging_active = not item.model_item.logging_active
+
+        self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
+
     def log_all_items(self, logging_active: bool):
         self.select_all_items()
         self.log_selected_items(logging_active)

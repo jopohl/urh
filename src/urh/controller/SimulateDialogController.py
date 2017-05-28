@@ -29,6 +29,7 @@ class SimulateDialogController(QDialog):
 
         self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
+        self.ui.btnLog.clicked.connect(self.on_btn_log_clicked)
 
     def on_project_updated(self):
         self.simulate_list_model.participants = self.project_manager.participants
@@ -39,3 +40,6 @@ class SimulateDialogController(QDialog):
 
     def on_btn_log_none_clicked(self):
         self.simulator_scene.log_all_items(False)
+
+    def on_btn_log_clicked(self):
+        self.simulator_scene.log_toggle_selected_items()

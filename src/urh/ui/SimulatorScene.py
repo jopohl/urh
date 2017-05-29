@@ -1,6 +1,6 @@
 import copy
 
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView, QGraphicsItem
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtCore import Qt
 
@@ -157,6 +157,9 @@ class SimulatorScene(QGraphicsScene):
 
     def log_selected_items(self, logging_active: bool):
         items = self.selectedItems()
+        self.log_items(items, logging_active)
+
+    def log_items(self, items, logging_active: bool):
 
         for item in items:
             item.model_item.logging_active = logging_active
@@ -172,9 +175,11 @@ class SimulatorScene(QGraphicsScene):
         self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
 
     def log_all_items(self, logging_active: bool):
-        self.select_all_items()
-        self.log_selected_items(logging_active)
-        self.clearSelection()
+        self.log_items(self.selectable_items(), logging_active)
+
+    def selectable_items(self):
+        return [item for item in self.items() if isinstance(item, GraphicsItem) and
+                 item.is_selectable()]
 
     def move_items(self, items, ref_item, position):
         new_pos, new_parent = self.insert_at(ref_item, position)

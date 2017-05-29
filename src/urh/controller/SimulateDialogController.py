@@ -21,11 +21,14 @@ class SimulateDialogController(QDialog):
 
         self.simulate_list_model = SimulateListModel(self.project_manager.participants)
         self.ui.listViewSimulate.setModel(self.simulate_list_model)
+        self.update_buttons()
 
         self.create_connects()
 
     def create_connects(self):
         self.project_manager.project_updated.connect(self.on_project_updated)
+        self.simulator_scene.selectionChanged.connect(self.update_buttons)
+        self.sim_proto_manager.items_updated.connect(self.update_buttons)
 
         self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
@@ -45,4 +48,9 @@ class SimulateDialogController(QDialog):
         self.simulator_scene.log_toggle_selected_items()
 
     def update_buttons(self):
-        pass
+        selectable_items = self.simulator_scene.selectable_items()
+        all_items_selected = all(item.model_item.logging_active for item in selectable_items)
+        any_item_selected = any(item.model_item.logging_active for item in selectable_items)
+        self.ui.btnLog.setEnabled(len(self.simulator_scene.selectedItems()))
+        self.ui.btnLogAll.setEnabled(not all_items_selected)
+        self.ui.btnLogNone.setEnabled(any_item_selected)

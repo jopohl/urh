@@ -111,6 +111,9 @@ class RuleConditionItem(GraphicsItem):
         self.update()
 
     def paint(self, painter, option, widget):
+        if self.scene().mode == 1:
+            self.setOpacity(1 if self.model_item.logging_active else 0.3)
+
         painter.setOpacity(constants.SELECTION_OPACITY)
 
         if self.hover_active or self.isSelected():
@@ -130,9 +133,6 @@ class RuleConditionItem(GraphicsItem):
 
         if self.drag_over:
             self.paint_drop_indicator(painter)
-
-        if self.scene().mode == 1:
-            self.setOpacity(1 if self.model_item.logging_active else 0.3)
 
     def paint_drop_indicator(self, painter):
         painter.setPen(QPen(Qt.darkRed, 2, Qt.SolidLine))

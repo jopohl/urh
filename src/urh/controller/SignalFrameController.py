@@ -824,7 +824,7 @@ class SignalFrameController(QFrame):
             return
 
         start_index = int(protocol.convert_index(start_index, 0, self.proto_view, True)[0])
-        end_index = int(math.ceil(protocol.convert_index(end_index, 0, self.proto_view, True)[1]))
+        end_index = int(math.ceil(protocol.convert_index(end_index, 0, self.proto_view, True)[1])) + 1
         text = self.ui.txtEdProto.toPlainText()
         n = 0
         message_pos = 0

@@ -72,6 +72,8 @@ class MessageTypeDialogController(QDialog):
         self.ui.tblViewRuleset.openPersistentEditor(self.ruleset_table_model.index(row, 3))
 
     def closeEvent(self, event: QCloseEvent):
+        self.ui.tblViewRuleset.setItemDelegateForColumn(2, None)
+        self.ui.tblViewRuleset.setItemDelegateForColumn(3, None)
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 

@@ -3,7 +3,7 @@ import math
 
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QInputDialog
 
 from urh import constants
 from urh.models.FuzzingTableModel import FuzzingTableModel
@@ -101,6 +101,7 @@ class FuzzingDialogController(QDialog):
         self.ui.spinBoxFuzzingStart.valueChanged.connect(self.on_fuzzing_start_changed)
         self.ui.spinBoxFuzzingEnd.valueChanged.connect(self.on_fuzzing_end_changed)
         self.ui.comboBoxFuzzingLabel.currentIndexChanged.connect(self.on_combo_box_fuzzing_label_current_index_changed)
+        self.ui.btnRepeatValues.clicked.connect(self.on_btn_repeat_values_clicked)
         self.ui.btnAddRow.clicked.connect(self.on_btn_add_row_clicked)
         self.ui.btnDelRow.clicked.connect(self.on_btn_del_row_clicked)
         self.ui.tblFuzzingValues.deletion_wanted.connect(self.delete_lines)
@@ -352,3 +353,16 @@ class FuzzingDialogController(QDialog):
         self.fuzz_table_model.fuzzing_label = self.current_label
         self.fuzz_table_model.update()
         self.update_message_data_string()
+
+    @pyqtSlot()
+    def on_btn_repeat_values_clicked(self):
+        num_repeats, ok = QInputDialog.getInt(self, self.tr("How many times shall values be repeated?"),
+                                                    self.tr("Number of repeats:"), 1, 1)
+        if ok:
+            self.ui.chkBRemoveDuplicates.setChecked(False)
+            min_row, max_row, _, _ = self.ui.tblFuzzingValues.selection_range()
+            if min_row == -1:
+                start, end = 0, len(self.current_label.fuzz_values)
+            else:
+                start, end = min_row, max_row + 1
+            self.fuzz_table_model.repeat_fuzzing_values(start, end, num_repeats)

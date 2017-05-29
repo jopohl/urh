@@ -297,8 +297,10 @@ class SimulatorScene(QGraphicsScene):
             participant.update_position(y_pos = max(y_pos, 50))
 
     def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
-        super().dragMoveEvent(event)
-        event.setAccepted(True)
+        if len([item for item in self.items(event.scenePos()) if item.acceptDrops()]):
+            super().dragMoveEvent(event)
+        else:
+            event.setAccepted(True)
 
     def insert_at(self, ref_item, position, insert_rule=False):
         if ref_item:        

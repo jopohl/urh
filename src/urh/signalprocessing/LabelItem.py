@@ -4,7 +4,7 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPen, QFont
+from PyQt5.QtGui import QPen, QFont, QColor
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):
@@ -25,7 +25,13 @@ class LabelItem(GraphicsItem):
         pass
 
     def paint(self, painter, option, widget):
-        painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
+        if self.scene().mode == 1:
+            color = QColor(constants.LABEL_COLORS[self.model_item.color_index])
+            color.setAlpha(150 if self.model_item.logging_active else 20)
+        else:
+            color = QColor(constants.LABEL_COLORS[self.model_item.color_index])
+
+        painter.setBrush(color)
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 
@@ -33,9 +39,4 @@ class LabelItem(GraphicsItem):
         return self.childrenBoundingRect()
 
     def refresh(self):
-        if self.model_item.logging_active and self.scene().mode == 1:
-            self.name.setFont(GraphicsItem.font_bold)
-        else:
-            self.name.setFont(GraphicsItem.font)
-
         self.name.setPlainText(self.model_item.name)

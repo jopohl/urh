@@ -117,7 +117,7 @@
        <item row="2" column="0">
         <widget class="QPushButton" name="btnLog">
          <property name="text">
-          <string>Log selected items</string>
+          <string>Toggle selected</string>
          </property>
         </widget>
        </item>

@@ -93,7 +93,7 @@ class Ui_SimulateDialog(object):
         self.comboBox.setItemText(2, _translate("SimulateDialog", "Restart simulation"))
         self.btnLogAll.setText(_translate("SimulateDialog", "Log all"))
         self.btnLogNone.setText(_translate("SimulateDialog", "Log none"))
-        self.btnLog.setText(_translate("SimulateDialog", "Log selected items"))
+        self.btnLog.setText(_translate("SimulateDialog", "Toggle selected"))
         self.label_5.setText(_translate("SimulateDialog", "Log settings:"))
         self.pushButton.setText(_translate("SimulateDialog", "Simulate"))
 

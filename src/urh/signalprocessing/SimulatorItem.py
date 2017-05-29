@@ -2,6 +2,7 @@ class SimulatorItem(object):
     def __init__(self):
         self.__parentItem = None
         self.__childItems = []
+        self.logging_active = True
 
     def get_pos(self):
         if self.parent() is not None:

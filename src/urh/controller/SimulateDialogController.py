@@ -43,3 +43,6 @@ class SimulateDialogController(QDialog):
 
     def on_btn_log_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
+
+    def update_buttons(self):
+        pass

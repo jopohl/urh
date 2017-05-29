@@ -25,13 +25,7 @@ class LabelItem(GraphicsItem):
         pass
 
     def paint(self, painter, option, widget):
-        if self.scene().mode == 1:
-            color = QColor(constants.LABEL_COLORS[self.model_item.color_index])
-            color.setAlpha(150 if self.model_item.logging_active else 20)
-        else:
-            color = QColor(constants.LABEL_COLORS[self.model_item.color_index])
-
-        painter.setBrush(color)
+        painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())
         super().paint(painter, option, widget)
 

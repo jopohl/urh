@@ -33,6 +33,8 @@ class GraphicsItem(QGraphicsObject):
         self.number = QGraphicsTextItem(self)
         self.number.setFont(GraphicsItem.font_bold)
 
+        self.setFlag(QGraphicsItem.ItemIgnoresParentOpacity, True)
+
     def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
         self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
         self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
@@ -118,6 +120,9 @@ class GraphicsItem(QGraphicsObject):
         self.update()
 
     def paint(self, painter, option, widget):
+        if self.scene().mode == 1:
+            self.setOpacity(1 if self.model_item.logging_active else 0.3)
+
         if self.hover_active or self.isSelected():
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)

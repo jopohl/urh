@@ -297,7 +297,7 @@ class SimulatorScene(QGraphicsScene):
             participant.update_position(y_pos = max(y_pos, 50))
 
     def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
-        if len([item for item in self.items(event.scenePos()) if item.acceptDrops()]):
+        if any(item.acceptDrops() for item in self.items(event.scenePos())):
             super().dragMoveEvent(event)
         else:
             event.setAccepted(True)

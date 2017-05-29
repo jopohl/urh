@@ -184,7 +184,7 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
         QApplication.instance().processEvents()
         QTest.qWait(100)
-        self.assertEqual(frame.proto_analyzer.messages[0].plain_bits_str, frame.ui.txtEdProto.selected_text)
+        self.assertEqual(frame.proto_analyzer.messages[0].plain_bits_str, frame.ui.txtEdProto.selected_text.strip())
         frame.ui.txtEdProto.show_proto_clicked.emit()
         QApplication.instance().processEvents()
         self.assertAlmostEqual((128440 - 89383) / 1000000,

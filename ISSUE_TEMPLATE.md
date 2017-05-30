@@ -1,4 +1,4 @@
-_Please use this template for bug reports. In case of a feature request, just delete everything and write as you like._
+_Please use this template for bug reports. If you have a feature request or question just delete everything and write as you like._
 ## Expected Behavior
 
 

@@ -5,7 +5,6 @@ import itertools
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter
 from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
 
-from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.util.ProjectManager import ProjectManager
@@ -25,7 +24,9 @@ from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 from urh.controller.CompareFrameController import CompareFrameController
+from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.SimulateDialogController import SimulateDialogController
+from urh.controller.ModulatorDialogController import ModulatorDialogController
 
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
@@ -34,11 +35,13 @@ from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
-                 project_manager: ProjectManager, parent):
+                       generator_tab_controller: GeneratorTabController,
+                       project_manager: ProjectManager, parent):
         super().__init__(parent)
 
         self.project_manager = project_manager
         self.compare_frame_controller = compare_frame_controller
+        self.generator_tab_controller = generator_tab_controller
         self.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.sim_proto_manager = SimulatorProtocolManager(self.project_manager)
@@ -50,9 +53,7 @@ class SimulatorTabController(QWidget):
         self.ui.splitter_2.setSizes([self.width() / 0.7, self.width() / 0.3])
 
         self.ui.treeProtocols.setHeaderHidden(True)
-        self.tree_model = GeneratorTreeModel(compare_frame_controller)
-        self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
-        self.tree_model.controller = self
+        self.tree_model = self.generator_tab_controller.tree_model
         self.ui.treeProtocols.setModel(self.tree_model)
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
@@ -63,7 +64,9 @@ class SimulatorTabController(QWidget):
         self.reload_field_types()
         self.update_field_name_column()
 
-        self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller.decodings, self)
+        self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller,
+                                                                        generator_tab_controller
+, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
@@ -115,10 +118,11 @@ class SimulatorTabController(QWidget):
         self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
+        self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
         self.ui.tblViewMessage.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
 
-        compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
+        self.tree_model.modelReset.connect(self.refresh_tree)
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
 
@@ -188,6 +192,40 @@ class SimulatorTabController(QWidget):
             self.ui.tblViewFieldValues.edit(self.simulator_message_field_model.createIndex(index, 0))
         except ValueError:
             pass
+
+    @pyqtSlot()
+    def open_modulator_dialog(self):
+        selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
+        preselected_index = selected_message.modulator_indx
+
+        modulator_dialog = ModulatorDialogController(self.generator_tab_controller.modulators, parent=self)
+        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
+        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
+        modulator_dialog.showMaximized()
+
+        self.generator_tab_controller.initialize_modulation_dialog(selected_message.encoded_bits_str[0:10], modulator_dialog)
+
+        modulator_dialog.finished.connect(self.refresh_modulators)
+        modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
+
+    @pyqtSlot()
+    def refresh_modulators(self):
+        # update Generator tab ...
+        cBoxModulations = self.generator_tab_controller.ui.cBoxModulations
+        current_index = cBoxModulations.currentIndex()
+        cBoxModulations.clear()
+
+        for modulator in self.generator_tab_controller.modulators:
+            cBoxModulations.addItem(modulator.name)
+
+        cBoxModulations.setCurrentIndex(current_index)
+
+        # update Simulator tab ...
+        index = self.sender().ui.comboBoxCustomModulations.currentIndex()
+
+        for row in self.ui.tblViewMessage.selected_rows:
+            self.simulator_message_table_model.protocol.messages[row].modulator_indx = index
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
@@ -352,11 +390,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def refresh_tree(self):
-        self.tree_model.beginResetModel()
-        self.tree_model.endResetModel()
         self.ui.treeProtocols.expandAll()
 
     def close_all(self):
-        self.tree_model.rootItem.clearChilds()
-        self.tree_model.rootItem.addGroup()
         self.refresh_tree()

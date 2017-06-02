@@ -45,7 +45,7 @@ before_script:
    - python3 src/urh/cythonext/build.py
 
 script:
-  - pytest -s -v --cov=src/urh tests
+  - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
   - pip3 install .
   - urh autoclose
 

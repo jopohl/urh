@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from xml.dom import minidom
 
+import array
 import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
@@ -236,12 +237,12 @@ class ProtocolAnalyzer(object):
         self.qt_signals.protocol_updated.emit()
 
     def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True):
-        bit_sampl_pos = []
+        bit_sampl_pos = array.array("L", [])
         bit_sample_positions = []
 
-        data_bits = []
+        data_bits = array.array("B", [])
         resulting_data_bits = []
-        pauses = []
+        pauses = array.array("L", [])
         start = 0
         total_samples = 0
 
@@ -275,18 +276,18 @@ class ProtocolAnalyzer(object):
                 elif not there_was_data:
                     # Ignore this pause, if there were no information
                     # transmitted previously
-                    data_bits[:] = []
-                    bit_sampl_pos[:] = []
+                    data_bits[:] = array.array("B", [])
+                    bit_sampl_pos[:] = array.array("L", [])
 
                 else:
                     if write_bit_sample_pos:
                         bit_sampl_pos.append(total_samples)
                         bit_sampl_pos.append(total_samples + num_samples)
                         bit_sample_positions.append(bit_sampl_pos[:])
-                        bit_sampl_pos[:] = []
+                        bit_sampl_pos[:] = array.array("L", [])
 
                     resulting_data_bits.append(data_bits[:])
-                    data_bits[:] = []
+                    data_bits[:] = array.array("B", [])
                     pauses.append(num_samples)
                     there_was_data = False
 
@@ -307,7 +308,7 @@ class ProtocolAnalyzer(object):
         if there_was_data:
             resulting_data_bits.append(data_bits[:])
             if write_bit_sample_pos:
-                bit_sample_positions.append(bit_sampl_pos[:] + [total_samples])
+                bit_sample_positions.append(bit_sampl_pos[:] + array.array("L", [total_samples]))
             pause = ppseq[-1, 1] if ppseq[-1, 0] == pause_type else 0
             pauses.append(pause)
 

@@ -10,6 +10,7 @@ from optparse import OptionParser
 import tempfile
 import os
 import sys
+
 try:
     with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "r") as f:
         gnuradio_path = f.read().strip()

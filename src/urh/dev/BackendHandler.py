@@ -80,6 +80,7 @@ class BackendHandler(object):
     1) List available backends for devices
     2) List available devices (atleast one backend)
     3) Manage the selection of devices backend
+    
 
     """
     DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")

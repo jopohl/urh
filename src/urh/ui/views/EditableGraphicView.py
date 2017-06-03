@@ -202,7 +202,7 @@ class EditableGraphicView(ZoomableGraphicView):
                 if selected_msg and selected_msg.participant == participant:
                     pa.setChecked(True)
 
-                self.participant_actions[pa] = participant
+                self.articipant_actions[pa] = participant
                 pa.triggered.connect(self.on_participant_action_triggered)
 
         if hasattr(self, "scene_type") and self.scene_type == 0:

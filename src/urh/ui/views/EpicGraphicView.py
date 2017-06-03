@@ -65,7 +65,7 @@ class EpicGraphicView(EditableGraphicView):
     def selected_messages(self):
         if not self.selection_area.is_empty:
             pa = self.parent_frame.proto_analyzer
-            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width), self.signal.bit_len)
+            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width))
             return pa.messages[sb:eb + 1]
         else:
             return []

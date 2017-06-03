@@ -320,75 +320,65 @@ class ProtocolAnalyzer(object):
         Determine on which place (regarding samples) a bit sequence is
         :rtype: tuple[int,int]
         """
-        lookup = {i: message.bit_sample_pos for i, message in enumerate(self.messages)}
         try:
             if start_message > end_message:
                 start_message, end_message = end_message, start_message
 
-            if start_index >= len(lookup[start_message]) - 1:
-                start_index = len(lookup[start_message]) - 1
+            if start_index >= len(self.messages[start_message].bit_sample_pos) - 1:
+                start_index = len(self.messages[start_message].bit_sample_pos) - 1
                 if not include_pause:
                     start_index -= 1
 
-            if end_index >= len(lookup[end_message]) - 1:
-                end_index = len(lookup[end_message]) - 1
+            if end_index >= len(self.messages[end_message].bit_sample_pos) - 1:
+                end_index = len(self.messages[end_message].bit_sample_pos) - 1
                 if not include_pause:
                     end_index -= 1
 
-            start = lookup[start_message][start_index]
-            end = lookup[end_message][end_index] - start
+            start = self.messages[start_message].bit_sample_pos[start_index]
+            end = self.messages[end_message].bit_sample_pos[end_index] - start
 
             return start, end
         except KeyError:
             return -1, -1
 
-    def get_bitseq_from_selection(self, selection_start: int, selection_width: int, bitlen: int):
+    def get_bitseq_from_selection(self, selection_start: int, selection_width: int):
         """
-        Holt Start und Endindex der Bitsequenz von der Selektion der Samples
+        get start and end index of bit sequence from selected samples
 
-        :param selection_start: Selektionsstart in Samples
-        :param selection_width: Selektionsende in Samples
         :rtype: tuple[int,int,int,int]
-        :return: Startmessage, Startindex, Endmessage, Endindex
+        :return: start_message index, start index, end message index, end index
         """
-        start_message = -1
-        start_index = -1
-        end_message = -1
-        end_index = -1
-        lookup = [msg.bit_sample_pos for msg in self.messages]
-        if not lookup:
-            return -1, -1, -1, -1
-
-        if selection_start + selection_width < lookup[0][0] or selection_width < bitlen:
+        start_message, start_index, end_message, end_index = -1, -1, -1, -1
+        if not self.messages:
             return start_message, start_index, end_message, end_index
 
-        for j, msg_sample_pos in enumerate(lookup):
+        if selection_start + selection_width < self.messages[0].bit_sample_pos[0]:
+            return start_message, start_index, end_message, end_index
+
+        for i, msg in enumerate(self.messages):
+            msg_sample_pos = msg.bit_sample_pos
             if msg_sample_pos[-2] < selection_start:
                 continue
             elif start_message == -1:
-                start_message = j
-                for i, sample_pos in enumerate(msg_sample_pos):
+                start_message = i
+                for j, sample_pos in enumerate(msg_sample_pos):
                     if sample_pos < selection_start:
                         continue
                     elif start_index == -1:
-                        start_index = i
+                        start_index = j
                         if msg_sample_pos[-1] - selection_start < selection_width:
                             break
                     elif sample_pos - selection_start > selection_width:
-                        end_message = j
-                        end_index = i
-                        return start_message, start_index, end_message, end_index
+                        return start_message, start_index, i, j
             elif msg_sample_pos[-1] - selection_start < selection_width:
                 continue
             else:
-                end_message = j
-                for i, sample_pos in enumerate(msg_sample_pos):
+                for j, sample_pos in enumerate(msg_sample_pos):
                     if sample_pos - selection_start > selection_width:
-                        end_index = i
-                        return start_message, start_index, end_message, end_index
+                        return start_message, start_index, i, j
 
-        last_message = len(lookup) - 1
-        last_index = len(lookup[last_message]) - 1
+        last_message = len(self.messages) - 1
+        last_index = len(self.messages[-1].plain_bits) + 1
         return start_message, start_index, last_message, last_index
 
     def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool):

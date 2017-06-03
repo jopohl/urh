@@ -802,9 +802,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(True)
 
         try:
-            start_message, start_index, end_message, end_index = protocol.get_bitseq_from_selection(
-                start, w,
-                self.signal.bit_len)
+            start_message, start_index, end_message, end_index = protocol.get_bitseq_from_selection(start, w)
         except IndexError:
             c.clearSelection()
             self.ui.txtEdProto.setTextCursor(c)

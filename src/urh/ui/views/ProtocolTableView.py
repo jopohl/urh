@@ -6,6 +6,7 @@ from PyQt5.QtGui import QKeySequence, QDropEvent, QIcon
 import numpy
 
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.ui.views.TableView import TableView
@@ -132,7 +133,8 @@ class ProtocolTableView(TableView):
             participant_menu_str = self.tr("Participant")
             if selected_participant is None:
                 participant_menu_str += self.tr(" (None)")
-            else:
+            elif isinstance(selected_participant, Participant):
+                # Ensure we have correct type as selected_participant can be -1 if multiple participants are selected
                 participant_menu_str += " (" + selected_participant.name + ")"
 
             participant_menu = menu.addMenu(participant_menu_str)

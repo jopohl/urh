@@ -90,6 +90,8 @@ class EditableGraphicView(ZoomableGraphicView):
         self.redo_action.setShortcut(QKeySequence.Redo)
         self.redo_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
 
+        self.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
+
     def eliminate(self):
         self.participants = None
         self.stored_item = None
@@ -275,7 +277,6 @@ class EditableGraphicView(ZoomableGraphicView):
                                           start=start, end=end,
                                           mode=EditAction.delete, cache_qad=self.cache_qad)
             self.undo_stack.push(del_action)
-            self.centerOn(start, self.y_center)
 
     @pyqtSlot()
     def on_crop_action_triggered(self):
@@ -317,3 +318,9 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_noise_action_triggered(self):
         self.set_noise_clicked.emit()
+
+    @pyqtSlot(int)
+    def on_undo_stack_index_changed(self, index: int):
+        view_width, scene_width = self.view_rect().width(), self.sceneRect().width()
+        if view_width > scene_width:
+            self.show_full_scene(reinitialize=True)

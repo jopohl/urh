@@ -69,33 +69,6 @@ class ProtocolTableView(TableView):
 
     def create_context_menu(self):
         menu = QMenu()
-
-        view_group = QActionGroup(self)
-        view_menu = menu.addMenu("View")
-
-        bit_action = view_menu.addAction("Bits")  # type: QAction
-        bit_action.setCheckable(True)
-        bit_action.setActionGroup(view_group)
-        bit_action.triggered.connect(self.on_bit_action_triggered)
-
-        hex_action = view_menu.addAction("Hex")
-        hex_action.setCheckable(True)
-        hex_action.setActionGroup(view_group)
-        hex_action.triggered.connect(self.on_hex_action_triggered)
-
-        ascii_action = view_menu.addAction("ASCII")
-        ascii_action.setCheckable(True)
-        ascii_action.setActionGroup(view_group)
-        ascii_action.triggered.connect(self.on_ascii_action_triggered)
-
-        if self.model().proto_view == 0:
-            bit_action.setChecked(True)
-        elif self.model().proto_view == 1:
-            hex_action.setChecked(True)
-        elif self.model().proto_view == 2:
-            ascii_action.setChecked(True)
-
-        menu.addSeparator()
         row = self.rowAt(self.context_menu_pos.y())
         cols = [index.column() for index in self.selectionModel().selectedIndexes() if index.row() == row]
         cols.sort()

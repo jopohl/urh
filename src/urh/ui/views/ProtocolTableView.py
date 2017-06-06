@@ -36,7 +36,7 @@ class ProtocolTableView(TableView):
         self.ref_message_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.ref_message_action.triggered.connect(self.set_ref_message)
 
-        self.hide_row_action = QAction("Hide selected Rows", self)
+        self.hide_row_action = QAction("Hide selected rows", self)
         self.hide_row_action.setShortcut(QKeySequence("H"))
         self.hide_row_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.hide_row_action.triggered.connect(self.hide_row)
@@ -92,10 +92,50 @@ class ProtocolTableView(TableView):
                 if selected_message_type == -1 and selected_participant == -1:
                     break
 
+        message_type_menu_str = self.tr("Message type")
+        if selected_message_type != -1:
+            message_type_menu_str += self.tr(" ("+selected_message_type.name+")")
+        message_type_menu = menu.addMenu(message_type_menu_str)
+        message_type_group = QActionGroup(self)
+        self.message_type_actions = {}
+
+        for message_type in self.model().protocol.message_types:
+            action = message_type_menu.addAction(message_type.name)
+            action.setCheckable(True)
+            action.setActionGroup(message_type_group)
+
+            if selected_message_type == message_type:
+                action.setChecked(True)
+
+            self.message_type_actions[action] = message_type
+            action.triggered.connect(self.on_message_type_action_triggered)
+
+        new_message_type_action = message_type_menu.addAction("Create new")
+        new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
+
+        try:
+            self.selected_label = self.controller.get_labels_from_selection(row, row, cols[0], cols[-1])[0]
+            edit_label_action = menu.addAction(self.tr("Edit protocol label ") + self.selected_label.name)
+            edit_label_action.setIcon(QIcon.fromTheme("configure"))
+            edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
+        except IndexError:
+            self.selected_label = None
+
+        create_label_action = menu.addAction(self.tr("Add protocol label"))  # type: QAction
+        create_label_action.setIcon(QIcon.fromTheme("list-add"))
+        create_label_action.setEnabled(not self.selection_is_empty)
+        create_label_action.triggered.connect(self.on_create_label_action_triggered)
+
         if self.model().participants and self.model().protocol and not self.selection_is_empty:
 
             participant_group = QActionGroup(self)
-            participant_menu = menu.addMenu("Participant")
+            participant_menu_str = self.tr("Participant")
+            if selected_participant is None:
+                participant_menu_str += self.tr(" (None)")
+            else:
+                participant_menu_str += " (" + selected_participant.name + ")"
+
+            participant_menu = menu.addMenu(participant_menu_str)
             none_participant_action = participant_menu.addAction("None")
             none_participant_action.setCheckable(True)
             none_participant_action.setActionGroup(participant_group)
@@ -114,44 +154,8 @@ class ProtocolTableView(TableView):
                 self.participant_actions[pa] = participant
                 pa.triggered.connect(self.on_participant_action_triggered)
 
-        try:
-            self.selected_label = self.controller.get_labels_from_selection(row, row, cols[0], cols[-1])[0]
-            edit_label_action = menu.addAction(self.tr("Edit Label ") + self.selected_label.name)
-            edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
-        except IndexError:
-            self.selected_label = None
-
         menu.addSeparator()
 
-        create_label_action = menu.addAction(self.tr("Add protocol label"))  # type: QAction
-        create_label_action.setIcon(QIcon.fromTheme("list-add"))
-        create_label_action.setEnabled(not self.selection_is_empty)
-        create_label_action.triggered.connect(self.on_create_label_action_triggered)
-
-        message_type_menu = menu.addMenu(self.tr("Message type"))
-        message_type_group = QActionGroup(self)
-        self.message_type_actions = {}
-
-        for message_type in self.model().protocol.message_types:
-            action = message_type_menu.addAction(message_type.name)
-            action.setCheckable(True)
-            action.setActionGroup(message_type_group)
-
-            if selected_message_type == message_type:
-                action.setChecked(True)
-
-            self.message_type_actions[action] = message_type
-            action.triggered.connect(self.on_message_type_action_triggered)
-
-        new_message_type_action = message_type_menu.addAction("Create new")
-        new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
-
-        menu.addSeparator()
-        if not self.model().is_writeable:
-            show_interpretation_action = menu.addAction(self.tr("Show in Interpretation"))
-            show_interpretation_action.triggered.connect(self.on_show_in_interpretation_action_triggered)
-
-        menu.addSeparator()
         menu.addAction(self.hide_row_action)
         hidden_rows = self.model().hidden_rows
         if len(hidden_rows) > 0:
@@ -161,7 +165,10 @@ class ProtocolTableView(TableView):
         if self.model().refindex != -1:
             menu.addAction(self.ref_message_action)
 
-        menu.addSeparator()
+        if not self.model().is_writeable:
+            show_interpretation_action = menu.addAction(self.tr("Show selection in Interpretation"))
+            show_interpretation_action.triggered.connect(self.on_show_in_interpretation_action_triggered)
+
         if self.model().is_writeable:
             writeable_action = menu.addAction(self.tr("Writeable"))
             writeable_action.setCheckable(True)

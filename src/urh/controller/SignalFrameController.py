@@ -317,7 +317,7 @@ class SignalFrameController(QFrame):
             self.files_dropped.emit(event.mimeData().urls())
 
     def create_new_signal(self, start, end):
-        if start < end:
+        if start != end:
             new_signal = self.signal.create_new(start, end)
             self.signal_created.emit(new_signal)
         else:

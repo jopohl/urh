@@ -297,11 +297,11 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_zoom_action_triggered(self):
-        self.zoom_to_selection(self.selection_area.x, self.selection_area.end)
+        self.zoom_to_selection(self.selection_area.start, self.selection_area.end)
 
     @pyqtSlot()
     def on_create_action_triggered(self):
-        self.create_clicked.emit(self.selection_area.x, self.selection_area.end)
+        self.create_clicked.emit(self.selection_area.start, self.selection_area.end)
 
     @pyqtSlot()
     def on_none_participant_action_triggered(self):

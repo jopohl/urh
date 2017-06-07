@@ -25,7 +25,6 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
-        editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         editor.addItems(self.items)
 
         if self.is_editable:
@@ -66,6 +65,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
             model.setData(index, editor.currentIndex(), Qt.EditRole)
         else:
             model.setData(index, editor.currentText(), Qt.EditRole)
+
+    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+        editor.setGeometry(option.rect)
 
     @pyqtSlot()
     def currentIndexChanged(self):

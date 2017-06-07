@@ -26,10 +26,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
-        if not self.colors and sys.platform == "win32":
+        if sys.platform == "win32":
             # Ensure text entries are visible with windows combo boxes
-            f = QFontMetrics(parent.font())
-            editor.setMinimumHeight(f.height() + 10)
+            editor.setMinimumHeight(self.sizeHint(option, index).height() + 10)
 
         editor.addItems(self.items)
 

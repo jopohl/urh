@@ -1,3 +1,4 @@
+import sys
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap, QFontMetrics
 from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
@@ -25,8 +26,11 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
-        f = QFontMetrics(parent.font())
-        editor.setMinimumHeight(f.height() + 10)
+        if not self.colors and sys.platform == "win32":
+            # Ensure text entries are visible with windows combo boxes
+            f = QFontMetrics(parent.font())
+            editor.setMinimumHeight(f.height() + 10)
+
         editor.addItems(self.items)
 
         if self.is_editable:

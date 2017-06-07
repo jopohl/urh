@@ -11,3 +11,8 @@ omit =
 
 [report]
 sort = Miss
+exclude_lines =
+    pragma: no cover
+    def mousePressEvent
+    def mouseMoveEvent
+    def mouseReleaseEvent

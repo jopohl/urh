@@ -611,6 +611,7 @@ class SignalFrameController(QFrame):
             self.ui.gvLegend.hide()
 
         self.ui.gvSignal.auto_fit_view()
+        self.ui.gvSignal.refresh_selection_area()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()
 

@@ -606,24 +606,13 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def show_proto_sniff_dialog(self):
         pm = self.project_manager
-        signal = None
-        for proto in self.compare_frame_controller.protocol_list:
-            signal = proto.signal
-            if signal:
-                break
+        signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        if signal:
-            bit_len = signal.bit_len
-            mod_type = signal.modulation_type
-            tolerance = signal.tolerance
-            noise = signal.noise_threshold
-            center = signal.qad_center
-        else:
-            bit_len = 100
-            mod_type = 1
-            tolerance = 5
-            noise = 0.001
-            center = 0.02
+        bit_len = signal.bit_len          if signal else 100
+        mod_type = signal.modulation_type if signal else 1
+        tolerance = signal.tolerance      if signal else 5
+        noise = signal.noise_threshold    if signal else 0.001
+        center = signal.qad_center        if signal else 0.02
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                             self.compare_frame_controller.decodings,

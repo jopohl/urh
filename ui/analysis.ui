@@ -997,7 +997,7 @@ stop:1 rgba(255, 255, 255, 0));
                 <bool>false</bool>
                </property>
                <attribute name="horizontalHeaderVisible">
-                <bool>false</bool>
+                <bool>true</bool>
                </attribute>
                <attribute name="horizontalHeaderCascadingSectionResizes">
                 <bool>false</bool>

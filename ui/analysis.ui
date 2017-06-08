@@ -91,8 +91,11 @@
          <property name="styleSheet">
           <string notr="true">QSplitter::handle {
 margin: 4px 0px;
-border-top: 1px solid;
-border-bottom: 1px solid;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 200), 
+stop:1 rgba(255, 255, 255, 0));
+	image: url(:/icons/data/icons/splitter_handle.png);
 }</string>
          </property>
          <property name="frameShape">

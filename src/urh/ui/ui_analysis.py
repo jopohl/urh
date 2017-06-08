@@ -39,8 +39,11 @@ class Ui_TabAnalysis(object):
         self.splitter = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter.setStyleSheet("QSplitter::handle {\n"
 "margin: 4px 0px;\n"
-"border-top: 1px solid;\n"
-"border-bottom: 1px solid;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 200), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"    image: url(:/icons/data/icons/splitter_handle.png);\n"
 "}")
         self.splitter.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.splitter.setLineWidth(1)

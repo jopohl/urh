@@ -116,7 +116,7 @@ stop:1 rgba(255, 255, 255, 0));
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,3">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
@@ -435,6 +435,13 @@ stop:1 rgba(255, 255, 255, 0));
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout">
@@ -1049,8 +1056,6 @@ stop:1 rgba(255, 255, 255, 0));
     </widget>
    </item>
   </layout>
-  <zorder>scrollArea</zorder>
-  <zorder>frame</zorder>
  </widget>
  <customwidgets>
   <customwidget>

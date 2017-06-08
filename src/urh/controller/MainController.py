@@ -116,6 +116,7 @@ class MainController(QMainWindow):
         redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         redo_action.setShortcut(QKeySequence.Redo)
         self.ui.menuEdit.insertAction(self.ui.actionDecoding, redo_action)
+        self.ui.menuEdit.insertSeparator(self.ui.actionDecoding)
 
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()

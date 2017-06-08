@@ -602,7 +602,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
 margin: 4px 0px;
     background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
 stop:0 rgba(255, 255, 255, 0), 
-stop:0.5 rgba(100, 100, 100, 200), 
+stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
 	image: url(:/icons/data/icons/splitter_handle.png);
 }</string>
@@ -617,7 +617,7 @@ stop:1 rgba(255, 255, 255, 0));
       <enum>Qt::Vertical</enum>
      </property>
      <property name="handleWidth">
-      <number>5</number>
+      <number>6</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>

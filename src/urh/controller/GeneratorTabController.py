@@ -397,9 +397,10 @@ class GeneratorTabController(QWidget):
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
 
-        if self.selected_message is not None:
+        if self.label_list_model.message is not None:
+            msg_index = self.table_model.protocol.messages.index(self.label_list_model.message)
             fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
-                                          msg_index=self.selected_message_index, proto_view=view, parent=self)
+                                          msg_index=msg_index, proto_view=view, parent=self)
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)

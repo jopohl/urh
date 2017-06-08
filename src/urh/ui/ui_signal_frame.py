@@ -224,6 +224,14 @@ class Ui_SignalFrame(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 200), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"    image: url(:/icons/data/icons/splitter_handle.png);\n"
+"}")
         self.splitter.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.splitter.setLineWidth(1)
         self.splitter.setOrientation(QtCore.Qt.Vertical)

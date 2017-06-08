@@ -20,12 +20,20 @@ class Ui_GeneratorTab(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1238, 656))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1234, 656))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.splitter = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 200), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.frame_2 = QtWidgets.QFrame(self.splitter)

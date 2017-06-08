@@ -37,7 +37,7 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_6.setSpacing(7)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.splitter = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
-        self.splitter.setStyleSheet("QSplitter::handle {\n"
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
 "margin: 4px 0px;\n"
 "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
 "stop:0 rgba(255, 255, 255, 0), \n"

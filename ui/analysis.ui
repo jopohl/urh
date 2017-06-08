@@ -89,7 +89,7 @@
        <item>
         <widget class="QSplitter" name="splitter">
          <property name="styleSheet">
-          <string notr="true">QSplitter::handle {
+          <string notr="true">QSplitter::handle:vertical {
 margin: 4px 0px;
     background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
 stop:0 rgba(255, 255, 255, 0), 

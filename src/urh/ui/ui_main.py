@@ -20,6 +20,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 200), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.layoutWidget = QtWidgets.QWidget(self.splitter)

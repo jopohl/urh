@@ -27,6 +27,16 @@
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="styleSheet">
+       <string notr="true">QSplitter::handle:horizontal {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 200), 
+stop:1 rgba(255, 255, 255, 0));
+image: url(:/icons/data/icons/rotated_splitter_handle.png);
+}</string>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>

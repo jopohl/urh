@@ -116,7 +116,7 @@ stop:1 rgba(255, 255, 255, 0));
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,3">
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,5">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>

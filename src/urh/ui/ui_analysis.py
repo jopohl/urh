@@ -93,7 +93,7 @@ class Ui_TabAnalysis(object):
         self.treeViewProtocols.header().setStretchLastSection(True)
         self.verticalLayout_3.addWidget(self.treeViewProtocols)
         self.btnSaveProto = QtWidgets.QToolButton(self.tab_protocols)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnSaveProto.sizePolicy().hasHeightForWidth())

@@ -91,11 +91,8 @@
          <property name="styleSheet">
           <string notr="true">QSplitter::handle {
 margin: 4px 0px;
-    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-stop:0 rgba(255, 255, 255, 0), 
-stop:0.5 rgba(100, 100, 100, 200), 
-stop:1 rgba(255, 255, 255, 0));
-	image: url(:/icons/data/icons/splitter_handle.png);
+border-top: 1px solid;
+border-bottom: 1px solid;
 }</string>
          </property>
          <property name="frameShape">
@@ -116,7 +113,7 @@ stop:1 rgba(255, 255, 255, 0));
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,5">
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,10">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>

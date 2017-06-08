@@ -2,6 +2,7 @@
   <qresource prefix="icons">
     <file>data/icons/lock.svg</file>
     <file>data/icons/ajax-loader.gif</file>
+    <file>data/icons/splitter_handle.png</file>
     <file>data/icons/appicon.png</file>
     <file>data/icons/arrow_down_generator.png</file>
     <file>data/icons/unlock.svg</file>

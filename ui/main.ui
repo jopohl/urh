@@ -128,7 +128,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tabParticipants">
            <attribute name="title">
@@ -168,19 +168,67 @@
         <attribute name="title">
          <string>Interpretation</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_2"/>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_protocol">
         <attribute name="title">
          <string>Analysis</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout"/>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_generator">
         <attribute name="title">
          <string>Generator</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_5"/>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+        </layout>
        </widget>
       </widget>
      </widget>
@@ -193,7 +241,7 @@
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

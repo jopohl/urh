@@ -14,6 +14,21 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="ScrollArea" name="scrollArea">
      <property name="sizePolicy">
@@ -28,6 +43,12 @@
      <property name="styleSheet">
       <string notr="true"/>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
@@ -39,8 +60,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>613</width>
-        <height>516</height>
+        <width>631</width>
+        <height>539</height>
        </rect>
       </property>
       <property name="sizePolicy">

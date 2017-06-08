@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FAnalysis</class>
- <widget class="QFrame" name="FAnalysis">
+ <class>TabAnalysis</class>
+ <widget class="QWidget" name="TabAnalysis">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1098</width>
-    <height>839</height>
+    <width>1331</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,23 +25,38 @@
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
-  </property>
-  <property name="frameShadow">
-   <enum>QFrame::Raised</enum>
-  </property>
-  <property name="lineWidth">
+  <property name="lineWidth" stdset="0">
    <number>1</number>
   </property>
-  <property name="midLineWidth">
+  <property name="midLineWidth" stdset="0">
    <number>0</number>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -51,46 +66,59 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1078</width>
-        <height>819</height>
+        <width>1331</width>
+        <height>740</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>7</number>
+       </property>
+       <property name="leftMargin">
+        <number>11</number>
+       </property>
+       <property name="topMargin">
+        <number>11</number>
+       </property>
+       <property name="rightMargin">
+        <number>11</number>
+       </property>
+       <property name="bottomMargin">
+        <number>11</number>
+       </property>
        <item>
         <widget class="QSplitter" name="splitter">
+         <property name="styleSheet">
+          <string notr="true">QSplitter::handle {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 200), 
+stop:1 rgba(255, 255, 255, 0));
+	image: url(:/icons/data/icons/splitter_handle.png);
+}</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <widget class="QFrame" name="frame_2">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="opaqueResize">
+          <bool>true</bool>
+         </property>
+         <property name="handleWidth">
+          <number>6</number>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QSplitter" name="splitter_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="childrenCollapsible">
-              <bool>false</bool>
-             </property>
-             <widget class="QFrame" name="frame_4">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QTabWidget" name="tabWidget">
                  <property name="currentIndex">
@@ -100,7 +128,7 @@
                   <attribute name="title">
                    <string>Protocols</string>
                   </attribute>
-                  <layout class="QVBoxLayout" name="verticalLayout_10">
+                  <layout class="QVBoxLayout" name="verticalLayout_3">
                    <item>
                     <widget class="ProtocolTreeView" name="treeViewProtocols">
                      <property name="sizePolicy">
@@ -141,7 +169,7 @@
                    <item>
                     <widget class="QToolButton" name="btnSaveProto">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -284,6 +312,19 @@
                 </widget>
                </item>
                <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="cbShowDiffs">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -311,28 +352,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="btnAnalyze">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Analyze</string>
-                 </property>
-                 <property name="popupMode">
-                  <enum>QToolButton::MenuButtonPopup</enum>
-                 </property>
-                 <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonTextOnly</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QStackedWidget" name="stackedWidgetLogicAnalysis">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -341,10 +363,60 @@
                   <number>0</number>
                  </property>
                  <widget class="QWidget" name="pageButtonAnalyzer">
-                  <layout class="QVBoxLayout" name="verticalLayout_5"/>
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QToolButton" name="btnAnalyze">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Analyze</string>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::MenuButtonPopup</enum>
+                     </property>
+                     <property name="toolButtonStyle">
+                      <enum>Qt::ToolButtonTextOnly</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="pageProgressBar">
-                  <layout class="QVBoxLayout" name="verticalLayout_6">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QProgressBar" name="progressBarLogicAnalyzer">
                      <property name="sizePolicy">
@@ -363,15 +435,9 @@
                 </widget>
                </item>
               </layout>
-             </widget>
-             <widget class="QFrame" name="frame_3">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <layout class="QGridLayout" name="gridLayout_2">
                  <item row="0" column="0">
@@ -831,150 +897,148 @@
                 </layout>
                </item>
               </layout>
-             </widget>
-            </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
-         <widget class="QFrame" name="frame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QLabel" name="lblLabelValues">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Label values for message</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QComboBox" name="cbMessagetypes">
-               <property name="editable">
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QGridLayout" name="gridLayout">
+             <item row="1" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QComboBox" name="cbMessagetypes">
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="insertPolicy">
+                  <enum>QComboBox::NoInsert</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="btnMessagetypeSettings">
+                 <property name="toolTip">
+                  <string>Settings for message type</string>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="preferences-other">
+                   <normaloff>.</normaloff>.</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="btnAddMessagetype">
+                 <property name="toolTip">
+                  <string>Add a new message type</string>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="list-add">
+                   <normaloff>.</normaloff>.</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="btnRemoveMessagetype">
+                 <property name="toolTip">
+                  <string>Delete current message type</string>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="list-remove">
+                   <normaloff>.</normaloff>.</iconset>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Message type:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" rowspan="2">
+              <widget class="LabelValueTableView" name="tblLabelValues">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="alternatingRowColors">
                 <bool>true</bool>
                </property>
-               <property name="insertPolicy">
-                <enum>QComboBox::NoInsert</enum>
+               <property name="showGrid">
+                <bool>false</bool>
+               </property>
+               <attribute name="horizontalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="horizontalHeaderCascadingSectionResizes">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                <number>150</number>
+               </attribute>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="lblLabelValues">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Label values for message</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QToolButton" name="btnMessagetypeSettings">
+             <item row="2" column="0">
+              <widget class="ProtocolLabelListView" name="listViewLabelNames">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="acceptDrops">
+                <bool>false</bool>
+               </property>
                <property name="toolTip">
-                <string>Settings for message type</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset theme="preferences-other">
-                 <normaloff>.</normaloff>.</iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="btnAddMessagetype">
-               <property name="toolTip">
-                <string>Add a new message type</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset theme="list-add">
-                 <normaloff>.</normaloff>.</iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="btnRemoveMessagetype">
-               <property name="toolTip">
-                <string>Delete current message type</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset theme="list-remove">
-                 <normaloff>.</normaloff>.</iconset>
+                <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
                </property>
               </widget>
              </item>
             </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="ProtocolLabelListView" name="listViewLabelNames">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="acceptDrops">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" rowspan="2">
-            <widget class="LabelValueTableView" name="tblLabelValues">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="showGrid">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="horizontalHeaderCascadingSectionResizes">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>150</number>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Message type:</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -985,6 +1049,8 @@
     </widget>
    </item>
   </layout>
+  <zorder>scrollArea</zorder>
+  <zorder>frame</zorder>
  </widget>
  <customwidgets>
   <customwidget>

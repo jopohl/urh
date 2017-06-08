@@ -50,6 +50,8 @@ class MainController(QMainWindow):
         self.compare_frame_controller = CompareFrameController(parent=self.ui.tab_protocol,
                                                                plugin_manager=self.plugin_manager,
                                                                project_manager=self.project_manager)
+        self.compare_frame_controller.ui.splitter.setSizes([1, 1000000])
+
 
         self.ui.tab_protocol.layout().addWidget(self.compare_frame_controller)
 

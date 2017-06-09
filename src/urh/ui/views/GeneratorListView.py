@@ -21,6 +21,10 @@ class GeneratorListView(QListView):
         if self.model().message is None or len(self.model().message.message_type) == 0:
             return menu
 
+        edit_action = menu.addAction("Edit fuzzing label")
+        edit_action.setIcon(QIcon.fromTheme("configure"))
+        edit_action.triggered.connect(self.on_edit_action_triggered)
+
         del_action = menu.addAction("Delete fuzzing label")
         del_action.setIcon(QIcon.fromTheme("edit-delete"))
         del_action.triggered.connect(self.on_delete_action_triggered)
@@ -60,3 +64,7 @@ class GeneratorListView(QListView):
     def on_delete_action_triggered(self):
         index = self.indexAt(self.context_menu_pos)
         self.model().delete_label_at(index.row())
+
+    @pyqtSlot()
+    def on_edit_action_triggered(self):
+        self.edit_on_item_triggered.emit(self.indexAt(self.context_menu_pos).row())

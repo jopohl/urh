@@ -6,21 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
-    <height>669</height>
+    <width>1081</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -30,23 +42,30 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1100</width>
-        <height>637</height>
+        <width>1081</width>
+        <height>699</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QSplitter" name="splitter">
+         <property name="styleSheet">
+          <string notr="true">QSplitter::handle:horizontal {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 100), 
+stop:1 rgba(255, 255, 255, 0));
+image: url(:/icons/data/icons/rotated_splitter_handle.png);
+}</string>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QFrame" name="frame_2">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
+         <property name="handleWidth">
+          <number>6</number>
+         </property>
+         <widget class="QWidget" name="layoutWidget_2">
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QTabWidget" name="tabWidget">
@@ -69,7 +88,7 @@
               <attribute name="title">
                <string>Protocols</string>
               </attribute>
-              <layout class="QHBoxLayout" name="horizontalLayout">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
                 <widget class="GeneratorTreeView" name="treeProtocols">
                  <property name="sizePolicy">
@@ -88,11 +107,11 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_4">
+             <widget class="QWidget" name="tab_pauses">
               <attribute name="title">
                <string>Pauses</string>
               </attribute>
-              <layout class="QGridLayout" name="gridLayout_4">
+              <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0" colspan="2">
                 <widget class="GeneratorListWidget" name="lWPauses">
                  <property name="sizePolicy">
@@ -117,11 +136,11 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_5">
+             <widget class="QWidget" name="tab_fuzzing">
               <attribute name="title">
                <string>Fuzzing</string>
               </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
+              <layout class="QVBoxLayout" name="verticalLayout_9">
                <property name="spacing">
                 <number>6</number>
                </property>
@@ -143,7 +162,7 @@
                  <property name="title">
                   <string>Add fuzzing values to generated data</string>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
                   <item>
                    <widget class="QStackedWidget" name="stackedWidgetFuzzing">
                     <property name="sizePolicy">
@@ -156,7 +175,7 @@
                      <number>0</number>
                     </property>
                     <widget class="QWidget" name="pageFuzzingUI">
-                     <layout class="QHBoxLayout" name="horizontalLayout_2">
+                     <layout class="QHBoxLayout" name="horizontalLayout_4">
                       <item>
                        <widget class="QPushButton" name="btnFuzz">
                         <property name="text">
@@ -200,7 +219,7 @@
                      </layout>
                     </widget>
                     <widget class="QWidget" name="pageFuzzingProgressBar">
-                     <layout class="QHBoxLayout" name="horizontalLayout_3">
+                     <layout class="QHBoxLayout" name="horizontalLayout_7">
                       <item>
                        <widget class="QProgressBar" name="progressBarFuzzing">
                         <property name="value">
@@ -223,7 +242,7 @@
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout_3">
+            <layout class="QGridLayout" name="gridLayout_6">
              <item row="2" column="1">
               <widget class="QComboBox" name="cBoxModulations">
                <item>
@@ -234,7 +253,7 @@
               </widget>
              </item>
              <item row="0" column="0" colspan="3">
-              <layout class="QGridLayout" name="modulationLayout">
+              <layout class="QGridLayout" name="modulationLayout_2">
                <item row="0" column="0">
                 <widget class="QLabel" name="lEncoding">
                  <property name="text">
@@ -298,7 +317,7 @@
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="label_carrier_phase">
                  <property name="text">
                   <string>Carrier Phase:</string>
                  </property>
@@ -372,8 +391,7 @@
                </property>
                <property name="icon">
                 <iconset theme="media-playback-start">
-                 <normaloff/>
-                </iconset>
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>
@@ -420,8 +438,7 @@
                </property>
                <property name="icon">
                 <iconset theme="document-new">
-                 <normaloff/>
-                </iconset>
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>
@@ -429,63 +446,25 @@
            </item>
           </layout>
          </widget>
-         <widget class="QFrame" name="frame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="7">
-            <widget class="QLabel" name="lViewType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0" colspan="7">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
              </property>
              <property name="text">
-              <string>Viewtype:</string>
+              <string>Generated data</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
-           <item row="2" column="6">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>38</width>
-               <height>22</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="3">
-            <widget class="QLabel" name="lEstimatedTime">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Estimated Time: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QToolButton" name="btnSave">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="document-save">
-               <normaloff/>
-              </iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="9">
+           <item row="1" column="0" colspan="7">
             <widget class="GeneratorTableView" name="tableMessages">
              <property name="acceptDrops">
               <bool>true</bool>
@@ -525,23 +504,85 @@
              </attribute>
             </widget>
            </item>
-           <item row="0" column="0" colspan="9">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
+           <item row="2" column="0">
+            <widget class="QToolButton" name="btnSave">
              <property name="text">
-              <string>Generated data</string>
+              <string>...</string>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="icon">
+              <iconset theme="document-save">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
-           <item row="2" column="8">
+           <item row="2" column="1">
+            <widget class="QPushButton" name="btnNetworkSDRSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Send via Network</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wired">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnRfCatSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Send via RfCat</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wireless">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="lEstimatedTime">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Estimated Time: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>38</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="5">
+            <widget class="QLabel" name="lViewType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Viewtype:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
             <widget class="QComboBox" name="cbViewType">
              <item>
               <property name="text">
@@ -560,49 +601,7 @@
              </item>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="btnNetworkSDRSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via Network</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wired">
-               <normaloff/>
-              </iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="btnRfCatSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via RfCat</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wireless">
-               <normaloff/>
-              </iconset>
-             </property>
-            </widget>
-           </item>
           </layout>
-          <zorder>cbViewType</zorder>
-          <zorder>lViewType</zorder>
-          <zorder>lEstimatedTime</zorder>
-          <zorder>label_3</zorder>
-          <zorder>tableMessages</zorder>
-          <zorder>btnSave</zorder>
-          <zorder>horizontalSpacer_3</zorder>
-          <zorder>btnNetworkSDRSend</zorder>
-          <zorder>btnRfCatSend</zorder>
          </widget>
         </widget>
        </item>

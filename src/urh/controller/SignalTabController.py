@@ -2,6 +2,7 @@ from PyQt5.QtCore import QPoint, pyqtSignal, Qt, pyqtSlot
 from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
+
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
@@ -35,8 +36,11 @@ class SignalTabController(QWidget):
         self.ui = Ui_Interpretation()
         self.ui.setupUi(self)
         self.splitter = QSplitter()
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\nmargin: 4px 0px; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \nstop:0 rgba(255, 255, 255, 0), \nstop:0.5 rgba(100, 100, 100, 100), \nstop:1 rgba(255, 255, 255, 0));\n	image: url(:/icons/data/icons/splitter_handle.png);\n}")
         self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
+        self.splitter.setHandleWidth(6)
+
         placeholder_widget = QWidget()
         placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.undo_stack = QUndoStack()
@@ -44,6 +48,7 @@ class SignalTabController(QWidget):
 
         self.splitter.addWidget(placeholder_widget)
         self.signal_vlay = QVBoxLayout()
+        self.signal_vlay.setContentsMargins(0,0,0,0)
         self.signal_vlay.addWidget(self.splitter)
         self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
 

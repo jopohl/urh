@@ -5,7 +5,7 @@ import time
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu, QApplication
+from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu
 
 from urh import constants
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -24,7 +24,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.signalprocessing.encoder import Encoder
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
-from urh.ui.ui_analysis_frame import Ui_FAnalysis
+from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -47,7 +47,7 @@ class CompareFrameController(QFrame):
         self.decodings = []  # type: list[Encoder]
         self.load_decodings()
 
-        self.ui = Ui_FAnalysis()
+        self.ui = Ui_TabAnalysis()
         self.ui.setupUi(self)
         self.ui.lBitsSelection.setText("")
         self.ui.lDecimalSelection.setText("")

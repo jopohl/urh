@@ -30,6 +30,7 @@ class SendRecvDialogController(QDialog):
 
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
+        self.ui.splitter.setHandleWidth(6)
 
         self.set_sniff_ui_items_visible(False)
 

@@ -48,6 +48,7 @@ class SignalTabController(QWidget):
 
         self.splitter.addWidget(placeholder_widget)
         self.signal_vlay = QVBoxLayout()
+        self.signal_vlay.setContentsMargins(0,0,0,0)
         self.signal_vlay.addWidget(self.splitter)
         self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
 

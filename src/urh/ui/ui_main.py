@@ -29,11 +29,13 @@ class Ui_MainWindow(object):
 "image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -127,7 +129,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 30))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -334,7 +336,7 @@ class Ui_MainWindow(object):
         self.actionShow_only_Compare_Frame.setText(_translate("MainWindow", "Show Compare Frame only"))
         self.actionConfigurePlugins.setText(_translate("MainWindow", "Configure..."))
         self.actionSort_Frames_by_Name.setText(_translate("MainWindow", "Sort &Frames by Name"))
-        self.actionConvert_Folder_to_Project.setText(_translate("MainWindow", "Convert &Folder to Project"))
+        self.actionConvert_Folder_to_Project.setText(_translate("MainWindow", "Conv&ert Folder to Project"))
         self.actionDecoding.setText(_translate("MainWindow", "&Decoding..."))
         self.actionRecord.setText(_translate("MainWindow", "&Record signal..."))
         self.actionSpectrum_Analyzer.setText(_translate("MainWindow", "Spectrum &Analyzer..."))
@@ -345,8 +347,8 @@ class Ui_MainWindow(object):
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
         self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
         self.actionOpen_directory.setText(_translate("MainWindow", "Open &folder..."))
-        self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
-        self.actionShowFileTree.setText(_translate("MainWindow", "Show file tree"))
+        self.actionAbout_Qt.setText(_translate("MainWindow", "About &Qt"))
+        self.actionShowFileTree.setText(_translate("MainWindow", "&Show file tree"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

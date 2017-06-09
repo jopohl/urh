@@ -40,8 +40,14 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="handleWidth">
+       <number>6</number>
+      </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -251,7 +257,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -519,7 +525,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
   </action>
   <action name="actionConvert_Folder_to_Project">
    <property name="text">
-    <string>Convert &amp;Folder to Project</string>
+    <string>Conv&amp;ert Folder to Project</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -605,7 +611,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
-    <string>About Qt</string>
+    <string>About &amp;Qt</string>
    </property>
   </action>
   <action name="actionShowFileTree">
@@ -613,7 +619,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show file tree</string>
+    <string>&amp;Show file tree</string>
    </property>
   </action>
  </widget>

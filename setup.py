@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
@@ -36,11 +37,7 @@ UI_SUBDIRS = ("actions", "delegates", "views")
 PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]
 URH_DIR = "urh"
 
-if "--IS_RELEASE" in sys.argv:
-    IS_RELEASE = True
-    sys.argv.remove("--IS-RELEASE")
-else:
-    IS_RELEASE = False
+IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
 try:
     import Cython.Build

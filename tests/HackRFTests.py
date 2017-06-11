@@ -5,11 +5,9 @@ import unittest
 import numpy as np
 import sys
 
-if sys.platform == "win32":
-    import os
-    cur_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
-    dll_dir = os.path.realpath(os.path.join(cur_dir, "..", "src", "urh", "dev", "native", "lib", "win"))
-    os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
+from urh.util import util
+
+util.set_windows_lib_path()
 
 
 from urh.dev.native.HackRF import HackRF

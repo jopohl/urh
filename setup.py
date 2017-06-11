@@ -19,7 +19,7 @@ from src.urh.dev.native import ExtensionHelper
 import src.urh.version as version
 
 if sys.platform == "win32":
-    OPEN_MP_FLAG = "-openmp"
+    OPEN_MP_FLAG = "/openmp"
 elif sys.platform == "darwin":
     OPEN_MP_FLAG = ""  # no OpenMP support in default Mac OSX compiler
 else:
@@ -71,8 +71,6 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    is_release = os.path.isfile("/tmp/urh_releasing")  # make sure precompiled binding are uploaded to PyPi
-
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
 
     # Bundle headers
@@ -83,9 +81,9 @@ def get_package_data():
             rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
             package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
 
-    if sys.platform == "win32" or is_release:
-        # we use precompiled device backends on windows
-        package_data["urh.dev.native.lib.win"] = ["*"]
+    # we use precompiled device backends on windows
+    package_data["urh.dev.native.lib.win.x64"] = ["*"]
+    package_data["urh.dev.native.lib.win.x86"] = ["*"]
 
     return package_data
 

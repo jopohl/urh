@@ -1,4 +1,10 @@
 environment:
+  TWINE_USERNAME:
+    secure: qqioSb3Yu/QTOdDKx10sDQ==
+  TWINE_PASSWORD:
+    secure: y8XwCStmwBEwWyXQ108iC7I+WFje6C7rbc0ypp56Q2g=
+  TWINE_REPOSITORY_URL:
+    'https://pypi.python.org/pypi/'
   matrix:
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
@@ -54,7 +60,7 @@ install:
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
   - pip install -r requirements.txt
-  - pip install pytest wheel
+  - pip install pytest wheel twine
 
 build_script:
   # Build the compiled extension
@@ -65,17 +71,17 @@ test_script:
   - python -m pytest -s
   - pip install .
   - urh autoclose
+  - pip uninstall -y urh
 
-#after_test:
-#  # If tests are successful, create binary packages for the project.
-#  - python setup.py bdist_wheel
+after_test:
+  # If tests are successful, create binary packages for the project.
+  - python setup.py bdist_wheel
 #  - python setup.py bdist_wininst
-#  - ps: "ls dist"
+  - ps: "ls dist"
 
-#artifacts:
+artifacts:
 #  # Archive the generated packages in the ci.appveyor.com build report.
-#  - path: dist\*
+  - path: dist\*
 
-#on_success:
-#  - TODO: upload the content of dist/*.whl to a public wheelhouse
-#
+on_success:
+  -  ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { Invoke-Expression "twine upload --skip-existing dist/*" } Else { write-output "Only deploy to PyPi for tags on master!"}

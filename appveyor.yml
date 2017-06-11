@@ -69,9 +69,6 @@ build_script:
 test_script:
   # Run the project tests
   - python -m pytest -s
-  - pip install .
-  - urh autoclose
-  - pip uninstall -y urh
 
 after_test:
   # If tests are successful, create binary packages for the project.
@@ -86,4 +83,3 @@ artifacts:
 
 on_success:
   -  cmd: IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*)
-  #-  ps: If ($env:APPVEYOR_REPO_TAG -eq "true") { Invoke-Expression "" } Else { write-output "Not on a tag, won't deploy to PyPi!"}

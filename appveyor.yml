@@ -84,6 +84,4 @@ artifacts:
   - path: dist\*
 
 on_success:
-  on:
-    appveyor_repo_tag: true
-  -  ps: Invoke-Expression "twine upload --skip-existing dist/*"
+  -  ps: If ($env:APPVEYOR_REPO_TAG -eq "true") { Invoke-Expression "twine upload --skip-existing dist/*" } Else { write-output "Not on a tag, won't deploy to pypi"}

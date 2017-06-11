@@ -1,10 +1,10 @@
 environment:
   TWINE_USERNAME:
-    secure: W28gbDCRcGdhPbyKNvSxhw==
+    secure: qqioSb3Yu/QTOdDKx10sDQ==
   TWINE_PASSWORD:
-    secure: pSKrWTu3mO6nhP4GyCwe6dtTvF+i9fOy3RsOKzp1BvM=
+    secure: y8XwCStmwBEwWyXQ108iC7I+WFje6C7rbc0ypp56Q2g=
   TWINE_REPOSITORY_URL:
-    'https://testpypi.python.org/pypi/'
+    'https://pypi.python.org/pypi/'
   matrix:
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
@@ -84,6 +84,4 @@ artifacts:
   - path: dist\*
 
 on_success:
-  # - ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { Invoke-Expression "twine upload -u andrewannex -p $env:PYPI_PASSWORD --repository-url https://testpypi.python.org/pypi/ --skip-existing dist/*" } Else { write-output "Not on a tag on master, won't deploy to pypi"}
-  -  ps: Invoke-Expression "twine upload --skip-existing dist/*"
-
+  -  ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { Invoke-Expression "twine upload --skip-existing dist/*" } Else { write-output "Only deploy to PyPi for tags on master!"}

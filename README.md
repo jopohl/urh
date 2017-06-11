@@ -67,13 +67,13 @@ sudo pip3 install urh
 
 
 ### Windows
-1. (Optional) Install [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools).
-  - If you use Python 3.5 or later (see next step) you can skip this step.
-  - It is recommended to use Python 3.5 or later on Windows.
-2. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ version for native device support!
-3. Open a terminal (__cmd__) and type: ``` pip install numpy ``` - _This speeds the installation up a bit and is needed if you do not have a C++ compiler installed._
-4. In a terminal, type: ``` pip install urh ```.
-5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
+If you run a Python version less than 3.5 you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.
+1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
+  - Make sure you tick the _Add Python to PATH_ checkbox on first page in python installer.
+  - Choose a __64 Bit__ version for native device support!
+2. Open a terminal (__cmd__) and type: ``` pip install numpy ``` - _This speeds the installation up a bit and is needed if you do not have a C++ compiler installed._
+3. In a terminal, type: ``` pip install urh ```.
+4. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
 
 ### Mac OS X
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 

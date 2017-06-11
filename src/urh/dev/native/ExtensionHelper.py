@@ -37,7 +37,7 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
             return []  # only 64 bit python supported for native device backends
 
         result = []
-        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win"))
+        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win/x64"))
         for dev_name, params in DEVICES.items():
             result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 

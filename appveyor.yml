@@ -83,5 +83,5 @@ artifacts:
 
 on_success:
   # - ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { Invoke-Expression "twine upload -u andrewannex -p $env:PYPI_PASSWORD --repository-url https://testpypi.python.org/pypi/ --skip-existing dist/*" } Else { write-output "Not on a tag on master, won't deploy to pypi"}
-  -  Invoke-Expression "twine upload -u $env:PYPI_TEST_USERNAME -p $env:PYPI_TEST_PASSWORD --repository-url https://testpypi.python.org/pypi/ --skip-existing dist/*"
+  -  ps: Invoke-Expression "twine upload -u $env:PYPI_TEST_USERNAME -p $env:PYPI_TEST_PASSWORD --repository-url https://testpypi.python.org/pypi/ --skip-existing dist/*"
 

@@ -71,7 +71,8 @@ If you run a Python version less than 3.5 you need to install  [Visual C++ Build
 1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
   - Make sure you tick the _Add Python to PATH_ checkbox on first page in python installer.
   - Choose a __64 Bit__ version for native device support!
-2. Open a terminal (__cmd__) and type: ``` pip install numpy ``` - _This speeds the installation up a bit and is needed if you do not have a C++ compiler installed._
+2. Open a terminal (__cmd__) and type: ``` pip install numpy ```.
+  - If you do not have a C++ Compiler on your system it is essential to install numpy before URH!
 3. In a terminal, type: ``` pip install urh ```.
 4. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
 

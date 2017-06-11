@@ -81,9 +81,13 @@ def get_package_data():
             rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
             package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
 
-    # we use precompiled device backends on windows
-    package_data["urh.dev.native.lib.win.x64"] = ["*"]
-    package_data["urh.dev.native.lib.win.x86"] = ["*"]
+    is_release = os.path.isfile("/tmp/urh_releasing")
+
+    if sys.platform == "win32" or is_release:
+        # we use precompiled device backends on windows
+        # only deploy DLLs on Windows or in release mode to prevent deploying by linux package managers
+        package_data["urh.dev.native.lib.win.x64"] = ["*"]
+        package_data["urh.dev.native.lib.win.x86"] = ["*"]
 
     return package_data
 

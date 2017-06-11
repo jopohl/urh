@@ -36,6 +36,12 @@ UI_SUBDIRS = ("actions", "delegates", "views")
 PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]
 URH_DIR = "urh"
 
+if "--IS_RELEASE" in sys.argv:
+    IS_RELEASE = True
+    sys.argv.remove("--IS-RELEASE")
+else:
+    IS_RELEASE = False
+
 try:
     import Cython.Build
 except ImportError:
@@ -81,9 +87,7 @@ def get_package_data():
             rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
             package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
 
-    is_release = os.path.isfile("/tmp/urh_releasing")
-
-    if sys.platform == "win32" or is_release:
+    if sys.platform == "win32" or IS_RELEASE:
         # we use precompiled device backends on windows
         # only deploy DLLs on Windows or in release mode to prevent deploying by linux package managers
         package_data["urh.dev.native.lib.win.x64"] = ["*"]
@@ -111,10 +115,13 @@ def read_long_description():
         return ""
 
 install_requires = ["numpy", "psutil", "pyzmq"]
-try:
-    import PyQt5
-except ImportError:
+if IS_RELEASE:
     install_requires.append("pyqt5")
+else:
+    try:
+        import PyQt5
+    except ImportError:
+        install_requires.append("pyqt5")
 
 if sys.version_info < (3, 4):
     install_requires.append('enum34')

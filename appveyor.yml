@@ -4,7 +4,7 @@ environment:
   TWINE_PASSWORD:
     secure: y8XwCStmwBEwWyXQ108iC7I+WFje6C7rbc0ypp56Q2g=
   TWINE_REPOSITORY_URL:
-    'https://pypi.python.org/pypi/'
+    'https://upload.pypi.org/legacy/'
   matrix:
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
@@ -75,7 +75,7 @@ test_script:
 
 after_test:
   # If tests are successful, create binary packages for the project.
-  - python setup.py bdist_wheel
+  - python setup.py bdist_wheel --IS-RELEASE
 #  - python setup.py bdist_wininst
   - ps: "ls dist"
 
@@ -84,4 +84,4 @@ artifacts:
   - path: dist\*
 
 on_success:
-  -  ps: If ($env:APPVEYOR_REPO_TAG -eq "true") { Invoke-Expression "twine upload --skip-existing dist/*" } Else { write-output "Not on a tag, won't deploy to pypi"}
+  -  ps: If ($env:APPVEYOR_REPO_TAG -eq "true") { Invoke-Expression "twine upload --skip-existing dist/*" } Else { write-output "Not on a tag, won't deploy to PyPi!"}

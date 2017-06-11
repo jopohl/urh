@@ -75,7 +75,7 @@ def release():
     call(["git", "tag", "v"+cur_version, "-m", "version "+cur_version])
     call(["git", "push", "origin", "--tags"])  # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
     call(["python", "setup.py", "register", "-r", "pypi"])
-    call(["python", "setup.py", "sdist", "upload", "-r", "pypi"])
+    call(["python", "setup.py", "sdist", "upload", "-r", "pypi", "--IS-RELEASE"])
 
     # Publish to AUR
     # Adapt pkgver

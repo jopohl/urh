@@ -67,8 +67,10 @@ sudo pip3 install urh
 
 
 ### Windows
-1. Install [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools).
-2. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ version!
+1. (Optional) Install [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools).
+  - If you use Python 3.5 or later (see next step) you can skip this step.
+  - It is recommended to use Python 3.5 or later on Windows.
+2. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ version for native device support!
 3. (Optional) Open a terminal (__cmd__) and type: ``` pip install numpy ``` - _This speeds the installation up a bit._
 4. In a terminal, type: ``` pip install urh ```.
 5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.

@@ -646,7 +646,11 @@ class CompareFrameController(QFrame):
 
     def show_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+        try:
+            longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+        except ValueError:
+            logger.warning("Configuring message type with empty message set.")
+            longest_message = Message([True]*1000, 1000, self.active_message_type)
         label_controller = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
         label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)

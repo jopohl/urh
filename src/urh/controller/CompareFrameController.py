@@ -360,15 +360,14 @@ class CompareFrameController(QFrame):
         try:
             f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
         except FileNotFoundError:
-            self.decodings = fallback
+            self.decodings[:] = fallback
             return
 
         if not f:
-            self.decodings = fallback
+            self.decodings[:] = fallback
             return
 
-        self.decodings = []
-        """:type: list of encoding """
+        self.decodings[:] = []  # :type: list[Encoding]
 
         for line in f:
             tmp_conf = []
@@ -381,7 +380,7 @@ class CompareFrameController(QFrame):
         f.close()
 
         if len(self.decodings) == 0:
-            self.decodings = fallback
+            self.decodings[:] = fallback
 
     def refresh_existing_encodings(self):
         """

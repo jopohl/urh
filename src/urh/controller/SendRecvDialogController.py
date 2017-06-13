@@ -309,7 +309,7 @@ class SendRecvDialogController(QDialog):
         return items
 
     def set_bandwidth_status(self):
-        if self.device is not None:
+        if self.device is not None and self.device.backend != Backends.none:
             self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
             self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
 

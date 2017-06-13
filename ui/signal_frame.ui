@@ -202,7 +202,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="maximum">
         <number>9999</number>
@@ -230,7 +230,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Error Tolerance:</string>
@@ -554,7 +554,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; text-decoration: underline;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; text-decoration: underline;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <item>
         <property name="text">

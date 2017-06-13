@@ -603,7 +603,8 @@ class SendRecvDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()
-        self.emit_editing_finished_signals()
+        if self.device.backend is not Backends.none:
+            self.emit_editing_finished_signals()
 
         self.device.stop("Dialog closed. Killing recording process.")
         logger.debug("Device stopped successfully.")

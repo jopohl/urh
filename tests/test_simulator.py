@@ -1,5 +1,6 @@
 import unittest
 import tests.utils_testing
+from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.ui.SimulatorScene import RuleItem
@@ -12,10 +13,8 @@ from PyQt5.QtWidgets import QMenu
 
 from tests.utils_testing import get_path_for_data_file
 
-app = tests.utils_testing.app
 
-
-class TestSimulator(unittest.TestCase):
+class TestSimulator(QtTestCase):
     def setUp(self):
         self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
         constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test

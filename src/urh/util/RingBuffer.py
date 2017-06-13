@@ -62,18 +62,25 @@ class RingBuffer(object):
 
         self.__increase_current_index_by(n)
 
-    def pop(self, number: int) -> np.ndarray:
+    def pop(self, number: int, pad_zeros=True) -> np.ndarray:
         """
         Pop number of elements. If there are not enough elements, all remaining elements are returned and the
         buffer is cleared afterwards. If buffer is empty, an empty numpy array is returned.
+        :param pad_zeros: If true and more items requested than present in queue pad the difference with zeros
         """
         if number > self.current_index:
+            too_much = number - self.current_index
             number = self.current_index
+        else:
+            too_much = 0
 
         with self.__data.get_lock():
             self.current_index -= number
             result = np.copy(self.data[0:number])
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
             data[:] = np.roll(data, -number)
+
+        if too_much > 0 and pad_zeros:
+            result = np.append(result, np.zeros(too_much, dtype=np.complex64))
 
         return result

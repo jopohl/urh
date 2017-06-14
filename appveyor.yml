@@ -22,6 +22,12 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
 
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
+
+
 install:
   # If there is a newer build queued for the same PR, cancel this one.
   # The AppVeyor 'rollout builds' option is supposed to serve the same

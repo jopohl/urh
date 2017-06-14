@@ -1,7 +1,6 @@
 import random
 import uuid
 import xml.etree.ElementTree as ET
-from copy import deepcopy
 
 from urh import constants
 from urh.signalprocessing.CRCLabel import CRCLabel
@@ -137,7 +136,7 @@ class MessageType(list):
     def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
         is_crc_type = field_type is not None and field_type.function == FieldType.Function.CRC
         if is_crc_type != isinstance(label, CRCLabel):
-            self[self.index(label)] = self.__create_label(label.name, label.start, label.end,
+            self[self.index(label)] = self.__create_label(label.name, label.start, label.end-1,
                                                           label.color_index, label.auto_created, field_type)
         else:
             label.field_type = field_type

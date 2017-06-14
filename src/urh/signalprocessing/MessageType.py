@@ -104,7 +104,7 @@ class MessageType(list):
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
         proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind,
-                                    auto_created=auto_created, type=type)
+                                    auto_created=auto_created, field_type=type)
 
         if proto_label not in self:
             self.append(proto_label)

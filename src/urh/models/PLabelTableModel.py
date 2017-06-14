@@ -66,7 +66,7 @@ class PLabelTableModel(QAbstractTableModel):
             return Qt.AlignCenter
         elif role == Qt.FontRole and j == 0:
             font = QFont()
-            font.setItalic(self.message_type[i].type is None)
+            font.setItalic(self.message_type[i].field_type is None)
             return font
         else:
             return None
@@ -85,9 +85,9 @@ class PLabelTableModel(QAbstractTableModel):
         if j == 0:
             lbl.name = value
             if value in self.field_types_by_caption:
-                lbl.type = self.field_types_by_caption[value]
+                lbl.field_type = self.field_types_by_caption[value]
             else:
-                lbl.type = None
+                lbl.field_type = None
         elif j == 1:
             lbl.start = self.message.convert_index(int(value-1), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 2:

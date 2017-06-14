@@ -84,10 +84,7 @@ class PLabelTableModel(QAbstractTableModel):
 
         if j == 0:
             lbl.name = value
-            if value in self.field_types_by_caption:
-                lbl.field_type = self.field_types_by_caption[value]
-            else:
-                lbl.field_type = None
+            self.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(value, None))
         elif j == 1:
             lbl.start = self.message.convert_index(int(value-1), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 2:

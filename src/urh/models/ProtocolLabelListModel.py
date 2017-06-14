@@ -57,10 +57,8 @@ class ProtocolLabelListModel(QAbstractListModel):
         elif role == Qt.EditRole:
             proto_label = self.message_type[index.row()]
             proto_label.name = value
-            if value in self.controller.field_types_by_caption:
-                proto_label.field_type = self.controller.field_types_by_caption[value]
-            else:
-                proto_label.field_type = None
+            self.message_type.change_field_type_of_label(proto_label,
+                                                         self.controller.field_types_by_caption.get(value, None))
 
             self.protolabel_type_edited.emit()
 

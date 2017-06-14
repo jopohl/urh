@@ -47,12 +47,6 @@ class Ui_DialogLabels(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tabWidgetAdvancedSettings = QtWidgets.QTabWidget(self.groupBoxAdvancedSettings)
         self.tabWidgetAdvancedSettings.setObjectName("tabWidgetAdvancedSettings")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.tabWidgetAdvancedSettings.addTab(self.tab, "")
-        self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
-        self.tabWidgetAdvancedSettings.addTab(self.tab_2, "")
         self.verticalLayout_2.addWidget(self.tabWidgetAdvancedSettings)
         self.verticalLayout_3.addWidget(self.groupBoxAdvancedSettings)
         self.btnConfirm = QtWidgets.QPushButton(DialogLabels)
@@ -71,8 +65,6 @@ class Ui_DialogLabels(object):
         self.cbProtoView.setItemText(1, _translate("DialogLabels", "Hex"))
         self.cbProtoView.setItemText(2, _translate("DialogLabels", "ASCII"))
         self.groupBoxAdvancedSettings.setTitle(_translate("DialogLabels", "Advanced Settings"))
-        self.tabWidgetAdvancedSettings.setTabText(self.tabWidgetAdvancedSettings.indexOf(self.tab), _translate("DialogLabels", "Tab 1"))
-        self.tabWidgetAdvancedSettings.setTabText(self.tabWidgetAdvancedSettings.indexOf(self.tab_2), _translate("DialogLabels", "Tab 2"))
         self.btnConfirm.setText(_translate("DialogLabels", "Confirm"))
 
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView

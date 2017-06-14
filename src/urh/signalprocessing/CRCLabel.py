@@ -18,7 +18,7 @@ class CRCLabel(ProtocolLabel):
 
     @staticmethod
     def from_label(label: ProtocolLabel):
-        result = CRCLabel(label.name, label.start, label.end, label.color_index, label.field_type,
+        result = CRCLabel(label.name, label.start, label.end-1, label.color_index, label.field_type,
                           label.fuzz_created, label.auto_created)
         result.apply_decoding = label.apply_decoding
         result.show = label.show

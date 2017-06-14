@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHeaderView
+from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget
 
 from urh import constants
 from urh.models.PLabelTableModel import PLabelTableModel
@@ -16,6 +16,8 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 
 class ProtocolLabelController(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
+
+    SPECIAL_CONFIG_TYPES = [FieldType.Function.CRC]
 
     def __init__(self, preselected_index, message: Message, viewtype: int, parent=None):
         super().__init__(parent)
@@ -44,6 +46,8 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
         self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message.message_type.name)
 
+        self.configure_special_config_tabs()
+
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -56,10 +60,19 @@ class ProtocolLabelController(QDialog):
         for i in range(self.model.rowCount()):
             self.open_editors(i)
 
+    def configure_special_config_tabs(self):
+        self.ui.tabWidgetAdvancedSettings.clear()
+        for lbl in self.model.message_type: # type: ProtocolLabel
+            if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
+                self.ui.tabWidgetAdvancedSettings.addTab(QWidget(), lbl.name)
+
+        self.ui.groupBoxAdvancedSettings.setVisible(self.ui.tabWidgetAdvancedSettings.count() > 0)
+
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
         self.model.apply_decoding_changed.connect(self.on_apply_decoding_changed)
+        self.model.special_status_label_changed.connect(self.on_label_special_status_changed)
 
     def open_editors(self, row):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
@@ -87,3 +100,7 @@ class ProtocolLabelController(QDialog):
     @pyqtSlot(ProtocolLabel)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel):
         self.apply_decoding_changed.emit(lbl, self.model.message_type)
+
+    @pyqtSlot(ProtocolLabel)
+    def on_label_special_status_changed(self, lbl: ProtocolLabel):
+        self.configure_special_config_tabs()

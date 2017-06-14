@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 
 from urh import constants
+from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
@@ -103,8 +104,8 @@ class MessageType(list):
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind,
-                                    auto_created=auto_created, field_type=type)
+        proto_label = self.__create_label(name=name, start=start, end=end, color_index=color_ind,
+                                          auto_created=auto_created, field_type=type)
 
         if proto_label not in self:
             self.append(proto_label)
@@ -132,6 +133,21 @@ class MessageType(list):
         result.append(self.ruleset.to_xml())
 
         return result
+
+    def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
+        is_crc_type = field_type is not None and field_type.function == FieldType.Function.CRC
+        if is_crc_type != isinstance(label, CRCLabel):
+            self[self.index(label)] = self.__create_label(label.name, label.start, label.end,
+                                                          label.color_index, label.auto_created, field_type)
+        else:
+            label.field_type = field_type
+
+    def __create_label(self, name: str, start: int, end: int, color_index: int, auto_created: bool, field_type: FieldType):
+        if field_type is not None:
+            if field_type.function == FieldType.Function.CRC:
+                return CRCLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type, auto_created=auto_created)
+
+        return ProtocolLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type, auto_created=auto_created)
 
     @staticmethod
     def from_xml(tag: ET.Element):

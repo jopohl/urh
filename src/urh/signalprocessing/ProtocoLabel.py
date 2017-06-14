@@ -143,8 +143,9 @@ class ProtocolLabel(object):
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_format_index = int(tag.get("display_format_index", 0))
-        result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
+        result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
         type_id = tag.get("type_id", None)
+
         if type_id and type_id in field_types_by_type_id:
             result.field_type = field_types_by_type_id[type_id]
         else:

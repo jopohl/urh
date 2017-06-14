@@ -124,7 +124,7 @@ class Length(Component):
 
             try:
                 start, end = max(scores, key=scores.__getitem__)
-                if not any((lbl.type.function == FieldType.Function.LENGTH or lbl.name == "Length") and lbl.auto_created
+                if not any((lbl.field_type.function == FieldType.Function.LENGTH or lbl.name == "Length") and lbl.auto_created
                            for lbl in message_type):
                     message_type.add_protocol_label(start=start, end=end - 1, name=self.length_field_name,
                                                     auto_created=True, type=self.length_field_type)
@@ -136,4 +136,4 @@ class Length(Component):
 
     @staticmethod
     def find_lbl_function_in(function: FieldType.Function, message_type: MessageType) -> ProtocolLabel:
-        return next((lbl for lbl in message_type if lbl.type and lbl.type.function == function), None)
+        return next((lbl for lbl in message_type if lbl.field_type and lbl.field_type.function == function), None)

@@ -958,11 +958,11 @@ class CompareFrameController(QWidget):
     def refresh_field_types_for_labels(self):
         self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
-            for lbl in (lbl for lbl in mt if lbl.type is not None):  # type: ProtocolLabel
-                if lbl.type.id not in self.field_types_by_id:
-                    lbl.type = None
+            for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
+                if lbl.field_type.id not in self.field_types_by_id:
+                    lbl.field_type = None
                 else:
-                    lbl.type = self.field_types_by_id[lbl.type.id]
+                    lbl.field_type = self.field_types_by_id[lbl.field_type.id]
 
         self.update_field_type_combobox()
 

@@ -23,6 +23,8 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 # Installation
+Universal Radio Hacker can be installed via _pip_ or using the _packet manager_ of your distribution (if included). Furthermore there is an _installer_ (setup.py) included in the source code. Of course, you can also run the Universal Radio Hacker directly _from source_ without installing it.
+
 __Dependencies__
 - Python 3.4+
 - numpy / psutil / zmq
@@ -62,6 +64,10 @@ __before__ installing URH, using:
 sudo apt-get update
 sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
+```
+### Gentoo/Pentoo
+```bash
+emerge -av urh
 ```
 
 ### Windows

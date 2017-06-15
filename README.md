@@ -22,15 +22,14 @@ Like to see things in action? Watch URH on YouTube!
 
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
-## Installation
-### Dependencies
-#### Required
+# Installation
+__Dependencies__
 - Python 3.4+
 - numpy / psutil / zmq
 - PyQt5
 - C++ Compiler
 
-#### Optional
+__Optional__
 - librtlsdr (for native RTL-SDR device backend)
 - libhackrf (for native HackRF device backend)
 - libairspy (for native AirSPy device backend)
@@ -39,6 +38,7 @@ Like to see things in action? Watch URH on YouTube!
 - rfcat (for RfCat plugin to send e.g. with YardStick One)
 - gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
+## Examples
 ### Arch Linux
 ```bash
 yaourt -S urh
@@ -56,7 +56,6 @@ If your device does not have a ``` -dev ``` package, e.g. LimeSDR, you need to m
 sudo ln -s /usr/lib/x86_64-linux-gnu/libLimeSuite.so.17.02.2 /usr/lib/x86_64-linux-gnu/libLimeSuite.so
 ```
 
-
 __before__ installing URH, using:
 
 ```bash
@@ -64,8 +63,6 @@ sudo apt-get update
 sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
 ```
-
-
 
 ### Windows
 If you run a Python 3.4 you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.
@@ -83,7 +80,7 @@ corresponding native device support.
 3. In a terminal, type: ``` pip3 install urh ```.
 4. Type ``` urh ``` in a terminal to get it started.
 
-### Updating
+## Update your installation
 If you installed URH via pip you can keep it up to date with
 ```bash
 pip3 install --upgrade urh
@@ -93,10 +90,10 @@ If this shouldn't work you can try:
 python3 -m pip install --upgrade urh
 ```
 
-### Running from source
+## Running from source
 If you like to live on bleeding edge, you can run URH from source.
 
-#### Without Installation
+### Without installation
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
@@ -106,7 +103,7 @@ cd urh/src/urh
 
 Note, before first usage the C++ extensions will be built.
 
-#### Installing from source
+### Installing from source
 To install from source you need to have ``` python-setuptools ``` installed. You can get it e.g. with ``` pip install setuptools ```. 
 Once the setuptools are installed use: 
 ```bash
@@ -117,15 +114,16 @@ python setup.py install
 
 And start the application by typing ``` urh ``` in a terminal.
 
+# External decodings
+See [wiki](https://github.com/jopohl/urh/wiki/External-decodings) for a list of external decodings provided by our community! Thanks for that!
 
-
-## Screenshots
-### Get the data out of raw signals
+# Screenshots
+## Get the data out of raw signals
 ![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
 
 
-### Keep an overview even on complex protocols
+## Keep an overview even on complex protocols
  ![Analysis phase](http://i.imgur.com/ubAL3pE.png)
 
-### Record and send signals
+## Record and send signals
  ![Record](http://i.imgur.com/BfQpg23.png)

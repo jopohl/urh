@@ -38,7 +38,7 @@ __Optional__
 - rfcat (for RfCat plugin to send e.g. with YardStick One)
 - gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
 
-## Examples
+## Installation examples
 ### Arch Linux
 ```bash
 yaourt -S urh

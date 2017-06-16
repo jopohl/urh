@@ -41,9 +41,6 @@ class ProtocolLabelController(QDialog):
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        for i in range(self.model.rowCount()):
-            self.open_editors(i)
-
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
         self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message.message_type.name)
 
@@ -56,15 +53,17 @@ class ProtocolLabelController(QDialog):
         except TypeError:
             pass
 
+        for i in range(self.model.rowCount()):
+            self.open_editors(i)
+
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
         self.model.apply_decoding_changed.connect(self.on_apply_decoding_changed)
 
     def open_editors(self, row):
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 1))
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 2))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
+        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Enter:

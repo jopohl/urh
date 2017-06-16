@@ -136,17 +136,29 @@ class EditSignalAction(QUndoCommand):
         if self.mode == EditAction.delete:
             self.signal._fulldata = np.insert(self.signal._fulldata, self.start, self.orig_data_part)
             if self.cache_qad:
-                self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
+                try:
+                    self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
+                except ValueError:
+                    self.signal._qad = None
+                    logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.mute or self.mode == EditAction.filter:
             self.signal._fulldata[self.start:self.end] = self.orig_data_part
             if self.cache_qad:
-                self.signal._qad[self.start:self.end] = self.orig_qad_part
+                try:
+                    self.signal._qad[self.start:self.end] = self.orig_qad_part
+                except ValueError:
+                    self.signal._qad = None
+                    logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.crop:
             self.signal._fulldata = np.concatenate((self.pre_crop_data, self.signal._fulldata, self.post_crop_data))
             if self.cache_qad:
-                self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))
+                try:
+                    self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))
+                except ValueError:
+                    self.signal._qad = None
+                    logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.paste or self.mode == EditAction.insert:
             self.signal.delete_range(self.position, self.position+len(self.data_to_insert))

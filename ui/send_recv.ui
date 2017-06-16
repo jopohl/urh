@@ -47,8 +47,8 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>404</width>
-         <height>1440</height>
+         <width>409</width>
+         <height>1238</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">

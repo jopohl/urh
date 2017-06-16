@@ -317,7 +317,7 @@ class SignalFrameController(QFrame):
             self.files_dropped.emit(event.mimeData().urls())
 
     def create_new_signal(self, start, end):
-        if start < end:
+        if start != end:
             new_signal = self.signal.create_new(start, end)
             self.signal_created.emit(new_signal)
         else:
@@ -611,6 +611,7 @@ class SignalFrameController(QFrame):
             self.ui.gvLegend.hide()
 
         self.ui.gvSignal.auto_fit_view()
+        self.ui.gvSignal.refresh_selection_area()
         self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()
 
@@ -704,8 +705,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def update_roi_from_protocol_selection(self):
         text_edit = self.ui.txtEdProto
-        end_pos = text_edit.textCursor().selectionEnd()
-        start_pos = text_edit.textCursor().selectionStart()
+        start_pos, end_pos = text_edit.textCursor().selectionStart(), text_edit.textCursor().selectionEnd()
         if start_pos == end_pos == -1:
             return
 
@@ -714,25 +714,22 @@ class SignalFrameController(QFrame):
         if start_pos > end_pos:
             start_pos, end_pos = end_pos, start_pos
 
-        start_message = text_edit.toPlainText()[:start_pos].count("\n")
-        end_message = start_message + text_edit.toPlainText()[start_pos:end_pos].count("\n")
-        newline_pos = text_edit.toPlainText()[:start_pos].rfind("\n")
+        text = text_edit.toPlainText()
+
+        start_message = text[:start_pos].count("\n")
+        end_message = start_message + text[start_pos:end_pos].count("\n")
+        newline_pos = text[:start_pos].rfind("\n")
 
         if newline_pos != -1:
             start_pos -= (newline_pos + 1)
 
-        newline_pos = text_edit.toPlainText()[:end_pos].rfind("\n")
+        newline_pos = text[:end_pos].rfind("\n")
         if newline_pos != -1:
             end_pos -= (newline_pos + 1)
 
-        if text_edit.cur_view == 1:
-            # Hex View
-            start_pos *= 4
-            end_pos *= 4
-        elif text_edit.cur_view == 2:
-            # ASCII View
-            start_pos *= 8
-            end_pos *= 8
+        factor = 1 if text_edit.cur_view == 0 else 4 if text_edit.cur_view == 1 else 8
+        start_pos *= factor
+        end_pos *= factor
 
         try:
             include_last_pause = False
@@ -741,7 +738,7 @@ class SignalFrameController(QFrame):
             if s > e:
                 s, e = e, s
 
-            selected_text = text_edit.toPlainText()[s:e]
+            selected_text = text[s:e]
 
             last_newline = selected_text.rfind("\n")
             if last_newline == -1:
@@ -806,9 +803,7 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(True)
 
         try:
-            start_message, start_index, end_message, end_index = protocol.get_bitseq_from_selection(
-                start, w,
-                self.signal.bit_len)
+            start_message, start_index, end_message, end_index = protocol.get_bitseq_from_selection(start, w)
         except IndexError:
             c.clearSelection()
             self.ui.txtEdProto.setTextCursor(c)

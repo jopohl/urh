@@ -328,7 +328,7 @@ class FuzzingDialogController(QDialog):
     @pyqtSlot()
     def set_current_label_name(self):
         self.current_label.name = self.ui.comboBoxFuzzingLabel.currentText()
-        self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), lbl.name)
+        self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), self.current_label.name)
 
     @pyqtSlot(int)
     def on_fuzz_msg_changed(self, index: int):

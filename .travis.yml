@@ -1,5 +1,3 @@
-
-
 matrix:
   include:
     - os: linux
@@ -26,26 +24,27 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
-    - os: osx
-      language: generic
+
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
 
 install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update || brew update; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install python3; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]] && [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]; then sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil; fi
   - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then pip3 install -r requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
+  - pip3 install coverage==4.3.4
   - pip3 install pytest-cov codeclimate-test-reporter
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update || brew update; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -qq libegl1-mesa; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sh -e /etc/init.d/xvfb start; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sleep 3; fi
+  - sudo apt-get install -qq libegl1-mesa
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
 
 before_script:
    - touch tests/show_gui
    - python3 src/urh/cythonext/build.py
 
 script:
-  - pytest -s -v --cov=src/urh tests
+  - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
   - pip3 install .
   - urh autoclose
 

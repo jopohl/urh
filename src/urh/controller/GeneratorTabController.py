@@ -67,6 +67,11 @@ class GeneratorTabController(QWidget):
         self.ui.prBarGeneration.hide()
         self.create_connects(compare_frame_controller)
 
+    def __get_modulator_of_message(self, message: Message) -> Modulator:
+        if message.modulator_indx > len(self.modulators) - 1:
+            message.modulator_indx = 0
+        return self.modulators[message.modulator_indx]
+
     @property
     def selected_message_index(self) -> int:
         min_row, _, _, _ = self.ui.tableMessages.selection_range()
@@ -90,7 +95,7 @@ class GeneratorTabController(QWidget):
 
     @property
     def total_modulated_samples(self) -> int:
-        return sum(int(len(msg.encoded_bits) * self.modulators[msg.modulator_indx].samples_per_bit + msg.pause)
+        return sum(int(len(msg.encoded_bits) * self.__get_modulator_of_message(msg).samples_per_bit + msg.pause)
                    for msg in  self.table_model.protocol.messages)
 
     @modulators.setter
@@ -325,7 +330,7 @@ class GeneratorTabController(QWidget):
         self.ui.lWPauses.clear()
         fmt_str = "Pause ({1:d}-{2:d}) <{0:d} samples ({3})>"
         for i, pause in enumerate(self.table_model.protocol.pauses):
-            sr = self.modulators[self.table_model.protocol.messages[i].modulator_indx].sample_rate
+            sr = self.__get_modulator_of_message(self.table_model.protocol.messages[i]).sample_rate
             item = fmt_str.format(pause, i + 1, i + 2, Formatter.science_time(pause / sr))
             self.ui.lWPauses.addItem(item)
 
@@ -382,7 +387,7 @@ class GeneratorTabController(QWidget):
         pos = 0
         for i in range(0, self.table_model.row_count):
             message = self.table_model.protocol.messages[i]
-            modulator = self.modulators[message.modulator_indx]
+            modulator = self.__get_modulator_of_message(message)
             # We do not need to modulate the pause extra, as result is already initialized with zeros
             modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
             buffer[pos:pos+len(modulator.modulated_samples)] = modulator.modulated_samples
@@ -397,9 +402,10 @@ class GeneratorTabController(QWidget):
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
 
-        if self.selected_message is not None:
+        if self.label_list_model.message is not None:
+            msg_index = self.table_model.protocol.messages.index(self.label_list_model.message)
             fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
-                                          msg_index=self.selected_message_index, proto_view=view, parent=self)
+                                          msg_index=msg_index, proto_view=view, parent=self)
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)
@@ -592,7 +598,7 @@ class GeneratorTabController(QWidget):
     def on_btn_network_sdr_clicked(self):
         if not self.network_sdr_plugin.is_sending:
             messages = self.table_model.protocol.messages
-            sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            sample_rates = [self.__get_modulator_of_message(msg).sample_rate for msg in messages]
             self.network_sdr_plugin.start_message_sending_thread(messages, sample_rates)
         else:
             self.network_sdr_plugin.stop_sending_thread()
@@ -619,7 +625,7 @@ class GeneratorTabController(QWidget):
     def on_btn_rfcat_clicked(self):
         if not self.rfcat_plugin.is_sending:
             messages = self.table_model.protocol.messages
-            sample_rates = [self.modulators[msg.modulator_indx].sample_rate for msg in messages]
+            sample_rates = [self.__get_modulator_of_message(msg).sample_rate for msg in messages]
             self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators, self.project_manager)
         else:
             self.rfcat_plugin.stop_sending_thread()

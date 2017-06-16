@@ -20,12 +20,22 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -98,16 +108,22 @@ class Ui_MainWindow(object):
         self.tab_interpretation = QtWidgets.QWidget()
         self.tab_interpretation.setObjectName("tab_interpretation")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab_interpretation)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tabWidget.addTab(self.tab_interpretation, "")
         self.tab_protocol = QtWidgets.QWidget()
         self.tab_protocol.setObjectName("tab_protocol")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab_protocol)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget.addTab(self.tab_protocol, "")
         self.tab_generator = QtWidgets.QWidget()
         self.tab_generator.setObjectName("tab_generator")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.tab_generator)
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_5.setSpacing(0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.tabWidget.addTab(self.tab_generator, "")
         self.tab_simulator = QtWidgets.QWidget()
@@ -119,7 +135,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 30))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -285,7 +301,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget_Project.setCurrentIndex(0)
+        self.tabWidget_Project.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -327,7 +343,7 @@ class Ui_MainWindow(object):
         self.actionShow_only_Compare_Frame.setText(_translate("MainWindow", "Show Compare Frame only"))
         self.actionConfigurePlugins.setText(_translate("MainWindow", "Configure..."))
         self.actionSort_Frames_by_Name.setText(_translate("MainWindow", "Sort &Frames by Name"))
-        self.actionConvert_Folder_to_Project.setText(_translate("MainWindow", "Convert &Folder to Project"))
+        self.actionConvert_Folder_to_Project.setText(_translate("MainWindow", "Conv&ert Folder to Project"))
         self.actionDecoding.setText(_translate("MainWindow", "&Decoding..."))
         self.actionRecord.setText(_translate("MainWindow", "&Record signal..."))
         self.actionSpectrum_Analyzer.setText(_translate("MainWindow", "Spectrum &Analyzer..."))
@@ -338,8 +354,8 @@ class Ui_MainWindow(object):
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
         self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
         self.actionOpen_directory.setText(_translate("MainWindow", "Open &folder..."))
-        self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
-        self.actionShowFileTree.setText(_translate("MainWindow", "Show file tree"))
+        self.actionAbout_Qt.setText(_translate("MainWindow", "About &Qt"))
+        self.actionShowFileTree.setText(_translate("MainWindow", "&Show file tree"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

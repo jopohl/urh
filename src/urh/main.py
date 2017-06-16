@@ -23,15 +23,6 @@ def main():
         print("You need at least Python 3.4 for this application!")
         sys.exit(1)
 
-    if sys.platform == "win32":
-        urh_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
-            else os.path.dirname(os.path.realpath(os.readlink(__file__)))
-        assert os.path.isdir(urh_dir)
-
-        dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win"))
-        print("Using DLLs from:", dll_dir)
-        os.environ['PATH'] = dll_dir + ';' + os.environ['PATH']
-
     t = time.time()
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
@@ -58,6 +49,9 @@ def main():
         # Started locally, not installed
         print("Adding {0} to pythonpath. This is only important when running URH from source.".format(src_dir))
         sys.path.insert(0, src_dir)
+
+    from urh.util import util
+    util.set_windows_lib_path()
 
     try:
         import urh.cythonext.signalFunctions

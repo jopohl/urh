@@ -149,10 +149,10 @@ class GeneratorTableView(TableView):
 
         if self.model().row_count > 0:
             if selected_label_index == -1:
-                fuzzing_action = menu.addAction("Create fuzzing Label...")
+                fuzzing_action = menu.addAction("Create fuzzing label...")
                 fuzzing_action.setIcon(QIcon.fromTheme("list-add"))
             else:
-                fuzzing_action = menu.addAction("Edit fuzzing Label...")
+                fuzzing_action = menu.addAction("Edit fuzzing label...")
                 fuzzing_action.setIcon(QIcon.fromTheme("configure"))
 
             fuzzing_action.triggered.connect(self.on_fuzzing_action_triggered)

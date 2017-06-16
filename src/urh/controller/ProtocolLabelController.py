@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget
+from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget, QAbstractItemView
 
 from urh import constants
 from urh.controller.CRCWidgetController import CRCWidgetController
@@ -39,9 +39,9 @@ class ProtocolLabelController(QDialog):
                                                                              colors=constants.LABEL_COLORS,
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
-
         self.ui.tblViewProtoLabels.setModel(self.model)
         self.ui.tblViewProtoLabels.selectRow(preselected_index)
+        self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -67,7 +67,8 @@ class ProtocolLabelController(QDialog):
         for lbl in self.model.message_type: # type: ProtocolLabel
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
                 if isinstance(lbl, CRCLabel):
-                    self.ui.tabWidgetAdvancedSettings.addTab(CRCWidgetController(lbl), lbl.name)
+                    w = CRCWidgetController(lbl, self.model.message, self.model.proto_view)
+                    self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
                     raise NotImplementedError("No Special Config Dialog for field type " + lbl.field_type.caption)
 
@@ -101,6 +102,9 @@ class ProtocolLabelController(QDialog):
     def set_view_index(self, ind):
         self.model.proto_view = ind
         self.model.update()
+
+        for i in range(self.ui.tabWidgetAdvancedSettings.count()):
+            self.ui.tabWidgetAdvancedSettings.widget(i).proto_view = ind
 
     @pyqtSlot(ProtocolLabel)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel):

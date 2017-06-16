@@ -65,29 +65,16 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QTableWidget" name="tableWidgetDataRanges">
-        <attribute name="horizontalHeaderCascadingSectionResizes">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderStretchLastSection">
+       <widget class="QTableView" name="tableViewDataRanges">
+        <attribute name="horizontalHeaderHighlightSections">
          <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderCascadingSectionResizes">
          <bool>false</bool>
         </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
+        <attribute name="verticalHeaderHighlightSections">
          <bool>false</bool>
         </attribute>
-        <column>
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>End</string>
-         </property>
-        </column>
        </widget>
       </item>
       <item>

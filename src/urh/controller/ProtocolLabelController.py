@@ -3,7 +3,9 @@ from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget
 
 from urh import constants
+from urh.controller.CRCWidgetController import CRCWidgetController
 from urh.models.PLabelTableModel import PLabelTableModel
+from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -64,7 +66,10 @@ class ProtocolLabelController(QDialog):
         self.ui.tabWidgetAdvancedSettings.clear()
         for lbl in self.model.message_type: # type: ProtocolLabel
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
-                self.ui.tabWidgetAdvancedSettings.addTab(QWidget(), lbl.name)
+                if isinstance(lbl, CRCLabel):
+                    self.ui.tabWidgetAdvancedSettings.addTab(CRCWidgetController(lbl), lbl.name)
+                else:
+                    raise NotImplementedError("No Special Config Dialog for field type " + lbl.field_type.caption)
 
         self.ui.groupBoxAdvancedSettings.setVisible(self.ui.tabWidgetAdvancedSettings.count() > 0)
 

@@ -13,7 +13,7 @@ class CRCLabel(ProtocolLabel):
         assert field_type.function == FieldType.Function.CRC
         super().__init__(name, start, end, color_index, fuzz_created, auto_created, field_type)
 
-        self.data_ranges = []  # type: list[tuple]
+        self.data_ranges = [(0, self.start)]  # type: list[tuple]
         self.crc = None   # type: crc_generic
 
     @staticmethod

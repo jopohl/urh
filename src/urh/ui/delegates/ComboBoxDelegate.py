@@ -1,6 +1,7 @@
+import sys
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
-from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QCompleter
+from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap, QFontMetrics
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
 
 class ComboBoxDelegate(QStyledItemDelegate):
@@ -25,13 +26,15 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
-        editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        if sys.platform == "win32":
+            # Ensure text entries are visible with windows combo boxes
+            editor.setMinimumHeight(self.sizeHint(option, index).height() + 10)
+
         editor.addItems(self.items)
 
         if self.is_editable:
             editor.setEditable(True)
             editor.setInsertPolicy(QComboBox.NoInsert)
-            editor.completer().setCompletionMode(QCompleter.PopupCompletion)
 
         if self.current_edit_text:
             editor.setEditText(self.current_edit_text)
@@ -67,6 +70,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
             model.setData(index, editor.currentIndex(), Qt.EditRole)
         else:
             model.setData(index, editor.currentText(), Qt.EditRole)
+
+    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+        editor.setGeometry(option.rect)
 
     @pyqtSlot()
     def currentIndexChanged(self):

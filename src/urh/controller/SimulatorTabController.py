@@ -1,9 +1,9 @@
-import re
 import numpy
 import itertools
 
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
+from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, QRegExp
+from PyQt5.QtGui import QRegExpValidator
 
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
@@ -65,8 +65,7 @@ class SimulatorTabController(QWidget):
         self.update_field_name_column()
 
         self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller,
-                                                                        generator_tab_controller
-, self)
+                                                                        generator_tab_controller, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
@@ -79,6 +78,8 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
+
+        self.ui.navLineEdit.setValidator(QRegExpValidator(QRegExp("^\d+(\.\d+)*$")))
 
         self.__active_item = None
 
@@ -156,6 +157,9 @@ class SimulatorTabController(QWidget):
             self.proto_analyzer.message_types.append(msg_type)
             self.compare_frame_controller.fill_message_type_combobox()
             self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
+
+            message.message_type.name = msg_type_name
+            self.sim_proto_manager.items_updated.emit([message])
 
     def on_label_list_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_list)
@@ -337,7 +341,8 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        s = SimulateDialogController(project_manager=self.project_manager, sim_proto_manager=self.sim_proto_manager, parent=self)
+        s = SimulateDialogController(project_manager=self.project_manager, compare_frame_controller=self.compare_frame_controller,
+                                     sim_proto_manager=self.sim_proto_manager, parent=self)
         s.show()
 
     @pyqtSlot()
@@ -347,16 +352,15 @@ class SimulatorTabController(QWidget):
 
         curr_item = self.sim_proto_manager.rootItem
 
-        if re.match(r"^\d+(\.\d+)*$", nav_text):
-            index_list = nav_text.split(".")
-            index_list = list(map(int, index_list))
+        index_list = nav_text.split(".")
+        index_list = list(map(int, index_list))
 
-            for index in index_list:
-                if (curr_item is None or index > curr_item.child_count()
-                        or isinstance(curr_item, SimulatorMessage)):
-                    break
+        for index in index_list:
+            if (curr_item is None or index > curr_item.child_count()
+                    or isinstance(curr_item, SimulatorMessage)):
+                break
 
-                curr_item = curr_item.children[index - 1]
+            curr_item = curr_item.children[index - 1]
 
             if isinstance(curr_item, SimulatorRule):
                 curr_item = curr_item.children[0]

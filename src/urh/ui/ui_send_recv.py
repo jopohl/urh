@@ -15,6 +15,14 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(SendRecvDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(SendRecvDialog)
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.scrollArea = QtWidgets.QScrollArea(self.splitter)
@@ -22,7 +30,7 @@ class Ui_SendRecvDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, -604, 387, 1186))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 404, 1440))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -375,12 +383,12 @@ class Ui_SendRecvDialog(object):
         self.spinbox_sniff_Center.setObjectName("spinbox_sniff_Center")
         self.gridLayout.addWidget(self.spinbox_sniff_Center, 16, 1, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
-        self.layoutWidget = QtWidgets.QWidget(self.splitter)
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.widget = QtWidgets.QWidget(self.splitter)
+        self.widget.setObjectName("widget")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.stackedWidget = QtWidgets.QStackedWidget(self.layoutWidget)
+        self.stackedWidget = QtWidgets.QStackedWidget(self.widget)
         self.stackedWidget.setObjectName("stackedWidget")
         self.page_receive = QtWidgets.QWidget()
         self.page_receive.setObjectName("page_receive")
@@ -444,10 +452,10 @@ class Ui_SendRecvDialog(object):
         self.horizontalLayout_2.addWidget(self.stackedWidget)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.label_y_scale = QtWidgets.QLabel(self.layoutWidget)
+        self.label_y_scale = QtWidgets.QLabel(self.widget)
         self.label_y_scale.setObjectName("label_y_scale")
         self.verticalLayout_5.addWidget(self.label_y_scale)
-        self.sliderYscale = QtWidgets.QSlider(self.layoutWidget)
+        self.sliderYscale = QtWidgets.QSlider(self.widget)
         self.sliderYscale.setMinimum(1)
         self.sliderYscale.setMaximum(1000)
         self.sliderYscale.setProperty("value", 1)

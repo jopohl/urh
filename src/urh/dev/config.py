@@ -102,3 +102,31 @@ DEVICE_CONFIG["Fallback"] = {
     "rx_rf_gain":  list(range(0, 51)),
     "tx_rf_gain":  list(range(0, 51)),
 }
+
+#default_profile = {
+#    "name": "Default",
+#    "device": "HackRF",
+#    "device_arguments": "",
+#    "channel": 0,
+#    "antenna": 0,
+#    "ip_address": "127.0.0.1",
+#    "port_number": 1234,
+#    "frequency": DEFAULT_FREQUENCY,
+#    "sample_rate": DEFAULT_SAMPLE_RATE,
+#    "band_width": DEFAULT_BANDWIDTH,
+#    "gain": self.ui.spinBoxGain.value(),
+#    "if_gain": self.ui.spinBoxIFGain.value(),
+#    "baseband_gain": self.ui.spinBoxBasebandGain.value(),
+#    "frequency_correction": self.ui.spinBoxFreqCorrection.value(),
+#    "direct_sampling": 0 if direct_sampling_index == -1 else direct_sampling_index,
+
+#    "noise": self.ui.spinbox_sniff_Noise.value(),
+#    "center": self.ui.spinbox_sniff_Center.value(),
+#    "bit_length": self.ui.spinbox_sniff_BitLen.value(),
+#    "error_tolerance": self.ui.spinbox_sniff_ErrorTolerance.value(),
+#    "modulation": self.ui.combox_sniff_Modulation.currentIndex(),
+
+#    "bw_sr_locked": self.ui.btnLockBWSR.isChecked()
+#}
+
+profiles = []

@@ -22,6 +22,16 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true">QSplitter::handle:horizontal {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 100), 
+stop:1 rgba(255, 255, 255, 0));
+image: url(:/icons/data/icons/rotated_splitter_handle.png);
+}</string>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -36,9 +46,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-604</y>
-         <width>387</width>
-         <height>1186</height>
+         <y>0</y>
+         <width>404</width>
+         <height>1440</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -896,7 +906,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="widget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QStackedWidget" name="stackedWidget">

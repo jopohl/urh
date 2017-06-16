@@ -4,7 +4,8 @@ import xml.etree.ElementTree as ET
 
 class Participant(object):
 
-    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate", "relative_rssi", "__id"]
+    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate",
+                 "send_recv_profile_index", "relative_rssi", "__id"]
 
     def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
         self.name = name if name else "unknown"
@@ -13,6 +14,7 @@ class Participant(object):
         self.color_index = color_index
         self.show = True
         self.simulate = False
+        self.send_recv_profile_index = 0
 
         self.relative_rssi = relative_rssi
 

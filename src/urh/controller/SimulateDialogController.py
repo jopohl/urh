@@ -3,24 +3,31 @@ from PyQt5.QtCore import Qt
 
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.ui_simulate_dialog import Ui_SimulateDialog
-from urh.models.SimulateListModel import SimulateListModel
+from urh.ui.delegates.SimulatorSettingsComboBoxDelegate import SimulatorSettingsComboBoxDelegate
+from urh.models.SimulatorSettingsTableModel import SimulatorSettingsTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 class SimulateDialogController(QDialog):
-    def __init__(self, project_manager: ProjectManager, sim_proto_manager: SimulatorProtocolManager, parent=None):
+    def __init__(self, project_manager: ProjectManager, compare_frame_controller, sim_proto_manager: SimulatorProtocolManager, parent=None):
         super().__init__(parent)
         self.ui = Ui_SimulateDialog()
         self.ui.setupUi(self)
 
         self.project_manager = project_manager
+        self.compare_frame_controller = compare_frame_controller
         self.sim_proto_manager = sim_proto_manager
 
         self.simulator_scene = SimulatorScene(mode=1, sim_proto_manager=self.sim_proto_manager)
         self.ui.gvSimulator.setScene(self.simulator_scene)
 
-        self.simulate_list_model = SimulateListModel(self.project_manager.participants)
-        self.ui.listViewSimulate.setModel(self.simulate_list_model)
+        self.simulator_settings_model = SimulatorSettingsTableModel(self.project_manager)
+        self.ui.tableViewSimulate.setModel(self.simulator_settings_model)
+
+        self.ui.tableViewSimulate.setItemDelegateForColumn(1, SimulatorSettingsComboBoxDelegate(
+                                                           controller=self, parent=self.ui.tableViewSimulate))
+        self.ui.tableViewSimulate.setItemDelegateForColumn(2, SimulatorSettingsComboBoxDelegate(
+                                                           controller=self, parent=self.ui.tableViewSimulate))
         self.update_buttons()
 
         self.create_connects()
@@ -35,8 +42,7 @@ class SimulateDialogController(QDialog):
         self.ui.btnLog.clicked.connect(self.on_btn_log_clicked)
 
     def on_project_updated(self):
-        self.simulate_list_model.participants = self.project_manager.participants
-        self.simulate_list_model.update()
+        self.simulator_settings_model.update()
 
     def on_btn_log_all_clicked(self):
         self.simulator_scene.log_all_items(True)

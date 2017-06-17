@@ -1,5 +1,6 @@
 from tests.QtTestCase import QtTestCase
 from urh.controller.CRCWidgetController import CRCWidgetController
+from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -27,3 +28,11 @@ class TestCRCWidget(QtTestCase):
         self.assertEqual(model.rowCount(), 1)
         crc_widget_controller.ui.btnRemoveRange.click()
         self.assertEqual(model.rowCount(), 1)
+
+    def test_crc_widget_in_protocol_label_dialog(self):
+        mt = MessageType("test")
+        mt.append(CRCLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CRC)))
+
+        dialog = ProtocolLabelController(0, Message([0]*100, 0, mt), 0)
+        self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.count(), 1)
+        self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")

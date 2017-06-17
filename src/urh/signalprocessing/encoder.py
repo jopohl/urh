@@ -3,7 +3,7 @@ import copy
 import array
 
 from urh import constants
-from urh.util.crc import crc_generic
+from urh.util.GenericCRC import GenericCRC
 
 
 class Encoder(object):
@@ -61,7 +61,7 @@ class Encoder(object):
         self.data_whitening_crc_rm = False  # Remove CRC
 
         # Get CRC Object
-        self.c = crc_generic(polynomial="16_standard", start_value=True)
+        self.c = GenericCRC(polynomial="16_standard", start_value=True)
 
         # Set Chain
         self.chain = []
@@ -774,7 +774,7 @@ class Encoder(object):
 
     @staticmethod
     def enocean_crc8(inpt):
-        c = crc_generic(polynomial="8_en")
+        c = GenericCRC(polynomial="8_en")
         return array.array("B", c.crc(inpt))
 
     def code_enocean(self, decoding: bool, inpt):

@@ -14,7 +14,7 @@ class CRCLabel(ProtocolLabel):
         super().__init__(name, start, end, color_index, fuzz_created, auto_created, field_type)
 
         self.data_ranges = [[0, self.start]]  # type: list[list[int,int]]
-        self.crc = None   # type: GenericCRC
+        self.crc = GenericCRC()   # type: GenericCRC
 
     @staticmethod
     def from_label(label: ProtocolLabel):

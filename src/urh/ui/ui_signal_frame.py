@@ -224,10 +224,18 @@ class Ui_SignalFrame(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"    image: url(:/icons/data/icons/splitter_handle.png);\n"
+"}")
         self.splitter.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.splitter.setLineWidth(1)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.splitter.setHandleWidth(5)
+        self.splitter.setHandleWidth(6)
         self.splitter.setChildrenCollapsible(False)
         self.splitter.setObjectName("splitter")
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
@@ -452,8 +460,8 @@ class Ui_SignalFrame(object):
         self.lInfoLenText.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the length of one (raw) bit <span style=\" font-weight:600;\">in samples</span>.</p><p><br/></p><p>Tune this value using either <span style=\" font-style:italic;\">the spinbox on the right</span> or the <span style=\" font-style:italic;\">context-menu of the SignalView</span>.</p></body></html>"))
         self.lInfoLenText.setText(_translate("SignalFrame", "Bit Length:"))
         self.spinBoxInfoLen.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the length of one (raw) bit <span style=\" font-weight:600;\">in samples</span>.</p><p><br/></p><p>Tune this value using either <span style=\" font-style:italic;\">the spinbox on the right</span> or the <span style=\" font-style:italic;\">context-menu of the SignalView</span>.</p></body></html>"))
-        self.spinBoxTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" text-decoration: underline;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
-        self.lErrorTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" text-decoration: underline;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
+        self.spinBoxTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" font-weight:400; font-style:italic;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
+        self.lErrorTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" font-weight:400; font-style:italic;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
         self.lErrorTolerance.setText(_translate("SignalFrame", "Error Tolerance:"))
         self.lSignalViewText.setText(_translate("SignalFrame", "Signal View:"))
         self.cbProtoView.setItemText(0, _translate("SignalFrame", "Bits"))
@@ -471,7 +479,7 @@ class Ui_SignalFrame(object):
         self.btnInfo.setText(_translate("SignalFrame", "..."))
         self.btnReplay.setToolTip(_translate("SignalFrame", "Replay signal"))
         self.label_2.setText(_translate("SignalFrame", "Modulation:"))
-        self.cbSignalView.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose the view of your signal.</p><p>The quadrature demodulation uses a <span style=\" text-decoration: underline;\">treshold of magnitude,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this treshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" text-decoration: underline;\">context menu</span>.</p><p>Current noise treshold is: </p></body></html>"))
+        self.cbSignalView.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose the view of your signal.</p><p>The quadrature demodulation uses a <span style=\" font-weight:600;\">treshold of magnitude,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this treshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" font-weight:600;\">context menu</span>.</p><p>Current noise treshold is: </p></body></html>"))
         self.cbSignalView.setItemText(0, _translate("SignalFrame", "Analog"))
         self.cbSignalView.setItemText(1, _translate("SignalFrame", "Demodulated"))
         self.cbModulationType.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose signals modulation:</p><ul><li>Amplitude Shift Keying (ASK)</li><li>Frequency Shift Keying (FSK)</li><li>Phase Shift Keying (PSK)</li></ul></body></html>"))

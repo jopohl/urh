@@ -30,6 +30,7 @@ class SendRecvDialogController(QDialog):
 
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
+        self.ui.splitter.setHandleWidth(6)
 
         self.set_sniff_ui_items_visible(False)
 
@@ -308,7 +309,7 @@ class SendRecvDialogController(QDialog):
         return items
 
     def set_bandwidth_status(self):
-        if self.device is not None:
+        if self.device is not None and self.device.backend != Backends.none:
             self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
             self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
 
@@ -602,7 +603,8 @@ class SendRecvDialogController(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()
-        self.emit_editing_finished_signals()
+        if self.device.backend is not Backends.none:
+            self.emit_editing_finished_signals()
 
         self.device.stop("Dialog closed. Killing recording process.")
         logger.debug("Device stopped successfully.")

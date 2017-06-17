@@ -1,6 +1,7 @@
 # Universal Radio Hacker
-[![Linux/OSX Build Status](https://img.shields.io/travis/jopohl/urh/master.svg?label=Linux/OSX)](https://travis-ci.org/jopohl/urh)
+[![Linux Build Status](https://img.shields.io/travis/jopohl/urh/master.svg?label=Linux)](https://travis-ci.org/jopohl/urh)
 [![Windows Build status](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
+[![OSX Build Status](https://img.shields.io/circleci/project/github/jopohl/urh/master.svg?label=OSX)](https://circleci.com/gh/jopohl/urh/tree/master)
 [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
@@ -67,11 +68,12 @@ sudo pip3 install urh
 
 
 ### Windows
-1. Install [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools).
-2. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ version!
-3. (Optional) Open a terminal (__cmd__) and type: ``` pip install numpy ``` - _This speeds the installation up a bit._
-4. In a terminal, type: ``` pip install urh ```.
-5. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar.
+If you run a Python 3.4 you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.
+1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
+  - Make sure you tick the _Add Python to PATH_ checkbox on first page in Python installer.
+  - Choose a __64 Bit__ Python version for native device support.
+2. In a terminal, type: ``` pip install urh ```.
+3. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar to start the application.
 
 ### Mac OS X
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 

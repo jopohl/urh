@@ -87,17 +87,17 @@ class TestAWRE(QtTestCase):
         dst_address_start, dst_address_end = 88, 111
         src_address_start, src_address_end = 112, 135
 
-        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, type=self.preamble_field_type,
+        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, field_type=self.preamble_field_type,
                                        start=preamble_start, end=preamble_end, color_index=0)
-        sync_label = ProtocolLabel(name=self.sync_field_type.caption, type=self.sync_field_type,
+        sync_label = ProtocolLabel(name=self.sync_field_type.caption, field_type=self.sync_field_type,
                                    start=sync_start, end=sync_end, color_index=1)
-        length_label = ProtocolLabel(name=self.length_field_type.caption, type=self.length_field_type,
+        length_label = ProtocolLabel(name=self.length_field_type.caption, field_type=self.length_field_type,
                                      start=length_start, end=length_end, color_index=2)
-        ack_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, type=self.dst_address_field_type,
+        ack_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, field_type=self.dst_address_field_type,
                                           start=ack_address_start, end=ack_address_end, color_index=3)
-        dst_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, type=self.dst_address_field_type,
+        dst_address_label = ProtocolLabel(name=self.dst_address_field_type.caption, field_type=self.dst_address_field_type,
                                           start=dst_address_start, end=dst_address_end, color_index=4)
-        src_address_label = ProtocolLabel(name=self.src_address_field_type.caption, type=self.src_address_field_type,
+        src_address_label = ProtocolLabel(name=self.src_address_field_type.caption, field_type=self.src_address_field_type,
                                           start=src_address_start, end=src_address_end, color_index=5)
 
         ff = FormatFinder(protocol=self.protocol, participants=self.participants, field_types=self.field_types)
@@ -140,9 +140,9 @@ class TestAWRE(QtTestCase):
         sof_start = 11
         sof_end = 14
 
-        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, type=self.preamble_field_type,
+        preamble_label = ProtocolLabel(name=self.preamble_field_type.caption, field_type=self.preamble_field_type,
                                        start=preamble_start, end=preamble_end, color_index=0)
-        sync_label = ProtocolLabel(name=self.sync_field_type.caption, type=self.sync_field_type,
+        sync_label = ProtocolLabel(name=self.sync_field_type.caption, field_type=self.sync_field_type,
                                    start=sof_start, end=sof_end, color_index=1)
 
 

@@ -238,15 +238,24 @@ class VirtualDevice(QObject):
 
     @gain.setter
     def gain(self, value):
-        self.__dev.gain = value
+        try:
+            self.__dev.gain = value
+        except AttributeError as e:
+            logger.warning(str(e))
 
     @property
     def if_gain(self):
-        return self.__dev.if_gain
+        try:
+            return self.__dev.if_gain
+        except AttributeError as e:
+            logger.warning(str(e))
 
     @if_gain.setter
     def if_gain(self, value):
-        self.__dev.if_gain = value
+        try:
+            self.__dev.if_gain = value
+        except AttributeError as e:
+            logger.warning(str(e))
 
     @property
     def baseband_gain(self):

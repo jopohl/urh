@@ -50,9 +50,8 @@ class MainController(QMainWindow):
         self.compare_frame_controller = CompareFrameController(parent=self.ui.tab_protocol,
                                                                plugin_manager=self.plugin_manager,
                                                                project_manager=self.project_manager)
+        self.compare_frame_controller.ui.splitter.setSizes([1, 1000000])
 
-        self.compare_frame_controller.ui.splitter_2.setSizes([self.compare_frame_controller.width() * 0.1,
-                                                              self.compare_frame_controller.width() * 0.9])
 
         self.ui.tab_protocol.layout().addWidget(self.compare_frame_controller)
 
@@ -113,12 +112,13 @@ class MainController(QMainWindow):
         undo_action = self.undo_group.createUndoAction(self)
         undo_action.setIcon(QIcon.fromTheme("edit-undo"))
         undo_action.setShortcut(QKeySequence.Undo)
-        self.ui.menuEdit.addAction(undo_action)
+        self.ui.menuEdit.insertAction(self.ui.actionDecoding, undo_action)
 
         redo_action = self.undo_group.createRedoAction(self)
         redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         redo_action.setShortcut(QKeySequence.Redo)
-        self.ui.menuEdit.addAction(redo_action)
+        self.ui.menuEdit.insertAction(self.ui.actionDecoding, redo_action)
+        self.ui.menuEdit.insertSeparator(self.ui.actionDecoding)
 
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()
@@ -606,24 +606,13 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def show_proto_sniff_dialog(self):
         pm = self.project_manager
-        signal = None
-        for proto in self.compare_frame_controller.protocol_list:
-            signal = proto.signal
-            if signal:
-                break
+        signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        if signal:
-            bit_len = signal.bit_len
-            mod_type = signal.modulation_type
-            tolerance = signal.tolerance
-            noise = signal.noise_threshold
-            center = signal.qad_center
-        else:
-            bit_len = 100
-            mod_type = 1
-            tolerance = 5
-            noise = 0.001
-            center = 0.02
+        bit_len = signal.bit_len          if signal else 100
+        mod_type = signal.modulation_type if signal else 1
+        tolerance = signal.tolerance      if signal else 5
+        noise = signal.noise_threshold    if signal else 0.001
+        center = signal.qad_center        if signal else 0.02
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                             self.compare_frame_controller.decodings,

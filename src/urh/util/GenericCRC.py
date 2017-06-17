@@ -1,11 +1,25 @@
 import array
+from collections import OrderedDict
 
 
-class crc_generic:
+class GenericCRC(object):
+    DEFAULT_POLYNOMIALS = OrderedDict([
+        # x^16+x^15+x^2+x^0
+        ("16_standard", array.array("B", [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
+
+        # x^16+x^12+x^5+x^
+        ("16_ccitt", array.array("B", [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
+
+        # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
+        ("16_dnp", array.array("B", [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
+
+        # x^8+x^2+x+1
+        ("8_en", array.array("B", [1, 0, 0, 0, 0, 0, 1, 1, 1]))
+    ])
+
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
         self.polynomial = self.choose_polynomial(polynomial)
-        self.poly_order = len(self.polynomial)
         self.reverse_polynomial = reverse_polynomial
         self.reverse_all = reverse_all
         self.little_endian = little_endian
@@ -23,23 +37,21 @@ class crc_generic:
         else:
             return [value] * (self.poly_order - 1)
 
+    @property
+    def poly_order(self):
+        return len(self.polynomial)
+
+    @property
+    def polynomial_as_bit_str(self) -> str:
+        return "".join("1" if p else "0" for p in self.polynomial)
+
     def choose_polynomial(self, polynomial):
-        if polynomial == "16_standard" or polynomial == 0:
-            return [True,
-                    True, False, False, False, False, False, False, False,
-                    False, False, False, False, False, True, False, True]  # x^16+x^15+x^2+x^0
-        elif polynomial == "16_ccitt" or polynomial == 1:
-            return [True,
-                    False, False, False, True, False, False, False, False,
-                    False, False, True, False, False, False, False, True]  # x^16+x^12+x^5+x^0
-        elif polynomial == "16_dnp" or polynomial == 2:
-            return [True,
-                    False, False, True, True, True, True, False, True,
-                    False, True, True, False, False, True, False, True]  # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-        elif polynomial == "8_en" or polynomial == 3:
-            return [True,
-                    False, False, False, False, False, True, True, True]  # x^8+x^2+x+1
-        return polynomial
+        if isinstance(polynomial, str):
+            return self.DEFAULT_POLYNOMIALS[polynomial]
+        elif isinstance(polynomial, int):
+            return list(self.DEFAULT_POLYNOMIALS.items())[polynomial][1]
+        else:
+            return polynomial
 
     def crc(self, inpt):
         data = array.array("B", inpt)

@@ -1,9 +1,8 @@
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QContextMenuEvent, QKeySequence
-from PyQt5.QtWidgets import QListView, QAbstractItemView, QMenu, QAction
 import numpy
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
+from PyQt5.QtWidgets import QListView, QAbstractItemView, QMenu, QAction
 
-from urh.controller.OptionsController import OptionsController
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 
 
@@ -20,12 +19,11 @@ class ProtocolLabelListView(QListView):
 
         self.del_rows_action = QAction("Delete selected labels", self)
         self.del_rows_action.setShortcut(QKeySequence.Delete)
+        self.del_rows_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.del_rows_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.del_rows_action.triggered.connect(self.delete_rows)
 
         self.addAction(self.del_rows_action)
-
-
 
     def model(self) -> ProtocolLabelListModel:
         return super().model()
@@ -45,18 +43,17 @@ class ProtocolLabelListView(QListView):
 
         return min_row, max_row
 
-
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = QMenu()
         pos = event.pos()
         index = self.indexAt(pos)
         min_row, max_row = self.selection_range()
 
-        editAction = menu.addAction("Edit Protocol Label...")
+        edit_action = menu.addAction("Edit Protocol Label...")
+        edit_action.setIcon(QIcon.fromTheme("configure"))
 
         assign_actions = []
         message_type_names = []
-
 
         if min_row > -1:
             menu.addAction(self.del_rows_action)
@@ -71,25 +68,25 @@ class ProtocolLabelListView(QListView):
 
                 if avail_message_types:
                     assign_menu = menu.addMenu("Copy label(s) to message type")
+                    assign_menu.setIcon(QIcon.fromTheme("edit-copy"))
                     assign_actions = [assign_menu.addAction(message_type.name) for message_type in avail_message_types]
             except IndexError:
                 pass
 
         menu.addSeparator()
-        showAllAction = menu.addAction("Show all")
-        hideAllAction = menu.addAction("Hide all")
-
+        show_all_action = menu.addAction("Show all")
+        hide_all_action = menu.addAction("Hide all")
 
         menu.addSeparator()
         configureAction = menu.addAction("Configure field types...")
 
         action = menu.exec_(self.mapToGlobal(pos))
 
-        if action == editAction:
+        if action == edit_action:
             self.editActionTriggered.emit(index.row())
-        elif action == showAllAction:
+        elif action == show_all_action:
             self.model().showAll()
-        elif action == hideAllAction:
+        elif action == hide_all_action:
             self.model().hideAll()
         elif action == configureAction:
             self.configureActionTriggered.emit()

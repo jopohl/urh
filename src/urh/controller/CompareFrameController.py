@@ -5,7 +5,7 @@ import time
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu, QApplication
+from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu
 
 from urh import constants
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -24,7 +24,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.signalprocessing.encoder import Encoder
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
-from urh.ui.ui_analysis_frame import Ui_FAnalysis
+from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -47,7 +47,7 @@ class CompareFrameController(QFrame):
         self.decodings = []  # type: list[Encoder]
         self.load_decodings()
 
-        self.ui = Ui_FAnalysis()
+        self.ui = Ui_TabAnalysis()
         self.ui.setupUi(self)
         self.ui.lBitsSelection.setText("")
         self.ui.lDecimalSelection.setText("")
@@ -360,15 +360,14 @@ class CompareFrameController(QFrame):
         try:
             f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
         except FileNotFoundError:
-            self.decodings = fallback
+            self.decodings[:] = fallback
             return
 
         if not f:
-            self.decodings = fallback
+            self.decodings[:] = fallback
             return
 
-        self.decodings = []
-        """:type: list of encoding """
+        self.decodings[:] = []  # :type: list[Encoding]
 
         for line in f:
             tmp_conf = []
@@ -381,7 +380,7 @@ class CompareFrameController(QFrame):
         f.close()
 
         if len(self.decodings) == 0:
-            self.decodings = fallback
+            self.decodings[:] = fallback
 
     def refresh_existing_encodings(self):
         """
@@ -646,7 +645,11 @@ class CompareFrameController(QFrame):
 
     def show_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
-        longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+        try:
+            longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+        except ValueError:
+            logger.warning("Configuring message type with empty message set.")
+            longest_message = Message([True]*1000, 1000, self.active_message_type)
         label_controller = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
         label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
@@ -956,11 +959,8 @@ class CompareFrameController(QFrame):
     def refresh_field_types_for_labels(self):
         self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
-            for lbl in (lbl for lbl in mt if lbl.type is not None):  # type: ProtocolLabel
-                if lbl.type.id not in self.field_types_by_id:
-                    lbl.type = None
-                else:
-                    lbl.type = self.field_types_by_id[lbl.type.id]
+            for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
+                mt.change_field_type_of_label(lbl, self.field_types_by_id.get(lbl.field_type.id, None))
 
         self.update_field_type_combobox()
 

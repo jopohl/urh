@@ -256,11 +256,11 @@ class TestSendRecvDialog(QtTestCase):
         view_width = send_dialog.graphics_view.view_rect().width()
         send_dialog.graphics_view.zoom(1.1)
         QApplication.instance().processEvents()
-        QTest.qWait(10)
+        QTest.qWait(50)
         self.assertLess(send_dialog.graphics_view.view_rect().width(), view_width)
         send_dialog.graphics_view.zoom(0.8)
         QApplication.instance().processEvents()
-        QTest.qWait(10)
+        QTest.qWait(50)
         self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
 
         self.__close_dialog(send_dialog)

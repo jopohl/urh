@@ -63,12 +63,12 @@ class Message(object):
         self.bit_len = bit_len  # Für Übernahme in Modulator
 
         if bit_sample_pos is None:
-            self.bit_sample_pos = []
+            self.bit_sample_pos = array.array("L", [])
         else:
             self.bit_sample_pos = bit_sample_pos
             """
             :param bit_sample_pos: Position of samples for each bit. Last position is pause so last bit is on pos -2.
-            :type  bit_sample_pos: list of int
+            :type  bit_sample_pos: array.array
             """
 
     @property
@@ -210,11 +210,7 @@ class Message(object):
         return self.bits2string(self.encoded_bits)
 
     @property
-    def decoded_bits(self):
-        """
-
-        :rtype: array.array
-        """
+    def decoded_bits(self) -> array.array:
         if self.__decoded_bits is None:
             self.__decoded_bits = array.array("B", [])
             start = 0

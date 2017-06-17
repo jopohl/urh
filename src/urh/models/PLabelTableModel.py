@@ -13,6 +13,7 @@ class PLabelTableModel(QAbstractTableModel):
     header_labels = ["Name", "Start", "End", 'Color', 'Apply decoding']
 
     label_removed = pyqtSignal(ProtocolLabel)
+    special_status_label_changed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
     def __init__(self, message: Message, field_types, parent=None):
@@ -26,7 +27,7 @@ class PLabelTableModel(QAbstractTableModel):
         self.row_count = len(message.message_type)
         self.proto_view = 0
         self.message = message
-        self.message_type = message.message_type
+        self.message_type = message.message_type  # type: MessageType
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
         self.update()
 
@@ -66,7 +67,7 @@ class PLabelTableModel(QAbstractTableModel):
             return Qt.AlignCenter
         elif role == Qt.FontRole and j == 0:
             font = QFont()
-            font.setItalic(self.message_type[i].type is None)
+            font.setItalic(self.message_type[i].field_type is None)
             return font
         else:
             return None
@@ -84,10 +85,11 @@ class PLabelTableModel(QAbstractTableModel):
 
         if j == 0:
             lbl.name = value
-            if value in self.field_types_by_caption:
-                lbl.type = self.field_types_by_caption[value]
-            else:
-                lbl.type = None
+            type_before = type(lbl)
+            self.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(value, None))
+            if type_before != ProtocolLabel or type(self.message_type[i]) != ProtocolLabel:
+                self.special_status_label_changed.emit(self.message_type[i])
+
         elif j == 1:
             lbl.start = self.message.convert_index(int(value-1), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 2:

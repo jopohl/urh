@@ -6,9 +6,11 @@
     <file>data/icons/arrow_down_generator.png</file>
     <file>data/icons/unlock.svg</file>
     <file>data/icons/arrow_right_generator.png</file>
+    <file>data/icons/rotated_splitter_handle.png</file>
     <file>data/icons/downarrow.png</file>
     <file>data/icons/equals_generator.png</file>
     <file>data/icons/expand.png</file>
+    <file>data/icons/splitter_handle.png</file>
     <file>data/icons/plus.png</file>
     <file>data/icons/shrink.png</file>
     <file>data/icons/uparrow.png</file>

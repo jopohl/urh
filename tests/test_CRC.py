@@ -1,6 +1,6 @@
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
-from urh.util.crc import crc_generic
+from urh.util.GenericCRC import GenericCRC
 
 class TestCRC(QtTestCase):
     def setUp(self):
@@ -13,7 +13,7 @@ class TestCRC(QtTestCase):
 
         # http://www.lammertbies.nl/comm/info/crc-calculation.html <- Fehler
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False
-        c = crc_generic(polynomial="8_en")
+        c = GenericCRC(polynomial="8_en")
         e = Encoder()
 
         bitstr = ["010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
@@ -33,8 +33,8 @@ class TestCRC(QtTestCase):
             self.assertEqual(e.bit2hex(c.crc(e.str2bit(value[4:-8]))), expect)
 
     def test_reverse_engineering(self):
-        c = crc_generic(polynomial="16_standard", start_value=False, final_xor=False,
-                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
         bitstring_set = [
             "1110001111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
             "1110010011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",

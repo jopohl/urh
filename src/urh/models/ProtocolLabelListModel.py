@@ -45,7 +45,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             return constants.LABEL_COLORS[label.color_index]
         elif role == Qt.FontRole:
             font = QFont()
-            font.setItalic(label.type is None)
+            font.setItalic(label.field_type is None)
             return font
 
 
@@ -57,10 +57,8 @@ class ProtocolLabelListModel(QAbstractListModel):
         elif role == Qt.EditRole:
             proto_label = self.message_type[index.row()]
             proto_label.name = value
-            if value in self.controller.field_types_by_caption:
-                proto_label.type = self.controller.field_types_by_caption[value]
-            else:
-                proto_label.type = None
+            self.message_type.change_field_type_of_label(proto_label,
+                                                         self.controller.field_types_by_caption.get(value, None))
 
             self.protolabel_type_edited.emit()
 

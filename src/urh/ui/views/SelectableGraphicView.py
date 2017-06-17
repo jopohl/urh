@@ -219,6 +219,14 @@ class SelectableGraphicView(QGraphicsView):
         self.emit_sel_area_width_changed()
         self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
 
+    def refresh_selection_area(self):
+        """
+        Refresh selection area in case scene was resized/scaled.
+        This happens e.g. when switching from Signal View to Quad Demod view
+        :return:
+        """
+        self.set_selection_area(x=self.selection_area.x, w=self.selection_area.width)
+
     def set_selection_area(self, x=None, w=None):
         self.selection_area.setY(self.view_rect().y())
         self.selection_area.height = self.view_rect().height()

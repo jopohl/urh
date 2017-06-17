@@ -1,4 +1,10 @@
 environment:
+  TWINE_USERNAME:
+    secure: qqioSb3Yu/QTOdDKx10sDQ==
+  TWINE_PASSWORD:
+    secure: y8XwCStmwBEwWyXQ108iC7I+WFje6C7rbc0ypp56Q2g=
+  TWINE_REPOSITORY_URL:
+    'https://upload.pypi.org/legacy/'
   matrix:
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
@@ -15,6 +21,12 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
+
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
+
 
 install:
   # If there is a newer build queued for the same PR, cancel this one.
@@ -54,7 +66,7 @@ install:
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
   - pip install -r requirements.txt
-  - pip install pytest wheel
+  - pip install pytest wheel twine
 
 build_script:
   # Build the compiled extension
@@ -63,19 +75,17 @@ build_script:
 test_script:
   # Run the project tests
   - python -m pytest -s
-  - pip install .
-  - urh autoclose
 
-#after_test:
-#  # If tests are successful, create binary packages for the project.
-#  - python setup.py bdist_wheel
+after_test:
+  # If tests are successful, create binary packages for the project.
+  - python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+  - python setup.py bdist_wheel
 #  - python setup.py bdist_wininst
-#  - ps: "ls dist"
+  - ps: "ls dist"
 
-#artifacts:
+artifacts:
 #  # Archive the generated packages in the ci.appveyor.com build report.
-#  - path: dist\*
+  - path: dist\*
 
-#on_success:
-#  - TODO: upload the content of dist/*.whl to a public wheelhouse
-#
+on_success:
+  -  cmd: IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*)

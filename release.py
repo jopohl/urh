@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+import tempfile
 from subprocess import call, check_output
 
 import pytest
@@ -47,7 +48,7 @@ def release():
         print("You can only release from master!")
         sys.exit(1)
 
-    open("/tmp/urh_releasing", "w").close()
+    open(os.path.join(tempfile.gettempdir(), "urh_releasing"), "w").close()
 
     from src.urh import version
     version_file = os.path.realpath(os.path.join(script_dir, "src", "urh", "version.py"))
@@ -80,7 +81,7 @@ def release():
     # Publish to AUR
     # Adapt pkgver
     # Regenerate md5sum and sha256sum
-    import tempfile, shutil, fileinput
+    import shutil, fileinput
     os.chdir(tempfile.gettempdir())
     call(["wget", "https://github.com/jopohl/urh/tarball/v"+cur_version])
     md5sum = check_output(["md5sum", "v"+cur_version]).decode("ascii").split(" ")[0]
@@ -111,7 +112,7 @@ def release():
     call(["git", "commit", "-am", "version "+cur_version])
     call(["git", "push"])
 
-    os.remove("/tmp/urh_releasing")
+    os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
 if __name__ == "__main__":
     cleanup()

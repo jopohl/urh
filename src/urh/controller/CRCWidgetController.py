@@ -1,10 +1,13 @@
+import array
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, pyqtSignal
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView
 
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.Message import Message
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
 from urh.ui.ui_crc_options_widget import Ui_CRCOptions
+from urh.util.GenericCRC import GenericCRC
 
 
 class CRCWidgetController(QWidget):
@@ -100,6 +103,10 @@ class CRCWidgetController(QWidget):
         self.ui.tableViewDataRanges.setModel(self.data_range_table_model)
         self.ui.tableViewDataRanges.setEditTriggers(QAbstractItemView.AllEditTriggers)
         self.display_crc_data_ranges_in_table()
+        self.ui.comboBoxCRCFunction.clear()
+        self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
+        self.ui.lineEditCRCPolynomial.setValidator(QIntValidator(0, 1, self))
+        self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
         self.create_connects()
 
     @property
@@ -116,6 +123,7 @@ class CRCWidgetController(QWidget):
         self.ui.comboBoxCRCFunction.currentIndexChanged.connect(self.on_combobox_crc_function_current_index_changed)
         self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
         self.ui.btnRemoveRange.clicked.connect(self.on_btn_remove_range_clicked)
+        self.ui.lineEditCRCPolynomial.editingFinished.connect(self.on_line_edit_crc_polynomial_editing_finished)
 
     def display_crc_data_ranges_in_table(self):
         self.data_range_table_model.update()
@@ -133,5 +141,9 @@ class CRCWidgetController(QWidget):
 
     @pyqtSlot(int)
     def on_combobox_crc_function_current_index_changed(self, index: int):
-        print(index)
+        self.crc_label.crc.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
+        self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
 
+    @pyqtSlot()
+    def on_line_edit_crc_polynomial_editing_finished(self):
+        self.crc_label.crc.polynomial = array.array("B", map(int, self.ui.lineEditCRCPolynomial.text()))

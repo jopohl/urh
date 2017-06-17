@@ -20,7 +20,6 @@ class GenericCRC(object):
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
         self.polynomial = self.choose_polynomial(polynomial)
-        self.poly_order = len(self.polynomial)
         self.reverse_polynomial = reverse_polynomial
         self.reverse_all = reverse_all
         self.little_endian = little_endian
@@ -38,11 +37,19 @@ class GenericCRC(object):
         else:
             return [value] * (self.poly_order - 1)
 
+    @property
+    def poly_order(self):
+        return len(self.polynomial)
+
+    @property
+    def polynomial_as_bit_str(self) -> str:
+        return "".join("1" if p else "0" for p in self.polynomial)
+
     def choose_polynomial(self, polynomial):
         if isinstance(polynomial, str):
             return self.DEFAULT_POLYNOMIALS[polynomial]
         elif isinstance(polynomial, int):
-            return self.DEFAULT_POLYNOMIALS[self.DEFAULT_POLYNOMIALS[polynomial]]
+            return list(self.DEFAULT_POLYNOMIALS.items())[polynomial][1]
         else:
             return polynomial
 

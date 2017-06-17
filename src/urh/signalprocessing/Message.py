@@ -210,11 +210,7 @@ class Message(object):
         return self.bits2string(self.encoded_bits)
 
     @property
-    def decoded_bits(self):
-        """
-
-        :rtype: array.array
-        """
+    def decoded_bits(self) -> array.array:
         if self.__decoded_bits is None:
             self.__decoded_bits = array.array("B", [])
             start = 0

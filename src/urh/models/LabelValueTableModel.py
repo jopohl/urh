@@ -1,4 +1,10 @@
+import array
+
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt5.QtGui import QColor
+
+from urh.signalprocessing.CRCLabel import CRCLabel
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
@@ -10,8 +16,7 @@ class LabelValueTableModel(QAbstractTableModel):
         self.proto_analyzer = proto_analyzer
         self.controller = controller
         self.__message_index = 0
-        self.display_labels = controller.active_message_type
-        """:type: urh.signalprocessing.MessageType.MessageType"""
+        self.display_labels = controller.active_message_type  # type: MessageType
 
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
@@ -59,20 +64,22 @@ class LabelValueTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
-            lbl = self.display_labels[i]
-            if not lbl:
-                return None
+        i, j = index.row(), index.column()
 
+        try:
+            lbl = self.display_labels[i]
+        except IndexError:
+            return None
+
+        if not lbl or not self.message:
+            return None
+
+        if role == Qt.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                if not self.message:
-                    return None
                 start, end = self.message.get_label_range(lbl, lbl.display_format_index % 3, True)
                 if lbl.display_format_index == 0:
                     try:
@@ -98,6 +105,20 @@ class LabelValueTableModel(QAbstractTableModel):
                     except ValueError:
                         decimal = ""
                     return decimal
+        elif role == Qt.BackgroundColorRole:
+            if isinstance(lbl, CRCLabel):
+                data = array.array("B", [])
+                for data_range in lbl.data_ranges:
+                    data.extend(self.message.decoded_bits[data_range[0]:data_range[1]])
+                calculated_crc = lbl.crc.crc(data)
+                start, end = self.message.get_label_range(lbl, 0, True)
+                if calculated_crc == self.message.decoded_bits[start:end]:
+                    return QColor(0, 255, 0, 150)
+                else:
+                    return QColor(255, 0, 0, 150)
+
+            else:
+                return None
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:

@@ -2,7 +2,7 @@ import ast
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.util.crc import crc_generic
+from urh.util.GenericCRC import GenericCRC
 import xml.etree.ElementTree as ET
 
 class CRCLabel(ProtocolLabel):
@@ -14,7 +14,7 @@ class CRCLabel(ProtocolLabel):
         super().__init__(name, start, end, color_index, fuzz_created, auto_created, field_type)
 
         self.data_ranges = [[0, self.start]]  # type: list[list[int,int]]
-        self.crc = None   # type: crc_generic
+        self.crc = None   # type: GenericCRC
 
     @staticmethod
     def from_label(label: ProtocolLabel):

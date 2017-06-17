@@ -1,6 +1,7 @@
 import array
-from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, pyqtSignal
-from PyQt5.QtGui import QIntValidator
+
+from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
+from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView
 
 from urh.signalprocessing.CRCLabel import CRCLabel
@@ -14,7 +15,7 @@ class CRCWidgetController(QWidget):
     class RangeTableModel(QAbstractTableModel):
         header_labels = ["Start", "End"]
 
-        def __init__(self, crc_label: CRCLabel, message: Message, proto_view:int, parent=None):
+        def __init__(self, crc_label: CRCLabel, message: Message, proto_view: int, parent=None):
             """
 
             :param message:
@@ -105,7 +106,7 @@ class CRCWidgetController(QWidget):
         self.display_crc_data_ranges_in_table()
         self.ui.comboBoxCRCFunction.clear()
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
-        self.ui.lineEditCRCPolynomial.setValidator(QIntValidator(0, 1, self))
+        self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("1[0,1]*")))
         self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
         self.create_connects()
 
@@ -141,7 +142,7 @@ class CRCWidgetController(QWidget):
 
     @pyqtSlot(int)
     def on_combobox_crc_function_current_index_changed(self, index: int):
-        self.crc_label.crc.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
+        self.crc_label.crc.polynomial = self.crc_label.crc.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
         self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
 
     @pyqtSlot()

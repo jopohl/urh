@@ -410,6 +410,9 @@ class Encoder(object):
                 crc = self.c.crc(inpt[whitening_start_pos:inpt_to])
             else:
                 crc = self.c.crc(inpt[whitening_start_pos:inpt_to - len(self.data_whitening_crc)])
+            # Enough bits there?
+            if len(inpt) < (inpt_to - len(self.data_whitening_crc) + 16) or inpt_to - len(self.data_whitening_crc) < 0:
+                    return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Misc Error
             # XOR calculated CRC to original CRC -> Zero if no errors
             for i in range(0, 16):
                 inpt[inpt_to - len(self.data_whitening_crc) + i] ^= crc[i]

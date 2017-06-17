@@ -6,6 +6,7 @@ from PyQt5.QtGui import QColor
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
@@ -74,6 +75,14 @@ class LabelValueTableModel(QAbstractTableModel):
         if not lbl or not self.message:
             return None
 
+        if isinstance(lbl, CRCLabel):
+            data = array.array("B", [])
+            for data_range in lbl.data_ranges:
+                data.extend(self.message.decoded_bits[data_range[0]:data_range[1]])
+            calculated_crc = lbl.crc.crc(data)
+        else:
+            calculated_crc = None
+
         if role == Qt.DisplayRole:
             if j == 0:
                 return lbl.name
@@ -81,36 +90,28 @@ class LabelValueTableModel(QAbstractTableModel):
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
                 start, end = self.message.get_label_range(lbl, lbl.display_format_index % 3, True)
-                if lbl.display_format_index == 0:
+                if lbl.display_format_index in (0, 1, 2):
                     try:
-                        return self.bit_str[self.message_index][start:end]
+                        data = self.bit_str[self.message_index][start:end] if lbl.display_format_index == 0 \
+                            else self.hex_str[self.message_index][start:end] if lbl.display_format_index == 1 \
+                            else self.ascii_str[self.message_index][start:end] if lbl.display_format_index == 2 \
+                            else ""
                     except IndexError:
                         return None
-                elif lbl.display_format_index == 1:
+                else:
+                    # decimal
                     try:
-                        return self.hex_str[self.message_index][start:end]
-                    except IndexError:
+                        data = str(int(self.bit_str[self.message_index][start:end], 2))
+                    except (IndexError, ValueError):
                         return None
-                elif lbl.display_format_index == 2:
-                    try:
-                        return self.ascii_str[self.message_index][start:end]
-                    except IndexError:
-                        return None
-                elif lbl.display_format_index == 3:
-                    try:
-                        try:
-                            decimal = int(self.bit_str[self.message_index][start:end], 2)
-                        except IndexError:
-                            return None
-                    except ValueError:
-                        decimal = ""
-                    return decimal
+
+                if calculated_crc is not None:
+                    data += " (should be {0})".format(util.convert_bits_to_string(calculated_crc, lbl.display_format_index))
+
+                return data
+
         elif role == Qt.BackgroundColorRole:
             if isinstance(lbl, CRCLabel):
-                data = array.array("B", [])
-                for data_range in lbl.data_ranges:
-                    data.extend(self.message.decoded_bits[data_range[0]:data_range[1]])
-                calculated_crc = lbl.crc.crc(data)
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
                     return QColor(0, 255, 0, 150)

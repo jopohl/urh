@@ -10,6 +10,7 @@ class ProtocolLabelListView(QListView):
     editActionTriggered = pyqtSignal(int)
     selection_changed = pyqtSignal()
     configureActionTriggered = pyqtSignal()
+    auto_message_type_update_triggered = pyqtSignal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -78,7 +79,9 @@ class ProtocolLabelListView(QListView):
         hide_all_action = menu.addAction("Hide all")
 
         menu.addSeparator()
-        configureAction = menu.addAction("Configure field types...")
+        update_message_types_action = menu.addAction("Update automatically assigned message types")
+        update_message_types_action.setIcon(QIcon.fromTheme("view-refresh"))
+        configure_action = menu.addAction("Configure field types...")
 
         action = menu.exec_(self.mapToGlobal(pos))
 
@@ -88,8 +91,10 @@ class ProtocolLabelListView(QListView):
             self.model().showAll()
         elif action == hide_all_action:
             self.model().hideAll()
-        elif action == configureAction:
+        elif action == configure_action:
             self.configureActionTriggered.emit()
+        elif action == update_message_types_action:
+            self.auto_message_type_update_triggered.emit()
         elif action in assign_actions:
             message_type_id = message_type_names.index(action.text())
             self.model().add_labels_to_message_type(min_row, max_row, message_type_id)

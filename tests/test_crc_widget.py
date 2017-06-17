@@ -45,7 +45,7 @@ class TestCRCWidget(QtTestCase):
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_bit_str)
 
         crc_widget_controller.ui.comboBoxCRCFunction.setCurrentIndex(2)
-        crc.choose_polynomial(2)
+        crc.polynomial = crc.choose_polynomial(2)
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_bit_str)
 
         crc_widget_controller.ui.lineEditCRCPolynomial.setText("1110001")

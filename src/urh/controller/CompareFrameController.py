@@ -255,6 +255,7 @@ class CompareFrameController(QFrame):
 
         self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
         self.ui.listViewLabelNames.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
+        self.ui.listViewLabelNames.auto_message_type_update_triggered.connect(self.update_automatic_assigned_message_types)
         self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
 
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)

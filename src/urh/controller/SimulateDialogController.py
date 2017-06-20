@@ -9,12 +9,14 @@ from urh.util.ProjectManager import ProjectManager
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 class SimulateDialogController(QDialog):
-    def __init__(self, project_manager: ProjectManager, compare_frame_controller, sim_proto_manager: SimulatorProtocolManager, parent=None):
+    def __init__(self, project_manager: ProjectManager, generator_tab_controller, compare_frame_controller,
+                 sim_proto_manager: SimulatorProtocolManager, parent=None):
         super().__init__(parent)
         self.ui = Ui_SimulateDialog()
         self.ui.setupUi(self)
 
         self.project_manager = project_manager
+        self.generator_tab_controller = generator_tab_controller
         self.compare_frame_controller = compare_frame_controller
         self.sim_proto_manager = sim_proto_manager
 
@@ -25,9 +27,9 @@ class SimulateDialogController(QDialog):
         self.ui.tableViewSimulate.setModel(self.simulator_settings_model)
 
         self.ui.tableViewSimulate.setItemDelegateForColumn(1, SimulatorSettingsComboBoxDelegate(
-                                                           controller=self, parent=self.ui.tableViewSimulate))
+                                                           controller=self, is_rx=True, parent=self.ui.tableViewSimulate))
         self.ui.tableViewSimulate.setItemDelegateForColumn(2, SimulatorSettingsComboBoxDelegate(
-                                                           controller=self, parent=self.ui.tableViewSimulate))
+                                                           controller=self, is_rx=False, parent=self.ui.tableViewSimulate))
         self.update_buttons()
 
         self.create_connects()

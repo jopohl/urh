@@ -2,17 +2,25 @@ from PyQt5.QtWidgets import QItemDelegate, QStyle, QStyleOptionViewItem, QComboB
 from PyQt5.QtCore import Qt, QModelIndex, QAbstractItemModel, pyqtSlot
 
 from urh.controller.SendRecvSettingsDialogController import SendRecvSettingsDialogController
+from urh.dev.BackendHandler import BackendHandler
 
 from urh.dev import config
 
 class SimulatorSettingsComboBoxDelegate(QItemDelegate):
-    def __init__(self, controller, parent=None):
+    def __init__(self, controller, is_rx=True, parent=None):
         super().__init__(parent)
         self.controller = controller
+        self.generator_tab_controller = controller.generator_tab_controller
         self.project_manager = controller.project_manager
         self.compare_frame_controller = controller.compare_frame_controller
         self.editor = None
-        
+        self.is_rx = is_rx
+        self.backend_handler = BackendHandler()
+
+    @property
+    def is_tx(self):
+        return not self.is_rx
+
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         self.editor = QComboBox(parent)
         self.load_combobox()
@@ -25,24 +33,33 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
         self.editor.clear()
 
         for profile in config.profiles:
-            self.editor.addItem(profile["name"])
+            if self.is_rx and profile['supports_rx']:
+                self.editor.addItem(profile['name'], profile)
+
+            if self.is_tx and profile['supports_tx']:
+                self.editor.addItem(profile['name'], profile)
 
         self.editor.addItem("...")
         self.editor.blockSignals(False)
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         self.editor.blockSignals(True)
-        indx = index.model().data(index, Qt.EditRole)
-        self.editor.setCurrentIndex(indx)
+        item = index.model().data(index, Qt.EditRole)
+        self.editor.setCurrentIndex(self.find_index(item))
         self.editor.blockSignals(False)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        model.setData(index, editor.currentIndex(), Qt.EditRole)
+        model.setData(index, editor.itemData(editor.currentIndex()), Qt.EditRole)
 
     def dialog_finished(self):
         self.load_combobox()
-        self.editor.setCurrentIndex(self.sender().ui.comboBoxProfiles.currentIndex())
+        selected_profile = config.profiles[self.sender().ui.comboBoxProfiles.currentIndex()]
+        self.editor.setCurrentIndex(self.find_index(selected_profile))
         self.commitData.emit(self.editor)
+
+    def find_index(self, profile):
+        indx = self.editor.findData(profile)
+        return self.editor.count() - 1 if indx == -1 else indx
 
     @pyqtSlot(int)
     def combobox_activated(self, index: int):
@@ -72,7 +89,7 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
                 center = 0.02
 
             dialog = SendRecvSettingsDialogController(pm, noise, center, bit_len, tolerance, mod_type,
-                            parent=self.editor)
+                                                      self.generator_tab_controller, parent=self.editor)
 
             dialog.finished.connect(self.dialog_finished)
             dialog.show()

@@ -240,7 +240,8 @@ class SimulatorTabController(QWidget):
 
         for item in items:
             if (isinstance(item, SimulatorProtocolLabel) or
-                    isinstance(item, SimulatorRule)):
+                    isinstance(item, SimulatorRule) or
+                    (isinstance(item, SimulatorRuleCondition) and not item.type == ConditionType.IF)):
                 continue
 
             goto_combobox.addItem("item" + item.index().replace(".", "_"))
@@ -341,8 +342,8 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        s = SimulateDialogController(project_manager=self.project_manager, compare_frame_controller=self.compare_frame_controller,
-                                     sim_proto_manager=self.sim_proto_manager, parent=self)
+        s = SimulateDialogController(project_manager=self.project_manager, generator_tab_controller=self.generator_tab_controller,
+                                     compare_frame_controller=self.compare_frame_controller, sim_proto_manager=self.sim_proto_manager, parent=self)
         s.show()
 
     @pyqtSlot()

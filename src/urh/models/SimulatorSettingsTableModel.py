@@ -4,7 +4,7 @@ from urh.util.ProjectManager import ProjectManager
 from urh.dev import config
 
 class SimulatorSettingsTableModel(QAbstractTableModel):
-    header_labels = ['Simulate', 'Receive/Send settings']
+    header_labels = ['Simulate', 'Receive', 'Send']
 
     def __init__(self, project_manager: ProjectManager, parent=None):
         super().__init__(parent)
@@ -40,16 +40,19 @@ class SimulatorSettingsTableModel(QAbstractTableModel):
             if j == 0:
                 return participants[i].name + " ("+ participants[i].shortname + ")"
             elif j == 1:
-                try:
-                    return config.profiles[participants[i].send_recv_profile_index]["name"]
-                except (IndexError, TypeError):
-                    return ""
+                profile = participants[i].recv_profile
+                return profile['name'] if profile is not None else "Not configured"
+            elif j == 2:
+                profile = participants[i].send_profile
+                return profile['name'] if profile is not None else "Not configured"
         elif role == Qt.CheckStateRole:
             if j == 0:
                 return Qt.Checked if participants[i].simulate else Qt.Unchecked
         elif role == Qt.EditRole:
             if j == 1:
-                return participants[i].send_recv_profile_index
+                return participants[i].recv_profile
+            elif j == 2:
+                return participants[i].send_profile
 
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()
@@ -58,7 +61,9 @@ class SimulatorSettingsTableModel(QAbstractTableModel):
 
         if role == Qt.EditRole:
             if j == 1:
-                participants[i].send_recv_profile_index = value
+                participants[i].recv_profile = value
+            elif j == 2:
+                participants[i].send_profile = value
         elif role == Qt.CheckStateRole:
             if j == 0:
                 participants[i].simulate = value
@@ -66,11 +71,15 @@ class SimulatorSettingsTableModel(QAbstractTableModel):
         return True
 
     def flags(self, index: QModelIndex):
+        row, col = index.row(), index.column()
         flags = super().flags(index)
 
         if index.column() == 0:
-            flags |= Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+            flags |= Qt.ItemIsUserCheckable
         else:
-            flags |= Qt.ItemIsEditable
+            flags = Qt.ItemIsSelectable
+
+            if self.project_manager.participants[row].simulate:
+                flags |= Qt.ItemIsEnabled | Qt.ItemIsEditable
 
         return flags

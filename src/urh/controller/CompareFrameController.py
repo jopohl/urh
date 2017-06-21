@@ -316,10 +316,10 @@ class CompareFrameController(QWidget):
             selected = self.ui.tblViewProtocol.selectionModel().selection()
 
             if not selected.isEmpty() and self.isVisible() and self.proto_analyzer.num_messages > 0:
-                max_row = numpy.max([rng.bottom() for rng in selected])
-                max_row = max_row if max_row < len(self.proto_analyzer.messages) else -1
+                min_row = min(rng.top() for rng in selected)
+                min_row = min_row if min_row < len(self.proto_analyzer.messages) else -1
                 try:
-                    msg = self.proto_analyzer.messages[max_row]
+                    msg = self.proto_analyzer.messages[min_row]
                 except IndexError:
                     msg = None
                 self.__set_decoding_error_label(msg)
@@ -1310,7 +1310,8 @@ class CompareFrameController(QWidget):
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
 
-        self.active_message_type = self.proto_analyzer.messages[max_row].message_type
+        message = self.proto_analyzer.messages[min_row]
+        self.active_message_type = message.message_type
 
         if cur_view == 1:
             start *= 4
@@ -1319,7 +1320,7 @@ class CompareFrameController(QWidget):
             start *= 8
             end *= 8
 
-        bits = self.proto_analyzer.decoded_proto_bits_str[max_row][start:end]
+        bits = message.decoded_bits_str[start:end]
         sym_ind = [i for i, b in enumerate(bits) if b not in ("0", "1")]
         hex_bits = []
         pos = 0
@@ -1340,7 +1341,7 @@ class CompareFrameController(QWidget):
 
         # hexs = "".join(["{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)])
         hexs = "".join(hex_bits)
-        message = self.proto_analyzer.messages[max_row]
+
 
         self.ui.lBitsSelection.setText(bits)
         self.ui.lHexSelection.setText(hexs)

@@ -447,22 +447,65 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="0">
-               <widget class="QLineEdit" name="lineEditSearch">
+              <item row="0" column="10">
+               <widget class="QLabel" name="label_2">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>RSSI:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="5">
+               <widget class="QLabel" name="lSlash">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="acceptDrops">
-                 <bool>false</bool>
+                <property name="text">
+                 <string>/</string>
                 </property>
-                <property name="placeholderText">
-                 <string>Search Pattern</string>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
-                <property name="clearButtonEnabled">
-                 <bool>true</bool>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="lFilterShown">
+                <property name="text">
+                 <string>shown: 42/108</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="14">
+               <widget class="QLabel" name="lTime">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>0 (+0)</string>
+                </property>
+                <property name="textFormat">
+                 <enum>Qt::PlainText</enum>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="12">
+               <widget class="Line" name="line_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
                </widget>
               </item>
@@ -476,39 +519,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextOnly</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLabel" name="lFilterShown">
-                <property name="text">
-                 <string>shown: 42/108</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QToolButton" name="btnPrevSearch">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>20</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>&lt;</string>
-                </property>
-                <property name="icon">
-                 <iconset theme="go-previous">
-                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -531,38 +541,38 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
-              <item row="0" column="5">
-               <widget class="QLabel" name="lSlash">
+              <item row="0" column="11">
+               <widget class="QLabel" name="lblRSSI">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="text">
-                 <string>/</string>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                <property name="text">
+                 <string>1.04</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="6">
-               <widget class="QLabel" name="lSearchTotal">
+              <item row="0" column="0">
+               <widget class="QLineEdit" name="lineEditSearch">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">QLabel
-{
-    qproperty-alignment: AlignCenter;
-}</string>
+                <property name="acceptDrops">
+                 <bool>false</bool>
                 </property>
-                <property name="text">
-                 <string>-</string>
+                <property name="placeholderText">
+                 <string>Search Pattern</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -592,22 +602,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
-              <item row="0" column="8">
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>60</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="0" column="9">
                <widget class="Line" name="line">
                 <property name="orientation">
@@ -615,30 +609,48 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
-              <item row="0" column="10">
-               <widget class="QLabel" name="label_2">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <item row="0" column="3">
+               <widget class="QToolButton" name="btnPrevSearch">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>20</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="text">
-                 <string>RSSI:</string>
+                 <string>&lt;</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-previous">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
-               <widget class="QLabel" name="lblRSSI">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <item row="0" column="6">
+               <widget class="QLabel" name="lSearchTotal">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLabel
+{
+    qproperty-alignment: AlignCenter;
+}</string>
                 </property>
                 <property name="text">
-                 <string>1.04</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="12">
-               <widget class="Line" name="line_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <string>-</string>
                 </property>
                </widget>
               </item>
@@ -655,27 +667,21 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
-              <item row="0" column="14">
-               <widget class="QLabel" name="lTime">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+              <item row="0" column="8">
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
                 </property>
-                <property name="text">
-                 <string>0 (+0)</string>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>60</width>
+                  <height>20</height>
+                 </size>
                 </property>
-                <property name="textFormat">
-                 <enum>Qt::PlainText</enum>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
+               </spacer>
               </item>
              </layout>
             </item>

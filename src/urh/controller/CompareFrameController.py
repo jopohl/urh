@@ -1292,10 +1292,9 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection()
-        """:type: QtWidgets.QItemSelection """
+        min_row, max_row, start, end = self.ui.tblViewProtocol.selection_range()
 
-        if selected.isEmpty():
+        if min_row == max_row == start == end == -1:
             self.ui.lBitsSelection.setText("")
             self.ui.lDecimalSelection.setText("")
             self.ui.lHexSelection.setText("")
@@ -1305,11 +1304,6 @@ class CompareFrameController(QWidget):
             self.active_message_type = self.proto_analyzer.default_message_type
             self.__set_decoding_error_label(message=None)
             return -1, -1
-
-        min_row = numpy.min([rng.top() for rng in selected])
-        max_row = numpy.max([rng.bottom() for rng in selected])
-        start = numpy.min([rng.left() for rng in selected])
-        end = numpy.max([rng.right() for rng in selected]) + 1
 
         selected_messages = self.selected_messages
 

@@ -5,7 +5,7 @@ import time
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -31,7 +31,7 @@ from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
-class CompareFrameController(QFrame):
+class CompareFrameController(QWidget):
     show_interpretation_clicked = pyqtSignal(int, int, int, int)
     show_decoding_clicked = pyqtSignal()
     files_dropped = pyqtSignal(list)
@@ -102,7 +102,6 @@ class CompareFrameController(QFrame):
         self.selection_timer = QTimer()
         self.selection_timer.setSingleShot(True)
 
-        self.setFrameStyle(0)
         self.setAcceptDrops(False)
 
         self.proto_tree_model = ProtocolTreeModel(controller=self)  # type: ProtocolTreeModel
@@ -203,6 +202,7 @@ class CompareFrameController(QFrame):
         for group in self.groups:
             result.extend(group.protocols)
         return result
+
     # endregion
 
     def __set_decoding_error_label(self, message: Message):
@@ -646,10 +646,11 @@ class CompareFrameController(QFrame):
     def show_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
-            longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+            longest_message = max(
+                (msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
-            longest_message = Message([True]*1000, 1000, self.active_message_type)
+            longest_message = Message([True] * 1000, 1000, self.active_message_type)
         label_controller = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
         label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)

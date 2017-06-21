@@ -215,7 +215,8 @@ class CompareFrameController(QWidget):
             self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
             self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%) %s", (errors, percent, state)))
         else:
-            self.ui.lDecodingErrorsValue.setText("")
+            self.ui.lDecodingErrorsValue.setStyleSheet("color: yellow")
+            self.ui.lDecodingErrorsValue.setText("No message selected")
 
             # self.ui.lSupport.setStyleSheet("color: green")
 
@@ -623,7 +624,7 @@ class CompareFrameController(QWidget):
             self.protocol_model.update()
 
         self.protocol_label_list_model.update()
-        self.proto_tree_model.layoutChanged.emit()  # no not call update, as it prevents editing
+        self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
         self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()

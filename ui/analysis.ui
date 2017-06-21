@@ -515,7 +515,8 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  <string>Search</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="edit-find"/>
+                 <iconset theme="edit-find">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                 <property name="popupMode">
                  <enum>QToolButton::MenuButtonPopup</enum>
@@ -896,7 +897,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               <item>
                <widget class="QLabel" name="lColumnsSelectedText">
                 <property name="text">
-                 <string>Column(s) selected</string>
+                 <string>column(s) selected</string>
                 </property>
                </widget>
               </item>

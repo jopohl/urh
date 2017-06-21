@@ -564,7 +564,7 @@ class Ui_TabAnalysis(object):
         self.lHex.setText(_translate("TabAnalysis", "Hex:"))
         self.lDecimal.setText(_translate("TabAnalysis", "Decimal:"))
         self.lNumSelectedColumns.setText(_translate("TabAnalysis", "0"))
-        self.lColumnsSelectedText.setText(_translate("TabAnalysis", "Column(s) selected"))
+        self.lColumnsSelectedText.setText(_translate("TabAnalysis", "column(s) selected"))
         self.btnMessagetypeSettings.setToolTip(_translate("TabAnalysis", "Settings for message type"))
         self.btnMessagetypeSettings.setText(_translate("TabAnalysis", "..."))
         self.btnAddMessagetype.setToolTip(_translate("TabAnalysis", "Add a new message type"))

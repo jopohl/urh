@@ -144,7 +144,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabParticipants">
            <attribute name="title">
@@ -257,7 +257,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

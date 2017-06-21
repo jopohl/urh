@@ -844,9 +844,14 @@ class Encoder(object):
                 state = self.ErrorState.WRONG_CRC
 
             for n in range(start, end, 8):
-                output.extend(
-                    [inpt[n], inpt[n + 1], inpt[n + 2], not inpt[n + 2], inpt[n + 3], inpt[n + 4], inpt[n + 5],
-                     not inpt[n + 5], inpt[n + 6], inpt[n + 7]])
+                try:
+                    output.extend(
+                        [inpt[n], inpt[n + 1], inpt[n + 2], not inpt[n + 2], inpt[n + 3], inpt[n + 4], inpt[n + 5],
+                         not inpt[n + 5], inpt[n + 6], inpt[n + 7]])
+                except IndexError:
+                    output.extend([False, True])
+                    break
+
                 if n < len(inpt) - 15:
                     output.extend([False, True])
 

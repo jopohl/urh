@@ -514,11 +514,14 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <property name="text">
                  <string>Search</string>
                 </property>
+                <property name="icon">
+                 <iconset theme="edit-find"/>
+                </property>
                 <property name="popupMode">
                  <enum>QToolButton::MenuButtonPopup</enum>
                 </property>
                 <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextOnly</enum>
+                 <enum>Qt::ToolButtonTextBesideIcon</enum>
                 </property>
                </widget>
               </item>

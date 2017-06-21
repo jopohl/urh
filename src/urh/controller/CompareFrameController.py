@@ -1303,6 +1303,7 @@ class CompareFrameController(QWidget):
             self.ui.lblLabelValues.setText(self.tr("Label values for message "))
             self.label_value_model.message_index = -1
             self.active_message_type = self.proto_analyzer.default_message_type
+            self.__set_decoding_error_label(message=None)
             return -1, -1
 
         min_row = numpy.min([rng.top() for rng in selected])

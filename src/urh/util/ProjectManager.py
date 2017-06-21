@@ -79,6 +79,7 @@ class ProjectManager(QObject):
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
             self.main_controller.close_all()
+        FileOperator.RECENT_PATH = path
         self.project_path = path
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         collapse_project_tabs = False

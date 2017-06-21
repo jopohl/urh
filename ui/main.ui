@@ -112,6 +112,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <height>16777215</height>
            </size>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
           <property name="autoScroll">
            <bool>true</bool>
           </property>
@@ -142,6 +145,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QTabWidget::pane { border: 0; }</string>
           </property>
           <property name="currentIndex">
            <number>0</number>
@@ -192,7 +198,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
@@ -214,7 +220,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
@@ -236,7 +242,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="rightMargin">
           <number>0</number>

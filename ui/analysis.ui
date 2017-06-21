@@ -110,6 +110,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <widget class="QTabWidget" name="tabWidget">
+              <property name="styleSheet">
+               <string notr="true">QTabWidget::pane { border: 0; }</string>
+              </property>
               <property name="currentIndex">
                <number>0</number>
               </property>
@@ -224,6 +227,13 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </item>
                </layout>
               </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
              </widget>
             </item>
             <item>
@@ -987,6 +997,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
                <property name="alternatingRowColors">
                 <bool>true</bool>
                </property>
@@ -1039,6 +1052,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                </property>
                <property name="toolTip">
                 <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
                </property>
               </widget>
              </item>

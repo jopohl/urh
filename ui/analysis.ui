@@ -244,46 +244,39 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <property name="rightMargin">
-               <number>0</number>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>View data as:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cbProtoView">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>View data as:</string>
-                </property>
-               </widget>
+               <property name="text">
+                <string>Bits</string>
+               </property>
               </item>
               <item>
-               <widget class="QComboBox" name="cbProtoView">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the desired view here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Bits</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hex</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>ASCII</string>
-                 </property>
-                </item>
-               </widget>
+               <property name="text">
+                <string>Hex</string>
+               </property>
               </item>
-             </layout>
+              <item>
+               <property name="text">
+                <string>ASCII</string>
+               </property>
+              </item>
+             </widget>
             </item>
             <item>
              <widget class="Line" name="line_4">

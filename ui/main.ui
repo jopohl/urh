@@ -343,7 +343,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFSK">
    <property name="checkable">
     <bool>true</bool>

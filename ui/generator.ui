@@ -40,7 +40,7 @@
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>-117</x>
         <y>0</y>
         <width>1198</width>
         <height>686</height>
@@ -524,19 +524,89 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            <property name="bottomMargin">
             <number>11</number>
            </property>
-           <item row="0" column="0" colspan="7">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="btnNetworkSDRSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Generated data</string>
+              <string>Send via Network</string>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="icon">
+              <iconset theme="network-wired">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnRfCatSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Send via RfCat</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wireless">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QComboBox" name="cbViewType">
+             <item>
+              <property name="text">
+               <string>Bit</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ASCII</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="lEstimatedTime">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Estimated Time: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>38</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="5">
+            <widget class="QLabel" name="lViewType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Viewtype:</string>
              </property>
             </widget>
            </item>
@@ -583,102 +653,36 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </attribute>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QToolButton" name="btnSave">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="document-save">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="btnNetworkSDRSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via Network</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wired">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="btnRfCatSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via RfCat</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wireless">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QLabel" name="lEstimatedTime">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Estimated Time: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="4">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>38</width>
-               <height>22</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="5">
-            <widget class="QLabel" name="lViewType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Viewtype:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="6">
-            <widget class="QComboBox" name="cbViewType">
+           <item row="0" column="0" colspan="7">
+            <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <property name="text">
-               <string>Bit</string>
-              </property>
+              <widget class="QLabel" name="label_3">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Generated data</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
              </item>
              <item>
-              <property name="text">
-               <string>Hex</string>
-              </property>
+              <widget class="QToolButton" name="btnSave">
+               <property name="text">
+                <string>...</string>
+               </property>
+               <property name="icon">
+                <iconset theme="document-save">
+                 <normaloff>.</normaloff>.</iconset>
+               </property>
+              </widget>
              </item>
-             <item>
-              <property name="text">
-               <string>ASCII</string>
-              </property>
-             </item>
-            </widget>
+            </layout>
            </item>
           </layout>
          </widget>

@@ -58,7 +58,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          <number>11</number>
         </property>
         <property name="bottomMargin">
-         <number>11</number>
+         <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">

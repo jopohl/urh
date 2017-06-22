@@ -34,7 +34,7 @@ class Ui_MainWindow(object):
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_3.setContentsMargins(11, 11, 11, 11)
+        self.verticalLayout_3.setContentsMargins(11, 11, 11, 0)
         self.verticalLayout_3.setSpacing(7)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()

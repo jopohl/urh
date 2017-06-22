@@ -245,6 +245,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             </item>
             <item>
              <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>View data as:</string>
               </property>
@@ -279,14 +285,13 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </widget>
             </item>
             <item>
-             <widget class="Line" name="line_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QLabel" name="label_5">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Configure Decoding:</string>
               </property>
@@ -338,6 +343,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Decoding errors for message:</string>
               </property>
@@ -353,13 +364,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               </property>
               <property name="text">
                <string>0 (0.00%)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="Line" name="line_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>

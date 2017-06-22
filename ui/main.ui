@@ -49,16 +49,16 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          <number>7</number>
         </property>
         <property name="leftMargin">
-         <number>0</number>
+         <number>11</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>11</number>
         </property>
         <property name="rightMargin">
          <number>11</number>
         </property>
         <property name="bottomMargin">
-         <number>0</number>
+         <number>11</number>
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -234,7 +234,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
@@ -256,7 +256,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
@@ -278,7 +278,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>0</number>

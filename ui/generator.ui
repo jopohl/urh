@@ -42,7 +42,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1180</width>
+        <width>1198</width>
         <height>686</height>
        </rect>
       </property>
@@ -67,6 +67,15 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </property>
          <widget class="QWidget" name="layoutWidget_2">
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="leftMargin">
+            <number>11</number>
+           </property>
+           <property name="topMargin">
+            <number>11</number>
+           </property>
+           <property name="rightMargin">
+            <number>11</number>
+           </property>
            <property name="bottomMargin">
             <number>11</number>
            </property>
@@ -95,6 +104,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <string>Protocols</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item>
                 <widget class="GeneratorTreeView" name="treeProtocols">
                  <property name="sizePolicy">
@@ -118,6 +139,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <string>Pauses</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item row="0" column="0" colspan="2">
                 <widget class="GeneratorListWidget" name="lWPauses">
                  <property name="sizePolicy">
@@ -149,6 +182,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <property name="spacing">
                 <number>6</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
                <item>
                 <widget class="GeneratorListView" name="listViewProtoLabels">
@@ -248,12 +293,19 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             </widget>
            </item>
            <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QGridLayout" name="gridLayout_6">
              <property name="leftMargin">
-              <number>11</number>
+              <number>0</number>
              </property>
              <property name="rightMargin">
-              <number>11</number>
+              <number>0</number>
              </property>
              <item row="2" column="1">
               <widget class="QComboBox" name="cBoxModulations">
@@ -266,91 +318,91 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </item>
              <item row="0" column="0" colspan="3">
               <layout class="QGridLayout" name="modulationLayout_2">
-               <item row="2" column="1">
+               <item row="1" column="1">
                 <widget class="QLabel" name="lCarrierFreqValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
+               <item row="1" column="2">
                 <widget class="QLabel" name="lModType">
                  <property name="text">
                   <string>Modulation Type:</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="3">
+               <item row="1" column="3">
                 <widget class="QLabel" name="lModTypeValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_carrier_phase">
                  <property name="text">
                   <string>Carrier Phase:</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item row="2" column="1">
                 <widget class="QLabel" name="lCarrierPhaseValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="2">
+               <item row="2" column="2">
                 <widget class="QLabel" name="lParamForZero">
                  <property name="text">
                   <string>Amplitude for 0:</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="3">
+               <item row="2" column="3">
                 <widget class="QLabel" name="lParamForZeroValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="3" column="0">
                 <widget class="QLabel" name="lBitLength">
                  <property name="text">
                   <string>Bit Length:</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
+               <item row="3" column="1">
                 <widget class="QLabel" name="lBitLenValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="2">
+               <item row="3" column="2">
                 <widget class="QLabel" name="lParamForOne">
                  <property name="text">
                   <string>Amplitude for 1:</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="3">
+               <item row="3" column="3">
                 <widget class="QLabel" name="lParamForOneValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="0" column="0">
                 <widget class="QLabel" name="lEncoding">
                  <property name="text">
                   <string>Encoding:</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="0" column="1">
                 <widget class="QLabel" name="lEncodingValue">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -363,31 +415,24 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
+               <item row="0" column="2">
                 <widget class="QLabel" name="lSampleRate">
                  <property name="text">
                   <string>Sample Rate:</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="3">
+               <item row="0" column="3">
                 <widget class="QLabel" name="lSampleRateValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="1" column="0">
                 <widget class="QLabel" name="lCarrierFrequency">
                  <property name="text">
                   <string>Carrier Frequency:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" colspan="4">
-                <widget class="Line" name="line_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -467,6 +512,15 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </widget>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QGridLayout" name="gridLayout_2">
+           <property name="leftMargin">
+            <number>11</number>
+           </property>
+           <property name="topMargin">
+            <number>11</number>
+           </property>
+           <property name="rightMargin">
+            <number>11</number>
+           </property>
            <property name="bottomMargin">
             <number>11</number>
            </property>

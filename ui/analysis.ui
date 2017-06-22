@@ -108,6 +108,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
           </property>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="leftMargin">
+             <number>11</number>
+            </property>
+            <property name="rightMargin">
+             <number>11</number>
+            </property>
             <item>
              <widget class="QTabWidget" name="tabWidget">
               <property name="styleSheet">
@@ -121,6 +127,21 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <string>Protocols</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_3">
+                <property name="spacing">
+                 <number>7</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="ProtocolTreeView" name="treeViewProtocols">
                   <property name="sizePolicy">
@@ -212,6 +233,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <string>Participants</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_11">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QListView" name="listViewParticipants">
                   <property name="sizePolicy">
@@ -239,7 +272,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="rightMargin">
-               <number>11</number>
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="label_4">
@@ -279,76 +312,88 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </layout>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string>Configure Decoding</string>
+             <widget class="Line" name="line_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <item>
-                <widget class="QComboBox" name="cbDecoding">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::AdjustToContents</enum>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>NRZ</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Manchester</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Manchester II</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Differential Manchester</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lEncodingErrors">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Decoding errors for message:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lDecodingErrorsValue">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>0 (0.00%)</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Configure Decoding:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cbDecoding">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>NRZ</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Manchester</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Manchester II</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Differential Manchester</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>...</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lEncodingErrors">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Decoding errors for message:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lDecodingErrorsValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>0 (0.00%)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
              </widget>
             </item>
             <item>
@@ -414,7 +459,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  <number>0</number>
                 </property>
                 <property name="rightMargin">
-                 <number>11</number>
+                 <number>0</number>
                 </property>
                 <property name="bottomMargin">
                  <number>0</number>

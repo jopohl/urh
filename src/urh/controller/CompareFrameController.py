@@ -215,10 +215,7 @@ class CompareFrameController(QWidget):
             self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
             self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%) %s", (errors, percent, state)))
         else:
-            self.ui.lDecodingErrorsValue.setStyleSheet("color: yellow")
             self.ui.lDecodingErrorsValue.setText("No message selected")
-
-            # self.ui.lSupport.setStyleSheet("color: green")
 
     def create_connects(self):
         self.protocol_undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)

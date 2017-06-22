@@ -140,6 +140,7 @@ class Ui_GeneratorTab(object):
         self.tabWidget.addTab(self.tab_fuzzing, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.gridLayout_6 = QtWidgets.QGridLayout()
+        self.gridLayout_6.setContentsMargins(11, -1, 11, -1)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.cBoxModulations = QtWidgets.QComboBox(self.layoutWidget_2)
         self.cBoxModulations.setObjectName("cBoxModulations")

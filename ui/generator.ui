@@ -67,6 +67,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </property>
          <widget class="QWidget" name="layoutWidget_2">
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="bottomMargin">
+            <number>11</number>
+           </property>
            <item>
             <widget class="QTabWidget" name="tabWidget">
              <property name="sizePolicy">
@@ -464,6 +467,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </widget>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QGridLayout" name="gridLayout_2">
+           <property name="bottomMargin">
+            <number>11</number>
+           </property>
            <item row="0" column="0" colspan="7">
             <widget class="QLabel" name="label_3">
              <property name="font">

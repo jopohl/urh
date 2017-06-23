@@ -611,6 +611,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               </item>
               <item row="0" column="2">
                <widget class="QToolButton" name="btnSearchSelectFilter">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="text">
                  <string>Search</string>
                 </property>
@@ -797,7 +809,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <bool>true</bool>
               </property>
               <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+               <enum>QFrame::StyledPanel</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Sunken</enum>
@@ -1093,7 +1105,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </sizepolicy>
                </property>
                <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
+                <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="alternatingRowColors">
                 <bool>true</bool>
@@ -1149,7 +1161,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
                </property>
                <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
+                <enum>QFrame::StyledPanel</enum>
                </property>
               </widget>
              </item>

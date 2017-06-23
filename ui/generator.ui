@@ -40,10 +40,10 @@
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
-        <x>-117</x>
+        <x>0</x>
         <y>0</y>
-        <width>1198</width>
-        <height>686</height>
+        <width>1081</width>
+        <height>699</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -616,7 +616,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               <bool>true</bool>
              </property>
              <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+              <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="dragEnabled">
               <bool>false</bool>
@@ -655,6 +655,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            </item>
            <item row="0" column="0" colspan="7">
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="topMargin">
+              <number>1</number>
+             </property>
+             <property name="bottomMargin">
+              <number>1</number>
+             </property>
              <item>
               <widget class="QLabel" name="label_3">
                <property name="font">

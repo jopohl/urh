@@ -5,7 +5,7 @@ import time
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QMessageBox, QFrame, QAbstractItemView, QUndoStack, QMenu
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
 from urh.controller.MessageTypeDialogController import MessageTypeDialogController
@@ -31,7 +31,7 @@ from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
-class CompareFrameController(QFrame):
+class CompareFrameController(QWidget):
     show_interpretation_clicked = pyqtSignal(int, int, int, int)
     show_decoding_clicked = pyqtSignal()
     files_dropped = pyqtSignal(list)
@@ -102,7 +102,6 @@ class CompareFrameController(QFrame):
         self.selection_timer = QTimer()
         self.selection_timer.setSingleShot(True)
 
-        self.setFrameStyle(0)
         self.setAcceptDrops(False)
 
         self.proto_tree_model = ProtocolTreeModel(controller=self)  # type: ProtocolTreeModel
@@ -203,6 +202,7 @@ class CompareFrameController(QFrame):
         for group in self.groups:
             result.extend(group.protocols)
         return result
+
     # endregion
 
     def __set_decoding_error_label(self, message: Message):
@@ -215,9 +215,7 @@ class CompareFrameController(QFrame):
             self.ui.lDecodingErrorsValue.setStyleSheet("color: " + color)
             self.ui.lDecodingErrorsValue.setText(locale.format_string("%d (%.02f%%) %s", (errors, percent, state)))
         else:
-            self.ui.lDecodingErrorsValue.setText("")
-
-            # self.ui.lSupport.setStyleSheet("color: green")
+            self.ui.lDecodingErrorsValue.setText("No message selected")
 
     def create_connects(self):
         self.protocol_undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
@@ -315,10 +313,10 @@ class CompareFrameController(QFrame):
             selected = self.ui.tblViewProtocol.selectionModel().selection()
 
             if not selected.isEmpty() and self.isVisible() and self.proto_analyzer.num_messages > 0:
-                max_row = numpy.max([rng.bottom() for rng in selected])
-                max_row = max_row if max_row < len(self.proto_analyzer.messages) else -1
+                min_row = min(rng.top() for rng in selected)
+                min_row = min_row if min_row < len(self.proto_analyzer.messages) else -1
                 try:
-                    msg = self.proto_analyzer.messages[max_row]
+                    msg = self.proto_analyzer.messages[min_row]
                 except IndexError:
                     msg = None
                 self.__set_decoding_error_label(msg)
@@ -623,7 +621,7 @@ class CompareFrameController(QFrame):
             self.protocol_model.update()
 
         self.protocol_label_list_model.update()
-        self.proto_tree_model.layoutChanged.emit()  # no not call update, as it prevents editing
+        self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
         self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()
@@ -646,10 +644,11 @@ class CompareFrameController(QFrame):
     def show_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
-            longest_message = max((msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
+            longest_message = max(
+                (msg for msg in self.proto_analyzer.messages if msg.message_type == self.active_message_type), key=len)
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
-            longest_message = Message([True]*1000, 1000, self.active_message_type)
+            longest_message = Message([True] * 1000, 1000, self.active_message_type)
         label_controller = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
         label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
@@ -1290,10 +1289,9 @@ class CompareFrameController(QFrame):
 
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection()
-        """:type: QtWidgets.QItemSelection """
+        min_row, max_row, start, end = self.ui.tblViewProtocol.selection_range()
 
-        if selected.isEmpty():
+        if min_row == max_row == start == end == -1:
             self.ui.lBitsSelection.setText("")
             self.ui.lDecimalSelection.setText("")
             self.ui.lHexSelection.setText("")
@@ -1301,19 +1299,16 @@ class CompareFrameController(QFrame):
             self.ui.lblLabelValues.setText(self.tr("Label values for message "))
             self.label_value_model.message_index = -1
             self.active_message_type = self.proto_analyzer.default_message_type
+            self.__set_decoding_error_label(message=None)
             return -1, -1
-
-        min_row = numpy.min([rng.top() for rng in selected])
-        max_row = numpy.max([rng.bottom() for rng in selected])
-        start = numpy.min([rng.left() for rng in selected])
-        end = numpy.max([rng.right() for rng in selected]) + 1
 
         selected_messages = self.selected_messages
 
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
 
-        self.active_message_type = self.proto_analyzer.messages[max_row].message_type
+        message = self.proto_analyzer.messages[min_row]
+        self.active_message_type = message.message_type
 
         if cur_view == 1:
             start *= 4
@@ -1322,7 +1317,7 @@ class CompareFrameController(QFrame):
             start *= 8
             end *= 8
 
-        bits = self.proto_analyzer.decoded_proto_bits_str[max_row][start:end]
+        bits = message.decoded_bits_str[start:end]
         sym_ind = [i for i, b in enumerate(bits) if b not in ("0", "1")]
         hex_bits = []
         pos = 0
@@ -1343,7 +1338,7 @@ class CompareFrameController(QFrame):
 
         # hexs = "".join(["{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)])
         hexs = "".join(hex_bits)
-        message = self.proto_analyzer.messages[max_row]
+
 
         self.ui.lBitsSelection.setText(bits)
         self.ui.lHexSelection.setText(hexs)

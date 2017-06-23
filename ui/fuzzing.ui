@@ -100,6 +100,19 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </item>
    <item row="2" column="0">
@@ -297,7 +310,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset theme="media-playlist-repeat"/>
+          <iconset theme="media-playlist-repeat">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>

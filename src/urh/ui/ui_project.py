@@ -169,6 +169,18 @@ class Ui_ProjectDialog(object):
         self.retranslateUi(ProjectDialog)
         self.btnCancel.clicked.connect(ProjectDialog.close)
         QtCore.QMetaObject.connectSlotsByName(ProjectDialog)
+        ProjectDialog.setTabOrder(self.lineEdit_Path, self.btnSelectPath)
+        ProjectDialog.setTabOrder(self.btnSelectPath, self.spinBoxSampleRate)
+        ProjectDialog.setTabOrder(self.spinBoxSampleRate, self.spinBoxFreq)
+        ProjectDialog.setTabOrder(self.spinBoxFreq, self.spinBoxBandwidth)
+        ProjectDialog.setTabOrder(self.spinBoxBandwidth, self.spinBoxGain)
+        ProjectDialog.setTabOrder(self.spinBoxGain, self.txtEdDescription)
+        ProjectDialog.setTabOrder(self.txtEdDescription, self.tblParticipants)
+        ProjectDialog.setTabOrder(self.tblParticipants, self.btnAddParticipant)
+        ProjectDialog.setTabOrder(self.btnAddParticipant, self.btnRemoveParticipant)
+        ProjectDialog.setTabOrder(self.btnRemoveParticipant, self.lineEditBroadcastAddress)
+        ProjectDialog.setTabOrder(self.lineEditBroadcastAddress, self.btnOK)
+        ProjectDialog.setTabOrder(self.btnOK, self.btnCancel)
 
     def retranslateUi(self, ProjectDialog):
         _translate = QtCore.QCoreApplication.translate

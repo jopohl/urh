@@ -61,15 +61,9 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         self.signal_loaded.emit(self.proto_analyzer)
 
     def eliminate(self):
-        # Do not remove self.signal and self.proto_analyzer
+        # Do _not_ call eliminate() for self.signal and self.proto_analyzer
         # as these are references to the original data!
-        #
-        # if self.signal is not None:
-        #     self.signal.eliminate()
-        #     self.signal = None
-        # if self.proto_analyzer is not None:
-        #     self.proto_analyzer.eliminate()
-        #     self.proto_analyzer = None
-
+        self.signal = None
+        self.proto_analyzer = None
         self.signal_tree_root = None
         super().eliminate()

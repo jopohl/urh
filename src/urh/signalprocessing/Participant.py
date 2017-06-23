@@ -1,7 +1,7 @@
 import uuid
 import xml.etree.ElementTree as ET
 
-from urh.dev import config
+from urh import SimulatorSettings
 
 
 class Participant(object):
@@ -31,7 +31,7 @@ class Participant(object):
 
     @property
     def recv_profile(self):
-        if not self.__recv_profile in config.profiles:
+        if not self.__recv_profile in SimulatorSettings.profiles:
             self.__recv_profile = None
 
         return self.__recv_profile
@@ -42,7 +42,7 @@ class Participant(object):
 
     @property
     def send_profile(self):
-        if self.__send_profile not in config.profiles:
+        if self.__send_profile not in SimulatorSettings.profiles:
             self.__send_profile = None
 
         return self.__send_profile

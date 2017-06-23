@@ -102,5 +102,3 @@ DEVICE_CONFIG["Fallback"] = {
     "rx_rf_gain":  list(range(0, 51)),
     "tx_rf_gain":  list(range(0, 51)),
 }
-
-profiles = []

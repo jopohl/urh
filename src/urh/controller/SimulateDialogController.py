@@ -7,6 +7,7 @@ from urh.ui.delegates.SimulatorSettingsComboBoxDelegate import SimulatorSettings
 from urh.models.SimulatorSettingsTableModel import SimulatorSettingsTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
+from urh import SimulatorSettings
 
 class SimulateDialogController(QDialog):
     def __init__(self, project_manager: ProjectManager, generator_tab_controller, compare_frame_controller,
@@ -30,6 +31,11 @@ class SimulateDialogController(QDialog):
                                                            controller=self, is_rx=True, parent=self.ui.tableViewSimulate))
         self.ui.tableViewSimulate.setItemDelegateForColumn(2, SimulatorSettingsComboBoxDelegate(
                                                            controller=self, is_rx=False, parent=self.ui.tableViewSimulate))
+
+        self.ui.spinBoxNRepeat.setValue(SimulatorSettings.num_repeat)
+        self.ui.spinBoxTimeout.setValue(SimulatorSettings.timeout)
+        self.ui.comboBoxError.setCurrentIndex(SimulatorSettings.error_handling_index)
+
         self.update_buttons()
 
         self.create_connects()
@@ -42,6 +48,19 @@ class SimulateDialogController(QDialog):
         self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
         self.ui.btnLog.clicked.connect(self.on_btn_log_clicked)
+
+        self.ui.spinBoxNRepeat.valueChanged.connect(self.on_repeat_value_changed)
+        self.ui.spinBoxTimeout.valueChanged.connect(self.on_timeout_value_changed)
+        self.ui.comboBoxError.currentIndexChanged.connect(self.on_error_handling_index_changed)
+
+    def on_repeat_value_changed(self, value):
+        SimulatorSettings.num_repeat = value
+
+    def on_timeout_value_changed(self, value):
+        SimulatorSettings.timeout = value
+
+    def on_error_handling_index_changed(self, index):
+        SimulatorSettings.error_handling_index = index
 
     def on_project_updated(self):
         self.simulator_settings_model.update()

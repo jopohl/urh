@@ -4,7 +4,7 @@ from urh.util.ProjectManager import ProjectManager
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
 
-from urh.dev import config
+from urh import SettingsSimulator
 
 class Simulator(object):
     def __init__(self, protocol_manager: SimulatorProtocolManager, project_manager: ProjectManager):

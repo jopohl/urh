@@ -6,6 +6,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
+from urh import SimulatorSettings
 from urh.dev import config
 
 from PyQt5.QtCore import pyqtSlot
@@ -35,7 +36,7 @@ class SendRecvSettingsDialogController(ProtocolSniffDialogController):
         self.ui.widget.hide()
 
         self.generator_tab_controller = generator_tab_controller
-        self.profiles = config.profiles
+        self.profiles = SimulatorSettings.profiles
         self.block_profile = False
         self.refresh_modulators()
 
@@ -54,8 +55,6 @@ class SendRecvSettingsDialogController(ProtocolSniffDialogController):
 
         if len(self.profiles) == 1:
             self.ui.btnRemoveProfile.setDisabled(True)
-
-        #self.create_connects()
 
     def move_widgets(self):
         target_layout = self.ui.scrollAreaContents_rx.layout()

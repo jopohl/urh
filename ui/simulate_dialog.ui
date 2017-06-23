@@ -64,7 +64,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="spinBoxNRepeat">
          <property name="specialValueText">
           <string>Infinite</string>
          </property>
@@ -78,7 +78,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_2"/>
+        <widget class="QSpinBox" name="spinBoxTimeout"/>
        </item>
        <item>
         <widget class="QLabel" name="label_4">
@@ -88,7 +88,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="comboBoxError">
          <item>
           <property name="text">
            <string>Resend last message</string>

@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QModelIndex, QAbstractItemModel, pyqtSlot
 from urh.controller.SendRecvSettingsDialogController import SendRecvSettingsDialogController
 from urh.dev.BackendHandler import BackendHandler
 
-from urh.dev import config
+from urh import SimulatorSettings
 
 class SimulatorSettingsComboBoxDelegate(QItemDelegate):
     def __init__(self, controller, is_rx=True, parent=None):
@@ -32,7 +32,7 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
         self.editor.blockSignals(True)
         self.editor.clear()
 
-        for profile in config.profiles:
+        for profile in SimulatorSettings.profiles:
             if self.is_rx and profile['supports_rx']:
                 self.editor.addItem(profile['name'], profile)
 
@@ -53,7 +53,7 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
 
     def dialog_finished(self):
         self.load_combobox()
-        selected_profile = config.profiles[self.sender().ui.comboBoxProfiles.currentIndex()]
+        selected_profile = SimulatorSettings.profiles[self.sender().ui.comboBoxProfiles.currentIndex()]
         self.editor.setCurrentIndex(self.find_index(selected_profile))
         self.commitData.emit(self.editor)
 

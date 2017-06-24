@@ -516,12 +516,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>30</height>
-                 </size>
-                </property>
                 <property name="baseSize">
                  <size>
                   <width>0</width>
@@ -748,6 +742,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                </property>
+                <property name="autoRaise">
+                 <bool>false</bool>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::NoArrow</enum>
                 </property>
                </widget>
               </item>

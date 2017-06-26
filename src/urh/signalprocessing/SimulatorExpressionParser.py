@@ -119,7 +119,7 @@ class SimulatorExpressionParser(QObject):
 
         if not (lbl_identifier in self.sim_proto_manager.item_dict and
                   isinstance(self.sim_proto_manager.item_dict[lbl_identifier], SimulatorProtocolLabel)):
-            self.raise_syntax_error("'" + label_identifier + "' is not a valid label identifier",
+            self.raise_syntax_error("'" + lbl_identifier + "' is not a valid label identifier",
                 node.lineno, node.col_offset)
 
     def label_identifier(self):

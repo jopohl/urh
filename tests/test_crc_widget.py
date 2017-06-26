@@ -1,10 +1,11 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.CRCWidgetController import CRCWidgetController
+from urh.controller.ChecksumWidgetController import ChecksumWidgetController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
+from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
@@ -12,7 +13,7 @@ class TestCRCWidget(QtTestCase):
     def test_configure_crc_ranges(self):
         crc_label = CRCLabel("crc_label", 50, 100, 0, FieldType("crc", FieldType.Function.CRC))
 
-        crc_widget_controller = CRCWidgetController(crc_label, Message([0]*100, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 100, 0, MessageType("test")), 0)
         model = crc_widget_controller.data_range_table_model
         self.assertEqual(model.data(model.index(0, 0)), 1)
         self.assertEqual(model.data(model.index(0, 1)), 50)
@@ -33,7 +34,7 @@ class TestCRCWidget(QtTestCase):
     def test_configure_crc_polynomial(self):
         crc_label = CRCLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CRC))
 
-        crc_widget_controller = CRCWidgetController(crc_label, Message([0]*150, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
 
         default_crc_polynomials = GenericCRC.DEFAULT_POLYNOMIALS
 
@@ -42,15 +43,15 @@ class TestCRCWidget(QtTestCase):
             self.assertEqual(default_polynomial_name, crc_widget_controller.ui.comboBoxCRCFunction.itemText(i))
 
         crc = GenericCRC()
-        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_bit_str)
+        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), util.bit2hex(crc.polynomial))
 
         crc_widget_controller.ui.comboBoxCRCFunction.setCurrentIndex(2)
         crc.polynomial = crc.choose_polynomial(2)
-        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_bit_str)
+        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), util.bit2hex(crc.polynomial))
 
-        crc_widget_controller.ui.lineEditCRCPolynomial.setText("1110001")
+        crc_widget_controller.ui.lineEditCRCPolynomial.setText("10abc001")
         crc_widget_controller.ui.lineEditCRCPolynomial.editingFinished.emit()
-        self.assertEqual(crc_label.crc.polynomial_as_bit_str, "1110001")
+        self.assertEqual(util.bit2hex(crc_label.crc.polynomial), "10abc001")
 
     def test_crc_widget_in_protocol_label_dialog(self):
         mt = MessageType("test")

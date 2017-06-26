@@ -3,6 +3,7 @@ import array
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
+from urh.util import util
 
 
 class TestDecoding(QtTestCase):
@@ -91,15 +92,15 @@ class TestDecoding(QtTestCase):
 
     def test_enocean_crc8_message(self):
         e = Encoder()
-        received = e.hex2bit("aacbac4cddd5ddd3bddd5ddcc5ddcddd4c2d5d5c2cdddab200000")
+        received = util.hex2bit("aacbac4cddd5ddd3bddd5ddcc5ddcddd4c2d5d5c2cdddab200000")
         preamble, sof, eof = "aa", "9", "b"
 
         decoded, err, state = e.code_enocean(decoding=True, inpt=received)
         self.assertEqual(err, 0)
         self.assertEqual(state, e.ErrorState.SUCCESS)
-        self.assertIn(preamble, e.bit2hex(decoded))
-        self.assertIn(sof, e.bit2hex(decoded))
-        self.assertIn(eof, e.bit2hex(decoded))
+        self.assertIn(preamble, util.bit2hex(decoded))
+        self.assertIn(sof, util.bit2hex(decoded))
+        self.assertIn(eof, util.bit2hex(decoded))
 
         reencoded, errors, state = e.code_enocean(decoding=False, inpt=decoded)
         self.assertEqual(errors, 0)
@@ -118,10 +119,10 @@ class TestDecoding(QtTestCase):
         msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"
 
         # Remove Preamble + SOF + EOF for CRC calculation
-        msg1 = e.hex2bit("a6d201006401009802019e411e8035")
-        crc1 = e.hex2bit("35")
-        msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e8071")
-        crc2 = e.hex2bit("71")
+        msg1 = util.hex2bit("a6d201006401009802019e411e8035")
+        crc1 = util.hex2bit("35")
+        msg2 = util.hex2bit("a6d2010000ffdaaf01019e411e8071")
+        crc2 = util.hex2bit("71")
 
         calc_crc1 = e.enocean_hash(msg1)
         calc_crc2 = e.enocean_hash(msg2)

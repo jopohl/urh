@@ -1,6 +1,10 @@
 import os
 import sys
 
+import array
+
+from urh.util.Logger import logger
+
 
 def set_windows_lib_path():
     if sys.platform == "win32":
@@ -16,25 +20,43 @@ def set_windows_lib_path():
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False):
+    bits_str = "".join(["1" if b else "0" for b in bits])
+
     if output_view_type == 0:
-        return "".join(map(str, map(int, bits)))
+        return bits_str
+
     elif output_view_type == 1:
-        bits_str_list = list(map(str, map(int, bits)))
-
         if pad_zeros:
-            bits_str_list += ["0"] * ((4 - (len(bits_str_list) % 4)) % 4)
+            bits_str += "0" * ((4 - (len(bits_str) % 4)) % 4)
 
-        return "".join(map(lambda h: "{0:x}".format(h),
-                           [int("".join(bits_str_list[i:i+4]), 2) for i in range(0, len(bits_str_list), 4)]))
+        return hex(int(bits_str, 2))[2:]
 
     elif output_view_type == 2:
-        bits_str_list = list(map(str, map(int, bits)))
-
         if pad_zeros:
-            bits_str_list += ["0"] * ((8 - (len(bits_str_list) % 8)) % 8)
+            bits_str += ["0"] * ((8 - (len(bits_str) % 8)) % 8)
 
         return "".join(map(chr,
-                           [int("".join(bits_str_list[i:i+8]), 2) for i in range(0, len(bits_str_list), 8)]))
+                           [int("".join(bits_str[i:i+8]), 2) for i in range(0, len(bits_str), 8)]))
 
     elif output_view_type == 3:
-        return int("".join(map(str, map(int, bits))), 2)
+        return int(bits_str, 2)
+
+
+def hex2bit(hex_str: str) -> array.array:
+    if not isinstance(hex_str, str):
+        return array.array("B", [])
+
+    try:
+        bitstring = bin(int(hex_str, base=16))[2:]
+        if len(bitstring) % 4 != 0:
+            bitstring = "0" * (4 - (len(bitstring) % 4)) + bitstring
+        return array.array("B", [True if x == "1" else False for x in bitstring])
+    except (TypeError, ValueError) as e:
+        logger.error(str(e))
+        result = array.array("B", [])
+
+    return result
+
+
+def bit2hex(bits: array.array, pad_zeros=False) -> str:
+    return convert_bits_to_string(bits, 1, pad_zeros)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CRCOptions</class>
- <widget class="QWidget" name="CRCOptions">
+ <class>ChecksumOptions</class>
+ <widget class="QWidget" name="ChecksumOptions">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,28 +14,14 @@
    <string>Configure CRC</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QComboBox" name="comboBoxCRCFunction">
-     <item>
-      <property name="text">
-       <string>WSP CRC 8</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>WSP CRC 4</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_5">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Custom CRC polynomial:</string>
+      <string>CRC type:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="6" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -51,14 +37,42 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="lineEditCRCPolynomial"/>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_3">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Predefined CRC function:</string>
+      <string>Start value (hex):</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>CRC polynomial (hex):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Final XOR (hex):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="comboBoxCRCFunction">
+     <item>
+      <property name="text">
+       <string>WSP CRC 8</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WSP CRC 4</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Configure data ranges for CRC</string>
@@ -119,18 +133,11 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="lineEditFinalXOR"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="lineEditStartValue"/>
    </item>
   </layout>
  </widget>

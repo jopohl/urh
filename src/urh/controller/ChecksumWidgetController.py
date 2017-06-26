@@ -7,11 +7,12 @@ from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.Message import Message
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
-from urh.ui.ui_crc_options_widget import Ui_CRCOptions
+from urh.ui.ui_checksum_options_widget import Ui_ChecksumOptions
+from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
-class CRCWidgetController(QWidget):
+class ChecksumWidgetController(QWidget):
     class RangeTableModel(QAbstractTableModel):
         header_labels = ["Start", "End"]
 
@@ -94,7 +95,7 @@ class CRCWidgetController(QWidget):
 
     def __init__(self, crc_label: CRCLabel, message: Message, proto_view: int, parent=None):
         super().__init__(parent)
-        self.ui = Ui_CRCOptions()
+        self.ui = Ui_ChecksumOptions()
         self.ui.setupUi(self)
         self.crc_label = crc_label
         self.data_range_table_model = self.RangeTableModel(crc_label, message, proto_view, parent=self)
@@ -106,8 +107,8 @@ class CRCWidgetController(QWidget):
         self.display_crc_data_ranges_in_table()
         self.ui.comboBoxCRCFunction.clear()
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
-        self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("1[0,1]*")))
-        self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
+        self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("[0-9,a-f]*")))
+        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.crc_label.crc.polynomial))
         self.create_connects()
 
     @property
@@ -143,8 +144,8 @@ class CRCWidgetController(QWidget):
     @pyqtSlot(int)
     def on_combobox_crc_function_current_index_changed(self, index: int):
         self.crc_label.crc.polynomial = self.crc_label.crc.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
-        self.ui.lineEditCRCPolynomial.setText(self.crc_label.crc.polynomial_as_bit_str)
+        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.crc_label.crc.polynomial))
 
     @pyqtSlot()
     def on_line_edit_crc_polynomial_editing_finished(self):
-        self.crc_label.crc.polynomial = array.array("B", map(int, self.ui.lineEditCRCPolynomial.text()))
+        self.crc_label.crc.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())

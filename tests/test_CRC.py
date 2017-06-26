@@ -1,5 +1,6 @@
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.encoder import Encoder
+from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 class TestCRC(QtTestCase):
@@ -20,7 +21,7 @@ class TestCRC(QtTestCase):
                   "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",
                   "010101010110100111010010111011101110111011100110001011101010001011101110110110100101"]
 
-        expected = ["0x78", "0xc9", "0xf2"]
+        expected = ["78", "c9", "f2"]
 
         for value, expect in zip(bitstr, expected):
             nv = ""
@@ -30,7 +31,7 @@ class TestCRC(QtTestCase):
                 else:
                     nv += "1"
 
-            self.assertEqual(e.bit2hex(c.crc(e.str2bit(value[4:-8]))), expect)
+            self.assertEqual(util.bit2hex(c.crc(e.str2bit(value[4:-8]))), expect)
 
     def test_reverse_engineering(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
@@ -52,4 +53,4 @@ class TestCRC(QtTestCase):
         polynomial = c.reverse_engineer_polynomial(bitset, crcset)
         if polynomial:
             self.assertEqual(c.bit2str(polynomial), "1000000000000101")
-            self.assertEqual(c.bit2hex(polynomial), "0x8005")
+            self.assertEqual(util.bit2hex(polynomial), "8005")

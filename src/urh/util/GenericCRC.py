@@ -205,16 +205,6 @@ class GenericCRC(object):
         return [True if x == "1" else False for x in inpt]
 
     @staticmethod
-    def bit2hex(inpt):
-        bitstring = "".join(["1" if x else "0" for x in inpt])
-        return hex(int(bitstring, 2))
-
-    @staticmethod
-    def hex2bit(inpt):
-        bitstring = bin(int(inpt, base=16))[2:]
-        return [True if x == "1" else False for x in "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring]
-
-    @staticmethod
     def hex2str(inpt):
         bitstring = bin(int(inpt, base=16))[2:]
         return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring

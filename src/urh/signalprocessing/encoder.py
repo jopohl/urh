@@ -3,6 +3,7 @@ import copy
 import array
 
 from urh import constants
+from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
@@ -272,9 +273,9 @@ class Encoder(object):
                 if self.chain[i + 1].count(';') == 2:
                     self.data_whitening_sync, self.data_whitening_polynomial, opt = self.chain[i + 1].split(";")
                     if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0) and len(opt) > 0:
-                        self.data_whitening_sync = self.hex2bit(self.data_whitening_sync)
-                        self.data_whitening_polynomial = self.hex2bit(self.data_whitening_polynomial)
-                        opt = self.hex2bit(opt)
+                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
+                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
+                        opt = util.hex2bit(opt)
                         if len(opt) >= 4:
                             self.data_whitening_apply_crc = opt[0]
                             self.data_whitening_preamble_rm = opt[1]
@@ -745,7 +746,7 @@ class Encoder(object):
         :rtype: list of bool
         """
         try:
-            if msg[0:4] == self.hex2bit("5") or msg[0:4] == self.hex2bit("6"):
+            if msg[0:4] == util.hex2bit("5") or msg[0:4] == util.hex2bit("6"):
                 # Switch telegram
                 return self.enocean_checksum4(msg)
 
@@ -899,31 +900,6 @@ class Encoder(object):
             elif i == '1':
                 output.append(True)
         return output
-
-    @staticmethod
-    def bit2hex(inpt):
-        try:
-            bitstring = "".join(["1" if x else "0" for x in inpt])
-            # Better alignment
-            if len(bitstring) % 4 != 0:
-                bitstring += "0" * (4 - (len(bitstring) % 4))
-            return hex(int(bitstring, 2))
-        except (TypeError, ValueError) as e:
-            pass
-        return ""
-
-    @staticmethod
-    def hex2bit(inpt: str) -> array:
-        if not isinstance(inpt, str):
-            return array.array("B", [])
-        try:
-            bitstring = bin(int(inpt, base=16))[2:]
-            if len(bitstring) % 4 != 0:
-                bitstring = "0" * (4 - (len(bitstring) % 4)) + bitstring
-            return array.array("B", [True if x == "1" else False for x in bitstring])
-        except (TypeError, ValueError) as e:
-            pass
-        return array.array("B", [])
 
     @staticmethod
     def hex2str(inpt):

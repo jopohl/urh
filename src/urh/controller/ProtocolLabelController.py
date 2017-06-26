@@ -3,7 +3,7 @@ from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget, QAbstractItemView
 
 from urh import constants
-from urh.controller.CRCWidgetController import CRCWidgetController
+from urh.controller.ChecksumWidgetController import ChecksumWidgetController
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.CRCLabel import CRCLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -67,7 +67,7 @@ class ProtocolLabelController(QDialog):
         for lbl in self.model.message_type: # type: ProtocolLabel
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
                 if isinstance(lbl, CRCLabel):
-                    w = CRCWidgetController(lbl, self.model.message, self.model.proto_view)
+                    w = ChecksumWidgetController(lbl, self.model.message, self.model.proto_view)
                     self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
                     raise NotImplementedError("No Special Config Dialog for field type " + lbl.field_type.caption)

@@ -12,6 +12,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.encoder import Encoder
 from urh.ui.ui_decoding import Ui_Decoder
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -630,7 +631,7 @@ class DecoderWidgetController(QDialog):
                             whitening_sync, whitening_polynomial, opt = value.split(";")
                             self.ui.datawhitening_sync.setText(whitening_sync)
                             self.ui.datawhitening_polynomial.setText(whitening_polynomial)
-                            opt = self.e.hex2bit(opt)
+                            opt = util.hex2bit(opt)
                             if len(opt) >= 4:
                                 self.ui.datawhitening_applycrc.setChecked(opt[0])
                                 self.ui.datawhitening_preamble_rm.setChecked(opt[1])

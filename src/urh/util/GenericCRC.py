@@ -1,4 +1,5 @@
 import array
+import copy
 from collections import OrderedDict
 
 
@@ -56,7 +57,7 @@ class GenericCRC(object):
             data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
         len_data = len(data)
 
-        crc = self.start_value.copy()
+        crc = copy.copy(self.start_value)
 
         for i in range(0, len_data, 8):
             for j in range(0, 8):

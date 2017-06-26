@@ -95,7 +95,6 @@ class FieldType(object):
         """
         caption = tag.get("caption", "")
         function_str = tag.get("function", "CUSTOM")
-        print(caption, function_str)
         if function_str == "CRC":
             function_str = "CHECKSUM"  # legacy
 

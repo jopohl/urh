@@ -108,7 +108,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                 fuz_msg = Message(plain_bits=cpy_bits, pause=pause,
                                   rssi=msg.rssi, message_type=message_type,
                                   modulator_indx=msg.modulator_indx,
-                                  decoder=msg.decoder, fuzz_created=True)
+                                  decoder=msg.decoder, fuzz_created=True, participant=msg.participant)
                 added_message_indices.append(i+j+1)
                 appd_result(fuz_msg)
                 if j % 10000 == 0:

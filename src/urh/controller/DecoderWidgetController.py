@@ -10,8 +10,9 @@ from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.ui.ui_decoding import Ui_Decoder
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -19,7 +20,7 @@ class DecoderWidgetController(QDialog):
     def __init__(self, decodings, signals, project_manager: ProjectManager,
                  parent=None):
         """
-        :type decodings: list of Encoder
+        :type decodings: list of Encoding
         :type signals: list of Signal
         """
         # Init
@@ -182,13 +183,13 @@ class DecoderWidgetController(QDialog):
             for i in range(0, len(self.decodings)):
                 if name == self.decodings[i].name:
                     self.ui.combobox_decodings.setCurrentIndex(i)
-                    self.decodings[i] = Encoder(self.chainstr)
+                    self.decodings[i] = Encoding(self.chainstr)
                     self.set_e()
                     self.ui.saveas.setVisible(False)
                     self.save_to_file()
                     return
 
-            self.decodings.append(Encoder(self.chainstr))
+            self.decodings.append(Encoding(self.chainstr))
             self.ui.combobox_decodings.addItem(self.chainstr[0])
             self.ui.combobox_decodings.setCurrentIndex(self.ui.combobox_decodings.count() - 1)
             self.set_e()
@@ -630,7 +631,7 @@ class DecoderWidgetController(QDialog):
                             whitening_sync, whitening_polynomial, opt = value.split(";")
                             self.ui.datawhitening_sync.setText(whitening_sync)
                             self.ui.datawhitening_polynomial.setText(whitening_polynomial)
-                            opt = self.e.hex2bit(opt)
+                            opt = util.hex2bit(opt)
                             if len(opt) >= 4:
                                 self.ui.datawhitening_applycrc.setChecked(opt[0])
                                 self.ui.datawhitening_preamble_rm.setChecked(opt[1])

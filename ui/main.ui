@@ -46,6 +46,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
+         <number>7</number>
+        </property>
+        <property name="leftMargin">
+         <number>11</number>
+        </property>
+        <property name="topMargin">
+         <number>11</number>
+        </property>
+        <property name="rightMargin">
+         <number>11</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -112,6 +124,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <height>16777215</height>
            </size>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
           <property name="autoScroll">
            <bool>true</bool>
           </property>
@@ -143,14 +158,29 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="styleSheet">
+           <string notr="true">QTabWidget::pane { border: 0; }</string>
+          </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabParticipants">
            <attribute name="title">
             <string>Participants</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QListView" name="listViewParticipants"/>
             </item>
@@ -161,6 +191,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             <string>Description</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QTextEdit" name="textEditProjectDescription"/>
             </item>
@@ -257,7 +299,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -301,7 +343,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFSK">
    <property name="checkable">
     <bool>true</bool>

@@ -7,7 +7,7 @@ from urh.models.TableModel import TableModel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.ui.actions.Clear import Clear
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 from urh.ui.actions.InsertBitsAndPauses import InsertBitsAndPauses
@@ -22,7 +22,7 @@ class GeneratorTableModel(TableModel):
         self.tree_root_item = tree_root_item
         self.dropped_row = -1
 
-        self.decodings = decodings  # type: list[Encoder]
+        self.decodings = decodings  # type: list[Encoding]
 
         self.cfc = None
         self.is_writeable = True

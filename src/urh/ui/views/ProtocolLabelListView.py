@@ -39,8 +39,8 @@ class ProtocolLabelListView(QListView):
         if selected.isEmpty():
             return -1, -1
 
-        min_row = numpy.min([rng.top() for rng in selected])
-        max_row = numpy.max([rng.bottom() for rng in selected])
+        min_row = min(rng.top() for rng in selected)
+        max_row = max(rng.bottom() for rng in selected)
 
         return min_row, max_row
 

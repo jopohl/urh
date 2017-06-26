@@ -40,10 +40,10 @@
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>-117</x>
         <y>0</y>
-        <width>1081</width>
-        <height>699</height>
+        <width>1198</width>
+        <height>686</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -67,6 +67,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </property>
          <widget class="QWidget" name="layoutWidget_2">
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="leftMargin">
+            <number>11</number>
+           </property>
+           <property name="topMargin">
+            <number>11</number>
+           </property>
+           <property name="rightMargin">
+            <number>11</number>
+           </property>
+           <property name="bottomMargin">
+            <number>11</number>
+           </property>
            <item>
             <widget class="QTabWidget" name="tabWidget">
              <property name="sizePolicy">
@@ -74,6 +86,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QTabWidget::pane { border: 0; }</string>
              </property>
              <property name="tabPosition">
               <enum>QTabWidget::North</enum>
@@ -89,6 +104,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <string>Protocols</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item>
                 <widget class="GeneratorTreeView" name="treeProtocols">
                  <property name="sizePolicy">
@@ -112,6 +139,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <string>Pauses</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item row="0" column="0" colspan="2">
                 <widget class="GeneratorListWidget" name="lWPauses">
                  <property name="sizePolicy">
@@ -143,6 +182,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <property name="spacing">
                 <number>6</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
                <item>
                 <widget class="GeneratorListView" name="listViewProtoLabels">
@@ -242,7 +293,20 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             </widget>
            </item>
            <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QGridLayout" name="gridLayout_6">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
              <item row="2" column="1">
               <widget class="QComboBox" name="cBoxModulations">
                <item>
@@ -254,47 +318,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </item>
              <item row="0" column="0" colspan="3">
               <layout class="QGridLayout" name="modulationLayout_2">
-               <item row="0" column="0">
-                <widget class="QLabel" name="lEncoding">
-                 <property name="text">
-                  <string>Encoding:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="lEncodingValue">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="lSampleRate">
-                 <property name="text">
-                  <string>Sample Rate:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QLabel" name="lSampleRateValue">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="lCarrierFrequency">
-                 <property name="text">
-                  <string>Carrier Frequency:</string>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="1">
                 <widget class="QLabel" name="lCarrierFreqValue">
                  <property name="text">
@@ -369,6 +392,47 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <widget class="QLabel" name="lParamForOneValue">
                  <property name="text">
                   <string>TextLabel</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="lEncoding">
+                 <property name="text">
+                  <string>Encoding:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="lEncodingValue">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="lSampleRate">
+                 <property name="text">
+                  <string>Sample Rate:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QLabel" name="lSampleRateValue">
+                 <property name="text">
+                  <string>TextLabel</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="lCarrierFrequency">
+                 <property name="text">
+                  <string>Carrier Frequency:</string>
                  </property>
                 </widget>
                </item>
@@ -448,73 +512,18 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          </widget>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0" colspan="7">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Generated data</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="7">
-            <widget class="GeneratorTableView" name="tableMessages">
-             <property name="acceptDrops">
-              <bool>true</bool>
-             </property>
-             <property name="dragEnabled">
-              <bool>false</bool>
-             </property>
-             <property name="dragDropOverwriteMode">
-              <bool>false</bool>
-             </property>
-             <property name="dragDropMode">
-              <enum>QAbstractItemView::DropOnly</enum>
-             </property>
-             <property name="defaultDropAction">
-              <enum>Qt::CopyAction</enum>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectItems</enum>
-             </property>
-             <property name="verticalScrollMode">
-              <enum>QAbstractItemView::ScrollPerPixel</enum>
-             </property>
-             <property name="horizontalScrollMode">
-              <enum>QAbstractItemView::ScrollPerPixel</enum>
-             </property>
-             <property name="showGrid">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QToolButton" name="btnSave">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="document-save">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
+           <property name="leftMargin">
+            <number>11</number>
+           </property>
+           <property name="topMargin">
+            <number>11</number>
+           </property>
+           <property name="rightMargin">
+            <number>11</number>
+           </property>
+           <property name="bottomMargin">
+            <number>11</number>
+           </property>
            <item row="2" column="1">
             <widget class="QPushButton" name="btnNetworkSDRSend">
              <property name="toolTip">
@@ -544,6 +553,25 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
               <iconset theme="network-wireless">
                <normaloff>.</normaloff>.</iconset>
              </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QComboBox" name="cbViewType">
+             <item>
+              <property name="text">
+               <string>Bit</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ASCII</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item row="2" column="3">
@@ -582,24 +610,79 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              </property>
             </widget>
            </item>
-           <item row="2" column="6">
-            <widget class="QComboBox" name="cbViewType">
-             <item>
-              <property name="text">
-               <string>Bit</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ASCII</string>
-              </property>
-             </item>
+           <item row="1" column="0" colspan="7">
+            <widget class="GeneratorTableView" name="tableMessages">
+             <property name="acceptDrops">
+              <bool>true</bool>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="dragEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::DropOnly</enum>
+             </property>
+             <property name="defaultDropAction">
+              <enum>Qt::CopyAction</enum>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectItems</enum>
+             </property>
+             <property name="verticalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="horizontalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderHighlightSections">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderHighlightSections">
+              <bool>false</bool>
+             </attribute>
             </widget>
+           </item>
+           <item row="0" column="0" colspan="7">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Generated data</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="btnSave">
+               <property name="text">
+                <string>...</string>
+               </property>
+               <property name="icon">
+                <iconset theme="document-save">
+                 <normaloff>.</normaloff>.</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>

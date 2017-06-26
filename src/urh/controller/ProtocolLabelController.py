@@ -3,9 +3,9 @@ from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget, QAbstractItemView
 
 from urh import constants
-from urh.controller.CRCWidgetController import CRCWidgetController
+from urh.controller.ChecksumWidgetController import ChecksumWidgetController
 from urh.models.PLabelTableModel import PLabelTableModel
-from urh.signalprocessing.CRCLabel import CRCLabel
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -19,7 +19,7 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 class ProtocolLabelController(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
 
-    SPECIAL_CONFIG_TYPES = [FieldType.Function.CRC]
+    SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
     def __init__(self, preselected_index, message: Message, viewtype: int, parent=None):
         super().__init__(parent)
@@ -66,8 +66,8 @@ class ProtocolLabelController(QDialog):
         self.ui.tabWidgetAdvancedSettings.clear()
         for lbl in self.model.message_type: # type: ProtocolLabel
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
-                if isinstance(lbl, CRCLabel):
-                    w = CRCWidgetController(lbl, self.model.message, self.model.proto_view)
+                if isinstance(lbl, ChecksumLabel):
+                    w = ChecksumWidgetController(lbl, self.model.message, self.model.proto_view)
                     self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
                     raise NotImplementedError("No Special Config Dialog for field type " + lbl.field_type.caption)

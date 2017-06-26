@@ -1,8 +1,8 @@
+import numpy
 import numpy as np
 from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection
 from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics
 from PyQt5.QtWidgets import QTableView, QApplication
-import numpy
 
 
 class TableView(QTableView):
@@ -32,18 +32,17 @@ class TableView(QTableView):
         """
         :rtype: int, int, int, int
         """
-        selected = self.selectionModel().selection()
-        """:type: QItemSelection """
-
+        selected = self.selectionModel().selection()  # type: QItemSelection
         if self.selection_is_empty:
             return -1, -1, -1, -1
 
-        min_row = numpy.min([rng.top() for rng in selected])
-        max_row = numpy.max([rng.bottom() for rng in selected])
-        start = numpy.min([rng.left() for rng in selected])
-        end = numpy.max([rng.right() for rng in selected]) + 1
+        def range_to_tuple(rng):
+            return rng.row(), rng.column()
 
-        return min_row, max_row, start, end
+        top_left = min(range_to_tuple(rng.topLeft()) for rng in selected)
+        bottom_right = max(range_to_tuple(rng.bottomRight()) for rng in selected)
+
+        return top_left[0], bottom_right[0], top_left[1], bottom_right[1] + 1
 
     def select(self, row_1, col_1, row_2, col_2):
         sel = QItemSelection()

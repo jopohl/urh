@@ -379,6 +379,21 @@
    <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEdit_Path</tabstop>
+  <tabstop>btnSelectPath</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>spinBoxFreq</tabstop>
+  <tabstop>spinBoxBandwidth</tabstop>
+  <tabstop>spinBoxGain</tabstop>
+  <tabstop>txtEdDescription</tabstop>
+  <tabstop>tblParticipants</tabstop>
+  <tabstop>btnAddParticipant</tabstop>
+  <tabstop>btnRemoveParticipant</tabstop>
+  <tabstop>lineEditBroadcastAddress</tabstop>
+  <tabstop>btnOK</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

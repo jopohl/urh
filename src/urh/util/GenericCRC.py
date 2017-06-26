@@ -12,9 +12,6 @@ class GenericCRC(object):
 
         # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
         ("16_dnp", array.array("B", [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
-
-        # x^8+x^2+x+1
-        ("8_en", array.array("B", [1, 0, 0, 0, 0, 0, 1, 1, 1]))
     ])
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
@@ -101,6 +98,9 @@ class GenericCRC(object):
                 self.__swap_bytes(crc, pos1, pos2)
 
         return crc
+
+    def calculate(self, bits: array.array):
+        return self.crc(bits)
 
     @staticmethod
     def __swap_bytes(array, pos1: int, pos2: int):
@@ -203,16 +203,6 @@ class GenericCRC(object):
     @staticmethod
     def str2bit(inpt):
         return [True if x == "1" else False for x in inpt]
-
-    @staticmethod
-    def bit2hex(inpt):
-        bitstring = "".join(["1" if x else "0" for x in inpt])
-        return hex(int(bitstring, 2))
-
-    @staticmethod
-    def hex2bit(inpt):
-        bitstring = bin(int(inpt, base=16))[2:]
-        return [True if x == "1" else False for x in "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring]
 
     @staticmethod
     def hex2str(inpt):

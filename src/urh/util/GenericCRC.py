@@ -2,17 +2,22 @@ import array
 import copy
 from collections import OrderedDict
 
+from urh.util import util
+
 
 class GenericCRC(object):
     DEFAULT_POLYNOMIALS = OrderedDict([
         # x^16+x^15+x^2+x^0
-        ("16_standard", array.array("B", [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
+        ("16_standard", array.array("B", [1,
+                                          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
 
         # x^16+x^12+x^5+x^
-        ("16_ccitt", array.array("B", [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
+        ("16_ccitt", array.array("B", [1,
+                                       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
 
         # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-        ("16_dnp", array.array("B", [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
+        ("16_dnp", array.array("B", [1,
+                                     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
     ])
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
@@ -42,6 +47,29 @@ class GenericCRC(object):
     @property
     def polynomial_as_bit_str(self) -> str:
         return "".join("1" if p else "0" for p in self.polynomial)
+
+    @property
+    def polynomial_as_hex_str(self) -> str:
+        return util.bit2hex(self.polynomial[1:])  # do not show leading one
+
+    @property
+    def polynomial_to_html(self) -> str:
+        result = ""
+        for i in range(self.poly_order):
+            index = self.poly_order - 1 - i
+            if self.polynomial[i] > 0:
+                if index > 1:
+                    result += "x<sup>{0}</sup> + ".format(index)
+                elif index == 1:
+                    result += "x + "
+                elif index == 0:
+                    result += "1"
+
+        result = result.rstrip(" + ")
+        return result
+
+    def set_polynomial_from_hex(self, hex_str: str):
+        self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
 
     def choose_polynomial(self, polynomial):
         if isinstance(polynomial, str):

@@ -18,7 +18,8 @@ class WSPChecksum(object):
         checksum8 = 2
         crc8 = 3
 
-    CRC_8_POLYNOMIAL = array.array("B", [1, 0, 0, 0, 0, 0, 1, 1, 1])  # x^8+x^2+x+1
+    CRC_8_POLYNOMIAL = array.array("B", [1,
+                                         0, 0, 0, 0, 0, 1, 1, 1])  # x^8+x^2+x+1
 
     def __init__(self, mode=ChecksumMode.auto):
         self.mode = mode

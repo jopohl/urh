@@ -29,11 +29,11 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False):
         if pad_zeros:
             bits_str += "0" * ((4 - (len(bits_str) % 4)) % 4)
 
-        return hex(int(bits_str, 2))[2:]
+        return "".join(["{0:x}".format(int(bits_str[i:i+4], 2)) for i in range(0, len(bits_str), 4)])
 
     elif output_view_type == 2:
         if pad_zeros:
-            bits_str += ["0"] * ((8 - (len(bits_str) % 8)) % 8)
+            bits_str += "0" * ((8 - (len(bits_str) % 8)) % 8)
 
         return "".join(map(chr,
                            [int("".join(bits_str[i:i+8]), 2) for i in range(0, len(bits_str), 8)]))
@@ -46,10 +46,11 @@ def hex2bit(hex_str: str) -> array.array:
     if not isinstance(hex_str, str):
         return array.array("B", [])
 
+    if hex_str[:2] == "0x":
+        hex_str = hex_str[2:]
+
     try:
-        bitstring = bin(int(hex_str, base=16))[2:]
-        if len(bitstring) % 4 != 0:
-            bitstring = "0" * (4 - (len(bitstring) % 4)) + bitstring
+        bitstring = "".join("{0:04b}".format(int(h, 16)) for h in hex_str)
         return array.array("B", [True if x == "1" else False for x in bitstring])
     except (TypeError, ValueError) as e:
         logger.error(str(e))

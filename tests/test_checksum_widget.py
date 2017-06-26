@@ -1,3 +1,5 @@
+import array
+
 from tests.QtTestCase import QtTestCase
 from urh.controller.ChecksumWidgetController import ChecksumWidgetController
 from urh.controller.ProtocolLabelController import ProtocolLabelController
@@ -44,7 +46,7 @@ class TestChecksumWidget(QtTestCase):
             self.assertEqual(default_polynomial_name, crc_widget_controller.ui.comboBoxCRCFunction.itemText(i))
 
         crc = GenericCRC()
-        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), util.bit2hex(crc.polynomial))
+        self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_hex_str)
         self.assertEqual(crc_widget_controller.ui.lineEditStartValue.text(), util.bit2hex(crc.start_value))
         self.assertEqual(crc_widget_controller.ui.lineEditFinalXOR.text(), util.bit2hex(crc.final_xor))
 
@@ -52,17 +54,17 @@ class TestChecksumWidget(QtTestCase):
         crc.polynomial = crc.choose_polynomial(2)
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), util.bit2hex(crc.polynomial))
 
-        crc_widget_controller.ui.lineEditCRCPolynomial.setText("10abc001")
+        crc_widget_controller.ui.lineEditCRCPolynomial.setText("abcde")
         crc_widget_controller.ui.lineEditCRCPolynomial.editingFinished.emit()
-        self.assertEqual(util.bit2hex(crc_label.checksum.polynomial), "10abc001")
+        self.assertEqual(crc_label.checksum.polynomial, array.array("B", [1]) + util.hex2bit("abcde"))
 
         crc_widget_controller.ui.lineEditStartValue.setText("12345")
         crc_widget_controller.ui.lineEditStartValue.editingFinished.emit()
         self.assertEqual(util.bit2hex(crc_label.checksum.start_value), "12345")
 
-        crc_widget_controller.ui.lineEditFinalXOR.setText("cccaaa")
+        crc_widget_controller.ui.lineEditFinalXOR.setText("cccaa")
         crc_widget_controller.ui.lineEditFinalXOR.editingFinished.emit()
-        self.assertEqual(util.bit2hex(crc_label.checksum.final_xor), "cccaaa")
+        self.assertEqual(util.bit2hex(crc_label.checksum.final_xor), "cccaa")
 
     def test_crc_widget_in_protocol_label_dialog(self):
         mt = MessageType("test")

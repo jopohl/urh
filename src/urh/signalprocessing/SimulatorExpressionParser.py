@@ -3,10 +3,11 @@ import html
 import operator as op
 
 from PyQt5.QtCore import pyqtSignal, QObject
+from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 
 class SimulatorExpressionParser(QObject):
-    label_list_updated = pyqtSignal()
+    label_dict_updated = pyqtSignal()
 
     formula_help = "<html><head/><body><p><b>Formula</b></p><p><i>Operators:</i> <code>+</code> (Addition), <code>-</code> (Subtraction), <code>*</code> (Multiplication), <code>/</code> (Division)</p><p><i>Bitwise operations:</i> <code>|</code> (Or), <code>^</code> (Exclusive Or), <code>&amp;</code> (And), <code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift), <code>~</code> (Inversion)</p><p><i>Numeric literals:</i> <code>14</code> (dec), <code>0xe</code> (hex), <code>0b1110</code> (bin), <code>0o16</code> (oct)</p><i>Examples:</i><ul><li><code>item1.sequence_number + 1</code></li><li><code>~ (item1.preamble ^ 0b1110)</code></li></ul></body></html>"
 
@@ -41,14 +42,6 @@ class SimulatorExpressionParser(QObject):
         super().__init__()
 
         self.sim_proto_manager = sim_proto_manager
-        self.label_list = []
-        self.create_connects()
-
-    def create_connects(self):
-        self.sim_proto_manager.items_added.connect(self.update_label_list)
-        self.sim_proto_manager.items_moved.connect(self.update_label_list)
-        self.sim_proto_manager.items_updated.connect(self.update_label_list)
-        self.sim_proto_manager.items_deleted.connect(self.update_label_list)
 
     def validate_expression(self, expr, is_formula=True):
         valid = True
@@ -61,10 +54,7 @@ class SimulatorExpressionParser(QObject):
             valid = False
             message = "<pre>" + html.escape(expr) + "<br/>" + " " * err.offset + "^</pre>" + str(err)
         else:
-            if is_formula:
-                message = self.formula_help
-            else:
-                message = self.rule_condition_help
+            message = self.formula_help if is_formula else self.rule_condition_help
 
         return (valid, message)
 
@@ -125,24 +115,24 @@ class SimulatorExpressionParser(QObject):
         if not isinstance(node.value, ast.Name):
             self.raise_syntax_error("", node.lineno, node.col_offset)
 
-        label_identifier = node.value.id + "." + node.attr
+        lbl_identifier = node.value.id + "." + node.attr
 
-        if label_identifier not in self.label_list:
+        if not (lbl_identifier in self.sim_proto_manager.item_dict and
+                  isinstance(self.sim_proto_manager.item_dict[lbl_identifier], SimulatorProtocolLabel)):
             self.raise_syntax_error("'" + label_identifier + "' is not a valid label identifier",
                 node.lineno, node.col_offset)
+
+    def label_identifier(self):
+        identifier = []
+
+        for key, value in self.sim_proto_manager.item_dict.items():
+            if isinstance(value, SimulatorProtocolLabel):
+                identifier.append(key)
+
+        return identifier
 
     def raise_syntax_error(self, message, lineno, col_offset):
         if message == "":
             message = "_invalid syntax"
 
         raise SyntaxError(message, ("", lineno, col_offset, ""))
-
-    def update_label_list(self):
-        self.label_list.clear()
-
-        for msg in self.sim_proto_manager.get_all_messages():
-            for lbl in msg.children:
-                label_name = "item" + msg.index().replace(".", "_") + "." + lbl.name.replace(" ", "_")
-                self.label_list.append(label_name)
-
-        self.label_list_updated.emit()

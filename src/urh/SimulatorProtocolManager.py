@@ -1,4 +1,5 @@
 import random
+from collections import OrderedDict
 
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorItem import SimulatorItem
@@ -14,6 +15,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 class SimulatorProtocolManager(QObject):
     participants_changed = pyqtSignal()
+    item_dict_updated = pyqtSignal()
 
     items_deleted = pyqtSignal(list)
     items_updated = pyqtSignal(list)
@@ -26,10 +28,34 @@ class SimulatorProtocolManager(QObject):
         self.project_manager = project_manager
         self.broadcast_part = Participant("Broadcast", "Broadcast", self.project_manager.broadcast_address_hex)
 
+        self.item_dict = OrderedDict()
+
         self.create_connects()
 
     def create_connects(self):
         self.project_manager.project_updated.connect(self.on_project_updated)
+
+        self.items_added.connect(self.update_item_dict)
+        self.items_moved.connect(self.update_item_dict)
+        self.items_updated.connect(self.update_item_dict)
+        self.items_deleted.connect(self.update_item_dict)
+
+    def update_item_dict(self):
+        self.item_dict.clear()
+
+        for item in self.get_all_items():
+            if isinstance(item, SimulatorProtocolLabel):
+                index = item.parent().index()
+                suffix = "." + item.name.replace(" ", "_")
+            else:
+                index = item.index()
+                suffix = ""
+
+            name = "item" + index.replace(".", "_") + suffix
+
+            self.item_dict[name] = item
+
+        self.item_dict_updated.emit()
 
     def on_project_updated(self):
         self.broadcast_part.address_hex = self.project_manager.broadcast_address_hex

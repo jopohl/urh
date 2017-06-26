@@ -1,7 +1,5 @@
-from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
 from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
-from urh.ui.ui_send_recv_settings import Ui_SendRecvSettingsDialog
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Message import Message

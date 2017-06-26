@@ -69,7 +69,7 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
-        self.completer_model = QStringListModel(self.sim_expression_parser.label_list)
+        self.completer_model = QStringListModel([])
         self.ui.ruleCondLineEdit.setCompleter(QCompleter(self.completer_model, self.ui.ruleCondLineEdit))
         self.ui.ruleCondLineEdit.setToolTip(self.sim_expression_parser.rule_condition_help)
 
@@ -116,7 +116,7 @@ class SimulatorTabController(QWidget):
         self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
         self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
-        self.ui.goto_combobox.activated.connect(self.on_goto_combobox_activated)
+        self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
@@ -136,8 +136,7 @@ class SimulatorTabController(QWidget):
         self.sim_proto_manager.items_moved.connect(self.refresh_message_table)
         self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
-
-        self.sim_expression_parser.label_list_updated.connect(self.on_label_list_updated)
+        self.sim_proto_manager.item_dict_updated.connect(self.on_item_dict_updated)
 
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
@@ -161,8 +160,9 @@ class SimulatorTabController(QWidget):
             message.message_type.name = msg_type_name
             self.sim_proto_manager.items_updated.emit([message])
 
-    def on_label_list_updated(self):
-        self.completer_model.setStringList(self.sim_expression_parser.label_list)
+    def on_item_dict_updated(self):
+        self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
+        self.update_goto_combobox()
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:
@@ -233,23 +233,25 @@ class SimulatorTabController(QWidget):
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
+        goto_combobox.blockSignals(True)
         goto_combobox.clear()
 
-        items = self.sim_proto_manager.get_all_items()
-        goto_combobox.addItem("Select item ...", None)
+        goto_combobox.addItem("Select item ...")
+        goto_combobox.addItems(SimulatorGotoAction.goto_identifier(self.sim_proto_manager.item_dict))
+        goto_combobox.blockSignals(False)
 
-        for item in items:
-            if (isinstance(item, SimulatorProtocolLabel) or
-                    isinstance(item, SimulatorRule) or
-                    (isinstance(item, SimulatorRuleCondition) and not item.type == ConditionType.IF)):
-                continue
+        if isinstance(self.active_item, SimulatorGotoAction):
+            self.update_goto_combobox_index()
 
-            goto_combobox.addItem("item" + item.index().replace(".", "_"))
+    def update_goto_combobox_index(self):
+        goto_combobox = self.ui.goto_combobox
 
-        if self.active_item.goto_target is not None:
-            goto_combobox.setCurrentText(self.active_item.goto_target)
-        else:
-            goto_combobox.setCurrentIndex(0)
+        index = goto_combobox.findText(self.active_item.goto_target)
+
+        if index == -1:
+            index = 0
+
+        goto_combobox.setCurrentIndex(index)
 
     def update_ui(self):
         if self.active_item is not None:
@@ -287,9 +289,13 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.resize_columns()
         
     @pyqtSlot()
-    def on_goto_combobox_activated(self):
-        self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
-        self.item_updated(self.active_item)
+    def on_goto_combobox_index_changed(self):
+        if not isinstance(self.active_item, SimulatorGotoAction):
+            return
+
+        if self.active_item.goto_target != self.ui.goto_combobox.currentText():
+            self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
+            self.item_updated(self.active_item)
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
@@ -319,7 +325,7 @@ class SimulatorTabController(QWidget):
         self.__active_item = value
 
         if isinstance(self.active_item, SimulatorGotoAction):
-            self.update_goto_combobox()
+            self.update_goto_combobox_index()
 
             self.ui.detail_view_widget.setCurrentIndex(1)
         elif isinstance(self.active_item, SimulatorMessage):

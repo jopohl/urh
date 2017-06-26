@@ -109,6 +109,8 @@ class ChecksumWidgetController(QWidget):
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
         self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("[0-9,a-f]*")))
         self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.crc_label.crc.polynomial))
+        self.ui.lineEditStartValue.setText(util.bit2hex(self.crc_label.crc.start_value))
+        self.ui.lineEditFinalXOR.setText(util.bit2hex(self.crc_label.crc.final_xor))
         self.create_connects()
 
     @property
@@ -126,6 +128,8 @@ class ChecksumWidgetController(QWidget):
         self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
         self.ui.btnRemoveRange.clicked.connect(self.on_btn_remove_range_clicked)
         self.ui.lineEditCRCPolynomial.editingFinished.connect(self.on_line_edit_crc_polynomial_editing_finished)
+        self.ui.lineEditStartValue.editingFinished.connect(self.on_line_edit_start_value_editing_finished)
+        self.ui.lineEditFinalXOR.editingFinished.connect(self.on_line_edit_final_xor_editing_finished)
 
     def display_crc_data_ranges_in_table(self):
         self.data_range_table_model.update()
@@ -149,3 +153,11 @@ class ChecksumWidgetController(QWidget):
     @pyqtSlot()
     def on_line_edit_crc_polynomial_editing_finished(self):
         self.crc_label.crc.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())
+
+    @pyqtSlot()
+    def on_line_edit_start_value_editing_finished(self):
+        self.crc_label.crc.start_value = util.hex2bit(self.ui.lineEditStartValue.text())
+
+    @pyqtSlot()
+    def on_line_edit_final_xor_editing_finished(self):
+        self.crc_label.crc.final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())

@@ -9,7 +9,7 @@ from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
-class TestCRCWidget(QtTestCase):
+class TestChecksumWidget(QtTestCase):
     def test_configure_crc_ranges(self):
         crc_label = CRCLabel("crc_label", 50, 100, 0, FieldType("crc", FieldType.Function.CRC))
 
@@ -31,7 +31,7 @@ class TestCRCWidget(QtTestCase):
         crc_widget_controller.ui.btnRemoveRange.click()
         self.assertEqual(model.rowCount(), 1)
 
-    def test_configure_crc_polynomial(self):
+    def test_configure_crc_parameters(self):
         crc_label = CRCLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CRC))
 
         crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
@@ -44,6 +44,8 @@ class TestCRCWidget(QtTestCase):
 
         crc = GenericCRC()
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), util.bit2hex(crc.polynomial))
+        self.assertEqual(crc_widget_controller.ui.lineEditStartValue.text(), util.bit2hex(crc.start_value))
+        self.assertEqual(crc_widget_controller.ui.lineEditFinalXOR.text(), util.bit2hex(crc.final_xor))
 
         crc_widget_controller.ui.comboBoxCRCFunction.setCurrentIndex(2)
         crc.polynomial = crc.choose_polynomial(2)
@@ -52,6 +54,14 @@ class TestCRCWidget(QtTestCase):
         crc_widget_controller.ui.lineEditCRCPolynomial.setText("10abc001")
         crc_widget_controller.ui.lineEditCRCPolynomial.editingFinished.emit()
         self.assertEqual(util.bit2hex(crc_label.crc.polynomial), "10abc001")
+
+        crc_widget_controller.ui.lineEditStartValue.setText("12345")
+        crc_widget_controller.ui.lineEditStartValue.editingFinished.emit()
+        self.assertEqual(util.bit2hex(crc_label.crc.start_value), "12345")
+
+        crc_widget_controller.ui.lineEditFinalXOR.setText("cccaaa")
+        crc_widget_controller.ui.lineEditFinalXOR.editingFinished.emit()
+        self.assertEqual(util.bit2hex(crc_label.crc.final_xor), "cccaaa")
 
     def test_crc_widget_in_protocol_label_dialog(self):
         mt = MessageType("test")

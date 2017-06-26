@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView
+from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
 
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
@@ -142,6 +142,8 @@ class ChecksumWidgetController(QWidget):
             self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.checksum_label.checksum.polynomial))
             self.ui.lineEditStartValue.setText(util.bit2hex(self.checksum_label.checksum.start_value))
             self.ui.lineEditFinalXOR.setText(util.bit2hex(self.checksum_label.checksum.final_xor))
+            self.__ensure_same_length(self.ui.lineEditCRCPolynomial,
+                                      [self.ui.lineEditStartValue, self.ui.lineEditFinalXOR])
         elif self.checksum_label.category == self.checksum_label.Category.wsp:
             if self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.auto:
                 self.ui.radioButtonWSPAuto.setChecked(True)
@@ -166,6 +168,16 @@ class ChecksumWidgetController(QWidget):
     def display_crc_data_ranges_in_table(self):
         self.data_range_table_model.update()
 
+    def __ensure_same_length(self, reference_line_edit: QLineEdit, dependant_line_edits: list):
+        for dependant_line_edit in dependant_line_edits:  # type: QLineEdit
+            if len(reference_line_edit.text()) < len(dependant_line_edit.text()):
+                dependant_line_edit.setText(dependant_line_edit.text()[:len(reference_line_edit.text())])
+                dependant_line_edit.editingFinished.emit()
+            elif len(reference_line_edit.text()) > len(dependant_line_edit.text()):
+                dependant_line_edit.setText(dependant_line_edit.text()
+                                            + "0" * (len(reference_line_edit.text()) - len(dependant_line_edit.text())))
+                dependant_line_edit.editingFinished.emit()
+
     @pyqtSlot()
     def on_btn_add_range_clicked(self):
         self.checksum_label.data_ranges.append([0, self.checksum_label.start])
@@ -185,14 +197,17 @@ class ChecksumWidgetController(QWidget):
     @pyqtSlot()
     def on_line_edit_crc_polynomial_editing_finished(self):
         self.checksum_label.checksum.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())
+        self.__ensure_same_length(self.ui.lineEditCRCPolynomial, [self.ui.lineEditStartValue, self.ui.lineEditFinalXOR])
 
     @pyqtSlot()
     def on_line_edit_start_value_editing_finished(self):
         self.checksum_label.checksum.start_value = util.hex2bit(self.ui.lineEditStartValue.text())
+        self.__ensure_same_length(self.ui.lineEditStartValue, [self.ui.lineEditCRCPolynomial, self.ui.lineEditFinalXOR])
 
     @pyqtSlot()
     def on_line_edit_final_xor_editing_finished(self):
         self.checksum_label.checksum.final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())
+        self.__ensure_same_length(self.ui.lineEditFinalXOR, [self.ui.lineEditCRCPolynomial, self.ui.lineEditStartValue])
 
     @pyqtSlot(int)
     def on_combobox_category_current_index_changed(self, index: int):

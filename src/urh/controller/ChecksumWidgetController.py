@@ -174,8 +174,9 @@ class ChecksumWidgetController(QWidget):
                 dependant_line_edit.setText(dependant_line_edit.text()[:len(reference_line_edit.text())])
                 dependant_line_edit.editingFinished.emit()
             elif len(reference_line_edit.text()) > len(dependant_line_edit.text()):
-                dependant_line_edit.setText(dependant_line_edit.text()
-                                            + "0" * (len(reference_line_edit.text()) - len(dependant_line_edit.text())))
+                # pad zeros at front
+                dependant_line_edit.setText("0" * (len(reference_line_edit.text()) - len(dependant_line_edit.text()))
+                                            + dependant_line_edit.text())
                 dependant_line_edit.editingFinished.emit()
 
     @pyqtSlot()

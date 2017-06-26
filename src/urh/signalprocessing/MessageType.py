@@ -3,7 +3,7 @@ import uuid
 import xml.etree.ElementTree as ET
 
 from urh import constants
-from urh.signalprocessing.CRCLabel import CRCLabel
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
@@ -134,8 +134,8 @@ class MessageType(list):
         return result
 
     def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
-        is_crc_type = field_type is not None and field_type.function == FieldType.Function.CRC
-        if is_crc_type != isinstance(label, CRCLabel):
+        is_crc_type = field_type is not None and field_type.function == FieldType.Function.CHECKSUM
+        if is_crc_type != isinstance(label, ChecksumLabel):
             self[self.index(label)] = self.__create_label(label.name, label.start, label.end-1,
                                                           label.color_index, label.auto_created, field_type)
         else:
@@ -143,8 +143,8 @@ class MessageType(list):
 
     def __create_label(self, name: str, start: int, end: int, color_index: int, auto_created: bool, field_type: FieldType):
         if field_type is not None:
-            if field_type.function == FieldType.Function.CRC:
-                return CRCLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type, auto_created=auto_created)
+            if field_type.function == FieldType.Function.CHECKSUM:
+                return ChecksumLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type, auto_created=auto_created)
 
         return ProtocolLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type, auto_created=auto_created)
 

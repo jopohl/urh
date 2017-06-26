@@ -7,7 +7,7 @@ from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
-class Encoder(object):
+class Encoding(object):
     """
     Full featured encoding/decoding of protocols.
     """
@@ -734,53 +734,6 @@ class Encoder(object):
             output.extend(inpt)
         return output, errors, state
 
-    def enocean_hash(self, msg):
-        """
-        Get the hash for an enocean message. There are three hashes possible:
-        1) 4 Bit Hash - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)
-        2) 8 Bit Checksum: STATUS bit 2^7 = 0
-        3) 8 Bit CRC: STATUS bit 2^7 = 1
-
-        :param msg: the message without Preamble/SOF and EOF. Message starts with RORG and ends with CRC
-        :type msg: list of bool
-        :rtype: list of bool
-        """
-        try:
-            if msg[0:4] == util.hex2bit("5") or msg[0:4] == util.hex2bit("6"):
-                # Switch telegram
-                return self.enocean_checksum4(msg)
-
-            status = msg[-16:-8]
-            if status[0]:
-                return self.enocean_crc8(msg[:-8])  # ignore trailing hash
-            else:
-                return self.enocean_checksum8(msg[:-8])  # ignore trailing hash
-
-        except IndexError:
-            return None
-
-    @staticmethod
-    def enocean_checksum4(inpt) -> array.array:
-        hash = 0
-        val = copy.copy(inpt)
-        val[-4:] = array.array("B", [False, False, False, False])
-        for i in range(0, len(val), 8):
-            hash += int("".join(map(str, map(int, val[i:i + 8]))), 2)
-        hash = (((hash & 0xf0) >> 4) + (hash & 0x0f)) & 0x0f
-        return array.array("B", list(map(bool, map(int, "{0:04b}".format(hash)))))
-
-    @staticmethod
-    def enocean_checksum8(inpt) -> array.array:
-        hash = 0
-        for i in range(0, len(inpt) - 8, 8):
-            hash += int("".join(map(str, map(int, inpt[i:i + 8]))), 2)
-        return array.array("B", list(map(bool, map(int, "{0:08b}".format(hash % 256)))))
-
-    @staticmethod
-    def enocean_crc8(inpt):
-        c = GenericCRC(polynomial="8_en")
-        return array.array("B", c.crc(inpt))
-
     def code_enocean(self, decoding: bool, inpt):
         errors = 0
         output = array.array("B", [])
@@ -829,21 +782,10 @@ class Encoder(object):
             except IndexError: # compatibility for old project files
                 return inpt, 0, self.ErrorState.MISC
 
-            enocean_hash = self.enocean_hash(output[12:])
-            if enocean_hash is None or output[-len(enocean_hash):] != enocean_hash:
-                state = self.ErrorState.WRONG_CRC
-
             # Finalize output
             output.extend(inpt[end:end + 4])
 
         else:
-            # Calculate hash
-            enocean_hash = self.enocean_hash(inpt[start:end])
-            if enocean_hash is not None:
-                inpt[end - len(enocean_hash):end] = enocean_hash
-            else:
-                state = self.ErrorState.WRONG_CRC
-
             for n in range(start, end, 8):
                 try:
                     output.extend(

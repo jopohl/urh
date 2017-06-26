@@ -1,7 +1,9 @@
 from tests.QtTestCase import QtTestCase
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
+from urh.util.WSPChecksum import WSPChecksum
+
 
 class TestCRC(QtTestCase):
     def setUp(self):
@@ -14,8 +16,8 @@ class TestCRC(QtTestCase):
 
         # http://www.lammertbies.nl/comm/info/crc-calculation.html <- Fehler
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False
-        c = GenericCRC(polynomial="8_en")
-        e = Encoder()
+        c = GenericCRC(polynomial=WSPChecksum.CRC_8_POLYNOMIAL)
+        e = Encoding()
 
         bitstr = ["010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
                   "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",

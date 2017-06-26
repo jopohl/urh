@@ -3,7 +3,7 @@ from PyQt5.QtCore import QPoint
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.DecoderWidgetController import DecoderWidgetController
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 
 class TestDecodingGUI(QtTestCase):
     def setUp(self):
@@ -37,7 +37,7 @@ class TestDecodingGUI(QtTestCase):
                  (constants.DECODING_EXTERNAL, "./;./"),
                  (constants.DECODING_CUT, "0;1010")]
 
-        decoding = Encoder(chain=[c for chain_item in chain for c in chain_item])
+        decoding = Encoding(chain=[c for chain_item in chain for c in chain_item])
         self.dialog.decodings[4] = decoding
         self.dialog.set_e()
 
@@ -63,7 +63,7 @@ class TestDecodingGUI(QtTestCase):
 
     def test_context_menu(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        decoding = Encoder(chain=[constants.DECODING_INVERT])
+        decoding = Encoding(chain=[constants.DECODING_INVERT])
         self.dialog.decodings[4] = decoding
         self.dialog.set_e()
 

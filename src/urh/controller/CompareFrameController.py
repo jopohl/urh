@@ -22,7 +22,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator
@@ -44,7 +44,7 @@ class CompareFrameController(QWidget):
 
         self.proto_analyzer = ProtocolAnalyzer(None)
         self.project_manager = project_manager
-        self.decodings = []  # type: list[Encoder]
+        self.decodings = []  # type: list[Encoding]
         self.load_decodings()
 
         self.ui = Ui_TabAnalysis()
@@ -282,7 +282,7 @@ class CompareFrameController(QWidget):
         field_types = [ft.caption for ft in self.field_types]
         self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True, return_index=False))
 
-    def set_decoding(self, decoding: Encoder, messages=None):
+    def set_decoding(self, decoding: Encoding, messages=None):
         """
 
         :param decoding:
@@ -339,21 +339,21 @@ class CompareFrameController(QWidget):
         else:
             prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
 
-        fallback = [Encoder(["Non Return To Zero (NRZ)"]),
+        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
 
-                    Encoder(["Non Return To Zero Inverted (NRZ-I)",
-                             constants.DECODING_INVERT]),
+                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
+                              constants.DECODING_INVERT]),
 
-                    Encoder(["Manchester I",
-                             constants.DECODING_EDGE]),
+                    Encoding(["Manchester I",
+                              constants.DECODING_EDGE]),
 
-                    Encoder(["Manchester II",
-                             constants.DECODING_EDGE,
-                             constants.DECODING_INVERT]),
+                    Encoding(["Manchester II",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_INVERT]),
 
-                    Encoder(["Differential Manchester",
-                             constants.DECODING_EDGE,
-                             constants.DECODING_DIFFERENTIAL])
+                    Encoding(["Differential Manchester",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_DIFFERENTIAL])
                     ]
 
         try:
@@ -375,7 +375,7 @@ class CompareFrameController(QWidget):
                 tmp = tmp.replace("'", "")
                 if not "\n" in tmp and tmp != "":
                     tmp_conf.append(tmp)
-            self.decodings.append(Encoder(tmp_conf))
+            self.decodings.append(Encoding(tmp_conf))
         f.close()
 
         if len(self.decodings) == 0:

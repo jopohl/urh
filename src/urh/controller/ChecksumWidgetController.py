@@ -1,22 +1,21 @@
-import array
-
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView
 
-from urh.signalprocessing.CRCLabel import CRCLabel
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
 from urh.ui.ui_checksum_options_widget import Ui_ChecksumOptions
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
+from urh.util.WSPChecksum import WSPChecksum
 
 
 class ChecksumWidgetController(QWidget):
     class RangeTableModel(QAbstractTableModel):
         header_labels = ["Start", "End"]
 
-        def __init__(self, crc_label: CRCLabel, message: Message, proto_view: int, parent=None):
+        def __init__(self, checksum_label: ChecksumLabel, message: Message, proto_view: int, parent=None):
             """
 
             :param message:
@@ -24,7 +23,7 @@ class ChecksumWidgetController(QWidget):
             :param parent:
             """
             super().__init__(parent)
-            self.crc_label = crc_label
+            self.checksum_label = checksum_label
             self.message = message
             self.proto_view = proto_view
             self.update()
@@ -37,7 +36,7 @@ class ChecksumWidgetController(QWidget):
             return len(self.header_labels)
 
         def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
-            return len(self.crc_label.data_ranges)
+            return len(self.checksum_label.data_ranges)
 
         def headerData(self, section, orientation, role=Qt.DisplayRole):
             if role == Qt.DisplayRole and orientation == Qt.Horizontal:
@@ -51,7 +50,7 @@ class ChecksumWidgetController(QWidget):
             i, j = index.row(), index.column()
 
             if role == Qt.DisplayRole:
-                data_range = self.crc_label.data_ranges[i]
+                data_range = self.checksum_label.data_ranges[i]
                 if j == 0:
                     return self.message.convert_index(data_range[0], 0, self.proto_view, True)[0] + 1
                 elif j == 1:
@@ -66,10 +65,10 @@ class ChecksumWidgetController(QWidget):
 
             i, j = index.row(), index.column()
 
-            if i > len(self.crc_label.data_ranges):
+            if i > len(self.checksum_label.data_ranges):
                 return False
 
-            data_range = self.crc_label.data_ranges[i]
+            data_range = self.checksum_label.data_ranges[i]
 
             if j == 0:
                 converted_index = self.message.convert_index(int_val - 1, self.proto_view, 0, True)[0]
@@ -87,18 +86,18 @@ class ChecksumWidgetController(QWidget):
                 return Qt.NoItemFlags
 
             try:
-                _ = self.crc_label.data_ranges[index.row()]
+                _ = self.checksum_label.data_ranges[index.row()]
             except IndexError:
                 return Qt.NoItemFlags
 
             return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-    def __init__(self, crc_label: CRCLabel, message: Message, proto_view: int, parent=None):
+    def __init__(self, checksum_label: ChecksumLabel, message: Message, proto_view: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_ChecksumOptions()
         self.ui.setupUi(self)
-        self.crc_label = crc_label
-        self.data_range_table_model = self.RangeTableModel(crc_label, message, proto_view, parent=self)
+        self.checksum_label = checksum_label
+        self.data_range_table_model = self.RangeTableModel(checksum_label, message, proto_view, parent=self)
         self.ui.tableViewDataRanges.setItemDelegateForColumn(0, SpinBoxDelegate(1, 999999, self))
         self.ui.tableViewDataRanges.setItemDelegateForColumn(1, SpinBoxDelegate(1, 999999, self))
         self.ui.tableViewDataRanges.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -108,9 +107,10 @@ class ChecksumWidgetController(QWidget):
         self.ui.comboBoxCRCFunction.clear()
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
         self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("[0-9,a-f]*")))
-        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.crc_label.crc.polynomial))
-        self.ui.lineEditStartValue.setText(util.bit2hex(self.crc_label.crc.start_value))
-        self.ui.lineEditFinalXOR.setText(util.bit2hex(self.crc_label.crc.final_xor))
+        self.ui.comboBoxCategory.clear()
+        for _, member in self.checksum_label.Category.__members__.items():
+            self.ui.comboBoxCategory.addItem(member.value)
+        self.set_ui_for_category()
         self.create_connects()
 
     @property
@@ -130,34 +130,87 @@ class ChecksumWidgetController(QWidget):
         self.ui.lineEditCRCPolynomial.editingFinished.connect(self.on_line_edit_crc_polynomial_editing_finished)
         self.ui.lineEditStartValue.editingFinished.connect(self.on_line_edit_start_value_editing_finished)
         self.ui.lineEditFinalXOR.editingFinished.connect(self.on_line_edit_final_xor_editing_finished)
+        self.ui.comboBoxCategory.currentIndexChanged.connect(self.on_combobox_category_current_index_changed)
+        self.ui.radioButtonWSPAuto.clicked.connect(self.on_radio_button_wsp_auto_clicked)
+        self.ui.radioButtonWSPChecksum4.clicked.connect(self.on_radio_button_wsp_checksum4_clicked)
+        self.ui.radioButtonWSPChecksum8.clicked.connect(self.on_radio_button_wsp_checksum8_clicked)
+        self.ui.radioButtonWSPCRC8.clicked.connect(self.on_radio_button_wsp_crc8_clicked)
+
+
+    def set_checksum_ui_elements(self):
+        if self.checksum_label.is_generic_crc:
+            self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.checksum_label.checksum.polynomial))
+            self.ui.lineEditStartValue.setText(util.bit2hex(self.checksum_label.checksum.start_value))
+            self.ui.lineEditFinalXOR.setText(util.bit2hex(self.checksum_label.checksum.final_xor))
+        elif self.checksum_label.category == self.checksum_label.Category.wsp:
+            if self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.auto:
+                self.ui.radioButtonWSPAuto.setChecked(True)
+            elif self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.checksum4:
+                self.ui.radioButtonWSPChecksum4.setChecked(True)
+            elif self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.checksum8:
+                self.ui.radioButtonWSPChecksum8.setChecked(True)
+            elif self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.crc8:
+                self.ui.radioButtonWSPCRC8.setChecked(True)
+
+    def set_ui_for_category(self):
+        self.ui.comboBoxCategory.setCurrentText(self.checksum_label.category.value)
+        if self.checksum_label.category == self.checksum_label.Category.generic:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_crc)
+        elif self.checksum_label.category == self.checksum_label.Category.wsp:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_wsp)
+        else:
+            raise ValueError("Unknown category")
+
+        self.set_checksum_ui_elements()
 
     def display_crc_data_ranges_in_table(self):
         self.data_range_table_model.update()
 
     @pyqtSlot()
     def on_btn_add_range_clicked(self):
-        self.crc_label.data_ranges.append([0, self.crc_label.start])
+        self.checksum_label.data_ranges.append([0, self.checksum_label.start])
         self.data_range_table_model.update()
 
     @pyqtSlot()
     def on_btn_remove_range_clicked(self):
-        if len(self.crc_label.data_ranges) > 1:
-            self.crc_label.data_ranges.pop(-1)
+        if len(self.checksum_label.data_ranges) > 1:
+            self.checksum_label.data_ranges.pop(-1)
             self.data_range_table_model.update()
 
     @pyqtSlot(int)
     def on_combobox_crc_function_current_index_changed(self, index: int):
-        self.crc_label.crc.polynomial = self.crc_label.crc.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
-        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.crc_label.crc.polynomial))
+        self.checksum_label.checksum.polynomial = self.checksum_label.checksum.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
+        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.checksum_label.checksum.polynomial))
 
     @pyqtSlot()
     def on_line_edit_crc_polynomial_editing_finished(self):
-        self.crc_label.crc.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())
+        self.checksum_label.checksum.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())
 
     @pyqtSlot()
     def on_line_edit_start_value_editing_finished(self):
-        self.crc_label.crc.start_value = util.hex2bit(self.ui.lineEditStartValue.text())
+        self.checksum_label.checksum.start_value = util.hex2bit(self.ui.lineEditStartValue.text())
 
     @pyqtSlot()
     def on_line_edit_final_xor_editing_finished(self):
-        self.crc_label.crc.final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())
+        self.checksum_label.checksum.final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())
+
+    @pyqtSlot(int)
+    def on_combobox_category_current_index_changed(self, index: int):
+        self.checksum_label.category = self.checksum_label.Category(self.ui.comboBoxCategory.currentText())
+        self.set_ui_for_category()
+
+    @pyqtSlot()
+    def on_radio_button_wsp_auto_clicked(self):
+        self.checksum_label.checksum.mode = WSPChecksum.ChecksumMode.auto
+
+    @pyqtSlot()
+    def on_radio_button_wsp_checksum4_clicked(self):
+        self.checksum_label.checksum.mode = WSPChecksum.ChecksumMode.checksum4
+
+    @pyqtSlot()
+    def on_radio_button_wsp_checksum8_clicked(self):
+        self.checksum_label.checksum.mode = WSPChecksum.ChecksumMode.checksum8
+
+    @pyqtSlot()
+    def on_radio_button_wsp_crc8_clicked(self):
+        self.checksum_label.checksum.mode = WSPChecksum.ChecksumMode.crc8

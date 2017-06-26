@@ -15,7 +15,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.util.Logger import logger
 
 
@@ -50,7 +50,7 @@ class ProtocolAnalyzer(object):
         self.show = Qt.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()
 
-        self.decoder = Encoder(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol
+        self.decoder = Encoding(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol
 
         self.message_types = [MessageType("default")]
 
@@ -198,7 +198,7 @@ class ProtocolAnalyzer(object):
 
         return "<br>".join(result)
 
-    def set_decoder_for_messages(self, decoder: Encoder, messages=None):
+    def set_decoder_for_messages(self, decoder: Encoding, messages=None):
         messages = messages if messages is not None else self.messages
         self.decoder = decoder
         for message in messages:
@@ -662,7 +662,7 @@ class ProtocolAnalyzer(object):
             decoders = []
             for decoding_tag in root.find("decodings").findall("decoding"):
                 conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-                decoders.append(Encoder(conf))
+                decoders.append(Encoding(conf))
             return decoders
         except AttributeError:
             logger.error("no decodings found in xml")
@@ -731,7 +731,7 @@ class ProtocolAnalyzer(object):
 
     def auto_assign_decodings(self, decodings):
         """
-        :type decodings: list of Encoder
+        :type decodings: list of Encoding
         """
         nrz_decodings = [decoding for decoding in decodings if decoding.is_nrz or decoding.is_nrzi]
         fallback = nrz_decodings[0] if nrz_decodings else None

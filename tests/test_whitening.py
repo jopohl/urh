@@ -3,13 +3,13 @@ import copy
 import array
 
 from tests.QtTestCase import QtTestCase
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 
 
 class TestWhitening(QtTestCase):
     def test_whitening(self):
-        e = Encoder()
+        e = Encoding()
 
         # Test 1
         e.data_whitening_sync = util.hex2bit("67686768")

@@ -25,7 +25,7 @@ class ChecksumLabel(ProtocolLabel):
 
         self.__category = self.Category.generic
         self.data_ranges = [[0, self.start]]  # type: list[list[int,int]]
-        self.checksum = GenericCRC()   # type: GenericCRC or WSPChecksum
+        self.checksum = GenericCRC(polynomial=0)   # type: GenericCRC or WSPChecksum
 
     def calculate_checksum(self, bits: array.array) -> array.array:
         return self.checksum.calculate(bits)

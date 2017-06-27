@@ -6,7 +6,12 @@ from urh.util import util
 
 
 class GenericCRC(object):
+    # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
     DEFAULT_POLYNOMIALS = OrderedDict([
+        # x^8 + x^7 + x^6 + x^4 + x^2 + 1
+        ("8_standard", array.array("B", [1,
+                                         1, 1, 0, 1, 0, 1, 0, 1])),
+
         # x^16+x^15+x^2+x^0
         ("16_standard", array.array("B", [1,
                                           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),

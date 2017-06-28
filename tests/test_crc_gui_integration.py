@@ -68,6 +68,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[2], "aad3d5ddddcc5d45ddbba0000000")
 
     def __set_wsp_encoding(self):
+        self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
         decoding = Encoding(["WSP", constants.DECODING_ENOCEAN])
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.fill_decoding_combobox()

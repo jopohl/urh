@@ -78,8 +78,10 @@ class ChecksumLabel(ProtocolLabel):
         result.data_ranges = ast.literal_eval(tag.get("data_ranges", "[]"))
         result.category = ChecksumLabel.Category[tag.get("category", "generic")]
         result.checksum = None # TODO: Define CRC Format for storage in XML
+        return result
 
     def to_xml(self, index: int):
         result = super().to_xml(index)
         result.tag = "checksum_label"
         result.attrib.update({"data_ranges": str(self.data_ranges), "checksum": str(self.checksum), "category": str(self.category)})
+        return result

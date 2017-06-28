@@ -127,7 +127,10 @@ class MessageType(list):
                                                     "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0",
                                                     "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
         for lbl in self:
-            result.append(lbl.to_xml(-1))
+            try:
+                result.append(lbl.to_xml(-1))
+            except TypeError:
+                logger.error("Could not save label: " + str(lbl))
 
         result.append(self.ruleset.to_xml())
 

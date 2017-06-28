@@ -65,10 +65,15 @@ class TestChecksumWidget(QtTestCase):
         crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
 
         default_crc_polynomials = GenericCRC.DEFAULT_POLYNOMIALS
+        special_crcs = ChecksumWidgetController.SPECIAL_CRCS
 
-        self.assertEqual(len(default_crc_polynomials), crc_widget_controller.ui.comboBoxCRCFunction.count())
+        self.assertEqual(len(default_crc_polynomials) + len(special_crcs),
+                         crc_widget_controller.ui.comboBoxCRCFunction.count())
         for i, default_polynomial_name in enumerate(default_crc_polynomials):
             self.assertEqual(default_polynomial_name, crc_widget_controller.ui.comboBoxCRCFunction.itemText(i))
+
+        for i, special_crc in enumerate(special_crcs):
+            self.assertEqual(special_crc, crc_widget_controller.ui.comboBoxCRCFunction.itemText(i+len(default_crc_polynomials)))
 
         crc_widget_controller.ui.comboBoxCRCFunction.setCurrentIndex(1)
         self.assertNotEqual(crc_widget_controller.ui.comboBoxCRCFunction.currentText(), "8_standard")
@@ -76,12 +81,11 @@ class TestChecksumWidget(QtTestCase):
         self.assertEqual(crc_widget_controller.ui.comboBoxCRCFunction.currentText(), "8_standard")
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), "d5")
 
-
     def test_crc_widget_in_protocol_label_dialog(self):
         mt = MessageType("test")
         mt.append(ChecksumLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CHECKSUM)))
 
-        dialog = ProtocolLabelController(0, Message([0]*100, 0, mt), 0)
+        dialog = ProtocolLabelController(0, Message([0] * 100, 0, mt), 0)
         self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.count(), 1)
         self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")
 

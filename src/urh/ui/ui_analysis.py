@@ -317,7 +317,7 @@ class Ui_TabAnalysis(object):
         self.lblRSSI.setObjectName("lblRSSI")
         self.gridLayout_2.addWidget(self.lblRSSI, 0, 12, 1, 1)
         self.lineEditSearch = QtWidgets.QLineEdit(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEditSearch.sizePolicy().hasHeightForWidth())

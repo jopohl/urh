@@ -12,7 +12,7 @@ from urh.util.WSPChecksum import WSPChecksum
 
 
 class ChecksumLabel(ProtocolLabel):
-    __slots__ = ("__data_ranges", "checksum", "__category")
+    __slots__ = ("__data_ranges", "checksum", "checksum_manually_edited", "__category")
 
     class Category(Enum):
         generic = "generic"
@@ -26,9 +26,16 @@ class ChecksumLabel(ProtocolLabel):
         self.__category = self.Category.generic
         self.__data_ranges = [[0, self.start]]  # type: list[list[int,int]]
         self.checksum = GenericCRC(polynomial=0)   # type: GenericCRC or WSPChecksum
+        self.checksum_manually_edited = False
 
     def calculate_checksum(self, bits: array.array) -> array.array:
         return self.checksum.calculate(bits)
+
+    def calculate_checksum_for_message(self, message) -> array.array:
+        data = array.array("B", [])
+        for data_range in self.data_ranges:
+            data.extend(message.decoded_bits[data_range[0]:data_range[1]])
+        return self.calculate_checksum(data)
 
     @property
     def data_ranges(self):

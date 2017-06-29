@@ -77,10 +77,7 @@ class LabelValueTableModel(QAbstractTableModel):
             return None
 
         if isinstance(lbl, ChecksumLabel):
-            data = array.array("B", [])
-            for data_range in lbl.data_ranges:
-                data.extend(self.message.decoded_bits[data_range[0]:data_range[1]])
-            calculated_crc = lbl.calculate_checksum(data)
+            calculated_crc = lbl.calculate_checksum_for_message(self.message)
         else:
             calculated_crc = None
 

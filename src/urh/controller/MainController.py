@@ -576,11 +576,19 @@ class MainController(QMainWindow):
             h = max(self.compare_frame_controller.ui.btnSaveProto.height(),
                     self.generator_tab_controller.ui.btnSave.height())
             self.compare_frame_controller.ui.btnSaveProto.setMinimumHeight(h)
+
+            th = self.compare_frame_controller.ui.tabWidget.tabBar().height()
+            for i in range(self.compare_frame_controller.ui.tabWidget.count()):
+                self.compare_frame_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
+
         elif index == 2:
             self.undo_group.setActiveStack(self.generator_tab_controller.generator_undo_stack)
             h = max(self.compare_frame_controller.ui.btnSaveProto.height(),
                     self.generator_tab_controller.ui.btnSave.height())
             self.generator_tab_controller.ui.btnSave.setMinimumHeight(h)
+            th = self.generator_tab_controller.ui.tabWidget.tabBar().height()
+            for i in range(self.generator_tab_controller.ui.tabWidget.count()):
+                self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):

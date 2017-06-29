@@ -159,6 +159,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                   <property name="acceptDrops">
                    <bool>true</bool>
                   </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
                   <property name="verticalScrollBarPolicy">
                    <enum>Qt::ScrollBarAsNeeded</enum>
                   </property>
@@ -226,6 +229,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
                   <property name="textElideMode">
                    <enum>Qt::ElideRight</enum>

@@ -162,6 +162,8 @@ class MessageType(list):
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
+        for lbl_tag in tag.findall("checksum_label"):
+            labels.append(ChecksumLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
         result = MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer

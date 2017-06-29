@@ -4,7 +4,7 @@ import copy
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 from enum import Enum
-
+from xml.etree import ElementTree as ET
 
 class WSPChecksum(object):
     """
@@ -75,3 +75,12 @@ class WSPChecksum(object):
     @classmethod
     def crc8(cls, bits: array.array):
         return array.array("B", GenericCRC(polynomial=cls.CRC_8_POLYNOMIAL).crc(bits))
+
+    def to_xml(self) -> ET.Element:
+        root = ET.Element("wsp_checksum")
+        root.set("mode", str(self.mode.name))
+        return root
+
+    @classmethod
+    def from_xml(cls, tag:  ET.Element):
+        return WSPChecksum(mode=WSPChecksum.ChecksumMode[tag.get("mode", "auto")])

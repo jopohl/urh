@@ -3,7 +3,7 @@ import copy
 from collections import OrderedDict
 
 from urh.util import util
-
+from xml.etree import ElementTree as ET
 
 class GenericCRC(object):
     # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
@@ -37,13 +37,14 @@ class GenericCRC(object):
         self.final_xor = self.__read_parameter(final_xor)
 
     def __read_parameter(self, value):
-        if not isinstance(value, bool):
+        if isinstance(value, bool) or isinstance(value, int):
+            return array.array('B', [value] * (self.poly_order - 1))
+        else:
             if len(value) == self.poly_order - 1:
                 return value
             else:
                 return array.array('B', value[0] * (self.poly_order - 1))
-        else:
-            return array.array('B', [value] * (self.poly_order - 1))
+
 
     @property
     def poly_order(self):
@@ -228,6 +229,21 @@ class GenericCRC(object):
                         polynomial[x] ^= one_bitter_crc[j][x + 1]
                     return polynomial
         return False
+
+    def to_xml(self):
+        root = ET.Element("crc")
+        root.set("polynomial", util.convert_bits_to_string(self.polynomial, 0))
+        root.set("start_value", util.convert_bits_to_string(self.start_value, 0))
+        root.set("final_xor", util.convert_bits_to_string(self.final_xor, 0))
+        return root
+
+    @classmethod
+    def from_xml(cls, tag:  ET.Element):
+        polynomial = tag.get("polynomial", "1010")
+        start_value = tag.get("start_value", "0000")
+        final_xor = tag.get("final_xor", "0000")
+        return GenericCRC(polynomial=util.string2bits(polynomial),
+                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor))
 
     @staticmethod
     def bit2str(inpt):

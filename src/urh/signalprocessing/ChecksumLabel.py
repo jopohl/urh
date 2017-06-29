@@ -67,8 +67,8 @@ class ChecksumLabel(ProtocolLabel):
             else:
                 raise ValueError("Unknown Category")
 
-    @staticmethod
-    def from_label(label: ProtocolLabel):
+    @classmethod
+    def from_label(cls, label: ProtocolLabel):
         result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index, label.field_type,
                                label.fuzz_created, label.auto_created)
         result.apply_decoding = label.apply_decoding
@@ -78,17 +78,26 @@ class ChecksumLabel(ProtocolLabel):
         result.display_format_index = label.display_format_index
         return result
 
-    @staticmethod
-    def from_xml(tag: ET.Element, field_types_by_type_id=None):
+    @classmethod
+    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
         lbl = super().from_xml(tag, field_types_by_type_id)
-        result = ChecksumLabel.from_label(lbl)
+        result = cls.from_label(lbl)
         result.data_ranges = ast.literal_eval(tag.get("data_ranges", "[]"))
-        result.category = ChecksumLabel.Category[tag.get("category", "generic")]
-        result.checksum = None # TODO: Define CRC Format for storage in XML
+        result.category = cls.Category[tag.get("category", "generic")]
+
+        crc_tag = tag.find("crc")
+        if crc_tag is not None:
+            result.checksum = GenericCRC.from_xml(crc_tag)
+
+        wsp_tag = tag.find("wsp_checksum")
+        if wsp_tag is not None:
+            result.checksum = WSPChecksum.from_xml(wsp_tag)
+
         return result
 
     def to_xml(self, index: int):
         result = super().to_xml(index)
         result.tag = "checksum_label"
-        result.attrib.update({"data_ranges": str(self.data_ranges), "checksum": str(self.checksum), "category": str(self.category)})
+        result.attrib.update({"data_ranges": str(self.data_ranges), "category": self.category.name})
+        result.append(self.checksum.to_xml())
         return result

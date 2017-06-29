@@ -1,5 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox, QApplication
@@ -8,9 +9,6 @@ from urh import constants
 from urh.dev import config
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from xml.dom import minidom
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator
 

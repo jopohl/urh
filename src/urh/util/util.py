@@ -58,6 +58,10 @@ def hex2bit(hex_str: str) -> array.array:
     return result
 
 
+def string2bits(bit_str: str) -> array.array:
+    return array.array("B", map(int, bit_str))
+
+
 def bit2hex(bits: array.array, pad_zeros=False) -> str:
     return convert_bits_to_string(bits, 1, pad_zeros)
 

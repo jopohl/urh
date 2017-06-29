@@ -123,8 +123,8 @@ class ProtocolLabel(object):
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
                                             "auto_created": str(self.auto_created), "type_id": self.field_type.id if self.field_type is not None else ""})
 
-    @staticmethod
-    def from_xml(tag: ET.Element, field_types_by_type_id=None):
+    @classmethod
+    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
         """
 
         :param tag:

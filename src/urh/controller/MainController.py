@@ -74,7 +74,6 @@ class MainController(QMainWindow):
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 
         self.signal_protocol_dict = {}  # type: dict[SignalFrameController, ProtocolAnalyzer]
-        self.signal_tab_controller.ui.lLoadingFile.setText("")
 
         self.ui.lnEdtTreeFilter.setClearButtonEnabled(True)
 
@@ -83,8 +82,6 @@ class MainController(QMainWindow):
         self.ui.actionOOK.setActionGroup(group)
         self.ui.actionNone.setActionGroup(group)
         self.ui.actionPSK.setActionGroup(group)
-
-        self.signal_tab_controller.ui.lShiftStatus.clear()
 
         self.recentFileActionList = []
         self.create_connects()
@@ -347,9 +344,6 @@ class MainController(QMainWindow):
             _, file_extension = os.path.splitext(file)
             FileOperator.RECENT_PATH = os.path.split(file)[0]
 
-            self.signal_tab_controller.ui.lLoadingFile.setText(
-                self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
-
             if file_extension == ".complex":
                 self.add_signalfile(file, group_id)
             elif file_extension == ".coco":
@@ -364,8 +358,6 @@ class MainController(QMainWindow):
                 self.add_plain_bits_from_txt(file)
             else:
                 self.add_signalfile(file, group_id)
-
-        self.signal_tab_controller.ui.lLoadingFile.setText("")
 
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()

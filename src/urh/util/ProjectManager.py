@@ -2,7 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
 from urh.dev import config
@@ -345,15 +345,17 @@ class ProjectManager(QObject):
         if self.project_file is not None:
             tree = ET.parse(self.project_file)
             root = tree.getroot()
-            fileNames = []
+            file_names = []
 
             for ftag in root.findall("open_file"):
                 pos = int(ftag.attrib["position"])
                 filename = os.path.join(self.project_path, ftag.attrib["name"])
-                fileNames.insert(pos, filename)
+                file_names.insert(pos, filename)
 
-            fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
-            return fileNames
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
+            QApplication.restoreOverrideCursor()
+            return file_names
         return []
 
     def read_compare_frame_groups(self, root):

@@ -350,8 +350,6 @@ class MainController(QMainWindow):
             self.signal_tab_controller.ui.lLoadingFile.setText(
                 self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
 
-            QApplication.instance().setOverrideCursor(Qt.WaitCursor)
-
             if file_extension == ".complex":
                 self.add_signalfile(file, group_id)
             elif file_extension == ".coco":
@@ -367,7 +365,6 @@ class MainController(QMainWindow):
             else:
                 self.add_signalfile(file, group_id)
 
-            QApplication.instance().restoreOverrideCursor()
         self.signal_tab_controller.ui.lLoadingFile.setText("")
 
     def set_frame_numbers(self):
@@ -503,7 +500,9 @@ class MainController(QMainWindow):
             if os.path.isdir(action.data()):
                 self.project_manager.set_project_folder(action.data())
             elif os.path.isfile(action.data()):
+                self.setCursor(Qt.WaitCursor)
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
+                self.unsetCursor()
         except Exception as e:
             Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
             self.unsetCursor()
@@ -717,8 +716,10 @@ class MainController(QMainWindow):
 
                     self.project_manager.set_project_folder(folder)
                 else:
+                    self.setCursor(Qt.WaitCursor)
                     file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
                     self.add_files(file_names)
+                    self.unsetCursor()
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
                 QApplication.instance().restoreOverrideCursor()
@@ -745,7 +746,9 @@ class MainController(QMainWindow):
     def __add_urls_to_group(self, file_urls, group_id=0):
         local_files = [file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()]
         if len(local_files) > 0:
+            self.setCursor(Qt.WaitCursor)
             self.add_files(FileOperator.uncompress_archives(local_files, QDir.tempPath()), group_id=group_id)
+            self.unsetCursor()
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):

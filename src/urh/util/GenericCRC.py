@@ -41,9 +41,9 @@ class GenericCRC(object):
             if len(value) == self.poly_order - 1:
                 return value
             else:
-                return value[0] * (self.poly_order - 1)
+                return array.array('B', value[0] * (self.poly_order - 1))
         else:
-            return [value] * (self.poly_order - 1)
+            return array.array('B', [value] * (self.poly_order - 1))
 
     @property
     def poly_order(self):

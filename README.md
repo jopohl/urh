@@ -24,7 +24,7 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 # Installation
-Universal Radio Hacker can be installed via _pip_ or using the _packet manager_ of your distribution (if included).
+Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
 Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source.
 
 __Dependencies__

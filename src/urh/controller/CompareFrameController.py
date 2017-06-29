@@ -4,7 +4,7 @@ import time
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
-from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
@@ -1136,6 +1136,7 @@ class CompareFrameController(QWidget):
     def on_search_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Search")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-find"))
         self.set_search_ui_visibility(True)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
@@ -1144,6 +1145,7 @@ class CompareFrameController(QWidget):
     def on_select_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Select all")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-select-all"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
@@ -1159,6 +1161,7 @@ class CompareFrameController(QWidget):
 
         self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)

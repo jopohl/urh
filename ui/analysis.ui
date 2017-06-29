@@ -508,26 +508,13 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
             </property>
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="10">
-               <widget class="Line" name="line">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="16">
                <widget class="QToolButton" name="btnSaveProto">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
                 </property>
                 <property name="baseSize">
                  <size>
@@ -602,30 +589,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
-              <item row="0" column="13">
-               <widget class="Line" name="line_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QToolButton" name="btnSearchSelectFilter">
-                <property name="text">
-                 <string>Search</string>
-                </property>
-                <property name="icon">
-                 <iconset theme="edit-find">
-                  <normaloff>.</normaloff>.</iconset>
-                </property>
-                <property name="popupMode">
-                 <enum>QToolButton::MenuButtonPopup</enum>
-                </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextBesideIcon</enum>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="5">
                <widget class="QLabel" name="lSearchCurrent">
                 <property name="sizePolicy">
@@ -686,16 +649,10 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  <bool>false</bool>
                 </property>
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>20</width>
-                  <height>16777215</height>
-                 </size>
                 </property>
                 <property name="text">
                  <string>&gt;</string>
@@ -712,16 +669,10 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                  <bool>false</bool>
                 </property>
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>20</width>
-                  <height>16777215</height>
-                 </size>
                 </property>
                 <property name="text">
                  <string>&lt;</string>
@@ -729,6 +680,25 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <property name="icon">
                  <iconset theme="go-previous">
                   <normaloff>.</normaloff>.</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="lineEditSearch">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="acceptDrops">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Search Pattern</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -764,6 +734,42 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
+              <item row="0" column="13">
+               <widget class="Line" name="line_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QToolButton" name="btnSearchSelectFilter">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Search</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="edit-find">
+                  <normaloff>.</normaloff>.</iconset>
+                </property>
+                <property name="popupMode">
+                 <enum>QToolButton::MenuButtonPopup</enum>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextBesideIcon</enum>
+                </property>
+                <property name="autoRaise">
+                 <bool>false</bool>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::NoArrow</enum>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="9">
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
@@ -775,10 +781,17 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>60</width>
-                  <height>20</height>
+                  <height>0</height>
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="0" column="10">
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -797,7 +810,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                <bool>true</bool>
               </property>
               <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+               <enum>QFrame::StyledPanel</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Sunken</enum>
@@ -1093,7 +1106,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </sizepolicy>
                </property>
                <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
+                <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="alternatingRowColors">
                 <bool>true</bool>
@@ -1149,7 +1162,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <string>Manage your estimations for protocol fields here. To add custom field types use Rightclick -&gt; Edit.</string>
                </property>
                <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
+                <enum>QFrame::StyledPanel</enum>
                </property>
               </widget>
              </item>

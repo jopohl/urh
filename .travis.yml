@@ -10,6 +10,7 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
+        - GENERATE_COVERAGE=0
     - os: linux
       language: python
       dist: trusty
@@ -18,6 +19,7 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
+        - GENERATE_COVERAGE=1
     - os: linux
       language: python
       dist: trusty
@@ -26,6 +28,7 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
+        - GENERATE_COVERAGE=0
 
 branches:
   only:
@@ -47,9 +50,9 @@ before_script:
   - python3 src/urh/cythonext/build.py
 
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5" ]]; then ./cc-test-reporter before-build; fi
+  - if [[ $GENERATE_COVERAGE == 1 ]]; then ./cc-test-reporter before-build; fi
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
   - coverage xml
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5" ]]; then ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [[ $GENERATE_COVERAGE == 1 ]]; then ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT; fi
   - pip3 install .
   - urh autoclose

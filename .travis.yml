@@ -47,9 +47,9 @@ before_script:
   - python3 src/urh/cythonext/build.py
 
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5"* ]]; then ./cc-test-reporter before-build; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.5" ]]; then ./cc-test-reporter before-build; fi
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
   - coverage xml
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5"* ]]; then ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.5" ]]; then ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT; fi
   - pip3 install .
   - urh autoclose

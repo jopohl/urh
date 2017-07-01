@@ -1,10 +1,13 @@
+
 matrix:
   include:
     - os: linux
       language: python
       dist: trusty
       sudo: required
-      python: 3.4_with_system_site_packages
+      python: 3.4
+      virtualenv:
+        system_site_packages: true
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0

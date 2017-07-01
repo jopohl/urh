@@ -98,6 +98,55 @@ class TestCRCGUIIntegration(QtTestCase):
         self.assertEqual(label_value_model.data(label_value_model.index(0, 2), Qt.BackgroundColorRole),
                          constants.BG_COLOR_CORRECT)
 
+    def test_checksum_in_generation_tab(self):
+        self.add_signal_to_form("esaver.complex")
+        self.form.compare_frame_controller.add_protocol_label(4, 6, 0, 1, edit_label_name=False)
+        checksum_fieldtype = next(
+            ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
+
+        label_list_model = self.form.compare_frame_controller.protocol_label_list_model
+        label_list_model.setData(label_list_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole)
+
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentIndex(1)
+        self.add_signal_to_generator(signal_index=0)
+        self.assertEqual(gframe.table_model.row_count, 3)
+        self.assertEqual(gframe.table_model.protocol.protocol_labels[0].field_type, checksum_fieldtype)
+
+        # check font is italic
+        for i in range(3):
+            for j in range(len(gframe.table_model.display_data[i])):
+                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                if 4 <= j <= 6:
+                    self.assertTrue(font.italic(), msg=str(j))
+                else:
+                    self.assertFalse(font.italic(), msg=str(j))
+
+        # Now change something and verify CRC gets recalced
+        checksum_before = gframe.table_model.display_data[0][4:6]
+        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(0, 1)), "f")
+        gframe.table_model.setData(gframe.table_model.index(0, 1), "f", Qt.EditRole)
+        checksum_after = gframe.table_model.display_data[0][4:6]
+        self.assertNotEqual(checksum_before, checksum_after)
+
+        # change something behind data ranges, crc should stay the same
+        checksum_before = gframe.table_model.display_data[1][4:6]
+        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(1, 10)), "b")
+        gframe.table_model.setData(gframe.table_model.index(1, 10), "b", Qt.EditRole)
+        checksum_after = gframe.table_model.display_data[1][4:6]
+        self.assertNotEqual(checksum_before, checksum_after)
+
+        # edit checksum and verify its not italic anymore
+        gframe.table_model.setData(gframe.table_model.index(2, 5), "c", Qt.EditRole)
+        for i in range(3):
+            for j in range(len(gframe.table_model.display_data[i])):
+                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                if 4 <= j <= 6 and i != 2:
+                    self.assertTrue(font.italic(), msg=str(j))
+                else:
+                    self.assertFalse(font.italic(), msg=str(j))
+
+
     def __add_wsp_signal(self):
         self.add_signal_to_form("wsp.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]

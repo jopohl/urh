@@ -40,13 +40,7 @@ class TestGenerator(QtTestCase):
         # Move with encoding to generator
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(0)
-        item = gframe.tree_model.rootItem.children[0].children[0]
-        index = gframe.tree_model.createIndex(0, 0, item)
-        rect = gframe.ui.treeProtocols.visualRect(index)
-        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos = rect.center())
-        self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
-        mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
-        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.add_signal_to_generator(signal_index=0)
         self.assertEqual(array.array("B", list(map(int, proto_inv))), gframe.table_model.display_data[0])
         self.assertNotEqual(array.array("B", list(map(int, proto))), gframe.table_model.display_data[0])
 

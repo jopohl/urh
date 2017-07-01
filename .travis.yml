@@ -10,7 +10,6 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
-        - GENERATE_COVERAGE=0
     - os: linux
       language: python
       dist: trusty
@@ -28,7 +27,6 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
-        - GENERATE_COVERAGE=0
 
 branches:
   only:
@@ -50,9 +48,10 @@ before_script:
   - python3 src/urh/cythonext/build.py
 
 script:
-  - if [[ $GENERATE_COVERAGE == 1 ]]; then ./cc-test-reporter before-build; fi
+  - ./cc-test-reporter before-build
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
   - coverage xml
-  - if [[ $GENERATE_COVERAGE == 1 ]]; then ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT; fi
   - pip3 install .
   - urh autoclose
+
+on_success: ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT

@@ -49,6 +49,7 @@ before_script:
 script:
   - ./cc-test-reporter before-build
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
+  - coverage xml
   - ls -a
   - ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT
   - pip3 install .

@@ -73,7 +73,9 @@ emerge -av urh
 ```
 
 ### Windows
-If you run a Python 3.4 you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.
+If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
+
+__It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__
 1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
   - Make sure you tick the _Add Python to PATH_ checkbox on first page in Python installer.
   - Choose a __64 Bit__ Python version for native device support.

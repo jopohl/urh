@@ -47,7 +47,6 @@ class QtTestCase(unittest.TestCase):
 
     def add_signal_to_generator(self, signal_index: int):
         gframe = self.form.generator_tab_controller
-        gframe.ui.cbViewType.setCurrentIndex(1)
         item = gframe.tree_model.rootItem.children[0].children[signal_index]
         index = gframe.tree_model.createIndex(signal_index, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)

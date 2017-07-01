@@ -1,5 +1,3 @@
-group: deprecated-2017Q2
-
 matrix:
   include:
     - os: linux
@@ -18,7 +16,6 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
-        - GENERATE_COVERAGE=1
     - os: linux
       language: python
       dist: trusty

@@ -1,3 +1,4 @@
+group: deprecated-2017Q2
 
 matrix:
   include:
@@ -5,9 +6,7 @@ matrix:
       language: python
       dist: trusty
       sudo: required
-      python: 3.4
-      virtualenv:
-        system_site_packages: true
+      python: 3.4_with_system_site_packages
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0

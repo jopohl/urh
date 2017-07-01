@@ -36,22 +36,18 @@ branches:
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]; then sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil; fi
   - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then pip3 install -r requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
-  - pip3 install pytest-cov
+  - pip3 install pytest-cov codecov
   - sudo apt-get install -qq libegl1-mesa
   - sh -e /etc/init.d/xvfb start
   - sleep 3
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
   - touch tests/show_gui
   - python3 src/urh/cythonext/build.py
 
 script:
-  - ./cc-test-reporter before-build
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
-  - coverage xml
   - pip3 install .
   - urh autoclose
 
-after_success: ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT
+after_success: codecov

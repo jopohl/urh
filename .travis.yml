@@ -54,4 +54,4 @@ script:
   - pip3 install .
   - urh autoclose
 
-on_success: ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT
+after_success: ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT

@@ -6,7 +6,7 @@ from urh import constants
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 
 
 class TestFuzzingProfile(QtTestCase):
@@ -16,7 +16,7 @@ class TestFuzzingProfile(QtTestCase):
         mod2 = Modulator("mod 2")
         mod2.param_for_one = 42
 
-        decoders = [Encoder(["NRZ"]), Encoder(["NRZ-I", constants.DECODING_INVERT])]
+        decoders = [Encoding(["NRZ"]), Encoding(["NRZ-I", constants.DECODING_INVERT])]
 
         pac = ProtocolAnalyzerContainer([mod1, mod2])
         pac.messages.append(Message([True, False, False, True], 100, decoder=decoders[0], message_type=pac.default_message_type))

@@ -10,8 +10,9 @@ from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.ui.ui_decoding import Ui_Decoder
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -19,7 +20,7 @@ class DecoderWidgetController(QDialog):
     def __init__(self, decodings, signals, project_manager: ProjectManager,
                  parent=None):
         """
-        :type decodings: list of Encoder
+        :type decodings: list of Encoding
         :type signals: list of Signal
         """
         # Init
@@ -105,10 +106,6 @@ class DecoderWidgetController(QDialog):
         self.ui.external_encoder.textEdited.connect(self.handle_external)
         self.ui.datawhitening_sync.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_polynomial.textEdited.connect(self.handle_datawhitening)
-        self.ui.datawhitening_applycrc.clicked.connect(self.handle_datawhitening)
-        self.ui.datawhitening_preamble_rm.clicked.connect(self.handle_datawhitening)
-        self.ui.datawhitening_sync_rm.clicked.connect(self.handle_datawhitening)
-        self.ui.datawhitening_crc_rm.clicked.connect(self.handle_datawhitening)
 
         self.ui.decoderchain.itemChanged.connect(self.decoderchainUpdate)
         self.ui.decoderchain.internalMove.connect(self.decoderchainUpdate)
@@ -182,13 +179,13 @@ class DecoderWidgetController(QDialog):
             for i in range(0, len(self.decodings)):
                 if name == self.decodings[i].name:
                     self.ui.combobox_decodings.setCurrentIndex(i)
-                    self.decodings[i] = Encoder(self.chainstr)
+                    self.decodings[i] = Encoding(self.chainstr)
                     self.set_e()
                     self.ui.saveas.setVisible(False)
                     self.save_to_file()
                     return
 
-            self.decodings.append(Encoder(self.chainstr))
+            self.decodings.append(Encoding(self.chainstr))
             self.ui.combobox_decodings.addItem(self.chainstr[0])
             self.ui.combobox_decodings.setCurrentIndex(self.ui.combobox_decodings.count() - 1)
             self.set_e()
@@ -287,7 +284,7 @@ class DecoderWidgetController(QDialog):
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("0xe9cae9ca;0x21;0x8")  # Default
+                    self.chainstr.append("0xe9cae9ca;0x21")  # Default
             elif constants.DECODING_CUT in op:
                 # Add cut parameters
                 if op in self.chainoptions:
@@ -605,52 +602,31 @@ class DecoderWidgetController(QDialog):
             txt += "Texas Instruments CC110x chips allow a data whitening that is applied before sending the signals to HF. " \
                    "After a preamble (1010...) there is a fixed 16/32 bit sync word. The following data (incl. 16 bit CRC) " \
                    "is masked (XOR) with the output of a LFSR.\n" \
-                   "This function removes the sync word, zeroes the crc (if valid) and unmasks the data."
+                   "This unmasks the data."
             self.ui.optionWidget.setCurrentIndex(5)
             # Values can only be changed when editing decoder, otherwise default value
             if not decoderEdit:
                 self.ui.datawhitening_sync.setText("0xe9cae9ca")
                 self.ui.datawhitening_polynomial.setText("0x21")
-                self.ui.datawhitening_applycrc.setChecked(True)
-                self.ui.datawhitening_preamble_rm.setChecked(False)
-                self.ui.datawhitening_sync_rm.setChecked(False)
-                self.ui.datawhitening_crc_rm.setChecked(False)
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
                         self.ui.datawhitening_sync.setText("0xe9cae9ca")
                         self.ui.datawhitening_polynomial.setText("0x21")
-                        self.ui.datawhitening_applycrc.setChecked(True)
-                        self.ui.datawhitening_preamble_rm.setChecked(False)
-                        self.ui.datawhitening_sync_rm.setChecked(False)
-                        self.ui.datawhitening_crc_rm.setChecked(False)
                     else:
                         try:
-                            whitening_sync, whitening_polynomial, opt = value.split(";")
+                            whitening_sync, whitening_polynomial = value.split(";")
                             self.ui.datawhitening_sync.setText(whitening_sync)
                             self.ui.datawhitening_polynomial.setText(whitening_polynomial)
-                            opt = self.e.hex2bit(opt)
-                            if len(opt) >= 4:
-                                self.ui.datawhitening_applycrc.setChecked(opt[0])
-                                self.ui.datawhitening_preamble_rm.setChecked(opt[1])
-                                self.ui.datawhitening_sync_rm.setChecked(opt[2])
-                                self.ui.datawhitening_crc_rm.setChecked(opt[3])
 
                         except ValueError:
                             self.ui.datawhitening_sync.setText("0xe9cae9ca")
                             self.ui.datawhitening_polynomial.setText("0x21")
-                            self.ui.datawhitening_applycrc.setChecked(True)
-                            self.ui.datawhitening_preamble_rm.setChecked(False)
-                            self.ui.datawhitening_sync_rm.setChecked(False)
-                            self.ui.datawhitening_crc_rm.setChecked(False)
 
             self.ui.datawhitening_sync.setEnabled(decoderEdit)
             self.ui.datawhitening_polynomial.setEnabled(decoderEdit)
-            self.ui.datawhitening_applycrc.setEnabled(decoderEdit)
-            self.ui.datawhitening_preamble_rm.setEnabled(decoderEdit)
-            self.ui.datawhitening_sync_rm.setEnabled(decoderEdit)
-            self.ui.datawhitening_crc_rm.setEnabled(decoderEdit)
+
         elif constants.DECODING_CUT in element:
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
                    "better view. Note that this decoding does NOT support encoding, because cut data is gone!\n" \
@@ -736,21 +712,7 @@ class DecoderWidgetController(QDialog):
 
     @pyqtSlot()
     def handle_datawhitening(self):
-        opt = 0
-        if self.ui.datawhitening_applycrc.isChecked():
-            opt = opt | 0x8
-
-        if self.ui.datawhitening_preamble_rm.isChecked():
-            opt = opt | 0x4
-
-        if self.ui.datawhitening_sync_rm.isChecked():
-            opt = opt | 0x2
-
-        if self.ui.datawhitening_crc_rm.isChecked():
-            opt = opt | 0x1
-
-        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + hex(
-            opt)
+        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text()
         self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 

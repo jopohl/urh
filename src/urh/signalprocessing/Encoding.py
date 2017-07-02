@@ -3,17 +3,16 @@ import copy
 import array
 
 from urh import constants
-from urh.util.crc import crc_generic
+from urh.util import util
 
 
-class Encoder(object):
+class Encoding(object):
     """
     Full featured encoding/decoding of protocols.
     """
 
     class ErrorState:
         SUCCESS = "success"
-        WRONG_CRC = "wrong crc"
         PREAMBLE_NOT_FOUND = "preamble not found"
         SYNC_NOT_FOUND = "sync not found"
         EOF_NOT_FOUND = "eof not found"
@@ -51,17 +50,8 @@ class Encoder(object):
 
         self.data_whitening_polynomial = polynomial  # Set polynomial
         self.data_whitening_sync = sync_bytes  # Sync Bytes
-        self.data_whitening_crc = array.array("B", [False] * 16)  # CRC is 16 Bit long
         self.data_whitening_preamble = array.array("B", [True, False] * 16)  # 010101...
         self.lfsr_state = array.array("B", [])
-
-        self.data_whitening_apply_crc = True  # Apply CRC with XOR
-        self.data_whitening_preamble_rm = True  # Remove Preamble
-        self.data_whitening_sync_rm = True  # Remove Sync Bytes
-        self.data_whitening_crc_rm = False  # Remove CRC
-
-        # Get CRC Object
-        self.c = crc_generic(polynomial="16_standard", start_value=True)
 
         # Set Chain
         self.chain = []
@@ -116,7 +106,7 @@ class Encoder(object):
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
-                    self.chain.append("0xe9cae9ca;0x21;0x8")  # Default Sync Bytes
+                    self.chain.append("0xe9cae9ca;0x21")  # Default Sync Bytes
             elif constants.DECODING_CARRIER in names[i]:
                 self.chain.append(self.code_carrier)
                 i += 1
@@ -269,17 +259,11 @@ class Encoder(object):
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:
-                if self.chain[i + 1].count(';') == 2:
-                    self.data_whitening_sync, self.data_whitening_polynomial, opt = self.chain[i + 1].split(";")
-                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0) and len(opt) > 0:
-                        self.data_whitening_sync = self.hex2bit(self.data_whitening_sync)
-                        self.data_whitening_polynomial = self.hex2bit(self.data_whitening_polynomial)
-                        opt = self.hex2bit(opt)
-                        if len(opt) >= 4:
-                            self.data_whitening_apply_crc = opt[0]
-                            self.data_whitening_preamble_rm = opt[1]
-                            self.data_whitening_sync_rm = opt[2]
-                            self.data_whitening_crc_rm = opt[3]
+                if self.chain[i + 1].count(';') == 1:
+                    self.data_whitening_sync, self.data_whitening_polynomial = self.chain[i + 1].split(";")
+                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0):
+                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
+                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
             elif self.code_cut == operation:
                 if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
                     self.cutmode, tmp = self.chain[i + 1].split(";")
@@ -383,11 +367,6 @@ class Encoder(object):
         if decoding and whitening_start_pos == inpt_from:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.SYNC_NOT_FOUND
 
-        # If encoding and crc_rm is active, extend inpt with 0s
-        if not decoding and self.data_whitening_crc_rm:
-            inpt = inpt + self.data_whitening_crc
-            inpt_to += len(self.data_whitening_crc)
-
         # Prepare keystream
         self.lfsr_state = array.array("B", [])
         keystream = self.lfsr(0)
@@ -398,46 +377,12 @@ class Encoder(object):
         if len(keystream) < inpt_to - whitening_start_pos:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Error 31338
 
-        # Apply keystream (xor) - Decoding
-        if decoding:
-            for i in range(whitening_start_pos, inpt_to):
-                inpt[i] ^= keystream[i - whitening_start_pos]
+        # Apply keystream (xor)
+        for i in range(whitening_start_pos, inpt_to):
+            inpt[i] ^= keystream[i - whitening_start_pos]
 
-        # Apply CRC-16
-        if self.data_whitening_apply_crc:
-            # Calculate CRC-16:
-            if not decoding and self.data_whitening_crc_rm:
-                crc = self.c.crc(inpt[whitening_start_pos:inpt_to])
-            else:
-                crc = self.c.crc(inpt[whitening_start_pos:inpt_to - len(self.data_whitening_crc)])
-            # Enough bits there?
-            if len(inpt) < (inpt_to - len(self.data_whitening_crc) + 16) or inpt_to - len(self.data_whitening_crc) < 0:
-                    return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Misc Error
-            # XOR calculated CRC to original CRC -> Zero if no errors
-            for i in range(0, 16):
-                inpt[inpt_to - len(self.data_whitening_crc) + i] ^= crc[i]
-
-        # Apply keystream (xor) - Decoding
+        # Duplicate last bit when encoding
         if not decoding:
-            for i in range(whitening_start_pos, inpt_to):
-                inpt[i] ^= keystream[i - whitening_start_pos]
-
-        # Remove preamble/sync bytes/crc
-        if decoding:
-            if self.data_whitening_preamble_rm:
-                inpt_from += whitening_start_pos - len_sync
-            if self.data_whitening_sync_rm:
-                inpt_from += len_sync
-            if self.data_whitening_crc_rm:
-                inpt_to -= len(self.data_whitening_crc)
-        else:
-            if self.data_whitening_sync_rm:
-                inpt = self.data_whitening_sync + inpt
-                inpt_to += len(self.data_whitening_sync)
-            if self.data_whitening_preamble_rm:
-                inpt = self.data_whitening_preamble + inpt
-                inpt_to += len(self.data_whitening_preamble)
-            # Duplicate last bit when encoding
             inpt += array.array("B", [inpt[-1]])
             inpt_to += 1
 
@@ -733,53 +678,6 @@ class Encoder(object):
             output.extend(inpt)
         return output, errors, state
 
-    def enocean_hash(self, msg):
-        """
-        Get the hash for an enocean message. There are three hashes possible:
-        1) 4 Bit Hash - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)
-        2) 8 Bit Checksum: STATUS bit 2^7 = 0
-        3) 8 Bit CRC: STATUS bit 2^7 = 1
-
-        :param msg: the message without Preamble/SOF and EOF. Message starts with RORG and ends with CRC
-        :type msg: list of bool
-        :rtype: list of bool
-        """
-        try:
-            if msg[0:4] == self.hex2bit("5") or msg[0:4] == self.hex2bit("6"):
-                # Switch telegram
-                return self.enocean_checksum4(msg)
-
-            status = msg[-16:-8]
-            if status[0]:
-                return self.enocean_crc8(msg[:-8])  # ignore trailing hash
-            else:
-                return self.enocean_checksum8(msg[:-8])  # ignore trailing hash
-
-        except IndexError:
-            return None
-
-    @staticmethod
-    def enocean_checksum4(inpt) -> array.array:
-        hash = 0
-        val = copy.copy(inpt)
-        val[-4:] = array.array("B", [False, False, False, False])
-        for i in range(0, len(val), 8):
-            hash += int("".join(map(str, map(int, val[i:i + 8]))), 2)
-        hash = (((hash & 0xf0) >> 4) + (hash & 0x0f)) & 0x0f
-        return array.array("B", list(map(bool, map(int, "{0:04b}".format(hash)))))
-
-    @staticmethod
-    def enocean_checksum8(inpt) -> array.array:
-        hash = 0
-        for i in range(0, len(inpt) - 8, 8):
-            hash += int("".join(map(str, map(int, inpt[i:i + 8]))), 2)
-        return array.array("B", list(map(bool, map(int, "{0:08b}".format(hash % 256)))))
-
-    @staticmethod
-    def enocean_crc8(inpt):
-        c = crc_generic(polynomial="8_en")
-        return array.array("B", c.crc(inpt))
-
     def code_enocean(self, decoding: bool, inpt):
         errors = 0
         output = array.array("B", [])
@@ -828,21 +726,10 @@ class Encoder(object):
             except IndexError: # compatibility for old project files
                 return inpt, 0, self.ErrorState.MISC
 
-            enocean_hash = self.enocean_hash(output[12:])
-            if enocean_hash is None or output[-len(enocean_hash):] != enocean_hash:
-                state = self.ErrorState.WRONG_CRC
-
             # Finalize output
             output.extend(inpt[end:end + 4])
 
         else:
-            # Calculate hash
-            enocean_hash = self.enocean_hash(inpt[start:end])
-            if enocean_hash is not None:
-                inpt[end - len(enocean_hash):end] = enocean_hash
-            else:
-                state = self.ErrorState.WRONG_CRC
-
             for n in range(start, end, 8):
                 try:
                     output.extend(
@@ -899,31 +786,6 @@ class Encoder(object):
             elif i == '1':
                 output.append(True)
         return output
-
-    @staticmethod
-    def bit2hex(inpt):
-        try:
-            bitstring = "".join(["1" if x else "0" for x in inpt])
-            # Better alignment
-            if len(bitstring) % 4 != 0:
-                bitstring += "0" * (4 - (len(bitstring) % 4))
-            return hex(int(bitstring, 2))
-        except (TypeError, ValueError) as e:
-            pass
-        return ""
-
-    @staticmethod
-    def hex2bit(inpt: str) -> array:
-        if not isinstance(inpt, str):
-            return array.array("B", [])
-        try:
-            bitstring = bin(int(inpt, base=16))[2:]
-            if len(bitstring) % 4 != 0:
-                bitstring = "0" * (4 - (len(bitstring) % 4)) + bitstring
-            return array.array("B", [True if x == "1" else False for x in bitstring])
-        except (TypeError, ValueError) as e:
-            pass
-        return array.array("B", [])
 
     @staticmethod
     def hex2str(inpt):

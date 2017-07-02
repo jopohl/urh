@@ -72,7 +72,6 @@ class SignalTabController(QWidget):
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
         sig_frame.signal_created.connect(self.signal_created.emit)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
-        sig_frame.ui.gvSignal.shift_state_changed.connect(self.set_shift_statuslabel)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
         sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
 
@@ -220,16 +219,6 @@ class SignalTabController(QWidget):
         if from_index != to_index:
             start_sig_widget = self.splitter.widget(from_index)
             self.splitter.insertWidget(to_index, start_sig_widget)
-
-    @pyqtSlot(bool)
-    def set_shift_statuslabel(self, shift_pressed):
-        if shift_pressed and constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
-            self.ui.lShiftStatus.setText("[SHIFT] Use Mouse to scroll signal.")
-
-        elif shift_pressed and not constants.SETTINGS.value('hold_shift_to_drag', False, type=bool):
-            self.ui.lShiftStatus.setText("[SHIFT] Use mouse to create a selection.")
-        else:
-            self.ui.lShiftStatus.clear()
 
     @pyqtSlot()
     def on_participant_changed(self):

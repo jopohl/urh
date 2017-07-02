@@ -2,12 +2,13 @@ import copy
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Ruleset import Rule, Ruleset, Mode
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 
 class TestAutoAssignments(QtTestCase):
     def setUp(self):
@@ -31,13 +32,13 @@ class TestAutoAssignments(QtTestCase):
         self.assertEqual(self.protocol.plain_hex_str[0][16:18], "2d")
 
         self.decodings = []
-        self.decodings.append(Encoder(['Non Return To Zero (NRZ)']))
-        self.decodings.append(Encoder(['Non Return To Zero Inverted (NRZ-I)', 'Invert']))
-        self.decodings.append(Encoder(['Manchester I', 'Edge Trigger']))
-        self.decodings.append(Encoder(['Manchester II', 'Edge Trigger', 'Invert']))
-        self.decodings.append(Encoder(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
-        self.decodings.append(Encoder(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
-        self.decodings.append(Encoder(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
+        self.decodings.append(Encoding(['Non Return To Zero (NRZ)']))
+        self.decodings.append(Encoding(['Non Return To Zero Inverted (NRZ-I)', 'Invert']))
+        self.decodings.append(Encoding(['Manchester I', 'Edge Trigger']))
+        self.decodings.append(Encoding(['Manchester II', 'Edge Trigger', 'Invert']))
+        self.decodings.append(Encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
+        self.decodings.append(Encoding(['DeWhitening Special', constants.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21']))
+        self.decodings.append(Encoding(['DeWhitening', constants.DECODING_DATAWHITENING, '0x67686768;0x21']))
 
     def test_message_type_assign_by_value(self):
         start = 8

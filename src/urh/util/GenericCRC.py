@@ -1,11 +1,33 @@
 import array
+import copy
+from collections import OrderedDict
 
+from urh.util import util
+from xml.etree import ElementTree as ET
 
-class crc_generic:
+class GenericCRC(object):
+    # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
+    DEFAULT_POLYNOMIALS = OrderedDict([
+        # x^8 + x^7 + x^6 + x^4 + x^2 + 1
+        ("8_standard", array.array("B", [1,
+                                         1, 1, 0, 1, 0, 1, 0, 1])),
+
+        # x^16+x^15+x^2+x^0
+        ("16_standard", array.array("B", [1,
+                                          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
+
+        # x^16+x^12+x^5+x^
+        ("16_ccitt", array.array("B", [1,
+                                       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
+
+        # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
+        ("16_dnp", array.array("B", [1,
+                                     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
+    ])
+
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
         self.polynomial = self.choose_polynomial(polynomial)
-        self.poly_order = len(self.polynomial)
         self.reverse_polynomial = reverse_polynomial
         self.reverse_all = reverse_all
         self.little_endian = little_endian
@@ -15,31 +37,53 @@ class crc_generic:
         self.final_xor = self.__read_parameter(final_xor)
 
     def __read_parameter(self, value):
-        if not isinstance(value, bool):
+        if isinstance(value, bool) or isinstance(value, int):
+            return array.array('B', [value] * (self.poly_order - 1))
+        else:
             if len(value) == self.poly_order - 1:
                 return value
             else:
-                return value[0] * (self.poly_order - 1)
-        else:
-            return [value] * (self.poly_order - 1)
+                return array.array('B', value[0] * (self.poly_order - 1))
+
+
+    @property
+    def poly_order(self):
+        return len(self.polynomial)
+
+    @property
+    def polynomial_as_bit_str(self) -> str:
+        return "".join("1" if p else "0" for p in self.polynomial)
+
+    @property
+    def polynomial_as_hex_str(self) -> str:
+        return util.bit2hex(self.polynomial[1:])  # do not show leading one
+
+    @property
+    def polynomial_to_html(self) -> str:
+        result = ""
+        for i in range(self.poly_order):
+            index = self.poly_order - 1 - i
+            if self.polynomial[i] > 0:
+                if index > 1:
+                    result += "x<sup>{0}</sup> + ".format(index)
+                elif index == 1:
+                    result += "x + "
+                elif index == 0:
+                    result += "1"
+
+        result = result.rstrip(" + ")
+        return result
+
+    def set_polynomial_from_hex(self, hex_str: str):
+        self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
 
     def choose_polynomial(self, polynomial):
-        if polynomial == "16_standard" or polynomial == 0:
-            return [True,
-                    True, False, False, False, False, False, False, False,
-                    False, False, False, False, False, True, False, True]  # x^16+x^15+x^2+x^0
-        elif polynomial == "16_ccitt" or polynomial == 1:
-            return [True,
-                    False, False, False, True, False, False, False, False,
-                    False, False, True, False, False, False, False, True]  # x^16+x^12+x^5+x^0
-        elif polynomial == "16_dnp" or polynomial == 2:
-            return [True,
-                    False, False, True, True, True, True, False, True,
-                    False, True, True, False, False, True, False, True]  # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-        elif polynomial == "8_en" or polynomial == 3:
-            return [True,
-                    False, False, False, False, False, True, True, True]  # x^8+x^2+x+1
-        return polynomial
+        if isinstance(polynomial, str):
+            return self.DEFAULT_POLYNOMIALS[polynomial]
+        elif isinstance(polynomial, int):
+            return list(self.DEFAULT_POLYNOMIALS.items())[polynomial][1]
+        else:
+            return polynomial
 
     def crc(self, inpt):
         data = array.array("B", inpt)
@@ -47,7 +91,7 @@ class crc_generic:
             data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
         len_data = len(data)
 
-        crc = self.start_value.copy()
+        crc = copy.copy(self.start_value)
 
         for i in range(0, len_data, 8):
             for j in range(0, 8):
@@ -89,6 +133,9 @@ class crc_generic:
                 self.__swap_bytes(crc, pos1, pos2)
 
         return crc
+
+    def calculate(self, bits: array.array):
+        return self.crc(bits)
 
     @staticmethod
     def __swap_bytes(array, pos1: int, pos2: int):
@@ -183,6 +230,21 @@ class crc_generic:
                     return polynomial
         return False
 
+    def to_xml(self):
+        root = ET.Element("crc")
+        root.set("polynomial", util.convert_bits_to_string(self.polynomial, 0))
+        root.set("start_value", util.convert_bits_to_string(self.start_value, 0))
+        root.set("final_xor", util.convert_bits_to_string(self.final_xor, 0))
+        return root
+
+    @classmethod
+    def from_xml(cls, tag:  ET.Element):
+        polynomial = tag.get("polynomial", "1010")
+        start_value = tag.get("start_value", "0000")
+        final_xor = tag.get("final_xor", "0000")
+        return GenericCRC(polynomial=util.string2bits(polynomial),
+                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor))
+
     @staticmethod
     def bit2str(inpt):
         return "".join(["1" if x else "0" for x in inpt])
@@ -191,16 +253,6 @@ class crc_generic:
     @staticmethod
     def str2bit(inpt):
         return [True if x == "1" else False for x in inpt]
-
-    @staticmethod
-    def bit2hex(inpt):
-        bitstring = "".join(["1" if x else "0" for x in inpt])
-        return hex(int(bitstring, 2))
-
-    @staticmethod
-    def hex2bit(inpt):
-        bitstring = bin(int(inpt, base=16))[2:]
-        return [True if x == "1" else False for x in "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring]
 
     @staticmethod
     def hex2str(inpt):

@@ -13,7 +13,6 @@ class SelectableGraphicView(QGraphicsView):
     sep_area_changed = pyqtSignal(float)
     sel_area_width_changed = pyqtSignal(int)
     sel_area_start_end_changed = pyqtSignal(int, int)
-    shift_state_changed = pyqtSignal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -62,7 +61,6 @@ class SelectableGraphicView(QGraphicsView):
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Shift:
             self.shift_mode = True
-            self.shift_state_changed.emit(True)
 
             if self.hold_shift_to_drag:
                 self.setCursor(Qt.OpenHandCursor)
@@ -75,7 +73,6 @@ class SelectableGraphicView(QGraphicsView):
     def keyReleaseEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Shift:
             self.shift_mode = False
-            self.shift_state_changed.emit(False)
 
             if self.hold_shift_to_drag:
                 self.unsetCursor()

@@ -19,10 +19,10 @@ class ProtocolLabel(object):
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
     __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",
-                 "fuzz_created", "__type", "display_format_index", "auto_created", "copied")
+                 "fuzz_created", "__field_type", "display_format_index", "auto_created", "copied")
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
-                 auto_created=False, type:FieldType=None):
+                 auto_created=False, field_type:FieldType=None):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -36,22 +36,22 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__type = type # type: FieldType
+        self.__field_type = field_type # type: FieldType
 
-        self.display_format_index = 0 if type is None else type.display_format_index
+        self.display_format_index = 0 if field_type is None else field_type.display_format_index
 
         self.auto_created = auto_created
 
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
 
     @property
-    def type(self) -> FieldType:
-        return self.__type
+    def field_type(self) -> FieldType:
+        return self.__field_type
 
-    @type.setter
-    def type(self, value: FieldType):
-        if value != self.type:
-            self.__type = value
+    @field_type.setter
+    def field_type(self, value: FieldType):
+        if value != self.field_type:
+            self.__field_type = value
             # set viewtype for type
             if hasattr(value, "display_format_index"):
                 self.display_format_index = value.display_format_index
@@ -92,7 +92,7 @@ class ProtocolLabel(object):
             return False
 
     def __eq__(self, other):
-        return self.start == other.start and self.end == other.end and self.name == other.name and self.type == other.type
+        return self.start == other.start and self.end == other.end and self.name == other.name and self.field_type == other.field_type
 
     def __hash__(self):
         return hash("{}/{}/{}".format(self.start, self.end, self.name))
@@ -117,14 +117,14 @@ class ProtocolLabel(object):
         self.fuzz_values.append(format_string.format(val))
 
     def to_xml(self, index:int) -> ET.Element:
-        return ET.Element("label", attrib={ "name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
+        return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
                                             "apply_decoding": str(self.apply_decoding), "index": str(index),
                                             "show": str(self.show), "display_format_index": str(self.display_format_index),
                                             "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created), "type_id": self.type.id if self.type is not None else ""})
+                                            "auto_created": str(self.auto_created), "type_id": self.field_type.id if self.field_type is not None else ""})
 
-    @staticmethod
-    def from_xml(tag: ET.Element, field_types_by_type_id=None):
+    @classmethod
+    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
         """
 
         :param tag:
@@ -143,11 +143,12 @@ class ProtocolLabel(object):
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_format_index = int(tag.get("display_format_index", 0))
-        result.auto_created =  True if tag.get("auto_created", 'False') == "True" else False
+        result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
         type_id = tag.get("type_id", None)
+
         if type_id and type_id in field_types_by_type_id:
-            result.type = field_types_by_type_id[type_id]
+            result.field_type = field_types_by_type_id[type_id]
         else:
-            result.type = None
+            result.field_type = None
 
         return result

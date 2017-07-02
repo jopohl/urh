@@ -1,8 +1,8 @@
 import numpy
 import numpy as np
-from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection
-from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics
-from PyQt5.QtWidgets import QTableView, QApplication
+from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot
+from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon
+from PyQt5.QtWidgets import QTableView, QApplication, QAction
 
 
 class TableView(QTableView):
@@ -10,6 +10,11 @@ class TableView(QTableView):
         super().__init__(parent)
 
         self.context_menu_pos = None  # type: QPoint
+
+        self.copy_action = QAction("Copy selection", self)
+        self.copy_action.setShortcut(QKeySequence.Copy)
+        self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
+        self.copy_action.triggered.connect(self.on_copy_action_triggered)
 
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
@@ -103,19 +108,7 @@ class TableView(QTableView):
             self.setFocus()
 
         if event.matches(QKeySequence.Copy):
-            cells = self.selectedIndexes()
-            cells.sort()
-            currentRow = 0
-            text = ""
-
-            for cell in cells:
-                if len(text) > 0 and cell.row() != currentRow:
-                    text += "\n"
-                currentRow = cell.row()
-                if cell.data():
-                    text += str(cell.data())
-
-            QApplication.instance().clipboard().setText(text)
+            self.on_copy_action_triggered()
             return
 
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
@@ -176,3 +169,20 @@ class TableView(QTableView):
             self.scrollTo(start)
         else:
             self.scrollTo(end)
+
+    @pyqtSlot()
+    def on_copy_action_triggered(self):
+        cells = self.selectedIndexes()
+        cells.sort()
+
+        current_row = 0
+        text = ""
+
+        for cell in cells:
+            if len(text) > 0 and cell.row() != current_row:
+                text += "\n"
+            current_row = cell.row()
+            if cell.data() is not None:
+                text += str(cell.data())
+
+        QApplication.instance().clipboard().setText(text)

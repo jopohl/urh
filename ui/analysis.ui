@@ -159,6 +159,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                   <property name="acceptDrops">
                    <bool>true</bool>
                   </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
                   <property name="verticalScrollBarPolicy">
                    <enum>Qt::ScrollBarAsNeeded</enum>
                   </property>
@@ -226,6 +229,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
                   <property name="textElideMode">
                    <enum>Qt::ElideRight</enum>
@@ -624,6 +630,25 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 </property>
                </widget>
               </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="lineEditSearch">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="acceptDrops">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Search Pattern</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="8">
                <widget class="QToolButton" name="btnNextSearch">
                 <property name="enabled">
@@ -661,25 +686,6 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
                 <property name="icon">
                  <iconset theme="go-previous">
                   <normaloff>.</normaloff>.</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="lineEditSearch">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="acceptDrops">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Search Pattern</string>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>true</bool>
                 </property>
                </widget>
               </item>

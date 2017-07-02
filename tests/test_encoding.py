@@ -2,7 +2,9 @@ import copy
 import array
 
 from tests.QtTestCase import QtTestCase
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
+from urh.util import util
+from urh.util.WSPChecksum import WSPChecksum
 
 
 class TestDecoding(QtTestCase):
@@ -10,7 +12,7 @@ class TestDecoding(QtTestCase):
         pass
 
     def test_carrier(self):
-        e = Encoder()
+        e = Encoding()
 
         # Test 1
         e.carrier = "----1....1**"  # or "....1....101", ...
@@ -24,7 +26,7 @@ class TestDecoding(QtTestCase):
         self.assertEqual(original_inpt, newinpt)
 
     def test_cut_decoding(self):
-        e = Encoder()
+        e = Encoding()
 
         received = e.str2bit("00001010010101111111000")
         expected_result = e.str2bit("1010010101111111000")
@@ -62,7 +64,7 @@ class TestDecoding(QtTestCase):
         self.assertEqual(decoded, expected_result)
 
     def test_enocean_switch_telegram(self):
-        e = Encoder()
+        e = Encoding()
 
 
         received = "010101010110100111101010111011101110111011100110001011101010001011101110110111011101000"
@@ -90,16 +92,16 @@ class TestDecoding(QtTestCase):
 
 
     def test_enocean_crc8_message(self):
-        e = Encoder()
-        received = e.hex2bit("aacbac4cddd5ddd3bddd5ddcc5ddcddd4c2d5d5c2cdddab200000")
+        e = Encoding()
+        received = util.hex2bit("aacbac4cddd5ddd3bddd5ddcc5ddcddd4c2d5d5c2cdddab200000")
         preamble, sof, eof = "aa", "9", "b"
 
         decoded, err, state = e.code_enocean(decoding=True, inpt=received)
         self.assertEqual(err, 0)
         self.assertEqual(state, e.ErrorState.SUCCESS)
-        self.assertIn(preamble, e.bit2hex(decoded))
-        self.assertIn(sof, e.bit2hex(decoded))
-        self.assertIn(eof, e.bit2hex(decoded))
+        self.assertIn(preamble, util.bit2hex(decoded))
+        self.assertIn(sof, util.bit2hex(decoded))
+        self.assertIn(eof, util.bit2hex(decoded))
 
         reencoded, errors, state = e.code_enocean(decoding=False, inpt=decoded)
         self.assertEqual(errors, 0)
@@ -112,24 +114,25 @@ class TestDecoding(QtTestCase):
 
 
     def test_enocean_crc_polynomial(self):
-        e = Encoder()
+        e = Encoding()
 
         msg1 = "aa9a6d201006401009802019e411e8035b"
         msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"
 
         # Remove Preamble + SOF + EOF for CRC calculation
-        msg1 = e.hex2bit("a6d201006401009802019e411e8035")
-        crc1 = e.hex2bit("35")
-        msg2 = e.hex2bit("a6d2010000ffdaaf01019e411e8071")
-        crc2 = e.hex2bit("71")
+        msg1 = util.hex2bit("a6d201006401009802019e411e8035")
+        crc1 = util.hex2bit("35")
+        msg2 = util.hex2bit("a6d2010000ffdaaf01019e411e8071")
+        crc2 = util.hex2bit("71")
 
-        calc_crc1 = e.enocean_hash(msg1)
-        calc_crc2 = e.enocean_hash(msg2)
+        wsp_checker = WSPChecksum()
+        calc_crc1 = wsp_checker.calculate(msg1)
+        calc_crc2 = wsp_checker.calculate(msg2)
         self.assertTrue(calc_crc1 == crc1)
         self.assertTrue(calc_crc2 == crc2)
 
     def test_morse(self):
-        e = Encoder()
+        e = Encoding()
         e.morse_low = 3
         e.morse_high = 5
         e.morse_wait = 1
@@ -144,7 +147,7 @@ class TestDecoding(QtTestCase):
         self.assertEqual(reencoded, compare)
 
     def test_substitution(self):
-        e = Encoder()
+        e = Encoding()
         e.src = [array.array("B", [True, True, True, False]), array.array("B", [True, False, False, False])]
         e.dst = [array.array("B", [True]), array.array("B", [False])]
 

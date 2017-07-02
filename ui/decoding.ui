@@ -478,58 +478,6 @@
                <string>Data whitening polynomial (LFSR, hex, w/o first bit)</string>
               </property>
              </widget>
-             <widget class="QCheckBox" name="datawhitening_applycrc">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>60</y>
-                <width>261</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Compute and apply CRC-16 via XOR</string>
-              </property>
-             </widget>
-             <widget class="QCheckBox" name="datawhitening_preamble_rm">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>80</y>
-                <width>221</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Remove Preamble (1010...)</string>
-              </property>
-             </widget>
-             <widget class="QCheckBox" name="datawhitening_sync_rm">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>100</y>
-                <width>261</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Remove Synchronization bytes</string>
-              </property>
-             </widget>
-             <widget class="QCheckBox" name="datawhitening_crc_rm">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>120</y>
-                <width>131</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Remove CRC-16</string>
-              </property>
-             </widget>
             </widget>
             <widget class="QWidget" name="page_cut">
              <widget class="QLineEdit" name="cutmark">

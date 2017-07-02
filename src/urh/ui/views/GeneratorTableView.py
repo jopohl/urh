@@ -162,6 +162,9 @@ class GeneratorTableView(TableView):
         add_message_action.setIcon(QIcon.fromTheme("edit-table-insert-row-below"))
         add_message_action.triggered.connect(self.on_add_message_action_triggered)
 
+        if not self.selection_is_empty:
+            menu.addAction(self.copy_action)
+
         if self.model().row_count > 0:
             duplicate_action = menu.addAction("Duplicate line")
             duplicate_action.setIcon(QIcon.fromTheme("edit-table-insert-row-under"))

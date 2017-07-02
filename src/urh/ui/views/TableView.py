@@ -11,7 +11,7 @@ class TableView(QTableView):
 
         self.context_menu_pos = None  # type: QPoint
 
-        self.copy_action = QAction("Copy selection")
+        self.copy_action = QAction("Copy selection", self)
         self.copy_action.setShortcut(QKeySequence.Copy)
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.copy_action.triggered.connect(self.on_copy_action_triggered)

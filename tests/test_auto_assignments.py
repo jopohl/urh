@@ -2,6 +2,7 @@ import copy
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
@@ -36,8 +37,8 @@ class TestAutoAssignments(QtTestCase):
         self.decodings.append(Encoding(['Manchester I', 'Edge Trigger']))
         self.decodings.append(Encoding(['Manchester II', 'Edge Trigger', 'Invert']))
         self.decodings.append(Encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
-        self.decodings.append(Encoding(['DeWhitening Special', 'Remove Data Whitening (CC1101)', '0x9a7d9a7d;0x21;0x8']))
-        self.decodings.append(Encoding(['DeWhitening', 'Remove Data Whitening (CC1101)', '0x67686768;0x21;0x8']))
+        self.decodings.append(Encoding(['DeWhitening Special', constants.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21']))
+        self.decodings.append(Encoding(['DeWhitening', constants.DECODING_DATAWHITENING, '0x67686768;0x21']))
 
     def test_message_type_assign_by_value(self):
         start = 8

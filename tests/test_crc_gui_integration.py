@@ -197,7 +197,7 @@ class TestCRCGUIIntegration(QtTestCase):
 
     def __set_cc1101_encoding(self):
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
-        decoding = Encoding(["CC1101", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x0"])
+        decoding = Encoding(["CC1101", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"])
 
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.fill_decoding_combobox()

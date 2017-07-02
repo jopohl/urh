@@ -1,3 +1,7 @@
+import array
+import copy
+from collections import OrderedDict
+
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
@@ -8,10 +12,16 @@ from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
 from urh.ui.ui_checksum_options_widget import Ui_ChecksumOptions
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
+from urh.util.Logger import logger
 from urh.util.WSPChecksum import WSPChecksum
 
 
 class ChecksumWidgetController(QWidget):
+    SPECIAL_CRCS = OrderedDict([
+        ("CC1101", GenericCRC(polynomial="16_standard", start_value=True)),
+    ])
+
+
     class RangeTableModel(QAbstractTableModel):
         header_labels = ["Start", "End"]
 
@@ -104,13 +114,14 @@ class ChecksumWidgetController(QWidget):
         self.ui.tableViewDataRanges.setModel(self.data_range_table_model)
         self.ui.tableViewDataRanges.setEditTriggers(QAbstractItemView.AllEditTriggers)
         self.display_crc_data_ranges_in_table()
-        self.ui.comboBoxCRCFunction.clear()
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
+        self.ui.comboBoxCRCFunction.addItems([special_crc_name for special_crc_name in self.SPECIAL_CRCS])
         self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("[0-9,a-f]*")))
         self.ui.comboBoxCategory.clear()
         for _, member in self.checksum_label.Category.__members__.items():
             self.ui.comboBoxCategory.addItem(member.value)
         self.set_ui_for_category()
+        self.setFocus()
         self.create_connects()
 
     @property
@@ -136,14 +147,13 @@ class ChecksumWidgetController(QWidget):
         self.ui.radioButtonWSPChecksum8.clicked.connect(self.on_radio_button_wsp_checksum8_clicked)
         self.ui.radioButtonWSPCRC8.clicked.connect(self.on_radio_button_wsp_crc8_clicked)
 
-
     def set_checksum_ui_elements(self):
         if self.checksum_label.is_generic_crc:
-            self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.checksum_label.checksum.polynomial))
+            self.ui.lineEditCRCPolynomial.setText(self.checksum_label.checksum.polynomial_as_hex_str)
             self.ui.lineEditStartValue.setText(util.bit2hex(self.checksum_label.checksum.start_value))
             self.ui.lineEditFinalXOR.setText(util.bit2hex(self.checksum_label.checksum.final_xor))
-            self.__ensure_same_length(self.ui.lineEditCRCPolynomial,
-                                      [self.ui.lineEditStartValue, self.ui.lineEditFinalXOR])
+            self.__ensure_same_length()
+            self.__set_crc_info_label()
         elif self.checksum_label.category == self.checksum_label.Category.wsp:
             if self.checksum_label.checksum.mode == WSPChecksum.ChecksumMode.auto:
                 self.ui.radioButtonWSPAuto.setChecked(True)
@@ -168,14 +178,25 @@ class ChecksumWidgetController(QWidget):
     def display_crc_data_ranges_in_table(self):
         self.data_range_table_model.update()
 
-    def __ensure_same_length(self, reference_line_edit: QLineEdit, dependant_line_edits: list):
-        for dependant_line_edit in dependant_line_edits:  # type: QLineEdit
-            if len(reference_line_edit.text()) < len(dependant_line_edit.text()):
-                dependant_line_edit.setText(dependant_line_edit.text()[:len(reference_line_edit.text())])
+    def __set_crc_info_label(self):
+        crc = self.checksum_label.checksum  # type: GenericCRC
+        self.ui.label_crc_info.setText("<b>CRC Summary:</b><ul>"
+                                       "<li>Polynomial = {}<>"
+                                       "<li>Length of checksum = {} bit</li>"
+                                       "<li>start value length = {} bit</li>"
+                                       "<li>final XOR length = {} bit</li>"
+                                       "</ul>".format(crc.polynomial_to_html, crc.poly_order-1,
+                                                                         len(crc.start_value), len(crc.final_xor)))
+
+    def __ensure_same_length(self):
+        for dependant_line_edit in [self.ui.lineEditStartValue, self.ui.lineEditFinalXOR]:  # type: QLineEdit
+            if len(self.ui.lineEditCRCPolynomial.text()) < len(dependant_line_edit.text()):
+                dependant_line_edit.setText(dependant_line_edit.text()[:len(self.ui.lineEditCRCPolynomial.text())])
                 dependant_line_edit.editingFinished.emit()
-            elif len(reference_line_edit.text()) > len(dependant_line_edit.text()):
-                dependant_line_edit.setText(dependant_line_edit.text()
-                                            + "0" * (len(reference_line_edit.text()) - len(dependant_line_edit.text())))
+            elif len(self.ui.lineEditCRCPolynomial.text()) > len(dependant_line_edit.text()):
+                # pad zeros at front
+                dependant_line_edit.setText("0" * (len(self.ui.lineEditCRCPolynomial.text()) - len(dependant_line_edit.text()))
+                                            + dependant_line_edit.text())
                 dependant_line_edit.editingFinished.emit()
 
     @pyqtSlot()
@@ -191,23 +212,46 @@ class ChecksumWidgetController(QWidget):
 
     @pyqtSlot(int)
     def on_combobox_crc_function_current_index_changed(self, index: int):
-        self.checksum_label.checksum.polynomial = self.checksum_label.checksum.choose_polynomial(self.ui.comboBoxCRCFunction.currentText())
-        self.ui.lineEditCRCPolynomial.setText(util.bit2hex(self.checksum_label.checksum.polynomial))
+        poly_str = self.ui.comboBoxCRCFunction.itemText(index)
+        if poly_str in GenericCRC.DEFAULT_POLYNOMIALS:
+            self.checksum_label.checksum.polynomial = self.checksum_label.checksum.choose_polynomial(poly_str)
+            self.checksum_label.checksum.start_value = array.array("B", [0] * (self.checksum_label.checksum.poly_order - 1))
+            self.checksum_label.checksum.final_xor = array.array("B", [0] * (self.checksum_label.checksum.poly_order - 1))
+        elif poly_str in self.SPECIAL_CRCS:
+            self.checksum_label.checksum = copy.deepcopy(self.SPECIAL_CRCS[poly_str])
+        else:
+            logger.error("Unknown CRC")
+            return
+
+        self.ui.lineEditCRCPolynomial.setText(self.checksum_label.checksum.polynomial_as_hex_str)
+        self.ui.lineEditStartValue.setText(util.bit2hex(self.checksum_label.checksum.start_value))
+        self.ui.lineEditFinalXOR.setText(util.bit2hex(self.checksum_label.checksum.final_xor))
+        self.ui.lineEditCRCPolynomial.editingFinished.emit()
 
     @pyqtSlot()
     def on_line_edit_crc_polynomial_editing_finished(self):
-        self.checksum_label.checksum.polynomial = util.hex2bit(self.ui.lineEditCRCPolynomial.text())
-        self.__ensure_same_length(self.ui.lineEditCRCPolynomial, [self.ui.lineEditStartValue, self.ui.lineEditFinalXOR])
+        self.checksum_label.checksum.set_polynomial_from_hex(self.ui.lineEditCRCPolynomial.text())
+        self.__ensure_same_length()
+        self.__set_crc_info_label()
 
     @pyqtSlot()
     def on_line_edit_start_value_editing_finished(self):
-        self.checksum_label.checksum.start_value = util.hex2bit(self.ui.lineEditStartValue.text())
-        self.__ensure_same_length(self.ui.lineEditStartValue, [self.ui.lineEditCRCPolynomial, self.ui.lineEditFinalXOR])
+        crc = self.checksum_label.checksum
+        start_value = util.hex2bit(self.ui.lineEditStartValue.text())
+        # pad with zeros at front
+        start_value = array.array("B", [0]*(crc.poly_order - 1 - len(start_value))) + start_value
+        crc.start_value = start_value[0:crc.poly_order-1]
+        self.ui.lineEditStartValue.setText(util.bit2hex(crc.start_value))
+        self.__set_crc_info_label()
 
     @pyqtSlot()
     def on_line_edit_final_xor_editing_finished(self):
-        self.checksum_label.checksum.final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())
-        self.__ensure_same_length(self.ui.lineEditFinalXOR, [self.ui.lineEditCRCPolynomial, self.ui.lineEditStartValue])
+        crc = self.checksum_label.checksum
+        final_xor = util.hex2bit(self.ui.lineEditFinalXOR.text())
+        final_xor = array.array("B", [0] * (crc.poly_order - 1 - len(final_xor))) + final_xor
+        crc.final_xor = final_xor[0:crc.poly_order-1]
+        self.ui.lineEditFinalXOR.setText(util.bit2hex(crc.final_xor))
+        self.__set_crc_info_label()
 
     @pyqtSlot(int)
     def on_combobox_category_current_index_changed(self, index: int):

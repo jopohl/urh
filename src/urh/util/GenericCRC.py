@@ -2,17 +2,27 @@ import array
 import copy
 from collections import OrderedDict
 
+from urh.util import util
+from xml.etree import ElementTree as ET
 
 class GenericCRC(object):
+    # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
     DEFAULT_POLYNOMIALS = OrderedDict([
+        # x^8 + x^7 + x^6 + x^4 + x^2 + 1
+        ("8_standard", array.array("B", [1,
+                                         1, 1, 0, 1, 0, 1, 0, 1])),
+
         # x^16+x^15+x^2+x^0
-        ("16_standard", array.array("B", [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
+        ("16_standard", array.array("B", [1,
+                                          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
 
         # x^16+x^12+x^5+x^
-        ("16_ccitt", array.array("B", [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
+        ("16_ccitt", array.array("B", [1,
+                                       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
 
         # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-        ("16_dnp", array.array("B", [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
+        ("16_dnp", array.array("B", [1,
+                                     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
     ])
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
@@ -27,13 +37,14 @@ class GenericCRC(object):
         self.final_xor = self.__read_parameter(final_xor)
 
     def __read_parameter(self, value):
-        if not isinstance(value, bool):
+        if isinstance(value, bool) or isinstance(value, int):
+            return array.array('B', [value] * (self.poly_order - 1))
+        else:
             if len(value) == self.poly_order - 1:
                 return value
             else:
-                return value[0] * (self.poly_order - 1)
-        else:
-            return [value] * (self.poly_order - 1)
+                return array.array('B', value[0] * (self.poly_order - 1))
+
 
     @property
     def poly_order(self):
@@ -42,6 +53,29 @@ class GenericCRC(object):
     @property
     def polynomial_as_bit_str(self) -> str:
         return "".join("1" if p else "0" for p in self.polynomial)
+
+    @property
+    def polynomial_as_hex_str(self) -> str:
+        return util.bit2hex(self.polynomial[1:])  # do not show leading one
+
+    @property
+    def polynomial_to_html(self) -> str:
+        result = ""
+        for i in range(self.poly_order):
+            index = self.poly_order - 1 - i
+            if self.polynomial[i] > 0:
+                if index > 1:
+                    result += "x<sup>{0}</sup> + ".format(index)
+                elif index == 1:
+                    result += "x + "
+                elif index == 0:
+                    result += "1"
+
+        result = result.rstrip(" + ")
+        return result
+
+    def set_polynomial_from_hex(self, hex_str: str):
+        self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
 
     def choose_polynomial(self, polynomial):
         if isinstance(polynomial, str):
@@ -195,6 +229,21 @@ class GenericCRC(object):
                         polynomial[x] ^= one_bitter_crc[j][x + 1]
                     return polynomial
         return False
+
+    def to_xml(self):
+        root = ET.Element("crc")
+        root.set("polynomial", util.convert_bits_to_string(self.polynomial, 0))
+        root.set("start_value", util.convert_bits_to_string(self.start_value, 0))
+        root.set("final_xor", util.convert_bits_to_string(self.final_xor, 0))
+        return root
+
+    @classmethod
+    def from_xml(cls, tag:  ET.Element):
+        polynomial = tag.get("polynomial", "1010")
+        start_value = tag.get("start_value", "0000")
+        final_xor = tag.get("final_xor", "0000")
+        return GenericCRC(polynomial=util.string2bits(polynomial),
+                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor))
 
     @staticmethod
     def bit2str(inpt):

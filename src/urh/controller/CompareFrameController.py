@@ -4,7 +4,7 @@ import time
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
-from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
@@ -642,7 +642,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
-    def show_protocol_label_dialog(self, preselected_index: int):
+    def create_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
             longest_message = max(
@@ -650,20 +650,16 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        label_controller = ProtocolLabelController(preselected_index=preselected_index,
+        protocol_label_dialog = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
-        label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
-        label_controller.exec_()
+        protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
+        protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
-        self.protocol_label_list_model.update()
-        self.update_field_type_combobox()
-        self.label_value_model.update()
-        self.show_all_cols()
-        for lbl in self.proto_analyzer.protocol_labels:
-            self.set_protocol_label_visibility(lbl)
-        self.set_show_only_status()
-        self.protocol_model.update()
-        self.ui.tblViewProtocol.resize_columns()
+        return protocol_label_dialog
+
+    def show_protocol_label_dialog(self, preselected_index: int):
+        dialog = self.create_protocol_label_dialog(preselected_index)
+        dialog.exec_()
 
     def search(self):
         value = self.ui.lineEditSearch.text()
@@ -970,6 +966,18 @@ class CompareFrameController(QWidget):
     def contextMenuEvent(self, event: QContextMenuEvent):
         pass
 
+    @pyqtSlot(int)
+    def on_protocol_label_dialog_finished(self, dialog_result: int):
+        self.protocol_label_list_model.update()
+        self.update_field_type_combobox()
+        self.label_value_model.update()
+        self.show_all_cols()
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl)
+        self.set_show_only_status()
+        self.protocol_model.update()
+        self.ui.tblViewProtocol.resize_columns()
+
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
         self.setCursor(Qt.WaitCursor)
@@ -1128,6 +1136,7 @@ class CompareFrameController(QWidget):
     def on_search_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Search")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-find"))
         self.set_search_ui_visibility(True)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
@@ -1136,6 +1145,7 @@ class CompareFrameController(QWidget):
     def on_select_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Select all")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-select-all"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
@@ -1151,6 +1161,7 @@ class CompareFrameController(QWidget):
 
         self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)

@@ -14,6 +14,7 @@ from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
 from urh.ui.ui_properties_dialog import Ui_DialogLabels
+from urh.util.Logger import logger
 
 
 class ProtocolLabelController(QDialog):
@@ -70,7 +71,11 @@ class ProtocolLabelController(QDialog):
                     w = ChecksumWidgetController(lbl, self.model.message, self.model.proto_view)
                     self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
-                    raise NotImplementedError("No Special Config Dialog for field type " + lbl.field_type.caption)
+                    logger.error("No Special Config Dialog for field type " + lbl.field_type.caption)
+
+        if self.ui.tabWidgetAdvancedSettings.count() > 0:
+            self.ui.tabWidgetAdvancedSettings.setCurrentIndex(0)
+            self.ui.tabWidgetAdvancedSettings.setFocus()
 
         self.ui.groupBoxAdvancedSettings.setVisible(self.ui.tabWidgetAdvancedSettings.count() > 0)
 

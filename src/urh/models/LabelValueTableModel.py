@@ -3,6 +3,7 @@ import array
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PyQt5.QtGui import QColor
 
+from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -76,10 +77,7 @@ class LabelValueTableModel(QAbstractTableModel):
             return None
 
         if isinstance(lbl, ChecksumLabel):
-            data = array.array("B", [])
-            for data_range in lbl.data_ranges:
-                data.extend(self.message.decoded_bits[data_range[0]:data_range[1]])
-            calculated_crc = lbl.calculate_checksum(data)
+            calculated_crc = lbl.calculate_checksum_for_message(self.message)
         else:
             calculated_crc = None
 
@@ -114,9 +112,9 @@ class LabelValueTableModel(QAbstractTableModel):
             if isinstance(lbl, ChecksumLabel):
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
-                    return QColor(0, 255, 0, 150)
+                    return constants.BG_COLOR_CORRECT
                 else:
-                    return QColor(255, 0, 0, 150)
+                    return constants.BG_COLOR_WRONG
 
             else:
                 return None

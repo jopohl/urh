@@ -125,7 +125,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="autoScroll">
            <bool>true</bool>
@@ -182,7 +182,11 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              <number>0</number>
             </property>
             <item>
-             <widget class="QListView" name="listViewParticipants"/>
+             <widget class="QListView" name="listViewParticipants">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -299,7 +303,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

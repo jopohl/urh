@@ -4,7 +4,6 @@ import array
 
 from urh import constants
 from urh.util import util
-from urh.util.GenericCRC import GenericCRC
 
 
 class Encoding(object):
@@ -14,7 +13,6 @@ class Encoding(object):
 
     class ErrorState:
         SUCCESS = "success"
-        WRONG_CRC = "wrong crc"
         PREAMBLE_NOT_FOUND = "preamble not found"
         SYNC_NOT_FOUND = "sync not found"
         EOF_NOT_FOUND = "eof not found"
@@ -52,17 +50,8 @@ class Encoding(object):
 
         self.data_whitening_polynomial = polynomial  # Set polynomial
         self.data_whitening_sync = sync_bytes  # Sync Bytes
-        self.data_whitening_crc = array.array("B", [False] * 16)  # CRC is 16 Bit long
         self.data_whitening_preamble = array.array("B", [True, False] * 16)  # 010101...
         self.lfsr_state = array.array("B", [])
-
-        self.data_whitening_apply_crc = True  # Apply CRC with XOR
-        self.data_whitening_preamble_rm = True  # Remove Preamble
-        self.data_whitening_sync_rm = True  # Remove Sync Bytes
-        self.data_whitening_crc_rm = False  # Remove CRC
-
-        # Get CRC Object
-        self.c = GenericCRC(polynomial="16_standard", start_value=True)
 
         # Set Chain
         self.chain = []
@@ -117,7 +106,7 @@ class Encoding(object):
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
-                    self.chain.append("0xe9cae9ca;0x21;0x8")  # Default Sync Bytes
+                    self.chain.append("0xe9cae9ca;0x21")  # Default Sync Bytes
             elif constants.DECODING_CARRIER in names[i]:
                 self.chain.append(self.code_carrier)
                 i += 1
@@ -270,17 +259,11 @@ class Encoding(object):
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:
-                if self.chain[i + 1].count(';') == 2:
-                    self.data_whitening_sync, self.data_whitening_polynomial, opt = self.chain[i + 1].split(";")
-                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0) and len(opt) > 0:
+                if self.chain[i + 1].count(';') == 1:
+                    self.data_whitening_sync, self.data_whitening_polynomial = self.chain[i + 1].split(";")
+                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0):
                         self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
                         self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
-                        opt = util.hex2bit(opt)
-                        if len(opt) >= 4:
-                            self.data_whitening_apply_crc = opt[0]
-                            self.data_whitening_preamble_rm = opt[1]
-                            self.data_whitening_sync_rm = opt[2]
-                            self.data_whitening_crc_rm = opt[3]
             elif self.code_cut == operation:
                 if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
                     self.cutmode, tmp = self.chain[i + 1].split(";")
@@ -384,11 +367,6 @@ class Encoding(object):
         if decoding and whitening_start_pos == inpt_from:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.SYNC_NOT_FOUND
 
-        # If encoding and crc_rm is active, extend inpt with 0s
-        if not decoding and self.data_whitening_crc_rm:
-            inpt = inpt + self.data_whitening_crc
-            inpt_to += len(self.data_whitening_crc)
-
         # Prepare keystream
         self.lfsr_state = array.array("B", [])
         keystream = self.lfsr(0)
@@ -399,46 +377,12 @@ class Encoding(object):
         if len(keystream) < inpt_to - whitening_start_pos:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Error 31338
 
-        # Apply keystream (xor) - Decoding
-        if decoding:
-            for i in range(whitening_start_pos, inpt_to):
-                inpt[i] ^= keystream[i - whitening_start_pos]
+        # Apply keystream (xor)
+        for i in range(whitening_start_pos, inpt_to):
+            inpt[i] ^= keystream[i - whitening_start_pos]
 
-        # Apply CRC-16
-        if self.data_whitening_apply_crc:
-            # Calculate CRC-16:
-            if not decoding and self.data_whitening_crc_rm:
-                crc = self.c.crc(inpt[whitening_start_pos:inpt_to])
-            else:
-                crc = self.c.crc(inpt[whitening_start_pos:inpt_to - len(self.data_whitening_crc)])
-            # Enough bits there?
-            if len(inpt) < (inpt_to - len(self.data_whitening_crc) + 16) or inpt_to - len(self.data_whitening_crc) < 0:
-                    return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Misc Error
-            # XOR calculated CRC to original CRC -> Zero if no errors
-            for i in range(0, 16):
-                inpt[inpt_to - len(self.data_whitening_crc) + i] ^= crc[i]
-
-        # Apply keystream (xor) - Decoding
+        # Duplicate last bit when encoding
         if not decoding:
-            for i in range(whitening_start_pos, inpt_to):
-                inpt[i] ^= keystream[i - whitening_start_pos]
-
-        # Remove preamble/sync bytes/crc
-        if decoding:
-            if self.data_whitening_preamble_rm:
-                inpt_from += whitening_start_pos - len_sync
-            if self.data_whitening_sync_rm:
-                inpt_from += len_sync
-            if self.data_whitening_crc_rm:
-                inpt_to -= len(self.data_whitening_crc)
-        else:
-            if self.data_whitening_sync_rm:
-                inpt = self.data_whitening_sync + inpt
-                inpt_to += len(self.data_whitening_sync)
-            if self.data_whitening_preamble_rm:
-                inpt = self.data_whitening_preamble + inpt
-                inpt_to += len(self.data_whitening_preamble)
-            # Duplicate last bit when encoding
             inpt += array.array("B", [inpt[-1]])
             inpt_to += 1
 

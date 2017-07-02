@@ -181,7 +181,7 @@ class GeneratorTableModel(TableModel):
                 for lbl in checksum_labels:  # type: ChecksumLabel
                     lbl = self.__copy_label_on_write(lbl, message.message_type)
                     lbl.checksum_manually_edited = False
-                    calculated_checksum = lbl.calculate_checksum_for_message(message)
+                    calculated_checksum = lbl.calculate_checksum_for_message(message, use_decoded_bits=False)
                     label_range = message.get_label_range(lbl=lbl, view=0, decode=False)
                     start, end = label_range[0], label_range[1]
                     message.plain_bits[start:end] = calculated_checksum + array.array("B", [0]*((end-start) - len(calculated_checksum)))

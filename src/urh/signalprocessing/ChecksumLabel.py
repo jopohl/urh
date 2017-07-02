@@ -31,10 +31,11 @@ class ChecksumLabel(ProtocolLabel):
     def calculate_checksum(self, bits: array.array) -> array.array:
         return self.checksum.calculate(bits)
 
-    def calculate_checksum_for_message(self, message) -> array.array:
+    def calculate_checksum_for_message(self, message, use_decoded_bits: bool) -> array.array:
         data = array.array("B", [])
+        bits = message.decoded_bits if use_decoded_bits else message.plain_bits
         for data_range in self.data_ranges:
-            data.extend(message.decoded_bits[data_range[0]:data_range[1]])
+            data.extend(bits[data_range[0]:data_range[1]])
         return self.calculate_checksum(data)
 
     @property

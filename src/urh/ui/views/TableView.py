@@ -1,4 +1,5 @@
 import numpy
+import numpy as np
 from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot
 from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon
 from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory
@@ -51,11 +52,11 @@ class TableView(QTableView):
         return top_left[0], bottom_right[0], top_left[1], bottom_right[1] + 1
 
     def select(self, row_1, col_1, row_2, col_2):
-        selection = QItemSelection()
-        start_index = self.model().index(row_1, col_1)
-        end_index = self.model().index(row_2, col_2)
-        selection.select(start_index, end_index)
-        self.selectionModel().select(selection, QItemSelectionModel.Select)
+        sel = QItemSelection()
+        startindex = self.model().index(row_1, col_1)
+        endindex = self.model().index(row_2, col_2)
+        sel.select(startindex, endindex)
+        self.selectionModel().select(sel, QItemSelectionModel.Select)
 
     def resize_columns(self):
         if not self.isVisible():
@@ -65,7 +66,7 @@ class TableView(QTableView):
         w = f.widthChar("0") + 2
 
         for i in range(10):
-            self.setColumnWidth(i, 3 * w)
+            self.setColumnWidth(i, 3*w)
 
         QApplication.instance().processEvents()
         for i in range(9, self.model().columnCount()):
@@ -73,9 +74,26 @@ class TableView(QTableView):
             if i % 10 == 0:
                 QApplication.instance().processEvents()
 
+    def resize_vertical_header(self):
+        num_rows = self.model().rowCount()
+        if self.isVisible() and num_rows > 0:
+            hd = self.model().headerData
+            max_len = np.max([len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(num_rows)])
+            w = (self.font().pointSize() + 2) * max_len
+
+            # https://github.com/jopohl/urh/issues/182
+            rh = self.verticalHeader().defaultSectionSize()
+
+            for i in range(num_rows):
+                self.verticalHeader().resizeSection(i, w)
+                self.setRowHeight(i, rh)
+                if i % 10 == 0:
+                    QApplication.instance().processEvents()
+
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
-            selected = self.selectionModel().selection()  # type: QItemSelection
+            selected = self.selectionModel().selection()
+            """:type: QtGui.QItemSelection """
             if selected.isEmpty():
                 return
 

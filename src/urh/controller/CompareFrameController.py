@@ -946,6 +946,7 @@ class CompareFrameController(QWidget):
 
     def refresh_assigned_participants_ui(self):
         self.protocol_model.refresh_vertical_header()
+        self.ui.tblViewProtocol.resize_vertical_header()
         self.participant_changed.emit()
 
     def reload_field_types(self):

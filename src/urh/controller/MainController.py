@@ -572,6 +572,7 @@ class MainController(QMainWindow):
         elif index == 1:
             self.undo_group.setActiveStack(self.compare_frame_controller.protocol_undo_stack)
             self.compare_frame_controller.ui.tblViewProtocol.resize_columns()
+            self.compare_frame_controller.ui.tblViewProtocol.resize_vertical_header()
             h = max(self.compare_frame_controller.ui.btnSaveProto.height(),
                     self.generator_tab_controller.ui.btnSave.height())
             self.compare_frame_controller.ui.btnSaveProto.setMinimumHeight(h)

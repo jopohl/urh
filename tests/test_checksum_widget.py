@@ -85,9 +85,9 @@ class TestChecksumWidget(QtTestCase):
         mt = MessageType("test")
         mt.append(ChecksumLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CHECKSUM)))
 
-        dialog = ProtocolLabelController(0, Message([0] * 100, 0, mt), 0)
-        self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        self.assertEqual(dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")
+        self.dialog = ProtocolLabelController(0, Message([0] * 100, 0, mt), 0)
+        self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.count(), 1)
+        self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")
 
     def test_enocean_checksum(self):
         checksum_label = ChecksumLabel("checksum_label", 50, 100, 0, FieldType("crc", FieldType.Function.CHECKSUM))

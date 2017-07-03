@@ -16,6 +16,8 @@ class TableView(QTableView):
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
 
+        self.use_header_colors = False
+
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
@@ -189,16 +191,14 @@ class TableView(QTableView):
 
     @pyqtSlot(bool)
     def on_vertical_header_color_status_changed(self, use_colors: bool):
-        app_style = QApplication.style().objectName()
-        if app_style.lower() == "fusion":
-            # Application style is fusion anyway, no need to change it
+        if use_colors == self.use_header_colors:
             return
 
+        self.use_header_colors = use_colors
         header = self.verticalHeader()
-
-        if use_colors:
+        if self.use_header_colors:
             header.setStyle(QStyleFactory.create("Fusion"))
         else:
-            header.setStyle(QStyleFactory.create(app_style))
+            header.setStyle(QStyleFactory.create(""))
 
         self.setVerticalHeader(header)

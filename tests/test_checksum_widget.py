@@ -34,6 +34,10 @@ class TestChecksumWidget(QtTestCase):
         crc_widget_controller.ui.btnRemoveRange.click()
         self.assertEqual(model.rowCount(), 1)
 
+        crc_widget_controller.setParent(None)
+        crc_widget_controller.deleteLater()
+        del crc_widget_controller
+
     def test_configure_crc_parameters(self):
         crc_label = ChecksumLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CHECKSUM))
 
@@ -60,6 +64,10 @@ class TestChecksumWidget(QtTestCase):
         crc_widget_controller.ui.lineEditFinalXOR.editingFinished.emit()
         self.assertEqual(util.bit2hex(crc_label.checksum.final_xor), "cccaa")
 
+        crc_widget_controller.setParent(None)
+        crc_widget_controller.deleteLater()
+        del crc_widget_controller
+
     def test_default_crcs(self):
         crc_label = ChecksumLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CHECKSUM))
         crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
@@ -81,6 +89,10 @@ class TestChecksumWidget(QtTestCase):
         self.assertEqual(crc_widget_controller.ui.comboBoxCRCFunction.currentText(), "8_standard")
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), "d5")
 
+        crc_widget_controller.setParent(None)
+        crc_widget_controller.deleteLater()
+        del crc_widget_controller
+
     def test_crc_widget_in_protocol_label_dialog(self):
         mt = MessageType("test")
         mt.append(ChecksumLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CHECKSUM)))
@@ -101,3 +113,7 @@ class TestChecksumWidget(QtTestCase):
         crc_widget_controller.ui.radioButtonWSPChecksum8.click()
 
         self.assertEqual(checksum_label.checksum.mode, WSPChecksum.ChecksumMode.checksum8)
+
+        crc_widget_controller.setParent(None)
+        crc_widget_controller.deleteLater()
+        del crc_widget_controller

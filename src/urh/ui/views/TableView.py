@@ -2,7 +2,7 @@ import numpy
 import numpy as np
 from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot
 from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon
-from PyQt5.QtWidgets import QTableView, QApplication, QAction
+from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory
 
 
 class TableView(QTableView):
@@ -186,3 +186,19 @@ class TableView(QTableView):
                 text += str(cell.data())
 
         QApplication.instance().clipboard().setText(text)
+
+    @pyqtSlot(bool)
+    def on_vertical_header_color_status_changed(self, use_colors: bool):
+        app_style = QApplication.style().objectName()
+        if app_style.lower() == "fusion":
+            # Application style is fusion anyway, no need to change it
+            return
+
+        header = self.verticalHeader()
+
+        if use_colors:
+            header.setStyle(QStyleFactory.create("Fusion"))
+        else:
+            header.setStyle(QStyleFactory.create(app_style))
+
+        self.setVerticalHeader(header)

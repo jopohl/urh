@@ -225,6 +225,8 @@ class CompareFrameController(QWidget):
         self.ui.chkBoxOnlyShowLabelsInProtocol.stateChanged.connect(self.on_check_box_show_only_labels_state_changed)
         self.ui.chkBoxShowOnlyDiffs.stateChanged.connect(self.on_check_box_show_only_diffs_state_changed)
 
+        self.protocol_model.vertical_header_color_status_changed.connect(self.ui.tblViewProtocol.on_vertical_header_color_status_changed)
+
         self.ui.tblViewProtocol.show_interpretation_clicked.connect(self.show_interpretation_clicked.emit)
         self.ui.tblViewProtocol.protocol_view_change_clicked.connect(self.ui.cbProtoView.setCurrentIndex)
         self.ui.tblViewProtocol.selection_changed.connect(self.on_table_selection_changed)

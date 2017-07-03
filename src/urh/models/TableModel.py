@@ -11,6 +11,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 class TableModel(QAbstractTableModel):
     data_edited = pyqtSignal(int, int)
+    vertical_header_color_status_changed = pyqtSignal(bool)
 
     def __init__(self, participants, parent=None):
         super().__init__(parent)
@@ -163,6 +164,7 @@ class TableModel(QAbstractTableModel):
     def refresh_vertical_header(self):
         self.vertical_header_colors.clear()
         self.vertical_header_text.clear()
+        use_colors = False
         for i in range(self.row_count):
             try:
                 participant = self.protocol.messages[i].participant
@@ -171,9 +173,11 @@ class TableModel(QAbstractTableModel):
             if participant:
                 self.vertical_header_text[i] = "{0} ({1})".format(i + 1, participant.shortname)
                 self.vertical_header_colors[i] = constants.PARTICIPANT_COLORS[participant.color_index]
+                use_colors = True
             else:
                 self.vertical_header_text[i] = str(i+1)
 
+        self.vertical_header_color_status_changed.emit(use_colors)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         if not index.isValid():

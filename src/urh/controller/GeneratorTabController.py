@@ -122,6 +122,8 @@ class GeneratorTabController(QWidget):
 
         self.project_manager.project_updated.connect(self.on_project_updated)
 
+        self.table_model.vertical_header_color_status_changed.connect(self.ui.tableMessages.on_vertical_header_color_status_changed)
+
         self.label_list_model.protolabel_removed.connect(self.handle_proto_label_removed)
 
         self.ui.lWPauses.item_edit_clicked.connect(self.edit_pause_item)

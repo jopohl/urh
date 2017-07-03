@@ -52,11 +52,11 @@ class TableView(QTableView):
         return top_left[0], bottom_right[0], top_left[1], bottom_right[1] + 1
 
     def select(self, row_1, col_1, row_2, col_2):
-        sel = QItemSelection()
-        startindex = self.model().index(row_1, col_1)
-        endindex = self.model().index(row_2, col_2)
-        sel.select(startindex, endindex)
-        self.selectionModel().select(sel, QItemSelectionModel.Select)
+        selection = QItemSelection()
+        start_index = self.model().index(row_1, col_1)
+        end_index = self.model().index(row_2, col_2)
+        selection.select(start_index, end_index)
+        self.selectionModel().select(selection, QItemSelectionModel.Select)
 
     def resize_columns(self):
         if not self.isVisible():
@@ -66,7 +66,7 @@ class TableView(QTableView):
         w = f.widthChar("0") + 2
 
         for i in range(10):
-            self.setColumnWidth(i, 3*w)
+            self.setColumnWidth(i, 3 * w)
 
         QApplication.instance().processEvents()
         for i in range(9, self.model().columnCount()):
@@ -92,19 +92,13 @@ class TableView(QTableView):
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
-            selected = self.selectionModel().selection()
-            """:type: QtGui.QItemSelection """
-            if selected.isEmpty():
+            min_row, max_row, start, end = self.selection_range()
+            if min_row == max_row == start == end == -1:
                 return
-
-            min_row = numpy.min([rng.top() for rng in selected])
-            max_row = numpy.max([rng.bottom() for rng in selected])
-            start = numpy.min([rng.left() for rng in selected])
-            end = numpy.max([rng.right() for rng in selected])
 
             self.setEnabled(False)
             self.setCursor(Qt.WaitCursor)
-            self.model().delete_range(min_row, max_row, start, end)
+            self.model().delete_range(min_row, max_row, start, end - 1)
             self.unsetCursor()
             self.setEnabled(True)
             self.setFocus()
@@ -118,55 +112,52 @@ class TableView(QTableView):
             super().keyPressEvent(event)
             return
 
-        sel = self.selectionModel().selectedIndexes()
-        cols = [i.column() for i in sel]
-        rows = [i.row() for i in sel]
-        if len(cols) == 0 or len(rows) == 0:
+        min_row, max_row, min_col, max_col = self.selection_range()
+        if min_row == max_row == min_col == max_col == -1:
             super().keyPressEvent(event)
             return
 
-        mincol, maxcol = numpy.min(cols), numpy.max(cols)
-        minrow, maxrow = numpy.min(rows), numpy.max(rows)
+        max_col -= 1
         scroll_to_start = True
 
-        if event.key() == Qt.Key_Right and maxcol < self.model().col_count - 1:
-            maxcol += 1
-            mincol += 1
+        if event.key() == Qt.Key_Right and max_col < self.model().col_count - 1:
+            max_col += 1
+            min_col += 1
             scroll_to_start = False
-        elif event.key() == Qt.Key_Left and mincol > 0:
-            mincol -= 1
-            maxcol -= 1
-        elif event.key() == Qt.Key_Down and maxrow < self.model().row_count - 1:
+        elif event.key() == Qt.Key_Left and min_col > 0:
+            min_col -= 1
+            max_col -= 1
+        elif event.key() == Qt.Key_Down and max_row < self.model().row_count - 1:
             first_unhidden = -1
-            for row in range(maxrow + 1, self.model().row_count):
+            for row in range(max_row + 1, self.model().row_count):
                 if not self.isRowHidden(row):
                     first_unhidden = row
                     break
 
             if first_unhidden != -1:
-                sel_len = maxrow - minrow
-                maxrow = first_unhidden
-                minrow = maxrow - sel_len
+                sel_len = max_row - min_row
+                max_row = first_unhidden
+                min_row = max_row - sel_len
                 scroll_to_start = False
-        elif event.key() == Qt.Key_Up and minrow > 0:
+        elif event.key() == Qt.Key_Up and min_row > 0:
             first_unhidden = -1
-            for row in range(minrow - 1, -1, -1):
+            for row in range(min_row - 1, -1, -1):
                 if not self.isRowHidden(row):
                     first_unhidden = row
                     break
 
             if first_unhidden != -1:
-                sel_len = maxrow - minrow
-                minrow = first_unhidden
-                maxrow = minrow + sel_len
+                sel_len = max_row - min_row
+                min_row = first_unhidden
+                max_row = min_row + sel_len
 
-        start = self.model().index(minrow, mincol)
-        end = self.model().index(maxrow, maxcol)
+        start = self.model().index(min_row, min_col)
+        end = self.model().index(max_row, max_col)
 
-        selctn = QItemSelection()
-        selctn.select(start, end)
+        selection = QItemSelection()
+        selection.select(start, end)
         self.selectionModel().setCurrentIndex(end, QItemSelectionModel.ClearAndSelect)
-        self.selectionModel().select(selctn, QItemSelectionModel.ClearAndSelect)
+        self.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         if scroll_to_start:
             self.scrollTo(start)
         else:

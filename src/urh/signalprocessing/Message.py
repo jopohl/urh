@@ -39,17 +39,13 @@ class Message(object):
         self.pause = pause
         self.modulator_indx = modulator_indx
         self.rssi = rssi
-        self.participant = participant
-        """:type: Participant """
-
-        self.message_type = message_type
-        """:type: MessageType """
+        self.participant = participant    # type: Participant
+        self.message_type = message_type  # type: MessageType
 
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 
-        self.__decoder = decoder if decoder else Encoding(["Non Return To Zero (NRZ)"])
-        """:type: encoding """
+        self.__decoder = decoder if decoder else Encoding(["Non Return To Zero (NRZ)"])  # type: Encoding
 
         self.align_labels = True
         self.fuzz_created = fuzz_created

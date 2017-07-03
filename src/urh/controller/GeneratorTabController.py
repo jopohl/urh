@@ -435,7 +435,10 @@ class GeneratorTabController(QWidget):
         self.setCursor(Qt.WaitCursor)
         fuzz_action = Fuzz(self.table_model.protocol, fuz_mode)
         self.table_model.undo_stack.push(fuzz_action)
+        for row in fuzz_action.added_message_indices:
+            self.table_model.update_checksums_for_row(row)
         self.unsetCursor()
+        self.ui.tableMessages.setFocus()
 
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
@@ -642,6 +645,10 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_fuzzing_finished(self):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingUI)
+        # Calculate Checksums for Fuzzed Messages
+        self.setCursor(Qt.WaitCursor)
+
+        self.unsetCursor()
 
     @pyqtSlot(int)
     def on_current_fuzzing_message_changed(self, current_message: int):

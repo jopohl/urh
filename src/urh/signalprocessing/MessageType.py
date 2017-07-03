@@ -53,6 +53,10 @@ class MessageType(list):
         return self.__id
 
     @property
+    def checksum_labels(self) -> list:
+        return [lbl for lbl in self if isinstance(lbl, ChecksumLabel)]
+
+    @property
     def unlabeled_ranges(self):
         """
 

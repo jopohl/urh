@@ -1,5 +1,6 @@
 import array
 import copy
+from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot
 from PyQt5.QtGui import QColor
@@ -34,6 +35,8 @@ class GeneratorTableModel(TableModel):
         self.decode = False
         self.is_generator = True
 
+        self.edited_checksum_labels_by_row = defaultdict(set)
+
         self.data_edited.connect(self.on_data_edited)
 
     def refresh_fonts(self):
@@ -54,9 +57,8 @@ class GeneratorTableModel(TableModel):
                     self.text_colors[i, j] = QColor("orange")
 
             for lbl in (lbl for lbl in message.message_type if isinstance(lbl, ChecksumLabel)):
-                if not lbl.checksum_manually_edited:
-                    for j in range(*message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)):
-                        self.italic_fonts[i, j] = True
+                if lbl not in self.edited_checksum_labels_by_row[i] and not lbl.fuzz_created:
+                    self.__set_italic_font_for_label_range(row=i, label=lbl, italic=True)
 
     def delete_range(self, msg_start: int, msg_end: int, index_start: int, index_end: int):
         if msg_start > msg_end:
@@ -153,19 +155,44 @@ class GeneratorTableModel(TableModel):
         insert_action = InsertColumn(self.protocol, index, rows, self.proto_view)
         self.undo_stack.push(insert_action)
 
-    def __copy_label_on_write(self, label, message_type):
-        if not label.copied:
-            index = message_type.index(label)
-            label = copy.deepcopy(label)
-            message_type[index] = label
-            label.copied = True
-        return label
+    def __set_italic_font_for_label_range(self, row, label, italic: bool):
+        message = self.protocol.messages[row]
+        for j in range(*message.get_label_range(lbl=label, view=self.proto_view, decode=False)):
+            self.italic_fonts[row, j] = italic
+
+    def update_checksums_for_row(self, row: int):
+        message = self.protocol.messages[row]
+        for lbl in message.message_type.checksum_labels:  # type: ChecksumLabel
+            if lbl.fuzz_created:
+                continue
+
+            self.__set_italic_font_for_label_range(row, lbl, italic=True)
+            self.edited_checksum_labels_by_row[row].discard(lbl)
+
+            calculated_checksum = lbl.calculate_checksum_for_message(message, use_decoded_bits=False)
+            label_range = message.get_label_range(lbl=lbl, view=0, decode=False)
+            start, end = label_range[0], label_range[1]
+            message.plain_bits[start:end] = calculated_checksum + array.array("B", [0] * (
+            (end - start) - len(calculated_checksum)))
+
+            label_range = message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)
+            start, end = label_range[0], label_range[1]
+            if self.proto_view == 0:
+                data = calculated_checksum
+            elif self.proto_view == 1:
+                data = util.aggregate_bits(calculated_checksum, size=4)
+            elif self.proto_view == 2:
+                data = util.aggregate_bits(calculated_checksum, size=8)
+            else:
+                data = array.array("B", [])
+
+            self.display_data[row][start:end] = data + array.array("B", [0] * ((end - start) - len(data)))
 
     @pyqtSlot(int, int)
     def on_data_edited(self, row: int, column: int):
         edited_range = range(column, column+1)
         message = self.protocol.messages[row]
-        checksum_labels = [lbl for lbl in message.message_type if isinstance(lbl, ChecksumLabel)]
+        checksum_labels = message.message_type.checksum_labels
         if checksum_labels:
             edited_checksum_labels = [lbl for lbl in checksum_labels
                                       if any(j in edited_range
@@ -175,29 +202,11 @@ class GeneratorTableModel(TableModel):
 
             if edited_checksum_labels:
                 for lbl in edited_checksum_labels:
-                    lbl = self.__copy_label_on_write(lbl, message.message_type)
-                    lbl.checksum_manually_edited = True
+                    if lbl.fuzz_created:
+                        continue
+
+                    self.__set_italic_font_for_label_range(row, lbl, italic=False)
+                    self.edited_checksum_labels_by_row[row].add(lbl)
             else:
-                for lbl in checksum_labels:  # type: ChecksumLabel
-                    lbl = self.__copy_label_on_write(lbl, message.message_type)
-                    lbl.checksum_manually_edited = False
-                    calculated_checksum = lbl.calculate_checksum_for_message(message, use_decoded_bits=False)
-                    label_range = message.get_label_range(lbl=lbl, view=0, decode=False)
-                    start, end = label_range[0], label_range[1]
-                    message.plain_bits[start:end] = calculated_checksum + array.array("B", [0]*((end-start) - len(calculated_checksum)))
+                self.update_checksums_for_row(row)
 
-                    label_range = message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)
-                    start, end = label_range[0], label_range[1]
-                    if self.proto_view == 0:
-                        data = calculated_checksum
-                    elif self.proto_view == 1:
-                        data = util.aggregate_bits(calculated_checksum, size=4)
-                    elif self.proto_view == 2:
-                        data = util.aggregate_bits(calculated_checksum, size=8)
-                    else:
-                        data = array.array("B", [])
-
-                    self.display_data[row][start:end] = data + array.array("B", [0]*((end-start) - len(data)))
-
-            # If performance should suffer, we need to update italic fonts only here
-            self.refresh_fonts()

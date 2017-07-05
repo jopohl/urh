@@ -236,7 +236,7 @@ class Ui_MainWindow(object):
         self.actionConvert_Folder_to_Project.setObjectName("actionConvert_Folder_to_Project")
         self.actionDecoding = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/data/icons/decoding.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/data/icons/decoding.svg.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDecoding.setIcon(icon1)
         self.actionDecoding.setObjectName("actionDecoding")
         self.actionRecord = QtWidgets.QAction(MainWindow)

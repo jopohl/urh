@@ -15,7 +15,10 @@
    version="1.1"
    id="SVGRoot"
    inkscape:version="0.92.1 r"
-   sodipodi:docname="decoding.svg">
+   sodipodi:docname="decoding.svg"
+   inkscape:export-filename="/home/joe/GIT/urh/data/icons/decoding.svg.png"
+   inkscape:export-xdpi="94.889999"
+   inkscape:export-ydpi="94.889999">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -24,7 +27,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="21.40625"
+     inkscape:cx="2.84375"
      inkscape:cy="20.0625"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"

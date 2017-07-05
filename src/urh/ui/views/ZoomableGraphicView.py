@@ -85,10 +85,6 @@ class ZoomableGraphicView(SelectableGraphicView):
         if self.sceneRect().width() == 0:
             return
 
-        if self.view_rect().width() > self.sceneRect().width():
-            x_factor = self.width() / self.sceneRect().width()
-            self.scale(x_factor / self.transform().m11(), 1)
-
         self.auto_fit_view()
 
     def auto_fit_view(self):

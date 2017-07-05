@@ -18,12 +18,12 @@ class TestModulatorGUI(QtTestCase):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
 
+        if self.SHOW:
+            self.dialog.show()
+
         logger.debug("Initializing Modulation dialog")
         self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
         logger.debug("Preparation success")
-
-        if self.SHOW:
-            self.dialog.show()
 
     def test_add_remove_modulator(self):
         self.assertEqual(len(self.dialog.modulators), 1)
@@ -66,7 +66,7 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(self.dialog.current_modulator.sample_rate, 5e6)
 
     def test_zoom(self):
-        self.dialog.ui.gVModulated.zoom(1.01)
+        self.dialog.ui.gVModulated.zoom(1.1)
         self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
                          int(self.dialog.ui.gVCarrier.view_rect().width()))
 

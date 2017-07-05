@@ -19,12 +19,12 @@ class ChecksumLabel(ProtocolLabel):
         wsp = "Wireless Short Packet (WSP)"
 
     def __init__(self, name: str, start: int, end: int, color_index: int, field_type: FieldType,
-                 fuzz_created=False, auto_created=False):
+                 fuzz_created=False, auto_created=False, data_range_start=0):
         assert field_type.function == FieldType.Function.CHECKSUM
         super().__init__(name, start, end, color_index, fuzz_created, auto_created, field_type)
 
         self.__category = self.Category.generic
-        self.__data_ranges = [[0, self.start]]  # type: list[list[int,int]]
+        self.__data_ranges = [[data_range_start, self.start]]  # type: list[list[int,int]]
         self.checksum = GenericCRC(polynomial=0)   # type: GenericCRC or WSPChecksum
 
     def calculate_checksum(self, bits: array.array) -> array.array:
@@ -39,10 +39,10 @@ class ChecksumLabel(ProtocolLabel):
 
     @property
     def data_ranges(self):
-        if self.category != self.Category.wsp:
-            return self.__data_ranges
-        else:
+        if self.category == self.Category.wsp:
             return [[12, -4]]
+        else:
+            return self.__data_ranges
 
     @data_ranges.setter
     def data_ranges(self, value):

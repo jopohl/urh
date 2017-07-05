@@ -45,6 +45,14 @@ class ProtocolLabel(object):
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
 
     @property
+    def is_preamble(self) -> bool:
+        return self.field_type is not None and self.field_type.function == FieldType.Function.PREAMBLE
+
+    @property
+    def is_sync(self) -> bool:
+        return self.field_type is not None and self.field_type.function == FieldType.Function.SYNC
+
+    @property
     def field_type(self) -> FieldType:
         return self.__field_type
 

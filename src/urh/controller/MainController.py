@@ -507,9 +507,9 @@ class MainController(QMainWindow):
     def on_show_about_clicked(self):
         descr = "<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />" \
                 "GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />" \
-                "Contributors:<i><ul><li>" \
+                "Creators:<i><ul><li>" \
                 "Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li>" \
-                "<li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li>" \
+                "<li>Andreas Noack &lt;<a href='mailto:andreas.noack@hochschule-stralsund.de'>andreas.noack@hochschule-stralsund.de</a>&gt;</li>" \
                 "</ul></i>".format(version.VERSION)
 
         QMessageBox.about(self, self.tr("About"), self.tr(descr))

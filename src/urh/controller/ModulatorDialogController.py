@@ -29,6 +29,11 @@ class ModulatorDialogController(QDialog):
 
         self.modulators = modulators
 
+        for graphic_view in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated):
+            graphic_view.scene_y_min = -1
+            graphic_view.scene_y_max = 1
+            graphic_view.scene_x_zoom_stretch = 1.1
+
         self.set_ui_for_current_modulator()
 
         self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
@@ -43,10 +48,6 @@ class ModulatorDialogController(QDialog):
 
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
-
-        for graphic_view in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated):
-            graphic_view.scene_y_min = -1
-            graphic_view.scene_y_max = 1
 
         self.create_connects()
 
@@ -340,6 +341,9 @@ class ModulatorDialogController(QDialog):
         self.draw_data_bits()
         self.draw_modulated()
 
+        for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
+            graphic_view.show_full_scene(reinitialize=True)
+
     @pyqtSlot()
     def on_data_bits_changed(self):
         text = self.ui.linEdDataBits.text()
@@ -362,6 +366,9 @@ class ModulatorDialogController(QDialog):
             self.ui.btnRestoreBits.setDisabled(True)
         else:
             self.ui.btnRestoreBits.setEnabled(True)
+
+        for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
+            graphic_view.show_full_scene(reinitialize=True)
 
     @pyqtSlot()
     def on_sample_rate_changed(self):

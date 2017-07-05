@@ -27,15 +27,16 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
 
-        self.margin = 0.25
-        self.min_width = 100
-        self.max_width = "auto"
-
         self.redraw_timer = QTimer()
         self.redraw_timer.setSingleShot(True)
         self.redraw_timer.timeout.connect(self.redraw_view)
 
         self.zoomed.connect(self.on_signal_zoomed)
+
+        self.scene_y_min = float("nan")  # NaN = AutoDetect
+        self.scene_y_max = float("nan")  # NaN = AutoDetect
+
+        self.scene_x_zoom_stretch = 1
 
     @property
     def y_center(self):
@@ -98,7 +99,7 @@ class ZoomableGraphicView(SelectableGraphicView):
     def show_full_scene(self, reinitialize=False):
         y_factor = self.transform().m22()
         self.resetTransform()
-        x_factor = self.width() / self.sceneRect().width() if self.sceneRect().width() else 1
+        x_factor = self.view_rect().width() / (self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
         self.scale(x_factor, y_factor)
         self.centerOn(0, self.y_center)
 
@@ -112,14 +113,11 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom(x_factor, zoom_to_mouse_cursor=False)
         self.centerOn(start + (end - start) / 2, self.y_center)
 
-    def setScene(self, scene: QGraphicsScene):
-        super().setScene(scene)
-        if self.scene() is not None:
-            self.margin = 0.25 * self.scene().height()
-
     def plot_data(self, data):
         if self.scene_manager is None:
             self.scene_manager = SceneManager(self)
+            self.scene_manager.minimum = self.scene_y_min
+            self.scene_manager.maximum = self.scene_y_max
 
         self.scene_manager.plot_data = data
         self.scene_manager.init_scene()

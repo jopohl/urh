@@ -109,7 +109,8 @@ class ProjectManager(QObject):
             self.read_compare_frame_groups(root)
             decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
             if decodings:
-                cfc.decodings = decodings
+                # Set values of decodings only so decodings are updated in generator when loading a project
+                cfc.decodings[:] = decodings
             cfc.fill_decoding_combobox()
 
             cfc.proto_analyzer.message_types = self.read_message_types()

@@ -66,7 +66,7 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(self.dialog.current_modulator.sample_rate, 5e6)
 
     def test_zoom(self):
-        self.dialog.ui.gVModulated.zoom(1.1)
+        self.dialog.ui.gVModulated.zoom(1.01)
         self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
                          int(self.dialog.ui.gVCarrier.view_rect().width()))
 

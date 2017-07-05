@@ -117,6 +117,8 @@ class MainController(QMainWindow):
         self.ui.menuEdit.insertAction(self.ui.actionDecoding, redo_action)
         self.ui.menuEdit.insertSeparator(self.ui.actionDecoding)
 
+        self.ui.actionAbout_Qt.setIcon(QIcon(":/qt-project.org/qmessagebox/images/qtlogo-64.png"))
+
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()
 

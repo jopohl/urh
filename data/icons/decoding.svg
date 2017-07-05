@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="decoding.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="21.40625"
+     inkscape:cy="20.0625"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1141"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:grid-bbox="true"
+     showguides="false" />
+  <defs
+     id="defs33" />
+  <metadata
+     id="metadata36">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Ebene 1">
+    <rect
+       id="rect72"
+       width="16.1875"
+       height="2.125"
+       x="0"
+       y="7"
+       style="stroke-width:0.57454073" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Ebene 2">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:8px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="-0.375"
+       y="6.4375"
+       id="text51"><tspan
+         sodipodi:role="line"
+         x="-0.375"
+         y="6.4375"
+         id="tspan4552"
+         style="font-size:9.33333302px;fill:#ff0000;-inkscape-font-specification:'Source Code Pro Heavy';font-family:'Source Code Pro';font-weight:900;font-style:normal;font-stretch:normal;font-variant:normal">101</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:9.33333302px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="-0.32195044"
+       y="15.5977"
+       id="text51-0"><tspan
+         sodipodi:role="line"
+         x="-0.32195044"
+         y="15.5977"
+         id="tspan4552-1"
+         style="font-size:9.33333302px;fill:#ff0000;-inkscape-font-specification:'Source Code Pro Heavy';font-family:'Source Code Pro';font-weight:900;font-style:normal;font-stretch:normal;font-variant:normal">010</tspan></text>
+  </g>
+</svg>

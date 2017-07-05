@@ -465,7 +465,10 @@ class MainController(QMainWindow):
             return
 
         for i, file_path in enumerate(recent_file_paths):
-            if os.path.isdir(file_path):
+            if os.path.isfile(file_path):
+                display_text = os.path.basename(file_path)
+                self.recentFileActionList[i].setIcon(QIcon())
+            elif os.path.isdir(file_path):
                 head, tail = os.path.split(file_path)
                 display_text = tail
                 head, tail = os.path.split(head)
@@ -473,9 +476,8 @@ class MainController(QMainWindow):
                     display_text = tail + "/" + display_text
 
                 self.recentFileActionList[i].setIcon(QIcon.fromTheme("folder"))
-
             else:
-                display_text = os.path.basename(file_path)
+                continue
 
             self.recentFileActionList[i].setText(display_text)
             self.recentFileActionList[i].setData(file_path)

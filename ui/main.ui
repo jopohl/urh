@@ -303,7 +303,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -614,6 +614,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    </property>
   </action>
   <action name="actionNew_Project">
+   <property name="icon">
+    <iconset theme="folder-new"/>
+   </property>
    <property name="text">
     <string>&amp;New Project..</string>
    </property>
@@ -624,6 +627,9 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    </property>
   </action>
   <action name="actionProject_settings">
+   <property name="icon">
+    <iconset theme="configure"/>
+   </property>
    <property name="text">
     <string>&amp;Project settings...</string>
    </property>

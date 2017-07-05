@@ -136,6 +136,7 @@ class MainController(QMainWindow):
         self.ui.menuEdit.aboutToShow.connect(self.on_edit_menu_about_to_show)
 
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
+        self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
         self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
 

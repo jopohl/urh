@@ -73,7 +73,7 @@ def main():
     if constants.SETTINGS.value("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
-    app = QApplication(sys.argv)
+    app = QApplication(["URH"] + sys.argv[1:])
     app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
 
     if sys.platform != "linux":

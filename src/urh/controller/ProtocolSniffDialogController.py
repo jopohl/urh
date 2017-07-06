@@ -1,5 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCompleter, QDirModel
 
 from urh import constants
@@ -49,7 +50,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
 
-        self.setWindowTitle(self.tr("Sniff protocol"))
+        self.setWindowTitle(self.tr("Sniff Protocol"))
+        self.setWindowIcon(QIcon.fromTheme(":/icons/data/icons/sniffer.svg"))
 
         self.encodings = encodings
         for encoding in self.encodings:

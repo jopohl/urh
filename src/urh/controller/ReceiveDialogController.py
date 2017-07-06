@@ -1,5 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 
 from urh.LiveSceneManager import LiveSceneManager
@@ -29,6 +30,9 @@ class ReceiveDialogController(SendRecvDialogController):
 
         self.init_device()
         self.set_bandwidth_status()
+
+        self.setWindowTitle("Record Signal")
+        self.setWindowIcon(QIcon.fromTheme("media-record"))
 
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager

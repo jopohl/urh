@@ -10,6 +10,8 @@ class Ui_FilterDialog(object):
     def setupUi(self, FilterDialog):
         FilterDialog.setObjectName("FilterDialog")
         FilterDialog.resize(469, 327)
+        icon = QtGui.QIcon.fromTheme("view-filter")
+        FilterDialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(FilterDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(FilterDialog)

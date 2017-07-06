@@ -21,7 +21,7 @@ class Ui_SendRecvDialog(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
@@ -30,7 +30,7 @@ class Ui_SendRecvDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 433, 1238))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 426, 1238))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)

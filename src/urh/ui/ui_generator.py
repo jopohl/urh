@@ -19,7 +19,7 @@ class Ui_GeneratorTab(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1081, 699))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1159, 686))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -31,7 +31,7 @@ class Ui_GeneratorTab(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)

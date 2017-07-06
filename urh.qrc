@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>data/icons/modulation.svg</file>
     <file>data/icons/spectrum.svg</file>
     <file>data/icons/spectrum.png</file>
     <file>data/icons/equals_generator_qm.png</file>

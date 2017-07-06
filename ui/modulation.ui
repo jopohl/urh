@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Modulation</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../urh.qrc">
+    <normaloff>:/icons/data/icons/modulation.svg</normaloff>:/icons/data/icons/modulation.svg</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_5">
@@ -71,8 +75,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>988</width>
-        <height>981</height>
+        <width>984</width>
+        <height>976</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_7" columnstretch="0,0,0,0">
@@ -1106,7 +1110,6 @@
   <tabstop>gVOriginalSignal</tabstop>
  </tabstops>
  <resources>
-  <include location="../urh.qrc"/>
   <include location="../urh.qrc"/>
  </resources>
  <connections/>

@@ -10,6 +10,9 @@ class Ui_DialogModulation(object):
     def setupUi(self, DialogModulation):
         DialogModulation.setObjectName("DialogModulation")
         DialogModulation.resize(1006, 1041)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/data/icons/modulation.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        DialogModulation.setWindowIcon(icon)
         self.verticalLayout = QtWidgets.QVBoxLayout(DialogModulation)
         self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout_5 = QtWidgets.QGridLayout()
@@ -37,7 +40,7 @@ class Ui_DialogModulation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 988, 981))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 984, 976))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_7.setContentsMargins(0, 0, 0, 0)

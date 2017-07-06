@@ -246,7 +246,7 @@ class Ui_MainWindow(object):
         self.actionRecord.setObjectName("actionRecord")
         self.actionSpectrum_Analyzer = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/data/icons/spectrum.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/data/icons/spectrum.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSpectrum_Analyzer.setIcon(icon2)
         self.actionSpectrum_Analyzer.setIconVisibleInMenu(True)
         self.actionSpectrum_Analyzer.setObjectName("actionSpectrum_Analyzer")

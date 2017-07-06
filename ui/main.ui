@@ -606,7 +606,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
   <action name="actionSpectrum_Analyzer">
    <property name="icon">
     <iconset resource="../urh.qrc">
-     <normaloff>:/icons/data/icons/spectrum.png</normaloff>:/icons/data/icons/spectrum.png</iconset>
+     <normaloff>:/icons/data/icons/spectrum.svg</normaloff>:/icons/data/icons/spectrum.svg</iconset>
    </property>
    <property name="text">
     <string>Spectrum &amp;Analyzer...</string>

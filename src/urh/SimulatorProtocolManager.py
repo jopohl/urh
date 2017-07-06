@@ -57,6 +57,21 @@ class SimulatorProtocolManager(QObject):
 
         self.item_dict_updated.emit()
 
+    def update_valid_states(self):
+        for child in self.rootItem.children:
+            self.__update_valid_states(child)
+
+    @staticmethod
+    def __update_valid_states(node: SimulatorItem):
+        for child in node.children:
+            SimulatorProtocolManager.__update_valid_states(child)
+
+        node.is_valid = node.check()
+
+    def protocol_valid(self):
+        self.update_valid_states()
+        return all(item.is_valid for item in self.get_all_items())
+
     def on_project_updated(self):
         self.broadcast_part.address_hex = self.project_manager.broadcast_address_hex
         participants = self.participants

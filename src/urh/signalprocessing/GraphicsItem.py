@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView, QGraphicsEllipseItem
 from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor, QBrush
 from PyQt5.QtCore import QRectF, Qt, QLineF
 
@@ -109,6 +109,9 @@ class GraphicsItem(QGraphicsObject):
 
         return self.scene().model_to_scene(prev_item)
 
+    def is_valid(self):
+        return self.model_item.is_valid
+
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()
 
@@ -126,6 +129,11 @@ class GraphicsItem(QGraphicsObject):
         if self.hover_active or self.isSelected():
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)
+            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.drawRect(self.boundingRect())
+        elif not self.is_valid():
+            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setBrush(QColor(255, 0, 0, 150))
             painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
             painter.drawRect(self.boundingRect())
 

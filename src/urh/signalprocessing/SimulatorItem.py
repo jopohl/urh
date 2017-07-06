@@ -1,8 +1,15 @@
 class SimulatorItem(object):
+    protocol_manager = None
+    expression_parser = None
+
     def __init__(self):
         self.__parentItem = None
         self.__childItems = []
         self.logging_active = True
+        self.is_valid = True
+
+    def check(self):
+        return True
 
     def get_pos(self):
         if self.parent() is not None:

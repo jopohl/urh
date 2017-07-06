@@ -195,8 +195,12 @@ class SimulatorScene(QGraphicsScene):
             scene_item = self.model_to_scene(item)
             scene_item.update_numbering()
 
+    def update_valid_states(self):
+        self.sim_proto_manager.update_valid_states()
+
     def update_view(self):
         self.update_numbering()
+        self.update_valid_states()
         self.arrange_participants()
         self.arrange_items()
 

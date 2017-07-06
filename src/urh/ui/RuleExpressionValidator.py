@@ -10,7 +10,7 @@ class RuleExpressionValidator(QValidator):
         self.is_formula = is_formula
 
     def validate(self, text, pos):
-        valid, message = self.parser.validate_expression(text, self.is_formula)
+        valid, message, _ = self.parser.validate_expression(text, self.is_formula)
         state = QValidator.Acceptable if valid else QValidator.Intermediate
 
         self.validation_status_changed.emit(state, message)

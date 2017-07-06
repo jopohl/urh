@@ -1,7 +1,7 @@
 import numpy
 import itertools
 
-from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter
+from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox
 from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
@@ -20,17 +20,13 @@ from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.signalprocessing.SimulatorItem import SimulatorItem
-
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
-
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.SimulateDialogController import SimulateDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
-
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
-from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
 class SimulatorTabController(QWidget):
@@ -46,6 +42,8 @@ class SimulatorTabController(QWidget):
 
         self.sim_proto_manager = SimulatorProtocolManager(self.project_manager)
         self.sim_expression_parser = SimulatorExpressionParser(self.sim_proto_manager)
+        SimulatorItem.protocol_manager = self.sim_proto_manager
+        SimulatorItem.expression_parser = self.sim_expression_parser
 
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)
@@ -162,7 +160,7 @@ class SimulatorTabController(QWidget):
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
-        self.update_goto_combobox()
+        #self.update_goto_combobox()
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:
@@ -233,18 +231,13 @@ class SimulatorTabController(QWidget):
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
+
         goto_combobox.blockSignals(True)
         goto_combobox.clear()
-
         goto_combobox.addItem("Select item ...")
-        goto_combobox.addItems(SimulatorGotoAction.goto_identifier(self.sim_proto_manager.item_dict))
+        goto_combobox.addItems(SimulatorGotoAction.goto_identifier())
+        goto_combobox.setCurrentIndex(-1)
         goto_combobox.blockSignals(False)
-
-        if isinstance(self.active_item, SimulatorGotoAction):
-            self.update_goto_combobox_index()
-
-    def update_goto_combobox_index(self):
-        goto_combobox = self.ui.goto_combobox
 
         index = goto_combobox.findText(self.active_item.goto_target)
 
@@ -293,9 +286,8 @@ class SimulatorTabController(QWidget):
         if not isinstance(self.active_item, SimulatorGotoAction):
             return
 
-        if self.active_item.goto_target != self.ui.goto_combobox.currentText():
-            self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
-            self.item_updated(self.active_item)
+        self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
+        self.item_updated(self.active_item)
 
     @pyqtSlot()
     def on_simulator_scene_selection_changed(self):
@@ -325,7 +317,7 @@ class SimulatorTabController(QWidget):
         self.__active_item = value
 
         if isinstance(self.active_item, SimulatorGotoAction):
-            self.update_goto_combobox_index()
+            self.update_goto_combobox()
 
             self.ui.detail_view_widget.setCurrentIndex(1)
         elif isinstance(self.active_item, SimulatorMessage):
@@ -348,8 +340,16 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        s = SimulateDialogController(project_manager=self.project_manager, generator_tab_controller=self.generator_tab_controller,
-                                     compare_frame_controller=self.compare_frame_controller, sim_proto_manager=self.sim_proto_manager, parent=self)
+        if not self.sim_proto_manager.protocol_valid():
+            QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
+                self.tr("There are some problems with your protocol configuration. Please fix them first."))
+            return
+
+        if not len(self.sim_proto_manager.get_all_messages()):
+            QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
+            return
+
+        s = SimulateDialogController(controller=self, parent=self)
         s.show()
 
     @pyqtSlot()

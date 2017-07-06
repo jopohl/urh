@@ -8,18 +8,19 @@ from urh.models.SimulatorSettingsTableModel import SimulatorSettingsTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.SimulatorProtocolManager import SimulatorProtocolManager
 from urh import SimulatorSettings
+from urh.util.Simulator import Simulator
 
 class SimulateDialogController(QDialog):
-    def __init__(self, project_manager: ProjectManager, generator_tab_controller, compare_frame_controller,
-                 sim_proto_manager: SimulatorProtocolManager, parent=None):
+    def __init__(self, controller, parent=None):
         super().__init__(parent)
         self.ui = Ui_SimulateDialog()
         self.ui.setupUi(self)
 
-        self.project_manager = project_manager
-        self.generator_tab_controller = generator_tab_controller
-        self.compare_frame_controller = compare_frame_controller
-        self.sim_proto_manager = sim_proto_manager
+        self.project_manager = controller.project_manager
+        self.generator_tab_controller = controller.generator_tab_controller
+        self.compare_frame_controller = controller.compare_frame_controller
+        self.sim_proto_manager = controller.sim_proto_manager
+        self.expression_parser = controller.sim_expression_parser
 
         self.simulator_scene = SimulatorScene(mode=1, sim_proto_manager=self.sim_proto_manager)
         self.ui.gvSimulator.setScene(self.simulator_scene)
@@ -47,6 +48,7 @@ class SimulateDialogController(QDialog):
 
         self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
+        self.ui.btnSimulate.clicked.connect(self.on_btn_simulate_clicked)
         self.ui.btnLog.clicked.connect(self.on_btn_log_clicked)
 
         self.ui.spinBoxNRepeat.valueChanged.connect(self.on_repeat_value_changed)
@@ -55,7 +57,7 @@ class SimulateDialogController(QDialog):
 
     def on_repeat_value_changed(self, value):
         SimulatorSettings.num_repeat = value
-
+ 
     def on_timeout_value_changed(self, value):
         SimulatorSettings.timeout = value
 
@@ -73,6 +75,10 @@ class SimulateDialogController(QDialog):
 
     def on_btn_log_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
+
+    def on_btn_simulate_clicked(self):
+        sim = Simulator(self.sim_proto_manager, self.expression_parser, self.project_manager)
+        sim.start()
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()

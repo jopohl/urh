@@ -76,11 +76,9 @@ class Ui_SimulateDialog(object):
         self.label_5.setObjectName("label_5")
         self.gridLayout_2.addWidget(self.label_5, 0, 0, 1, 3)
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
-        self.pushButton = QtWidgets.QPushButton(SimulateDialog)
-        icon = QtGui.QIcon.fromTheme("media-playback-start")
-        self.pushButton.setIcon(icon)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 1)
+        self.btnSimulate = QtWidgets.QPushButton(SimulateDialog)
+        self.btnSimulate.setObjectName("btnSimulate")
+        self.gridLayout.addWidget(self.btnSimulate, 1, 0, 1, 1)
 
         self.retranslateUi(SimulateDialog)
         QtCore.QMetaObject.connectSlotsByName(SimulateDialog)
@@ -100,6 +98,6 @@ class Ui_SimulateDialog(object):
         self.btnLogNone.setText(_translate("SimulateDialog", "Log none"))
         self.btnLog.setText(_translate("SimulateDialog", "Toggle selected"))
         self.label_5.setText(_translate("SimulateDialog", "Log settings:"))
-        self.pushButton.setText(_translate("SimulateDialog", "Simulate"))
+        self.btnSimulate.setText(_translate("SimulateDialog", "Confirm"))
 
 from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView

@@ -13,6 +13,8 @@ class SimulatorProtocolLabel(ProtocolLabel, SimulatorItem):
         self.value_type_index = 0
         self.external_program = ""
         self.formula = ""
+        self.random_min = 0
+        self.random_max = self.fuzz_maximum - 1
 
     def set_parent(self, value):
         if value is not None:
@@ -25,3 +27,11 @@ class SimulatorProtocolLabel(ProtocolLabel, SimulatorItem):
 
     def __eq__(self, other):
         return object.__eq__(self, other)
+
+    def check(self):
+        result = True
+
+        if self.value_type_index == 2:
+            result, _, _ = self.expression_parser.validate_expression(self.formula)
+        
+        return result

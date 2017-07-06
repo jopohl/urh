@@ -27,7 +27,9 @@ class LabelItem(GraphicsItem):
     def paint(self, painter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())
-        super().paint(painter, option, widget)
+
+        if self.scene().mode == 1:
+            super().paint(painter, option, widget)
 
     def boundingRect(self):
         return self.childrenBoundingRect()

@@ -152,13 +152,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="btnSimulate">
      <property name="text">
-      <string>Simulate</string>
-     </property>
-     <property name="icon">
-      <iconset theme="media-playback-start">
-       <normaloff>.</normaloff>.</iconset>
+      <string>Confirm</string>
      </property>
     </widget>
    </item>

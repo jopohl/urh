@@ -15,6 +15,16 @@ class SimulatorRule(SimulatorItem):
     def has_else_condition(self):
         return any(child.type is ConditionType.ELSE for child in self.children)
 
+    def next_item(self):
+        result = self.next_sibling()
+
+        for child in self.children:
+            if child.applies() and child.child_count():
+                result = child.children[0]
+                break
+
+        return result
+
 class ConditionType(Enum):
     IF = "IF"
     ELSE_IF = "ELSE IF"
@@ -31,3 +41,18 @@ class SimulatorRuleCondition(SimulatorItem):
             assert isinstance(value, SimulatorRule)
 
         super().set_parent(value)
+
+    def applies(self):
+        if self.type is ConditionType.ELSE:
+            return True
+
+        valid, _, node = self.expression_parser.validate_expression(self.condition, is_formula=False)
+        assert valid == True and node is not None
+        return self.expression_parser.evaluate_node(node)
+
+    def check(self):
+        if self.type is ConditionType.ELSE:
+            return True
+
+        result, _, _ = self.expression_parser.validate_expression(self.condition, is_formula=False)
+        return result

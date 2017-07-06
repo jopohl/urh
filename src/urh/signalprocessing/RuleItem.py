@@ -118,6 +118,8 @@ class RuleConditionItem(GraphicsItem):
 
         if self.hover_active or self.isSelected():
             painter.setBrush(constants.SELECTION_COLOR)
+        elif not self.is_valid():
+            painter.setBrush(QColor(255, 0, 0, 150))
         else:
             painter.setBrush(QColor.fromRgb(204, 204, 204, 255))
 

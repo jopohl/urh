@@ -53,7 +53,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         i, j = index.row(), index.column()
         lbl = self.message_type[i]
 
-        if role == Qt.DisplayRole or role == Qt.EditRole:
+        if role == Qt.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
@@ -63,12 +63,28 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 3:
                 if lbl.value_type_index == 0:
                     return self.value_str(lbl)
-                elif lbl.value_type_index in [1, 4]:
+                elif lbl.value_type_index == 1:
                     return "-"
                 elif lbl.value_type_index == 2:
                     return lbl.formula
                 elif lbl.value_type_index == 3:
                     return lbl.external_program
+                elif lbl.value_type_index == 4:
+                    return "Range (Decimal): " + str(lbl.random_min) + " - " + str(lbl.random_max)
+        elif role == Qt.EditRole:
+            if j == 0:
+                return lbl.name
+            elif j == 1:
+                return lbl.display_format_index
+            elif j == 2:
+                return lbl.value_type_index
+            elif j == 3:
+                if lbl.value_type_index == 2:
+                    return lbl.formula
+                elif lbl.value_type_index == 3:
+                    return lbl.external_program
+                elif lbl.value_type_index == 4:
+                    return [lbl.random_min, lbl.random_max]
         elif role == Qt.FontRole:
             if j == 0:
                 font = QFont()
@@ -103,6 +119,9 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     label.formula = value
                 elif label.value_type_index == 3:
                     label.external_program = value
+                elif label.value_type_index == 4:
+                    label.random_min = value[0]
+                    label.random_max = value[1]
 
             self.protocol_label_updated.emit(label)
 
@@ -114,7 +133,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
         flags = super().flags(index)
 
-        if not(col == 3 and label.value_type_index in [0, 1, 4]):
+        if not(col == 3 and label.value_type_index in [0, 1]):
             flags |= Qt.ItemIsEditable
 
         return flags

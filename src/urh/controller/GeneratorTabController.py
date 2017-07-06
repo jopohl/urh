@@ -16,8 +16,8 @@ from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
 from urh.plugins.PluginManager import PluginManager
+from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -96,7 +96,7 @@ class GeneratorTabController(QWidget):
     @property
     def total_modulated_samples(self) -> int:
         return sum(int(len(msg.encoded_bits) * self.__get_modulator_of_message(msg).samples_per_bit + msg.pause)
-                   for msg in  self.table_model.protocol.messages)
+                   for msg in self.table_model.protocol.messages)
 
     @modulators.setter
     def modulators(self, value):
@@ -113,7 +113,8 @@ class GeneratorTabController(QWidget):
         self.table_model.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
         self.table_model.protocol.qt_signals.line_duplicated.connect(self.refresh_pause_list)
         self.table_model.protocol.qt_signals.fuzzing_started.connect(self.on_fuzzing_started)
-        self.table_model.protocol.qt_signals.current_fuzzing_message_changed.connect(self.on_current_fuzzing_message_changed)
+        self.table_model.protocol.qt_signals.current_fuzzing_message_changed.connect(
+            self.on_current_fuzzing_message_changed)
         self.table_model.protocol.qt_signals.fuzzing_finished.connect(self.on_fuzzing_finished)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -121,6 +122,9 @@ class GeneratorTabController(QWidget):
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
 
         self.project_manager.project_updated.connect(self.on_project_updated)
+
+        self.table_model.vertical_header_color_status_changed.connect(
+            self.ui.tableMessages.on_vertical_header_color_status_changed)
 
         self.label_list_model.protolabel_removed.connect(self.handle_proto_label_removed)
 
@@ -233,9 +237,9 @@ class GeneratorTabController(QWidget):
                 selected_message = self.table_model.protocol.messages[min_row]
                 preselected_index = selected_message.modulator_indx
             except IndexError:
-                selected_message = Message([True, False, True, False], 0, [], MessageType("empty"))
+                selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
         else:
-            selected_message = Message([True, False, True, False], 0, [], MessageType("empty"))
+            selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
                 selected_message.bit_len = self.table_model.protocol.messages[0].bit_len
 
@@ -263,6 +267,8 @@ class GeneratorTabController(QWidget):
         dialog.ui.gVData.auto_fit_view()
         dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
         dialog.ui.gVCarrier.auto_fit_view()
+
+        dialog.mark_samples_in_view()
 
     def init_rfcat_plugin(self):
         self.set_rfcat_button_visibility()
@@ -365,8 +371,8 @@ class GeneratorTabController(QWidget):
             self.unsetCursor()
 
     def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> np.ndarray:
-        memory_size_for_buffer = total_samples*8
-        logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024**2) ))
+        memory_size_for_buffer = total_samples * 8
+        logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024 ** 2)))
         try:
             return np.zeros(total_samples, dtype=np.complex64)
         except MemoryError:
@@ -390,7 +396,7 @@ class GeneratorTabController(QWidget):
             modulator = self.__get_modulator_of_message(message)
             # We do not need to modulate the pause extra, as result is already initialized with zeros
             modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
-            buffer[pos:pos+len(modulator.modulated_samples)] = modulator.modulated_samples
+            buffer[pos:pos + len(modulator.modulated_samples)] = modulator.modulated_samples
             pos += len(modulator.modulated_samples) + message.pause
             self.ui.prBarGeneration.setValue(i + 1)
             QApplication.instance().processEvents()
@@ -433,7 +439,10 @@ class GeneratorTabController(QWidget):
         self.setCursor(Qt.WaitCursor)
         fuzz_action = Fuzz(self.table_model.protocol, fuz_mode)
         self.table_model.undo_stack.push(fuzz_action)
+        for row in fuzz_action.added_message_indices:
+            self.table_model.update_checksums_for_row(row)
         self.unsetCursor()
+        self.ui.tableMessages.setFocus()
 
     @pyqtSlot()
     def set_fuzzing_ui_status(self):
@@ -626,7 +635,8 @@ class GeneratorTabController(QWidget):
         if not self.rfcat_plugin.is_sending:
             messages = self.table_model.protocol.messages
             sample_rates = [self.__get_modulator_of_message(msg).sample_rate for msg in messages]
-            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators, self.project_manager)
+            self.rfcat_plugin.start_message_sending_thread(messages, sample_rates, self.modulators,
+                                                           self.project_manager)
         else:
             self.rfcat_plugin.stop_sending_thread()
 
@@ -640,6 +650,10 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_fuzzing_finished(self):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingUI)
+        # Calculate Checksums for Fuzzed Messages
+        self.setCursor(Qt.WaitCursor)
+
+        self.unsetCursor()
 
     @pyqtSlot(int)
     def on_current_fuzzing_message_changed(self, current_message: int):

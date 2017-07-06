@@ -7,7 +7,7 @@ import numpy as np
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 import array
@@ -28,7 +28,7 @@ class Message(object):
 
         :param pause: pause AFTER the message in samples
         :type plain_bits: list[bool|int]
-        :type decoder: Encoder
+        :type decoder: Encoding
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
         :param bit_len: Für Übernahme der Bitlänge in Modulator Dialog
@@ -39,17 +39,13 @@ class Message(object):
         self.pause = pause
         self.modulator_indx = modulator_indx
         self.rssi = rssi
-        self.participant = participant
-        """:type: Participant """
-
-        self.message_type = message_type
-        """:type: MessageType """
+        self.participant = participant    # type: Participant
+        self.message_type = message_type  # type: MessageType
 
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 
-        self.__decoder = decoder if decoder else Encoder(["Non Return To Zero (NRZ)"])
-        """:type: encoding """
+        self.__decoder = decoder if decoder else Encoding(["Non Return To Zero (NRZ)"])  # type: Encoding
 
         self.align_labels = True
         self.fuzz_created = fuzz_created
@@ -58,7 +54,7 @@ class Message(object):
         self.__encoded_bits = None
         self.__bit_alignments = []
         self.decoding_errors = 0
-        self.decoding_state = Encoder.ErrorState.SUCCESS
+        self.decoding_state = Encoding.ErrorState.SUCCESS
 
         self.bit_len = bit_len  # Für Übernahme in Modulator
 
@@ -174,11 +170,11 @@ class Message(object):
         self.__decoded_bits = None
 
     @property
-    def decoder(self) -> Encoder:
+    def decoder(self) -> Encoding:
         return self.__decoder
 
     @decoder.setter
-    def decoder(self, val: Encoder):
+    def decoder(self, val: Encoding):
         self.__decoder = val
         self.clear_decoded_bits()
         self.clear_encoded_bits()
@@ -210,11 +206,7 @@ class Message(object):
         return self.bits2string(self.encoded_bits)
 
     @property
-    def decoded_bits(self):
-        """
-
-        :rtype: array.array
-        """
+    def decoded_bits(self) -> array.array:
         if self.__decoded_bits is None:
             self.__decoded_bits = array.array("B", [])
             start = 0

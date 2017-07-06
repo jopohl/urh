@@ -82,7 +82,6 @@ class MainController(QMainWindow):
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 
         self.signal_protocol_dict = {}  # type: dict[SignalFrameController, ProtocolAnalyzer]
-        self.signal_tab_controller.ui.lLoadingFile.setText("")
 
         self.ui.lnEdtTreeFilter.setClearButtonEnabled(True)
 
@@ -91,8 +90,6 @@ class MainController(QMainWindow):
         self.ui.actionOOK.setActionGroup(group)
         self.ui.actionNone.setActionGroup(group)
         self.ui.actionPSK.setActionGroup(group)
-
-        self.signal_tab_controller.ui.lShiftStatus.clear()
 
         self.recentFileActionList = []
         self.create_connects()
@@ -128,6 +125,8 @@ class MainController(QMainWindow):
         self.ui.menuEdit.insertAction(self.ui.actionDecoding, redo_action)
         self.ui.menuEdit.insertSeparator(self.ui.actionDecoding)
 
+        self.ui.actionAbout_Qt.setIcon(QIcon(":/qt-project.org/qmessagebox/images/qtlogo-64.png"))
+
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()
 
@@ -145,6 +144,7 @@ class MainController(QMainWindow):
         self.ui.menuEdit.aboutToShow.connect(self.on_edit_menu_about_to_show)
 
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
+        self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
         self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
 
@@ -355,11 +355,6 @@ class MainController(QMainWindow):
             _, file_extension = os.path.splitext(file)
             FileOperator.RECENT_PATH = os.path.split(file)[0]
 
-            self.signal_tab_controller.ui.lLoadingFile.setText(
-                self.tr("Loading File {0:d}/{1:d}".format(i + 1, num_files)))
-
-            QApplication.instance().setOverrideCursor(Qt.WaitCursor)
-
             if file_extension == ".complex":
                 self.add_signalfile(file, group_id)
             elif file_extension == ".coco":
@@ -374,9 +369,6 @@ class MainController(QMainWindow):
                 self.add_plain_bits_from_txt(file)
             else:
                 self.add_signalfile(file, group_id)
-
-            QApplication.instance().restoreOverrideCursor()
-        self.signal_tab_controller.ui.lLoadingFile.setText("")
 
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()
@@ -485,7 +477,10 @@ class MainController(QMainWindow):
             return
 
         for i, file_path in enumerate(recent_file_paths):
-            if os.path.isdir(file_path):
+            if os.path.isfile(file_path):
+                display_text = os.path.basename(file_path)
+                self.recentFileActionList[i].setIcon(QIcon())
+            elif os.path.isdir(file_path):
                 head, tail = os.path.split(file_path)
                 display_text = tail
                 head, tail = os.path.split(head)
@@ -493,9 +488,8 @@ class MainController(QMainWindow):
                     display_text = tail + "/" + display_text
 
                 self.recentFileActionList[i].setIcon(QIcon.fromTheme("folder"))
-
             else:
-                display_text = os.path.basename(file_path)
+                continue
 
             self.recentFileActionList[i].setText(display_text)
             self.recentFileActionList[i].setData(file_path)
@@ -512,7 +506,9 @@ class MainController(QMainWindow):
             if os.path.isdir(action.data()):
                 self.project_manager.set_project_folder(action.data())
             elif os.path.isfile(action.data()):
+                self.setCursor(Qt.WaitCursor)
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
+                self.unsetCursor()
         except Exception as e:
             Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
             self.unsetCursor()
@@ -521,9 +517,9 @@ class MainController(QMainWindow):
     def on_show_about_clicked(self):
         descr = "<b><h2>Universal Radio Hacker</h2></b>Version: {0}<br />" \
                 "GitHub: <a href='https://github.com/jopohl/urh'>https://github.com/jopohl/urh</a><br /><br />" \
-                "Contributors:<i><ul><li>" \
+                "Creators:<i><ul><li>" \
                 "Johannes Pohl &lt;<a href='mailto:joahnnes.pohl90@gmail.com'>johannes.pohl90@gmail.com</a>&gt;</li>" \
-                "<li>Andreas Noack &lt;<a href='mailto:andreas.noack@fh-stralsund.de'>andreas.noack@fh-stralsund.de</a>&gt;</li>" \
+                "<li>Andreas Noack &lt;<a href='mailto:andreas.noack@hochschule-stralsund.de'>andreas.noack@hochschule-stralsund.de</a>&gt;</li>" \
                 "</ul></i>".format(version.VERSION)
 
         QMessageBox.about(self, self.tr("About"), self.tr(descr))
@@ -591,8 +587,22 @@ class MainController(QMainWindow):
             self.undo_group.setActiveStack(self.compare_frame_controller.protocol_undo_stack)
             self.compare_frame_controller.ui.tblViewProtocol.resize_columns()
             self.compare_frame_controller.ui.tblViewProtocol.resize_vertical_header()
+            h = max(self.compare_frame_controller.ui.btnSaveProto.height(),
+                    self.generator_tab_controller.ui.btnSave.height())
+            self.compare_frame_controller.ui.btnSaveProto.setMinimumHeight(h)
+
+            th = self.compare_frame_controller.ui.tabWidget.tabBar().height()
+            for i in range(self.compare_frame_controller.ui.tabWidget.count()):
+                self.compare_frame_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
+
         elif index == 2:
             self.undo_group.setActiveStack(self.generator_tab_controller.generator_undo_stack)
+            h = max(self.compare_frame_controller.ui.btnSaveProto.height(),
+                    self.generator_tab_controller.ui.btnSave.height())
+            self.generator_tab_controller.ui.btnSave.setMinimumHeight(h)
+            th = self.generator_tab_controller.ui.tabWidget.tabBar().height()
+            for i in range(self.generator_tab_controller.ui.tabWidget.count()):
+                self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):
@@ -726,8 +736,10 @@ class MainController(QMainWindow):
 
                     self.project_manager.set_project_folder(folder)
                 else:
+                    self.setCursor(Qt.WaitCursor)
                     file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
                     self.add_files(file_names)
+                    self.unsetCursor()
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
                 QApplication.instance().restoreOverrideCursor()
@@ -754,7 +766,9 @@ class MainController(QMainWindow):
     def __add_urls_to_group(self, file_urls, group_id=0):
         local_files = [file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()]
         if len(local_files) > 0:
+            self.setCursor(Qt.WaitCursor)
             self.add_files(FileOperator.uncompress_archives(local_files, QDir.tempPath()), group_id=group_id)
+            self.unsetCursor()
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):

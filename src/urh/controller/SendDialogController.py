@@ -22,7 +22,8 @@ class SendDialogController(SendRecvDialogController):
         self.hide_receive_ui_items()
 
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
-        self.setWindowTitle("Send signal")
+        self.setWindowTitle("Send Signal")
+        self.setWindowIcon(QIcon.fromTheme("media-playback-start"))
         self.ui.btnStart.setToolTip("Send data")
         self.ui.btnStop.setToolTip("Stop sending")
         self.device_is_sending = False

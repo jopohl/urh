@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Configure filter</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="view-filter"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
     <widget class="QLabel" name="label">

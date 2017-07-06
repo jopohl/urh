@@ -5,7 +5,7 @@ from PyQt5.QtTest import QTest
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 
 
 class TestFuzzingDialog(QtTestCase):
@@ -26,13 +26,10 @@ class TestFuzzingDialog(QtTestCase):
         # Rest auf False anlegen und setzen
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentIndex(1)  # Hex
-        decoding = Encoder(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21;0x8"])
+        decoding = Encoding(["Data Whitening", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"])
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.ui.cbDecoding.addItem(decoding.name)
         self.form.compare_frame_controller.set_decoding(decoding)
-
-        # CRC Check
-        self.assertEqual(self.form.compare_frame_controller.protocol_model.display_data[0][-4:], array.array("B", [0,0,0,0]))
 
         # Serial Part 1: Bits 207-226 (Dezimal: 91412) (20 Bits)
         self.form.compare_frame_controller.add_protocol_label(start=206, end=225, messagenr=0, proto_view=0,

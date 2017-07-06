@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import numpy
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack
 
@@ -10,6 +10,9 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class TableModel(QAbstractTableModel):
+    data_edited = pyqtSignal(int, int)
+    vertical_header_color_status_changed = pyqtSignal(bool)
+
     def __init__(self, participants, parent=None):
         super().__init__(parent)
         self.controller = None  # :type: CompareFrameController|GeneratorTabController
@@ -33,6 +36,7 @@ class TableModel(QAbstractTableModel):
 
         self.background_colors = defaultdict(lambda: None)
         self.bold_fonts = defaultdict(lambda: False)
+        self.italic_fonts = defaultdict(lambda: False)
         self.text_colors = defaultdict(lambda: None)
         self.tooltips = defaultdict(lambda: None)
         self.vertical_header_text = defaultdict(lambda: None)
@@ -160,6 +164,7 @@ class TableModel(QAbstractTableModel):
     def refresh_vertical_header(self):
         self.vertical_header_colors.clear()
         self.vertical_header_text.clear()
+        use_colors = False
         for i in range(self.row_count):
             try:
                 participant = self.protocol.messages[i].participant
@@ -168,9 +173,11 @@ class TableModel(QAbstractTableModel):
             if participant:
                 self.vertical_header_text[i] = "{0} ({1})".format(i + 1, participant.shortname)
                 self.vertical_header_colors[i] = constants.PARTICIPANT_COLORS[participant.color_index]
+                use_colors = True
             else:
                 self.vertical_header_text[i] = str(i+1)
 
+        self.vertical_header_color_status_changed.emit(use_colors)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         if not index.isValid():
@@ -201,6 +208,7 @@ class TableModel(QAbstractTableModel):
         elif role == Qt.FontRole:
             font = QFont()
             font.setBold(self.bold_fonts[i, j])
+            font.setItalic(self.italic_fonts[i, j])
             return font
 
         elif role == Qt.TextColorRole:
@@ -223,27 +231,30 @@ class TableModel(QAbstractTableModel):
                     try:
                         self.protocol.messages[i][j] = bool(int(value))
                         self.display_data[i][j] = int(value)
+                        self.data_edited.emit(i, j)
                     except IndexError:
                         return False
             elif self.proto_view == 1:
                 if value in hex_chars:
-                    index = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
+                    converted_j = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
                     bits = "{0:04b}".format(int(value, 16))
                     for k in range(4):
                         try:
-                            self.protocol.messages[i][index + k] = bool(int(bits[k]))
+                            self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
                         except IndexError:
                             break
                     self.display_data[i][j] = int(value, 16)
+                    self.data_edited.emit(i, j)
             elif self.proto_view == 2 and len(value) == 1:
-                index = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
+                converted_j = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
                 bits = "{0:08b}".format(ord(value))
                 for k in range(8):
                     try:
-                        self.protocol.messages[i][index + k] = bool(int(bits[k]))
+                        self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
                     except IndexError:
                         break
                 self.display_data[i][j] = ord(value)
+                self.data_edited.emit(i, j)
         return True
 
     def find_protocol_value(self, value):

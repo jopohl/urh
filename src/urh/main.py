@@ -73,7 +73,7 @@ def main():
     if constants.SETTINGS.value("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
-    app = QApplication(sys.argv)
+    app = QApplication(["URH"] + sys.argv[1:])
     app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
 
     if sys.platform != "linux":
@@ -116,6 +116,10 @@ def main():
         menu_bar.setNativeMenuBar(False)
         import multiprocessing as mp
         mp.set_start_method("spawn")  # prevent errors with forking in native RTL-SDR backend
+    elif sys.platform == "win32":
+        # Ensure we get the app icon in windows taskbar
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube

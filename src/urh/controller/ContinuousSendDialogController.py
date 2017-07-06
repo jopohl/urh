@@ -9,7 +9,7 @@ from urh.signalprocessing.ContinuousModulator import ContinuousModulator
 
 
 class ContinuousSendDialogController(SendDialogController):
-    def __init__(self, project_manager, messages, modulators, total_samples:int, parent, testing_mode=False):
+    def __init__(self, project_manager, messages, modulators, total_samples: int, parent, testing_mode=False):
         super().__init__(project_manager, modulated_data=None, parent=parent, testing_mode=testing_mode)
         self.messages = messages
         self.modulators = modulators
@@ -26,7 +26,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
 
-        self.setWindowTitle("Send data (continuous mode)")
+        self.setWindowTitle("Send Signal (continuous mode)")
         self.ui.lSamplesSentText.setText("Progress:")
 
         self.init_device()
@@ -41,7 +41,7 @@ class ContinuousSendDialogController(SendDialogController):
 
     def update_view(self):
         super().update_view()
-        self.ui.progressBar.setValue(self.continuous_modulator.current_message_index.value+1)
+        self.ui.progressBar.setValue(self.continuous_modulator.current_message_index.value + 1)
         self.scene_manager.init_scene()
         self.scene_manager.show_full_scene()
         self.graphics_view.update()

@@ -9,7 +9,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(653, 550)
+        DialogOptions.resize(696, 610)
+        icon = QtGui.QIcon.fromTheme("configure")
+        DialogOptions.setWindowIcon(icon)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.tabWidget = QtWidgets.QTabWidget(DialogOptions)
@@ -17,7 +19,7 @@ class Ui_DialogOptions(object):
         self.tabGeneration = QtWidgets.QWidget()
         self.tabGeneration.setObjectName("tabGeneration")
         self.layoutWidget = QtWidgets.QWidget(self.tabGeneration)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 299, 53))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 314, 58))
         self.layoutWidget.setObjectName("layoutWidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)

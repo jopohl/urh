@@ -24,7 +24,7 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 # Installation
-Universal Radio Hacker can be installed via _pip_ or using the _packet manager_ of your distribution (if included).
+Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
 Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source.
 
 __Dependencies__
@@ -73,7 +73,9 @@ emerge -av urh
 ```
 
 ### Windows
-If you run a Python 3.4 you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.
+If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
+
+__It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__
 1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
   - Make sure you tick the _Add Python to PATH_ checkbox on first page in Python installer.
   - Choose a __64 Bit__ Python version for native device support.

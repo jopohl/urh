@@ -1,5 +1,13 @@
+import array
+
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt5.QtGui import QColor
+
+from urh import constants
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
@@ -10,8 +18,7 @@ class LabelValueTableModel(QAbstractTableModel):
         self.proto_analyzer = proto_analyzer
         self.controller = controller
         self.__message_index = 0
-        self.display_labels = controller.active_message_type
-        """:type: urh.signalprocessing.MessageType.MessageType"""
+        self.display_labels = controller.active_message_type  # type: MessageType
 
         self.bit_str = self.proto_analyzer.decoded_proto_bits_str
         self.hex_str = self.proto_analyzer.decoded_hex_str
@@ -59,45 +66,58 @@ class LabelValueTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
-            lbl = self.display_labels[i]
-            if not lbl:
-                return None
+        i, j = index.row(), index.column()
 
+        try:
+            lbl = self.display_labels[i]
+        except IndexError:
+            return None
+
+        if not lbl or not self.message:
+            return None
+
+        if isinstance(lbl, ChecksumLabel):
+            calculated_crc = lbl.calculate_checksum_for_message(self.message, use_decoded_bits=True)
+        else:
+            calculated_crc = None
+
+        if role == Qt.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                if not self.message:
-                    return None
                 start, end = self.message.get_label_range(lbl, lbl.display_format_index % 3, True)
-                if lbl.display_format_index == 0:
+                if lbl.display_format_index in (0, 1, 2):
                     try:
-                        return self.bit_str[self.message_index][start:end]
+                        data = self.bit_str[self.message_index][start:end] if lbl.display_format_index == 0 \
+                            else self.hex_str[self.message_index][start:end] if lbl.display_format_index == 1 \
+                            else self.ascii_str[self.message_index][start:end] if lbl.display_format_index == 2 \
+                            else ""
                     except IndexError:
                         return None
-                elif lbl.display_format_index == 1:
+                else:
+                    # decimal
                     try:
-                        return self.hex_str[self.message_index][start:end]
-                    except IndexError:
+                        data = str(int(self.bit_str[self.message_index][start:end], 2))
+                    except (IndexError, ValueError):
                         return None
-                elif lbl.display_format_index == 2:
-                    try:
-                        return self.ascii_str[self.message_index][start:end]
-                    except IndexError:
-                        return None
-                elif lbl.display_format_index == 3:
-                    try:
-                        try:
-                            decimal = int(self.bit_str[self.message_index][start:end], 2)
-                        except IndexError:
-                            return None
-                    except ValueError:
-                        decimal = ""
-                    return decimal
+
+                if calculated_crc is not None:
+                    data += " (should be {0})".format(util.convert_bits_to_string(calculated_crc, lbl.display_format_index))
+
+                return data
+
+        elif role == Qt.BackgroundColorRole:
+            if isinstance(lbl, ChecksumLabel):
+                start, end = self.message.get_label_range(lbl, 0, True)
+                if calculated_crc == self.message.decoded_bits[start:end]:
+                    return constants.BG_COLOR_CORRECT
+                else:
+                    return constants.BG_COLOR_WRONG
+
+            else:
+                return None
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:

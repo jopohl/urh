@@ -17,7 +17,7 @@ class FieldType(object):
         SRC_ADDRESS = "source address"
         DST_ADDRESS = "destination address"
         SEQUENCE_NUMBER = "sequence number"
-        CRC = "crc"
+        CHECKSUM = "checksum"
         CUSTOM = "custom"
 
     def __init__(self, caption: str, function: Function, display_format_index:int = None, id=None):
@@ -27,7 +27,7 @@ class FieldType(object):
         if display_format_index is None:
             if self.function in (self.Function.PREAMBLE, self.Function.SYNC):
                 self.display_format_index = 0
-            elif self.function in (self.Function.DST_ADDRESS, self.Function.SRC_ADDRESS, self.Function.CRC):
+            elif self.function in (self.Function.DST_ADDRESS, self.Function.SRC_ADDRESS, self.Function.CHECKSUM):
                 self.display_format_index = 1
             elif self.function in (self.Function.SEQUENCE_NUMBER, self.Function.LENGTH):
                 self.display_format_index = 3
@@ -94,7 +94,15 @@ class FieldType(object):
         :rtype: FieldType
         """
         caption = tag.get("caption", "")
-        function = FieldType.Function[tag.get("function", "CUSTOM")]
+        function_str = tag.get("function", "CUSTOM")
+        if function_str == "CRC":
+            function_str = "CHECKSUM"  # legacy
+
+        try:
+            function = FieldType.Function[function_str]
+        except KeyError:
+            function = FieldType.Function.CUSTOM
+
         display_format_index = int(tag.get("display_format_index", -1))
         display_format_index = None if display_format_index == -1 else display_format_index
 

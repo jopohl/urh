@@ -114,6 +114,9 @@ LABEL_COLORS = [QColor.fromRgb(217, 240, 27, 125),  # yellow
 # full alpha for participant colors, since its used in text html view (signal frame)
 PARTICIPANT_COLORS = [QColor.fromRgb(lc.red(), lc.green(), lc.blue()) for lc in LABEL_COLORS]
 
+BG_COLOR_CORRECT = QColor(0, 255, 0, 150)
+BG_COLOR_WRONG = QColor(255, 0, 0, 150)
+
 HIGHLIGHT_TEXT_BACKGROUND_COLOR = QColor("orange")
 HIGHLIGHT_TEXT_FOREGROUND_COLOR = QColor("white")
 

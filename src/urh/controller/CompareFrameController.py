@@ -4,7 +4,7 @@ import time
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
-from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
@@ -22,7 +22,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
-from urh.signalprocessing.encoder import Encoder
+from urh.signalprocessing.Encoding import Encoding
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator
@@ -44,7 +44,7 @@ class CompareFrameController(QWidget):
 
         self.proto_analyzer = ProtocolAnalyzer(None)
         self.project_manager = project_manager
-        self.decodings = []  # type: list[Encoder]
+        self.decodings = []  # type: list[Encoding]
         self.load_decodings()
 
         self.ui = Ui_TabAnalysis()
@@ -225,6 +225,8 @@ class CompareFrameController(QWidget):
         self.ui.chkBoxOnlyShowLabelsInProtocol.stateChanged.connect(self.on_check_box_show_only_labels_state_changed)
         self.ui.chkBoxShowOnlyDiffs.stateChanged.connect(self.on_check_box_show_only_diffs_state_changed)
 
+        self.protocol_model.vertical_header_color_status_changed.connect(self.ui.tblViewProtocol.on_vertical_header_color_status_changed)
+
         self.ui.tblViewProtocol.show_interpretation_clicked.connect(self.show_interpretation_clicked.emit)
         self.ui.tblViewProtocol.protocol_view_change_clicked.connect(self.ui.cbProtoView.setCurrentIndex)
         self.ui.tblViewProtocol.selection_changed.connect(self.on_table_selection_changed)
@@ -253,6 +255,7 @@ class CompareFrameController(QWidget):
 
         self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
         self.ui.listViewLabelNames.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
+        self.ui.listViewLabelNames.auto_message_type_update_triggered.connect(self.update_automatic_assigned_message_types)
         self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
 
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)
@@ -281,7 +284,7 @@ class CompareFrameController(QWidget):
         field_types = [ft.caption for ft in self.field_types]
         self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True, return_index=False))
 
-    def set_decoding(self, decoding: Encoder, messages=None):
+    def set_decoding(self, decoding: Encoding, messages=None):
         """
 
         :param decoding:
@@ -338,21 +341,21 @@ class CompareFrameController(QWidget):
         else:
             prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
 
-        fallback = [Encoder(["Non Return To Zero (NRZ)"]),
+        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
 
-                    Encoder(["Non Return To Zero Inverted (NRZ-I)",
-                             constants.DECODING_INVERT]),
+                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
+                              constants.DECODING_INVERT]),
 
-                    Encoder(["Manchester I",
-                             constants.DECODING_EDGE]),
+                    Encoding(["Manchester I",
+                              constants.DECODING_EDGE]),
 
-                    Encoder(["Manchester II",
-                             constants.DECODING_EDGE,
-                             constants.DECODING_INVERT]),
+                    Encoding(["Manchester II",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_INVERT]),
 
-                    Encoder(["Differential Manchester",
-                             constants.DECODING_EDGE,
-                             constants.DECODING_DIFFERENTIAL])
+                    Encoding(["Differential Manchester",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_DIFFERENTIAL])
                     ]
 
         try:
@@ -374,7 +377,7 @@ class CompareFrameController(QWidget):
                 tmp = tmp.replace("'", "")
                 if not "\n" in tmp and tmp != "":
                     tmp_conf.append(tmp)
-            self.decodings.append(Encoder(tmp_conf))
+            self.decodings.append(Encoding(tmp_conf))
         f.close()
 
         if len(self.decodings) == 0:
@@ -641,7 +644,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
-    def show_protocol_label_dialog(self, preselected_index: int):
+    def create_protocol_label_dialog(self, preselected_index: int):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
             longest_message = max(
@@ -649,20 +652,16 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        label_controller = ProtocolLabelController(preselected_index=preselected_index,
+        protocol_label_dialog = ProtocolLabelController(preselected_index=preselected_index,
                                                    message=longest_message, viewtype=view_type, parent=self)
-        label_controller.apply_decoding_changed.connect(self.on_apply_decoding_changed)
-        label_controller.exec_()
+        protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
+        protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
-        self.protocol_label_list_model.update()
-        self.update_field_type_combobox()
-        self.label_value_model.update()
-        self.show_all_cols()
-        for lbl in self.proto_analyzer.protocol_labels:
-            self.set_protocol_label_visibility(lbl)
-        self.set_show_only_status()
-        self.protocol_model.update()
-        self.ui.tblViewProtocol.resize_columns()
+        return protocol_label_dialog
+
+    def show_protocol_label_dialog(self, preselected_index: int):
+        dialog = self.create_protocol_label_dialog(preselected_index)
+        dialog.exec_()
 
     def search(self):
         value = self.ui.lineEditSearch.text()
@@ -958,11 +957,8 @@ class CompareFrameController(QWidget):
     def refresh_field_types_for_labels(self):
         self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
-            for lbl in (lbl for lbl in mt if lbl.type is not None):  # type: ProtocolLabel
-                if lbl.type.id not in self.field_types_by_id:
-                    lbl.type = None
-                else:
-                    lbl.type = self.field_types_by_id[lbl.type.id]
+            for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
+                mt.change_field_type_of_label(lbl, self.field_types_by_id.get(lbl.field_type.id, None))
 
         self.update_field_type_combobox()
 
@@ -971,6 +967,18 @@ class CompareFrameController(QWidget):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         pass
+
+    @pyqtSlot(int)
+    def on_protocol_label_dialog_finished(self, dialog_result: int):
+        self.protocol_label_list_model.update()
+        self.update_field_type_combobox()
+        self.label_value_model.update()
+        self.show_all_cols()
+        for lbl in self.proto_analyzer.protocol_labels:
+            self.set_protocol_label_visibility(lbl)
+        self.set_show_only_status()
+        self.protocol_model.update()
+        self.ui.tblViewProtocol.resize_columns()
 
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
@@ -1130,6 +1138,7 @@ class CompareFrameController(QWidget):
     def on_search_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Search")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-find"))
         self.set_search_ui_visibility(True)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
@@ -1138,6 +1147,7 @@ class CompareFrameController(QWidget):
     def on_select_action_triggered(self):
         self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Select all")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-select-all"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
@@ -1153,6 +1163,7 @@ class CompareFrameController(QWidget):
 
         self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)

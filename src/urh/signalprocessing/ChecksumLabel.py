@@ -1,0 +1,103 @@
+import ast
+
+import array
+
+from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.util.GenericCRC import GenericCRC
+from enum import Enum
+import xml.etree.ElementTree as ET
+
+from urh.util.WSPChecksum import WSPChecksum
+
+
+class ChecksumLabel(ProtocolLabel):
+    __slots__ = ("__data_ranges", "checksum", "__category")
+
+    class Category(Enum):
+        generic = "generic"
+        wsp = "Wireless Short Packet (WSP)"
+
+    def __init__(self, name: str, start: int, end: int, color_index: int, field_type: FieldType,
+                 fuzz_created=False, auto_created=False, data_range_start=0):
+        assert field_type.function == FieldType.Function.CHECKSUM
+        super().__init__(name, start, end, color_index, fuzz_created, auto_created, field_type)
+
+        self.__category = self.Category.generic
+        self.__data_ranges = [[data_range_start, self.start]]  # type: list[list[int,int]]
+        self.checksum = GenericCRC(polynomial=0)   # type: GenericCRC or WSPChecksum
+
+    def calculate_checksum(self, bits: array.array) -> array.array:
+        return self.checksum.calculate(bits)
+
+    def calculate_checksum_for_message(self, message, use_decoded_bits: bool) -> array.array:
+        data = array.array("B", [])
+        bits = message.decoded_bits if use_decoded_bits else message.plain_bits
+        for data_range in self.data_ranges:
+            data.extend(bits[data_range[0]:data_range[1]])
+        return self.calculate_checksum(data)
+
+    @property
+    def data_ranges(self):
+        if self.category == self.Category.wsp:
+            return [[12, -4]]
+        else:
+            return self.__data_ranges
+
+    @data_ranges.setter
+    def data_ranges(self, value):
+        self.__data_ranges = value
+
+    @property
+    def is_generic_crc(self):
+        return self.category == self.Category.generic
+
+    @property
+    def category(self) -> Category:
+        return self.__category
+
+    @category.setter
+    def category(self, value: Category):
+        if value != self.category:
+            self.__category = value
+            if self.category == self.Category.generic:
+                self.checksum = GenericCRC()
+            elif self.category == self.Category.wsp:
+                self.checksum = WSPChecksum()
+            else:
+                raise ValueError("Unknown Category")
+
+    @classmethod
+    def from_label(cls, label: ProtocolLabel):
+        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index, label.field_type,
+                               label.fuzz_created, label.auto_created)
+        result.apply_decoding = label.apply_decoding
+        result.show = label.show
+        result.fuzz_me = label.fuzz_me
+        result.fuzz_values = label.fuzz_values
+        result.display_format_index = label.display_format_index
+        return result
+
+    @classmethod
+    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
+        lbl = super().from_xml(tag, field_types_by_type_id)
+        result = cls.from_label(lbl)
+        result.data_ranges = ast.literal_eval(tag.get("data_ranges", "[]"))
+        result.category = cls.Category[tag.get("category", "generic")]
+
+        crc_tag = tag.find("crc")
+        if crc_tag is not None:
+            result.checksum = GenericCRC.from_xml(crc_tag)
+
+        wsp_tag = tag.find("wsp_checksum")
+        if wsp_tag is not None:
+            result.checksum = WSPChecksum.from_xml(wsp_tag)
+
+        return result
+
+    def to_xml(self, index: int):
+        result = super().to_xml(index)
+        result.tag = "checksum_label"
+        result.attrib.update({"data_ranges": str(self.data_ranges), "category": self.category.name})
+        result.append(self.checksum.to_xml())
+        return result

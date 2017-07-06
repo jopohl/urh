@@ -1,16 +1,14 @@
 import os
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
 from urh.dev import config
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from xml.dom import minidom
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator
 
@@ -111,7 +109,8 @@ class ProjectManager(QObject):
             self.read_compare_frame_groups(root)
             decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
             if decodings:
-                cfc.decodings = decodings
+                # Set values of decodings only so decodings are updated in generator when loading a project
+                cfc.decodings[:] = decodings
             cfc.fill_decoding_combobox()
 
             cfc.proto_analyzer.message_types = self.read_message_types()
@@ -345,15 +344,17 @@ class ProjectManager(QObject):
         if self.project_file is not None:
             tree = ET.parse(self.project_file)
             root = tree.getroot()
-            fileNames = []
+            file_names = []
 
             for ftag in root.findall("open_file"):
                 pos = int(ftag.attrib["position"])
                 filename = os.path.join(self.project_path, ftag.attrib["name"])
-                fileNames.insert(pos, filename)
+                file_names.insert(pos, filename)
 
-            fileNames = FileOperator.uncompress_archives(fileNames, QDir.tempPath())
-            return fileNames
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
+            QApplication.restoreOverrideCursor()
+            return file_names
         return []
 
     def read_compare_frame_groups(self, root):

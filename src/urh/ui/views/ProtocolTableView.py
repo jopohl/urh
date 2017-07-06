@@ -158,6 +158,9 @@ class ProtocolTableView(TableView):
 
         menu.addSeparator()
 
+        if not self.selection_is_empty:
+            menu.addAction(self.copy_action)
+
         menu.addAction(self.hide_row_action)
         hidden_rows = self.model().hidden_rows
         if len(hidden_rows) > 0:

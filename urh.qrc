@@ -1,18 +1,17 @@
 <RCC>
   <qresource prefix="icons">
-    <file>data/icons/lock.svg</file>
-    <file>data/icons/ajax-loader.gif</file>
+    <file>data/icons/spectrum.svg</file>
+    <file>data/icons/spectrum.png</file>
+    <file>data/icons/equals_generator_qm.png</file>
+    <file>data/icons/sniffer.svg</file>
+    <file>data/icons/protocol_sniffer.png</file>
     <file>data/icons/appicon.png</file>
-    <file>data/icons/arrow_down_generator.png</file>
-    <file>data/icons/unlock.svg</file>
-    <file>data/icons/arrow_right_generator.png</file>
+    <file>data/icons/decoding.svg</file>
     <file>data/icons/rotated_splitter_handle.png</file>
-    <file>data/icons/downarrow.png</file>
     <file>data/icons/equals_generator.png</file>
-    <file>data/icons/expand.png</file>
     <file>data/icons/splitter_handle.png</file>
     <file>data/icons/plus.png</file>
-    <file>data/icons/shrink.png</file>
-    <file>data/icons/uparrow.png</file>
+    <file>data/icons/lock.svg</file>
+    <file>data/icons/unlock.svg</file>
   </qresource>
 </RCC>

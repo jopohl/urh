@@ -1,12 +1,10 @@
+import array
 import copy
 import itertools
 from enum import Enum
 
-import array
 import numpy
-import time
 
-from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
@@ -109,7 +107,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                   rssi=msg.rssi, message_type=message_type,
                                   modulator_indx=msg.modulator_indx,
                                   decoder=msg.decoder, fuzz_created=True, participant=msg.participant)
-                added_message_indices.append(i+j+1)
+                added_message_indices.append(i + j + 1)
                 appd_result(fuz_msg)
                 if j % 10000 == 0:
                     self.qt_signals.current_fuzzing_message_changed.emit(j)

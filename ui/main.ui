@@ -125,7 +125,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="autoScroll">
            <bool>true</bool>
@@ -182,7 +182,11 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
              <number>0</number>
             </property>
             <item>
-             <widget class="QListView" name="listViewParticipants"/>
+             <widget class="QListView" name="listViewParticipants">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -218,6 +222,12 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -579,6 +589,10 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    </property>
   </action>
   <action name="actionDecoding">
+   <property name="icon">
+    <iconset resource="../urh.qrc">
+     <normaloff>:/icons/data/icons/decoding.svg</normaloff>:/icons/data/icons/decoding.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Decoding...</string>
    </property>
@@ -596,6 +610,10 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    </property>
   </action>
   <action name="actionSpectrum_Analyzer">
+   <property name="icon">
+    <iconset resource="../urh.qrc">
+     <normaloff>:/icons/data/icons/spectrum.svg</normaloff>:/icons/data/icons/spectrum.svg</iconset>
+   </property>
    <property name="text">
     <string>Spectrum &amp;Analyzer...</string>
    </property>
@@ -616,16 +634,28 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
    </property>
   </action>
   <action name="actionNew_Project">
+   <property name="icon">
+    <iconset theme="folder-new">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
    <property name="text">
     <string>&amp;New Project..</string>
    </property>
   </action>
   <action name="actionSniff_protocol">
+   <property name="icon">
+    <iconset resource="../urh.qrc">
+     <normaloff>:/icons/data/icons/sniffer.svg</normaloff>:/icons/data/icons/sniffer.svg</iconset>
+   </property>
    <property name="text">
     <string>Sn&amp;iff protocol...</string>
    </property>
   </action>
   <action name="actionProject_settings">
+   <property name="icon">
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
    <property name="text">
     <string>&amp;Project settings...</string>
    </property>

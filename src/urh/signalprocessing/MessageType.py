@@ -1,9 +1,9 @@
 import random
 import uuid
 import xml.etree.ElementTree as ET
-from copy import deepcopy
 
 from urh import constants
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Ruleset import Ruleset
@@ -51,6 +51,10 @@ class MessageType(list):
     @property
     def id(self) -> str:
         return self.__id
+
+    @property
+    def checksum_labels(self) -> list:
+        return [lbl for lbl in self if isinstance(lbl, ChecksumLabel)]
 
     @property
     def unlabeled_ranges(self):
@@ -103,8 +107,8 @@ class MessageType(list):
             else:
                 color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        proto_label = ProtocolLabel(name=name, start=start, end=end, color_index=color_ind,
-                                    auto_created=auto_created, type=type)
+        proto_label = self.__create_label(name=name, start=start, end=end, color_index=color_ind,
+                                          auto_created=auto_created, field_type=type)
 
         if proto_label not in self:
             self.append(proto_label)
@@ -114,7 +118,7 @@ class MessageType(list):
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
-            self.add_protocol_label(lbl.start, lbl.end-1, name=lbl.name, color_ind=lbl.color_index)
+            self.add_protocol_label(lbl.start, lbl.end - 1, name=lbl.name, color_ind=lbl.color_index)
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:
@@ -127,11 +131,42 @@ class MessageType(list):
                                                     "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0",
                                                     "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
         for lbl in self:
-            result.append(lbl.to_xml(-1))
+            try:
+                result.append(lbl.to_xml(-1))
+            except TypeError:
+                logger.error("Could not save label: " + str(lbl))
 
         result.append(self.ruleset.to_xml())
 
         return result
+
+    def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
+        is_crc_type = field_type is not None and field_type.function == FieldType.Function.CHECKSUM
+        if is_crc_type != isinstance(label, ChecksumLabel):
+            self[self.index(label)] = self.__create_label(label.name, label.start, label.end - 1,
+                                                          label.color_index, label.auto_created, field_type)
+        else:
+            label.field_type = field_type
+
+    def __create_label(self, name: str, start: int, end: int, color_index: int, auto_created: bool,
+                       field_type: FieldType):
+        if field_type is not None:
+            if field_type.function == FieldType.Function.CHECKSUM:
+                # If we have sync or preamble labels start behind last one:
+                pre_sync_label_ends = [lbl.end for lbl in self if lbl.is_preamble or lbl.is_sync]
+                if len(pre_sync_label_ends) > 0:
+                    range_start = max(pre_sync_label_ends)
+                else:
+                    range_start = 0
+
+                if range_start >= start:
+                    range_start = 0
+
+                return ChecksumLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
+                                     auto_created=auto_created, data_range_start=range_start)
+
+        return ProtocolLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
+                             auto_created=auto_created)
 
     @staticmethod
     def from_xml(tag: ET.Element):
@@ -144,9 +179,10 @@ class MessageType(list):
         labels = []
         for lbl_tag in tag.findall("label"):
             labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
+        for lbl_tag in tag.findall("checksum_label"):
+            labels.append(ChecksumLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
         result = MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer
 
         return result
-

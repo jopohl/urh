@@ -39,7 +39,7 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(x_zoom, 100)
 
         for _ in range(10):
-            frame.ui.gvSignal.zoom(1.01)
+            frame.ui.gvSignal.zoom(1.1)
             self.assertGreater(frame.ui.spinBoxXZoom.value(), x_zoom)
             x_zoom = frame.ui.spinBoxXZoom.value()
 

@@ -25,7 +25,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="16"
      inkscape:cx="20.384743"
-     inkscape:cy="20.4375"
+     inkscape:cy="17.390625"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,15 +62,15 @@
          sodipodi:role="line"
          id="tspan5089"
          x="8.375"
-         y="14.875"></tspan></text>
+         y="14.875" /></text>
     <g
        aria-label="+"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#0055d4;fill-opacity:1;stroke:none"
-       id="text5687">
+       style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:53.33333206px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0px;word-spacing:0px;fill:#0055d4;fill-opacity:1;stroke:none"
+       id="text5707">
       <path
-         d="m 12.1695,31.3025 h 7.936 v -11.52 h 11.136 v -7.68 h -11.136 v -11.52 h -7.936 v 11.52 H 1.0335 v 7.68 h 11.136 z"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:64px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';fill:#0055d4;fill-opacity:1"
-         id="path5689" />
+         d="m 12.755833,28.8875 h 6.613333 v -9.6 h 9.28 v -6.4 h -9.28 V 3.2875007 H 12.755833 V 12.8875 H 3.4758333 v 6.4 h 9.2799997 z"
+         style=""
+         id="path5709" />
     </g>
   </g>
 </svg>

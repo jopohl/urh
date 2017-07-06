@@ -24,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="7.040993"
-     inkscape:cy="17.3125"
+     inkscape:cx="-7.8340023"
+     inkscape:cy="9.8125"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -64,13 +64,14 @@
          x="8.375"
          y="14.875" /></text>
     <g
-       aria-label="="
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#0055d4;fill-opacity:1;stroke:none"
-       id="text6324">
-      <path
-         d="M 0.971,12.29 H 31.179 V 4.61 H 0.971 Z m 0,15.36 H 31.179 V 19.97 H 0.971 Z"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:64px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';fill:#0055d4;fill-opacity:1"
-         id="path6326" />
-    </g>
+       transform="translate(-2.8046876,-0.0527343)"
+       aria-label=" ≟"
+       style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0px;word-spacing:0px;fill:#0055d4;fill-opacity:1;stroke:none"
+       id="text5046" />
+    <path
+       id="path5687"
+       style="fill:#0055d4;fill-opacity:1;stroke:none;stroke-width:0.94488192;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 3.1054687,18.119141 H 28.144531 v 4.628906 H 3.1054687 Z m 0,-8.886719 H 28.144531 v 4.589844 H 3.1054687 Z"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

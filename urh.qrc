@@ -2,6 +2,7 @@
   <qresource prefix="icons">
     <file>data/icons/spectrum.png</file>
     <file>data/icons/equals_generator_qm.png</file>
+    <file>data/icons/sniffer.svg</file>
     <file>data/icons/protocol_sniffer.png</file>
     <file>data/icons/decoding.svg.png</file>
     <file>data/icons/appicon.png</file>

@@ -261,7 +261,7 @@ class Ui_MainWindow(object):
         self.actionNew_Project.setObjectName("actionNew_Project")
         self.actionSniff_protocol = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/data/icons/protocol_sniffer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/data/icons/sniffer.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSniff_protocol.setIcon(icon3)
         self.actionSniff_protocol.setObjectName("actionSniff_protocol")
         self.actionProject_settings = QtWidgets.QAction(MainWindow)

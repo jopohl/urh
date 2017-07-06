@@ -2,7 +2,7 @@ import copy
 import os
 
 from PyQt5.QtCore import QDir, Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication, QFileDialog, QInputDialog, \
     QLineEdit, QMessageBox
 
@@ -70,6 +70,7 @@ class DecoderWidgetController(QDialog):
 
         # Presets
         self.setWindowTitle("Decoding")
+        self.setWindowIcon(QIcon(":/icons/data/icons/decoding.svg"))
         self.setAcceptDrops(True)
         self.inpt_text = "10010110"
         self.ui.inpt.setText(self.inpt_text)

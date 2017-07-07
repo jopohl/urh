@@ -5,9 +5,9 @@
     <file>data/icons/splitter_handle_vertical.svg</file>
     <file>data/icons/modulation.svg</file>
     <file>data/icons/plus.svg</file>
-    <file>data/icons/spectrum.svg</file>
     <file>data/icons/splitter_handle_horizontal.svg</file>
     <file>data/icons/spectrum.png</file>
+    <file>data/icons/spectrum.svg</file>
     <file>data/icons/sniffer.svg</file>
     <file>data/icons/protocol_sniffer.png</file>
     <file>data/icons/appicon.png</file>

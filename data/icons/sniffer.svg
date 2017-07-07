@@ -24,14 +24,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="4.383195"
-     inkscape:cy="0.25349098"
+     inkscape:zoom="32"
+     inkscape:cx="4.0973469"
+     inkscape:cy="9.5734649"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1141"
+     inkscape:window-height="1015"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -46,6 +46,70 @@
          offset="0"
          id="stop7077" />
     </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter914">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood904" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite906" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.5"
+         result="blur"
+         id="feGaussianBlur908" />
+      <feOffset
+         dx="0.1"
+         dy="0.1"
+         result="offset"
+         id="feOffset910" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite912" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter938">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood928" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite930" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.5"
+         result="blur"
+         id="feGaussianBlur932" />
+      <feOffset
+         dx="0.1"
+         dy="0.1"
+         result="offset"
+         id="feOffset934" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite936" />
+    </filter>
   </defs>
   <metadata
      id="metadata5039">
@@ -62,12 +126,11 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Ebene 2">
-    <circle
-       style="fill:#afc6e9;fill-opacity:1;stroke:#ff0000;stroke-width:1.19093943;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path5605"
-       cx="6.8475037"
-       cy="6.8600025"
-       r="6.0412431" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.88976378;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter938)"
+       d="m 11.303085,11.154756 3.83883,3.910488"
+       id="path5611"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      id="layer1"
@@ -87,10 +150,11 @@
          id="path7119"
          inkscape:connector-curvature="0" />
     </g>
-    <path
-       style="fill:none;stroke:#ff0000;stroke-width:1.88976378;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 11.303085,11.154756 3.83883,3.910488"
-       id="path5611"
-       inkscape:connector-curvature="0" />
+    <circle
+       style="fill:#afc6e9;fill-opacity:0.33070865;stroke:#ff0000;stroke-width:1.19093943;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter914)"
+       id="path5605"
+       cx="6.8475037"
+       cy="6.8600025"
+       r="6.0412431" />
   </g>
 </svg>

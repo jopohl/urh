@@ -486,8 +486,11 @@ class ModulatorDialogController(QDialog):
         for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated):
             if gv == self.sender():
                 continue
-            gv.scale(factor, 1)
-            gv.centerOn(x, y)
+            if factor == -1:
+                gv.show_full_scene()
+            else:
+                gv.scale(factor, 1)
+                gv.centerOn(x, y)
 
         if self.lock_samples_in_view:
             self.adjust_samples_in_view(self.ui.gVModulated.view_rect().width())

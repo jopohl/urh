@@ -8,6 +8,9 @@ from urh.util.Logger import logger
 
 
 class ZoomableGraphicView(SelectableGraphicView):
+
+    # argument is x zoom factor
+    # if argument is -1, then show_full_scene was triggered during zoom
     zoomed = pyqtSignal(float)
 
     def __init__(self, parent=None):
@@ -67,12 +70,17 @@ class ZoomableGraphicView(SelectableGraphicView):
             pos = None
         old_pos = self.mapToScene(pos) if pos is not None else None
 
+        show_full = False
         if self.view_rect().width() / factor > self.sceneRect().width():
             self.show_full_scene()
             factor = 1
+            show_full = True
 
         self.scale(factor, 1)
-        self.zoomed.emit(factor)
+        if show_full:
+            self.zoomed.emit(-1)
+        else:
+            self.zoomed.emit(factor)
 
         if pos is not None:
             move = self.mapToScene(pos) - old_pos

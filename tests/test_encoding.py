@@ -2,10 +2,11 @@ import copy
 import array
 
 from tests.QtTestCase import QtTestCase
+from urh import constants
 from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 from urh.util.WSPChecksum import WSPChecksum
-
+from tests.utils_testing import get_path_for_data_file
 
 class TestDecoding(QtTestCase):
     def setUp(self):
@@ -158,3 +159,15 @@ class TestDecoding(QtTestCase):
         reencoded, _, _ = e.code_substitution(decoding=False, inpt=decoded)
         self.assertEqual(err, 3)
         self.assertEqual(reencoded, compare)
+
+    def test_external(self):
+        encoder = get_path_for_data_file("encode.py")
+        decoder = get_path_for_data_file("decode.py")
+        e = Encoding(["test external", constants.DECODING_EXTERNAL, decoder+";"+encoder])
+
+        data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
+        encoded = e.encode(data)
+        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+
+        decoded = e.decode(encoded)
+        self.assertEqual(decoded, data)

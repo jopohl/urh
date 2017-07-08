@@ -393,7 +393,7 @@ class Encoding(object):
         # print(command, param)
         try:
             import subprocess
-            p = subprocess.Popen([command + " " + param],
+            p = subprocess.Popen([command, param],
                                  shell=True,
                                  # stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE)

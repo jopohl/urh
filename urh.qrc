@@ -10,7 +10,7 @@
     <file>data/icons/spectrum.svg</file>
     <file>data/icons/appicon.png</file>
     <file>data/icons/decoding.svg</file>
-    <file>data/icons/lock.svg</file>
     <file>data/icons/unlock.svg</file>
+    <file>data/icons/lock.svg</file>
   </qresource>
 </RCC>

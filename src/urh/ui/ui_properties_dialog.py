@@ -12,7 +12,20 @@ class Ui_DialogLabels(object):
         DialogLabels.resize(714, 463)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(DialogLabels)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.groupBoxSettings = QtWidgets.QGroupBox(DialogLabels)
+        self.splitter = QtWidgets.QSplitter(DialogLabels)
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"    image: url(:/icons/data/icons/splitter_handle_horizontal.svg);\n"
+"}")
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setChildrenCollapsible(False)
+        self.splitter.setObjectName("splitter")
+        self.groupBoxSettings = QtWidgets.QGroupBox(self.splitter)
         self.groupBoxSettings.setObjectName("groupBoxSettings")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBoxSettings)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -40,15 +53,14 @@ class Ui_DialogLabels(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.verticalLayout_3.addWidget(self.groupBoxSettings)
-        self.groupBoxAdvancedSettings = QtWidgets.QGroupBox(DialogLabels)
+        self.groupBoxAdvancedSettings = QtWidgets.QGroupBox(self.splitter)
         self.groupBoxAdvancedSettings.setObjectName("groupBoxAdvancedSettings")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBoxAdvancedSettings)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tabWidgetAdvancedSettings = QtWidgets.QTabWidget(self.groupBoxAdvancedSettings)
         self.tabWidgetAdvancedSettings.setObjectName("tabWidgetAdvancedSettings")
         self.verticalLayout_2.addWidget(self.tabWidgetAdvancedSettings)
-        self.verticalLayout_3.addWidget(self.groupBoxAdvancedSettings)
+        self.verticalLayout_3.addWidget(self.splitter)
         self.btnConfirm = QtWidgets.QPushButton(DialogLabels)
         self.btnConfirm.setObjectName("btnConfirm")
         self.verticalLayout_3.addWidget(self.btnConfirm)
@@ -68,3 +80,4 @@ class Ui_DialogLabels(object):
         self.btnConfirm.setText(_translate("DialogLabels", "Confirm"))
 
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
+from . import urh_rc

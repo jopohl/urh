@@ -107,7 +107,8 @@ class ZoomableGraphicView(SelectableGraphicView):
     def show_full_scene(self, reinitialize=False):
         y_factor = self.transform().m22()
         self.resetTransform()
-        x_factor = self.view_rect().width() / (self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
+        # Use full self.width() here to enable show_full_scene when view_rect not yet set e.g. in Record Signal Dialog
+        x_factor = self.width() / (self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
         self.scale(x_factor, y_factor)
         self.centerOn(0, self.y_center)
 

@@ -217,10 +217,8 @@ class ProtocolAnalyzer(object):
 
         bit_len = signal.bit_len
 
-        ppseq = signalFunctions.grab_pulse_lens(signal.qad,
-                                                signal.qad_center,
-                                                signal.tolerance,
-                                                signal.modulation_type)
+        ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+                                                signal.modulation_type, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 

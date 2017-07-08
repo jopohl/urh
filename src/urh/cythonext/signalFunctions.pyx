@@ -195,92 +195,101 @@ cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type)
 
     return ns
 
-cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples,
-                                                 float treshold, unsigned int tolerance, int mod_type):
+cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float center,
+                                                 unsigned int tolerance, int modulation_type, unsigned int bit_length):
     """
     Holt sich die Pulslängen aus den quadraturdemodulierten Samples
     @param samples: Samples nach der QAD
-    @param treshold: Alles über der Treshold ist ein Einserpuls, alles darunter 0er Puls
+    @param center: Alles über der Treshold ist ein Einserpuls, alles darunter 0er Puls
     @return: Ein 2D Array arr.
     arr[i] gibt Position an.
     arr[i][0] gibt an ob Einspuls (arr[i][0] = 1) Nullpuls (arr[i][0] = 0) Pause (arr[i][0] = 42)
     arr[i][1] gibt die Länge des Pulses bzw. der Pause an.
     """
-    cdef unsigned long long i, ns, pulselen = 0
-    cdef unsigned long long cur_index = 0, conseq_ones = 0, conseq_zeros = 0, conseq_pause = 0
+    cdef int is_ask = modulation_type == 0
+    cdef unsigned long long i, pulse_length = 0
+    cdef unsigned long long cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
     cdef float s, s_prev
-    cdef int cur_state
-    cdef float NOISE = get_noise_for_mod_type(mod_type)
-    ns = len(samples)
+    cdef int cur_state, new_state
+    cdef float NOISE = get_noise_for_mod_type(modulation_type)
+    cdef unsigned long long num_samples = len(samples)
 
-    cdef unsigned long long[:, ::1] result = np.zeros((ns, 2), dtype=np.uint64, order="C")
-    if ns == 0:
+    cdef unsigned long long[:, ::1] result = np.zeros((num_samples, 2), dtype=np.uint64, order="C")
+    if num_samples == 0:
         return result
 
     s_prev = samples[0]
     if s_prev == NOISE:
         cur_state = 42
-    elif s_prev > treshold:
+    elif s_prev > center:
         cur_state = 1
     else:
         cur_state = 0
 
-    for i in range(ns-1):
-        pulselen += 1
+    for i in range(num_samples):
+        pulse_length += 1
         s = samples[i]
         if s == NOISE:
-            conseq_pause += 1
-            conseq_ones = 0
-            conseq_zeros = 0
-            if cur_state == 42: continue
-        elif s > treshold:
-            conseq_ones += 1
-            conseq_zeros = 0
-            conseq_pause = 0
-            if cur_state == 1: continue
+            consecutive_pause += 1
+            consecutive_ones = 0
+            consecutive_zeros = 0
+            if cur_state == 42:
+                continue
+
+        elif s > center:
+            consecutive_ones += 1
+            consecutive_zeros = 0
+            consecutive_pause = 0
+            if cur_state == 1:
+                continue
+
         else:
-            conseq_zeros += 1
-            conseq_ones = 0
-            conseq_pause = 0
-            if cur_state == 0: continue
+            consecutive_zeros += 1
+            consecutive_ones = 0
+            consecutive_pause = 0
+            if cur_state == 0:
+                continue
 
-        if conseq_ones > tolerance:
-            result[cur_index, 0] = cur_state
-            result[cur_index, 1] = pulselen - tolerance
-            cur_index += 1
-            pulselen = tolerance
-            cur_state = 1
+        if consecutive_ones > tolerance:
+            new_state = 1
+        elif consecutive_zeros > tolerance:
+            new_state = 0
+        elif consecutive_pause > tolerance:
+            new_state = 42
+        else:
+            continue
 
-        elif conseq_zeros > tolerance:
-            result[cur_index, 0] = cur_state
-            result[cur_index, 1] = pulselen - tolerance
-            cur_index += 1
-            pulselen = tolerance
+        if is_ask and cur_state == 42 and (pulse_length - tolerance) < bit_length:
+            # Aggregate short pauses for ASK
             cur_state = 0
 
-        elif conseq_pause > tolerance:
+        if cur_index > 0 and result[cur_index - 1, 0] == cur_state:
+            result[cur_index - 1, 1] += pulse_length - tolerance
+        else:
             result[cur_index, 0] = cur_state
-            result[cur_index, 1] = pulselen - tolerance
+            result[cur_index, 1] = pulse_length - tolerance
             cur_index += 1
-            pulselen = tolerance
-            cur_state = 42
 
-    # Letzen anfügen
+        pulse_length = tolerance
+        cur_state = new_state
+
+    # Append last one
     cdef unsigned long long len_result = len(result)
     if cur_index < len_result:
-        result[cur_index, 0] = cur_state
-        result[cur_index, 1] = pulselen
-        cur_index += 1
-
-    if cur_index > len_result:
-        cur_index = len_result
+        if cur_index > 0 and result[cur_index - 1, 0] == cur_state:
+            result[cur_index - 1, 1] += pulse_length - tolerance
+        else:
+            result[cur_index, 0] = cur_state
+            result[cur_index, 1] = pulse_length - tolerance
+            cur_index += 1
 
     return result[:cur_index]
 
 cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_center, int tolerance, int mod_type):
 
     start = find_signal_start(qad_samples, mod_type)
-    cdef unsigned long long[:, ::1] ppseq = grab_pulse_lens(qad_samples[start:], qad_center, tolerance, mod_type)
+    cdef unsigned long long[:, ::1] ppseq = grab_pulse_lens(qad_samples[start:], qad_center, tolerance, mod_type,
+                                                            4294967295)
     cdef unsigned long long i = 0
     cdef unsigned long long l = len(ppseq)
     for i in range(0, l):

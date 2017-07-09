@@ -72,6 +72,11 @@ sudo pip3 install urh
 emerge -av urh
 ```
 
+### Fedora 25+
+```bash
+dnf install urh
+```
+
 ### Windows
 If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
 

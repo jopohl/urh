@@ -47,6 +47,8 @@ class OptionsController(QDialog):
         self.ui.checkBoxDefaultFuzzingPause.setChecked(
             constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
+        self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value('align_labels', True, bool))
+
         self.ui.doubleSpinBoxRAMThreshold.setValue(100 * constants.SETTINGS.value('ram_threshold', 0.6, float))
 
         self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)

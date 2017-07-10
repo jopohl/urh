@@ -107,8 +107,13 @@ def get_ext_modules():
 def read_long_description():
     try:
         import pypandoc
-        return pypandoc.convert('README.md', 'rst')
-    except(IOError, ImportError, RuntimeError):
+        with open("README.md") as f:
+            text = f.read()
+
+        # Remove screenshots as they get rendered poorly on PyPi
+        stripped_text = text[:text.index("# Screenshots")].rstrip()
+        return pypandoc.convert_text(stripped_text, 'rst', format='md')
+    except:
         return ""
 
 install_requires = ["numpy", "psutil", "pyzmq"]

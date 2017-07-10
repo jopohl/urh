@@ -172,6 +172,7 @@ class ProtocolTableView(TableView):
 
         if not self.model().is_writeable:
             show_interpretation_action = menu.addAction(self.tr("Show selection in Interpretation"))
+            show_interpretation_action.setIcon(QIcon.fromTheme("zoom-select"))
             show_interpretation_action.triggered.connect(self.on_show_in_interpretation_action_triggered)
 
         if self.model().is_writeable:

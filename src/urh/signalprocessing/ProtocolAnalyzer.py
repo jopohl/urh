@@ -222,6 +222,7 @@ class ProtocolAnalyzer(object):
             ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
                                                     signal.modulation_type, signal.bit_len)
         except TypeError:
+            # Remove this check in version 1.7
             print("Extension method has changed! To fix this, first move to URHs base directory "
                   "then recompile the extensions using the following command:")
             print("python3 src/urh/cythonext/build.py")

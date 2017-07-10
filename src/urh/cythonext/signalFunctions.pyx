@@ -288,8 +288,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
 cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_center, int tolerance, int mod_type):
 
     start = find_signal_start(qad_samples, mod_type)
-    cdef unsigned long long[:, ::1] ppseq = grab_pulse_lens(qad_samples[start:], qad_center, tolerance, mod_type,
-                                                            4294967295)
+    cdef unsigned long long[:, ::1] ppseq = grab_pulse_lens(qad_samples[start:], qad_center, tolerance, mod_type, 0)
     cdef unsigned long long i = 0
     cdef unsigned long long l = len(ppseq)
     for i in range(0, l):

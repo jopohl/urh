@@ -5,6 +5,7 @@ from xml.dom import minidom
 
 import array
 import numpy as np
+import sys
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
@@ -217,10 +218,16 @@ class ProtocolAnalyzer(object):
 
         bit_len = signal.bit_len
 
-        ppseq = signalFunctions.grab_pulse_lens(signal.qad,
-                                                signal.qad_center,
-                                                signal.tolerance,
-                                                signal.modulation_type)
+        try:
+            ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+                                                    signal.modulation_type, signal.bit_len)
+        except TypeError:
+            # Remove this check in version 1.7
+            print("Extension method has changed! To fix this, first move to URHs base directory "
+                  "then recompile the extensions using the following command:")
+            print("python3 src/urh/cythonext/build.py")
+            print("and finally restart the application")
+            sys.exit(1)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 

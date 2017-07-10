@@ -356,8 +356,14 @@ class ModulatorDialogController(QDialog):
         self.draw_data_bits()
         self.draw_modulated()
         if len(text) > 0:
-            self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n") + "(" + text + ")")
+            if len(text) > 24:
+                display_text = text[0:24] + "..."
+            else:
+                display_text = text
+            self.ui.cbShowDataBitsOnly.setToolTip(text)
+            self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n") + "(" + display_text + ")")
         else:
+            self.ui.cbShowDataBitsOnly.setToolTip("")
             self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
 
         self.search_data_sequence()

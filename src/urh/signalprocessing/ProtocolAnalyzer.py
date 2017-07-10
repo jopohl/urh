@@ -335,9 +335,9 @@ class ProtocolAnalyzer(object):
                     end_index -= 1
 
             start = self.messages[start_message].bit_sample_pos[start_index]
-            end = self.messages[end_message].bit_sample_pos[end_index] - start
+            num_samples = self.messages[end_message].bit_sample_pos[end_index] - start
 
-            return start, end
+            return start, num_samples
         except KeyError:
             return -1, -1
 

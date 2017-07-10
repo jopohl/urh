@@ -6,6 +6,9 @@ import numpy as np
 
 from urh.signalprocessing.Modulator import Modulator
 from urh.cythonext import signalFunctions
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.signalprocessing.Signal import Signal
+from tests.utils_testing import get_path_for_data_file
 
 
 class PlotTests(unittest.TestCase):
@@ -37,3 +40,16 @@ class PlotTests(unittest.TestCase):
         plt.title("Quad Demod")
 
         plt.show()
+
+    def test_carrier_auto_detect(self):
+        signal = Signal(get_path_for_data_file("wsp.complex"), "test")
+        signal.modulation_type = 0
+        signal.noise_threshold = 0.035
+        signal.qad_center = 0.0245
+        signal.bit_len = 25
+        pa = ProtocolAnalyzer(signal)
+        pa.get_protocol_from_signal()
+        start, num_samples = pa.get_samplepos_of_bitseq(0, 0, 0, 999999, include_pause=False)
+
+        print("-----------")
+        print(signal.estimate_frequency(start, end=start+num_samples, sample_rate=2e6))

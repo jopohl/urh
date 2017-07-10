@@ -30,6 +30,13 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
 
+        self.zoom_original_action = QAction(self.tr("Zoom original"), self)
+        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
+        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
+        self.addAction(self.zoom_original_action)
+
         self.redraw_timer = QTimer()
         self.redraw_timer.setSingleShot(True)
         self.redraw_timer.timeout.connect(self.redraw_view)
@@ -162,3 +169,8 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_zoom_out_action_triggered(self):
         self.zoom(0.9)
+
+    @pyqtSlot()
+    def on_zoom_original_action_triggered(self):
+        self.show_full_scene(reinitialize=False)
+        self.zoomed.emit(-1)

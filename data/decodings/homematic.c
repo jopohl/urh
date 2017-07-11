@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     {
         if (argv[1][0]=='d')
         {
-            if (strlen(argv[2]) > 256*8 ) return -1;
+            if (strlen(argv[2]) > 256*8 || strlen(argv[2]) < 4) return -1;
             memcpy(string, argv[2], strlen(argv[2]));
             
             for (i = 0; i < strlen(string)-3; i+=8)
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            if (strlen(argv[2]) > 256*8 ) return -1;
+            if (strlen(argv[2]) > 256*8 || strlen(argv[2]) < 4) return -1;
             memcpy(string, argv[2], strlen(argv[2]));
             
             for (i = 0; i < strlen(string)-3; i+=8)

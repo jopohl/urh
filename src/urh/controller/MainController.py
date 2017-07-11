@@ -227,7 +227,7 @@ class MainController(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(2)
         self.generator_tab_controller.load_from_file(filename)
 
-    def add_signalfile(self, filename: str, group_id=0):
+    def add_signalfile(self, filename: str, group_id=0, enforce_sample_rate=None):
         if not os.path.exists(filename):
             QMessageBox.critical(self, self.tr("File not Found"),
                                  self.tr("The file {0} could not be found. Was it moved or renamed?").format(
@@ -257,8 +257,12 @@ class MainController(QMainWindow):
 
         # Use default sample rate for signal
         # Sample rate will be overriden in case of a project later
-        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated,
-                        sample_rate=self.project_manager.device_conf["sample_rate"])
+        if enforce_sample_rate is not None:
+            sample_rate = enforce_sample_rate
+        else:
+            sample_rate = self.project_manager.device_conf["sample_rate"]
+
+        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated, sample_rate=sample_rate)
 
         if self.project_manager.project_file is None:
             self.adjust_for_current_file(signal.filename)
@@ -649,11 +653,11 @@ class MainController(QMainWindow):
         r.recording_parameters.connect(pm.set_recording_parameters)
         r.show()
 
-    @pyqtSlot(list)
-    def on_signals_recorded(self, file_names: list):
+    @pyqtSlot(list, float)
+    def on_signals_recorded(self, file_names: list, sample_rate: float):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         for filename in file_names:
-            self.add_signalfile(filename)
+            self.add_signalfile(filename, enforce_sample_rate=sample_rate)
         QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()

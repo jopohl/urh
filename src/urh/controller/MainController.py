@@ -138,7 +138,7 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
         self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
-        self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
+        self.ui.actionSave_project.triggered.connect(self.project_manager.save_project)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
         self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
@@ -177,7 +177,7 @@ class MainController(QMainWindow):
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
-        self.project_save_timer.timeout.connect(self.project_manager.saveProject)
+        self.project_save_timer.timeout.connect(self.project_manager.save_project)
 
         self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
@@ -366,14 +366,14 @@ class MainController(QMainWindow):
         self.signal_tab_controller.set_frame_numbers()
 
     def closeEvent(self, event: QCloseEvent):
-        self.project_manager.saveProject()
+        self.project_manager.save_project()
         super().closeEvent(event)
 
     def close_all(self):
 
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.project_manager.saveProject()
+        self.project_manager.save_project()
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()

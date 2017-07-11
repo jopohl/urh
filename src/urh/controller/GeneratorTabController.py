@@ -37,13 +37,13 @@ class GeneratorTabController(QWidget):
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
 
+        self.project_manager = project_manager
+
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
         self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
-
-        self.has_default_modulation = True
 
         self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
                                                [Modulator("Modulation")], compare_frame_controller.decodings)
@@ -63,7 +63,6 @@ class GeneratorTabController(QWidget):
         self.refresh_modulators()
         self.on_selected_modulation_changed()
         self.set_fuzzing_ui_status()
-        self.project_manager = project_manager
         self.ui.prBarGeneration.hide()
         self.create_connects(compare_frame_controller)
 
@@ -175,7 +174,7 @@ class GeneratorTabController(QWidget):
         cur_ind = self.ui.cBoxModulations.currentIndex()
         min_row, max_row, _, _ = self.ui.tableMessages.selection_range()
         if min_row > -1:
-            # Modulation für Selektierte Blöcke setzen
+            # set modulation for selected messages
             for row in range(min_row, max_row + 1):
                 try:
                     self.table_model.protocol.messages[row].modulator_indx = cur_ind
@@ -195,10 +194,9 @@ class GeneratorTabController(QWidget):
         self.ui.cBoxModulations.setCurrentIndex(current_index)
 
     def show_modulation_info(self):
-        show = not self.has_default_modulation or self.modulators[0] != Modulator("Modulation")
-
-        if not show:
-            self.ui.btnEditModulation.setStyleSheet("background: orange")
+        # TODO: Remove button coloring when modulation is bootstrapped
+        if not self.project_manager.modulation_was_edited:
+            self.ui.btnEditModulation.setStyleSheet("color: orange")
             font = QFont()
             font.setBold(True)
             self.ui.btnEditModulation.setFont(font)
@@ -290,7 +288,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog.showMaximized()
 
         self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
-        self.has_default_modulation = False
+        self.project_manager.modulation_was_edited = True
 
     @pyqtSlot()
     def on_table_selection_changed(self):

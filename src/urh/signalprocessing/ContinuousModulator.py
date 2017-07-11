@@ -75,7 +75,7 @@ class ContinuousModulator(object):
 
                 message = self.messages[i]
                 self.current_message_index.value = i
-                modulator = self.modulators[message.modulator_indx]  # type: Modulator
+                modulator = self.modulators[message.modulator_index]  # type: Modulator
                 modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
                 while not self.ring_buffer.will_fit(len(modulator.modulated_samples)):
                     if self.abort.value:

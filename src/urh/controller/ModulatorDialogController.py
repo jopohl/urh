@@ -563,19 +563,14 @@ class ModulatorDialogController(QDialog):
 
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
-        if len(self.protocol.messages) == 0:
+        signal = self.ui.gVOriginalSignal.scene_manager.signal
+        freq = self.current_modulator.estimate_carrier_frequency(signal, self.protocol)
+
+        if freq is None or freq == 0:
             QMessageBox.information(self, self.tr("No results"),
                                     self.tr("Unable to detect parameters from current signal"))
             return
 
-        # Take the first message for detection
-        start, num_samples = self.protocol.get_samplepos_of_bitseq(0, 0, 0, 999999, False)
-        # Avoid too large arrays
-        if num_samples > 1e6:
-            num_samples = int(1e6)
-
-        signal = self.ui.gVOriginalSignal.scene_manager.signal
-        freq = signal.estimate_frequency(start, start + num_samples, self.current_modulator.sample_rate)
         self.ui.doubleSpinBoxCarrierFreq.setValue(freq)
         self.autodetect_fsk_freqs()
 

@@ -1,6 +1,6 @@
+import array
 import os
 
-import array
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
@@ -20,20 +20,20 @@ class TestGenerator(QtTestCase):
         """
         # Load a Signal
         self.add_signal_to_form("ask.complex")
-        sframe = self.form.signal_tab_controller.signal_frames[0]
-        sframe.ui.cbModulationType.setCurrentIndex(0) # ASK
-        sframe.ui.spinBoxInfoLen.setValue(295)
-        sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
-        sframe.refresh()
-        sframe.ui.cbProtoView.setCurrentIndex(0)
+        signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK
+        signal_frame.ui.spinBoxInfoLen.setValue(295)
+        signal_frame.ui.spinBoxCenterOffset.setValue(-0.1667)
+        signal_frame.refresh()
+        signal_frame.ui.cbProtoView.setCurrentIndex(0)
 
         proto = "1011001001011011011011011011011011001000000"
-        self.assertTrue(sframe.ui.txtEdProto.toPlainText().startswith(proto))
+        self.assertTrue(signal_frame.ui.txtEdProto.toPlainText().startswith(proto))
 
         # Set Decoding
         self.form.ui.tabWidget.setCurrentIndex(1)
         cfc = self.form.compare_frame_controller
-        cfc.ui.cbDecoding.setCurrentIndex(1) # NRZ-I
+        cfc.ui.cbDecoding.setCurrentIndex(1)  # NRZ-I
         proto_inv = cfc.proto_analyzer.decoded_proto_bits_str[0]
         self.assertTrue(self.__is_inv_proto(proto, proto_inv))
 
@@ -50,24 +50,32 @@ class TestGenerator(QtTestCase):
         modulator.samples_per_bit = 295
         buffer = gframe.prepare_modulation_buffer(gframe.total_modulated_samples, show_error=False)
         modulated_data = gframe.modulate_data(buffer)
-        filename = os.path.join(QDir.tempPath(), "generator_test.complex")
+        filename = os.path.join(QDir.tempPath(), "test_generator.complex")
         modulated_data.tofile(filename)
 
         # Reload datafile and see if bits match
-        self.add_signal_to_form(filename)
-        sframe = self.form.signal_tab_controller.signal_frames[1]
-        sframe.ui.cbProtoView.setCurrentIndex(0)
-        self.assertEqual(sframe.ui.lineEditSignalName.text(), "generator_test")
-        sframe.ui.cbSignalView.setCurrentIndex(1)  # ASK
-        sframe.ui.spinBoxInfoLen.setValue(295)
-        sframe.ui.spinBoxInfoLen.editingFinished.emit()
-        sframe.ui.spinBoxCenterOffset.setValue(0.1)
-        sframe.ui.spinBoxCenterOffset.editingFinished.emit()
-        sframe.ui.spinBoxTolerance.setValue(6)
-        sframe.ui.spinBoxTolerance.editingFinished.emit()
-        sframe.refresh()
+        self.form.add_signalfile(filename)
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 2)
+        signal_frame = self.form.signal_tab_controller.signal_frames[1]
 
-        gen_proto = sframe.ui.txtEdProto.toPlainText()
+        self.assertEqual(signal_frame.signal.num_samples, 14374)
+        signal_frame.ui.cbProtoView.setCurrentIndex(0)
+        self.assertEqual(signal_frame.ui.lineEditSignalName.text(), "test_generator")
+        signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK
+        signal_frame.ui.spinBoxNoiseTreshold.setValue(0)
+        signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
+
+        signal_frame.ui.spinBoxInfoLen.setValue(295)
+        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+
+        signal_frame.ui.spinBoxCenterOffset.setValue(0.1)
+        signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
+
+        signal_frame.ui.spinBoxTolerance.setValue(6)
+        signal_frame.ui.spinBoxTolerance.editingFinished.emit()
+
+        self.assertEqual(len(signal_frame.proto_analyzer.messages), 1)
+        gen_proto = signal_frame.ui.txtEdProto.toPlainText()
         gen_proto = gen_proto[:gen_proto.index(" ")]
         self.assertTrue(proto.startswith(gen_proto))
 
@@ -142,8 +150,6 @@ class TestGenerator(QtTestCase):
         self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 3)
         self.assertEqual(len(self.form.generator_tab_controller.table_model.display_data[1]), 30)
         self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[2]), 30)
-
-
 
     def test_create_fuzzing_list_view_context_menu(self):
         # Context menu should be empty if table is empty

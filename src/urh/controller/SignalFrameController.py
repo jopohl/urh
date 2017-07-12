@@ -361,7 +361,7 @@ class SignalFrameController(QFrame):
 
     def draw_signal(self, full_signal=False):
         gv_legend = self.ui.gvLegend
-        gv_legend.ysep = -self.signal.qad_center
+        gv_legend.y_sep = -self.signal.qad_center
 
         self.scene_manager.scene_type = self.ui.cbSignalView.currentIndex()
         self.scene_manager.init_scene()
@@ -572,7 +572,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot(float)
     def update_legend(self, y_sep):
         if self.ui.gvLegend.isVisible():
-            self.ui.gvLegend.ysep = y_sep
+            self.ui.gvLegend.y_sep = y_sep
             self.ui.gvLegend.refresh()
         self.ui.spinBoxCenterOffset.blockSignals(True)
         self.ui.spinBoxCenterOffset.setValue(-y_sep)
@@ -857,7 +857,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):
         self.ui.gvSignal.y_sep = -qad_center
-        self.ui.gvLegend.ysep = -qad_center
+        self.ui.gvLegend.y_sep = -qad_center
 
         if self.ui.cbSignalView.currentIndex() > 0:
             self.scene_manager.scene.draw_sep_area(-qad_center)

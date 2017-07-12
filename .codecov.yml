@@ -1,12 +1,12 @@
 coverage:
-  precision: 2
+  precision: 1
   round: down
   range: 70...100
 
   status:
     # Learn more at http://docs.codecov.io/docs/codecov-yaml
-    project: false
-    patch: true
+    project: true
+    patch: false
     changes: false
 
 comment: false

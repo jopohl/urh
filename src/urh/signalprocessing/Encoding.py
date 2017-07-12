@@ -390,13 +390,9 @@ class Encoding(object):
 
     def run_command(self, command, param):
         # add shlex.quote(param) later for security reasons
-        # print(command, param)
         try:
             import subprocess
-            p = subprocess.Popen(command + " " + param,
-                                 shell=True,
-                                 # stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE)
+            p = subprocess.Popen('"{0}" {1}'.format(command, param), shell=True, stdout=subprocess.PIPE)
             out, _ = p.communicate(param.encode())
             return out.decode()
         except:

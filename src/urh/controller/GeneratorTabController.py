@@ -4,7 +4,7 @@ import traceback
 import numpy
 import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QFontMetrics, QFont
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -130,6 +130,7 @@ class GeneratorTabController(QWidget):
         self.label_list_model.protolabel_removed.connect(self.handle_proto_label_removed)
 
         self.ui.lWPauses.item_edit_clicked.connect(self.edit_pause_item)
+        self.ui.lWPauses.edit_all_items_clicked.connect(self.edit_all_pause_items)
         self.ui.lWPauses.itemSelectionChanged.connect(self.on_lWpauses_selection_changed)
         self.ui.lWPauses.lost_focus.connect(self.on_lWPauses_lost_focus)
         self.ui.lWPauses.doubleClicked.connect(self.on_lWPauses_double_clicked)
@@ -333,6 +334,18 @@ class GeneratorTabController(QWidget):
                                           self.tr("Pause Length:"), cur_len, 0)
         if ok:
             message.pause = new_len
+            self.refresh_pause_list()
+
+    @pyqtSlot()
+    def edit_all_pause_items(self):
+        message = self.table_model.protocol.messages[0]
+        cur_len = message.pause
+        new_len, ok = QInputDialog.getInt(self, self.tr("Enter new Pause Length"),
+                                          self.tr("Pause Length:"), cur_len, 0)
+        if ok:
+            for message in self.table_model.protocol.messages:
+                message.pause = new_len
+
             self.refresh_pause_list()
 
     @pyqtSlot()

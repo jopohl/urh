@@ -388,16 +388,42 @@ class Encoding(object):
 
         return inpt[inpt_from:inpt_to], 0, self.ErrorState.SUCCESS
 
+    def parse_command(self, command):
+        import os
+        cl = command.split(" ")
+        cmd = cl[0]
+        param = ""
+        if len(cl) > 0:
+            for i in range(1, len(cl)):
+                if not os.path.isfile(cmd):
+                    cmd += " " + cl[i]
+                else:
+                    param += " " + cl[i]
+        print(('"%s"' % cmd) + param)
+        return ("'%s'" % cmd) + param
+
     def run_command(self, command, param):
         # add shlex.quote(param) later for security reasons
+        cmd = self.parse_command(command)
         try:
             import subprocess
-            p = subprocess.Popen('"{0}" {1}'.format(command, param), shell=True, stdout=subprocess.PIPE)
+            p = subprocess.Popen(cmd, param, shell=True, stdout=subprocess.PIPE)
             out, _ = p.communicate(param.encode())
             return out.decode()
         except:
-            print("Error running", command, param)
+            print("Error running", cmd, param)
             return ""
+
+    # def run_command(self, command, param):
+    #     # add shlex.quote(param) later for security reasons
+    #     try:
+    #         import subprocess
+    #         p = subprocess.Popen('"{0}" {1}'.format(command, param), shell=True, stdout=subprocess.PIPE)
+    #         out, _ = p.communicate(param.encode())
+    #         return out.decode()
+    #     except:
+    #         print("Error running", command, param)
+    #         return ""
 
     def code_carrier(self, decoding, inpt):
         output = array.array("B", [])

@@ -679,7 +679,7 @@ class DecoderWidgetController(QDialog):
                                 self.ui.cutmark2.setEnabled(True)
                                 self.ui.cutmark2.setValue(int(cmark))
                             elif cmode == 3:
-                                self.ui.rB_delbeforepos.setChecked(True)
+                                self.ui.rB_delafterpos.setChecked(True)
                                 self.ui.cutmark.setEnabled(False)
                                 self.ui.cutmark2.setEnabled(True)
                                 self.ui.cutmark2.setValue(int(cmark))
@@ -714,13 +714,15 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot()
     def handle_datawhitening(self):
         datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text()
-        self.chainoptions[self.active_message] = datawhiteningstr
+        if constants.DECODING_DATAWHITENING in self.active_message:
+            self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
     def handle_external(self):
         externalstr = self.ui.external_decoder.text() + ";" + self.ui.external_encoder.text()
-        self.chainoptions[self.active_message] = externalstr
+        if constants.DECODING_EXTERNAL in self.active_message:
+            self.chainoptions[self.active_message] = externalstr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -729,7 +731,8 @@ class DecoderWidgetController(QDialog):
         for i in range(0, self.ui.substitution_rows.value()):
             if self.ui.substitution.item(i, 0) and self.ui.substitution.item(i, 1):
                 subststr += self.ui.substitution.item(i, 0).text() + ":" + self.ui.substitution.item(i, 1).text() + ";"
-        self.chainoptions[self.active_message] = subststr
+        if constants.DECODING_SUBSTITUTION in self.active_message:
+            self.chainoptions[self.active_message] = subststr
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -742,7 +745,8 @@ class DecoderWidgetController(QDialog):
     def handle_multiple_changed(self):
         # Multiple Spinbox
         val = self.ui.multiple.value()
-        self.chainoptions[self.active_message] = val
+        if constants.DECODING_REDUNDANCY in self.active_message:
+            self.chainoptions[self.active_message] = val
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -759,7 +763,8 @@ class DecoderWidgetController(QDialog):
         else:
             self.old_morse = (val_low, val_high)
 
-        self.chainoptions[self.active_message] = "{};{};{}".format(val_low, val_high, val_wait)
+        if constants.DECODING_MORSE in self.active_message:
+            self.chainoptions[self.active_message] = "{};{};{}".format(val_low, val_high, val_wait)
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -773,7 +778,8 @@ class DecoderWidgetController(QDialog):
             self.old_carrier_txt = carrier_txt
         # Carrier Textbox
         # self.e.carrier = self.e.str2bit(self.ui.carrier.text())
-        self.chainoptions[self.active_message] = carrier_txt
+        if constants.DECODING_CARRIER in self.active_message:
+            self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
     @pyqtSlot()
@@ -806,7 +812,8 @@ class DecoderWidgetController(QDialog):
 
         cut_text = str(cmode) + ";" + cmark
 
-        self.chainoptions[self.active_message] = cut_text
+        if constants.DECODING_CUT in self.active_message:
+            self.chainoptions[self.active_message] = cut_text
         self.decoderchainUpdate()
 
     def dragEnterEvent(self, event: QDragEnterEvent):

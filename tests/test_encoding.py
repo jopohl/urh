@@ -210,10 +210,11 @@ class TestDecoding(QtTestCase):
         encoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "encode.py")
         decoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "decode.py")
 
-        shutil.copy(code, encoder_in_dir_with_spaces)
+        shutil.copy(code, coder_in_dir_with_spaces)
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
+        print( coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e")
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
 

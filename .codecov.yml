@@ -5,8 +5,8 @@ coverage:
 
   status:
     # Learn more at http://docs.codecov.io/docs/codecov-yaml
-    project: true
-    patch: false
+    project: false
+    patch: true
     changes: false
 
 comment: false

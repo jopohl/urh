@@ -11,7 +11,7 @@ from urh.util.Formatter import Formatter
 
 
 class ReceiveDialogController(SendRecvDialogController):
-    files_recorded = pyqtSignal(list)
+    files_recorded = pyqtSignal(list, float)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):
         try:
@@ -53,7 +53,12 @@ class ReceiveDialogController(SendRecvDialogController):
             elif reply == QMessageBox.Abort:
                 return False
 
-        self.files_recorded.emit(self.recorded_files)
+        try:
+            sample_rate = self.device.sample_rate
+        except:
+            sample_rate = 1e6
+
+        self.files_recorded.emit(self.recorded_files, sample_rate)
         return True
 
     def update_view(self):

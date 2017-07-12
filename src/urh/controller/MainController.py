@@ -138,7 +138,7 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
         self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
-        self.ui.actionSave_project.triggered.connect(self.project_manager.saveProject)
+        self.ui.actionSave_project.triggered.connect(self.project_manager.save_project)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
         self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
@@ -177,7 +177,7 @@ class MainController(QMainWindow):
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
-        self.project_save_timer.timeout.connect(self.project_manager.saveProject)
+        self.project_save_timer.timeout.connect(self.project_manager.save_project)
 
         self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
         self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
@@ -227,7 +227,7 @@ class MainController(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(2)
         self.generator_tab_controller.load_from_file(filename)
 
-    def add_signalfile(self, filename: str, group_id=0):
+    def add_signalfile(self, filename: str, group_id=0, enforce_sample_rate=None):
         if not os.path.exists(filename):
             QMessageBox.critical(self, self.tr("File not Found"),
                                  self.tr("The file {0} could not be found. Was it moved or renamed?").format(
@@ -257,8 +257,12 @@ class MainController(QMainWindow):
 
         # Use default sample rate for signal
         # Sample rate will be overriden in case of a project later
-        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated,
-                        sample_rate=self.project_manager.device_conf["sample_rate"])
+        if enforce_sample_rate is not None:
+            sample_rate = enforce_sample_rate
+        else:
+            sample_rate = self.project_manager.device_conf["sample_rate"]
+
+        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated, sample_rate=sample_rate)
 
         if self.project_manager.project_file is None:
             self.adjust_for_current_file(signal.filename)
@@ -366,14 +370,14 @@ class MainController(QMainWindow):
         self.signal_tab_controller.set_frame_numbers()
 
     def closeEvent(self, event: QCloseEvent):
-        self.project_manager.saveProject()
+        self.project_manager.save_project()
         super().closeEvent(event)
 
     def close_all(self):
 
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.project_manager.saveProject()
+        self.project_manager.save_project()
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
@@ -649,11 +653,11 @@ class MainController(QMainWindow):
         r.recording_parameters.connect(pm.set_recording_parameters)
         r.show()
 
-    @pyqtSlot(list)
-    def on_signals_recorded(self, file_names: list):
+    @pyqtSlot(list, float)
+    def on_signals_recorded(self, file_names: list, sample_rate: float):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         for filename in file_names:
-            self.add_signalfile(filename)
+            self.add_signalfile(filename, enforce_sample_rate=sample_rate)
         QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()

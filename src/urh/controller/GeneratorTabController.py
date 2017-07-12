@@ -22,6 +22,7 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
 from urh.util import FileOperator
@@ -37,13 +38,13 @@ class GeneratorTabController(QWidget):
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
 
+        self.project_manager = project_manager
+
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = GeneratorTreeModel(compare_frame_controller)
         self.tree_model.set_root_item(compare_frame_controller.proto_tree_model.rootItem)
         self.tree_model.controller = self
         self.ui.treeProtocols.setModel(self.tree_model)
-
-        self.has_default_modulation = True
 
         self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
                                                [Modulator("Modulation")], compare_frame_controller.decodings)
@@ -63,14 +64,13 @@ class GeneratorTabController(QWidget):
         self.refresh_modulators()
         self.on_selected_modulation_changed()
         self.set_fuzzing_ui_status()
-        self.project_manager = project_manager
         self.ui.prBarGeneration.hide()
         self.create_connects(compare_frame_controller)
 
     def __get_modulator_of_message(self, message: Message) -> Modulator:
-        if message.modulator_indx > len(self.modulators) - 1:
-            message.modulator_indx = 0
-        return self.modulators[message.modulator_indx]
+        if message.modulator_index > len(self.modulators) - 1:
+            message.modulator_index = 0
+        return self.modulators[message.modulator_index]
 
     @property
     def selected_message_index(self) -> int:
@@ -116,6 +116,7 @@ class GeneratorTabController(QWidget):
         self.table_model.protocol.qt_signals.current_fuzzing_message_changed.connect(
             self.on_current_fuzzing_message_changed)
         self.table_model.protocol.qt_signals.fuzzing_finished.connect(self.on_fuzzing_finished)
+        self.table_model.first_protocol_added.connect(self.on_first_protocol_added)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.set_fuzzing_ui_status)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.btnSend.clicked.connect(self.on_btn_send_clicked)
@@ -175,10 +176,10 @@ class GeneratorTabController(QWidget):
         cur_ind = self.ui.cBoxModulations.currentIndex()
         min_row, max_row, _, _ = self.ui.tableMessages.selection_range()
         if min_row > -1:
-            # Modulation für Selektierte Blöcke setzen
+            # set modulation for selected messages
             for row in range(min_row, max_row + 1):
                 try:
-                    self.table_model.protocol.messages[row].modulator_indx = cur_ind
+                    self.table_model.protocol.messages[row].modulator_index = cur_ind
                 except IndexError:
                     continue
 
@@ -194,18 +195,27 @@ class GeneratorTabController(QWidget):
 
         self.ui.cBoxModulations.setCurrentIndex(current_index)
 
+    def bootstrap_modulator(self, protocol: ProtocolAnalyzer):
+        """
+        Set initial parameters for default modulator if it was not edited by user previously
+        :return:
+        """
+        if len(self.modulators) != 1 or len(self.table_model.protocol.messages) == 0:
+            return
+
+        modulator = self.modulators[0]
+        modulator.samples_per_bit = protocol.messages[0].bit_len
+
+        if protocol.signal:
+            modulator.sample_rate = protocol.signal.sample_rate
+            modulator.modulation_type = protocol.signal.modulation_type
+            auto_freq = modulator.estimate_carrier_frequency(protocol.signal, protocol)
+            if auto_freq is not None and auto_freq != 0:
+                modulator.carrier_freq_hz = auto_freq
+
+        self.show_modulation_info()
+
     def show_modulation_info(self):
-        show = not self.has_default_modulation or self.modulators[0] != Modulator("Modulation")
-
-        if not show:
-            self.ui.btnEditModulation.setStyleSheet("background: orange")
-            font = QFont()
-            font.setBold(True)
-            self.ui.btnEditModulation.setFont(font)
-        else:
-            self.ui.btnEditModulation.setStyleSheet("")
-            self.ui.btnEditModulation.setFont(QFont())
-
         cur_ind = self.ui.cBoxModulations.currentIndex()
         cur_mod = self.modulators[cur_ind]
         self.ui.lCarrierFreqValue.setText(cur_mod.carrier_frequency_str)
@@ -235,7 +245,7 @@ class GeneratorTabController(QWidget):
         if min_row > -1:
             try:
                 selected_message = self.table_model.protocol.messages[min_row]
-                preselected_index = selected_message.modulator_indx
+                preselected_index = selected_message.modulator_index
             except IndexError:
                 selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
         else:
@@ -290,7 +300,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog.showMaximized()
 
         self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
-        self.has_default_modulation = False
+        self.project_manager.modulation_was_edited = True
 
     @pyqtSlot()
     def on_table_selection_changed(self):
@@ -311,7 +321,7 @@ class GeneratorTabController(QWidget):
         self.ui.lEncodingValue.setText(elidedName)
         self.ui.lEncodingValue.setToolTip(decoder_name)
         self.ui.cBoxModulations.blockSignals(True)
-        self.ui.cBoxModulations.setCurrentIndex(message.modulator_indx)
+        self.ui.cBoxModulations.setCurrentIndex(message.modulator_index)
         self.show_modulation_info()
         self.ui.cBoxModulations.blockSignals(False)
 
@@ -659,3 +669,8 @@ class GeneratorTabController(QWidget):
     def on_current_fuzzing_message_changed(self, current_message: int):
         self.ui.progressBarFuzzing.setValue(current_message)
         QApplication.instance().processEvents()
+
+    @pyqtSlot(ProtocolAnalyzer)
+    def on_first_protocol_added(self, protocol: ProtocolAnalyzer):
+        if not self.project_manager.modulation_was_edited:
+            self.bootstrap_modulator(protocol)

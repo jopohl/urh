@@ -28,6 +28,7 @@ class ProjectManager(QObject):
                                 bandwidth=config.DEFAULT_BANDWIDTH,
                                 gain=config.DEFAULT_GAIN)
 
+        self.modulation_was_edited = False
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
@@ -97,11 +98,13 @@ class ProjectManager(QObject):
                 root = ET.Element("UniversalRadioHackerProject")
                 tree = ET.ElementTree(root)
                 tree.write(self.project_file)
+                self.modulation_was_edited = False
         else:
             tree = ET.parse(self.project_file)
             root = tree.getroot()
 
             collapse_project_tabs = bool(int(root.get("collapse_project_tabs", 0)))
+            self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
             self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
@@ -224,7 +227,7 @@ class ProjectManager(QObject):
 
         return result
 
-    def saveProject(self):
+    def save_project(self):
         if self.project_file is None or not os.path.isfile(self.project_file):
             return
 
@@ -245,6 +248,7 @@ class ProjectManager(QObject):
             device_val_tag.text = str(self.device_conf[key])
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
+        root.set("modulation_was_edited", str(int(self.modulation_was_edited)))
         root.set("broadcast_address_hex", str(self.broadcast_address_hex))
 
         open_files = []

@@ -28,7 +28,7 @@ class TestProjectManager(QtTestCase):
         self.gframe.modulators.append(Modulator("test 2"))
         self.gframe.modulators = self.gframe.modulators[:2]  # Take only the first two
 
-        self.form.project_manager.saveProject()
+        self.form.project_manager.save_project()
 
         loaded_mods = self.form.project_manager.read_modulators_from_project_file()
         self.assertEqual(len(loaded_mods), 2)

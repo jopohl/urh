@@ -363,6 +363,8 @@ class MainController(QMainWindow):
                 self.add_fuzz_profile(file)
             elif file_extension == ".txt":
                 self.add_plain_bits_from_txt(file)
+            elif os.path.basename(file) == constants.PROJECT_FILE:
+                self.project_manager.set_project_folder(os.path.split(file)[0])
             else:
                 self.add_signalfile(file, group_id)
 

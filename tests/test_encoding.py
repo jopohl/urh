@@ -176,15 +176,18 @@ class TestDecoding(QtTestCase):
         self.assertEqual(decoded, data)
 
     def test_external_in_dir_with_spaces(self):
+        code = get_path_for_data_file("code.py")
         encoder = get_path_for_data_file("encode.py")
         decoder = get_path_for_data_file("decode.py")
         dir_with_spaces = os.path.join(tempfile.gettempdir(), "directory", "with space")
 
         os.makedirs(dir_with_spaces, exist_ok=True)
 
+        coder_in_dir_with_spaces = os.path.join(dir_with_spaces, "code.py")
         encoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "encode.py")
         decoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "decode.py")
 
+        shutil.copy(code, encoder_in_dir_with_spaces)
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
@@ -196,4 +199,14 @@ class TestDecoding(QtTestCase):
         self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
 
         decoded = e.decode(encoded)
+        self.assertEqual(decoded, data)
+
+        e2 = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
+                      coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
+
+        data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
+        encoded = e2.encode(data)
+        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+
+        decoded = e2.decode(encoded)
         self.assertEqual(decoded, data)

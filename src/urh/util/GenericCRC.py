@@ -1,9 +1,10 @@
 import array
 import copy
 from collections import OrderedDict
+from xml.etree import ElementTree as ET
 
 from urh.util import util
-from xml.etree import ElementTree as ET
+
 
 class GenericCRC(object):
     # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
@@ -45,6 +46,12 @@ class GenericCRC(object):
             else:
                 return array.array('B', value[0] * (self.poly_order - 1))
 
+    def __eq__(self, other):
+        if not isinstance(other, GenericCRC):
+            return False
+
+        return all(getattr(self, attrib) == getattr(other, attrib) for attrib in (
+        "polynomial", "reverse_polynomial", "reverse_all", "little_endian", "lsb_first", "start_value", "final_xor"))
 
     @property
     def poly_order(self):
@@ -238,7 +245,7 @@ class GenericCRC(object):
         return root
 
     @classmethod
-    def from_xml(cls, tag:  ET.Element):
+    def from_xml(cls, tag: ET.Element):
         polynomial = tag.get("polynomial", "1010")
         start_value = tag.get("start_value", "0000")
         final_xor = tag.get("final_xor", "0000")
@@ -248,7 +255,6 @@ class GenericCRC(object):
     @staticmethod
     def bit2str(inpt):
         return "".join(["1" if x else "0" for x in inpt])
-
 
     @staticmethod
     def str2bit(inpt):

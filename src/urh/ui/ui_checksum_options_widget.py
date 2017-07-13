@@ -133,7 +133,7 @@ class Ui_ChecksumOptions(object):
         self.groupBox.setTitle(_translate("ChecksumOptions", "Configure data ranges for CRC"))
         self.btnAddRange.setText(_translate("ChecksumOptions", "..."))
         self.btnRemoveRange.setText(_translate("ChecksumOptions", "..."))
-        self.label_3.setText(_translate("ChecksumOptions", "Load CRC preset:"))
+        self.label_3.setText(_translate("ChecksumOptions", "CRC function:"))
         self.label_2.setText(_translate("ChecksumOptions", "Final XOR (hex):"))
         self.label.setText(_translate("ChecksumOptions", "Start value (hex):"))
         self.label_crc_info.setText(_translate("ChecksumOptions", "<html><head/><body><p>Order=17</p><p>Length of checksum=16</p><p>start value length =16</p><p>final XOR length = 16</p><p>Polynomial = x<span style=\" vertical-align:super;\">1</span> + 4</p></body></html>"))

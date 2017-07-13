@@ -56,7 +56,7 @@ class ProtocolTableModel(TableModel):
 
         del_action = DeleteBitsAndPauses(proto_analyzer=self.protocol, start_message=min_row, end_message=max_row,
                                          start=start, end=end, view=self.proto_view, decoded=True,
-                                         subprotos=self.controller.protocol_list)
+                                         subprotos=self.controller.protocol_list, update_label_ranges=False)
         self.undo_stack.push(del_action)
 
     def flags(self, index: QModelIndex):

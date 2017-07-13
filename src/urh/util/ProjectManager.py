@@ -170,7 +170,7 @@ class ProjectManager(QObject):
         if os.path.relpath(signal.filename, self.project_path) in existing_filenames.keys():
             signal_tag = existing_filenames[os.path.relpath(signal.filename, self.project_path)]
         else:
-            # Neuen Tag anlegen
+            # Create new tag
             signal_tag = ET.SubElement(root, "signal")
 
         signal_tag.set("name", signal.name)
@@ -351,9 +351,9 @@ class ProjectManager(QObject):
             root = tree.getroot()
             file_names = []
 
-            for ftag in root.findall("open_file"):
-                pos = int(ftag.attrib["position"])
-                filename = os.path.join(self.project_path, ftag.attrib["name"])
+            for file_tag in root.findall("open_file"):
+                pos = int(file_tag.attrib["position"])
+                filename = os.path.realpath(os.path.join(self.project_path, file_tag.attrib["name"]))
                 file_names.insert(pos, filename)
 
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -380,7 +380,7 @@ class ProjectManager(QObject):
             group = tree_root.child(int(id))
 
             for proto_tag in group_tag.iter("cf_protocol"):
-                filename = os.path.join(self.project_path, proto_tag.attrib["filename"])
+                filename = os.path.realpath(os.path.join(self.project_path, proto_tag.attrib["filename"]))
                 try:
                     proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
                 except StopIteration:

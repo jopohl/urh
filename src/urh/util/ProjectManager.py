@@ -353,7 +353,7 @@ class ProjectManager(QObject):
 
             for file_tag in root.findall("open_file"):
                 pos = int(file_tag.attrib["position"])
-                filename = os.path.realpath(os.path.join(self.project_path, file_tag.attrib["name"]))
+                filename = os.path.normpath(os.path.join(self.project_path, file_tag.attrib["name"]))
                 file_names.insert(pos, filename)
 
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -380,7 +380,7 @@ class ProjectManager(QObject):
             group = tree_root.child(int(id))
 
             for proto_tag in group_tag.iter("cf_protocol"):
-                filename = os.path.realpath(os.path.join(self.project_path, proto_tag.attrib["filename"]))
+                filename = os.path.normpath(os.path.join(self.project_path, proto_tag.attrib["filename"]))
                 try:
                     proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
                 except StopIteration:

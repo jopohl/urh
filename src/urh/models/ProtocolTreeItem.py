@@ -34,6 +34,7 @@ class ProtocolTreeItem(object):
                         decoded_bits = message.decoded_bits
                         message.decoder = nrz
                         message.plain_bits = decoded_bits
+                    self.__data_copy.qt_signals.show_state_changed.connect(self.__itemData.qt_signals.show_state_changed.emit)
 
                 return self.__data_copy
             else:
@@ -57,15 +58,15 @@ class ProtocolTreeItem(object):
         if self.is_group:
             return self.group_check_state
         else:
-            return self.__itemData.show
+            return self.protocol.show
 
     @show.setter
     def show(self, value: bool):
         value = Qt.Checked if value else Qt.Unchecked
 
         if not self.is_group:
-            self.__itemData.show = value
-            self.__itemData.qt_signals.show_state_changed.emit()
+            self.protocol.show = value
+            self.protocol.qt_signals.show_state_changed.emit()
         else:
             for child in self.__childItems:
                 child.__itemData.show = value

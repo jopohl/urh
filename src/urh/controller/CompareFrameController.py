@@ -1189,8 +1189,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.set_copy_mode(writeable_status)
         self.ui.cbDecoding.setDisabled(writeable_status)
         self.refresh()
-        for row in hidden_rows:
-            self.ui.tblViewProtocol.hide_row(row)
+        self.ui.tblViewProtocol.hide_row(hidden_rows)
 
     @pyqtSlot()
     def on_project_updated(self):

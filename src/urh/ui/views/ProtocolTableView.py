@@ -220,6 +220,8 @@ class ProtocolTableView(TableView):
     def hide_row(self, row=None):
         if row is None:
             rows = [index.row() for index in self.selectionModel().selectedIndexes()]
+        elif isinstance(row, set) or isinstance(row, list):
+            rows = row
         else:
             rows = [row]
 

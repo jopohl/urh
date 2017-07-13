@@ -174,6 +174,28 @@ class TestGenerator(QtTestCase):
         n_items = len(menu.actions())
         self.assertGreater(n_items, 0)
 
+    def test_add_column(self):
+        # Add data to test
+        self.add_signal_to_form("ask.complex")
+        gframe = self.form.generator_tab_controller
+        gframe.ui.cbViewType.setCurrentText("Bit")
+
+        index = gframe.tree_model.createIndex(0, 0, gframe.tree_model.rootItem.children[0].children[0])
+        mimedata = gframe.tree_model.mimeData([index])
+        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 1)
+
+        l1 = len(self.form.generator_tab_controller.table_model.protocol.messages[0])
+        self.form.generator_tab_controller.table_model.insert_column(0, [0])
+        self.assertEqual(l1 + 1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
+
+        self.form.generator_tab_controller.generator_undo_stack.undo()
+        self.assertEqual(l1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
+
+        self.form.generator_tab_controller.generator_undo_stack.redo()
+        self.assertEqual(l1 + 1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
+
+
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):
             return False

@@ -150,6 +150,9 @@ class Message(object):
     def __str__(self):
         return self.bits2string(self.plain_bits)
 
+    def delete_range_without_label_range_update(self, start: int, end: int):
+        del self.plain_bits[start:end]
+
     def get_byte_length(self, decoded=True) -> int:
         """
         Return the length of this message in byte.

@@ -388,14 +388,17 @@ class ProtocolAnalyzer(object):
         last_index = len(self.messages[-1].plain_bits) + 1
         return start_message, start_index, last_message, last_index
 
-    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool):
+    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool, update_label_ranges=True):
         removable_msg_indices = []
 
         for i in range(msg_start, msg_end + 1):
             try:
-                self.messages[i].clear_decoded_bits()
                 bs, be = self.convert_range(start, end, view, 0, decoded, message_indx=i)
-                del self.messages[i][bs:be + 1]
+                self.messages[i].clear_decoded_bits()
+                if update_label_ranges:
+                    del self.messages[i][bs:be + 1]
+                else:
+                    self.messages[i].delete_range_without_label_range_update(bs, be + 1)
                 if len(self.messages[i]) == 0:
                     removable_msg_indices.append(i)
             except IndexError:

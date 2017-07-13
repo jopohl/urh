@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.ui.actions.InsertColumn import InsertColumn
 
 
 class TableModel(QAbstractTableModel):
@@ -133,6 +134,13 @@ class TableModel(QAbstractTableModel):
         self.beginResetModel()
         self.endResetModel()
         self.locked = False
+
+    def insert_column(self, index: int, rows: list):
+        if self.protocol is None or not self.is_writeable:
+            return
+
+        insert_action = InsertColumn(self.protocol, index, rows, self.proto_view)
+        self.undo_stack.push(insert_action)
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
         return self.col_count

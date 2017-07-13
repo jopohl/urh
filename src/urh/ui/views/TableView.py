@@ -107,6 +107,13 @@ class TableView(QTableView):
             self.on_copy_action_triggered()
             return
 
+        if event.key() == Qt.Key_Space:
+            _, _, start, _ = self.selection_range()
+            if start == -1:
+                return
+
+            self.model().insert_column(start+1, list(range(self.model().rowCount())))
+
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
                 or event.modifiers() == Qt.ShiftModifier:
             super().keyPressEvent(event)

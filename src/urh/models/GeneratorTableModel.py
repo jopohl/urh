@@ -158,10 +158,6 @@ class GeneratorTableModel(TableModel):
 
         return -1
 
-    def insert_column(self, index: int, rows: list):
-        insert_action = InsertColumn(self.protocol, index, rows, self.proto_view)
-        self.undo_stack.push(insert_action)
-
     def __set_italic_font_for_label_range(self, row, label, italic: bool):
         message = self.protocol.messages[row]
         for j in range(*message.get_label_range(lbl=label, view=self.proto_view, decode=False)):

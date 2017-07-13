@@ -108,11 +108,11 @@ class TableView(QTableView):
             return
 
         if event.key() == Qt.Key_Space:
-            _, _, start, _ = self.selection_range()
+            min_row, max_row, start, _ = self.selection_range()
             if start == -1:
                 return
 
-            self.model().insert_column(start+1, list(range(self.model().rowCount())))
+            self.model().insert_column(start, list(range(min_row, max_row+1)))
 
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
                 or event.modifiers() == Qt.ShiftModifier:

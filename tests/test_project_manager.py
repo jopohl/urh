@@ -1,5 +1,6 @@
 import os
 import random
+import tempfile
 
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
@@ -7,8 +8,10 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.controller.ProjectDialogController import ProjectDialogController
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 
 
 class TestProjectManager(QtTestCase):
@@ -59,6 +62,53 @@ class TestProjectManager(QtTestCase):
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
+
+    def test_save_and_load_participants(self):
+        target_dir = os.path.join(tempfile.gettempdir(), "urh", "multi_participant_test")
+        os.makedirs(target_dir, exist_ok=True)
+        if os.path.isfile(os.path.join(target_dir, constants.PROJECT_FILE)):
+            os.remove(os.path.join(target_dir, constants.PROJECT_FILE))
+        self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
+        self.form.project_manager.participants = [Participant("Alice", "A"), Participant("Bob", "B")]
+
+        self.add_signal_to_form("esaver.complex")
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.messages), 3)
+        self.add_signal_to_form("two_participants.complex")
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames[1].proto_analyzer.messages), 18)
+        self.add_signal_to_form("fsk.complex")
+        self.assertEqual(len(self.form.signal_tab_controller.signal_frames[2].proto_analyzer.messages), 1)
+
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 22)
+
+        target = {0: "A", 1: "A", 2: "B", 3: "B", 4: "A", 5: "B", 6: "A", 7: "A", 8: "A", 9: "B", 10: "B",
+                  11: "A", 12: "B", 13: "A", 14: "A", 15: "B", 16: "A", 17: "B", 18: "B", 19: "B", 20: "A", 21: "B"}
+
+        for row, shortname in target.items():
+            participant = next(p for p in self.form.project_manager.participants if p.shortname == shortname)
+            self.form.compare_frame_controller.proto_analyzer.messages[row].participant = participant
+
+        self.form.compare_frame_controller.proto_tree_model.rootItem.child(0).child(0).show = False
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 19)
+
+        for row, shortname in target.items():
+            row -= 3
+            if row >= 0:
+                self.assertEqual(self.form.compare_frame_controller.proto_analyzer.messages[row].participant.shortname, shortname)
+
+        self.form.compare_frame_controller.refresh_assigned_participants_ui()
+
+        self.form.project_manager.save_project()
+        self.form.close_all()
+        self.wait_before_new_file()
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 0)
+        self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
+
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 22)
+        for row, shortname in target.items():
+            self.assertEqual(self.form.compare_frame_controller.proto_analyzer.messages[row].participant.shortname,
+                             shortname, msg=str(row))
+
+
 
     def test_project_dialog(self):
         frequency = 1e9

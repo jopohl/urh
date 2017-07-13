@@ -196,11 +196,23 @@ class CompareFrameController(QWidget):
     @property
     def protocol_list(self):
         """
+        :return: visible protocols
         :rtype: list of ProtocolAnalyzer
         """
         result = []
         for group in self.groups:
             result.extend(group.protocols)
+        return result
+
+    @property
+    def full_protocol_list(self):
+        """
+        :return: all protocols including not shown ones
+        :rtype: list of ProtocolAnalyzer
+        """
+        result = []
+        for group in self.groups:
+            result.extend(group.all_protocols)
         return result
 
     # endregion
@@ -559,8 +571,10 @@ class CompareFrameController(QWidget):
                 if line != 0:
                     first_msg_indices.append(line)
 
-        # Hidden Rows auf neue Reihenfolge übertragen
-        [self.ui.tblViewProtocol.showRow(i) for i in range(self.protocol_model.row_count)]
+        # apply hidden rows to new order
+        for i in range(self.protocol_model.row_count):
+            self.ui.tblViewProtocol.showRow(i)
+
         self.protocol_model.hidden_rows.clear()
         for proto in relative_hidden_row_positions.keys():
             try:

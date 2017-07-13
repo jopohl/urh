@@ -1186,6 +1186,7 @@ class CompareFrameController(QWidget):
     def on_writeable_changed(self, writeable_status: bool):
         self.protocol_model.is_writeable = writeable_status
         self.proto_tree_model.set_copy_mode(writeable_status)
+        self.ui.cbDecoding.setDisabled(writeable_status)
         self.refresh()
 
     @pyqtSlot()

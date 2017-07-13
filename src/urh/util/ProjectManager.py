@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
 from urh.dev import config
+from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
@@ -287,10 +288,10 @@ class ProjectManager(QObject):
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
                     proto_tag.set("filename", os.path.relpath(proto_frame.filename, self.project_path))
-                    show = "1" if proto_frame.show else "0"
-                    proto_tag.set("show", show)
 
-        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants))
+        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
+                                                  messages=[msg for proto in cfc.full_protocol_list for msg in
+                                                            proto.messages]))
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         with open(self.project_file, "w") as f:
@@ -365,8 +366,7 @@ class ProjectManager(QObject):
         proto_tree_model = self.main_controller.compare_frame_controller.proto_tree_model
         tree_root = proto_tree_model.rootItem
         pfi = proto_tree_model.protocol_tree_items
-        proto_frame_items = [item for item in pfi[0]]
-        """:type: list of ProtocolTreeItem """
+        proto_frame_items = [item for item in pfi[0]]  # type:  list[ProtocolTreeItem]
 
         for group_tag in root.iter("group"):
             name = group_tag.attrib["name"]
@@ -381,7 +381,6 @@ class ProjectManager(QObject):
 
             for proto_tag in group_tag.iter("cf_protocol"):
                 filename = os.path.join(self.project_path, proto_tag.attrib["filename"])
-                show = proto_tag.attrib["show"]
                 try:
                     proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
                 except StopIteration:
@@ -389,7 +388,6 @@ class ProjectManager(QObject):
 
                 if proto_frame_item is not None:
                     group.appendChild(proto_frame_item)
-                    proto_frame_item.show_in_compare_frame = Qt.Checked if show == "1" else Qt.Unchecked
 
             self.main_controller.compare_frame_controller.expand_group_node(int(id))
 

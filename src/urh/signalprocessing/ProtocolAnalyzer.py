@@ -544,8 +544,20 @@ class ProtocolAnalyzer(object):
                 break
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False,
-                   write_bits=False) -> ET.Element:
+                   write_bits=False, messages=None) -> ET.Element:
+        """
+
+        :param decodings:
+        :param participants:
+        :param tag_name:
+        :param include_message_type:
+        :param write_bits:
+        :param messages: Give custom list of messages to use instead of self.messages. Used when saving project and
+        some subprotocols are hidden in Compare Frame Controller
+        :return:
+        """
         root = ET.Element(tag_name)
+        messages = self.messages if messages is None else messages
 
         # Save modulators
         if hasattr(self, "modulators"):  # For protocol analyzer container
@@ -556,7 +568,7 @@ class ProtocolAnalyzer(object):
         # Save decodings
         if not decodings:
             decodings = []
-            for message in self.messages:
+            for message in messages:
                 if message.decoder not in decodings:
                     decodings.append(message.decoder)
 
@@ -571,7 +583,7 @@ class ProtocolAnalyzer(object):
         # Save participants
         if not participants:
             participants = []
-            for message in self.messages:
+            for message in messages:
                 if message.participant and message.participant not in participants:
                     participants.append(message.participant)
 
@@ -581,7 +593,7 @@ class ProtocolAnalyzer(object):
 
         # Save data
         data_tag = ET.SubElement(root, "messages")
-        for i, message in enumerate(self.messages):
+        for i, message in enumerate(messages):
             message_tag = message.to_xml(decoders=decodings, include_message_type=include_message_type)
             if write_bits:
                 message_tag.set("bits", message.plain_bits_str)

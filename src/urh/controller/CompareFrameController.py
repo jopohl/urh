@@ -1184,10 +1184,13 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(bool)
     def on_writeable_changed(self, writeable_status: bool):
+        hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         self.protocol_model.is_writeable = writeable_status
         self.proto_tree_model.set_copy_mode(writeable_status)
         self.ui.cbDecoding.setDisabled(writeable_status)
         self.refresh()
+        for row in hidden_rows:
+            self.ui.tblViewProtocol.hide_row(row)
 
     @pyqtSlot()
     def on_project_updated(self):

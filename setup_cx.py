@@ -59,7 +59,9 @@ def get_package_data():
     return package_data
 
 # Dependencies are automatically detected, but it might need fine tuning.
-build_exe_options = {"packages": ["os"], "excludes": ["tkinter"]}
+build_exe_options = {"packages": ["traceback"], "path": sys.path+["/home/joe/GIT/urh/src"], "excludes": ["tkinter"]}
+
+
 
 # GUI applications require a different base on Windows (the default is for a
 # console application).
@@ -79,7 +81,8 @@ setup(
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     ext_modules=get_ext_modules(), #+ ExtensionHelper.get_device_extensions(False),
     package_data=get_package_data(),
-    packages=get_packages(),
+    package_dir={"": "src"},
+    #packages=get_packages(),
     options={"build_exe": build_exe_options},
     executables = [Executable("src/urh/main.py", base = base)]
 )

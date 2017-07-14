@@ -163,6 +163,7 @@ class TableView(QTableView):
 
         selection = QItemSelection()
         selection.select(start, end)
+        self.setCurrentIndex(start)
         self.selectionModel().setCurrentIndex(end, QItemSelectionModel.ClearAndSelect)
         self.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         if scroll_to_start:

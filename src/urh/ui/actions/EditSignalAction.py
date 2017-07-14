@@ -81,7 +81,8 @@ class EditSignalAction(QUndoCommand):
         self.signal_was_changed = self.signal.changed
 
         if self.protocol:
-            self.orig_messages = copy.deepcopy(self.protocol.messages)
+            # Do not make a deepcopy of the message type, or they will be out of sync in analysis
+            self.orig_messages = copy.copy(self.protocol.messages)
 
     def redo(self):
         keep_msg_indices = {}

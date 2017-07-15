@@ -6,6 +6,7 @@ from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
@@ -134,7 +135,8 @@ class SimulatorProtocolManager(QObject):
             else:
                 color_index = random.randint(0, len(constants.LABEL_COLORS) - 1)
 
-        sim_label = SimulatorProtocolLabel(name, start, end, color_index, type)
+        label = ProtocolLabel(name, start, end, color_index, type)
+        sim_label = SimulatorProtocolLabel(label)
         self.add_items([sim_label], -1, parent_item)
         return sim_label
 

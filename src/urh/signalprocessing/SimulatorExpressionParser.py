@@ -88,7 +88,7 @@ class SimulatorExpressionParser(QObject):
         label = self.sim_proto_manager.item_dict[label_identifier]
         message = label.parent()
 
-        start, end = message.get_label_range(label, 2 if to_string else 0, True)
+        start, end = message.get_label_range(label, 2 if to_string else 0, False)
         return message.plain_ascii_str[start:end] if to_string else int(message.plain_bits_str[start:end], 2)
 
     def validate_formula_node(self, node):

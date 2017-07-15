@@ -424,7 +424,7 @@ class SimulatorScene(QGraphicsScene):
                         message_type=MessageType(message_type.name), decoder=decoder, source=source)
 
         for lbl in message_type:
-            sim_label = SimulatorProtocolLabel(lbl.name, lbl.start, lbl.end - 1, lbl.color_index, lbl.type)
+            sim_label = SimulatorProtocolLabel(copy.deepcopy(lbl))
             sim_message.insert_child(-1, sim_label)
 
         return sim_message

@@ -56,7 +56,7 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(SimulatorProtocolLabel.DISPLAY_FORMATS, parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self.ui.tblViewFieldValues))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self.ui.tblViewFieldValues))
         self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self, parent=self.ui.tblViewFieldValues))
         self.reload_field_types()
@@ -87,11 +87,11 @@ class SimulatorTabController(QWidget):
         self.reload_field_types()
 
         for msg in self.sim_proto_manager.get_all_messages():
-            for lbl in (lbl for lbl in msg.message_type if lbl.type is not None):
-                if lbl.type.id not in self.field_types_by_id:
-                    lbl.type = None
+            for lbl in (lbl for lbl in msg.message_type if lbl.field_type is not None):
+                if lbl.field_type.id not in self.field_types_by_id:
+                    lbl.field_type = None
                 else:
-                    lbl.type = self.field_types_by_id[lbl.type.id]
+                    lbl.field_type = self.field_types_by_id[lbl.field_type.id]
 
         self.update_field_name_column()
         self.update_ui()
@@ -149,7 +149,7 @@ class SimulatorTabController(QWidget):
 
             for lbl in message.message_type:
                 msg_type.add_protocol_label(start=lbl.start, end=lbl.end - 1, name=lbl.name,
-                                            color_ind=lbl.color_index, type=lbl.type)
+                                            color_ind=lbl.color_index, type=lbl.field_type)
 
             self.proto_analyzer.message_types.append(msg_type)
             self.compare_frame_controller.fill_message_type_combobox()

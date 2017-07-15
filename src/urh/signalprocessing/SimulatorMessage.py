@@ -8,7 +8,7 @@ class SimulatorMessage(Message, SimulatorItem):
         Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
         SimulatorItem.__init__(self)
         self.destination = destination
-        self.received_messages = []
+        self.send_recv_messages = []
 
     def set_parent(self, value):
         if value is not None:
@@ -26,3 +26,12 @@ class SimulatorMessage(Message, SimulatorItem):
 
     def check(self):
         return all(child.is_valid for child in self.children)
+
+    @property
+    def plain_ascii_str(self) -> str:
+        plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array if len(self.send_recv_messages) else self.plain_ascii_array
+        return "".join(map(chr, plain_ascii_array))
+
+    @property
+    def plain_bits_str(self) -> str:
+        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) else str(self)

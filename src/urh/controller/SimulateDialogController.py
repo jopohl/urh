@@ -77,7 +77,7 @@ class SimulateDialogController(QDialog):
         self.simulator_scene.log_toggle_selected_items()
 
     def on_btn_simulate_clicked(self):
-        sim = Simulator(self.sim_proto_manager, self.expression_parser, self.project_manager)
+        sim = Simulator(self.sim_proto_manager, self.generator_tab_controller.modulators, self.expression_parser, self.project_manager)
         sim.start()
 
     def update_buttons(self):

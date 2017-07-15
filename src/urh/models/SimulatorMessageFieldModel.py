@@ -2,6 +2,7 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 
 from urh import constants
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 
@@ -38,7 +39,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
     def value_str(self, label: SimulatorProtocolLabel):
         message = label.parent()
-        start, end = message.get_label_range(label, label.display_format_index % 3, True)
+        start, end = message.get_label_range(label, label.display_format_index % 3, False)
 
         if label.display_format_index == 0:
             return message.plain_bits_str[start:end]
@@ -47,7 +48,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         elif label.display_format_index == 2:
             return message.plain_ascii_str[start:end]
         elif label.display_format_index == 3:
-            return int(message.plain_bits_str[start:end], 2)
+            try:
+                return int(message.plain_bits_str[start:end], 2)
+            except ValueError:
+                pass
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i, j = index.row(), index.column()
@@ -57,7 +61,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
+                return ProtocolLabel.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
                 return lbl.VALUE_TYPES[lbl.value_type_index]
             elif j == 3:
@@ -88,7 +92,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         elif role == Qt.FontRole:
             if j == 0:
                 font = QFont()
-                font.setItalic(lbl.type is None)
+                font.setItalic(lbl.field_type is None)
                 return font
         elif role == Qt.BackgroundColorRole:
             if j == 0:
@@ -107,9 +111,9 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 label.name = value
 
                 if value in self.controller.field_types_by_caption:
-                    label.type = self.controller.field_types_by_caption[value]
+                    label.field_type = self.controller.field_types_by_caption[value]
                 else:
-                    label.type = None
+                    label.field_type = None
             elif j == 1:
                 label.display_format_index = value
             elif j == 2:

@@ -34,7 +34,7 @@ margin: 4px 0px;
 stop:0 rgba(255, 255, 255, 0), 
 stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
-image: url(:/icons/data/icons/rotated_splitter_handle.png);
+image: url(:/icons/data/icons/splitter_handle_vertical.svg);
 }</string>
       </property>
       <property name="orientation">
@@ -315,7 +315,7 @@ image: url(:/icons/data/icons/rotated_splitter_handle.png);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

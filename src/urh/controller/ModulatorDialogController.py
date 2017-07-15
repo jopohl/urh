@@ -356,8 +356,14 @@ class ModulatorDialogController(QDialog):
         self.draw_data_bits()
         self.draw_modulated()
         if len(text) > 0:
-            self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n") + "(" + text + ")")
+            if len(text) > 24:
+                display_text = text[0:24] + "..."
+            else:
+                display_text = text
+            self.ui.cbShowDataBitsOnly.setToolTip(text)
+            self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n") + "(" + display_text + ")")
         else:
+            self.ui.cbShowDataBitsOnly.setToolTip("")
             self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
 
         self.search_data_sequence()
@@ -486,8 +492,11 @@ class ModulatorDialogController(QDialog):
         for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated):
             if gv == self.sender():
                 continue
-            gv.scale(factor, 1)
-            gv.centerOn(x, y)
+            if factor == -1:
+                gv.show_full_scene()
+            else:
+                gv.scale(factor, 1)
+                gv.centerOn(x, y)
 
         if self.lock_samples_in_view:
             self.adjust_samples_in_view(self.ui.gVModulated.view_rect().width())
@@ -554,27 +563,14 @@ class ModulatorDialogController(QDialog):
 
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
-        proto_bits = self.protocol.plain_bits_str
+        signal = self.ui.gVOriginalSignal.scene_manager.signal
+        freq = self.current_modulator.estimate_carrier_frequency(signal, self.protocol)
 
-        message_index = -1
-        pos = -1
-
-        # Lets find a one
-        for i, message in enumerate(proto_bits):
-            j = message.find("1")
-            if j != -1:
-                message_index = i
-                pos = j
-                break
-
-        if message_index == -1 or pos == -1:
+        if freq is None or freq == 0:
             QMessageBox.information(self, self.tr("No results"),
                                     self.tr("Unable to detect parameters from current signal"))
             return
 
-        start, nsamples = self.protocol.get_samplepos_of_bitseq(message_index, pos, message_index, pos + 1, False)
-        signal = self.ui.gVOriginalSignal.scene_manager.signal
-        freq = signal.estimate_frequency(start, start + nsamples, self.current_modulator.sample_rate)
         self.ui.doubleSpinBoxCarrierFreq.setValue(freq)
         self.autodetect_fsk_freqs()
 

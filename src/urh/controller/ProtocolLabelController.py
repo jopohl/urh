@@ -47,9 +47,11 @@ class ProtocolLabelController(QDialog):
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
-        self.setWindowTitle(self.tr("Edit Protocol Labels from %s") % message.message_type.name)
+        self.setWindowFlags(Qt.Window)
+        self.setWindowTitle(self.tr("Edit Protocol Labels from message type %s") % message.message_type.name)
 
         self.configure_special_config_tabs()
+        self.ui.splitter.setSizes([self.height() / 2, self.height() / 2])
 
         self.create_connects()
         self.ui.cbProtoView.setCurrentIndex(viewtype)

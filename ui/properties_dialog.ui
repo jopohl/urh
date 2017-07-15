@@ -15,88 +15,107 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QGroupBox" name="groupBoxSettings">
-     <property name="title">
-      <string>Protocol Label Settings</string>
+    <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true">QSplitter::handle:vertical {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 100), 
+stop:1 rgba(255, 255, 255, 0));
+	image: url(:/icons/data/icons/splitter_handle_horizontal.svg);
+}</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="ProtocolLabelTableView" name="tblViewProtoLabels">
-        <property name="selectionMode">
-         <enum>QAbstractItemView::ExtendedSelection</enum>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectItems</enum>
-        </property>
-        <property name="verticalScrollMode">
-         <enum>QAbstractItemView::ScrollPerPixel</enum>
-        </property>
-        <property name="horizontalScrollMode">
-         <enum>QAbstractItemView::ScrollPerPixel</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <underline>false</underline>
-           </font>
-          </property>
-          <property name="text">
-           <string>View Type:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cbProtoView">
-          <item>
-           <property name="text">
-            <string>Bits</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hex</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>ASCII</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBoxAdvancedSettings">
-     <property name="title">
-      <string>Advanced Settings</string>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QTabWidget" name="tabWidgetAdvancedSettings"/>
-      </item>
-     </layout>
+     <property name="handleWidth">
+      <number>6</number>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="QGroupBox" name="groupBoxSettings">
+      <property name="title">
+       <string>Protocol Label Settings</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="ProtocolLabelTableView" name="tblViewProtoLabels">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="font">
+            <font>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>View Type:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbProtoView">
+           <item>
+            <property name="text">
+             <string>Bits</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Hex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ASCII</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="groupBoxAdvancedSettings">
+      <property name="title">
+       <string>Advanced Settings</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTabWidget" name="tabWidgetAdvancedSettings"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -115,6 +134,8 @@
    <header>urh.ui.views.ProtocolLabelTableView.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../urh.qrc"/>
+ </resources>
  <connections/>
 </ui>

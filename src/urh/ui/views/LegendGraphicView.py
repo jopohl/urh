@@ -7,7 +7,7 @@ class LegendGraphicView(QGraphicsView):
     resized = pyqtSignal()
 
     def __init__(self, parent=None):
-        self.ysep = 0
+        self.y_sep = 0
         self.y_scene = -1
         self.scene_height = 2
         super().__init__(parent)
@@ -24,7 +24,7 @@ class LegendGraphicView(QGraphicsView):
         if self.scene() is not None:
             self.resetTransform()
             self.scene().setSceneRect(0, self.y_scene, self.width(), self.scene_height)
-            self.scene().draw_one_zero_arrows(self.ysep)
+            self.scene().draw_one_zero_arrows(self.y_sep)
             self.fitInView(self.sceneRect())
             self.show()
 

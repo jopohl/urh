@@ -17,6 +17,19 @@ class TestDemodulations(QtTestCase):
         proto_analyzer.get_protocol_from_signal()
         self.assertTrue(proto_analyzer.plain_bits_str[0].startswith("1011001001011011011011011011011011001000000"))
 
+    def test_ask_two(self):
+        signal = Signal(get_path_for_data_file("ask_short.complex"), "ASK-Test2")
+        signal.modulation_type = 0
+        signal.noise_threshold = 0.0299
+        signal.bit_len = 16
+        signal.qad_center = 0.1300
+        signal.tolerance = 0
+        self.assertEqual(signal.num_samples, 131)
+
+        proto_analyzer = ProtocolAnalyzer(signal)
+        proto_analyzer.get_protocol_from_signal()
+        self.assertEqual(proto_analyzer.plain_bits_str[0], "10101010")
+
     def test_fsk(self):
         signal = Signal(get_path_for_data_file("fsk.complex"), "FSK-Test")
         signal.modulation_type = 1

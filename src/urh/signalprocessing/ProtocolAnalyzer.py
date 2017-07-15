@@ -5,6 +5,7 @@ from xml.dom import minidom
 
 import array
 import numpy as np
+import sys
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
@@ -217,10 +218,16 @@ class ProtocolAnalyzer(object):
 
         bit_len = signal.bit_len
 
-        ppseq = signalFunctions.grab_pulse_lens(signal.qad,
-                                                signal.qad_center,
-                                                signal.tolerance,
-                                                signal.modulation_type)
+        try:
+            ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+                                                    signal.modulation_type, signal.bit_len)
+        except TypeError:
+            # Remove this check in version 1.7
+            print("Extension method has changed! To fix this, first move to URHs base directory "
+                  "then recompile the extensions using the following command:")
+            print("python3 src/urh/cythonext/build.py")
+            print("and finally restart the application")
+            sys.exit(1)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 
@@ -335,9 +342,9 @@ class ProtocolAnalyzer(object):
                     end_index -= 1
 
             start = self.messages[start_message].bit_sample_pos[start_index]
-            end = self.messages[end_message].bit_sample_pos[end_index] - start
+            num_samples = self.messages[end_message].bit_sample_pos[end_index] - start
 
-            return start, end
+            return start, num_samples
         except KeyError:
             return -1, -1
 
@@ -381,14 +388,17 @@ class ProtocolAnalyzer(object):
         last_index = len(self.messages[-1].plain_bits) + 1
         return start_message, start_index, last_message, last_index
 
-    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool):
+    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool, update_label_ranges=True):
         removable_msg_indices = []
 
         for i in range(msg_start, msg_end + 1):
             try:
-                self.messages[i].clear_decoded_bits()
                 bs, be = self.convert_range(start, end, view, 0, decoded, message_indx=i)
-                del self.messages[i][bs:be + 1]
+                self.messages[i].clear_decoded_bits()
+                if update_label_ranges:
+                    del self.messages[i][bs:be + 1]
+                else:
+                    self.messages[i].delete_range_without_label_range_update(bs, be + 1)
                 if len(self.messages[i]) == 0:
                     removable_msg_indices.append(i)
             except IndexError:
@@ -537,8 +547,20 @@ class ProtocolAnalyzer(object):
                 break
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False,
-                   write_bits=False) -> ET.Element:
+                   write_bits=False, messages=None) -> ET.Element:
+        """
+
+        :param decodings:
+        :param participants:
+        :param tag_name:
+        :param include_message_type:
+        :param write_bits:
+        :param messages: Give custom list of messages to use instead of self.messages. Used when saving project and
+        some subprotocols are hidden in Compare Frame Controller
+        :return:
+        """
         root = ET.Element(tag_name)
+        messages = self.messages if messages is None else messages
 
         # Save modulators
         if hasattr(self, "modulators"):  # For protocol analyzer container
@@ -549,7 +571,7 @@ class ProtocolAnalyzer(object):
         # Save decodings
         if not decodings:
             decodings = []
-            for message in self.messages:
+            for message in messages:
                 if message.decoder not in decodings:
                     decodings.append(message.decoder)
 
@@ -564,7 +586,7 @@ class ProtocolAnalyzer(object):
         # Save participants
         if not participants:
             participants = []
-            for message in self.messages:
+            for message in messages:
                 if message.participant and message.participant not in participants:
                     participants.append(message.participant)
 
@@ -574,7 +596,7 @@ class ProtocolAnalyzer(object):
 
         # Save data
         data_tag = ET.SubElement(root, "messages")
-        for i, message in enumerate(self.messages):
+        for i, message in enumerate(messages):
             message_tag = message.to_xml(decoders=decodings, include_message_type=include_message_type)
             if write_bits:
                 message_tag.set("bits", message.plain_bits_str)

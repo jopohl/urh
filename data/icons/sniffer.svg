@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="4.383195"
-     inkscape:cy="0.25349098"
+     inkscape:zoom="32"
+     inkscape:cx="2.7848469"
+     inkscape:cy="9.5734649"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -46,6 +46,70 @@
          offset="0"
          id="stop7077" />
     </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter914">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood904" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite906" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.5"
+         result="blur"
+         id="feGaussianBlur908" />
+      <feOffset
+         dx="0.1"
+         dy="0.1"
+         result="offset"
+         id="feOffset910" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite912" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter938">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood928" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite930" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.5"
+         result="blur"
+         id="feGaussianBlur932" />
+      <feOffset
+         dx="0.1"
+         dy="0.1"
+         result="offset"
+         id="feOffset934" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite936" />
+    </filter>
   </defs>
   <metadata
      id="metadata5039">
@@ -62,35 +126,37 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Ebene 2">
-    <circle
-       style="fill:#afc6e9;fill-opacity:1;stroke:#ff0000;stroke-width:1.19093943;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path5605"
-       cx="6.8475037"
-       cy="6.8600025"
-       r="6.0412431" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.88976378;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter938)"
+       d="m 11.303085,11.154756 3.83883,3.910488"
+       id="path5611"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Ebene 1">
+    <circle
+       style="fill:#afc6e9;fill-opacity:0.78417263;stroke:#ff0000;stroke-width:1.19093943;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter914)"
+       id="path5605"
+       cx="6.8475037"
+       cy="6.8600025"
+       r="6.0412431" />
     <g
        aria-label="10"
        style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        id="text5597"
-       transform="matrix(0.85162896,0,0,0.85162896,0.0610823,0.02035532)">
+       transform="matrix(0.7643067,0,0,0.85162896,0.65422787,0.02035532)">
       <path
          d="M 2.4981667,11.1875 H 7.4475002 V 9.7155 H 5.9968335 V 4.4248331 H 4.6528334 c -0.5333333,0.32 -1.0666667,0.512 -1.8773334,0.6613334 V 6.2168332 H 4.1621667 V 9.7155 h -1.664 z"
          id="path7117"
-         inkscape:connector-curvature="0" />
+         inkscape:connector-curvature="0"
+         style="fill:#000000;fill-opacity:1" />
       <path
          d="m 11.283334,11.3155 c 1.589333,0 2.666666,-1.226667 2.666666,-3.5413334 0,-2.3146668 -1.077333,-3.4773335 -2.666666,-3.4773335 -1.5893338,0 -2.6666672,1.1626667 -2.6666672,3.4773335 0,2.3146664 1.0773334,3.5413334 2.6666672,3.5413334 z m 0,-1.408 C 10.718,9.9075 10.238,9.4594999 10.238,7.7741666 c 0,-1.6853334 0.48,-2.0693334 1.045334,-2.0693334 0.565333,0 1.045333,0.384 1.045333,2.0693334 0,1.6853333 -0.48,2.1333334 -1.045333,2.1333334 z m 0,-1.2800001 c 0.490666,0 0.853333,-0.3413333 0.853333,-0.8533333 0,-0.5120001 -0.362667,-0.8533334 -0.853333,-0.8533334 -0.490667,0 -0.853334,0.3413333 -0.853334,0.8533334 0,0.512 0.362667,0.8533333 0.853334,0.8533333 z"
          id="path7119"
-         inkscape:connector-curvature="0" />
+         inkscape:connector-curvature="0"
+         style="fill:#000000;fill-opacity:1" />
     </g>
-    <path
-       style="fill:none;stroke:#ff0000;stroke-width:1.88976378;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 11.303085,11.154756 3.83883,3.910488"
-       id="path5611"
-       inkscape:connector-curvature="0" />
   </g>
 </svg>

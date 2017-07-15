@@ -128,7 +128,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         bit_len = self.signal.bit_len
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type)
+                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
 
@@ -160,7 +160,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         bit_len = self.signal.bit_len
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type)
+                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
 
         bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len)
 

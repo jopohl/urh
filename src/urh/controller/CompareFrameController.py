@@ -196,11 +196,23 @@ class CompareFrameController(QWidget):
     @property
     def protocol_list(self):
         """
+        :return: visible protocols
         :rtype: list of ProtocolAnalyzer
         """
         result = []
         for group in self.groups:
             result.extend(group.protocols)
+        return result
+
+    @property
+    def full_protocol_list(self):
+        """
+        :return: all protocols including not shown ones
+        :rtype: list of ProtocolAnalyzer
+        """
+        result = []
+        for group in self.groups:
+            result.extend(group.all_protocols)
         return result
 
     # endregion
@@ -559,8 +571,10 @@ class CompareFrameController(QWidget):
                 if line != 0:
                     first_msg_indices.append(line)
 
-        # Hidden Rows auf neue Reihenfolge übertragen
-        [self.ui.tblViewProtocol.showRow(i) for i in range(self.protocol_model.row_count)]
+        # apply hidden rows to new order
+        for i in range(self.protocol_model.row_count):
+            self.ui.tblViewProtocol.showRow(i)
+
         self.protocol_model.hidden_rows.clear()
         for proto in relative_hidden_row_positions.keys():
             try:
@@ -1170,9 +1184,12 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(bool)
     def on_writeable_changed(self, writeable_status: bool):
+        hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         self.protocol_model.is_writeable = writeable_status
         self.proto_tree_model.set_copy_mode(writeable_status)
+        self.ui.cbDecoding.setDisabled(writeable_status)
         self.refresh()
+        self.ui.tblViewProtocol.hide_row(hidden_rows)
 
     @pyqtSlot()
     def on_project_updated(self):

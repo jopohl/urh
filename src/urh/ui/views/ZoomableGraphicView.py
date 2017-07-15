@@ -8,6 +8,9 @@ from urh.util.Logger import logger
 
 
 class ZoomableGraphicView(SelectableGraphicView):
+
+    # argument is x zoom factor
+    # if argument is -1, then show_full_scene was triggered during zoom
     zoomed = pyqtSignal(float)
 
     def __init__(self, parent=None):
@@ -26,6 +29,13 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
+
+        self.zoom_original_action = QAction(self.tr("Zoom original"), self)
+        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
+        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
+        self.addAction(self.zoom_original_action)
 
         self.redraw_timer = QTimer()
         self.redraw_timer.setSingleShot(True)
@@ -67,12 +77,17 @@ class ZoomableGraphicView(SelectableGraphicView):
             pos = None
         old_pos = self.mapToScene(pos) if pos is not None else None
 
+        show_full = False
         if self.view_rect().width() / factor > self.sceneRect().width():
             self.show_full_scene()
             factor = 1
+            show_full = True
 
         self.scale(factor, 1)
-        self.zoomed.emit(factor)
+        if show_full:
+            self.zoomed.emit(-1)
+        else:
+            self.zoomed.emit(factor)
 
         if pos is not None:
             move = self.mapToScene(pos) - old_pos
@@ -99,7 +114,8 @@ class ZoomableGraphicView(SelectableGraphicView):
     def show_full_scene(self, reinitialize=False):
         y_factor = self.transform().m22()
         self.resetTransform()
-        x_factor = self.view_rect().width() / (self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
+        # Use full self.width() here to enable show_full_scene when view_rect not yet set e.g. in Record Signal Dialog
+        x_factor = self.width() / (self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
         self.scale(x_factor, y_factor)
         self.centerOn(0, self.y_center)
 
@@ -153,3 +169,8 @@ class ZoomableGraphicView(SelectableGraphicView):
     @pyqtSlot()
     def on_zoom_out_action_triggered(self):
         self.zoom(0.9)
+
+    @pyqtSlot()
+    def on_zoom_original_action_triggered(self):
+        self.show_full_scene(reinitialize=False)
+        self.zoomed.emit(-1)

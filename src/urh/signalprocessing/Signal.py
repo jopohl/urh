@@ -290,6 +290,10 @@ class Signal(QObject):
     def calc_noise_threshold(self, noise_start: int, noise_end: int):
         num_digits = 4
         noise_start, noise_end = int(noise_start), int(noise_end)
+
+        if noise_start > noise_end:
+            noise_start, noise_end = noise_end, noise_start
+
         try:
             magnitudes = np.absolute(self.data[noise_start:noise_end])
             maximum = np.max(magnitudes)

@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
 from urh.dev import config
+from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
@@ -28,6 +29,7 @@ class ProjectManager(QObject):
                                 bandwidth=config.DEFAULT_BANDWIDTH,
                                 gain=config.DEFAULT_GAIN)
 
+        self.modulation_was_edited = False
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
@@ -97,11 +99,13 @@ class ProjectManager(QObject):
                 root = ET.Element("UniversalRadioHackerProject")
                 tree = ET.ElementTree(root)
                 tree.write(self.project_file)
+                self.modulation_was_edited = False
         else:
             tree = ET.parse(self.project_file)
             root = tree.getroot()
 
             collapse_project_tabs = bool(int(root.get("collapse_project_tabs", 0)))
+            self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
             self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
@@ -166,7 +170,7 @@ class ProjectManager(QObject):
         if os.path.relpath(signal.filename, self.project_path) in existing_filenames.keys():
             signal_tag = existing_filenames[os.path.relpath(signal.filename, self.project_path)]
         else:
-            # Neuen Tag anlegen
+            # Create new tag
             signal_tag = ET.SubElement(root, "signal")
 
         signal_tag.set("name", signal.name)
@@ -224,7 +228,7 @@ class ProjectManager(QObject):
 
         return result
 
-    def saveProject(self):
+    def save_project(self):
         if self.project_file is None or not os.path.isfile(self.project_file):
             return
 
@@ -245,6 +249,7 @@ class ProjectManager(QObject):
             device_val_tag.text = str(self.device_conf[key])
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
+        root.set("modulation_was_edited", str(int(self.modulation_was_edited)))
         root.set("broadcast_address_hex", str(self.broadcast_address_hex))
 
         open_files = []
@@ -283,10 +288,10 @@ class ProjectManager(QObject):
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
                     proto_tag.set("filename", os.path.relpath(proto_frame.filename, self.project_path))
-                    show = "1" if proto_frame.show else "0"
-                    proto_tag.set("show", show)
 
-        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants))
+        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
+                                                  messages=[msg for proto in cfc.full_protocol_list for msg in
+                                                            proto.messages]))
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         with open(self.project_file, "w") as f:
@@ -346,9 +351,9 @@ class ProjectManager(QObject):
             root = tree.getroot()
             file_names = []
 
-            for ftag in root.findall("open_file"):
-                pos = int(ftag.attrib["position"])
-                filename = os.path.join(self.project_path, ftag.attrib["name"])
+            for file_tag in root.findall("open_file"):
+                pos = int(file_tag.attrib["position"])
+                filename = os.path.normpath(os.path.join(self.project_path, file_tag.attrib["name"]))
                 file_names.insert(pos, filename)
 
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -361,8 +366,7 @@ class ProjectManager(QObject):
         proto_tree_model = self.main_controller.compare_frame_controller.proto_tree_model
         tree_root = proto_tree_model.rootItem
         pfi = proto_tree_model.protocol_tree_items
-        proto_frame_items = [item for item in pfi[0]]
-        """:type: list of ProtocolTreeItem """
+        proto_frame_items = [item for item in pfi[0]]  # type:  list[ProtocolTreeItem]
 
         for group_tag in root.iter("group"):
             name = group_tag.attrib["name"]
@@ -376,8 +380,7 @@ class ProjectManager(QObject):
             group = tree_root.child(int(id))
 
             for proto_tag in group_tag.iter("cf_protocol"):
-                filename = os.path.join(self.project_path, proto_tag.attrib["filename"])
-                show = proto_tag.attrib["show"]
+                filename = os.path.normpath(os.path.join(self.project_path, proto_tag.attrib["filename"]))
                 try:
                     proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
                 except StopIteration:
@@ -385,7 +388,6 @@ class ProjectManager(QObject):
 
                 if proto_frame_item is not None:
                     group.appendChild(proto_frame_item)
-                    proto_frame_item.show_in_compare_frame = Qt.Checked if show == "1" else Qt.Unchecked
 
             self.main_controller.compare_frame_controller.expand_group_node(int(id))
 

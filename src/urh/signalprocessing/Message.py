@@ -18,11 +18,11 @@ class Message(object):
     A protocol message is a single line of a protocol.
     """
 
-    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_indx", "rssi", "participant", "message_type",
+    __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
-    def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_indx=0, decoder=None,
+    def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
         """
 
@@ -37,7 +37,7 @@ class Message(object):
         """
         self.__plain_bits = array.array("B", plain_bits)
         self.pause = pause
-        self.modulator_indx = modulator_indx
+        self.modulator_index = modulator_index
         self.rssi = rssi
         self.participant = participant    # type: Participant
         self.message_type = message_type  # type: MessageType
@@ -149,6 +149,9 @@ class Message(object):
 
     def __str__(self):
         return self.bits2string(self.plain_bits)
+
+    def delete_range_without_label_range_update(self, start: int, end: int):
+        del self.plain_bits[start:end]
 
     def get_byte_length(self, decoded=True) -> int:
         """
@@ -446,7 +449,7 @@ class Message(object):
     def to_xml(self, decoders=None, include_message_type=False) -> ET.Element:
         root = ET.Element("message")
         root.set("message_type_id", self.message_type.id)
-        root.set("modulator_index", str(self.modulator_indx))
+        root.set("modulator_index", str(self.modulator_index))
         root.set("pause", str(self.pause))
         if decoders:
             root.set("decoding_index", str(decoders.index(self.decoder)))
@@ -459,7 +462,7 @@ class Message(object):
     def from_xml(self, tag: ET.Element, participants, decoders=None, message_types=None):
         part_id = tag.get("participant_id", None)
         message_type_id = tag.get("message_type_id", None)
-        self.modulator_indx = int(tag.get("modulator_index", self.modulator_indx))
+        self.modulator_index = int(tag.get("modulator_index", self.modulator_index))
         self.pause = int(tag.get("pause", self.pause))
         decoding_index = tag.get("decoding_index", None)
         if decoding_index:

@@ -151,7 +151,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.add_signal_to_form("wsp.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
-        signal_frame.ui.spinBoxNoiseTreshold.setValue(0.0400)
+        signal_frame.ui.spinBoxNoiseTreshold.setValue(0.0500)
         signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         signal_frame.ui.spinBoxCenterOffset.setValue(0.3480)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
@@ -161,9 +161,8 @@ class TestCRCGUIIntegration(QtTestCase):
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 
         self.assertEqual(len(signal_frame.proto_analyzer.plain_hex_str), 3)
-        self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[0], "0aad3d5ddddcc5d45ddbba0000000")
-        self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[1], "aad3d5ddddcc5d45ddbba00000000000")
-        self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[2], "aad3d5ddddcc5d45ddbba0000000")
+        for i in range(3):
+            self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[i].strip("0"), "aad3d5ddddcc5d45ddbba")
 
     def __add_cc1101_signal(self):
         self.add_signal_to_form("cc1101.complex")

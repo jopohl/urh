@@ -36,7 +36,7 @@ class SignalTabController(QWidget):
         self.ui = Ui_Interpretation()
         self.ui.setupUi(self)
         self.splitter = QSplitter()
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\nmargin: 4px 0px; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \nstop:0 rgba(255, 255, 255, 0), \nstop:0.5 rgba(100, 100, 100, 100), \nstop:1 rgba(255, 255, 255, 0));\n	image: url(:/icons/data/icons/splitter_handle.png);\n}")
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\nmargin: 4px 0px; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \nstop:0 rgba(255, 255, 255, 0), \nstop:0.5 rgba(100, 100, 100, 100), \nstop:1 rgba(255, 255, 255, 0));\n	image: url(:/icons/data/icons/splitter_handle_horizontal.svg);\n}")
         self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
         self.splitter.setHandleWidth(6)

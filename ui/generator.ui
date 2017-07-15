@@ -42,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1081</width>
-        <height>699</height>
+        <width>1159</width>
+        <height>686</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -56,7 +56,7 @@ margin: 4px 0px;
 stop:0 rgba(255, 255, 255, 0), 
 stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
-image: url(:/icons/data/icons/rotated_splitter_handle.png);
+image: url(:/icons/data/icons/splitter_handle_vertical.svg);
 }</string>
          </property>
          <property name="orientation">

@@ -166,7 +166,7 @@ class RfCatPlugin(SDRPlugin):
         # Open and configure RfCat
         if not self.open_rfcat():
             return False
-        modulation = self.modulators[messages[0].modulator_indx].modulation_type
+        modulation = self.modulators[messages[0].modulator_index].modulation_type
         if modulation == 0:     # ASK
             modulation = "MOD_ASK_OOK"
         elif modulation == 1:   # FSK

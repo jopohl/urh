@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/rotated_splitter_handle.png);\n"
+"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)
@@ -141,7 +141,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 798, 22))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

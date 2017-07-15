@@ -107,6 +107,13 @@ class TableView(QTableView):
             self.on_copy_action_triggered()
             return
 
+        if event.key() == Qt.Key_Space:
+            min_row, max_row, start, _ = self.selection_range()
+            if start == -1:
+                return
+
+            self.model().insert_column(start, list(range(min_row, max_row+1)))
+
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
                 or event.modifiers() == Qt.ShiftModifier:
             super().keyPressEvent(event)
@@ -156,6 +163,7 @@ class TableView(QTableView):
 
         selection = QItemSelection()
         selection.select(start, end)
+        self.setCurrentIndex(start)
         self.selectionModel().setCurrentIndex(end, QItemSelectionModel.ClearAndSelect)
         self.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         if scroll_to_start:

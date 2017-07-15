@@ -2,7 +2,7 @@ import array
 import copy
 from collections import defaultdict
 
-from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot
+from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QColor
 
 from urh import constants
@@ -22,6 +22,8 @@ from urh.util.Logger import logger
 
 
 class GeneratorTableModel(TableModel):
+    first_protocol_added = pyqtSignal(ProtocolAnalyzer)
+
     def __init__(self, tree_root_item: ProtocolTreeItem, modulators, decodings, parent = None):
         super().__init__(participants=[], parent=parent)
         self.protocol = ProtocolAnalyzerContainer(modulators)
@@ -111,9 +113,14 @@ class GeneratorTableModel(TableModel):
             nodes_to_add.extend(group_node.children)
         nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
 
+        is_empty = self.row_count == 0
+
         for node in reversed(nodes_to_add):
             undo_action = InsertBitsAndPauses(self.protocol, self.dropped_row, node.protocol)
             self.undo_stack.push(undo_action)
+
+        if is_empty and self.row_count > 0:
+            self.first_protocol_added.emit(nodes_to_add[0].protocol)
 
         return True
 
@@ -150,10 +157,6 @@ class GeneratorTableModel(TableModel):
                 return i
 
         return -1
-
-    def insert_column(self, index: int, rows: list):
-        insert_action = InsertColumn(self.protocol, index, rows, self.proto_view)
-        self.undo_stack.push(insert_action)
 
     def __set_italic_font_for_label_range(self, row, label, italic: bool):
         message = self.protocol.messages[row]

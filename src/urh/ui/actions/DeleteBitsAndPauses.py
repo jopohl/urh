@@ -38,7 +38,10 @@ class DeleteBitsAndPauses(QUndoCommand):
             if i in self.removed_message_indices:
                 self.proto_analyzer.messages.insert(i, self.saved_messages[i-self.start_message])
             else:
-                self.proto_analyzer.messages[i] = self.saved_messages[i-self.start_message]
+                try:
+                    self.proto_analyzer.messages[i] = self.saved_messages[i-self.start_message]
+                except IndexError:
+                    self.proto_analyzer.messages.append(self.saved_messages[i-self.start_message])
 
         for sub_protocol in self.sub_protocol_history.keys():
             sub_protocol.messages = self.sub_protocol_history[sub_protocol]

@@ -60,6 +60,11 @@ def build_exe(build_cmd='build'):
 
     cx_Freeze.setup(
         name="Universal Radio Hacker",
+        description="Universal Radio Hacker: investigate wireless protocols like a boss",
+        author="Johannes Pohl",
+        author_email="Johannes.Pohl90@gmail.com",
+        url="https://github.com/jopohl/urh",
+        license="GNU General Public License (GPL) 3",
         version=version.VERSION,
         executables=executables,
         options=options

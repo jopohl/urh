@@ -96,7 +96,7 @@ class BackendHandler(object):
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
         else:
-            self.path = os.path.join(os.path.dirname(sys.executable), "dev")
+            self.path = os.path.dirname(sys.executable)
 
         self.device_backends = {}
         """:type: dict[str, BackendContainer] """
@@ -175,7 +175,10 @@ class BackendHandler(object):
                 return
 
     def __device_has_gr_scripts(self, devname: str):
-        script_path = os.path.join(self.path, "gr", "scripts")
+        if not hasattr(sys, "frozen"):
+            script_path = os.path.join(self.path, "gr", "scripts")
+        else:
+            script_path = self.path
         devname = devname.lower().split(" ")[0]
         has_send_file = False
         has_recv_file = False

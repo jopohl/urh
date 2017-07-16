@@ -6,7 +6,7 @@ from urh.util.Logger import logger
 
 
 def set_windows_lib_path():
-    if sys.platform == "win32":
+    if sys.platform == "win32" and not hasattr(sys, "frozen"):
         util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
             else os.path.dirname(os.path.realpath(os.readlink(__file__)))
         urh_dir = os.path.realpath(os.path.join(util_dir, ".."))

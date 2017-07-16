@@ -58,6 +58,9 @@ def main():
         import urh.cythonext.path_creator
         import urh.cythonext.util
     except ImportError:
+        if hasattr(sys, "frozen"):
+            print("C++ Extensions not found. Exiting...")
+            sys.exit(1)
         print("Could not find C++ extensions, trying to build them.")
         old_dir = os.curdir
         os.chdir(os.path.join(src_dir, "urh", "cythonext"))

@@ -36,6 +36,14 @@ def build_exe(build_cmd='build'):
         if f.endswith(".py"):
             include_files.append(os.path.join("src", "urh", "dev", "gr", "scripts", f))
 
+    plugins = []
+    plugin_path = os.path.join("src", "urh", "plugins")
+    for plugin in os.listdir(plugin_path):
+        if os.path.isdir(os.path.join(plugin_path, plugin)):
+            for f in os.listdir(os.path.join(plugin_path, plugin)):
+                if f.endswith(".py") and f != "__init__.py":
+                    plugins.append("urh.plugins.{0}.{1}".format(plugin, f.replace(".py", "")))
+
     options = {
         'build_exe': {
             "include_files": include_files,
@@ -43,7 +51,7 @@ def build_exe(build_cmd='build'):
             "excludes": ["tkinter"],
             "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs',
                          'packaging', 'packaging.version', 'packaging.specifiers', 'packaging.requirements',
-                         'setuptools.msvc']
+                         'setuptools.msvc'] + plugins
         },
         'bdist_msi': {
             "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}"

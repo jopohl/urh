@@ -123,6 +123,8 @@ def main():
         # Ensure we get the app icon in windows taskbar
         import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
+        import multiprocessing as mp
+        mp.freeze_support()
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube

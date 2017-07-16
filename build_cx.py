@@ -5,16 +5,14 @@ import cx_Freeze
 
 import src.urh.version as version
 
-def build_exe():
+def build_exe(build_cmd='build'):
     # have to make sure args looks right
-    sys.argv = sys.argv[:1] + ['build']
+    sys.argv = sys.argv[:1] + [build_cmd]
 
     app_path = os.path.join(os.path.dirname(__file__), "src", "urh", "main.py")
-    include_files = [
-        os.path.join("data", 'icons', 'appicon.png')
-    ]
 
     if sys.platform == 'win32':
+        include_files = [os.path.join("data", 'icons', 'appicon.ico')]
         arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
         lib_path = os.path.join("src", "urh", "dev", "native", "lib", "win", arch)
         for f in os.listdir(lib_path):
@@ -23,9 +21,12 @@ def build_exe():
         executables = [cx_Freeze.Executable(
             app_path,
             targetName="urh.exe",
-            icon=os.path.join("data", 'icons', 'appicon.png'),
+            icon=os.path.join("data", 'icons', 'appicon.ico'),
+            shortcutName="Universal Radio Hacker",
+            shortcutDir="DesktopFolder",
             base="Win32GUI")]
     else:
+        include_files = [os.path.join("data", 'icons', 'appicon.png')]
         executables = [cx_Freeze.Executable(
             app_path,
             targetName="urh",
@@ -43,6 +44,9 @@ def build_exe():
             "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs',
                          'packaging', 'packaging.version', 'packaging.specifiers', 'packaging.requirements',
                          'setuptools.msvc']
+        },
+        'bdist_msi': {
+            "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}"
         }
     }
 
@@ -54,4 +58,7 @@ def build_exe():
     )
 
 if __name__ == '__main__':
-    build_exe()
+    if sys.platform == "win32":
+        build_exe("bdist_msi")
+    else:
+        build_exe()

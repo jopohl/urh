@@ -10,7 +10,7 @@ def build_exe(build_cmd='build'):
     sys.argv = sys.argv[:1] + [build_cmd]
 
     app_path = os.path.join(os.path.dirname(__file__), "src", "urh", "main.py")
-    sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]

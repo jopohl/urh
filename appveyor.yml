@@ -71,7 +71,7 @@ install:
   - pip install -r requirements.txt
   - pip install pytest
   # TODO: Only make this on tag later
-  - pip install wheel twine cx_freeze six
+  - pip install wheel twine cx_freeze six appdirs
 
 build_script:
   # Build the compiled extension

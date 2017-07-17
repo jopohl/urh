@@ -28,6 +28,9 @@ branches:
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
 
 
+# - cmd: if %PYTHON_VERSION%==3.5.x VCUpgrade.exe /overwrite igraph.vcproj
+# IF [%var%] == [1] OR IF [%var%] == [2] ECHO TRUE
+
 install:
   # If there is a newer build queued for the same PR, cancel this one.
   # The AppVeyor 'rollout builds' option is supposed to serve the same
@@ -66,7 +69,9 @@ install:
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
   - pip install -r requirements.txt
-  - pip install pytest wheel twine
+  - pip install pytest
+  # TODO: Only make this on tag later
+  - pip install wheel twine cx_freeze
 
 build_script:
   # Build the compiled extension

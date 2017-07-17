@@ -10,6 +10,7 @@ def build_exe(build_cmd='build'):
     sys.argv = sys.argv[:1] + [build_cmd]
 
     app_path = os.path.join(os.path.dirname(__file__), "src", "urh", "main.py")
+    sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]
@@ -36,16 +37,13 @@ def build_exe(build_cmd='build'):
         if f.endswith(".py"):
             include_files.append(os.path.join("src", "urh", "dev", "gr", "scripts", f))
 
-    plugins = ["urh.plugins"]
+    plugins = []
     plugin_path = os.path.join("src", "urh", "plugins")
     for plugin in os.listdir(plugin_path):
         if os.path.isdir(os.path.join(plugin_path, plugin)):
-            plugins.append("urh.plugins.{0}".format(plugin))
             for f in os.listdir(os.path.join(plugin_path, plugin)):
-                if f.endswith(".py"):
+                if f.endswith(".py") and f != "__init__.py":
                     plugins.append("urh.plugins.{0}.{1}".format(plugin, f.replace(".py", "")))
-
-    print(plugins)
 
     options = {
         'build_exe': {

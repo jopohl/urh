@@ -6,13 +6,13 @@ environment:
   TWINE_REPOSITORY_URL:
     'https://upload.pypi.org/legacy/'
   matrix:
-#    - PYTHON: "C:\\Python35"
-#      PYTHON_VERSION: "3.5.x"
-#      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5.x"
+      PYTHON_ARCH: "32"
 
-#    - PYTHON: "C:\\Python36"
-#      PYTHON_VERSION: "3.6.x"
-#      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.x"
+      PYTHON_ARCH: "32"
 
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5.x"

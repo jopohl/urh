@@ -36,7 +36,7 @@ def build_exe(build_cmd='build'):
         if f.endswith(".py"):
             include_files.append(os.path.join("src", "urh", "dev", "gr", "scripts", f))
 
-    plugins = []
+    plugins = ["urh.plugins"]
     plugin_path = os.path.join("src", "urh", "plugins")
     for plugin in os.listdir(plugin_path):
         if os.path.isdir(os.path.join(plugin_path, plugin)):
@@ -44,6 +44,8 @@ def build_exe(build_cmd='build'):
             for f in os.listdir(os.path.join(plugin_path, plugin)):
                 if f.endswith(".py"):
                     plugins.append("urh.plugins.{0}.{1}".format(plugin, f.replace(".py", "")))
+
+    print(plugins)
 
     options = {
         'build_exe': {

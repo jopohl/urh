@@ -40,8 +40,9 @@ def build_exe(build_cmd='build'):
     plugin_path = os.path.join("src", "urh", "plugins")
     for plugin in os.listdir(plugin_path):
         if os.path.isdir(os.path.join(plugin_path, plugin)):
+            plugins.append("urh.plugins.{0}".format(plugin))
             for f in os.listdir(os.path.join(plugin_path, plugin)):
-                if f.endswith(".py") and f != "__init__.py":
+                if f.endswith(".py"):
                     plugins.append("urh.plugins.{0}.{1}".format(plugin, f.replace(".py", "")))
 
     options = {

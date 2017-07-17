@@ -6,6 +6,14 @@ environment:
   TWINE_REPOSITORY_URL:
     'https://upload.pypi.org/legacy/'
   matrix:
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5.x"
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6.x"
+      PYTHON_ARCH: "64"
+
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "32"
@@ -14,13 +22,8 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "32"
 
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
 
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "64"
+max_jobs: 4
 
 branches:
   only:
@@ -47,15 +50,14 @@ build_script:
   - python setup.py build_ext --inplace
 
 test_script:
-  # Run the project tests
-  - IF "%APPVEYOR_REPO_TAG%" == "false" (IF "%PYTHON_VERSION%" == "3.5.x"  (python -m pytest -s))
+  - python -m pytest -s
 
 after_test:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze six appdirs packaging)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (python build_cx.py)
-  - ps: "ls dist"
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python build_cx.py))
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
 
 artifacts:
 #  # Archive the generated packages in the ci.appveyor.com build report.

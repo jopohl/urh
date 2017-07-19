@@ -64,4 +64,4 @@ artifacts:
   - path: dist\*
 
 on_success:
-  -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*)
+  -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)

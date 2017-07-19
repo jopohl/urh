@@ -1,10 +1,17 @@
 import logging
+import os
 
 import sys
+import tempfile
 
 from urh.constants import color
 
-logging.basicConfig(level=logging.WARNING, format='[%(levelname)s::%(filename)s::%(funcName)s] %(message)s')
+logfile = os.path.join(tempfile.gettempdir(), "urh.log")
+
+logging.basicConfig(level=logging.WARNING,
+                    format='[%(levelname)s::%(filename)s::%(funcName)s] %(message)s',
+                    filename=logfile if hasattr(sys, "frozen") else None,
+                    filemode='w')
 
 logging_colors_per_level = {
     logging.WARNING: color.YELLOW,

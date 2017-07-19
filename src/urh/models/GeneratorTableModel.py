@@ -164,21 +164,20 @@ class GeneratorTableModel(TableModel):
             self.italic_fonts[row, j] = italic
 
     def update_checksums_for_row(self, row: int):
-        message = self.protocol.messages[row]
-        for lbl in message.message_type.checksum_labels:  # type: ChecksumLabel
+        msg = self.protocol.messages[row]
+        for lbl in msg.message_type.checksum_labels:  # type: ChecksumLabel
             if lbl.fuzz_created:
                 continue
 
             self.__set_italic_font_for_label_range(row, lbl, italic=True)
             self.edited_checksum_labels_by_row[row].discard(lbl)
 
-            calculated_checksum = lbl.calculate_checksum_for_message(message, use_decoded_bits=False)
-            label_range = message.get_label_range(lbl=lbl, view=0, decode=False)
+            calculated_checksum = lbl.calculate_checksum_for_message(msg, use_decoded_bits=False)
+            label_range = msg.get_label_range(lbl=lbl, view=0, decode=False)
             start, end = label_range[0], label_range[1]
-            message.plain_bits[start:end] = calculated_checksum + array.array("B", [0] * (
-            (end - start) - len(calculated_checksum)))
+            msg[start:end] = calculated_checksum + array.array("B", [0] * ((end - start) - len(calculated_checksum)))
 
-            label_range = message.get_label_range(lbl=lbl, view=self.proto_view, decode=False)
+            label_range = msg.get_label_range(lbl=lbl, view=self.proto_view, decode=False)
             start, end = label_range[0], label_range[1]
             if self.proto_view == 0:
                 data = calculated_checksum

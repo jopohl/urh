@@ -357,11 +357,14 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def refresh_pause_list(self):
         self.ui.lWPauses.clear()
+
         fmt_str = "Pause ({1:d}-{2:d}) <{0:d} samples ({3})>"
         for i, pause in enumerate(self.table_model.protocol.pauses):
             sr = self.__get_modulator_of_message(self.table_model.protocol.messages[i]).sample_rate
             item = fmt_str.format(pause, i + 1, i + 2, Formatter.science_time(pause / sr))
             self.ui.lWPauses.addItem(item)
+
+        self.refresh_estimated_time()
 
     @pyqtSlot()
     def on_lWpauses_selection_changed(self):

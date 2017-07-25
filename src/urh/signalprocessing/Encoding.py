@@ -605,7 +605,8 @@ class Encoding(object):
                 else:
                     # Consider last value
                     if i == len(inpt) - 1:
-                        cnt += 1
+                        if inpt[-1]:
+                            cnt += 1
 
                     # Evaluate sequence whenever we get a zero
                     if cnt >= self.morse_high:

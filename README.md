@@ -4,8 +4,11 @@
 [![OSX Build Status](https://img.shields.io/circleci/project/github/jopohl/urh/master.svg?label=OSX)](https://circleci.com/gh/jopohl/urh/tree/master)
 [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
+
+[![Blackhat Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/2017.svg)](https://www.blackhat.com/us-17/arsenal.html#universal-radio-hacker-investigate-wireless-protocols-like-a-boss-arsenal-theater-demo)
 [![Slack](https://slackinstralsund.herokuapp.com/badge.svg)](https://slackinstralsund.herokuapp.com/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
+
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 

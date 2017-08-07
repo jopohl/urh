@@ -17,7 +17,7 @@ class SignalTabController(QWidget):
 
     @property
     def num_frames(self):
-        return self.splitter.count() - 1
+        return len(self.signal_frames)
 
     @property
     def signal_frames(self):
@@ -25,7 +25,9 @@ class SignalTabController(QWidget):
 
         :rtype: list of SignalFrameController
         """
-        return [self.splitter.widget(i) for i in range(self.num_frames)]
+        splitter = self.ui.splitter
+        return [splitter.widget(i) for i in range(splitter.count())
+                if isinstance(splitter.widget(i), SignalFrameController)]
 
     @property
     def signal_undo_stack(self):
@@ -35,22 +37,13 @@ class SignalTabController(QWidget):
         super().__init__(parent)
         self.ui = Ui_Interpretation()
         self.ui.setupUi(self)
-        self.splitter = QSplitter()
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\nmargin: 4px 0px; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \nstop:0 rgba(255, 255, 255, 0), \nstop:0.5 rgba(100, 100, 100, 100), \nstop:1 rgba(255, 255, 255, 0));\n	image: url(:/icons/data/icons/splitter_handle_horizontal.svg);\n}")
-        self.splitter.setOrientation(Qt.Vertical)
-        self.splitter.setChildrenCollapsible(True)
-        self.splitter.setHandleWidth(6)
 
-        placeholder_widget = QWidget()
-        placeholder_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.ui.placeholderLabel.setVisible(False)
+        self.getting_started_status = None
+        self.__set_getting_started_status(True)
+
         self.undo_stack = QUndoStack()
         self.project_manager = project_manager
-
-        self.splitter.addWidget(placeholder_widget)
-        self.signal_vlay = QVBoxLayout()
-        self.signal_vlay.setContentsMargins(0,0,0,0)
-        self.signal_vlay.addWidget(self.splitter)
-        self.ui.scrlAreaSignals.setLayout(self.signal_vlay)
 
         self.drag_pos = None
 
@@ -61,9 +54,9 @@ class SignalTabController(QWidget):
         self.frame_closed.emit(frame)
 
     def add_signal_frame(self, proto_analyzer):
+        self.__set_getting_started_status(False)
         sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
         sframes = self.signal_frames
-
 
         if len(proto_analyzer.signal.filename) == 0:
             # new signal from "create signal from selection"
@@ -85,7 +78,7 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbSignalView.setCurrentIndex(1)
             sig_frame.ui.cbSignalView.setDisabled(True)
 
-        self.splitter.insertWidget(self.num_frames, sig_frame)
+        self.ui.splitter.insertWidget(self.num_frames, sig_frame)
         sig_frame.blockSignals(False)
 
         default_view = constants.SETTINGS.value('default_view', 0, int)
@@ -93,14 +86,8 @@ class SignalTabController(QWidget):
 
         return sig_frame
 
-    def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
-        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
-        signal_frame.drag_started.connect(self.frame_dragged)
-        signal_frame.frame_dropped.connect(self.frame_dropped)
-        signal_frame.files_dropped.connect(self.on_files_dropped)
-        signal_frame.closed.connect(self.close_frame)
-
     def add_empty_frame(self, filename: str, proto):
+        self.__set_getting_started_status(False)
         sig_frame = SignalFrameController(proto_analyzer=proto, undo_stack=self.undo_stack,
                                           project_manager=self.project_manager, proto_bits=proto.decoded_proto_bits_str,
                                           parent=self)
@@ -110,9 +97,28 @@ class SignalTabController(QWidget):
         sig_frame.set_empty_frame_visibilities()
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
 
-        self.splitter.insertWidget(self.num_frames, sig_frame)
+        self.ui.splitter.insertWidget(self.num_frames, sig_frame)
 
         return sig_frame
+
+    def __set_getting_started_status(self, getting_started: bool):
+        if getting_started == self.getting_started_status:
+            return
+
+        self.getting_started_status = getting_started
+        self.ui.labelGettingStarted.setVisible(getting_started)
+
+        if not getting_started:
+            w = QWidget()
+            w.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            self.ui.splitter.addWidget(w)
+
+    def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
+        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
+        signal_frame.drag_started.connect(self.frame_dragged)
+        signal_frame.frame_dropped.connect(self.frame_dropped)
+        signal_frame.files_dropped.connect(self.on_files_dropped)
+        signal_frame.closed.connect(self.close_frame)
 
     def set_frame_numbers(self):
         for i, f in enumerate(self.signal_frames):
@@ -217,8 +223,8 @@ class SignalTabController(QWidget):
     @pyqtSlot(int, int)
     def swap_frames(self, from_index: int, to_index: int):
         if from_index != to_index:
-            start_sig_widget = self.splitter.widget(from_index)
-            self.splitter.insertWidget(to_index, start_sig_widget)
+            start_sig_widget = self.ui.splitter.widget(from_index)
+            self.ui.splitter.insertWidget(to_index, start_sig_widget)
 
     @pyqtSlot()
     def on_participant_changed(self):

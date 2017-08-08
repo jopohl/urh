@@ -67,6 +67,7 @@ class SignalFrameController(QFrame):
         self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
+        self.ui.gvSpectrogram.limit_zoom = False
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
         self.set_filter_button_caption()
@@ -193,7 +194,7 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
 
-        self.ui.sliderYScale.valueChanged.connect(self.handle_slideryscale_value_changed)
+        self.ui.sliderYScale.valueChanged.connect(self.on_slider_y_scale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
 
         self.project_manager.project_updated.connect(self.on_participant_changed)
@@ -283,14 +284,14 @@ class SignalFrameController(QFrame):
             t = num_samples / self.signal.sample_rate
             self.ui.lDuration.setText(Formatter.science_time(t))
 
-    def handle_slideryscale_value_changed(self):
+    def on_slider_y_scale_value_changed(self):
         try:
-            gvs = self.ui.gvSignal
+            gv = self.ui.gvSignal if self.ui.stackedWidget.currentIndex() == 0 else self.ui.gvSpectrogram
             yscale = self.ui.sliderYScale.value()
-            current_factor = gvs.sceneRect().height() / gvs.view_rect().height()
-            gvs.scale(1, yscale / current_factor)
-            x, w = self.ui.gvSignal.view_rect().x(), self.ui.gvSignal.view_rect().width()
-            gvs.centerOn(x + w / 2, gvs.y_center)
+            current_factor = gv.sceneRect().height() / gv.view_rect().height()
+            gv.scale(1, yscale / current_factor)
+            x, w = gv.view_rect().x(), gv.view_rect().width()
+            gv.centerOn(x + w / 2, gv.y_center)
         except ZeroDivisionError:
             pass
 
@@ -622,7 +623,7 @@ class SignalFrameController(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
-            self.handle_slideryscale_value_changed()  # apply YScale to new view
+            self.on_slider_y_scale_value_changed()  # apply YScale to new view
         else:
             spectrogram_scene = SpectrogramScene(Spectrogram(self.signal.data, self.signal.sample_rate), parent=self.ui.gvSpectrogram)
             self.ui.gvSpectrogram.setScene(spectrogram_scene)

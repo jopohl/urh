@@ -1,9 +1,12 @@
 import math
 
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QRectF, QTimer
+from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
     QCheckBox, QApplication
+
+from urh.signalprocessing.Spectrogram import Spectrogram
+from urh.ui.SpectrogramScene import SpectrogramScene
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 
 from urh import constants
@@ -605,19 +608,26 @@ class SignalFrameController(QFrame):
     def on_cb_signal_view_index_changed(self):
         self.setCursor(Qt.WaitCursor)
 
-        self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
-        self.ui.gvSignal.redraw_view(reinitialize=True)
+        if self.ui.cbSignalView.currentIndex() < 2:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
+            self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
+            self.ui.gvSignal.redraw_view(reinitialize=True)
 
-        if self.ui.cbSignalView.currentIndex() == 1:
-            self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
-            self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
-            self.ui.gvLegend.refresh()
+            if self.ui.cbSignalView.currentIndex() == 1:
+                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
+                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
+                self.ui.gvLegend.refresh()
+            else:
+                self.ui.gvLegend.hide()
+
+            self.ui.gvSignal.auto_fit_view()
+            self.ui.gvSignal.refresh_selection_area()
+            self.handle_slideryscale_value_changed()  # apply YScale to new view
         else:
-            self.ui.gvLegend.hide()
+            spectrogram_scene = SpectrogramScene(Spectrogram(self.signal.data, self.signal.sample_rate), parent=self.ui.gvSpectrogram)
+            self.ui.gvSpectrogram.setScene(spectrogram_scene)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
 
-        self.ui.gvSignal.auto_fit_view()
-        self.ui.gvSignal.refresh_selection_area()
-        self.handle_slideryscale_value_changed()  # YScale auf neue Sicht übertragen
         self.unsetCursor()
 
     @pyqtSlot()

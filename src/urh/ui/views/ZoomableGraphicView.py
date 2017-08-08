@@ -16,6 +16,8 @@ class ZoomableGraphicView(SelectableGraphicView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.scene_type = 0
+
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
         self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
         self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
@@ -50,15 +52,11 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     @property
     def y_center(self):
-        if not hasattr(self, "scene_type") or self.scene_type == 0:
+        if self.scene_type == 0:
             # Normal scene
             return 0
         else:
             return -self.signal.qad_center
-
-    @property
-    def scene_type(self):
-        return 0  # gets overwritten in Epic Graphic View
 
     def scrollContentsBy(self, dx: int, dy: int):
         try:

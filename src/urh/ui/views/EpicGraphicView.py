@@ -3,7 +3,6 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QAction
 
 from urh import constants
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.views.EditableGraphicView import EditableGraphicView
 
 
@@ -22,18 +21,12 @@ class EpicGraphicView(EditableGraphicView):
         self.cache_qad = True
         self.y_sep = 0
 
-        self._init_undo_stack(self.parent_frame.undo_stack)
-
         self.save_action = QAction(self.tr("Save"), self)  # type: QAction
         self.save_action.setIcon(QIcon.fromTheme("document-save"))
         self.save_action.setShortcut(QKeySequence.Save)
         self.save_action.triggered.connect(self.on_save_action_triggered)
         self.save_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.save_action)
-
-    @property
-    def parent_frame(self):
-        return self.parent().parent().parent()
 
     @property
     def sample_rate(self):
@@ -47,31 +40,15 @@ class EpicGraphicView(EditableGraphicView):
         raise ValueError("Not implemented for epic graphic view")
 
     @property
-    def signal(self):
-        if self.parent_frame is not None:
-            return self.parent_frame.signal
-        else:
-            return None
-
-    @property
-    def protocol(self) -> ProtocolAnalyzer:
-        return self.parent_frame.proto_analyzer
-
-    @property
-    def scene_type(self):
-        return self.parent_frame.ui.cbSignalView.currentIndex()
-
-    @property
     def selected_messages(self):
-        if not self.selection_area.is_empty:
-            pa = self.parent_frame.proto_analyzer
-            sb, _, eb, _ = pa.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width))
-            return pa.messages[sb:eb + 1]
+        if not self.selection_area.is_empty and self.protocol:
+            sb, _, eb, _ = self.protocol.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width))
+            return self.protocol.messages[sb:eb + 1]
         else:
             return []
 
     def is_pos_in_separea(self, pos: QPoint):
-        if self.scene_type == 0:
+        if self.scene_type != 1:
             return False
         padding = constants.SEPARATION_PADDING * self.view_rect().height()
         return self.y_sep - padding <= pos.y() <= self.y_sep + padding

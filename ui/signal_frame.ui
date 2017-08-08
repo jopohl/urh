@@ -641,119 +641,170 @@ stop:1 rgba(255, 255, 255, 0));
             <number>0</number>
            </property>
            <item>
-            <widget class="LegendGraphicView" name="gvLegend">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>150</height>
-              </size>
+            <widget class="QStackedWidget" name="stackedWidget">
+             <property name="lineWidth">
+              <number>0</number>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="verticalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOn</enum>
-             </property>
-             <property name="interactive">
-              <bool>false</bool>
-             </property>
-             <property name="resizeAnchor">
-              <enum>QGraphicsView::AnchorViewCenter</enum>
-             </property>
-             <property name="rubberBandSelectionMode">
-              <enum>Qt::ContainsItemShape</enum>
-             </property>
-             <property name="optimizationFlags">
-              <set>QGraphicsView::DontSavePainterState</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="EpicGraphicView" name="gvSignal">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>150</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="mouseTracking">
-              <bool>true</bool>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::WheelFocus</enum>
-             </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::DefaultContextMenu</enum>
-             </property>
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <property name="verticalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOn</enum>
-             </property>
-             <property name="interactive">
-              <bool>false</bool>
-             </property>
-             <property name="renderHints">
-              <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
-             </property>
-             <property name="dragMode">
-              <enum>QGraphicsView::NoDrag</enum>
-             </property>
-             <property name="cacheMode">
-              <set>QGraphicsView::CacheNone</set>
-             </property>
-             <property name="transformationAnchor">
-              <enum>QGraphicsView::NoAnchor</enum>
-             </property>
-             <property name="resizeAnchor">
-              <enum>QGraphicsView::NoAnchor</enum>
-             </property>
-             <property name="viewportUpdateMode">
-              <enum>QGraphicsView::MinimalViewportUpdate</enum>
-             </property>
-             <property name="rubberBandSelectionMode">
-              <enum>Qt::ContainsItemShape</enum>
-             </property>
-             <property name="optimizationFlags">
-              <set>QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState</set>
-             </property>
+             <widget class="QWidget" name="pageSignal">
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="LegendGraphicView" name="gvLegend">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>150</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOn</enum>
+                 </property>
+                 <property name="interactive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="resizeAnchor">
+                  <enum>QGraphicsView::AnchorViewCenter</enum>
+                 </property>
+                 <property name="rubberBandSelectionMode">
+                  <enum>Qt::ContainsItemShape</enum>
+                 </property>
+                 <property name="optimizationFlags">
+                  <set>QGraphicsView::DontSavePainterState</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="EpicGraphicView" name="gvSignal">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>150</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="mouseTracking">
+                  <bool>true</bool>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::WheelFocus</enum>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::DefaultContextMenu</enum>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOn</enum>
+                 </property>
+                 <property name="interactive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="renderHints">
+                  <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+                 </property>
+                 <property name="dragMode">
+                  <enum>QGraphicsView::NoDrag</enum>
+                 </property>
+                 <property name="cacheMode">
+                  <set>QGraphicsView::CacheNone</set>
+                 </property>
+                 <property name="transformationAnchor">
+                  <enum>QGraphicsView::NoAnchor</enum>
+                 </property>
+                 <property name="resizeAnchor">
+                  <enum>QGraphicsView::NoAnchor</enum>
+                 </property>
+                 <property name="viewportUpdateMode">
+                  <enum>QGraphicsView::MinimalViewportUpdate</enum>
+                 </property>
+                 <property name="rubberBandSelectionMode">
+                  <enum>Qt::ContainsItemShape</enum>
+                 </property>
+                 <property name="optimizationFlags">
+                  <set>QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="pageSpectrogram">
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="SpectrogramGraphicView" name="gvSpectrogram"/>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -1106,6 +1157,11 @@ stop:1 rgba(255, 255, 255, 0));
    <extends>QTextEdit</extends>
    <header>urh.ui.views.TextEditProtocolView.h</header>
   </customwidget>
+  <customwidget>
+   <class>SpectrogramGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.SpectrogramGraphicView.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>btnSaveSignal</tabstop>
@@ -1120,8 +1176,6 @@ stop:1 rgba(255, 255, 255, 0));
   <tabstop>cbProtoView</tabstop>
   <tabstop>chkBoxSyncSelection</tabstop>
   <tabstop>txtEdProto</tabstop>
-  <tabstop>gvLegend</tabstop>
-  <tabstop>gvSignal</tabstop>
   <tabstop>sliderYScale</tabstop>
   <tabstop>btnShowHideStartEnd</tabstop>
   <tabstop>spinBoxSelectionStart</tabstop>

@@ -22,6 +22,7 @@ class EditableGraphicView(ZoomableGraphicView):
 
         self.participants = []
         self.__sample_rate = None  # For default sample rate in insert sine dialog
+        self.protocol = None  # gets overwritten in epic graphic view
 
         self.autoRangeY = True
         self.save_enabled = False  # Signal is can be saved
@@ -35,7 +36,7 @@ class EditableGraphicView(ZoomableGraphicView):
         self.paste_position = 0  # Where to paste? Set in contextmenuevent
         self.context_menu_position = None  # type: QPoint
 
-        self._init_undo_stack(QUndoStack())
+        self.init_undo_stack(QUndoStack())
 
         self.addAction(self.undo_action)
         self.addAction(self.redo_action)
@@ -77,7 +78,7 @@ class EditableGraphicView(ZoomableGraphicView):
         self.insert_sine_plugin = InsertSinePlugin()
         self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
 
-    def _init_undo_stack(self, undo_stack):
+    def init_undo_stack(self, undo_stack):
         self.undo_stack = undo_stack
 
         self.undo_action = self.undo_stack.createUndoAction(self)
@@ -115,10 +116,6 @@ class EditableGraphicView(ZoomableGraphicView):
     @property
     def signal(self) -> Signal:
         return self.__signal
-
-    @property
-    def protocol(self) -> ProtocolAnalyzer:
-        return None  # Gets overwritten in EpicGraphicView
 
     @property
     def selection_area(self) -> ROI:
@@ -207,7 +204,7 @@ class EditableGraphicView(ZoomableGraphicView):
                 self.participant_actions[pa] = participant
                 pa.triggered.connect(self.on_participant_action_triggered)
 
-        if hasattr(self, "scene_type") and self.scene_type == 0:
+        if self.scene_type == 0:
             if not self.selection_area.is_empty:
                 menu.addSeparator()
                 noise_action = menu.addAction(self.tr("Set noise level from Selection"))

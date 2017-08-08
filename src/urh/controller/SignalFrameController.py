@@ -47,6 +47,8 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
+        self.ui.gvSignal.init_undo_stack(self.undo_stack)
+
         fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixed_font.setPointSize(QApplication.instance().font().pointSize())
         self.ui.txtEdProto.setFont(fixed_font)
@@ -60,6 +62,8 @@ class SignalFrameController(QFrame):
 
         self.proto_analyzer = proto_analyzer
         self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
+        self.ui.gvSignal.protocol = self.proto_analyzer
+        self.ui.gvSignal.set_signal(self.signal)
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
         self.set_filter_button_caption()
@@ -601,9 +605,10 @@ class SignalFrameController(QFrame):
     def on_cb_signal_view_index_changed(self):
         self.setCursor(Qt.WaitCursor)
 
+        self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
         self.ui.gvSignal.redraw_view(reinitialize=True)
 
-        if self.ui.cbSignalView.currentIndex() > 0:
+        if self.ui.cbSignalView.currentIndex() == 1:
             self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
             self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
             self.ui.gvLegend.refresh()

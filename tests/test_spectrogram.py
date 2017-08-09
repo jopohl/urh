@@ -1,5 +1,5 @@
-import colormap
 from tests.QtTestCase import QtTestCase
+from urh import colormap
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
 

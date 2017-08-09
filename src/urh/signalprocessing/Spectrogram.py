@@ -1,8 +1,9 @@
 import numpy as np
 from PyQt5.QtGui import QImage
 
-import colormap
+from urh import colormap
 from urh.util.Logger import logger
+
 
 class Spectrogram(object):
     def __init__(self, samples: np.ndarray, sample_rate: float, window_size=1024, overlap_factor=0.5, window_function=np.hanning):

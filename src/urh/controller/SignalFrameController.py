@@ -67,7 +67,6 @@ class SignalFrameController(QFrame):
         self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
-        self.ui.gvSpectrogram.limit_zoom = False
         self.ui.gvSpectrogram.setScene(ZoomableScene())
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
@@ -624,12 +623,12 @@ class SignalFrameController(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
-            self.on_slider_y_scale_value_changed()  # apply YScale to new view
         else:
             spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate)
             self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_image())
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
 
+        self.on_slider_y_scale_value_changed()  # apply YScale to new view
         self.unsetCursor()
 
     @pyqtSlot()

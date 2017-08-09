@@ -1,6 +1,8 @@
 import numpy as np
+from PyQt5.QtGui import QImage
 
-import colormaps
+import colormap
+from urh.util.Logger import logger
 
 class Spectrogram(object):
     def __init__(self, samples: np.ndarray, sample_rate: float, window_size=1024, overlap_factor=0.5, window_function=np.hanning):
@@ -17,6 +19,7 @@ class Spectrogram(object):
         self.__overlap_factor = overlap_factor
         self.__window_function = window_function
         self.data = self.__calculate_spectrogram()
+        # TODO: Check if we can use predifined values e.g. -160 and 0 here
         self.data_min, self.data_max = np.min(self.data), np.max(self.data)
 
     @property
@@ -60,9 +63,12 @@ class Spectrogram(object):
         self.__window_function = value
 
     @property
-    def dimension(self) -> tuple:
-        time_bins, freq_bins = np.shape(self.data)
-        return time_bins, freq_bins
+    def time_bins(self) -> int:
+        return np.shape(self.data)[0]
+
+    @property
+    def freq_bins(self) -> int:
+        return np.shape(self.data)[1]
 
     def stft(self):
         """
@@ -85,8 +91,30 @@ class Spectrogram(object):
         spectrogram = 20 * np.log10(np.abs(spectrogram))  # convert magnitudes to decibel
         return spectrogram
 
-    def get_color_for_value(self, value: float):
-        colormap = colormaps.DEFAULT
-        num_colors = len(colormap)
-        normalized_value = (value - self.data_min) / (self.data_max - self.data_min)
-        return colormap[int(normalized_value * (num_colors-1))]
+    def apply_bgra_lookup(self) -> np.ndarray:
+        cmap = colormap.colormap_numpy_bgra
+        normalized_values = (len(cmap) - 1) * ((self.data.T - self.data_min) / (self.data_max - self.data_min))
+        return np.take(cmap, normalized_values.astype(np.int64), axis=0, mode='clip')
+
+    def create_image(self) -> QImage:
+        """
+        Create QImage from ARGB array.
+        The ARGB must have shape (width, height, 4) and dtype=ubyte.
+        NOTE: The order of values in the 3rd axis must be (blue, green, red, alpha).
+        :return:
+        """
+        image_data = self.apply_bgra_lookup()
+
+        if not image_data.flags['C_CONTIGUOUS']:
+            logger.debug("Array was not C_CONTIGUOUS. Converting it.")
+            image_data = np.ascontiguousarray(image_data)
+
+        try:
+            # QImage constructor needs inverted row/column order
+            image = QImage(image_data.ctypes.data, image_data.shape[1], image_data.shape[0], QImage.Format_ARGB32)
+        except Exception as e:
+            logger.error("could not create image " + str(e))
+            return QImage()
+
+        image.data = image_data
+        return image

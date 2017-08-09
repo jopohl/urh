@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
-from PyQt5.QtGui import QPen
+from PyQt5.QtGui import QPen, QPixmap, QImage
 
 from urh import constants
 from urh.ui.ROI import ROI
@@ -14,6 +14,7 @@ class ZoomableScene(QGraphicsScene):
         self.zeros_area = None
         self.ones_arrow = None
         self.zeros_arrow = None
+        self.spectrogram_image = None
         self.selection_area = ROI(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR, opacity=constants.SELECTION_OPACITY)
         self.addItem(self.selection_area)
 
@@ -66,6 +67,13 @@ class ZoomableScene(QGraphicsScene):
             self.zeros_area.show()
             self.zeros_area.setRect(x, start, w, (y + h) - start)
 
+    def set_spectrogram_image(self, image: QImage):
+        if self.spectrogram_image is None:
+            self.spectrogram_image = self.addPixmap(QPixmap.fromImage(image))
+        else:
+            self.spectrogram_image.setPixmap(QPixmap.fromImage(image))
+        self.setSceneRect(QRectF(image.rect()))
+
     def clear(self):
         self.noise_area = None
         self.ones_area = None
@@ -73,6 +81,7 @@ class ZoomableScene(QGraphicsScene):
         self.zeros_arrow = None
         self.ones_arrow = None
         self.selection_area = None
+        self.spectrogram_image = None
         super().clear()
 
     def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):

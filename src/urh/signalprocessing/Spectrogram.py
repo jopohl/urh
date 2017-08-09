@@ -91,19 +91,24 @@ class Spectrogram(object):
         spectrogram = 20 * np.log10(np.abs(spectrogram))  # convert magnitudes to decibel
         return spectrogram
 
-    def apply_bgra_lookup(self) -> np.ndarray:
+    def apply_bgra_lookup(self, data: np.ndarray, normalize=True) -> np.ndarray:
         cmap = colormap.colormap_numpy_bgra
-        normalized_values = (len(cmap) - 1) * ((self.data.T - self.data_min) / (self.data_max - self.data_min))
+
+        if normalize:
+            normalized_values = (len(cmap) - 1) * ((data.T - self.data_min) / (self.data_max - self.data_min))
+        else:
+            normalized_values = data.T
+
         return np.take(cmap, normalized_values.astype(np.int64), axis=0, mode='clip')
 
-    def create_image(self) -> QImage:
+    def create_image(self, data: np.ndarray, normalize=True) -> QImage:
         """
         Create QImage from ARGB array.
         The ARGB must have shape (width, height, 4) and dtype=ubyte.
         NOTE: The order of values in the 3rd axis must be (blue, green, red, alpha).
         :return:
         """
-        image_data = self.apply_bgra_lookup()
+        image_data = self.apply_bgra_lookup(data, normalize)
 
         if not image_data.flags['C_CONTIGUOUS']:
             logger.debug("Array was not C_CONTIGUOUS. Converting it.")
@@ -118,3 +123,12 @@ class Spectrogram(object):
 
         image.data = image_data
         return image
+
+    def create_spectrogram_image(self):
+        return self.create_image(self.data)
+
+    def create_colormap_image(self, width=100) -> QImage:
+        indices = np.zeros((width, len(colormap.colormap_numpy_bgra)), dtype=np.int64)
+        for i in np.arange(indices.shape[1], dtype=np.int64):
+            indices[:, i] = np.repeat(indices.shape[1]-i, width)
+        return self.create_image(indices, normalize=False)

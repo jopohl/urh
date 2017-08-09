@@ -1,3 +1,4 @@
+import colormap
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
@@ -9,10 +10,15 @@ class TestSpectrogram(QtTestCase):
         self.spectrogram = Spectrogram(self.signal.data, sample_rate=2e6)
 
     def test_colormap(self):
-        bgra_values = self.spectrogram.apply_bgra_lookup()
+        bgra_values = self.spectrogram.apply_bgra_lookup(self.spectrogram.data)
         self.assertEqual(bgra_values.shape, (self.spectrogram.freq_bins, self.spectrogram.time_bins, 4))
 
-    def test_create_image(self):
-        image = self.spectrogram.create_image()
+    def test_create_spectrogram_image(self):
+        image = self.spectrogram.create_spectrogram_image()
         self.assertEqual(image.width(), self.spectrogram.time_bins)
         self.assertEqual(image.height(), self.spectrogram.freq_bins)
+
+    def test_create_colormap_image(self):
+        image = self.spectrogram.create_colormap_image(width=42)
+        self.assertEqual(image.width(), 42)
+        self.assertEqual(image.height(), len(colormap.colormap_numpy_bgra))

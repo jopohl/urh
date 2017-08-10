@@ -1,5 +1,7 @@
 import numpy as np
 
+from urh import constants
+
 magma = [[0.001462, 0.000466, 0.013866],
          [0.002258, 0.001295, 0.018331],
          [0.003279, 0.002305, 0.023708],
@@ -1028,8 +1030,15 @@ viridis = [[0.267004, 0.004874, 0.329415],
                  [0.983868, 0.904867, 0.136897],
                  [0.993248, 0.906157, 0.143936]]
 
+default_colormap = "plasma"
 
-chosen_colormap = plasma
+maps = {"magma": magma, "inferno": inferno, "plasma": plasma, "viridis": viridis}
+
+
+try:
+    chosen_colormap = maps[constants.SETTINGS.value("spectrogram_colormap", defaultValue=default_colormap, type=str)]
+except KeyError:
+    chosen_colormap = maps[default_colormap]
 
 # QImage constructor needs bgra format
 colormap_numpy_bgra = np.zeros((len(chosen_colormap), 4), dtype=np.ubyte)

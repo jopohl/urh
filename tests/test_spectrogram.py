@@ -20,6 +20,6 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(image.height(), self.spectrogram.freq_bins)
 
     def test_create_colormap_image(self):
-        image = self.spectrogram.create_colormap_image("magma", width=42)
-        self.assertEqual(image.width(), 42)
-        self.assertEqual(image.height(), len(colormaps.chosen_colormap_numpy_bgra))
+        image = self.spectrogram.create_colormap_image("magma", height=42)
+        self.assertEqual(image.height(), 42)
+        self.assertEqual(image.width(), len(colormaps.chosen_colormap_numpy_bgra))

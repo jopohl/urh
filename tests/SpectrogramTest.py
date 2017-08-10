@@ -40,7 +40,7 @@ class SpectrogramTest(unittest.TestCase):
         ims = 20 * np.log10(np.abs(spectrogram) / 10e-6)  # convert amplitudes to decibel
         num_time_bins, num_freq_bins = np.shape(ims)
 
-        plt.imshow(np.transpose(ims), aspect="auto")
+        plt.imshow(np.transpose(ims), aspect="auto", cmap="magma")
         plt.colorbar()
 
         plt.xlabel("time in seconds")

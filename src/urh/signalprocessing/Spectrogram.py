@@ -1,7 +1,7 @@
 import numpy as np
 from PyQt5.QtGui import QImage
 
-from urh import colormap
+from urh import colormaps
 from urh.util.Logger import logger
 
 
@@ -93,7 +93,7 @@ class Spectrogram(object):
         return spectrogram
 
     def apply_bgra_lookup(self, data: np.ndarray, normalize=True) -> np.ndarray:
-        cmap = colormap.colormap_numpy_bgra
+        cmap = colormaps.colormap_numpy_bgra
 
         if normalize:
             normalized_values = (len(cmap) - 1) * ((data.T - self.data_min) / (self.data_max - self.data_min))

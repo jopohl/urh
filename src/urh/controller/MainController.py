@@ -794,6 +794,9 @@ class MainController(QMainWindow):
         if "default_view" in changed_options:
             self.apply_default_view(int(changed_options["default_view"]))
 
+        if "spectrogram_colormap" in changed_options:
+            self.signal_tab_controller.redraw_spectrograms()
+
     @pyqtSlot()
     def on_text_edit_project_description_text_changed(self):
         self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()

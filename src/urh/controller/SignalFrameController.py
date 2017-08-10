@@ -494,6 +494,10 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.blockSignals(False)
 
+    def draw_spectrogram(self):
+        spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate)
+        self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
+
     def eliminate(self):
         self.proto_selection_timer.stop()
         self.ui.verticalLayout.removeItem(self.ui.additionalInfos)
@@ -624,8 +628,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
         else:
-            spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate)
-            self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
+            self.draw_spectrogram()
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
 
         self.on_slider_y_scale_value_changed()  # apply YScale to new view

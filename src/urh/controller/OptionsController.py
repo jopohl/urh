@@ -5,17 +5,19 @@ import sys
 import tempfile
 from subprocess import call
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
+from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory, \
+    QRadioButton
 
-from urh import constants
+from urh import constants, colormaps
 from urh.controller.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
 
@@ -90,6 +92,8 @@ class OptionsController(QDialog):
 
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
         self.ui.labelRebuildNativeStatus.setText("")
+
+        self.show_available_colormaps()
 
         try:
             self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
@@ -201,6 +205,18 @@ class OptionsController(QDialog):
         self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
         self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
 
+    def show_available_colormaps(self):
+        height = 50
+
+        selected = colormaps.read_selected_colormap_name_from_settings()
+        for colormap_name in sorted(colormaps.maps.keys()):
+            image = Spectrogram.create_colormap_image(colormap_name, height=height)
+            rb = QRadioButton(colormap_name)
+            rb.setChecked(colormap_name == selected)
+            rb.setIcon(QIcon(QPixmap.fromImage(image)))
+            rb.setIconSize(QSize(256, height))
+            self.ui.scrollAreaWidgetSpectrogramColormapContents.layout().addWidget(rb)
+
     def closeEvent(self, event: QCloseEvent):
         changed_values = {}
         if bool(self.ui.checkBoxPauseTime.isChecked()) != self.old_show_pause_as_time:
@@ -217,6 +233,15 @@ class OptionsController(QDialog):
         self.plugin_controller.save_enabled_states()
         for plugin in self.plugin_controller.model.plugins:
             plugin.destroy_settings_frame()
+
+        for i in range(self.ui.scrollAreaWidgetSpectrogramColormapContents.layout().count()):
+            widget = self.ui.scrollAreaWidgetSpectrogramColormapContents.layout().itemAt(i).widget()
+            if isinstance(widget, QRadioButton) and widget.isChecked():
+                if widget.text() != colormaps.read_selected_colormap_name_from_settings():
+                    colormaps.choose_colormap(widget.text())
+                    colormaps.write_selected_colormap_to_settings(widget.text())
+                    changed_values["spectrogram_colormap"] = widget.text()
+                break
 
         self.values_changed.emit(changed_values)
 

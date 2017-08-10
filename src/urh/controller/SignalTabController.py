@@ -230,3 +230,8 @@ class SignalTabController(QWidget):
     def on_participant_changed(self):
         for sframe in self.signal_frames:
             sframe.on_participant_changed()
+
+    def redraw_spectrograms(self):
+        for frame in self.signal_frames:
+            if frame.ui.stackedWidget.currentWidget() == frame.ui.pageSpectrogram:
+                frame.draw_spectrogram()

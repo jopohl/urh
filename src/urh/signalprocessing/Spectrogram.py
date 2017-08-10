@@ -92,24 +92,30 @@ class Spectrogram(object):
         spectrogram = 20 * np.log10(np.abs(spectrogram))  # convert magnitudes to decibel
         return spectrogram
 
-    def apply_bgra_lookup(self, data: np.ndarray, normalize=True) -> np.ndarray:
-        cmap = colormaps.colormap_numpy_bgra
+    def create_spectrogram_image(self):
+        return self.create_image(self.data, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
+
+    @staticmethod
+    def apply_bgra_lookup(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> np.ndarray:
+        if normalize and (data_min is None or data_max is None):
+            raise ValueError("Can't normalize without data min and data max")
 
         if normalize:
-            normalized_values = (len(cmap) - 1) * ((data.T - self.data_min) / (self.data_max - self.data_min))
+            normalized_values = (len(colormap) - 1) * ((data.T - data_min) / (data_max - data_min))
         else:
             normalized_values = data.T
 
-        return np.take(cmap, normalized_values.astype(np.int), axis=0, mode='clip')
+        return np.take(colormap, normalized_values.astype(np.int), axis=0, mode='clip')
 
-    def create_image(self, data: np.ndarray, normalize=True) -> QImage:
+    @staticmethod
+    def create_image(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> QImage:
         """
         Create QImage from ARGB array.
         The ARGB must have shape (width, height, 4) and dtype=ubyte.
         NOTE: The order of values in the 3rd axis must be (blue, green, red, alpha).
         :return:
         """
-        image_data = self.apply_bgra_lookup(data, normalize)
+        image_data = Spectrogram.apply_bgra_lookup(data, colormap, data_min, data_max, normalize)
 
         if not image_data.flags['C_CONTIGUOUS']:
             logger.debug("Array was not C_CONTIGUOUS. Converting it.")
@@ -125,6 +131,12 @@ class Spectrogram(object):
         image.data = image_data
         return image
 
-    def create_spectrogram_image(self):
-        return self.create_image(self.data)
+    @staticmethod
+    def create_colormap_image(colormap_name: str, height=100) -> QImage:
+        colormap = colormaps.calculate_numpy_brga_for(colormap_name)
 
+        indices = np.zeros((len(colormap), height), dtype=np.int64)
+        for i in np.arange(len(colormap), dtype=np.int64):
+            indices[i, :] = np.repeat(i, height)
+
+        return Spectrogram.create_image(indices, colormap, normalize=False)

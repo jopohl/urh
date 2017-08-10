@@ -1,13 +1,9 @@
 import math
 
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer, QRectF
+from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
-    QCheckBox, QApplication, QGraphicsScene
-
-from urh.signalprocessing.Spectrogram import Spectrogram
-from urh.ui.ZoomableScene import ZoomableScene
-from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
+    QCheckBox, QApplication
 
 from urh import constants
 from urh.SignalSceneManager import SignalSceneManager
@@ -17,8 +13,11 @@ from urh.controller.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.LegendScene import LegendScene
+from urh.ui.ZoomableScene import ZoomableScene
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
+from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -50,6 +49,7 @@ class SignalFrameController(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
+        self.__set_spectrogram_adjust_widgets_visibility()
         self.ui.gvSignal.init_undo_stack(self.undo_stack)
 
         fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
@@ -67,6 +67,7 @@ class SignalFrameController(QFrame):
         self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
+        self.ui.sliderFFTWindowSize.setValue(int(math.log2(Spectrogram.DEFAULT_FFT_WINDOW_SIZE)))
         self.ui.gvSpectrogram.setScene(ZoomableScene())
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
@@ -76,6 +77,10 @@ class SignalFrameController(QFrame):
         self.proto_selection_timer = QTimer()  # For Update Proto Selection from ROI
         self.proto_selection_timer.setSingleShot(True)
         self.proto_selection_timer.setInterval(1)
+
+        self.spectrogram_update_timer = QTimer()
+        self.spectrogram_update_timer.setSingleShot(True)
+        self.spectrogram_update_timer.setInterval(500)
 
         # Disabled because never used (see also set_protocol_visibilty())
         self.ui.chkBoxSyncSelection.hide()
@@ -134,7 +139,7 @@ class SignalFrameController(QFrame):
                 suffix = " (*.proto)"
             elif proto_analyzer.filename.endswith(".txt"):
                 suffix = " (*.txt)"
-            self.ui.lSignalTyp.setText("Protocol"+suffix)
+            self.ui.lSignalTyp.setText("Protocol" + suffix)
 
             scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
 
@@ -158,6 +163,7 @@ class SignalFrameController(QFrame):
         self.ui.btnInfo.clicked.connect(self.on_info_btn_clicked)
         self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
         self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
+        self.ui.sliderFFTWindowSize.valueChanged.connect(self.on_slider_fft_window_size_value_changed)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -180,6 +186,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.sel_area_width_changed.connect(self.start_proto_selection_timer)
             self.ui.gvSignal.sel_area_start_end_changed.connect(self.start_proto_selection_timer)
             self.proto_selection_timer.timeout.connect(self.update_protocol_selection_from_roi)
+            self.spectrogram_update_timer.timeout.connect(self.on_spectrogram_update_timer_timeout)
 
             self.ui.lineEditSignalName.editingFinished.connect(self.change_signal_name)
             self.proto_analyzer.qt_signals.protocol_updated.connect(self.on_protocol_updated)
@@ -274,6 +281,10 @@ class SignalFrameController(QFrame):
     def change_signal_name(self):
         self.signal.name = self.ui.lineEditSignalName.text()
 
+    def __set_spectrogram_adjust_widgets_visibility(self):
+        self.ui.labelFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.sliderFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+
     def __set_duration(self):  # On Signal Sample Rate changed
         try:
             num_samples = int(self.ui.lNumSelectedSamples.text())
@@ -294,6 +305,10 @@ class SignalFrameController(QFrame):
             gv.centerOn(x + w / 2, gv.y_center)
         except ZeroDivisionError:
             pass
+
+    @pyqtSlot()
+    def on_slider_fft_window_size_value_changed(self):
+        self.spectrogram_update_timer.start()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -494,9 +509,18 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.blockSignals(False)
 
-    def draw_spectrogram(self):
-        spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate)
+    def draw_spectrogram(self, show_full_scene=False):
+        self.setCursor(Qt.WaitCursor)
+        window_size = 2 ** self.ui.sliderFFTWindowSize.value()
+        spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate, window_size=window_size)
         self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
+
+        if show_full_scene:
+            self.ui.gvSpectrogram.show_full_scene()
+
+        self.on_slider_y_scale_value_changed()
+
+        self.unsetCursor()
 
     def eliminate(self):
         self.proto_selection_timer.stop()
@@ -613,6 +637,8 @@ class SignalFrameController(QFrame):
     def on_cb_signal_view_index_changed(self):
         self.setCursor(Qt.WaitCursor)
 
+        self.__set_spectrogram_adjust_widgets_visibility()
+
         if self.ui.cbSignalView.currentIndex() < 2:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
@@ -627,11 +653,11 @@ class SignalFrameController(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
+            self.on_slider_y_scale_value_changed()  # apply YScale to new view
         else:
-            self.draw_spectrogram()
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
+            self.draw_spectrogram()
 
-        self.on_slider_y_scale_value_changed()  # apply YScale to new view
         self.unsetCursor()
 
     @pyqtSlot()
@@ -1040,3 +1066,7 @@ class SignalFrameController(QFrame):
         if dsp_filter is not None:
             self.dsp_filter = dsp_filter
             self.set_filter_button_caption()
+
+    @pyqtSlot()
+    def on_spectrogram_update_timer_timeout(self):
+        self.draw_spectrogram(show_full_scene=True)

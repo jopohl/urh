@@ -6,7 +6,10 @@ from urh.util.Logger import logger
 
 
 class Spectrogram(object):
-    def __init__(self, samples: np.ndarray, sample_rate: float, window_size=1024, overlap_factor=0.5, window_function=np.hanning):
+    DEFAULT_FFT_WINDOW_SIZE = 1024
+
+    def __init__(self, samples: np.ndarray, sample_rate: float, window_size=DEFAULT_FFT_WINDOW_SIZE,
+                 overlap_factor=0.5, window_function=np.hanning):
         """
 
         :param samples: Complex samples

@@ -70,7 +70,7 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
-     <item row="18" column="0">
+     <item row="19" column="0">
       <widget class="QCheckBox" name="chkBoxSyncSelection">
        <property name="toolTip">
         <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
@@ -99,7 +99,7 @@
        </property>
       </widget>
      </item>
-     <item row="17" column="0">
+     <item row="18" column="0">
       <widget class="QCheckBox" name="chkBoxShowProtocol">
        <property name="toolTip">
         <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
@@ -209,6 +209,25 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
+     <item row="18" column="1">
+      <widget class="QComboBox" name="cbProtoView">
+       <item>
+        <property name="text">
+         <string>Bits</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hex</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ASCII</string>
+        </property>
+       </item>
+      </widget>
+     </item>
      <item row="7" column="0">
       <widget class="QLabel" name="lErrorTolerance">
        <property name="sizePolicy">
@@ -253,25 +272,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        <property name="text">
         <string>Signal View:</string>
        </property>
-      </widget>
-     </item>
-     <item row="17" column="1">
-      <widget class="QComboBox" name="cbProtoView">
-       <item>
-        <property name="text">
-         <string>Bits</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Hex</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ASCII</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="12" column="0" colspan="2">
@@ -593,6 +593,32 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <string>PSK</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QLabel" name="labelFFTWindowSize">
+       <property name="text">
+        <string>FFT Window Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <widget class="QSlider" name="sliderFFTWindowSize">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
       </widget>
      </item>
     </layout>

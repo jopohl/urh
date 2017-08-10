@@ -808,6 +808,9 @@ stop:1 rgba(255, 255, 255, 0));
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>
                </property>
+               <property name="renderHints">
+                <set>QPainter::TextAntialiasing</set>
+               </property>
                <property name="cacheMode">
                 <set>QGraphicsView::CacheNone</set>
                </property>
@@ -819,19 +822,6 @@ stop:1 rgba(255, 255, 255, 0));
                </property>
                <property name="optimizationFlags">
                 <set>QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGraphicsView" name="graphicsViewColorbar">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
                </property>
               </widget>
              </item>

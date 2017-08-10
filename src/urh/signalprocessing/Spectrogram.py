@@ -100,7 +100,7 @@ class Spectrogram(object):
         else:
             normalized_values = data.T
 
-        return np.take(cmap, normalized_values.astype(np.int64), axis=0, mode='clip')
+        return np.take(cmap, normalized_values.astype(np.int), axis=0, mode='clip')
 
     def create_image(self, data: np.ndarray, normalize=True) -> QImage:
         """
@@ -128,8 +128,3 @@ class Spectrogram(object):
     def create_spectrogram_image(self):
         return self.create_image(self.data)
 
-    def create_colormap_image(self, width=100) -> QImage:
-        indices = np.zeros((width, len(colormap.colormap_numpy_bgra)), dtype=np.int64)
-        for i in np.arange(indices.shape[1], dtype=np.int64):
-            indices[:, i] = np.repeat(indices.shape[1]-i, width)
-        return self.create_image(indices, normalize=False)

@@ -68,7 +68,6 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
         self.ui.gvSpectrogram.setScene(ZoomableScene())
-        self.ui.graphicsViewColorbar.setScene(QGraphicsScene())
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
         self.set_filter_button_caption()
@@ -628,14 +627,6 @@ class SignalFrameController(QFrame):
             spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate)
             self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
-
-            # TODO: Refactor this -- Move to a dedicated class
-            # TODO: add text labels to indicate min and max data
-            gv_color_bar = self.ui.graphicsViewColorbar
-            gv_color_bar.scene().clear()
-            pixmap = QPixmap.fromImage(spectrogram.create_colormap_image(width=int(0.75*gv_color_bar.width())))
-            gv_color_bar.scene().addPixmap(pixmap)
-            gv_color_bar.setSceneRect(QRectF(pixmap.rect()))
 
         self.on_slider_y_scale_value_changed()  # apply YScale to new view
         self.unsetCursor()

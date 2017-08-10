@@ -960,6 +960,10 @@ class SignalFrameController(QFrame):
         if self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.on_slider_y_scale_value_changed()
+
     @pyqtSlot()
     def on_info_btn_clicked(self):
         sdc = SignalDetailsController(self.signal, self)

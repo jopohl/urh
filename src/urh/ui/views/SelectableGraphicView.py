@@ -26,6 +26,8 @@ class SelectableGraphicView(QGraphicsView):
         self.mouse_pos = None  # type: QPoint
         self.grab_start = None  # type: QPoint
 
+        self.move_y_with_drag = False
+
         self.xmove = 0
 
         self.separation_area_moving = False
@@ -119,8 +121,13 @@ class SelectableGraphicView(QGraphicsView):
         cursor = self.cursor().shape()
 
         if self.grab_start is not None:
-            move = self.grab_start.x() - event.pos().x()
-            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + move)
+            move_x = self.grab_start.x() - event.pos().x()
+            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + move_x)
+
+            if self.move_y_with_drag:
+                move_y = self.grab_start.y() - event.pos().y()
+                self.verticalScrollBar().setValue(self.verticalScrollBar().value() + move_y)
+
             self.grab_start = event.pos()
             return
 

@@ -1,9 +1,9 @@
-import io
 import time
 import unittest
+import os
+import tempfile
 
 import numpy as np
-import sys
 
 from urh.util import util
 
@@ -11,12 +11,10 @@ util.set_windows_lib_path()
 
 
 from urh.dev.native.HackRF import HackRF
-from urh.dev.native.lib import hackrf
 
 
 class TestHackRF(unittest.TestCase):
     def callback_fun(self, buffer):
-        out = []
         print(buffer)
         for i in range(0, len(buffer), 4):
             try:
@@ -74,13 +72,14 @@ class TestHackRF(unittest.TestCase):
             time.sleep(1)
             i+=1
         print("{0:,}".format(hfc.current_recv_index))
-        hfc.received_data.tofile("/tmp/hackrf.complex")
+        hfc.received_data.tofile(os.path.join(tempfile.gettempdir(), "hackrf.complex"))
         print("Wrote Data")
         hfc.stop_rx_mode("Finished test")
 
     def test_hackrf_class_send(self):
         hfc = HackRF(433.92e6, 1e6, 1e6, 20)
-        hfc.start_tx_mode(np.fromfile("/tmp/hackrf.complex", dtype=np.complex64), repeats=1)
+        hfc.start_tx_mode(np.fromfile(os.path.join(tempfile.gettempdir(), "hackrf.complex"),
+                                      dtype=np.complex64), repeats=1)
         while not hfc.sending_finished:
             print("Repeat: {0} Current Sample: {1}/{2}".format(hfc.current_sending_repeat+1,
                                                                hfc.current_sent_sample,

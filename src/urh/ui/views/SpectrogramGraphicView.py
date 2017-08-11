@@ -1,3 +1,4 @@
+from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
@@ -6,6 +7,10 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         super().__init__(parent)
 
         self.move_y_with_drag = True
+        self.setScene(SpectrogramScene())
+
+    def scene(self) -> SpectrogramScene:
+        return super().scene()
 
     @property
     def y_center(self):

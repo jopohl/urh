@@ -4,10 +4,9 @@ from PyQt5.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.ui.ROI import ROI
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
+from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
@@ -118,7 +117,7 @@ class EditableGraphicView(ZoomableGraphicView):
         return self.__signal
 
     @property
-    def selection_area(self) -> ROI:
+    def selection_area(self) -> HorizontalSelection:
         return self.scene().selection_area
 
     @selection_area.setter

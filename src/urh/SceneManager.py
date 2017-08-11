@@ -2,13 +2,12 @@ import math
 
 import numpy as np
 from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QFont, QPen, QColor
+from PyQt5.QtGui import QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.cythonext import path_creator, util
-from urh.ui.ZoomableScene import ZoomableScene
-from urh.util.Logger import logger
+from urh.ui.painting.ZoomableScene import ZoomableScene
 
 
 class SceneManager(QObject):

@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QGraphicsView
 
 from urh import constants
 from urh.SceneManager import SceneManager
-from urh.ui.ROI import ROI
-from urh.ui.ZoomableScene import ZoomableScene
+from urh.ui.painting.HorizontalSelection import HorizontalSelection
+from urh.ui.painting.ZoomableScene import ZoomableScene
 
 
 class SelectableGraphicView(QGraphicsView):
@@ -38,7 +38,7 @@ class SelectableGraphicView(QGraphicsView):
         return super().scene()
 
     @property
-    def selection_area(self) -> ROI:
+    def selection_area(self) -> HorizontalSelection:
         return self.scene().selection_area
 
     @selection_area.setter

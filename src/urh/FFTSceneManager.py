@@ -1,12 +1,12 @@
 import numpy as np
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainterPath, QFont, QPen
+from PyQt5.QtGui import QPainterPath, QPen
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.SceneManager import SceneManager
 from urh.cythonext import path_creator
-from urh.ui.GridScene import GridScene
+from urh.ui.painting.GridScene import GridScene
 
 
 class FFTSceneManager(SceneManager):

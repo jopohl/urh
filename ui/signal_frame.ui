@@ -834,6 +834,9 @@ stop:1 rgba(255, 255, 255, 0));
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>
                </property>
+               <property name="interactive">
+                <bool>false</bool>
+               </property>
                <property name="renderHints">
                 <set>QPainter::TextAntialiasing</set>
                </property>

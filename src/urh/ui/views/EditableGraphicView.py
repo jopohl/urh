@@ -221,8 +221,8 @@ class EditableGraphicView(ZoomableGraphicView):
         menu.exec_(self.mapToGlobal(event.pos()))
         self.context_menu_position = None
 
-    def clear_selection(self):
-        self.set_selection_area(0, 0)
+    def clear_horizontal_selection(self):
+        self.set_horizontal_selection(0, 0)
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):
@@ -241,7 +241,7 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):
         if self.insert_sine_plugin.complex_wave is not None:
-            self.clear_selection()
+            self.clear_horizontal_selection()
             insert_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                              data_to_insert=self.insert_sine_plugin.complex_wave,
                                              position=self.paste_position,
@@ -257,7 +257,7 @@ class EditableGraphicView(ZoomableGraphicView):
     def on_paste_action_triggered(self):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
-            self.clear_selection()
+            self.clear_horizontal_selection()
             paste_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                             start=self.selection_area.start, end=self.selection_area.end,
                                             data_to_insert=self.stored_item, position=self.paste_position,
@@ -268,7 +268,7 @@ class EditableGraphicView(ZoomableGraphicView):
     def on_delete_action_triggered(self):
         if not self.selection_area.is_empty:
             start, end = self.selection_area.start, self.selection_area.end
-            self.clear_selection()
+            self.clear_horizontal_selection()
             del_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                           start=start, end=end,
                                           mode=EditAction.delete, cache_qad=self.cache_qad)
@@ -278,7 +278,7 @@ class EditableGraphicView(ZoomableGraphicView):
     def on_crop_action_triggered(self):
         if not self.selection_area.is_empty:
             start, end = self.selection_area.start, self.selection_area.end
-            self.clear_selection()
+            self.clear_horizontal_selection()
             crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                            start=start, end=end,
                                            mode=EditAction.crop, cache_qad=self.cache_qad)

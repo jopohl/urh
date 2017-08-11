@@ -1,7 +1,10 @@
+from PyQt5.QtCore import QPointF
+from PyQt5.QtGui import QTransform
+
 from urh.ui.painting.Selection import Selection
 
 
-class HorizontalSelection(Selection):
+class VerticalSelection(Selection):
     def __init__(self, *args, fillcolor, opacity, parent=None):
         super().__init__(*args, fillcolor=fillcolor, opacity=opacity, parent=parent)
 
@@ -34,3 +37,6 @@ class HorizontalSelection(Selection):
     def clear(self):
         self.height = 0
         super().clear()
+
+    def get_selected_edge(self, pos: QPointF, transform: QTransform):
+        return super()._get_selected_edge(pos, transform, horizontal_selection=False)

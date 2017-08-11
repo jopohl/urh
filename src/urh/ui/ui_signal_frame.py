@@ -322,6 +322,7 @@ class Ui_SignalFrame(object):
         self.gvSpectrogram = SpectrogramGraphicView(self.pageSpectrogram)
         self.gvSpectrogram.setMouseTracking(True)
         self.gvSpectrogram.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.gvSpectrogram.setInteractive(False)
         self.gvSpectrogram.setRenderHints(QtGui.QPainter.TextAntialiasing)
         self.gvSpectrogram.setCacheMode(QtWidgets.QGraphicsView.CacheNone)
         self.gvSpectrogram.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)

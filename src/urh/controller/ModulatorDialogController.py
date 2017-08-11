@@ -136,8 +136,8 @@ class ModulatorDialogController(QDialog):
         self.ui.gVModulated.zoomed.connect(self.on_carrier_data_modulated_zoomed)
         self.ui.gVCarrier.zoomed.connect(self.on_carrier_data_modulated_zoomed)
         self.ui.gVData.zoomed.connect(self.on_carrier_data_modulated_zoomed)
-        self.ui.gVModulated.sel_area_width_changed.connect(self.on_modulated_selection_changed)
-        self.ui.gVOriginalSignal.sel_area_width_changed.connect(self.on_original_selection_changed)
+        self.ui.gVModulated.selection_width_changed.connect(self.on_modulated_selection_changed)
+        self.ui.gVOriginalSignal.selection_width_changed.connect(self.on_original_selection_changed)
         self.ui.spinBoxGaussBT.valueChanged.connect(self.on_gauss_bt_changed)
         self.ui.spinBoxGaussFilterWidth.valueChanged.connect(self.on_gaus_filter_wdith_changed)
 

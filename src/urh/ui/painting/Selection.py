@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QColor, QPen
+from PyQt5.QtGui import QColor, QPen, QTransform
 from PyQt5.QtWidgets import QGraphicsRectItem
 
 
@@ -91,25 +91,29 @@ class Selection(QGraphicsRectItem):
     def end(self, value):
         raise NotImplementedError("Overwrite in subclass")
 
-    def get_selected_edge(self, pos: QPointF, width_view: float):
-        """
-        Bestimmt auf welcher Ecke der ROI der Mauszeiger gerade ist.
-        0 = links, 1 = rechts
+    def _get_selected_edge(self, pos: QPointF, transform: QTransform, horizontal_selection: bool):
+        x1, x2 = self.x, self.x + self.width
+        y1, y2 = self.y, self.y + self.height
+        x, y = pos.x(), pos.y()
 
-        :param pos: In die Szene gemappte Position des Mauszeigers
-        """
-        x1 = self.rect().x()
-        x2 = x1 + self.rect().width()
-        y1 = self.rect().y()
-        y2 = y1 + self.rect().height()
-        x = pos.x()
-        y = pos.y()
+        spacing = 5
+        spacing /= transform.m11() if horizontal_selection else transform.m22()
 
-        if x1 - 0.025 * width_view < x < x1 + 0.025 * width_view and y1 < y < y2:
+        if horizontal_selection:
+            x1a, x1b = x1 - spacing, x1 + spacing
+            y1a, y1b = y1, y2
+            x2a, x2b = x2 - spacing, x2 + spacing
+            y2a, y2b = y1, y2
+        else:
+            x1a, x1b, x2a, x2b = x1, x2, x1, x2
+            y1a, y1b = min(y1 - spacing, y1 + spacing), max(y1 - spacing, y1 + spacing)
+            y2a, y2b = min(y2 - spacing, y2 + spacing), max(y2 - spacing, y2 + spacing)
+
+        if x1a < x < x1b and y1a < y < y1b:
             self.selected_edge = 0
             return 0
 
-        if x2 - 0.025 * width_view < x < x2 + 0.025 * width_view and y1 < y < y2:
+        if x2a < x < x2b and y2a < y < y2b:
             self.selected_edge = 1
             return 1
 

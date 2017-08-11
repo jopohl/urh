@@ -181,7 +181,7 @@ class SignalFrameController(QFrame):
             self.signal.name_changed.connect(self.ui.lineEditSignalName.setText)
             self.ui.gvLegend.resized.connect(self.on_gv_legend_resized)
 
-            self.ui.gvSignal.sel_area_width_changed.connect(self.start_proto_selection_timer)
+            self.ui.gvSignal.selection_width_changed.connect(self.start_proto_selection_timer)
             self.ui.gvSignal.sel_area_start_end_changed.connect(self.start_proto_selection_timer)
             self.proto_selection_timer.timeout.connect(self.update_protocol_selection_from_roi)
             self.spectrogram_update_timer.timeout.connect(self.on_spectrogram_update_timer_timeout)
@@ -586,16 +586,16 @@ class SignalFrameController(QFrame):
     @pyqtSlot(int)
     def on_spinbox_selection_start_value_changed(self, value: int):
         if self.ui.gvSignal.sel_area_active:
-            self.ui.gvSignal.set_selection_area(x=value)
+            self.ui.gvSignal.set_horizontal_selection(x=value)
             self.ui.gvSignal.selection_area.finished = True
-            self.ui.gvSignal.emit_sel_area_width_changed()
+            self.ui.gvSignal.emit_selection_size_changed()
 
     @pyqtSlot(int)
     def on_spinbox_selection_end_value_changed(self, value: int):
         if self.ui.gvSignal.sel_area_active:
-            self.ui.gvSignal.set_selection_area(w=value - self.ui.spinBoxSelectionStart.value())
+            self.ui.gvSignal.set_horizontal_selection(w=value - self.ui.spinBoxSelectionStart.value())
             self.ui.gvSignal.selection_area.finished = True
-            self.ui.gvSignal.emit_sel_area_width_changed()
+            self.ui.gvSignal.emit_selection_size_changed()
 
     @pyqtSlot()
     def on_protocol_updated(self):
@@ -733,14 +733,14 @@ class SignalFrameController(QFrame):
         if sample_pos != -1:
             if self.jump_sync and self.sync_protocol:
                 self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
-                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                self.ui.gvSignal.set_horizontal_selection(sample_pos, num_samples)
                 self.ui.gvSignal.centerOn(sample_pos + num_samples, self.ui.gvSignal.y_center)
             else:
-                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                self.ui.gvSignal.set_horizontal_selection(sample_pos, num_samples)
 
             self.ui.gvSignal.zoom_to_selection(sample_pos, sample_pos + num_samples)
         else:
-            self.ui.gvSignal.set_selection_area(0, 0)
+            self.ui.gvSignal.clear_horizontal_selection()
 
         self.protocol_selection_is_updateable = True
         self.update_protocol_selection_from_roi()
@@ -805,15 +805,15 @@ class SignalFrameController(QFrame):
         if sample_pos != -1:
             if self.jump_sync and self.sync_protocol:
                 self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
-                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                self.ui.gvSignal.set_horizontal_selection(sample_pos, num_samples)
                 if forward_selection:  # Forward Selection --> Center ROI to End of Selection
                     self.ui.gvSignal.centerOn(sample_pos + num_samples, self.ui.gvSignal.y_center)
                 else:  # Backward Selection --> Center ROI to Start of Selection
                     self.ui.gvSignal.centerOn(sample_pos, self.ui.gvSignal.y_center)
             else:
-                self.ui.gvSignal.set_selection_area(sample_pos, num_samples)
+                self.ui.gvSignal.set_horizontal_selection(sample_pos, num_samples)
         else:
-            self.ui.gvSignal.set_selection_area(0, 0)
+            self.ui.gvSignal.clear_horizontal_selection()
         self.ui.gvSignal.blockSignals(False)
 
         self.update_number_selected_samples()

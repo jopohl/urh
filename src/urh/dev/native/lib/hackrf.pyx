@@ -10,6 +10,9 @@ TIMEOUT = 0.2
 cdef object f
 from cpython cimport PyBytes_GET_SIZE
 
+cdef extern from "Python.h":
+    void PyEval_InitThreads()
+
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
     global f
     try:
@@ -56,6 +59,7 @@ cpdef close():
 cpdef start_rx_mode(callback):
     global f
     f = callback
+    PyEval_InitThreads()
     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
 
 cpdef stop_rx_mode():
@@ -65,6 +69,7 @@ cpdef stop_rx_mode():
 cpdef start_tx_mode(callback):
     global f
     f = callback
+    PyEval_InitThreads()
     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
 
 cpdef stop_tx_mode():

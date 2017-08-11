@@ -93,7 +93,8 @@ class Spectrogram(object):
     def __calculate_spectrogram(self) -> np.ndarray:
         spectrogram = np.fft.fftshift(self.stft())
         spectrogram = 20 * np.log10(np.abs(spectrogram))  # convert magnitudes to decibel
-        return spectrogram
+        # Flip Array so Y axis goes from negative to positive
+        return np.flip(spectrogram, 1)
 
     def create_spectrogram_image(self):
         return self.create_image(self.data, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)

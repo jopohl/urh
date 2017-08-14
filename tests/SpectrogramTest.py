@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from tests.utils_testing import get_path_for_data_file
+from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.Signal import Signal
 
 from matplotlib import pyplot as plt
@@ -55,38 +56,6 @@ class SpectrogramTest(unittest.TestCase):
 
         plt.show()
 
-    def design_windowed_sinc_lpf(self, fc, bw):
-        N = int(np.ceil((4 / bw)))
-        if not N % 2: N += 1  # Make sure that N is odd.
-        n = np.arange(N)
-
-        # Compute sinc filter.
-        h = np.sinc(2 * fc * (n - (N - 1) / 2.))
-
-        # Compute Blackman window.
-        w = np.blackman(N)
-
-        # Multiply sinc filter with window.
-        h = h * w
-
-        # Normalize to get unity gain.
-        h_unity = h / np.sum(h)
-
-        return h_unity
-
-    def design_windowed_sinc_bandpass(self, f_low, f_high, bw):
-        lp1 = self.design_windowed_sinc_lpf(f_low, bw)
-        lp2 = self.design_windowed_sinc_lpf(f_high, bw)
-
-        lp2_spectral_inverse = np.negative(lp2)
-        lp2_spectral_inverse[len(lp2_spectral_inverse) // 2] += 1
-
-        band_reject_kernel = lp1 + lp2_spectral_inverse
-        band_pass_kernel = np.negative(band_reject_kernel)
-        band_pass_kernel[len(band_pass_kernel) // 2] += 1
-
-        return band_pass_kernel
-
     def fftconvolve_1d(self, in1, in2):
         import math
         outlen = in1.shape[-1] + in2.shape[-1] - 1
@@ -131,19 +100,9 @@ class SpectrogramTest(unittest.TestCase):
         # Define the parameters
         fc = f0 / fs
         b = 0.05
-
-        # Normalize to get unity gain.
-        t = time.time()
-        h_unity = self.design_windowed_sinc_bandpass(lowcut / fs, highcut / fs, b)
-        print("Design time", time.time() - t)
-
         data = x
 
-        print("Len data", len(data))
-
-        t = time.time()
-        y = np.convolve(data, h_unity, 'same')
-        print("Concolve time", time.time() - t)
+        y = Filter.apply_bandpass_filter(data, lowcut, highcut, fs, filter_bw=b)
 
         plt.plot(y, label='Filtered signal (%g Hz)' % f0)
         plt.plot(data, label='Noisy signal')

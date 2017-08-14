@@ -54,3 +54,90 @@ class SpectrogramTest(unittest.TestCase):
         plt.yticks(y_tick_pos, ["%.02f" % frequencies[i] for i in y_tick_pos])
 
         plt.show()
+
+    def design_windowed_sinc_lpf(self, fc, bw):
+        N = int(np.ceil((4 / bw)))
+        if not N % 2: N += 1  # Make sure that N is odd.
+        n = np.arange(N)
+
+        # Compute sinc filter.
+        h = np.sinc(2 * fc * (n - (N - 1) / 2.))
+
+        # Compute Blackman window.
+        w = np.blackman(N)
+
+        # Multiply sinc filter with window.
+        h = h * w
+
+        # Normalize to get unity gain.
+        h_unity = h / np.sum(h)
+
+        return h_unity
+
+    def design_windowed_sinc_bandpass(self, f_low, f_high, bw):
+        lp1 = self.design_windowed_sinc_lpf(f_low, bw)
+        lp2 = self.design_windowed_sinc_lpf(f_high, bw)
+
+        lp2_spectral_inverse = np.negative(lp2)
+        lp2_spectral_inverse[len(lp2_spectral_inverse) // 2] += 1
+
+        band_reject_kernel = lp1 + lp2_spectral_inverse
+        band_pass_kernel = np.negative(band_reject_kernel)
+        band_pass_kernel[len(band_pass_kernel) // 2] += 1
+
+        return band_pass_kernel
+
+    def fftconvolve_1d(self, in1, in2):
+        import math
+        outlen = in1.shape[-1] + in2.shape[-1] - 1
+        n = int(2**(math.ceil(math.log2(outlen))))
+
+        tr1 = np.fft.fft(in1, n)
+        tr2 = np.fft.fft(in2, n)
+        out = np.fft.ifft(tr1 * tr2, n)
+
+        return out[..., :outlen].copy()
+
+    def test_bandpass(self):
+        # Generate a noisy signal
+        fs = 5000
+        T = 0.1
+        nsamples = T * fs
+        t = np.linspace(0, T, nsamples, endpoint=False)
+        a = 0.02
+        f0 = 600
+        x = 0.25 * np.sin(2 * np.pi * 0.25*f0 * t)
+        x += 0.25 * np.sin(2 * np.pi * f0 * t)
+        x += 0.25 * np.sin(2 * np.pi * 2*f0 * t)
+        x += 0.25 * np.sin(2 * np.pi * 3*f0 * t)
+
+        import time
+
+        lowcut = 400
+        highcut = 800
+
+        # Define the parameters
+        fc = f0 / fs
+        b = 0.01
+
+        # Normalize to get unity gain.
+        t = time.time()
+        h_unity = self.design_windowed_sinc_bandpass(lowcut / fs, highcut / fs, b)
+        print("Design time", time.time() - t)
+
+        data = self.signal.data
+
+        t = time.time()
+        y = np.convolve(data, h_unity, 'same')
+        print("Concolve time", time.time() - t)
+
+        t = time.time()
+        a = self.fftconvolve_1d(data, h_unity)
+        print("FFT convolve time", time.time() - t)
+
+
+        plt.plot(data, label='Noisy signal')
+        plt.plot(y, label='Filtered signal (%g Hz)' % f0)
+        plt.plot(a, label='Filtered signal (%g Hz) with fft' % f0)
+        plt.legend(loc='upper left')
+        plt.show()

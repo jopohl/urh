@@ -112,7 +112,7 @@ class SpectrogramTest(unittest.TestCase):
 
     def test_bandpass(self):
         # Generate a noisy signal
-        fs = 1e6
+        fs = 2000
         T = 0.1
         nsamples = T * fs
         t = np.linspace(0, T, nsamples, endpoint=False)
@@ -125,21 +125,19 @@ class SpectrogramTest(unittest.TestCase):
 
         import time
 
-        lowcut = 0
-        highcut = 1e6
+        lowcut = f0 - 200
+        highcut = f0 + 200
 
         # Define the parameters
         fc = f0 / fs
-        b = 0.01
+        b = 0.05
 
         # Normalize to get unity gain.
         t = time.time()
         h_unity = self.design_windowed_sinc_bandpass(lowcut / fs, highcut / fs, b)
         print("Design time", time.time() - t)
 
-        data = np.concatenate([self.signal.data, self.signal.data, self.signal.data, self.signal.data])
-
-        data = np.ones(10*10**6, dtype=np.complex64)
+        data = x
 
         print("Len data", len(data))
 
@@ -147,14 +145,7 @@ class SpectrogramTest(unittest.TestCase):
         y = np.convolve(data, h_unity, 'same')
         print("Concolve time", time.time() - t)
 
-        t = time.time()
-        a = self.fftconvolve_1d(data, h_unity)
-        print("FFT convolve time", time.time() - t)
-
-
-
         plt.plot(y, label='Filtered signal (%g Hz)' % f0)
-        plt.plot(a, label='Filtered signal (%g Hz) with fft' % f0)
         plt.plot(data, label='Noisy signal')
         plt.legend(loc='upper left')
         plt.show()

@@ -4,7 +4,7 @@ from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Signal import Signal
 
 from matplotlib import pyplot as plt
-
+from urh.cythonext import signalFunctions
 
 class SpectrogramTest(unittest.TestCase):
     """ short time fourier transform of audio signal """
@@ -98,9 +98,21 @@ class SpectrogramTest(unittest.TestCase):
 
         return out[..., :outlen].copy()
 
+    def narrowband_iir(self, fc, bw, fs):
+        fc /= fs
+        bw /= fs
+
+        R = 1 - 3 * bw
+        K = (1 - 2 * R * np.cos(2 * np.pi * fc) + R ** 2) / (2 - 2*np.cos(2 * np.pi * fc))
+
+        a = np.array([K, -2*K*np.cos(2 * np.pi * fc), K], dtype=np.float64)
+        b = np.array([2 * R * np.cos(2 * np.pi * fc), -R**2], dtype=np.float64)
+
+        return a, b
+
     def test_bandpass(self):
         # Generate a noisy signal
-        fs = 5000
+        fs = 1e6
         T = 0.1
         nsamples = T * fs
         t = np.linspace(0, T, nsamples, endpoint=False)
@@ -113,8 +125,8 @@ class SpectrogramTest(unittest.TestCase):
 
         import time
 
-        lowcut = 400
-        highcut = 800
+        lowcut = 0
+        highcut = 1e6
 
         # Define the parameters
         fc = f0 / fs
@@ -125,7 +137,11 @@ class SpectrogramTest(unittest.TestCase):
         h_unity = self.design_windowed_sinc_bandpass(lowcut / fs, highcut / fs, b)
         print("Design time", time.time() - t)
 
-        data = self.signal.data
+        data = np.concatenate([self.signal.data, self.signal.data, self.signal.data, self.signal.data])
+
+        data = np.ones(10*10**6, dtype=np.complex64)
+
+        print("Len data", len(data))
 
         t = time.time()
         y = np.convolve(data, h_unity, 'same')
@@ -136,8 +152,41 @@ class SpectrogramTest(unittest.TestCase):
         print("FFT convolve time", time.time() - t)
 
 
-        plt.plot(data, label='Noisy signal')
+
         plt.plot(y, label='Filtered signal (%g Hz)' % f0)
         plt.plot(a, label='Filtered signal (%g Hz) with fft' % f0)
+        plt.plot(data, label='Noisy signal')
+        plt.legend(loc='upper left')
+        plt.show()
+
+    def test_iir_bandpass(self):
+        # Generate a noisy signal
+        fs = 2400
+        T = 6
+        nsamples = T * fs
+        t = np.linspace(0, T, nsamples, endpoint=False)
+        a = 0.02
+        f0 = 300
+        x = 0.5 * np.sin(2 * np.pi * f0 * t)
+        x += 0.25 * np.sin(2 * np.pi * 2 * f0 * t)
+        x += 0.25 * np.sin(2 * np.pi * 3 * f0 * t)
+
+        #data = x.astype(np.complex64)
+        data = np.sin(2 * np.pi * f0 * t).astype(np.complex64)
+
+        print("Len data", len(data))
+        a, b = self.narrowband_iir(f0, 100, fs)
+        s = a.sum() + b.sum()
+        #a /= s
+        #b /= s
+        print(a,  b)
+
+        filtered_data = signalFunctions.iir_filter(a, b, data)
+
+        #plt.plot(data, label='Noisy signal')
+        plt.plot(np.fft.fft(filtered_data), label='Filtered signal (%g Hz)' % f0)
+
+
+
         plt.legend(loc='upper left')
         plt.show()

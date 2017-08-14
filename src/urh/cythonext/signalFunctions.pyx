@@ -393,3 +393,20 @@ cpdef np.ndarray[np.complex64_t, ndim=1] fir_filter(float complex[::1] input_sam
 
 
     return output[:N]
+
+cpdef np.ndarray[np.complex64_t, ndim=1] iir_filter(np.ndarray[np.float64_t, ndim=1] a,
+                                                    np.ndarray[np.float64_t, ndim=1] b,
+                                                    np.ndarray[np.complex64_t, ndim=1] signal):
+    cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(len(signal), dtype=np.complex64)
+
+    cdef long n, j, k
+    cdef long M = len(a)
+    cdef long N = len(b)
+    for n in range(max(M, N+1) , len(signal)):
+        for j in range(M):
+            result[n] += a[j] * signal[n-j]
+
+        for k in range(N):
+            result[n] += b[k] * result[n-1-k]
+
+    return result

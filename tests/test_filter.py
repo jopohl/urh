@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+import time
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Filter import Filter
@@ -91,6 +92,23 @@ class TestFilter(QtTestCase):
         result_fft = Filter.fft_convolve_1d(x, h)
         self.assertTrue(np.array_equal(result_fft, expected_result))
 
+    def test_fft_convolution_performance(self):
+        x = np.linspace(0, 1, num=10**6, dtype=np.complex64)
+        h = Filter.design_windowed_sinc_bandpass(0.1, 0.4, 0.01)
+        # fft convolve is faster if IR is round about 400 samples or windowed sinc has bandwidth of 0.01
+        print(len(h))
+
+        t_np = time.time()
+        result_np = np.convolve(x, h, mode="same")
+        t_np = time.time() - t_np
+
+        t_fft = time.time()
+        result_fft = Filter.fft_convolve_1d(x, h)
+        t_fft = time.time() - t_fft
+
+        np.testing.assert_array_almost_equal(result_np, result_fft)
+        print("fft", t_fft, "np", t_np)
+        self.assertLess(t_fft, t_np)
 
 if __name__ == '__main__':
     unittest.main()

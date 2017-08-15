@@ -30,7 +30,14 @@ Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsu
 
 # Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
-Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source.
+Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source. Below you find more specific installation instructions for:
+- Linux Distributions:
+  - [Arch Linux](#arch-linux)
+  - [Ubuntu/Debian](#ubuntudebian)
+  - [Gentoo/Pentoo](#gentoopentoo)
+  - [Fedora 25+](#fedora-25)
+- [Windows](#windows)
+- [Mac OS X](#mac-os-x)
 
 __Dependencies__
 - Python 3.4+

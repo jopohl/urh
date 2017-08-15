@@ -55,6 +55,10 @@ class SelectableGraphicView(QGraphicsView):
     def hold_shift_to_drag(self) -> bool:
         return constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
 
+    @property
+    def something_is_selected(self) -> bool:
+        return hasattr(self, "selection_area") and self.selection_area is not None and not self.selection_area.is_empty
+
     def is_pos_in_separea(self, pos: QPoint):
         """
         GraphicViews can override this, if they need a seperation area.

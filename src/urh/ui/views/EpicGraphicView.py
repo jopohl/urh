@@ -41,7 +41,7 @@ class EpicGraphicView(EditableGraphicView):
 
     @property
     def selected_messages(self):
-        if not self.selection_area.is_empty and self.protocol:
+        if self.something_is_selected and self.protocol:
             sb, _, eb, _ = self.protocol.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width))
             return self.protocol.messages[sb:eb + 1]
         else:

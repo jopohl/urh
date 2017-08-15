@@ -654,7 +654,8 @@ class SignalFrameController(QFrame):
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
-            self.draw_spectrogram()
+            # TODO: Synchronize with X Zoom of Analog/Demod view
+            self.draw_spectrogram(show_full_scene=True)
 
         self.unsetCursor()
 

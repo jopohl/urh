@@ -40,9 +40,9 @@ class SpectrogramTest(unittest.TestCase):
 
     def test_numpy_impl(self):
         sample_rate = 1e6
-        spectrogram = np.fft.fftshift(self.stft(self.signal.data, 2**10, overlap_factor=0.5))
+        spectrogram = np.fft.fftshift(self.stft(self.signal.data, 2**10, overlap_factor=0.5)) / 1024
 
-        ims = 20 * np.log10(np.abs(spectrogram) / 10e-6)  # convert amplitudes to decibel
+        ims = 10 * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert amplitudes to decibel
         num_time_bins, num_freq_bins = np.shape(ims)
 
         plt.imshow(np.transpose(ims), aspect="auto", cmap="magma")

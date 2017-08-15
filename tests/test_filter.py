@@ -93,7 +93,7 @@ class TestFilter(QtTestCase):
         self.assertTrue(np.array_equal(result_fft, expected_result))
 
     def test_fft_convolution_performance(self):
-        x = np.linspace(0, 1, num=10**3, dtype=np.complex64)
+        x = np.linspace(0, 1, num=10**3).astype(np.complex64)
         h = Filter.design_windowed_sinc_bandpass(0.1, 0.4, 0.005)
         # fft convolve is faster if IR is round about 400 samples or windowed sinc has bandwidth of 0.01
         print(len(h))

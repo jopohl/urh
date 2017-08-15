@@ -45,7 +45,7 @@ class OptionsController(QDialog):
         self.ui.comboBoxTheme.setCurrentIndex(constants.SETTINGS.value("theme_index", 0, int))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(
             not constants.SETTINGS.value('not_show_close_dialog', False, bool))
-        self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', False, bool))
+        self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', True, bool))
         self.ui.checkBoxDefaultFuzzingPause.setChecked(
             constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 

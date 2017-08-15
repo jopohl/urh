@@ -117,6 +117,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxHoldShiftToDrag">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, you need to &lt;span style=&quot; font-weight:600;&quot;&gt;hold the Shift key to drag&lt;/span&gt; with the mouse inside graphic views like the drawn signal in Interpreation tab, while making a selection with the mouse does not require holding any buttons.&lt;/p&gt;&lt;p&gt;If unchecked, this is inverted: Hold shift to make a selection, and drag by default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Hold shift to drag</string>
          </property>

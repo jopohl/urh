@@ -277,6 +277,7 @@ class Ui_DialogOptions(object):
         self.comboBoxDefaultView.setItemText(1, _translate("DialogOptions", "Hex"))
         self.comboBoxDefaultView.setItemText(2, _translate("DialogOptions", "ASCII"))
         self.checkBoxShowConfirmCloseDialog.setText(_translate("DialogOptions", "Show \"confirm close\" dialog"))
+        self.checkBoxHoldShiftToDrag.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If checked, you need to <span style=\" font-weight:600;\">hold the Shift key to drag</span> with the mouse inside graphic views like the drawn signal in Interpreation tab, while making a selection with the mouse does not require holding any buttons.</p><p>If unchecked, this is inverted: Hold shift to make a selection, and drag by default.</p></body></html>"))
         self.checkBoxHoldShiftToDrag.setText(_translate("DialogOptions", "Hold shift to drag"))
         self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
         self.checkBoxAlignLabels.setText(_translate("DialogOptions", "Align on labels"))

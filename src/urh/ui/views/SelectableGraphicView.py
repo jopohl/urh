@@ -53,7 +53,7 @@ class SelectableGraphicView(QGraphicsView):
 
     @property
     def hold_shift_to_drag(self) -> bool:
-        return constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
+        return constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
 
     def is_pos_in_separea(self, pos: QPoint):
         """

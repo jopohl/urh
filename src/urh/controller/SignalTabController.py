@@ -114,7 +114,7 @@ class SignalTabController(QWidget):
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
-        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', False, type=bool)
+        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
         signal_frame.drag_started.connect(self.frame_dragged)
         signal_frame.frame_dropped.connect(self.frame_dropped)
         signal_frame.files_dropped.connect(self.on_files_dropped)

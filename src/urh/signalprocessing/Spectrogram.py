@@ -86,6 +86,9 @@ class Spectrogram(object):
 
         # pad with zeros to ensure last window fits signal
         padded_samples = np.append(self.samples, np.zeros((len(self.samples) - self.window_size) % hop_size))
+        if len(padded_samples) < self.window_size:
+            padded_samples = np.append(padded_samples, np.zeros(self.window_size - len(padded_samples)))
+
         num_frames = ((len(padded_samples) - self.window_size) // hop_size) + 1
         frames = [padded_samples[i*hop_size:i*hop_size+self.window_size] * window for i in range(num_frames)]
         return np.fft.fft(frames)

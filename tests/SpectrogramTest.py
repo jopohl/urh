@@ -2,10 +2,14 @@ import unittest
 import numpy as np
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Filter import Filter
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
+import array
 
 from matplotlib import pyplot as plt
 from urh.cythonext import signalFunctions
+from urh.signalprocessing.Spectrogram import Spectrogram
+
 
 class SpectrogramTest(unittest.TestCase):
     """ short time fourier transform of audio signal """
@@ -55,17 +59,6 @@ class SpectrogramTest(unittest.TestCase):
         plt.yticks(y_tick_pos, ["%.02f" % frequencies[i] for i in y_tick_pos])
 
         plt.show()
-
-    def fftconvolve_1d(self, in1, in2):
-        import math
-        outlen = in1.shape[-1] + in2.shape[-1] - 1
-        n = int(2**(math.ceil(math.log2(outlen))))
-
-        tr1 = np.fft.fft(in1, n)
-        tr2 = np.fft.fft(in2, n)
-        out = np.fft.ifft(tr1 * tr2, n)
-
-        return out[..., :outlen].copy()
 
     def narrowband_iir(self, fc, bw, fs):
         fc /= fs
@@ -139,4 +132,53 @@ class SpectrogramTest(unittest.TestCase):
 
 
         plt.legend(loc='upper left')
+        plt.show()
+
+    def test_channels(self):
+        sample_rate = 10 ** 6
+
+        channel1_freq = 40 * 10 ** 3
+        channel2_freq = 240 * 10 ** 3
+
+        channel1_data = array.array("B", [1, 0, 1, 0, 1, 0, 0, 1])
+        channel2_data = array.array("B", [1, 1, 0, 0, 1, 1, 0, 1])
+
+        filter_bw = 0.1
+
+        filter_freq1_high = 1.5 * channel1_freq
+        filter_freq1_low = 0.5 * channel1_freq
+        filter_freq2_high = 1.5*channel2_freq
+        filter_freq2_low = 0.5 * channel2_freq
+
+        modulator1, modulator2 = Modulator("test"), Modulator("test2")
+        modulator1.carrier_freq_hz = channel1_freq
+        modulator2.carrier_freq_hz = channel2_freq
+        modulator1.sample_rate = modulator2.sample_rate = sample_rate
+        modulator1.modulate(channel1_data)
+        modulator2.modulate(channel2_data)
+        data1, data2 = modulator1.modulated_samples, modulator2.modulated_samples
+
+        mixed_signal = data1 + data2
+
+        plt.subplot("221")
+        plt.title("Signal")
+        plt.plot(mixed_signal)
+
+
+        spectrogram = Spectrogram(mixed_signal, sample_rate)
+        plt.subplot("222")
+        plt.title("Spectrogram")
+        plt.imshow(np.transpose(spectrogram.data), aspect="auto", cmap="magma")
+        plt.ylim(0, spectrogram.freq_bins)
+
+        chann1_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq1_low, filter_freq1_high, sample_rate, filter_bw)
+        plt.subplot("223")
+        plt.title("Channel 1 Filtered ({})".format("".join(map(str, channel1_data))))
+        plt.plot(chann1_filtered)
+
+        chann2_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq2_low, filter_freq2_high, sample_rate, filter_bw)
+        plt.subplot("224")
+        plt.title("Channel 2 Filtered ({})".format("".join(map(str, channel2_data))))
+        plt.plot(chann2_filtered)
+
         plt.show()

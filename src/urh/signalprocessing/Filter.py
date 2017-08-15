@@ -20,6 +20,19 @@ class Filter(object):
         return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 
     @classmethod
+    def fft_convolve_1d(cls, x: np.ndarray, h: np.ndarray):
+        n = len(x) + len(h) - 1
+        n_opt = 1 << (n-1).bit_length()  # Get next power of 2
+        if np.issubdtype(x.dtype, np.complexfloating) or np.issubdtype(h.dtype, np.complexfloating):
+            fft, ifft = np.fft.fft, np.fft.ifft    # use complex fft
+        else:
+            fft, ifft = np.fft.rfft, np.fft.irfft  # use real fft
+
+        result = ifft(fft(x, n_opt) * fft(h, n_opt), n_opt)[0:n]
+        too_much = (len(result) - len(x)) // 2  # Center result
+        return result[too_much: -too_much]
+
+    @classmethod
     def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate, filter_bw=0.05):
         h = cls.design_windowed_sinc_bandpass(f_low / sample_rate, f_high / sample_rate, filter_bw)
         return np.convolve(data, h, 'same')

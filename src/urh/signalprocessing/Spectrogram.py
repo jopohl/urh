@@ -91,11 +91,11 @@ class Spectrogram(object):
 
         num_frames = ((len(padded_samples) - self.window_size) // hop_size) + 1
         frames = [padded_samples[i*hop_size:i*hop_size+self.window_size] * window for i in range(num_frames)]
-        return np.fft.fft(frames)
+        return np.fft.fft(frames) / np.atleast_1d(self.window_size)
 
     def __calculate_spectrogram(self) -> np.ndarray:
         spectrogram = np.fft.fftshift(self.stft())
-        spectrogram = 20 * np.log10(np.abs(spectrogram))  # convert magnitudes to decibel
+        spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert magnitudes to decibel
         # Flip Array so Y axis goes from negative to positive
         return np.fliplr(spectrogram)
 

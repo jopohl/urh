@@ -84,14 +84,15 @@ class Spectrogram(object):
         # hop size determines by how many samples the window is advanced
         hop_size = self.window_size - int(self.overlap_factor * self.window_size)
 
-        # pad with zeros to ensure last window fits signal
-        padded_samples = np.append(self.samples, np.zeros((len(self.samples) - self.window_size) % hop_size))
-        if len(padded_samples) < self.window_size:
-            padded_samples = np.append(padded_samples, np.zeros(self.window_size - len(padded_samples)))
+        num_frames = max(1, (len(self.samples) - self.window_size) // hop_size)
 
-        num_frames = ((len(padded_samples) - self.window_size) // hop_size) + 1
-        frames = [padded_samples[i*hop_size:i*hop_size+self.window_size] * window for i in range(num_frames)]
-        return np.fft.fft(frames) / np.atleast_1d(self.window_size)
+        # Get frames as numpy view with stride_tricks to save RAM
+        # Same as: frames = [padded_samples[i*hop_size:i*hop_size+self.window_size] for i in range(num_frames)]
+        shape = (num_frames, self.window_size)
+        strides = (hop_size * self.samples.strides[-1], self.samples.strides[-1])
+        frames = np.lib.stride_tricks.as_strided(self.samples, shape=shape, strides=strides)
+
+        return np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
 
     def __calculate_spectrogram(self) -> np.ndarray:
         spectrogram = np.fft.fftshift(self.stft())

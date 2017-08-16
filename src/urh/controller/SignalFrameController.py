@@ -195,6 +195,7 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
+        self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
@@ -518,6 +519,7 @@ class SignalFrameController(QFrame):
 
         self.on_slider_y_scale_value_changed()
 
+        self.__set_samples_in_view()
         self.unsetCursor()
 
     def eliminate(self):
@@ -544,13 +546,19 @@ class SignalFrameController(QFrame):
         self.setParent(None)
         self.deleteLater()
 
+    def __handle_graphic_view_zoomed(self, graphic_view):
+        self.ui.lSamplesInView.setText("{0:n}".format(int(graphic_view.view_rect().width())))
+        self.ui.spinBoxXZoom.blockSignals(True)
+        self.ui.spinBoxXZoom.setValue(int(graphic_view.sceneRect().width() / graphic_view.view_rect().width() * 100))
+        self.ui.spinBoxXZoom.blockSignals(False)
+
     @pyqtSlot()
     def on_signal_zoomed(self):
-        gvs = self.ui.gvSignal
-        self.ui.lSamplesInView.setText("{0:n}".format(int(gvs.view_rect().width())))
-        self.ui.spinBoxXZoom.blockSignals(True)
-        self.ui.spinBoxXZoom.setValue(int(gvs.sceneRect().width() / gvs.view_rect().width() * 100))
-        self.ui.spinBoxXZoom.blockSignals(False)
+        self.__handle_graphic_view_zoomed(self.ui.gvSignal)
+
+    @pyqtSlot()
+    def on_spectrum_zoomed(self):
+        self.__handle_graphic_view_zoomed(self.ui.gvSpectrogram)
 
     @pyqtSlot(int)
     def on_spinbox_x_zoom_value_changed(self, value: int):
@@ -652,10 +660,13 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
+            self.__set_samples_in_view()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
             # TODO: Synchronize with X Zoom of Analog/Demod view
             self.draw_spectrogram(show_full_scene=True)
+
+
 
         self.unsetCursor()
 
@@ -886,12 +897,19 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.blockSignals(False)
         self.jump_sync = True
 
+    def __set_samples_in_view(self):
+        if self.ui.cbSignalView.currentIndex() < 2:
+            self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
+            self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
+        else:
+            self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSpectrogram.view_rect().width())))
+            self.ui.lSamplesTotal.setText("{0:n}".format(self.ui.gvSpectrogram.scene().width_spectrogram()))
+
     def refresh_signal(self, draw_full_signal=False):
         self.ui.gvSignal.sel_area_active = False
         self.draw_signal(draw_full_signal)
 
-        self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
-        self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
+        self.__set_samples_in_view()
 
         self.update_number_selected_samples()
 

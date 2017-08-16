@@ -8,6 +8,8 @@ from urh.util.Logger import logger
 
 
 class ZoomableGraphicView(SelectableGraphicView):
+    MINIMUM_VIEW_WIDTH = 300
+
     # argument is x zoom factor
     # if argument is -1, then show_full_scene was triggered during zoom
     zoomed = pyqtSignal(float)
@@ -88,8 +90,8 @@ class ZoomableGraphicView(SelectableGraphicView):
             logger.warning("Graphic View already closed: " + str(e))
 
     def zoom(self, factor, zoom_to_mouse_cursor=True, cursor_pos=None):
-        if factor > 1 and self.view_rect().width() / factor < 300:
-            factor = self.view_rect().width() / 300
+        if factor > 1 and self.view_rect().width() / factor < self.MINIMUM_VIEW_WIDTH:
+            factor = self.view_rect().width() / self.MINIMUM_VIEW_WIDTH
 
         if zoom_to_mouse_cursor:
             pos = self.mapFromGlobal(QCursor.pos()) if cursor_pos is None else cursor_pos

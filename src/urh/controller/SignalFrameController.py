@@ -200,6 +200,7 @@ class SignalFrameController(QFrame):
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
+        self.ui.gvSpectrogram.selection_height_changed.connect(self.update_number_selected_samples)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
 
@@ -608,6 +609,7 @@ class SignalFrameController(QFrame):
     def on_spinbox_selection_start_value_changed(self, value: int):
         if self.spectrogram_is_active:
             self.ui.gvSpectrogram.set_vertical_selection(y=self.ui.gvSpectrogram.sceneRect().height()-value)
+            self.ui.gvSpectrogram.emit_selection_size_changed()
             self.ui.gvSpectrogram.selection_area.finished = True
         else:
             self.ui.gvSignal.set_horizontal_selection(x=value)
@@ -618,6 +620,7 @@ class SignalFrameController(QFrame):
     def on_spinbox_selection_end_value_changed(self, value: int):
         if self.spectrogram_is_active:
             self.ui.gvSpectrogram.set_vertical_selection(h=self.ui.spinBoxSelectionStart.value() - value)
+            self.ui.gvSpectrogram.emit_selection_size_changed()
             self.ui.gvSpectrogram.selection_area.finished = True
         else:
             self.ui.gvSignal.set_horizontal_selection(w=value - self.ui.spinBoxSelectionStart.value())

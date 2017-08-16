@@ -33,8 +33,14 @@ class Filter(object):
         return result[too_much: -too_much]
 
     @classmethod
-    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate, filter_bw=0.05):
-        h = cls.design_windowed_sinc_bandpass(f_low / sample_rate, f_high / sample_rate, filter_bw)
+    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float=None, filter_bw=0.05):
+        if sample_rate is not None:
+            f_low /= sample_rate
+            f_high /= sample_rate
+
+        assert -0.5 <= f_low <= 0.5
+        assert -0.5 <= f_high <= 0.5
+        h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
         return np.convolve(data, h, 'same')
 
     @classmethod

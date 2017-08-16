@@ -9,6 +9,7 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
     y_scale_changed = pyqtSignal(float)
+    bandpass_filter_triggered = pyqtSignal(float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -49,4 +50,9 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
-        print("Todo")
+        sh = self.sceneRect().height()
+        y1, y2 = sh / 2 - self.selection_area.start, sh / 2 - self.selection_area.end
+        if y1 > y2:
+            y1, y2 = y2, y1
+        f_low, f_high = y1 / self.sceneRect().height(), y2 / self.sceneRect().height()
+        self.bandpass_filter_triggered.emit(f_low, f_high)

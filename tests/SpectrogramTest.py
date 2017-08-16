@@ -164,7 +164,6 @@ class SpectrogramTest(unittest.TestCase):
         plt.title("Signal")
         plt.plot(mixed_signal)
 
-
         spectrogram = Spectrogram(mixed_signal)
         plt.subplot("222")
         plt.title("Spectrogram")

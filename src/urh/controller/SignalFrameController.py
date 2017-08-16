@@ -1,5 +1,6 @@
 import math
 
+import numpy as np
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
@@ -164,6 +165,7 @@ class SignalFrameController(QFrame):
         self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
         self.ui.sliderFFTWindowSize.valueChanged.connect(self.on_slider_fft_window_size_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
+        self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -1118,3 +1120,11 @@ class SignalFrameController(QFrame):
         self.ui.sliderYScale.blockSignals(True)
         self.ui.sliderYScale.setValue(self.ui.sliderYScale.value() * scale)
         self.ui.sliderYScale.blockSignals(False)
+
+    @pyqtSlot(float, float)
+    def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
+        filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high)
+        signal = Signal("", "Filtered")
+        signal._fulldata = filtered.astype(np.complex64)
+        signal.sample_rate = self.signal.sample_rate
+        self.signal_created.emit(signal)

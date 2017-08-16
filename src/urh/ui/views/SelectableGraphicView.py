@@ -240,7 +240,7 @@ class SelectableGraphicView(QGraphicsView):
         self.selection_area.finished = True
         self.selection_area.resizing = False
         self.emit_selection_size_changed()
-        self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
+        self.emit_selection_start_end_changed()
 
     def refresh_selection_area(self):
         """
@@ -300,6 +300,9 @@ class SelectableGraphicView(QGraphicsView):
             self.selection_width_changed.emit(int(self.selection_area.width))
         else:
             self.selection_height_changed.emit(int(self.selection_area.height))
+
+    def emit_selection_start_end_changed(self):
+        self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
 
     def view_rect(self) -> QRectF:
         """

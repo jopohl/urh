@@ -145,8 +145,6 @@ class SignalFrameController(QFrame):
             self.ui.lSamplesInView.setText("{0:n}".format(int(nsamples)))
             self.ui.lSamplesTotal.setText("{0:n}".format(int(nsamples)))
             self.ui.gvSignal.setScene(scene)
-            self.ui.spinBoxSelectionStart.setMaximum(nsamples)
-            self.ui.spinBoxSelectionEnd.setMaximum(nsamples)
             self.ui.btnReplay.hide()
 
             self.create_connects()
@@ -420,11 +418,6 @@ class SignalFrameController(QFrame):
         legend.draw_one_zero_arrows(-self.signal.qad_center)
         gv_legend.setScene(legend)
 
-        num_samples = self.signal.num_samples
-        self.ui.spinBoxSelectionStart.setMaximum(num_samples)
-        self.ui.spinBoxSelectionEnd.setMaximum(num_samples)
-        self.ui.gvSignal.nsamples = num_samples
-
         self.ui.gvSignal.y_sep = -self.signal.qad_center
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
@@ -614,8 +607,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot(int)
     def on_spinbox_selection_start_value_changed(self, value: int):
         if self.spectrogram_is_active:
-            value = self.ui.gvSpectrogram.sceneRect().height() - value
-            self.ui.gvSpectrogram.set_vertical_selection(y=value)
+            self.ui.gvSpectrogram.set_vertical_selection(y=self.ui.gvSpectrogram.sceneRect().height()-value)
             self.ui.gvSpectrogram.selection_area.finished = True
         else:
             self.ui.gvSignal.set_horizontal_selection(x=value)
@@ -625,7 +617,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot(int)
     def on_spinbox_selection_end_value_changed(self, value: int):
         if self.spectrogram_is_active:
-            self.ui.gvSpectrogram.set_vertical_selection(h=abs(value - self.ui.spinBoxSelectionStart.value()))
+            self.ui.gvSpectrogram.set_vertical_selection(h=self.ui.spinBoxSelectionStart.value() - value)
             self.ui.gvSpectrogram.selection_area.finished = True
         else:
             self.ui.gvSignal.set_horizontal_selection(w=value - self.ui.spinBoxSelectionStart.value())

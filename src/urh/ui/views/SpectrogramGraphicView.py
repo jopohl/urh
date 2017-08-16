@@ -48,6 +48,10 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     def auto_fit_view(self):
         pass
 
+    def emit_selection_start_end_changed(self):
+        h = self.sceneRect().height()
+        self.sel_area_start_end_changed.emit(h - self.selection_area.end, h - self.selection_area.start)
+
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
         sh = self.sceneRect().height()

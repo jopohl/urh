@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMenu
 
@@ -8,6 +8,7 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
+    y_scale_changed = pyqtSignal(float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -32,6 +33,16 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
 
         return menu
+
+    def zoom_to_selection(self, start: int, end: int):
+        if start == end:
+            return
+
+        x_center = self.view_rect().x() + self.view_rect().width() / 2
+        y_factor = self.view_rect().height() / (end - start)
+        self.scale(1, y_factor)
+        self.centerOn(x_center, start + (end - start) / 2)
+        self.y_scale_changed.emit(y_factor)
 
     def auto_fit_view(self):
         pass

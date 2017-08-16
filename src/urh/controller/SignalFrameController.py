@@ -162,6 +162,7 @@ class SignalFrameController(QFrame):
         self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
         self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
         self.ui.sliderFFTWindowSize.valueChanged.connect(self.on_slider_fft_window_size_value_changed)
+        self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -1091,3 +1092,9 @@ class SignalFrameController(QFrame):
     @pyqtSlot()
     def on_spectrogram_update_timer_timeout(self):
         self.draw_spectrogram(show_full_scene=True)
+
+    @pyqtSlot(float)
+    def on_gv_spectrogram_y_scale_changed(self, scale: float):
+        self.ui.sliderYScale.blockSignals(True)
+        self.ui.sliderYScale.setValue(self.ui.sliderYScale.value() * scale)
+        self.ui.sliderYScale.blockSignals(False)

@@ -9,6 +9,10 @@ class VerticalSelection(Selection):
         super().__init__(*args, fillcolor=fillcolor, opacity=opacity, parent=parent)
 
     @property
+    def length(self):
+        return self.height
+
+    @property
     def is_empty(self) -> bool:
         return self.height == 0
 

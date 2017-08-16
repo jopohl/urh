@@ -9,6 +9,10 @@ class HorizontalSelection(Selection):
         super().__init__(*args, fillcolor=fillcolor, opacity=opacity, parent=parent)
 
     @property
+    def length(self):
+        return self.width
+
+    @property
     def is_empty(self) -> bool:
         return self.width == 0
 

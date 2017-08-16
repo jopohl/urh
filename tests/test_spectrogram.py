@@ -7,7 +7,7 @@ from urh.signalprocessing.Spectrogram import Spectrogram
 class TestSpectrogram(QtTestCase):
     def setUp(self):
         self.signal = Signal(self.get_path_for_filename("two_participants.complex"), "test")
-        self.spectrogram = Spectrogram(self.signal.data, sample_rate=2e6)
+        self.spectrogram = Spectrogram(self.signal.data)
 
     def test_colormap(self):
         bgra_values = self.spectrogram.apply_bgra_lookup(self.spectrogram.data, colormaps.chosen_colormap_numpy_bgra,

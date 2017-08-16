@@ -8,7 +8,7 @@ from urh.util.Logger import logger
 class Spectrogram(object):
     DEFAULT_FFT_WINDOW_SIZE = 1024
 
-    def __init__(self, samples: np.ndarray, sample_rate: float, window_size=DEFAULT_FFT_WINDOW_SIZE,
+    def __init__(self, samples: np.ndarray, window_size=DEFAULT_FFT_WINDOW_SIZE,
                  overlap_factor=0.5, window_function=np.hanning):
         """
 
@@ -18,7 +18,6 @@ class Spectrogram(object):
         :param window_function: Function for DFT window
         """
         self.__samples = samples
-        self.__sample_rate = sample_rate
         self.__window_size = window_size
         self.__overlap_factor = overlap_factor
         self.__window_function = window_function

@@ -149,10 +149,11 @@ class SignalFrameController(QFrame):
             self.ui.btnReplay.hide()
 
             self.create_connects()
-
-            self.ui.gvSignal.sel_area_active = True
-
             self.ui.btnSaveSignal.hide()
+
+    @property
+    def spectrogram_is_active(self) -> bool:
+        return self.ui.stackedWidget.currentWidget() == self.ui.pageSpectrogram
 
     def create_connects(self):
         self.ui.btnCloseSignal.clicked.connect(self.on_btn_close_signal_clicked)
@@ -198,6 +199,7 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
+        self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
         self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
 
@@ -267,8 +269,14 @@ class SignalFrameController(QFrame):
         self.ui.btnSaveSignal.hide()
 
     def update_number_selected_samples(self):
-        self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.width))))
-        self.__set_duration()
+        if self.spectrogram_is_active:
+            self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSpectrogram.selection_area.length))))
+            self.__set_selected_bandwidth()
+            return
+        else:
+            self.ui.lNumSelectedSamples.setText(str(abs(int(self.ui.gvSignal.selection_area.length))))
+            self.__set_duration()
+
         try:
             sel_messages = self.ui.gvSignal.selected_messages
         except AttributeError:
@@ -284,6 +292,16 @@ class SignalFrameController(QFrame):
     def __set_spectrogram_adjust_widgets_visibility(self):
         self.ui.labelFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
         self.ui.sliderFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+
+    def __set_selected_bandwidth(self):
+        try:
+            num_samples = int(self.ui.lNumSelectedSamples.text())
+        except ValueError:
+            return
+
+        if self.ui.gvSpectrogram.scene().spectrogram_image and self.signal:
+            bw = (num_samples / self.ui.gvSpectrogram.scene().spectrogram_image.pixmap().height()) * self.signal.sample_rate
+            self.ui.lDuration.setText(Formatter.big_value_with_suffix(bw) + "Hz")
 
     def __set_duration(self):  # On Signal Sample Rate changed
         try:
@@ -405,7 +423,6 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxSelectionEnd.setMaximum(num_samples)
         self.ui.gvSignal.nsamples = num_samples
 
-        self.ui.gvSignal.sel_area_active = True
         self.ui.gvSignal.y_sep = -self.signal.qad_center
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
@@ -512,7 +529,7 @@ class SignalFrameController(QFrame):
     def draw_spectrogram(self, show_full_scene=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
-        spectrogram = Spectrogram(self.signal.data, self.signal.sample_rate, window_size=window_size)
+        spectrogram = Spectrogram(self.signal.data, window_size=window_size)
         self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
 
         if show_full_scene:
@@ -563,10 +580,10 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(int)
     def on_spinbox_x_zoom_value_changed(self, value: int):
-        gvs = self.ui.gvSignal
+        graphic_view = self.ui.gvSpectrogram if self.spectrogram_is_active else self.ui.gvSignal
         zoom_factor = value / 100
-        current_factor = gvs.sceneRect().width() / gvs.view_rect().width()
-        gvs.zoom(zoom_factor / current_factor)
+        current_factor = graphic_view.sceneRect().width() / graphic_view.view_rect().width()
+        graphic_view.zoom(zoom_factor / current_factor)
 
     @pyqtSlot()
     def on_btn_close_signal_clicked(self):
@@ -594,14 +611,21 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(int)
     def on_spinbox_selection_start_value_changed(self, value: int):
-        if self.ui.gvSignal.sel_area_active:
+        if self.spectrogram_is_active:
+            value = self.ui.gvSpectrogram.sceneRect().height() - value
+            self.ui.gvSpectrogram.set_vertical_selection(y=value)
+            self.ui.gvSpectrogram.selection_area.finished = True
+        else:
             self.ui.gvSignal.set_horizontal_selection(x=value)
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_selection_size_changed()
 
     @pyqtSlot(int)
     def on_spinbox_selection_end_value_changed(self, value: int):
-        if self.ui.gvSignal.sel_area_active:
+        if self.spectrogram_is_active:
+            self.ui.gvSpectrogram.set_vertical_selection(h=abs(value - self.ui.spinBoxSelectionStart.value()))
+            self.ui.gvSpectrogram.selection_area.finished = True
+        else:
             self.ui.gvSignal.set_horizontal_selection(w=value - self.ui.spinBoxSelectionStart.value())
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_selection_size_changed()
@@ -646,7 +670,11 @@ class SignalFrameController(QFrame):
 
         self.__set_spectrogram_adjust_widgets_visibility()
 
-        if self.ui.cbSignalView.currentIndex() < 2:
+        if self.ui.cbSignalView.currentText().lower() == "spectrogram":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
+            # TODO: Synchronize with X Zoom of Analog/Demod view
+            self.draw_spectrogram(show_full_scene=True)
+        else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
@@ -662,12 +690,6 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.refresh_selection_area()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
             self.__set_samples_in_view()
-        else:
-            self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
-            # TODO: Synchronize with X Zoom of Analog/Demod view
-            self.draw_spectrogram(show_full_scene=True)
-
-
 
         self.unsetCursor()
 
@@ -899,15 +921,14 @@ class SignalFrameController(QFrame):
         self.jump_sync = True
 
     def __set_samples_in_view(self):
-        if self.ui.cbSignalView.currentIndex() < 2:
-            self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
-            self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
-        else:
+        if self.spectrogram_is_active:
             self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSpectrogram.view_rect().width())))
             self.ui.lSamplesTotal.setText("{0:n}".format(self.ui.gvSpectrogram.scene().width_spectrogram()))
+        else:
+            self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
+            self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))
 
     def refresh_signal(self, draw_full_signal=False):
-        self.ui.gvSignal.sel_area_active = False
         self.draw_signal(draw_full_signal)
 
         self.__set_samples_in_view()
@@ -915,7 +936,6 @@ class SignalFrameController(QFrame):
         self.update_number_selected_samples()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
-        self.ui.gvSignal.sel_area_active = True
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):

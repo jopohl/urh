@@ -165,7 +165,7 @@ class SpectrogramTest(unittest.TestCase):
         plt.plot(mixed_signal)
 
 
-        spectrogram = Spectrogram(mixed_signal, sample_rate)
+        spectrogram = Spectrogram(mixed_signal)
         plt.subplot("222")
         plt.title("Spectrogram")
         plt.imshow(np.transpose(spectrogram.data), aspect="auto", cmap="magma")

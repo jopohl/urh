@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
     QCheckBox, QApplication
 
 from urh import constants
-from urh.SignalSceneManager import SignalSceneManager
 from urh.controller.FilterDialogController import FilterDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
@@ -18,6 +17,7 @@ from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.painting.LegendScene import LegendScene
+from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -174,7 +174,7 @@ class SignalFrameController(QFrame):
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
-            self.signal.data_edited.connect(self.refresh_signal)  # Crop/Delete Mute etc.
+            self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
             self.signal.sample_rate_changed.connect(self.__set_duration)
             self.signal.sample_rate_changed.connect(self.show_protocol)  # Update times
 
@@ -525,8 +525,7 @@ class SignalFrameController(QFrame):
     def draw_spectrogram(self, show_full_scene=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
-        spectrogram = Spectrogram(self.signal.data, window_size=window_size)
-        self.ui.gvSpectrogram.scene().set_spectrogram_image(spectrogram.create_spectrogram_image())
+        self.ui.gvSpectrogram.scene_manager.set_samples(self.signal.data, window_size=window_size)
 
         if show_full_scene:
             self.ui.gvSpectrogram.show_full_scene()
@@ -1123,3 +1122,7 @@ class SignalFrameController(QFrame):
         signal._fulldata = filtered.astype(np.complex64)
         signal.sample_rate = self.signal.sample_rate
         self.signal_created.emit(signal)
+
+    def on_signal_data_edited(self):
+        self.refresh_signal()
+        self.ui.gvSpectrogram.scene_manager.samples_need_update = True

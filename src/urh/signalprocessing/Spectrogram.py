@@ -6,6 +6,7 @@ from urh.util.Logger import logger
 
 
 class Spectrogram(object):
+    MAX_LINES_PER_VIEW = 1000
     DEFAULT_FFT_WINDOW_SIZE = 1024
 
     def __init__(self, samples: np.ndarray, window_size=DEFAULT_FFT_WINDOW_SIZE,
@@ -21,9 +22,10 @@ class Spectrogram(object):
         self.__window_size = window_size
         self.__overlap_factor = overlap_factor
         self.__window_function = window_function
-        self.data = self.__calculate_spectrogram()
-        # TODO: Check if we can use predifined values e.g. -160 and 0 here
-        self.data_min, self.data_max = np.min(self.data), np.max(self.data)
+
+        self.freq_bins, self.time_bins = 0, 0  # will be written in __calculate spectrogram
+
+        self.data_min, self.data_max = -140, 10
 
     @property
     def samples(self):
@@ -32,14 +34,6 @@ class Spectrogram(object):
     @samples.setter
     def samples(self, value):
         self.__samples = value
-
-    @property
-    def sample_rate(self):
-        return self.__sample_rate
-
-    @sample_rate.setter
-    def sample_rate(self, value):
-        self.__sample_rate = value
 
     @property
     def window_size(self):
@@ -66,27 +60,24 @@ class Spectrogram(object):
         self.__window_function = value
 
     @property
-    def time_bins(self) -> int:
-        return np.shape(self.data)[0]
+    def hop_size(self):
+        """
+        hop size determines by how many samples the window is advanced
+        """
+        return self.window_size - int(self.overlap_factor * self.window_size)
 
-    @property
-    def freq_bins(self) -> int:
-        return np.shape(self.data)[1]
-
-    def stft(self):
+    def stft(self, samples: np.ndarray):
         """
         Perform Short-time Fourier transform to get the spectrogram for the given samples
         :return: short-time Fourier transform of the given signal
         """
         window = self.window_function(self.window_size)
-
-        # hop size determines by how many samples the window is advanced
-        hop_size = self.window_size - int(self.overlap_factor * self.window_size)
+        hop_size = self.hop_size
 
         if len(self.samples) < self.window_size:
-            samples = np.append(self.samples, np.zeros(self.window_size - len(self.samples)))
+            samples = np.append(self.samples, np.zeros(self.window_size - len(samples)))
         else:
-            samples = self.samples
+            samples = samples
 
         num_frames = (len(samples) - self.window_size) // hop_size + 1
 
@@ -98,14 +89,16 @@ class Spectrogram(object):
 
         return np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
 
-    def __calculate_spectrogram(self) -> np.ndarray:
-        spectrogram = np.fft.fftshift(self.stft())
+    def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
+        spectrogram = np.fft.fftshift(self.stft(samples))
         spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert magnitudes to decibel
+        self.time_bins, self.freq_bins = np.shape(spectrogram)
         # Flip Array so Y axis goes from negative to positive
-        return np.fliplr(spectrogram)
+        return np.flipud(np.fliplr(spectrogram))
 
-    def create_spectrogram_image(self):
-        return self.create_image(self.data, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
+    def create_spectrogram_image(self, sample_start: int=None, sample_end: int=None, step: int=None):
+        spectrogram = self.__calculate_spectrogram(self.samples[sample_start:sample_end:step])
+        return self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
 
     @staticmethod
     def apply_bgra_lookup(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> np.ndarray:

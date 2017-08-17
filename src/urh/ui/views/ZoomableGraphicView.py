@@ -2,7 +2,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent
 from PyQt5.QtWidgets import QAction, QMenu
 
-from urh.SceneManager import SceneManager
+from urh.ui.painting.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
 from urh.util.Logger import logger
 

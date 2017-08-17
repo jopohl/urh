@@ -1,11 +1,9 @@
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QWheelEvent, QIcon
 
-from urh.FFTSceneManager import FFTSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.ui.painting.FFTSceneManager import FFTSceneManager
 
 
 class SpectrumDialogController(SendRecvDialogController):

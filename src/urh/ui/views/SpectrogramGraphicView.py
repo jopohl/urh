@@ -1,8 +1,10 @@
+import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMenu
 
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
+from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
@@ -11,11 +13,14 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     y_scale_changed = pyqtSignal(float)
     bandpass_filter_triggered = pyqtSignal(float, float)
 
+    # TODO: Update Scene on 1) Zoom 2) Translation (scroll)
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.move_y_with_drag = True
-        self.setScene(SpectrogramScene())
+        self.scene_manager = SpectrogramSceneManager(np.zeros(1), parent=self)
+        self.setScene(self.scene_manager.scene)
 
     @property
     def y_center(self):

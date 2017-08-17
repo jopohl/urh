@@ -1,5 +1,5 @@
 
-from urh.SceneManager import SceneManager
+from urh.ui.painting.SceneManager import SceneManager
 
 class LiveSceneManager(SceneManager):
     def __init__(self, data_array, parent):

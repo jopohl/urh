@@ -1,9 +1,9 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 
-from urh.SignalSceneManager import SignalSceneManager
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 

@@ -1,4 +1,4 @@
-from urh.SceneManager import SceneManager
+from urh.ui.painting.SceneManager import SceneManager
 
 
 class SniffSceneManager(SceneManager):

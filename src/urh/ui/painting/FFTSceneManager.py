@@ -4,9 +4,9 @@ from PyQt5.QtGui import QPainterPath, QPen
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
-from urh.SceneManager import SceneManager
 from urh.cythonext import path_creator
 from urh.ui.painting.GridScene import GridScene
+from urh.ui.painting.SceneManager import SceneManager
 
 
 class FFTSceneManager(SceneManager):

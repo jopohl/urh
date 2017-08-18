@@ -22,14 +22,6 @@ class SpectrogramSceneManager(SceneManager):
         return len(self.spectrogram.samples)
 
     @property
-    def total_length_x(self):
-        return len(self.spectrogram.samples) / self.spectrogram.hop_size
-
-    @property
-    def zoom_factor(self):
-        return self.total_length_x / self.spectrogram.time_bins
-
-    @property
     def min_lod(self):
         return 1
 

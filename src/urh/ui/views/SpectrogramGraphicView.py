@@ -13,8 +13,6 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     y_scale_changed = pyqtSignal(float)
     bandpass_filter_triggered = pyqtSignal(float, float)
 
-    # TODO: Update Scene on 1) Zoom 2) Translation (scroll)
-
     def __init__(self, parent=None):
         super().__init__(parent)
 

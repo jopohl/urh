@@ -21,7 +21,6 @@ class SpectrogramScene(ZoomableScene):
 
     def set_spectrogram_image(self, image: QImage):
         self.spectrogram_image.setPixmap(QPixmap.fromImage(image))
-        # Todo: Move setSceneRect to initScene?
         self.setSceneRect(QRectF(image.rect()))
 
     def clear(self):

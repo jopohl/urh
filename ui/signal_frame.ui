@@ -623,6 +623,9 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      </item>
      <item row="18" column="0">
       <widget class="QLabel" name="labelSpectrogramLOD">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the level of detail for spectrogram. A higher level of detail will give you a higher resolution, but it may take some seconds to calculate the more accurate spectrogram.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Level of Detail:</string>
        </property>
@@ -635,6 +638,9 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Define the level of detail for spectrogram. A higher level of detail will give you a higher resolution, but it may take some seconds to calculate the more accurate spectrogram.</string>
        </property>
        <property name="minimum">
         <number>1</number>

@@ -35,11 +35,19 @@ class SpectrogramSceneManager(SceneManager):
         return max(1, int((sample_end - sample_start) / (self.spectrogram.MAX_LINES_PER_VIEW * self.spectrogram.hop_size)))
 
     def set_samples(self, samples: np.ndarray, window_size):
+        redraw_needed = False
         if self.samples_need_update:
             self.spectrogram.samples = samples
-            self.spectrogram.window_size = window_size
-            self.show_full_scene()
+            redraw_needed = True
             self.samples_need_update = False
+
+        if window_size != self.spectrogram.window_size:
+            self.spectrogram.window_size = window_size
+            redraw_needed = True
+
+        if redraw_needed:
+            self.show_full_scene()
+
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         if not self.dynamic:

@@ -162,6 +162,7 @@ class SignalFrameController(QFrame):
         self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
         self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
         self.ui.sliderFFTWindowSize.valueChanged.connect(self.on_slider_fft_window_size_value_changed)
+        self.ui.sliderSpectrogramLOD.valueChanged.connect(self.on_slider_spectrogram_lod_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
 
@@ -293,6 +294,15 @@ class SignalFrameController(QFrame):
     def __set_spectrogram_adjust_widgets_visibility(self):
         self.ui.labelFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
         self.ui.sliderFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.sliderSpectrogramLOD.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.labelSpectrogramLOD.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+
+    def __set_spectrogram_lod_widgets_status(self):
+        self.ui.sliderSpectrogramLOD.setMaximum(self.ui.gvSpectrogram.scene_manager.max_lod)
+        slider_min, slider_max = self.ui.sliderSpectrogramLOD.minimum(), self.ui.sliderSpectrogramLOD.maximum()
+        self.ui.sliderSpectrogramLOD.setVisible(self.ui.cbSignalView.currentIndex() == 2 and slider_min != slider_max)
+        self.ui.labelSpectrogramLOD.setVisible(self.ui.cbSignalView.currentIndex() == 2 and slider_min != slider_max)
+
 
     def __set_selected_bandwidth(self):
         try:
@@ -324,6 +334,10 @@ class SignalFrameController(QFrame):
             gv.centerOn(x + w / 2, gv.y_center)
         except ZeroDivisionError:
             pass
+
+    @pyqtSlot()
+    def on_slider_spectrogram_lod_value_changed(self):
+        self.spectrogram_update_timer.start()
 
     @pyqtSlot()
     def on_slider_fft_window_size_value_changed(self):
@@ -525,8 +539,8 @@ class SignalFrameController(QFrame):
     def draw_spectrogram(self, show_full_scene=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
-        self.ui.gvSpectrogram.scene_manager.set_samples(self.signal.data, window_size=window_size)
-
+        lod = self.ui.sliderSpectrogramLOD.value()
+        self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size, lod=lod)
         if show_full_scene:
             self.ui.gvSpectrogram.show_full_scene()
 
@@ -668,8 +682,8 @@ class SignalFrameController(QFrame):
 
         if self.ui.cbSignalView.currentText().lower() == "spectrogram":
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
-            # TODO: Synchronize with X Zoom of Analog/Demod view
             self.draw_spectrogram(show_full_scene=True)
+            self.__set_spectrogram_lod_widgets_status()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()

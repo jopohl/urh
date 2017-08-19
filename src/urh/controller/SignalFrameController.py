@@ -176,8 +176,8 @@ class SignalFrameController(QFrame):
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
-            self.signal.sample_rate_changed.connect(self.__set_duration)
-            self.signal.sample_rate_changed.connect(self.show_protocol)  # Update times
+
+            self.signal.sample_rate_changed.connect(self.on_signal_sample_rate_changed)
 
             self.signal.saved_status_changed.connect(self.on_signal_data_changed_before_save)
             self.ui.btnSaveSignal.clicked.connect(self.save_signal)
@@ -684,6 +684,7 @@ class SignalFrameController(QFrame):
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
             self.draw_spectrogram(show_full_scene=True)
             self.__set_spectrogram_lod_widgets_status()
+            self.__set_selected_bandwidth()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
@@ -700,6 +701,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.refresh_selection_area()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
             self.__set_samples_in_view()
+            self.__set_duration()
 
         self.unsetCursor()
 
@@ -1140,3 +1142,12 @@ class SignalFrameController(QFrame):
     def on_signal_data_edited(self):
         self.refresh_signal()
         self.ui.gvSpectrogram.scene_manager.samples_need_update = True
+
+    @pyqtSlot()
+    def on_signal_sample_rate_changed(self):
+        if self.spectrogram_is_active:
+            self.__set_selected_bandwidth()
+        else:
+            self.__set_duration()
+
+        self.show_protocol()  # update times

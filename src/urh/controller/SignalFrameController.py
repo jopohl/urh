@@ -1122,11 +1122,13 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(float, float)
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
+        self.setCursor(Qt.WaitCursor)
         filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high)
         signal = Signal("", "Filtered")
         signal._fulldata = filtered.astype(np.complex64)
         signal.sample_rate = self.signal.sample_rate
         self.signal_created.emit(signal)
+        self.unsetCursor()
 
     def on_signal_data_edited(self):
         self.refresh_signal()

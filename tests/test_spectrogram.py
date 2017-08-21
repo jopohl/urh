@@ -24,6 +24,8 @@ class TestSpectrogram(QtTestCase):
         self.add_signal_to_form("two_channels.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        signal_frame.ui.spinBoxNoiseTreshold.setValue(0)
+        signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.assertEqual(signal_frame.signal.num_samples, 800)
         signal_frame.ui.cbSignalView.setCurrentIndex(2)
         self.assertTrue(signal_frame.spectrogram_is_active)

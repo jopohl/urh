@@ -522,10 +522,11 @@ class SignalFrameController(QFrame):
 
             self.ui.txtEdProto.blockSignals(False)
 
-    def draw_spectrogram(self, show_full_scene=False):
+    def draw_spectrogram(self, show_full_scene=False, force_redraw=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
-        self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size)
+        self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size,
+                                                           force_redraw=force_redraw)
         if show_full_scene:
             self.ui.gvSpectrogram.show_full_scene()
 

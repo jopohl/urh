@@ -33,7 +33,7 @@ class Filter(object):
         return result[too_much: -too_much]
 
     @classmethod
-    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float=None, filter_bw=0.01):
+    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float=None, filter_bw=0.08):
         if sample_rate is not None:
             f_low /= sample_rate
             f_high /= sample_rate

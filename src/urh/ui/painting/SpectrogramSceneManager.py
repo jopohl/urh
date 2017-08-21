@@ -19,7 +19,7 @@ class SpectrogramSceneManager(SceneManager):
     def num_samples(self):
         return len(self.spectrogram.samples)
 
-    def set_parameters(self, samples: np.ndarray, window_size):
+    def set_parameters(self, samples: np.ndarray, window_size, force_redraw=False):
         redraw_needed = False
         if self.samples_need_update:
             self.spectrogram.samples = samples
@@ -30,7 +30,7 @@ class SpectrogramSceneManager(SceneManager):
             self.spectrogram.window_size = window_size
             redraw_needed = True
 
-        if redraw_needed:
+        if redraw_needed or force_redraw:
             self.show_full_scene()
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):

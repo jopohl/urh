@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QMenu
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.util import util
 
 
 class SpectrogramGraphicView(ZoomableGraphicView):
@@ -59,7 +60,11 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     def on_create_from_frequency_selection_triggered(self):
         sh = self.sceneRect().height()
         y1, y2 = sh / 2 - self.selection_area.start, sh / 2 - self.selection_area.end
-        if y1 > y2:
-            y1, y2 = y2, y1
         f_low, f_high = y1 / self.sceneRect().height(), y2 / self.sceneRect().height()
+        f_low = util.clip(f_low, 0, 0.5)
+        f_high = util.clip(f_high, 0, 0.5)
+
+        if f_low > f_high:
+            f_low, f_high = f_high, f_low
+
         self.bandpass_filter_triggered.emit(f_low, f_high)

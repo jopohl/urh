@@ -181,3 +181,27 @@ class SpectrogramTest(unittest.TestCase):
         plt.plot(chann2_filtered)
 
         plt.show()
+
+
+    def test_bandpass_h(self):
+        f_low = 0.31
+        f_high = 0.44
+        bw = 0.01
+
+        h = Filter.design_windowed_sinc_bandpass(f_low=f_low, f_high=f_high, bw=bw)
+        #h = Filter.design_windowed_sinc_lpf(0.42, bw=0.08)
+
+        impulse = np.exp(1j * np.linspace(0, 1, 50))
+
+        plt.subplot("221")
+        plt.title("f_low={} f_high={} bw=0.05".format(f_low, f_high, bw))
+        plt.plot(np.fft.rfft(h))
+
+        plt.subplot("222")
+        plt.plot(h)
+
+        plt.show()
+
+
+
+        # h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)

@@ -70,7 +70,7 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
-     <item row="20" column="0">
+     <item row="19" column="0">
       <widget class="QCheckBox" name="chkBoxSyncSelection">
        <property name="toolTip">
         <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
@@ -99,7 +99,7 @@
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="18" column="0">
       <widget class="QCheckBox" name="chkBoxShowProtocol">
        <property name="toolTip">
         <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
@@ -149,6 +149,25 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
+     <item row="18" column="1">
+      <widget class="QComboBox" name="cbProtoView">
+       <item>
+        <property name="text">
+         <string>Bits</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hex</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ASCII</string>
+        </property>
+       </item>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="lInfoLenText">
        <property name="sizePolicy">
@@ -166,25 +185,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse</set>
        </property>
-      </widget>
-     </item>
-     <item row="19" column="1">
-      <widget class="QComboBox" name="cbProtoView">
-       <item>
-        <property name="text">
-         <string>Bits</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Hex</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ASCII</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="4" column="1">
@@ -615,35 +615,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
        <property name="maximum">
         <number>15</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="0">
-      <widget class="QLabel" name="labelSpectrogramLOD">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the level of detail for spectrogram. A higher level of detail will give you a higher resolution, but it may take some seconds to calculate the more accurate spectrogram.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Level of Detail:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="1">
-      <widget class="QSlider" name="sliderSpectrogramLOD">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Define the level of detail for spectrogram. A higher level of detail will give you a higher resolution, but it may take some seconds to calculate the more accurate spectrogram.</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

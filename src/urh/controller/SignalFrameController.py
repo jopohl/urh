@@ -360,7 +360,7 @@ class SignalFrameController(QFrame):
 
     def create_new_signal(self, start, end):
         if start != end:
-            new_signal = self.signal.create_new(start, end)
+            new_signal = self.signal.create_new(start=start, end=end)
             self.signal_created.emit(new_signal)
         else:
             Errors.empty_selection()
@@ -1124,9 +1124,8 @@ class SignalFrameController(QFrame):
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
         self.setCursor(Qt.WaitCursor)
         filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high)
-        signal = Signal("", "Filtered")
-        signal._fulldata = filtered.astype(np.complex64)
-        signal.sample_rate = self.signal.sample_rate
+        signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
+        signal.name = self.signal.name + " (filtered)"
         self.signal_created.emit(signal)
         self.unsetCursor()
 

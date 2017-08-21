@@ -278,13 +278,15 @@ class MainController(QMainWindow):
 
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
-        if not has_entry:
+
+        if not has_entry and not signal.changed:
             signal.auto_detect()
+
         signal.blockSignals(False)
 
         self.signal_protocol_dict[sig_frame] = pa
 
-        sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
+        sig_frame.refresh(draw_full_signal=True)  # protocol is derived here
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sig_frame.ui.gvSignal.redraw_view()
 

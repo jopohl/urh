@@ -1014,6 +1014,10 @@ class SignalFrameController(QFrame):
         super().resizeEvent(event)
         self.on_slider_y_scale_value_changed()
 
+        # Force update of GVS, when size changed e.g. when Project Tree is opened
+        if not self.spectrogram_is_active:
+            self.ui.gvSignal.zoomed.emit(-1)
+
     @pyqtSlot()
     def on_info_btn_clicked(self):
         sdc = SignalDetailsController(self.signal, self)

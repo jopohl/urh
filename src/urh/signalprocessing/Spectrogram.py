@@ -90,7 +90,8 @@ class Spectrogram(object):
         return np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
 
     def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
-        spectrogram = np.fft.fftshift(self.stft(samples))
+        # Only shift axis 1 (frequency) and not time
+        spectrogram = np.fft.fftshift(self.stft(samples), axes=(1,))
         spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert magnitudes to decibel
         self.time_bins, self.freq_bins = np.shape(spectrogram)
         # Flip Array so Y axis goes from negative to positive

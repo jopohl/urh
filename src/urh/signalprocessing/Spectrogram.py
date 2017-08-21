@@ -95,7 +95,7 @@ class Spectrogram(object):
         spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert magnitudes to decibel
         self.time_bins, self.freq_bins = np.shape(spectrogram)
         # Flip Array so Y axis goes from negative to positive
-        return np.flipud(np.fliplr(spectrogram))
+        return np.fliplr(spectrogram)
 
     def create_spectrogram_image(self, sample_start: int=None, sample_end: int=None, step: int=None):
         spectrogram = self.__calculate_spectrogram(self.samples[sample_start:sample_end:step])

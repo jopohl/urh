@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
-from PyQt5.QtGui import QMouseEvent, QKeyEvent, QPainter
-from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
+from PyQt5.QtWidgets import QGraphicsView, QAction
 
 from urh import constants
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
@@ -35,6 +35,13 @@ class SelectableGraphicView(QGraphicsView):
         self.separation_area_moving = False
 
         self.shift_mode = False  # Shift Key currently pressed?
+
+        self.select_all_action = QAction(self.tr("Select all"), self)
+        self.select_all_action.setShortcut(QKeySequence.SelectAll)
+        self.select_all_action.triggered.connect(self.select_all)
+        self.select_all_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.select_all_action.setIcon(QIcon.fromTheme("edit-select-all"))
+        self.addAction(self.select_all_action)
 
     def scene(self) -> ZoomableScene:
         return super().scene()
@@ -294,6 +301,9 @@ class SelectableGraphicView(QGraphicsView):
             self.set_horizontal_selection(x, w)
         else:
             self.set_vertical_selection(y, h)
+
+    def select_all(self):
+        self.__set_selection_area(*self.sceneRect().getCoords())
 
     def emit_selection_size_changed(self):
         if self.has_horizontal_selection:

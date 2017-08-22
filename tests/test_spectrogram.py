@@ -57,7 +57,7 @@ class TestSpectrogram(QtTestCase):
         create_action.trigger()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 3)
-        filtered_frame2 = self.form.signal_tab_controller.signal_frames[2]
+        filtered_frame2 = self.form.signal_tab_controller.signal_frames[1]
         filtered_frame2.ui.cbModulationType.setCurrentText("ASK")
         filtered_frame2.ui.spinBoxInfoLen.setValue(100)
         filtered_frame2.ui.spinBoxInfoLen.editingFinished.emit()

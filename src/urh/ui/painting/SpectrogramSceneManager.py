@@ -21,13 +21,9 @@ class SpectrogramSceneManager(SceneManager):
     def num_samples(self):
         return len(self.spectrogram.samples)
 
-    def set_parameters(self, samples: np.ndarray, window_size) -> bool:
+    def set_parameters(self, samples: np.ndarray, window_size, data_min, data_max) -> bool:
         """
-
-        :param samples:
-        :param window_size:
-        :param force_redraw:
-        :return: True if redraw of scene is needed
+        Return true if redraw is needed
         """
         redraw_needed = False
         if self.samples_need_update:
@@ -37,6 +33,14 @@ class SpectrogramSceneManager(SceneManager):
 
         if window_size != self.spectrogram.window_size:
             self.spectrogram.window_size = window_size
+            redraw_needed = True
+
+        if data_min != self.spectrogram.data_min:
+            self.spectrogram.data_min = data_min
+            redraw_needed = True
+
+        if data_max != self.spectrogram.data_max:
+            self.spectrogram.data_max = data_max
             redraw_needed = True
 
         return redraw_needed

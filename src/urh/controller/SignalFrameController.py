@@ -69,6 +69,8 @@ class SignalFrameController(QFrame):
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
         self.ui.sliderFFTWindowSize.setValue(int(math.log2(Spectrogram.DEFAULT_FFT_WINDOW_SIZE)))
+        self.ui.sliderSpectrogramMin.setValue(self.ui.gvSpectrogram.scene_manager.spectrogram.data_min)
+        self.ui.sliderSpectrogramMax.setValue(self.ui.gvSpectrogram.scene_manager.spectrogram.data_max)
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
         self.set_filter_button_caption()
@@ -163,6 +165,8 @@ class SignalFrameController(QFrame):
         self.ui.btnShowHideStartEnd.clicked.connect(self.on_btn_show_hide_start_end_clicked)
         self.filter_dialog.filter_accepted.connect(self.on_filter_dialog_filter_accepted)
         self.ui.sliderFFTWindowSize.valueChanged.connect(self.on_slider_fft_window_size_value_changed)
+        self.ui.sliderSpectrogramMin.valueChanged.connect(self.on_slider_spectrogram_min_value_changed)
+        self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
 
@@ -294,6 +298,10 @@ class SignalFrameController(QFrame):
     def __set_spectrogram_adjust_widgets_visibility(self):
         self.ui.labelFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
         self.ui.sliderFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.labelSpectrogramMin.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.labelSpectrogramMax.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.sliderSpectrogramMin.setVisible(self.ui.cbSignalView.currentIndex() == 2)
+        self.ui.sliderSpectrogramMax.setVisible(self.ui.cbSignalView.currentIndex() == 2)
 
     def __set_selected_bandwidth(self):
         try:
@@ -328,6 +336,14 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_slider_fft_window_size_value_changed(self):
+        self.spectrogram_update_timer.start()
+
+    @pyqtSlot()
+    def on_slider_spectrogram_min_value_changed(self):
+        self.spectrogram_update_timer.start()
+
+    @pyqtSlot()
+    def on_slider_spectrogram_max_value_changed(self):
         self.spectrogram_update_timer.start()
 
     def mousePressEvent(self, event):
@@ -526,8 +542,10 @@ class SignalFrameController(QFrame):
     def draw_spectrogram(self, show_full_scene=False, force_redraw=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
+        data_min, data_max = self.ui.sliderSpectrogramMin.value(), self.ui.sliderSpectrogramMax.value()
 
-        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size)
+        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size,
+                                                                           data_min=data_min, data_max=data_max)
         self.ui.gvSpectrogram.scene_manager.update_scene_rect()
 
         if show_full_scene:

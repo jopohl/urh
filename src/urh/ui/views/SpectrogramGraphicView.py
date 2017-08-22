@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMenu
 
+from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
@@ -47,9 +48,14 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         self._add_zoom_actions_to_menu(menu)
 
         if self.something_is_selected:
-            create_from_frequency_selection = menu.addAction("Create signal from frequency selection")
+            # Todo: Add configured bandwidth to action text
+            create_from_frequency_selection = menu.addAction(self.tr("Create signal from frequency selection"))
             create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
+
+        configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
+        configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
+        configure_filter_bw.setIcon(QIcon.fromTheme("configure"))
 
         return menu
 
@@ -82,3 +88,8 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             f_low, f_high = f_high, f_low
 
         self.bandpass_filter_triggered.emit(f_low, f_high)
+
+    @pyqtSlot()
+    def on_configure_filter_bw_triggered(self):
+        dialog = FilterBandwidthDialogController(parent=self)
+        dialog.show()

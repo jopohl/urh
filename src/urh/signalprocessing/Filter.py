@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from urh.cythonext import signalFunctions
 from enum import Enum
 
@@ -8,6 +9,13 @@ class FilterType(Enum):
     custom = "custom"
 
 class Filter(object):
+    BANDWIDTHS = {
+        "Very Narrow": 0.001,
+        "Narrow": 0.01,
+        "Medium": 0.08,
+        "Wide": 0.1,
+        "Very Wide": 0.42
+    }
 
     def __init__(self, taps: list, filter_type: FilterType = FilterType.custom):
         self.filter_type = filter_type
@@ -18,6 +26,11 @@ class Filter(object):
             input_signal = np.array(input_signal, dtype=np.complex64)
 
         return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
+
+    @classmethod
+    def filter_length_from_bandwidth(cls, bw):
+        N = int(math.ceil((4 / bw)))
+        return N + 1 if N % 2 == 0 else N  # Ensure N is odd.
 
     @classmethod
     def fft_convolve_1d(cls, x: np.ndarray, h: np.ndarray):
@@ -47,8 +60,7 @@ class Filter(object):
 
     @classmethod
     def design_windowed_sinc_lpf(cls, fc, bw):
-        N = int(np.ceil((4 / bw)))
-        N += 1 if N % 2 == 0 else 0  # Ensure N is odd.
+        N = cls.filter_length_from_bandwidth(bw)
 
         # Compute sinc filter impulse response
         h = np.sinc(2 * fc * (np.arange(N) - (N - 1) / 2.))

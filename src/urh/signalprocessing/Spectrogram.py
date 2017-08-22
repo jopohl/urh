@@ -108,7 +108,7 @@ class Spectrogram(object):
         return self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
 
     def create_image_segments(self):
-        n_segments = self.time_bins // self.MAX_LINES_PER_VIEW
+        n_segments = max(1, self.time_bins // self.MAX_LINES_PER_VIEW)
         step = self.time_bins / n_segments
         step = max(1, int((step / self.hop_size) * self.hop_size ** 2))
 

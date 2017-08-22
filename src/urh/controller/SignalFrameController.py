@@ -300,8 +300,8 @@ class SignalFrameController(QFrame):
         except ValueError:
             return
 
-        if self.ui.gvSpectrogram.scene().spectrogram_image and self.signal:
-            bw = (num_samples / self.ui.gvSpectrogram.scene().spectrogram_image.pixmap().height()) * self.signal.sample_rate
+        if self.ui.gvSpectrogram.height_spectrogram and self.signal:
+            bw = (num_samples / self.ui.gvSpectrogram.height_spectrogram) * self.signal.sample_rate
             self.ui.lDuration.setText(Formatter.big_value_with_suffix(bw) + "Hz")
 
     def __set_duration(self):  # On Signal Sample Rate changed
@@ -525,10 +525,15 @@ class SignalFrameController(QFrame):
     def draw_spectrogram(self, show_full_scene=False, force_redraw=False):
         self.setCursor(Qt.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
-        self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size,
-                                                           force_redraw=force_redraw)
+
+        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size)
+        self.ui.gvSpectrogram.scene_manager.update_scene_rect()
+
         if show_full_scene:
             self.ui.gvSpectrogram.show_full_scene()
+
+        if redraw_needed or force_redraw:
+            self.ui.gvSpectrogram.scene_manager.show_full_scene()
 
         self.on_slider_y_scale_value_changed()
 
@@ -920,7 +925,7 @@ class SignalFrameController(QFrame):
     def __set_samples_in_view(self):
         if self.spectrogram_is_active:
             self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSpectrogram.view_rect().width())))
-            self.ui.lSamplesTotal.setText("{0:n}".format(self.ui.gvSpectrogram.scene().width_spectrogram()))
+            self.ui.lSamplesTotal.setText("{0:n}".format(self.ui.gvSpectrogram.width_spectrogram))
         else:
             self.ui.lSamplesInView.setText("{0:n}".format(int(self.ui.gvSignal.view_rect().width())))
             self.ui.lSamplesTotal.setText("{0:n}".format(self.signal.num_samples))

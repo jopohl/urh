@@ -11,18 +11,9 @@ class SpectrogramScene(ZoomableScene):
         super().__init__(parent)
         self.removeItem(self.selection_area)
 
-        self.spectrogram_image = self.addPixmap(QPixmap())
-
         self.selection_area = VerticalSelection(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR, opacity=0.6)
+        self.selection_area.setZValue(1)
         self.addItem(self.selection_area)
 
     def width_spectrogram(self):
         return self.spectrogram_image.pixmap().width()
-
-    def set_spectrogram_image(self, image: QImage):
-        self.spectrogram_image.setPixmap(QPixmap.fromImage(image))
-        self.setSceneRect(QRectF(image.rect()))
-
-    def clear(self):
-        self.spectrogram_image = None
-        super().clear()

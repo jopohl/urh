@@ -233,5 +233,5 @@ class SignalTabController(QWidget):
 
     def redraw_spectrograms(self):
         for frame in self.signal_frames:
-            if frame.ui.gvSpectrogram.scene().width_spectrogram() > 0:
+            if frame.ui.gvSpectrogram.width_spectrogram > 0:
                 frame.draw_spectrogram(force_redraw=True)

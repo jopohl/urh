@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from PyQt5.QtGui import QImage
 
 from urh import colormaps
@@ -22,8 +23,6 @@ class Spectrogram(object):
         self.__window_size = window_size
         self.__overlap_factor = overlap_factor
         self.__window_function = window_function
-
-        self.freq_bins, self.time_bins = 0, 0  # will be written in __calculate spectrogram
 
         self.data_min, self.data_max = -140, 10
 
@@ -60,6 +59,14 @@ class Spectrogram(object):
         self.__window_function = value
 
     @property
+    def time_bins(self):
+        return int(math.ceil(len(self.samples) / self.hop_size))
+
+    @property
+    def freq_bins(self):
+        return self.window_size
+
+    @property
     def hop_size(self):
         """
         hop size determines by how many samples the window is advanced
@@ -79,7 +86,7 @@ class Spectrogram(object):
         else:
             samples = samples
 
-        num_frames = (len(samples) - self.window_size) // hop_size + 1
+        num_frames = max(1, (len(samples) - self.window_size) // hop_size + 1)
 
         # Get frames as numpy view with stride_tricks to save RAM
         # Same as: frames = [padded_samples[i*hop_size:i*hop_size+self.window_size] for i in range(num_frames)]
@@ -93,13 +100,21 @@ class Spectrogram(object):
         # Only shift axis 1 (frequency) and not time
         spectrogram = np.fft.fftshift(self.stft(samples), axes=(1,))
         spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert magnitudes to decibel
-        self.time_bins, self.freq_bins = np.shape(spectrogram)
         # Flip Array so Y axis goes from negative to positive
         return np.fliplr(spectrogram)
 
     def create_spectrogram_image(self, sample_start: int=None, sample_end: int=None, step: int=None):
         spectrogram = self.__calculate_spectrogram(self.samples[sample_start:sample_end:step])
         return self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
+
+    def create_image_segments(self):
+        n_segments = self.time_bins // self.MAX_LINES_PER_VIEW
+        step = self.time_bins / n_segments
+        step = max(1, int((step / self.hop_size) * self.hop_size ** 2))
+
+        for i in range(0, len(self.samples), step):
+            image = self.create_spectrogram_image(sample_start=i, sample_end=i+step)
+            yield image
 
     @staticmethod
     def apply_bgra_lookup(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> np.ndarray:

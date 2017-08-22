@@ -25,6 +25,20 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     def y_center(self):
         return self.sceneRect().height() // 2
 
+    @property
+    def height_spectrogram(self):
+        if self.scene_manager and self.scene_manager.spectrogram:
+            return self.scene_manager.spectrogram.freq_bins
+        else:
+            return 0
+
+    @property
+    def width_spectrogram(self):
+        if self.scene_manager and self.scene_manager.spectrogram:
+            return self.scene_manager.spectrogram.time_bins
+        else:
+            return 0
+
     def scene(self) -> SpectrogramScene:
         return super().scene()
 

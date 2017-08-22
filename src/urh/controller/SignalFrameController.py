@@ -2,7 +2,8 @@ import math
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
-from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent
+from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
+    QResizeEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
     QCheckBox, QApplication
 
@@ -1000,13 +1001,14 @@ class SignalFrameController(QFrame):
         if self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
+        old_width, new_width = max(1, event.oldSize().width()), max(1, event.size().width())
         super().resizeEvent(event)
         self.on_slider_y_scale_value_changed()
 
         # Force update of GVS, when size changed e.g. when Project Tree is opened
         if not self.spectrogram_is_active:
-            self.ui.gvSignal.zoomed.emit(-1)
+            self.ui.gvSignal.zoom(new_width / old_width, zoom_to_mouse_cursor=False)
 
     @pyqtSlot()
     def on_info_btn_clicked(self):

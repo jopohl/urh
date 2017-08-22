@@ -212,6 +212,7 @@ class OptionsController(QDialog):
         for colormap_name in sorted(colormaps.maps.keys()):
             image = Spectrogram.create_colormap_image(colormap_name, height=height)
             rb = QRadioButton(colormap_name)
+            rb.setObjectName(colormap_name)
             rb.setChecked(colormap_name == selected)
             rb.setIcon(QIcon(QPixmap.fromImage(image)))
             rb.setIconSize(QSize(256, height))
@@ -237,10 +238,11 @@ class OptionsController(QDialog):
         for i in range(self.ui.scrollAreaWidgetSpectrogramColormapContents.layout().count()):
             widget = self.ui.scrollAreaWidgetSpectrogramColormapContents.layout().itemAt(i).widget()
             if isinstance(widget, QRadioButton) and widget.isChecked():
-                if widget.text() != colormaps.read_selected_colormap_name_from_settings():
-                    colormaps.choose_colormap(widget.text())
-                    colormaps.write_selected_colormap_to_settings(widget.text())
-                    changed_values["spectrogram_colormap"] = widget.text()
+                selected_colormap_name = widget.objectName()
+                if selected_colormap_name != colormaps.read_selected_colormap_name_from_settings():
+                    colormaps.choose_colormap(selected_colormap_name)
+                    colormaps.write_selected_colormap_to_settings(selected_colormap_name)
+                    changed_values["spectrogram_colormap"] = selected_colormap_name
                 break
 
         self.values_changed.emit(changed_values)

@@ -25,7 +25,7 @@ class FilterBandwidthDialogController(QDialog):
                 elif key is not None and name.endswith("KernelLength"):
                     item.setText(str(Filter.get_filter_length_from_bandwidth(Filter.BANDWIDTHS[key])))
             elif isinstance(item, QRadioButton):
-                item.setChecked(bw_type.replace(" ", "") == item.objectName().replace("radioButton", ""))
+                item.setChecked(bw_type.replace(" ", "_") == item.objectName().replace("radioButton", ""))
 
         self.ui.doubleSpinBoxCustomBandwidth.setValue(custom_bw)
         self.ui.spinBoxCustomKernelLength.setValue(Filter.get_filter_length_from_bandwidth(custom_bw))
@@ -60,6 +60,7 @@ class FilterBandwidthDialogController(QDialog):
     @pyqtSlot()
     def on_accepted(self):
         if self.checked_radiobutton is not None:
-            constants.SETTINGS.setValue("bandpass_filter_bw_type", self.checked_radiobutton.text())
+            bw_type = self.checked_radiobutton.objectName().replace("radioButton", "").replace("_", " ")
+            constants.SETTINGS.setValue("bandpass_filter_bw_type", bw_type)
 
         constants.SETTINGS.setValue("bandpass_filter_custom_bw", self.ui.doubleSpinBoxCustomBandwidth.value())

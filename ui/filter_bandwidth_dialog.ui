@@ -159,14 +159,14 @@
       </widget>
      </item>
      <item row="6" column="0">
-      <widget class="QRadioButton" name="radioButtonVeryWide">
+      <widget class="QRadioButton" name="radioButtonVery_Wide">
        <property name="text">
         <string>Very Wide</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QRadioButton" name="radioButtonVeryNarrow">
+      <widget class="QRadioButton" name="radioButtonVery_Narrow">
        <property name="text">
         <string>Very Narrow</string>
        </property>

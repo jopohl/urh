@@ -662,14 +662,14 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      <item row="18" column="0">
       <widget class="QLabel" name="labelSpectrogramMin">
        <property name="text">
-        <string>Data&lt;sub&gt;min&lt;/sub&gt;</string>
+        <string>Data&lt;sub&gt;min&lt;/sub&gt;:</string>
        </property>
       </widget>
      </item>
      <item row="19" column="0">
       <widget class="QLabel" name="labelSpectrogramMax">
        <property name="text">
-        <string>Data&lt;sub&gt;max&lt;/sub&gt;</string>
+        <string>Data&lt;sub&gt;max&lt;/sub&gt;:</string>
        </property>
       </widget>
      </item>

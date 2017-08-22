@@ -1,5 +1,7 @@
 import numpy as np
 import math
+
+from urh import constants
 from urh.cythonext import signalFunctions
 from enum import Enum
 
@@ -28,7 +30,23 @@ class Filter(object):
         return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 
     @classmethod
-    def filter_length_from_bandwidth(cls, bw):
+    def read_configured_filter_bw(cls) -> float:
+        bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
+
+        if bw_type in cls.BANDWIDTHS:
+            return cls.BANDWIDTHS[bw_type]
+
+        if bw_type.lower() == "custom":
+            return constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)
+
+        return 0.08
+
+    @classmethod
+    def get_bandwidth_from_filter_length(cls, N):
+        return 4 / N
+
+    @classmethod
+    def get_filter_length_from_bandwidth(cls, bw):
         N = int(math.ceil((4 / bw)))
         return N + 1 if N % 2 == 0 else N  # Ensure N is odd.
 
@@ -60,7 +78,7 @@ class Filter(object):
 
     @classmethod
     def design_windowed_sinc_lpf(cls, fc, bw):
-        N = cls.filter_length_from_bandwidth(bw)
+        N = cls.get_filter_length_from_bandwidth(bw)
 
         # Compute sinc filter impulse response
         h = np.sinc(2 * fc * (np.arange(N) - (N - 1) / 2.))

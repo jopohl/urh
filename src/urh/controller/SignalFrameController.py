@@ -613,7 +613,7 @@ class SignalFrameController(QFrame):
     @pyqtSlot(int)
     def on_spinbox_selection_start_value_changed(self, value: int):
         if self.spectrogram_is_active:
-            self.ui.gvSpectrogram.set_vertical_selection(y=self.ui.gvSpectrogram.sceneRect().height()-value)
+            self.ui.gvSpectrogram.set_vertical_selection(y=self.ui.gvSpectrogram.sceneRect().height() - value)
             self.ui.gvSpectrogram.emit_selection_size_changed()
             self.ui.gvSpectrogram.selection_area.finished = True
         else:
@@ -1130,9 +1130,11 @@ class SignalFrameController(QFrame):
     @pyqtSlot(float, float)
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
         self.setCursor(Qt.WaitCursor)
-        filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high)
+        filter_bw = Filter.read_configured_filter_bw()
+        filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high, filter_bw=filter_bw)
         signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
-        signal.name = self.signal.name + " (filtered)"
+        signal.name = self.signal.name + " filtered with f_low={0:.4n} f_high={1:.4n} bw={2:.4n}".format(f_low, f_high,
+                                                                                                       filter_bw)
         self.signal_created.emit(signal)
         self.unsetCursor()
 

@@ -11,7 +11,7 @@ from urh.ui.ui_tab_interpretation import Ui_Interpretation
 class SignalTabController(QWidget):
     frame_closed = pyqtSignal(SignalFrameController)
     not_show_again_changed = pyqtSignal()
-    signal_created = pyqtSignal(Signal)
+    signal_created = pyqtSignal(int, Signal)
     files_dropped = pyqtSignal(list)
     frame_was_dropped = pyqtSignal(int, int)
 
@@ -53,7 +53,7 @@ class SignalTabController(QWidget):
     def close_frame(self, frame:SignalFrameController):
         self.frame_closed.emit(frame)
 
-    def add_signal_frame(self, proto_analyzer):
+    def add_signal_frame(self, proto_analyzer, index=-1):
         self.__set_getting_started_status(False)
         sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
         sframes = self.signal_frames
@@ -63,7 +63,7 @@ class SignalTabController(QWidget):
             sig_frame.ui.btnSaveSignal.show()
 
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
-        sig_frame.signal_created.connect(self.signal_created.emit)
+        sig_frame.signal_created.connect(self.emit_signal_created)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
         sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
         sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
@@ -78,7 +78,8 @@ class SignalTabController(QWidget):
             sig_frame.ui.cbSignalView.setCurrentIndex(1)
             sig_frame.ui.cbSignalView.setDisabled(True)
 
-        self.ui.splitter.insertWidget(self.num_frames, sig_frame)
+        index = self.num_frames if index == -1 else index
+        self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
         default_view = constants.SETTINGS.value('default_view', 0, int)
@@ -235,3 +236,12 @@ class SignalTabController(QWidget):
         for frame in self.signal_frames:
             if frame.ui.gvSpectrogram.width_spectrogram > 0:
                 frame.draw_spectrogram(force_redraw=True)
+
+    @pyqtSlot(Signal)
+    def emit_signal_created(self, signal):
+        try:
+            index = self.signal_frames.index(self.sender()) + 1
+        except ValueError:
+            index = -1
+
+        self.signal_created.emit(index, signal)

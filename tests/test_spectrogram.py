@@ -11,7 +11,7 @@ class TestSpectrogram(QtTestCase):
 
     def test_create_spectrogram_image(self):
         image = self.spectrogram.create_spectrogram_image()
-        self.assertEqual(image.width(), self.spectrogram.time_bins)
+        self.assertEqual(image.width(), self.spectrogram.time_bins - 2)
         self.assertEqual(image.height(), self.spectrogram.freq_bins)
 
     def test_create_colormap_image(self):

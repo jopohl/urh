@@ -535,6 +535,7 @@ class SignalFrameController(QFrame):
 
         if redraw_needed or force_redraw:
             self.ui.gvSpectrogram.scene_manager.show_full_scene()
+            self.ui.gvSpectrogram.show_full_scene()
 
         self.on_slider_y_scale_value_changed()
 

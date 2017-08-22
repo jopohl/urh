@@ -59,6 +59,10 @@ class SpectrogramSceneManager(SceneManager):
             x_pos += image.width()
             QApplication.instance().processEvents()
 
+        # Estimated time_bins from update_scene_rect may be too many for small signals so we update the scene rect
+        # after we know how wide the spectrogram actually is
+        self.scene.setSceneRect(0, 0, x_pos, self.spectrogram.freq_bins)
+
     def init_scene(self, apply_padding=True):
         pass
 

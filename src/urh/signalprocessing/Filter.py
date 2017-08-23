@@ -5,6 +5,8 @@ from urh import constants
 from urh.cythonext import signalFunctions
 from enum import Enum
 
+from urh.util.Logger import logger
+
 
 class FilterType(Enum):
     moving_average = "moving average"
@@ -74,7 +76,15 @@ class Filter(object):
         assert f_low <= f_high
 
         h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
-        return np.convolve(data, h, 'same')
+
+        # Choose normal or FFT convolution based on heuristic described in
+        # https://softwareengineering.stackexchange.com/questions/171757/computational-complexity-of-correlation-in-time-vs-multiplication-in-frequency-s/
+        if len(h) < 8 * math.log(math.sqrt(len(data))):
+            logger.debug("Use normal convolve")
+            return np.convolve(data, h, 'same')
+        else:
+            logger.debug("Use FFT convolve")
+            return cls.fft_convolve_1d(data, h)
 
     @classmethod
     def design_windowed_sinc_lpf(cls, fc, bw):

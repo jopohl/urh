@@ -1,3 +1,4 @@
+import math
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QAction
@@ -56,8 +57,8 @@ class EpicGraphicView(EditableGraphicView):
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
         sub_path_ranges = []
         colors = []
-        start = int(start) if start > 0 else 0
-        end = int(end) if end == int(end) else int(end) + 1
+        start = max(0, int(start))
+        end = int(math.ceil(end))
 
         if not self.protocol.messages:
             return None, None
@@ -68,6 +69,9 @@ class EpicGraphicView(EditableGraphicView):
 
             color = None if message.participant is None else constants.PARTICIPANT_COLORS[
                 message.participant.color_index]
+
+            if color is None:
+                continue
 
             # Append the pause until first bit of message
             sub_path_ranges.append((start, message.bit_sample_pos[0]))
@@ -82,7 +86,7 @@ class EpicGraphicView(EditableGraphicView):
                 break
 
             # Data part of the message
-            sub_path_ranges.append((message.bit_sample_pos[0], message.bit_sample_pos[-2]))
+            sub_path_ranges.append((message.bit_sample_pos[0], message.bit_sample_pos[-2] + 1))
             colors.append(color)
 
             start = message.bit_sample_pos[-2] + 1

@@ -411,7 +411,12 @@ class SignalFrameController(QFrame):
             self.save_signal_as()
 
     def save_signal_as(self):
-        filename = FileOperator.get_save_file_name(self.signal.filename, wav_only=self.signal.wav_mode)
+        if self.signal.filename:
+            initial_name = self.signal.filename
+        else:
+            initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".complex"
+
+        filename = FileOperator.get_save_file_name(initial_name, wav_only=self.signal.wav_mode)
         if filename:
             try:
                 self.signal.save_as(filename)

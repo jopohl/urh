@@ -985,8 +985,12 @@ class SignalFrameController(QFrame):
 
     def set_qad_tooltip(self, noise_threshold):
         self.ui.cbSignalView.setToolTip(
-            "<html><head/><body><p>Choose the view of your signal.</p><p>The quadrature demodulation uses a <b>threshold of magnitude,</b> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this threshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <b>context menu</b>.</p><p>Current noise threshold is: <b>" + str(
-                noise_threshold) + "</b></p></body></html>")
+            "<html><head/><body><p>Choose the view of your signal: Analog, Demodulated or Spectrogram.</p>"
+            "<p>The quadrature demodulation uses a <b>threshold of magnitude,</b> to <b>supress noise</b>. "
+            "All samples with a magnitude lower than this threshold will be eliminated "
+            "(set to <i>-127</i>) after demodulation.</p>"
+            "<p>Tune this value by selecting a <i>noisy area</i> and mark it as noise using <b>context menu</b>.</p>"
+            "<p>Current noise threshold is: <b>" + str(noise_threshold) + "</b></p></body></html>")
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         if self.signal is None:

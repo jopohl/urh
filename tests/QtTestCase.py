@@ -45,6 +45,9 @@ class QtTestCase(unittest.TestCase):
         self.wait_before_new_file()
         self.form.add_signalfile(get_path_for_data_file(filename))
 
+    def get_path_for_filename(self, filename) -> str:
+        return get_path_for_data_file(filename)
+
     def add_signal_to_generator(self, signal_index: int):
         gframe = self.form.generator_tab_controller
         item = gframe.tree_model.rootItem.children[0].children[signal_index]

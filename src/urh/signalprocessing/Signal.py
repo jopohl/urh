@@ -318,15 +318,18 @@ class Signal(QObject):
             self.__parameter_cache[self.modulation_type_str]["qad_center"] = center
         return center
 
-    def create_new(self, start:int, end:int):
+    def create_new(self, start=0, end=0, new_data=None):
         new_signal = Signal("", "New " + self.name)
-        new_signal._fulldata = self.data[start:end]
+
+        if new_data is None:
+            new_signal._fulldata = self.data[start:end]
+        else:
+            new_signal._fulldata = new_data
+
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
         new_signal.__bit_len = self.bit_len
-        new_signal.history = [("Crop", 0, len(self._fulldata))]
-        new_signal.cur_history_index = 0
         new_signal.__qad_center = self.qad_center
         new_signal.changed = True
         return new_signal

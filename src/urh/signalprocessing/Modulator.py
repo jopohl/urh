@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
 from urh.cythonext import path_creator
-from urh.ui.ZoomableScene import ZoomableScene
+from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
 

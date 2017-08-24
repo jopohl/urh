@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsScene
 
-from urh.ui.LabeledArrow import LabeledArrow
+from urh.ui.painting.LabeledArrow import LabeledArrow
 
 
 class LegendScene(QGraphicsScene):

@@ -12,6 +12,7 @@ from PyQt5.QtGui import QPainterPath
 from cython.parallel import prange
 
 from urh import constants
+import math
 
 cpdef create_path(float[:] samples, long long start, long long end, list subpath_ranges=None):
     cdef float[:] values
@@ -59,10 +60,14 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
     cdef list result = []
     if scale_factor == 0:
         scale_factor = 1  # prevent division by zero
+
     for subpath_range in subpath_ranges:
-        substart = int((subpath_range[0]-start)/scale_factor)
-        subend = int((subpath_range[1]-start)/scale_factor)
-        result.append(array_to_QPath(x[substart:subend], values[substart:subend]))
+        sub_start = ((((subpath_range[0]-start)/scale_factor) * scale_factor) - 2*scale_factor) / scale_factor
+        sub_start =int(max(0, math.floor(sub_start)))
+        sub_end = ((((subpath_range[1]-start)/scale_factor) * scale_factor) + 2*scale_factor) / scale_factor
+        sub_end = int(max(0, math.ceil(sub_end)))
+        result.append(array_to_QPath(x[sub_start:sub_end], values[sub_start:sub_end]))
+
     return result
 
 

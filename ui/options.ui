@@ -14,13 +14,14 @@
    <string>Options</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="configure"/>
+   <iconset theme="configure">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -70,7 +71,7 @@
       <attribute name="title">
        <string>View</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -105,19 +106,6 @@
            </item>
           </widget>
          </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </item>
        <item>
@@ -129,6 +117,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxHoldShiftToDrag">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, you need to &lt;span style=&quot; font-weight:600;&quot;&gt;hold the Shift key to drag&lt;/span&gt; with the mouse inside graphic views like the drawn signal in Interpreation tab, while making a selection with the mouse does not require holding any buttons.&lt;/p&gt;&lt;p&gt;If unchecked, this is inverted: Hold shift to make a selection, and drag by default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Hold shift to drag</string>
          </property>
@@ -149,43 +140,61 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Choose application theme (requires restart):</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Choose application theme (requires restart):</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBoxTheme">
+           <item>
+            <property name="text">
+             <string>native look (default)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>fallback theme</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>fallback theme (dark)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBoxTheme">
-         <item>
-          <property name="text">
-           <string>native look (default)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>fallback theme</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>fallback theme (dark)</string>
-          </property>
-         </item>
+        <widget class="QGroupBox" name="groupBoxSpectrogramColormap">
+         <property name="title">
+          <string>Spectrogram Colormap</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QScrollArea" name="scrollAreaSpectrogramColormap">
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetSpectrogramColormapContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>616</width>
+               <height>307</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4"/>
+            </widget>
+           </widget>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>383</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

@@ -1,9 +1,9 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
 from PyQt5.QtGui import QPen
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
 
 from urh import constants
-from urh.ui.ROI import ROI
+from urh.ui.painting.HorizontalSelection import HorizontalSelection
 
 
 class ZoomableScene(QGraphicsScene):
@@ -14,7 +14,8 @@ class ZoomableScene(QGraphicsScene):
         self.zeros_area = None
         self.ones_arrow = None
         self.zeros_arrow = None
-        self.selection_area = ROI(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR, opacity=constants.SELECTION_OPACITY)
+        self.selection_area = HorizontalSelection(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR,
+                                                  opacity=constants.SELECTION_OPACITY)
         self.addItem(self.selection_area)
 
     def draw_noise_area(self, y, h):
@@ -27,8 +28,7 @@ class ZoomableScene(QGraphicsScene):
             self.zeros_area.hide()
 
         if self.noise_area is None or self.noise_area.scene() != self:
-            roi = ROI(x, y, w, h, fillcolor=constants.NOISE_COLOR, opacity=constants.NOISE_OPACITY)
-           # roi.setPen(QPen(constants.NOISE_COLOR, Qt.FlatCap))
+            roi = HorizontalSelection(x, y, w, h, fillcolor=constants.NOISE_COLOR, opacity=constants.NOISE_OPACITY)
             self.noise_area = roi
             self.addItem(self.noise_area)
         else:

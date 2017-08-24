@@ -83,3 +83,7 @@ def aggregate_bits(bits: array.array, size=4) -> array.array:
         result.append(h)
 
     return result
+
+
+def clip(value, minimum, maximum):
+    return max(minimum, min(value, maximum))

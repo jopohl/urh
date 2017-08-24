@@ -1,15 +1,12 @@
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QBrush
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QPen
+from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.SignalSceneManager import SignalSceneManager
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Signal import Signal
+from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
 
 

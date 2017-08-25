@@ -9,8 +9,6 @@ from importlib import import_module
 
 from setuptools import Extension
 
-from urh.util import util
-
 USE_RELATIVE_PATHS = False
 
 DEVICES = {
@@ -154,9 +152,6 @@ def perform_health_check() -> str:
                     pass
 
             result.append(device + " -- ERROR: " + str(e))
-
-    if util.get_windows_lib_path():
-        result.append("[INFO] Used DLLs from " + util.get_windows_lib_path())
 
     return "\n".join(result)
 

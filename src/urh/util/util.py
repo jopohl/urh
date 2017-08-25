@@ -24,7 +24,6 @@ def get_windows_lib_path():
 
             arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
             dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win", arch))
-            print("Using DLLs from:", dll_dir)
         else:
             dll_dir = os.path.dirname(sys.executable)
 

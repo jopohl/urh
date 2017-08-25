@@ -6,6 +6,13 @@ from urh.util.Logger import logger
 
 
 def set_windows_lib_path():
+    dll_dir = get_windows_lib_path()
+    if dll_dir:
+        os.environ['PATH'] = dll_dir + ";" + os.environ['PATH']
+
+
+def get_windows_lib_path():
+    dll_dir = ""
     if sys.platform == "win32":
         if not hasattr(sys, "frozen"):
             util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
@@ -18,7 +25,8 @@ def set_windows_lib_path():
             print("Using DLLs from:", dll_dir)
         else:
             dll_dir = os.path.dirname(sys.executable)
-        os.environ['PATH'] = os.environ['PATH'] + ";" + dll_dir
+
+    return dll_dir
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False):

@@ -5,6 +5,9 @@ import os
 import sys
 from enum import Enum
 
+from urh.util import util
+from urh.util.Logger import logger
+
 
 class Backends(Enum):
     none = 0
@@ -108,12 +111,18 @@ class BackendHandler(object):
         return len([dev for dev, backend_container in self.device_backends.items()
                     if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
 
+    def __log_import_error(self, error: ImportError):
+        logger.info(str(error))
+        if util.get_windows_lib_path():
+            logger.info("DLL-DIR is "+util.get_windows_lib_path())
+
     @property
     def __hackrf_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import hackrf
             return True
-        except ImportError:
+        except ImportError as e:
+            self.__log_import_error(e)
             return False
 
     @property
@@ -121,7 +130,8 @@ class BackendHandler(object):
         try:
             from urh.dev.native.lib import usrp
             return True
-        except ImportError:
+        except ImportError as e:
+            self.__log_import_error(e)
             return False
 
     @property
@@ -129,7 +139,8 @@ class BackendHandler(object):
         try:
             from urh.dev.native.lib import airspy
             return True
-        except ImportError:
+        except ImportError as e:
+            self.__log_import_error(e)
             return False
 
     @property
@@ -137,7 +148,8 @@ class BackendHandler(object):
         try:
             from urh.dev.native.lib import limesdr
             return True
-        except ImportError:
+        except ImportError as e:
+            self.__log_import_error(e)
             return False
 
     @property
@@ -148,7 +160,8 @@ class BackendHandler(object):
             except ImportError:
                 from urh.dev.native.lib import rtlsdr_fallback
             return True
-        except ImportError:
+        except ImportError as e:
+            self.__log_import_error(e)
             return False
 
     def set_gnuradio_installed_status(self):

@@ -155,6 +155,9 @@ def perform_health_check() -> str:
 
             result.append(device + " -- ERROR: " + str(e))
 
+    if result and util.get_windows_lib_path():
+        result.append(util.get_windows_lib_path())
+
     return "\n".join(result)
 
 

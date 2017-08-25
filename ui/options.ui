@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>696</width>
-    <height>610</height>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -186,7 +186,7 @@
                <x>0</x>
                <y>0</y>
                <width>616</width>
-               <height>307</height>
+               <height>343</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -313,6 +313,25 @@
             <widget class="QRadioButton" name="rbGnuradioBackend">
              <property name="text">
               <string>Gnuradio backend</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnHealthCheck">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Perform a health check for native device extenions</string>
+             </property>
+             <property name="text">
+              <string>Health Check</string>
+             </property>
+             <property name="icon">
+              <iconset theme="heart"/>
              </property>
             </widget>
            </item>

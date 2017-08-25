@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(696, 610)
+        DialogOptions.resize(696, 646)
         icon = QtGui.QIcon.fromTheme("configure")
         DialogOptions.setWindowIcon(icon)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
@@ -89,7 +89,7 @@ class Ui_DialogOptions(object):
         self.scrollAreaSpectrogramColormap.setWidgetResizable(True)
         self.scrollAreaSpectrogramColormap.setObjectName("scrollAreaSpectrogramColormap")
         self.scrollAreaWidgetSpectrogramColormapContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 616, 307))
+        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 616, 343))
         self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -153,6 +153,16 @@ class Ui_DialogOptions(object):
         self.rbGnuradioBackend = QtWidgets.QRadioButton(self.tabDevices)
         self.rbGnuradioBackend.setObjectName("rbGnuradioBackend")
         self.verticalLayout_7.addWidget(self.rbGnuradioBackend)
+        self.btnHealthCheck = QtWidgets.QPushButton(self.tabDevices)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnHealthCheck.sizePolicy().hasHeightForWidth())
+        self.btnHealthCheck.setSizePolicy(sizePolicy)
+        icon = QtGui.QIcon.fromTheme("heart")
+        self.btnHealthCheck.setIcon(icon)
+        self.btnHealthCheck.setObjectName("btnHealthCheck")
+        self.verticalLayout_7.addWidget(self.btnHealthCheck)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem2)
         self.horizontalLayout.addLayout(self.verticalLayout_7)
@@ -262,7 +272,7 @@ class Ui_DialogOptions(object):
         self.verticalLayout_6.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(DialogOptions)
 
     def retranslateUi(self, DialogOptions):
@@ -294,6 +304,8 @@ class Ui_DialogOptions(object):
         self.chkBoxDeviceEnabled.setText(_translate("DialogOptions", "Enabled"))
         self.rbNativeBackend.setText(_translate("DialogOptions", "Native backend (recommended)"))
         self.rbGnuradioBackend.setText(_translate("DialogOptions", "Gnuradio backend"))
+        self.btnHealthCheck.setToolTip(_translate("DialogOptions", "Perform a health check for native device extenions"))
+        self.btnHealthCheck.setText(_translate("DialogOptions", "Health Check"))
         self.lSupport.setText(_translate("DialogOptions", "device supports sending and receiving"))
         self.labelWindowsError.setText(_translate("DialogOptions", "<html><head/><body><p><span style=\" color:#ff0000;\">Detected a 32 bit installation of python 3.</span> Install <span style=\" font-weight:600;\">64 bit version</span> to use native backends.</p></body></html>"))
         self.label_8.setText(_translate("DialogOptions", "Default sending repititions:"))

@@ -2,10 +2,19 @@ import array
 import os
 import sys
 
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit
+
 from urh.util.Logger import logger
 
 
 def set_windows_lib_path():
+    dll_dir = get_windows_lib_path()
+    if dll_dir:
+        os.environ['PATH'] = dll_dir + ";" + os.environ['PATH']
+
+
+def get_windows_lib_path():
+    dll_dir = ""
     if sys.platform == "win32":
         if not hasattr(sys, "frozen"):
             util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
@@ -15,10 +24,10 @@ def set_windows_lib_path():
 
             arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
             dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win", arch))
-            print("Using DLLs from:", dll_dir)
         else:
             dll_dir = os.path.dirname(sys.executable)
-        os.environ['PATH'] = os.environ['PATH'] + ";" + dll_dir
+
+    return dll_dir
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False):
@@ -59,6 +68,18 @@ def hex2bit(hex_str: str) -> array.array:
         result = array.array("B", [])
 
     return result
+
+
+def create_textbox_dialog(content: str, title: str, parent) -> QDialog:
+    d = QDialog(parent)
+    d.resize(800, 600)
+    d.setWindowTitle(title)
+    layout = QVBoxLayout(d)
+    text_edit = QPlainTextEdit(content)
+    text_edit.setReadOnly(True)
+    layout.addWidget(text_edit)
+    d.setLayout(layout)
+    return d
 
 
 def string2bits(bit_str: str) -> array.array:

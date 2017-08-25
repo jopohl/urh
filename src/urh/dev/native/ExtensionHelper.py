@@ -142,13 +142,16 @@ def perform_health_check() -> str:
     result = []
     for device in sorted(DEVICES.keys()):
         try:
-            suffix = "_fallback" if device in FALLBACKS else ""
-            _ = import_module("urh.dev.native.lib." + device + suffix)
+            _ = import_module("urh.dev.native.lib." + device)
             result.append(device + " -- OK")
-        except ImportError as e:
-            result.append(device + ": " + str(e))
-            if util.get_windows_lib_path():
-                result.append("dll dir is " + util.get_windows_lib_path())
+        except ImportError:
+            try:
+                _ = import_module("urh.dev.native.lib." + device + "_fallback")
+                result.append(device + " -- OK (using fallback)")
+            except ImportError as e:
+                result.append(device + " -- ERROR: " + str(e))
+                if util.get_windows_lib_path():
+                    result.append("dll dir is " + util.get_windows_lib_path())
 
     return "\n".join(result)
 

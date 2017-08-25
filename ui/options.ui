@@ -317,6 +317,25 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="btnHealthCheck">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Perform a health check for native device extenions</string>
+             </property>
+             <property name="text">
+              <string>Health Check</string>
+             </property>
+             <property name="icon">
+              <iconset theme="heart"/>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer_6">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -510,16 +529,6 @@
           <string>Native options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="4" column="0">
-           <widget class="QPushButton" name="btnHealthCheck">
-            <property name="text">
-             <string>Health Check</string>
-            </property>
-            <property name="icon">
-             <iconset theme="heart"/>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
@@ -565,13 +574,6 @@
            <widget class="QLabel" name="labelRebuildNativeStatus">
             <property name="text">
              <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLabel" name="labelHealthCheck">
-            <property name="text">
-             <string>Perform a health check of native extensions</string>
             </property>
            </widget>
           </item>

@@ -8,7 +8,7 @@ from subprocess import call
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory, \
-    QRadioButton
+    QRadioButton, QVBoxLayout, QPlainTextEdit
 
 from urh import constants, colormaps
 from urh.controller.PluginController import PluginController
@@ -20,6 +20,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
+from urh.util import util
 
 
 class OptionsController(QDialog):
@@ -137,6 +138,7 @@ class OptionsController(QDialog):
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
+        self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -394,6 +396,13 @@ class OptionsController(QDialog):
                 os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
             except OSError:
                 pass
+
+
+    @pyqtSlot()
+    def on_btn_health_check_clicked(self):
+        info = ExtensionHelper.perform_health_check()
+        d = util.create_textbox_dialog(info, "Health check for native extensions", self)
+        d.show()
 
 
     @staticmethod

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>696</width>
-    <height>610</height>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -186,7 +186,7 @@
                <x>0</x>
                <y>0</y>
                <width>616</width>
-               <height>307</height>
+               <height>343</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -510,6 +510,16 @@
           <string>Native options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnHealthCheck">
+            <property name="text">
+             <string>Health Check</string>
+            </property>
+            <property name="icon">
+             <iconset theme="heart"/>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
@@ -555,6 +565,13 @@
            <widget class="QLabel" name="labelRebuildNativeStatus">
             <property name="text">
              <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLabel" name="labelHealthCheck">
+            <property name="text">
+             <string>Perform a health check of native extensions</string>
             </property>
            </widget>
           </item>

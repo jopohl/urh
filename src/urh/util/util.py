@@ -2,6 +2,8 @@ import array
 import os
 import sys
 
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit
+
 from urh.util.Logger import logger
 
 
@@ -67,6 +69,18 @@ def hex2bit(hex_str: str) -> array.array:
         result = array.array("B", [])
 
     return result
+
+
+def create_textbox_dialog(content: str, title: str, parent) -> QDialog:
+    d = QDialog(parent)
+    d.resize(800, 600)
+    d.setWindowTitle(title)
+    layout = QVBoxLayout(d)
+    text_edit = QPlainTextEdit(content)
+    text_edit.setReadOnly(True)
+    layout.addWidget(text_edit)
+    d.setLayout(layout)
+    return d
 
 
 def string2bits(bit_str: str) -> array.array:

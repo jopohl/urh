@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(696, 610)
+        DialogOptions.resize(696, 646)
         icon = QtGui.QIcon.fromTheme("configure")
         DialogOptions.setWindowIcon(icon)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
@@ -89,7 +89,7 @@ class Ui_DialogOptions(object):
         self.scrollAreaSpectrogramColormap.setWidgetResizable(True)
         self.scrollAreaSpectrogramColormap.setObjectName("scrollAreaSpectrogramColormap")
         self.scrollAreaWidgetSpectrogramColormapContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 616, 307))
+        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 616, 343))
         self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -238,6 +238,11 @@ class Ui_DialogOptions(object):
         self.groupBoxNativeOptions.setObjectName("groupBoxNativeOptions")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBoxNativeOptions)
         self.gridLayout_5.setObjectName("gridLayout_5")
+        self.btnHealthCheck = QtWidgets.QPushButton(self.groupBoxNativeOptions)
+        icon = QtGui.QIcon.fromTheme("heart")
+        self.btnHealthCheck.setIcon(icon)
+        self.btnHealthCheck.setObjectName("btnHealthCheck")
+        self.gridLayout_5.addWidget(self.btnHealthCheck, 4, 0, 1, 1)
         self.labelLibDirs = QtWidgets.QLabel(self.groupBoxNativeOptions)
         self.labelLibDirs.setObjectName("labelLibDirs")
         self.gridLayout_5.addWidget(self.labelLibDirs, 2, 0, 1, 1)
@@ -257,12 +262,15 @@ class Ui_DialogOptions(object):
         self.labelRebuildNativeStatus = QtWidgets.QLabel(self.groupBoxNativeOptions)
         self.labelRebuildNativeStatus.setObjectName("labelRebuildNativeStatus")
         self.gridLayout_5.addWidget(self.labelRebuildNativeStatus, 3, 2, 1, 1)
+        self.labelHealthCheck = QtWidgets.QLabel(self.groupBoxNativeOptions)
+        self.labelHealthCheck.setObjectName("labelHealthCheck")
+        self.gridLayout_5.addWidget(self.labelHealthCheck, 4, 2, 1, 1)
         self.verticalLayout_8.addWidget(self.groupBoxNativeOptions)
         self.tabWidget.addTab(self.tabDevices, "")
         self.verticalLayout_6.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(DialogOptions)
 
     def retranslateUi(self, DialogOptions):
@@ -312,12 +320,14 @@ class Ui_DialogOptions(object):
         self.radioButtonGnuradioDirectory.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like <span style=\" font-style:italic;\">C:\\Program Files\\GNURadio-3.7</span>.</p></body></html>"))
         self.radioButtonGnuradioDirectory.setText(_translate("DialogOptions", "Gnuradio Directory"))
         self.groupBoxNativeOptions.setTitle(_translate("DialogOptions", "Native options"))
+        self.btnHealthCheck.setText(_translate("DialogOptions", "Health Check"))
         self.labelLibDirs.setText(_translate("DialogOptions", "Library directories:"))
         self.btnRebuildNative.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Rebuild the native device extensions. You need to restart URH after this, to use new extensions.</p></body></html>"))
         self.btnRebuildNative.setText(_translate("DialogOptions", "Rebuild"))
         self.labelNativeRebuildInfo.setText(_translate("DialogOptions", "You can rebuild the native device extensions here. This is useful, when you installed a device driver afterwards or your drivers are stored in an unusual location."))
         self.lineEditLibDirs.setPlaceholderText(_translate("DialogOptions", "Comma separated list of additional library directories"))
         self.labelRebuildNativeStatus.setText(_translate("DialogOptions", "Rebuild <x> new device extensions. Please restart URH to use them."))
+        self.labelHealthCheck.setText(_translate("DialogOptions", "Perform a health check of native extensions"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDevices), _translate("DialogOptions", "Device"))
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

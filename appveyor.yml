@@ -65,3 +65,15 @@ artifacts:
 
 on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
+
+deploy:
+  release: Version $(APPVEYOR_REPO_TAG_NAME)
+  description: 'Release description'
+  provider: GitHub
+  auth_token:
+    secure: 7TPX876BQbnkqNGJYoKi9hnbnsH6vQFkF0fzSe7keguq4g6FAf3W5uPc/s2Ya0vH
+  artifact: dist/*.msi            # upload msi installers
+  draft: true
+  prerelease: false
+  on:
+    appveyor_repo_tag: true        # deploy on tag push only

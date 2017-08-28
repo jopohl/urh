@@ -72,7 +72,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: 7TPX876BQbnkqNGJYoKi9hnbnsH6vQFkF0fzSe7keguq4g6FAf3W5uPc/s2Ya0vH
-  artifact: dist/*.msi            # upload msi installers
+  artifact: dist\*.msi            # upload msi installers
   draft: true
   prerelease: false
   on:

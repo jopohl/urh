@@ -90,6 +90,13 @@ dnf install urh
 ```
 
 ### Windows
+#### MSI Installer
+The easiest way to install URH on Windows is to use the ```.msi``` installer available [here](https://github.com/jopohl/urh/releases).
+ 
+It is recommended to use the __64 bit version__ of URH because native device support is not available on 32 bit windows.
+If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
+
+#### Pip
 If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
 
 __It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>696</width>
-    <height>646</height>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -185,8 +185,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>616</width>
-               <height>343</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -325,13 +325,14 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Perform a health check for native device extenions</string>
+              <string>Perform a health check for native device extensions.</string>
              </property>
              <property name="text">
               <string>Health Check</string>
              </property>
              <property name="icon">
-              <iconset theme="heart"/>
+              <iconset theme="heart">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>

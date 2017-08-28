@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(696, 646)
+        DialogOptions.resize(696, 653)
         icon = QtGui.QIcon.fromTheme("configure")
         DialogOptions.setWindowIcon(icon)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
@@ -89,7 +89,7 @@ class Ui_DialogOptions(object):
         self.scrollAreaSpectrogramColormap.setWidgetResizable(True)
         self.scrollAreaSpectrogramColormap.setObjectName("scrollAreaSpectrogramColormap")
         self.scrollAreaWidgetSpectrogramColormapContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 616, 343))
+        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -304,7 +304,7 @@ class Ui_DialogOptions(object):
         self.chkBoxDeviceEnabled.setText(_translate("DialogOptions", "Enabled"))
         self.rbNativeBackend.setText(_translate("DialogOptions", "Native backend (recommended)"))
         self.rbGnuradioBackend.setText(_translate("DialogOptions", "Gnuradio backend"))
-        self.btnHealthCheck.setToolTip(_translate("DialogOptions", "Perform a health check for native device extenions"))
+        self.btnHealthCheck.setToolTip(_translate("DialogOptions", "Perform a health check for native device extensions."))
         self.btnHealthCheck.setText(_translate("DialogOptions", "Health Check"))
         self.lSupport.setText(_translate("DialogOptions", "device supports sending and receiving"))
         self.labelWindowsError.setText(_translate("DialogOptions", "<html><head/><body><p><span style=\" color:#ff0000;\">Detected a 32 bit installation of python 3.</span> Install <span style=\" font-weight:600;\">64 bit version</span> to use native backends.</p></body></html>"))

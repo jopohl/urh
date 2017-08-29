@@ -16,7 +16,4 @@ _Please use this template for bug reports. If you have a feature request or ques
   - Python Version:
   - Operating System:
   - Version of URH:
-  - URH was installed
-    - [ ] from source
-    - [ ] via pip
-    - [ ] via ```.msi```
+  - URH was installed: __from source__ /// __via pip__ /// via ```.msi```

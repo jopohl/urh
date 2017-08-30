@@ -71,6 +71,7 @@ before_deploy:
   - ps: >-
       & GitReleaseNotes . /OutputFile ReleaseNotes.md;
       ${env:release_description} = ( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) -join "`n";
+      echo "Release Description:" ${env:release_description};
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)

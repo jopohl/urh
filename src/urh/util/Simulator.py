@@ -453,7 +453,7 @@ class Simulator(QObject):
             logger.warning("Value {0} too big for label {1}, bits truncated".format(value, label.name))
 
         for i in range(lbl_len):
-            new_message[label.start + i] = bool(int(bits[i]))
+            message[label.start + i] = bool(int(bits[i]))
         
     def generate_message_from_template(self, template_msg):
         new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,

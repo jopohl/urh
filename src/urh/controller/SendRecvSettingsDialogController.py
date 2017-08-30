@@ -8,6 +8,7 @@ from urh import SimulatorSettings
 from urh.dev import config
 
 from PyQt5.QtCore import pyqtSlot
+from PyQt5 import QtWidgets
 
 TX_SUFFIX = "_tx"
 TX_PREFIX = "tx_"
@@ -58,13 +59,13 @@ class SendRecvSettingsDialogController(ProtocolSniffDialogController):
         target_layout = self.ui.scrollAreaContents_rx.layout()
 
         target_layout.addWidget(self.ui.labelChannel, 0, 0)
-        target_layout.addWidget(self.ui.comboBoxChannel, 0, 1)
+        target_layout.addWidget(self.ui.comboBoxChannel, 0, 1, 1, 2)
         target_layout.addWidget(self.ui.labelAntenna, 1, 0)
-        target_layout.addWidget(self.ui.comboBoxAntenna, 1, 1)
+        target_layout.addWidget(self.ui.comboBoxAntenna, 1, 1, 1, 2)
         target_layout.addWidget(self.ui.labelIP, 2, 0)
-        target_layout.addWidget(self.ui.lineEditIP, 2, 1)
+        target_layout.addWidget(self.ui.lineEditIP, 2, 1, 1, 2)
         target_layout.addWidget(self.ui.labelPort, 3, 0)
-        target_layout.addWidget(self.ui.spinBoxPort, 3, 1)
+        target_layout.addWidget(self.ui.spinBoxPort, 3, 1, 1, 2)
         target_layout.addWidget(self.ui.labelGain, 4, 0)
         target_layout.addWidget(self.ui.sliderGain, 4, 1)
         target_layout.addWidget(self.ui.spinBoxGain, 4, 2)
@@ -76,15 +77,20 @@ class SendRecvSettingsDialogController(ProtocolSniffDialogController):
         target_layout.addWidget(self.ui.spinBoxBasebandGain, 6, 2)
 
         target_layout.addWidget(self.ui.label_sniff_Noise, 7, 0)
-        target_layout.addWidget(self.ui.spinbox_sniff_Noise, 7, 1)
+        target_layout.addWidget(self.ui.spinbox_sniff_Noise, 7, 1, 1, 2)
         target_layout.addWidget(self.ui.label_sniff_Center, 8, 0)
-        target_layout.addWidget(self.ui.spinbox_sniff_Center, 8, 1)
+        target_layout.addWidget(self.ui.spinbox_sniff_Center, 8, 1, 1, 2)
         target_layout.addWidget(self.ui.label_sniff_BitLength, 9, 0)
-        target_layout.addWidget(self.ui.spinbox_sniff_BitLen, 9, 1)
+        target_layout.addWidget(self.ui.spinbox_sniff_BitLen, 9, 1, 1, 2)
         target_layout.addWidget(self.ui.label_sniff_Tolerance, 10, 0)
-        target_layout.addWidget(self.ui.spinbox_sniff_ErrorTolerance, 10, 1)
+        target_layout.addWidget(self.ui.spinbox_sniff_ErrorTolerance, 10, 1, 1, 2)
         target_layout.addWidget(self.ui.label_sniff_Modulation, 11, 0)
-        target_layout.addWidget(self.ui.combox_sniff_Modulation, 11, 1)
+        target_layout.addWidget(self.ui.combox_sniff_Modulation, 11, 1, 1, 2)
+
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        target_layout.addItem(spacerItem, 12, 0, 1, 2)
+
+        #target_layout.add
 
     def sync_gain_sliders(self):
         super().sync_gain_sliders()
@@ -342,8 +348,8 @@ class SendRecvSettingsDialogController(ProtocolSniffDialogController):
             supports_rx = dev.supports_rx
             supports_tx = dev.supports_tx
 
-        self.ui.tabWidget.setTabEnabled(0, supports_rx)
-        self.ui.tabWidget.setTabEnabled(1, supports_tx)
+        self.ui.groupBoxReceive.setEnabled(supports_rx)
+        self.ui.groupBoxSend.setEnabled(supports_tx)
 
         self.set_profile_value("supports_rx", supports_rx)
         self.set_profile_value("supports_tx", supports_tx)

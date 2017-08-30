@@ -12,6 +12,7 @@ from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 class SimulatorGraphicsView(QGraphicsView):
     message_updated = pyqtSignal(SimulatorMessage)
     new_messagetype_clicked = pyqtSignal(SimulatorMessage)
+    consolidate_messages_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -106,6 +107,16 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_new_message_type_action_triggered(self):
         self.new_messagetype_clicked.emit(self.context_menu_item.model_item)
 
+    @pyqtSlot()
+    def on_consolidate_messages_action_triggered(self):
+        self.consolidate_messages_clicked.emit()
+
+    def on_select_from_action_triggered(self):
+        self.scene().select_messages_with_participant(self.sender().data())
+
+    def on_select_to_action_triggered(self):
+        self.scene().select_messages_with_participant(self.sender().data(), from_part=False)
+
     def create_context_menu(self):
         menu = QMenu()
 
@@ -189,11 +200,36 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu.addSeparator()
 
+        if len(self.scene().get_all_messages()) > 1:
+            consolidate_messages_action = menu.addAction("Consolidate messages")
+            consolidate_messages_action.triggered.connect(self.on_consolidate_messages_action_triggered)
+            
+
         if len([item for item in self.scene().items() if isinstance(item, GraphicsItem)]):
             #menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
             clear_all_action.setIcon(QIcon.fromTheme("edit-clear"))
+
+        if len(self.scene().visible_participants):
+            menu.addSeparator()
+
+            select_from_menu = menu.addMenu("Select all messages from")
+
+            for vp in self.scene().visible_participants:
+                if vp is self.scene().broadcast_part:
+                    continue
+
+                vpa = select_from_menu.addAction(vp.text.toPlainText())
+                vpa.setData(vp)
+                vpa.triggered.connect(self.on_select_from_action_triggered)
+
+            select_to_menu = menu.addMenu("Select all messages to")
+
+            for vp in self.scene().visible_participants:
+                vpa = select_to_menu.addAction(vp.text.toPlainText())
+                vpa.setData(vp)
+                vpa.triggered.connect(self.on_select_to_action_triggered)
 
         return menu
 

@@ -58,9 +58,9 @@ class SimulatorMessageTableView(TableView):
                 ea.setData(decoding)
                 ea.triggered.connect(self.on_encoding_action_triggered)
 
-            selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_indx
+            selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
-            if not all(self.model().protocol.messages[i].modulator_indx == selected_modulation
+            if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
                     for i in self.selected_rows):
                 selected_modulation = -1
 
@@ -91,7 +91,7 @@ class SimulatorMessageTableView(TableView):
     @pyqtSlot()
     def on_modulation_action_triggered(self):
         for row in self.selected_rows:
-            self.model().protocol.messages[row].modulator_indx = self.sender().data()
+            self.model().protocol.messages[row].modulator_index = self.sender().data()
 
     @pyqtSlot()
     def on_open_modulator_dialog_action_triggered(self):

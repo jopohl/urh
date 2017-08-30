@@ -15,6 +15,13 @@ class SimulatorRule(SimulatorItem):
     def has_else_condition(self):
         return any(child.type is ConditionType.ELSE for child in self.children)
 
+    def true_condition(self):
+        for child in self.children:
+            if child.applies():
+                return child
+
+        return None
+
     def next_item(self):
         result = self.next_sibling()
 

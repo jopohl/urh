@@ -24,6 +24,7 @@ from urh.SimulatorProtocolManager import SimulatorProtocolManager
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.SimulateDialogController import SimulateDialogController
+from urh.controller.SimulationDialogController import SimulationDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
@@ -115,6 +116,7 @@ class SimulatorTabController(QWidget):
         self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
         self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
+        self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
@@ -128,6 +130,7 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model.protocol_label_updated.connect(self.item_updated)
         self.ui.gvSimulator.message_updated.connect(self.item_updated)
         self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
+        self.ui.gvSimulator.consolidate_messages_clicked.connect(self.consolidate_messages)
 
         self.sim_proto_manager.items_added.connect(self.refresh_message_table)
         self.sim_proto_manager.items_updated.connect(self.refresh_message_table)
@@ -135,6 +138,9 @@ class SimulatorTabController(QWidget):
         self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
         self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
         self.sim_proto_manager.item_dict_updated.connect(self.on_item_dict_updated)
+
+    def consolidate_messages(self):
+        self.sim_proto_manager.consolidate_messages()
 
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
@@ -157,6 +163,9 @@ class SimulatorTabController(QWidget):
 
             message.message_type.name = msg_type_name
             self.sim_proto_manager.items_updated.emit([message])
+
+    def on_repeat_value_changed(self, value):
+        self.active_item.repeat = value
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
@@ -198,7 +207,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def open_modulator_dialog(self):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
-        preselected_index = selected_message.modulator_indx
+        preselected_index = selected_message.modulator_index
 
         modulator_dialog = ModulatorDialogController(self.generator_tab_controller.modulators, parent=self)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
@@ -227,7 +236,7 @@ class SimulatorTabController(QWidget):
         index = self.sender().ui.comboBoxCustomModulations.currentIndex()
 
         for row in self.ui.tblViewMessage.selected_rows:
-            self.simulator_message_table_model.protocol.messages[row].modulator_indx = index
+            self.simulator_message_table_model.protocol.messages[row].modulator_index = index
 
     def update_goto_combobox(self):
         goto_combobox = self.ui.goto_combobox
@@ -257,6 +266,7 @@ class SimulatorTabController(QWidget):
 
             if isinstance(self.active_item, SimulatorMessage):
                 text += " (" + self.active_item.message_type.name + ")"
+                self.ui.spinBoxRepeat.setValue(self.active_item.repeat)
 
             self.ui.lblMsgFieldsValues.setText(text)
         else:
@@ -302,9 +312,12 @@ class SimulatorTabController(QWidget):
 
         if selection.isEmpty():
             self.active_item = None
+            self.ui.lNumSelectedColumns.setText("0")
         else:
             max_row = numpy.max([rng.bottom() for rng in selection])
             self.active_item = self.simulator_message_table_model.protocol.messages[max_row]
+            _, _, start, end = self.ui.tblViewMessage.selection_range()
+            self.ui.lNumSelectedColumns.setText(str(end - start))
 
         self.update_ui()
 
@@ -322,6 +335,7 @@ class SimulatorTabController(QWidget):
             self.ui.detail_view_widget.setCurrentIndex(1)
         elif isinstance(self.active_item, SimulatorMessage):
             self.simulator_message_field_model.update()
+            self.ui.spinBoxRepeat.setValue(self.active_item.repeat)
 
             self.ui.detail_view_widget.setCurrentIndex(2)
         elif (isinstance(self.active_item, SimulatorRuleCondition) and
@@ -350,6 +364,13 @@ class SimulatorTabController(QWidget):
             return
 
         s = SimulateDialogController(controller=self, parent=self)
+        s.simulator_settings_confirmed.connect(self.on_simulation_settings_confirmed)
+        s.show()
+
+    @pyqtSlot()
+    def on_simulation_settings_confirmed(self):
+        s = SimulationDialogController(self.sim_proto_manager, self.generator_tab_controller.modulators,
+            self.sim_expression_parser, self.project_manager, parent=self)
         s.show()
 
     @pyqtSlot()

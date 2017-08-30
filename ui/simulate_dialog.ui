@@ -83,7 +83,7 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>In case of an unexpected/overdue response:</string>
+          <string>In case of an overdue response:</string>
          </property>
         </widget>
        </item>
@@ -104,6 +104,23 @@
            <string>Restart simulation</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Max retries:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxRetries">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>10</number>
+         </property>
         </widget>
        </item>
       </layout>

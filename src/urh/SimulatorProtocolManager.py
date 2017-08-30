@@ -28,6 +28,7 @@ class SimulatorProtocolManager(QObject):
         self.rootItem = SimulatorItem()
         self.project_manager = project_manager
         self.broadcast_part = Participant("Broadcast", "Broadcast", self.project_manager.broadcast_address_hex)
+        self.__active_participants = None
 
         self.item_dict = OrderedDict()
 
@@ -40,6 +41,10 @@ class SimulatorProtocolManager(QObject):
         self.items_moved.connect(self.update_item_dict)
         self.items_updated.connect(self.update_item_dict)
         self.items_deleted.connect(self.update_item_dict)
+
+        self.items_added.connect(self.reset_active_participants)
+        self.items_updated.connect(self.reset_active_participants)
+        self.items_deleted.connect(self.reset_active_participants)
 
     def update_item_dict(self):
         self.item_dict.clear()
@@ -87,6 +92,13 @@ class SimulatorProtocolManager(QObject):
     @property
     def participants(self):
         return self.project_manager.participants + [self.broadcast_part]
+
+    @property
+    def active_participants(self):
+        if self.__active_participants == None:
+            self.update_active_participants()
+
+        return self.__active_participants
 
     def add_items(self, items, pos: int, parent_item: SimulatorItem):
         if parent_item is None:
@@ -142,6 +154,47 @@ class SimulatorProtocolManager(QObject):
 
     def n_top_level_items(self):
         return self.rootItem.child_count()
+
+    def reset_active_participants(self):
+        self.__active_participants = None
+
+    def update_active_participants(self):
+        messages = self.get_all_messages()
+        active_participants = []
+
+        for part in self.project_manager.participants:
+            if any(msg.participant == part or msg.destination == part for msg in messages):
+                active_participants.append(part)
+
+        self.__active_participants = active_participants
+
+    def consolidate_messages(self):
+        current_item = self.rootItem
+        first_msg = None
+        next_item = None
+        redundant_messages = []
+        repeat_counter = 0
+
+        while current_item is not None:
+            if isinstance(current_item, SimulatorMessage):
+                first_msg = current_item
+                current_msg = current_item
+                repeat_counter = 0
+
+                while (isinstance(current_msg.next_sibling(), SimulatorMessage) and
+                        current_item.plain_bits == current_msg.next_sibling().plain_bits):
+                    repeat_counter += 1
+                    current_msg = current_msg.next_sibling()
+                    redundant_messages.append(current_msg)
+
+                if repeat_counter:
+                    first_msg.repeat += repeat_counter
+
+                current_item = current_msg.next()
+            else:
+                current_item = current_item.next()
+
+        self.delete_items(redundant_messages)
 
     def get_all_messages(self):
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]

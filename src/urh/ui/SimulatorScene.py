@@ -471,9 +471,9 @@ class SimulatorScene(QGraphicsScene):
         elif len(participants) > 2:
             if message.participant:
                 source = message.participant
-                destination = participants[0] if message.participant == participants[1] else participants[1]
+                #destination = participants[0] if message.participant == participants[1] else participants[1]
             else:
                 source = participants[0]
-                destination = participants[1]
+                #destination = participants[1]
 
         return (source, destination)

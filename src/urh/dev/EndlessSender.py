@@ -1,6 +1,5 @@
 import numpy as np
-import sys
-sys.path.append("/home/splotz/urh/src/")
+
 from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.util.RingBuffer import RingBuffer
 
@@ -47,11 +46,7 @@ if __name__ == '__main__':
     from urh.util.Logger import logger
     import time
 
-    endless_sender = EndlessSender(BackendHandler(), "USRP")
-
-    endless_sender.device.frequency = 868300000.0
-    endless_sender.device.sample_rate = 1000000.0
-    endless_sender.device.gain = 25.0
+    endless_sender = EndlessSender(BackendHandler(), "HackRF")
     msg = Message([1, 0] * 16 + [1, 1, 0, 0] * 8 + [0,0,1,1]*8 + [1,0,1,1,1,0,0,1,1,1]*4, 0, MessageType("empty_message_type"))
     modulator = Modulator("test_modulator")
     modulator.samples_per_bit = 1000
@@ -66,7 +61,7 @@ if __name__ == '__main__':
     logger.debug("Pushing data")
     endless_sender.push_data(modulator.modulated_samples)
     logger.debug("Pushed data")
-    time.sleep(20)
+    time.sleep(5)
     logger.debug("Stopping endless sender")
     endless_sender.stop()
     time.sleep(1)

@@ -13,6 +13,7 @@ class SimulatorMessageTableModel(TableModel):
         self.compare_frame_controller = compare_frame_controller
         self.generator_tab_controller = generator_tab_controller
         self.decode = False
+        self.is_writeable = True
 
         self.label_mask = defaultdict(lambda: False)
 
@@ -42,6 +43,28 @@ class SimulatorMessageTableModel(TableModel):
 
             self.vertical_header_text[i] = "{0} ({1} -> {2})".format(msg.index(), participant_name, destination_name)
 
+    def delete_range(self, msg_start: int, msg_end: int, index_start: int, index_end: int):
+        removable_messages = []
+
+        if msg_start > msg_end:
+            msg_start, msg_end = msg_end, msg_start
+
+        if index_start > index_end:
+            index_start, index_end = index_end, index_start
+
+        for i in range(msg_start, msg_end + 1):
+            try:
+                bs, be = self.protocol.convert_range(index_start, index_end, self.proto_view, 0, self.decode, message_indx=i)
+                self.protocol.messages[i].clear_decoded_bits()
+                del self.protocol.messages[i][bs:be + 1]
+
+                if len(self.protocol.messages[i]) == 0:
+                    removable_messages.append(self.protocol.messages[i])
+            except IndexError:
+                continue
+
+        self.parent().sim_proto_manager.delete_items(removable_messages)
+
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         if not index.isValid():
             return None
@@ -54,3 +77,12 @@ class SimulatorMessageTableModel(TableModel):
                 return "."
 
         return super().data(index, role)
+
+    def flags(self, index: QModelIndex):
+        if index.isValid():
+            if self.is_writeable:
+                return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
+            else:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        else:
+            return Qt.NoItemFlags

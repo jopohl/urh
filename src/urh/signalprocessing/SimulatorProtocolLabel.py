@@ -7,7 +7,6 @@ class SimulatorProtocolLabel(SimulatorItem):
     VALUE_TYPES = ["Constant value", "Get live during simulation", "Formula", "External program", "Random value"]
 
     def __init__(self, label: ProtocolLabel):
-        #ProtocolLabel.__init__(self, name, start, end, color_index, field_type=field_type)
         SimulatorItem.__init__(self)
 
         self.label = label
@@ -50,9 +49,17 @@ class SimulatorProtocolLabel(SimulatorItem):
     def start(self):
         return self.label.start
 
+    @start.setter
+    def start(self, value):
+        self.label.start = value
+
     @property
     def end(self):
         return self.label.end
+
+    @end.setter
+    def end(self, value):
+        self.label.end = value
 
     @property
     def display_format_index(self):
@@ -66,6 +73,10 @@ class SimulatorProtocolLabel(SimulatorItem):
     def field_type(self) -> FieldType:
         return self.label.field_type
 
+    @property
+    def fuzz_maximum(self):
+        return self.label.fuzz_maximum
+
     @field_type.setter
     def field_type(self, val):
         self.label.field_type = val
@@ -73,12 +84,6 @@ class SimulatorProtocolLabel(SimulatorItem):
     @property
     def apply_decoding(self):
         return self.label.apply_decoding
-
-#    def __hash__(self):
-#        return object.__hash__(self)
-
-#    def __eq__(self, other):
-#        return object.__eq__(self, other)
 
     def check(self):
         result = True

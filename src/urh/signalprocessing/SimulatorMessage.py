@@ -1,3 +1,5 @@
+import copy
+
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition
 from urh.signalprocessing.Message import Message
@@ -9,6 +11,7 @@ class SimulatorMessage(Message, SimulatorItem):
         SimulatorItem.__init__(self)
         self.destination = destination
         self.send_recv_messages = []
+        self.repeat = 1
 
     def set_parent(self, value):
         if value is not None:
@@ -35,3 +38,45 @@ class SimulatorMessage(Message, SimulatorItem):
     @property
     def plain_bits_str(self) -> str:
         return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) else str(self)
+
+    def __delitem__(self, index):
+        labels_add = []
+        labels_remove = []
+
+        if isinstance(index, slice):
+            step = index.step
+            if step is None:
+                step = 1
+            number_elements = len(range(index.start, index.stop, step))
+
+            for l in self.message_type:
+                if index.start <= l.start and index.stop >= l.end:
+                    labels_remove.append(l)
+
+                elif index.stop - 1 < l.start:
+                    l.start -= number_elements
+                    l.end -= number_elements
+
+                elif index.start <= l.start <= index.stop:
+                    labels_remove.append(l)
+
+                elif index.start >= l.start and index.stop <= l.end:
+                    labels_remove.append(l)
+
+                elif l.start <= index.start < l.end:
+                    labels_remove.append(l)
+        else:
+            for l in self.message_type:
+                if index < l.start:
+                    l.start -= 1
+                    l.end -= 1
+                elif l.start < index < l.end:
+                    labels_remove.append(l)
+                    if l.end - l.start > 1:
+                        l.start = index - 1
+                    else:
+                        labels_remove.append(l)
+
+        self.protocol_manager.delete_items(labels_remove)
+        self.protocol_manager.add_items(labels_add, -1, self)
+        del self.plain_bits[index]

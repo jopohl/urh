@@ -1,14 +1,13 @@
 import os
-
-import sys
+import pickle
 import platform
+import sys
 import tempfile
 from collections import defaultdict
 from distutils import ccompiler
+from importlib import import_module
 
-import pickle
 from setuptools import Extension
-
 
 USE_RELATIVE_PATHS = False
 
@@ -135,6 +134,26 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
                      [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language=language)
+
+
+def perform_health_check() -> str:
+    result = []
+    for device in sorted(DEVICES.keys()):
+        try:
+            _ = import_module("urh.dev.native.lib." + device)
+            result.append(device + " -- OK")
+        except ImportError as e:
+            if device in FALLBACKS:
+                try:
+                    _ = import_module("urh.dev.native.lib." + device + "_fallback")
+                    result.append(device + " -- OK (using fallback)")
+                    continue
+                except ImportError:
+                    pass
+
+            result.append(device + " -- ERROR: " + str(e))
+
+    return "\n".join(result)
 
 
 if __name__ == "__main__":

@@ -84,7 +84,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                                 range(1, num_values)]
             elif mode == FuzzMode.exhaustive:
                 pool = [[(l.start, l.end, fv) for fv in l.fuzz_values[1:]] for l in labels]
-                combinations = itertools.product(*pool) if labels else []
+                combinations = list(itertools.product(*pool)) if labels else []
             else:
                 raise ValueError("Unknown fuzz mode")
 

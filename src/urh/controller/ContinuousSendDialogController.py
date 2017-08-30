@@ -1,11 +1,11 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QCloseEvent
 
-from urh.ContinuousSceneManager import ContinuousSceneManager
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
+from urh.ui.painting.ContinuousSceneManager import ContinuousSceneManager
 
 
 class ContinuousSendDialogController(SendDialogController):

@@ -1,9 +1,8 @@
 import numpy as np
-from PyQt5.QtGui import QFont
 
-from urh.SceneManager import SceneManager
 from urh.cythonext import signalFunctions
 from urh.signalprocessing.Signal import Signal
+from urh.ui.painting.SceneManager import SceneManager
 
 
 class SignalSceneManager(SceneManager):

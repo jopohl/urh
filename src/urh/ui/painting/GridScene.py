@@ -1,9 +1,8 @@
-import locale
+import numpy as np
 from PyQt5.QtCore import QRectF, QLineF, Qt
 from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen
-import numpy as np
 
-from urh.ui.ZoomableScene import ZoomableScene
+from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
 

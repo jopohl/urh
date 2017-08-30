@@ -58,6 +58,9 @@ def main():
         import urh.cythonext.path_creator
         import urh.cythonext.util
     except ImportError:
+        if hasattr(sys, "frozen"):
+            print("C++ Extensions not found. Exiting...")
+            sys.exit(1)
         print("Could not find C++ extensions, trying to build them.")
         old_dir = os.curdir
         os.chdir(os.path.join(src_dir, "urh", "cythonext"))
@@ -120,6 +123,8 @@ def main():
         # Ensure we get the app icon in windows taskbar
         import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
+        import multiprocessing as mp
+        mp.freeze_support()
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube

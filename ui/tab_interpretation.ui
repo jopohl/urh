@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -76,6 +76,55 @@
       <property name="styleSheet">
        <string notr="true"/>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QSplitter" name="splitter">
+         <property name="styleSheet">
+          <string notr="true">QSplitter::handle:vertical {
+margin: 4px 0px;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+stop:0 rgba(255, 255, 255, 0), 
+stop:0.5 rgba(100, 100, 100, 100), 
+stop:1 rgba(255, 255, 255, 0));
+	image: url(:/icons/data/icons/splitter_handle_horizontal.svg);
+}</string>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="handleWidth">
+          <number>6</number>
+         </property>
+         <widget class="QLabel" name="labelGettingStarted">
+          <property name="font">
+           <font>
+            <pointsize>32</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open a file or record a new signal using the &lt;b&gt;File menu&lt;/b&gt; to get started.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="placeholderLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -89,6 +138,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../urh.qrc"/>
+ </resources>
  <connections/>
 </ui>

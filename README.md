@@ -4,8 +4,11 @@
 [![OSX Build Status](https://img.shields.io/circleci/project/github/jopohl/urh/master.svg?label=OSX)](https://circleci.com/gh/jopohl/urh/tree/master)
 [![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
+
+[![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
 [![Slack](https://slackinstralsund.herokuapp.com/badge.svg)](https://slackinstralsund.herokuapp.com/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
+
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
 
@@ -23,9 +26,18 @@ Like to see things in action? Watch URH on YouTube!
 
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
+Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
+
 # Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
-Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source.
+Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source. Below you find more specific installation instructions for:
+- Linux Distributions:
+  - [Arch Linux](#arch-linux)
+  - [Ubuntu/Debian](#ubuntudebian)
+  - [Gentoo/Pentoo](#gentoopentoo)
+  - [Fedora 25+](#fedora-25)
+- [Windows](#windows)
+- [Mac OS X](#mac-os-x)
 
 __Dependencies__
 - Python 3.4+
@@ -78,6 +90,13 @@ dnf install urh
 ```
 
 ### Windows
+#### MSI Installer
+The easiest way to install URH on Windows is to use the ```.msi``` installer available [here](https://github.com/jopohl/urh/releases).
+ 
+It is recommended to use the __64 bit version__ of URH because native device support is not available on 32 bit windows.
+If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
+
+#### Pip
 If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
 
 __It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__

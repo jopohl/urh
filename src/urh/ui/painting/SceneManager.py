@@ -2,13 +2,12 @@ import math
 
 import numpy as np
 from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QFont, QPen, QColor
+from PyQt5.QtGui import QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.cythonext import path_creator, util
-from urh.ui.ZoomableScene import ZoomableScene
-from urh.util.Logger import logger
+from urh.ui.painting.ZoomableScene import ZoomableScene
 
 
 class SceneManager(QObject):
@@ -55,7 +54,9 @@ class SceneManager(QObject):
         colors = [constants.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
-            self.scene.addPath(path, QPen(color if color else constants.LINECOLOR, Qt.FlatCap))
+            path_object = self.scene.addPath(path, QPen(color if color else constants.LINECOLOR, Qt.FlatCap))
+            if color:
+                path_object.setZValue(1)
 
     def __limit_value(self, val: float) -> int:
         return 0 if val < 0 else self.num_samples if val > self.num_samples else int(val)

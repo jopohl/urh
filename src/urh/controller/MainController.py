@@ -166,7 +166,7 @@ class MainController(QMainWindow):
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
 
         self.signal_tab_controller.frame_closed.connect(self.close_signal_frame)
-        self.signal_tab_controller.signal_created.connect(self.add_signal)
+        self.signal_tab_controller.signal_created.connect(self.on_signal_created)
         self.signal_tab_controller.ui.scrollArea.files_dropped.connect(self.on_files_dropped)
         self.signal_tab_controller.files_dropped.connect(self.on_files_dropped)
         self.signal_tab_controller.frame_was_dropped.connect(self.set_frame_numbers)
@@ -278,21 +278,23 @@ class MainController(QMainWindow):
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
 
-    def add_signal(self, signal, group_id=0):
+    def add_signal(self, signal, group_id=0, index=-1):
         self.setCursor(Qt.WaitCursor)
         pa = ProtocolAnalyzer(signal)
-        sig_frame = self.signal_tab_controller.add_signal_frame(pa)
+        sig_frame = self.signal_tab_controller.add_signal_frame(pa, index=index)
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
 
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
-        if not has_entry:
+
+        if not has_entry and not signal.changed:
             signal.auto_detect()
+
         signal.blockSignals(False)
 
         self.signal_protocol_dict[sig_frame] = pa
 
-        sig_frame.refresh(draw_full_signal=True)  # Hier wird das Protokoll ausgelesen
+        sig_frame.refresh(draw_full_signal=True)  # protocol is derived here
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sig_frame.ui.gvSignal.redraw_view()
 
@@ -804,6 +806,9 @@ class MainController(QMainWindow):
         if "default_view" in changed_options:
             self.apply_default_view(int(changed_options["default_view"]))
 
+        if "spectrogram_colormap" in changed_options:
+            self.signal_tab_controller.redraw_spectrograms()
+
     @pyqtSlot()
     def on_text_edit_project_description_text_changed(self):
         self.project_manager.description = self.ui.textEditProjectDescription.toPlainText()
@@ -815,3 +820,7 @@ class MainController(QMainWindow):
             path = cur_dir.path()
             self.filemodel.setRootPath(path)
             self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))
+
+    @pyqtSlot(int, Signal)
+    def on_signal_created(self, index: int, signal: Signal):
+        self.add_signal(signal, index=index)

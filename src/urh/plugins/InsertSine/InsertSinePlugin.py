@@ -6,8 +6,8 @@ from PyQt5.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
 from PyQt5.QtWidgets import QApplication, QDialog
 
-from urh.SceneManager import SceneManager
 from urh.plugins.Plugin import SignalEditorPlugin
+from urh.ui.painting.SceneManager import SceneManager
 from urh.util.Formatter import Formatter
 
 

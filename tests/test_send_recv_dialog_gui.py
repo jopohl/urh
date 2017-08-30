@@ -270,7 +270,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog = self.__get_send_dialog()
         self.assertEqual(num_samples, send_dialog.scene_manager.signal.num_samples)
         self.assertEqual(num_samples, len(send_dialog.device.samples_to_send))
-        send_dialog.graphics_view.set_selection_area(0, 1337)
+        send_dialog.graphics_view.set_horizontal_selection(0, 1337)
         send_dialog.graphics_view.delete_action.trigger()
         self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
         self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)

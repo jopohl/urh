@@ -2,7 +2,7 @@ from PyQt5.QtCore import pyqtSignal, QRect
 from PyQt5.QtGui import QWheelEvent, QMouseEvent
 from PyQt5.QtWidgets import QToolTip
 
-from urh.ui.GridScene import GridScene
+from urh.ui.painting.GridScene import GridScene
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 

@@ -2,10 +2,10 @@ import os
 
 from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
 from PyQt5.QtGui import QContextMenuEvent, QIcon, QDesktopServices
-from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu, QWidget, QDialog, QLayout, QTextEdit, \
-    QVBoxLayout, QPlainTextEdit
+from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
 from urh import constants
+from urh.util import util
 
 
 class DirectoryTreeView(QTreeView):
@@ -89,14 +89,7 @@ class DirectoryTreeView(QTreeView):
                 content = open(file_path, "r").read()
             except:
                 return
-            d = QDialog(self)
-            d.resize(800, 600)
-            d.setWindowTitle(file_path)
-            layout = QVBoxLayout(d)
-            text_edit = QPlainTextEdit(content)
-            text_edit.setReadOnly(True)
-            layout.addWidget(text_edit)
-            d.setLayout(layout)
+            d = util.create_textbox_dialog(content, file_path, self)
             d.show()
 
     @pyqtSlot()

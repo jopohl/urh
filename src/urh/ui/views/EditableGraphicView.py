@@ -1,13 +1,12 @@
-from PyQt5.QtCore import QPoint, Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QContextMenuEvent, QIcon, QKeySequence
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.ui.ROI import ROI
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
+from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
@@ -22,6 +21,7 @@ class EditableGraphicView(ZoomableGraphicView):
 
         self.participants = []
         self.__sample_rate = None  # For default sample rate in insert sine dialog
+        self.protocol = None  # gets overwritten in epic graphic view
 
         self.autoRangeY = True
         self.save_enabled = False  # Signal is can be saved
@@ -33,9 +33,8 @@ class EditableGraphicView(ZoomableGraphicView):
 
         self.stored_item = None  # For copy/paste
         self.paste_position = 0  # Where to paste? Set in contextmenuevent
-        self.context_menu_position = None  # type: QPoint
 
-        self._init_undo_stack(QUndoStack())
+        self.init_undo_stack(QUndoStack())
 
         self.addAction(self.undo_action)
         self.addAction(self.redo_action)
@@ -77,7 +76,7 @@ class EditableGraphicView(ZoomableGraphicView):
         self.insert_sine_plugin = InsertSinePlugin()
         self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
 
-    def _init_undo_stack(self, undo_stack):
+    def init_undo_stack(self, undo_stack):
         self.undo_stack = undo_stack
 
         self.undo_action = self.undo_stack.createUndoAction(self)
@@ -117,11 +116,7 @@ class EditableGraphicView(ZoomableGraphicView):
         return self.__signal
 
     @property
-    def protocol(self) -> ProtocolAnalyzer:
-        return None  # Gets overwritten in EpicGraphicView
-
-    @property
-    def selection_area(self) -> ROI:
+    def selection_area(self) -> HorizontalSelection:
         return self.scene().selection_area
 
     @selection_area.setter
@@ -142,37 +137,29 @@ class EditableGraphicView(ZoomableGraphicView):
         menu.addSeparator()
 
         menu.addAction(self.copy_action)
-        self.copy_action.setEnabled(not self.selection_area.is_empty)
+        self.copy_action.setEnabled(self.something_is_selected)
         menu.addAction(self.paste_action)
         self.paste_action.setEnabled(self.stored_item is not None)
 
         menu.addSeparator()
         if PluginManager().is_plugin_enabled("InsertSine"):
             menu.addAction(self.insert_sine_action)
-            if not self.selection_area.is_empty:
-                menu.addSeparator()
 
-        menu.addAction(self.zoom_in_action)
-        menu.addAction(self.zoom_out_action)
+        self._add_zoom_actions_to_menu(menu)
 
-        if not self.selection_area.is_empty:
-            zoom_action = menu.addAction(self.tr("Zoom selection"))
-            zoom_action.setIcon(QIcon.fromTheme("zoom-fit-best"))
-            zoom_action.triggered.connect(self.on_zoom_action_triggered)
-
-            menu.addSeparator()
+        if self.something_is_selected:
             menu.addAction(self.delete_action)
             crop_action = menu.addAction(self.tr("Crop to selection"))
             crop_action.triggered.connect(self.on_crop_action_triggered)
             mute_action = menu.addAction(self.tr("Mute selection"))
             mute_action.triggered.connect(self.on_mute_action_triggered)
 
-            menu.addSeparator()
-
             if self.create_new_signal_enabled:
                 create_action = menu.addAction(self.tr("Create signal from selection"))
                 create_action.setIcon(QIcon.fromTheme("document-new"))
                 create_action.triggered.connect(self.on_create_action_triggered)
+
+            menu.addSeparator()
 
         if hasattr(self, "selected_messages"):
             selected_messages = self.selected_messages
@@ -207,11 +194,10 @@ class EditableGraphicView(ZoomableGraphicView):
                 self.participant_actions[pa] = participant
                 pa.triggered.connect(self.on_participant_action_triggered)
 
-        if hasattr(self, "scene_type") and self.scene_type == 0:
-            if not self.selection_area.is_empty:
-                menu.addSeparator()
-                noise_action = menu.addAction(self.tr("Set noise level from Selection"))
-                noise_action.triggered.connect(self.on_noise_action_triggered)
+        if self.scene_type == 0 and self.something_is_selected:
+            menu.addSeparator()
+            noise_action = menu.addAction(self.tr("Set noise level from Selection"))
+            noise_action.triggered.connect(self.on_noise_action_triggered)
 
         menu.addSeparator()
         menu.addAction(self.undo_action)
@@ -219,18 +205,12 @@ class EditableGraphicView(ZoomableGraphicView):
 
         return menu
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
-        self.context_menu_position = event.pos()
-        menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
-        self.context_menu_position = None
-
-    def clear_selection(self):
-        self.set_selection_area(0, 0)
+    def clear_horizontal_selection(self):
+        self.set_horizontal_selection(0, 0)
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):
-        if not self.selection_area.is_empty:
+        if self.something_is_selected:
             num_samples = self.selection_area.width
         else:
             num_samples = None
@@ -245,7 +225,7 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):
         if self.insert_sine_plugin.complex_wave is not None:
-            self.clear_selection()
+            self.clear_horizontal_selection()
             insert_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                              data_to_insert=self.insert_sine_plugin.complex_wave,
                                              position=self.paste_position,
@@ -254,14 +234,14 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_copy_action_triggered(self):
-        if not self.selection_area.is_empty:
+        if self.something_is_selected:
             self.stored_item = self.signal._fulldata[int(self.selection_area.start):int(self.selection_area.end)]
 
     @pyqtSlot()
     def on_paste_action_triggered(self):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
-            self.clear_selection()
+            self.clear_horizontal_selection()
             paste_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                             start=self.selection_area.start, end=self.selection_area.end,
                                             data_to_insert=self.stored_item, position=self.paste_position,
@@ -270,9 +250,9 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
-        if not self.selection_area.is_empty:
+        if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
-            self.clear_selection()
+            self.clear_horizontal_selection()
             del_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                           start=start, end=end,
                                           mode=EditAction.delete, cache_qad=self.cache_qad)
@@ -280,9 +260,9 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_crop_action_triggered(self):
-        if not self.selection_area.is_empty:
+        if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
-            self.clear_selection()
+            self.clear_horizontal_selection()
             crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                            start=start, end=end,
                                            mode=EditAction.crop, cache_qad=self.cache_qad)
@@ -294,10 +274,6 @@ class EditableGraphicView(ZoomableGraphicView):
                                        start=self.selection_area.start, end=self.selection_area.end,
                                        mode=EditAction.mute, cache_qad=self.cache_qad)
         self.undo_stack.push(mute_action)
-
-    @pyqtSlot()
-    def on_zoom_action_triggered(self):
-        self.zoom_to_selection(self.selection_area.start, self.selection_area.end)
 
     @pyqtSlot()
     def on_create_action_triggered(self):

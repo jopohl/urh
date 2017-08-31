@@ -37,7 +37,7 @@ class Preamble(Component):
         """:type: dict[MessageType, list] """
 
         for msg in messages:
-            rng = self.find_preamble_range(msg)
+            rng = self.__find_preamble_range(msg)
             if rng:
                 preamble_ranges[msg.message_type].append(rng)
 
@@ -60,7 +60,7 @@ class Preamble(Component):
                                                 auto_created=True, type=self.sync_field_type)
 
 
-    def find_preamble_range(self, message: Message):
+    def __find_preamble_range(self, message: Message):
         search_start = 0
 
         if len(message.message_type) == 0:

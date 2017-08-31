@@ -263,6 +263,10 @@ class ModulatorDialogController(QDialog):
             one_freq = self.__trim_number(one_freq)
             zero_freq, one_freq = self.__ensure_multitude(zero_freq, one_freq)
 
+            if zero_freq == one_freq:
+                # If frequencies are equal, it is very probable the zero freq is negative
+                zero_freq = -one_freq
+
             self.ui.spinBoxParameter0.setValue(zero_freq)
             self.ui.spinBoxParameter1.setValue(one_freq)
 

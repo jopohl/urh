@@ -1,3 +1,6 @@
+import tempfile
+
+import os
 from PyQt5.QtCore import QPoint
 
 from tests.QtTestCase import QtTestCase
@@ -9,9 +12,17 @@ class TestDecodingGUI(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("esaver.complex")
+
+        # add empty signal
+        path = os.path.join(tempfile.gettempdir(), "empty.complex")
+        open(path, "w").close()
+        self.wait_before_new_file()
+        self.form.add_signalfile(path)
+
         signal = self.form.signal_tab_controller.signal_frames[0].signal
+        empty_signal = self.form.signal_tab_controller.signal_frames[1].signal
         self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[signal], parent=self.form,
+                                              signals=[signal, empty_signal], parent=self.form,
                                               project_manager=self.form.project_manager)
 
         if self.SHOW:
@@ -49,8 +60,16 @@ class TestDecodingGUI(QtTestCase):
             self.assertIn(chain[i][0], self.dialog.ui.info.text())
 
     def test_set_signal(self):
-        self.dialog.ui.combobox_signals.currentIndexChanged.emit(0)
+        self.dialog.ui.combobox_signals.setCurrentText("esaver")
+        bits = "".join(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.plain_bits_str)
+        self.assertEqual(self.dialog.ui.inpt.text(), bits)
+
+        self.dialog.ui.combobox_signals.setCurrentIndex(0)
         self.assertEqual(self.dialog.ui.inpt.text(), "10010110")
+
+    def test_set_signal_empty_message(self):
+        self.dialog.ui.combobox_signals.setCurrentText("empty")
+        self.assertEqual(self.dialog.ui.inpt.text(), "")
 
     def test_select_items(self):
         for i in range(0, self.dialog.ui.basefunctions.count()):

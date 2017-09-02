@@ -1,5 +1,3 @@
-from enum import Enum
-
 from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
 
@@ -22,7 +20,7 @@ class ProtocolLabel(object):
                  "fuzz_created", "__field_type", "display_format_index", "auto_created", "copied")
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
-                 auto_created=False, field_type:FieldType=None):
+                 auto_created=False, field_type: FieldType = None):
         self.__name = name
         self.start = start
         self.end = end + 1
@@ -36,7 +34,7 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__field_type = field_type # type: FieldType
+        self.__field_type = field_type  # type: FieldType
 
         self.display_format_index = 0 if field_type is None else field_type.display_format_index
 
@@ -124,12 +122,15 @@ class ProtocolLabel(object):
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
 
-    def to_xml(self, index:int) -> ET.Element:
-        return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end), "color_index": str(self.color_index),
-                                            "apply_decoding": str(self.apply_decoding), "index": str(index),
-                                            "show": str(self.show), "display_format_index": str(self.display_format_index),
-                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                            "auto_created": str(self.auto_created), "type_id": self.field_type.id if self.field_type is not None else ""})
+    def to_xml(self, index: int) -> ET.Element:
+        return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end),
+                                           "color_index": str(self.color_index),
+                                           "apply_decoding": str(self.apply_decoding), "index": str(index),
+                                           "show": str(self.show),
+                                           "display_format_index": str(self.display_format_index),
+                                           "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
+                                           "auto_created": str(self.auto_created),
+                                           "type_id": self.field_type.id if self.field_type is not None else ""})
 
     @classmethod
     def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):

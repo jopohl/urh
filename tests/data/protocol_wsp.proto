@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<protocol>
+   <decodings>
+      <decoding>'Non Return To Zero (NRZ)', </decoding>
+      <decoding>'Non Return To Zero Inverted (NRZ-I)', 'Invert', </decoding>
+      <decoding>'Manchester I', 'Edge Trigger', </decoding>
+      <decoding>'Manchester II', 'Edge Trigger', 'Invert', </decoding>
+      <decoding>'Differential Manchester', 'Edge Trigger', 'Differential Encoding', </decoding>
+      <decoding>'enOcean', 'Wireless Short Packet (WSP)', </decoding>
+      <decoding>'WSP', 'Wireless Short Packet (WSP)', </decoding>
+   </decodings>
+   <participants/>
+   <messages>
+      <message bits="10101010110100111100010111011101110111011100110001011101010001011101110110111010101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="14759"/>
+      <message bits="10101010110100111100010111011101110111011100110001011101010001011101110110111010101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="107253"/>
+      <message bits="10101010110100111100010111011101110111011100110001011101010001011101110110111010101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="1077892"/>
+      <message bits="10101010110101001101110111011101110111011100110001011101010001011101110110111100101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="14763"/>
+      <message bits="10101010110101001101110111011101110111011100110001011101010001011101110110111100101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="107219"/>
+      <message bits="10101010110101001101110111011101110111011100110001011101010001011101110110111100101" decoding_index="6" message_type_id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" modulator_index="0" pause="7285368"/>
+   </messages>
+   <message_types>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="xJu8iU6iRvpZ08q8KCNUmhi1gI0pPzWS0i51sYqsrTt5uTGFmF" name="default">
+         <label apply_decoding="True" auto_created="False" color_index="0" display_format_index="0" end="8" fuzz_me="2" fuzz_values="" index="-1" name="preamble" show="2" start="0" type_id="1e1260c9-c66d-4295-85f0-df4e6a653943"/>
+         <label apply_decoding="True" auto_created="False" color_index="1" display_format_index="0" end="12" fuzz_me="2" fuzz_values="" index="-1" name="synchronization" show="2" start="8" type_id="907b411d-0bad-4c1d-9131-8add551cd57f"/>
+         <label apply_decoding="True" auto_created="False" color_index="2" display_format_index="0" end="16" fuzz_me="2" fuzz_values="" index="-1" name="RORG" show="2" start="12" type_id=""/>
+         <label apply_decoding="True" auto_created="False" color_index="6" display_format_index="0" end="20" fuzz_me="2" fuzz_values="" index="-1" name="DATA" show="2" start="16" type_id=""/>
+         <label apply_decoding="True" auto_created="False" color_index="7" display_format_index="1" end="52" fuzz_me="2" fuzz_values="" index="-1" name="source address" show="2" start="28" type_id="5972badc-dd7c-47bd-b50a-1a3d58a61a9c"/>
+         <label apply_decoding="True" auto_created="False" color_index="5" display_format_index="0" end="56" fuzz_me="2" fuzz_values="" index="-1" name="status" show="2" start="52" type_id=""/>
+         <checksum_label apply_decoding="True" auto_created="False" category="wsp" color_index="4" data_ranges="[[12, -4]]" display_format_index="1" end="60" fuzz_me="2" fuzz_values="" index="-1" name="checksum" show="2" start="56" type_id="00ad72f0-a31a-4532-bd3e-e6813d64619d">
+            <wsp_checksum mode="auto"/>
+         </checksum_label>
+         <label apply_decoding="True" auto_created="False" color_index="3" display_format_index="0" end="64" fuzz_me="2" fuzz_values="" index="-1" name="EoF" show="2" start="60" type_id=""/>
+         <ruleset mode="0"/>
+      </message_type>
+   </message_types>
+</protocol>

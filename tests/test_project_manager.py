@@ -17,8 +17,15 @@ from urh.signalprocessing.Participant import Participant
 class TestProjectManager(QtTestCase):
     def setUp(self):
         super().setUp()
+        if os.path.isfile(get_path_for_data_file("URHProject.xml")):
+            os.remove(get_path_for_data_file("URHProject.xml"))
         self.form.project_manager.set_project_folder(get_path_for_data_file(""), ask_for_new_project=False)
         self.gframe = self.form.generator_tab_controller
+
+    def test_load_protocol_file(self):
+        self.wait_before_new_file()
+        self.form.add_protocol_file(self.get_path_for_filename("protocol_wsp.proto"))
+        self.assertEqual(len(self.form.compare_frame_controller.proto_analyzer.messages), 6)
 
     def test_save_modulations(self):
         self.gframe.modulators[0].name = "Test"

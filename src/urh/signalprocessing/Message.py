@@ -452,7 +452,12 @@ class Message(object):
         root.set("modulator_index", str(self.modulator_index))
         root.set("pause", str(self.pause))
         if decoders:
-            root.set("decoding_index", str(decoders.index(self.decoder)))
+            try:
+                decoding_index = decoders.index(self.decoder)
+            except ValueError:
+                logger.warning("Failed to find '{}' in list of decodings".format(self.decoder.name))
+                decoding_index = 0
+            root.set("decoding_index", str(decoding_index))
         if self.participant is not None:
             root.set("participant_id", self.participant.id)
         if include_message_type:

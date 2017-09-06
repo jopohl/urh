@@ -264,9 +264,6 @@ class MainController(QMainWindow):
 
         signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated, sample_rate=sample_rate)
 
-        if self.project_manager.project_file is None:
-            self.adjust_for_current_file(signal.filename)
-
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
 
@@ -369,6 +366,9 @@ class MainController(QMainWindow):
             else:
                 self.add_signalfile(file, group_id)
 
+            if self.project_manager.project_file is None:
+                self.adjust_for_current_file(file)
+
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()
 
@@ -448,7 +448,6 @@ class MainController(QMainWindow):
         else:
             self.showMaximized()
 
-    @pyqtSlot(str)
     def adjust_for_current_file(self, file_path):
         if file_path is None:
             return
@@ -740,7 +739,7 @@ class MainController(QMainWindow):
                     self.unsetCursor()
             except Exception as e:
                 Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
-                QApplication.instance().restoreOverrideCursor()
+                self.unsetCursor()
 
     @pyqtSlot()
     def on_close_all_action_triggered(self):

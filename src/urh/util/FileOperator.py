@@ -64,11 +64,11 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
         if wav_only:
             name_filter = "wav files (*.wav);;all files (*)"
     elif caption == "Save fuzz profile":
-        name_filter = "Fuzzfiles (*.fuzz);;All files (*)"
+        name_filter = "Fuzzfiles (*.fuzz.xml *.fuzz);;All files (*)"
     elif caption == "Save encoding":
         name_filter = ""
     else:
-        name_filter = "Protocols (*.proto);;All files (*)"
+        name_filter = "Protocols (*.proto.xml *.proto);;All files (*)"
 
     filename = None
     dialog = QFileDialog()

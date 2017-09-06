@@ -70,6 +70,8 @@ on_success:
 before_deploy:
   - ps: >-
       & GitReleaseNotes . /OutputFile ReleaseNotes.md;
+      echo "File content:";
+      cat ReleaseNotes.md;
       ${env:release_description} = ( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) -join "`n";
       echo "Release Description:" ${env:release_description};
 

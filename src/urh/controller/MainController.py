@@ -717,7 +717,7 @@ class MainController(QMainWindow):
             self.dialog.setFileMode(QFileDialog.ExistingFiles)
             self.dialog.setNameFilter(
                 "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto.xml *.proto);;"
-                "Fuzzprofiles (*.fuzz.xml *.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+                "Fuzzprofiles (*.fuzz.xml *.fuzz);;Plain bits (*.txt);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
         self.dialog.setOptions(QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)

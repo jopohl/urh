@@ -11,7 +11,7 @@ from urh.signalprocessing.Encoding import Encoding
 
 class TestFuzzingProfile(QtTestCase):
     def test_load_profile(self):
-        filename = os.path.join(tempfile.gettempdir(), "test.fuzz")
+        filename = os.path.join(tempfile.gettempdir(), "test.fuzz.xml")
         mod1 = Modulator("mod 1")
         mod2 = Modulator("mod 2")
         mod2.param_for_one = 42
@@ -25,7 +25,7 @@ class TestFuzzingProfile(QtTestCase):
         pac.to_xml_file(filename)
 
         self.wait_before_new_file()
-        self.form.add_files([os.path.join(tempfile.gettempdir(), "test.fuzz")])
+        self.form.add_files([os.path.join(tempfile.gettempdir(), "test.fuzz.xml")])
 
         self.assertEqual(self.form.ui.tabWidget.currentWidget(), self.form.ui.tab_generator)
 

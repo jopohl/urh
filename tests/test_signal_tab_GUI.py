@@ -55,7 +55,7 @@ class TestSignalTabGUI(QtTestCase):
     def test_load_proto(self):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
-        self.form.add_files([get_path_for_data_file("protocol.proto")])
+        self.form.add_files([get_path_for_data_file("protocol.proto.xml")])
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(), "Protocol (*.proto)")
 
     def test_graphic_view_selection(self):

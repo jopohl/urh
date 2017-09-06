@@ -350,20 +350,19 @@ class MainController(QMainWindow):
                 self.project_manager.set_project_folder(file)
                 return
 
-            _, file_extension = os.path.splitext(file)
             FileOperator.RECENT_PATH = os.path.split(file)[0]
 
-            if file_extension == ".complex":
+            if file.endswith(".complex"):
                 self.add_signalfile(file, group_id)
-            elif file_extension == ".coco":
+            elif file.endswith(".coco"):
                 self.add_signalfile(file, group_id)
-            elif file_extension == ".proto":
+            elif file.endswith(".proto") or file.endswith(".proto.xml"):
                 self.add_protocol_file(file)
-            elif file_extension == ".wav":
+            elif file.endswith(".wav"):
                 self.add_signalfile(file, group_id)
-            elif file_extension == ".fuzz":
+            elif file.endswith(".fuzz") or file.endswith(".fuzz.xml"):
                 self.add_fuzz_profile(file)
-            elif file_extension == ".txt":
+            elif file.endswith(".txt"):
                 self.add_plain_bits_from_txt(file)
             elif os.path.basename(file) == constants.PROJECT_FILE:
                 self.project_manager.set_project_folder(os.path.split(file)[0])
@@ -717,8 +716,8 @@ class MainController(QMainWindow):
         else:
             self.dialog.setFileMode(QFileDialog.ExistingFiles)
             self.dialog.setNameFilter(
-                "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto);;"
-                "Fuzzprofiles (*.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
+                "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto.xml *.proto);;"
+                "Fuzzprofiles (*.fuzz.xml *.fuzz);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
 
         self.dialog.setOptions(QFileDialog.DontResolveSymlinks)
         self.dialog.setViewMode(QFileDialog.Detail)

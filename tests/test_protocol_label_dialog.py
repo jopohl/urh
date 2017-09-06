@@ -11,7 +11,7 @@ class TestProtocolLabelDialog(QtTestCase):
         super().setUp()
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
-        self.form.add_protocol_file(get_path_for_data_file("protocol.proto"))
+        self.form.add_protocol_file(get_path_for_data_file("protocol.proto.xml"))
 
         self.cframe = self.form.compare_frame_controller
 

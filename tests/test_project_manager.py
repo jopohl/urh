@@ -24,7 +24,7 @@ class TestProjectManager(QtTestCase):
 
     def test_load_protocol_file(self):
         self.wait_before_new_file()
-        self.form.add_protocol_file(self.get_path_for_filename("protocol_wsp.proto"))
+        self.form.add_protocol_file(self.get_path_for_filename("protocol_wsp.proto.xml"))
         self.assertEqual(len(self.form.compare_frame_controller.proto_analyzer.messages), 6)
 
     def test_save_modulations(self):

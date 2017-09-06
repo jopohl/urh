@@ -819,7 +819,7 @@ class CompareFrameController(QWidget):
                     break
 
         text = "protocol"
-        filename = FileOperator.get_save_file_name("{0}.proto".format(text), caption="Save protocol")
+        filename = FileOperator.get_save_file_name("{0}.proto.xml".format(text), caption="Save protocol")
 
         if not filename:
             return

@@ -70,7 +70,6 @@ class Simulator(QObject):
 
                     self.load_device_parameter(sniffer.rcv_device, recv_profile, is_rx=True)
                     self.profile_sniffer_dict[recv_profile['name']] = sniffer
-                    sniffer.decoder = Encoding(["Wireless Short Packet (WSP)"])
             else:
                 send_profile = participant.send_profile
 

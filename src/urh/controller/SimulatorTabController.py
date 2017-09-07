@@ -49,7 +49,7 @@ class SimulatorTabController(QWidget):
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)
 
-        self.ui.splitter_2.setSizes([self.width() / 0.7, self.width() / 0.3])
+        self.ui.splitter.setSizes([self.width() / 0.7, self.width() / 0.3])
 
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = self.generator_tab_controller.tree_model

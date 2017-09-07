@@ -14,3 +14,8 @@ class SimulatorMessageFieldTableView(QTableView):
 
     def model(self) -> SimulatorMessageFieldModel:
         return super().model()
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        menu = QMenu()
+
+        

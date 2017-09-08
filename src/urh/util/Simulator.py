@@ -2,6 +2,7 @@ import threading
 import numpy
 import array
 import time
+import datetime
 
 from PyQt5.QtCore import QEventLoop, QTimer, pyqtSignal, QObject
 
@@ -115,7 +116,7 @@ class Simulator(QObject):
         if not self.is_simulating:
             return
 
-        self.messages.append("Stop simulation ...")
+        self.log_message("Stop simulation ...")
         self.is_simulating = False
 
         self.stopping_simulation.emit()
@@ -129,7 +130,7 @@ class Simulator(QObject):
 
     def restart(self):
         self.reset()
-        self.messages.append("Restart simulation ...")
+        self.log_message("Restart simulation ...")
 
     def reset(self):
         for _, sniffer in self.profile_sniffer_dict.items():
@@ -206,7 +207,7 @@ class Simulator(QObject):
 
     def simulate(self):
         self.simulation_started.emit()
-        self.messages.append("Start simulation ...")
+        self.log_message("Start simulation ...")
 
         while self.is_simulating and not self.simulation_is_finished():
             if (self.current_item is self.protocol_manager.rootItem or
@@ -217,12 +218,12 @@ class Simulator(QObject):
                 next_item = self.current_item.next()
             elif isinstance(self.current_item, SimulatorGotoAction):
                 next_item = self.current_item.target
-                self.messages.append("GOTO item " + next_item.index())
+                self.log_message("GOTO item " + next_item.index())
             elif isinstance(self.current_item, SimulatorRule):
                 true_cond = self.current_item.true_condition()
 
                 if true_cond is not None and true_cond.logging_active and true_cond.type != ConditionType.ELSE:
-                    self.messages.append("Rule condition " + true_cond.index() + " (" + true_cond.condition + ") applied")
+                    self.log_message("Rule condition " + true_cond.index() + " (" + true_cond.condition + ") applied")
                 
                 next_item = true_cond.children[0] if true_cond is not None and true_cond.child_count() else self.current_item.next_sibling()
             elif (isinstance(self.current_item, SimulatorRuleCondition) and 
@@ -287,13 +288,13 @@ class Simulator(QObject):
 
             print("Send message: " + str(time.perf_counter() - start_time))
 
-            self.messages.append("Sending message " + msg.index())
+            self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
             msg.send_recv_messages.append(new_message)
             self.last_sent_message = msg
         else:
             # we have to receive a message ...
-            self.messages.append("Waiting for message " + msg.index() + " ...")
+            self.log_message("Waiting for message " + msg.index() + " ...")
             sniffer = self.profile_sniffer_dict[msg.participant.recv_profile['name']]
             retry = 0
 
@@ -340,15 +341,20 @@ class Simulator(QObject):
                     decoded_msg = Message(received_msg.decoded_bits, 0,
                         received_msg.message_type, decoder=received_msg.decoder)
                     msg.send_recv_messages.append(decoded_msg)
-                    self.messages.append("Received message " + msg.index() + ": ")
+                    self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
 
                 retry += 1
 
             if retry == SimulatorSettings.retries:
-                self.messages.append("Message " + msg.index() + " not received")
+                self.log_message("Message " + msg.index() + " not received")
                 self.stop()
+
+    def log_message(self, message):
+        now = datetime.datetime.now()
+        timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(now)
+        self.messages.append(timestamp + ": " + message)
 
     def check_message(self, received_msg, expected_msg):
         # do we have a crc label?
@@ -398,7 +404,7 @@ class Simulator(QObject):
                 self.messages.append("\t" + lbl.name + ": " + value)
 
     def resend_last_message(self):
-        self.messages.append("Resending last message ...")
+        self.log_message("Resending last message ...")
         lsm = self.last_sent_message
 
         if lsm is None:
@@ -437,7 +443,7 @@ class Simulator(QObject):
             loop.exec()
 
         if not timer.isActive():
-            self.messages.append("Receive timeout")
+            self.log_message("Receive timeout")
 
         # just to be sure ...
         timer.stop()

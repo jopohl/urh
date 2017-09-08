@@ -103,7 +103,7 @@ class TestLimeSDR(unittest.TestCase):
             limesdr.print_last_error()
             print("Setup stream", limesdr.setup_stream(4000000000))
             print("Start stream", limesdr.start_stream())
-            print("Send samples", limesdr.send_stream(samples_to_send, 100))
+            print("Send samples", limesdr.send_stream(samples_to_send.astype(np.float32), 100))
             print("Stop stream", limesdr.stop_stream())
             print("Destroy stream", limesdr.destroy_stream())
 

@@ -1,6 +1,6 @@
 import time
 
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QCloseEvent, QIcon
 
@@ -26,6 +26,7 @@ class SimulationDialogController(QDialog):
 
     def create_connects(self):
         self.ui.btnStartStop.clicked.connect(self.on_start_stop_clicked)
+        self.ui.btnSaveLog.clicked.connect(self.on_save_log_clicked)
         self.timer.timeout.connect(self.update_view)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
@@ -50,6 +51,20 @@ class SimulationDialogController(QDialog):
 
         current_item = self.simulator.current_item.index() if self.simulator.is_simulating else "-"
         self.ui.lblCurrentItemValue.setText(current_item)
+
+    def on_save_log_clicked(self):
+        file_path = QFileDialog.getSaveFileName(self, "Save log", "", "Log file (*.log)")
+
+        if file_path[0] == "":
+            return
+
+        log_string = self.ui.textEditSimulation.toPlainText()
+
+        try:
+            with open(str(file_path[0]), "w") as f:
+                f.write(log_string)
+        except Exception as e:
+            QMessageBox.critical(self, "Error saving log", e.args[0])
 
     def on_start_stop_clicked(self):
         if self.simulator.is_simulating:

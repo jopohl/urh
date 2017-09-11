@@ -3,7 +3,7 @@ import os
 
 from PyQt5.QtCore import QDir, Qt, pyqtSlot
 from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QGraphicsScene, QApplication, QFileDialog, QInputDialog, \
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
     QLineEdit, QMessageBox
 
 from urh import constants
@@ -169,7 +169,7 @@ class DecoderWidgetController(QDialog):
     def saveas(self):
         # Ask for a name
         name, ok = QInputDialog.getText(self, self.tr("Save decoding"),
-                                          self.tr("Please enter a name:"), QLineEdit.Normal, self.e.chain[0])
+                                        self.tr("Please enter a name:"), QLineEdit.Normal, self.e.chain[0])
 
         if ok and name != "":
             self.e.chain[0] = name
@@ -195,7 +195,8 @@ class DecoderWidgetController(QDialog):
         num = self.ui.combobox_decodings.currentIndex()
         if num >= 0:
             reply = QMessageBox.question(self, self.tr("Delete Decoding?"),
-                                         self.tr("Do you really want to delete " + "'{}'?".format(self.decodings[num].name)),
+                                         self.tr("Do you really want to delete " + "'{}'?".format(
+                                             self.decodings[num].name)),
                                          QMessageBox.Yes | QMessageBox.No)
 
             if reply == QMessageBox.Yes:
@@ -389,6 +390,7 @@ class DecoderWidgetController(QDialog):
         errors = "[Decoding Errors = " + str(self.e.analyze(bit)[0]) + "]"
         self.ui.decoding_errors_label.setText(errors)
         self.ui.output.setText(decoded)
+        self.ui.output.setCursorPosition(0)
 
         if len(decoded) > 0:
             if signaltype == 0:
@@ -835,17 +837,15 @@ class DecoderWidgetController(QDialog):
             self.decoder_update()
             return
 
+        self.setCursor(Qt.WaitCursor)
+
         signal = self.signals[indx - 1]
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
-        self.ui.inpt.setText("".join(pa.decoded_proto_bits_str))
+        self.ui.inpt.setText("".join(pa.plain_bits_str))
+        self.ui.inpt.setCursorPosition(0)
 
-        tmp_scene = QGraphicsScene()
-        tmp_scene.addText(self.tr("Loading Signal..."))
-        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
-        self.ui.graphicsView_signal.setScene(tmp_scene)
-
-        if signal is not None:
+        if signal is not None and pa.messages:
             last_message = pa.messages[-1]
             lookup = {i: msg.bit_sample_pos for i, msg in enumerate(pa.messages)}
 
@@ -853,4 +853,4 @@ class DecoderWidgetController(QDialog):
             self.ui.graphicsView_signal.plot_data(plot_data)
 
         self.ui.graphicsView_signal.centerOn(0, 0)
-        QApplication.instance().restoreOverrideCursor()
+        self.unsetCursor()

@@ -456,12 +456,15 @@ class CompareFrameController(QWidget):
         :rtype: list of ProtocolAnalyzer
         """
         pa = ProtocolAnalyzer(signal=None)
+        pa.message_types = []
         pa.name = "Loaded Protocol"
         pa.filename = filename
         pa.from_xml_file(filename=filename, read_bits=True)
-        for messsagetype in pa.message_types:
-            if messsagetype not in self.proto_analyzer.message_types:
-                self.proto_analyzer.message_types.append(messsagetype)
+        for messsage_type in pa.message_types:
+            if messsage_type not in self.proto_analyzer.message_types:
+                if messsage_type.name in (mt.name for mt in self.proto_analyzer.message_types):
+                    messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
+                self.proto_analyzer.message_types.append(messsage_type)
 
         self.fill_message_type_combobox()
         self.add_protocol(protocol=pa)
@@ -819,7 +822,7 @@ class CompareFrameController(QWidget):
                     break
 
         text = "protocol"
-        filename = FileOperator.get_save_file_name("{0}.proto".format(text), caption="Save protocol")
+        filename = FileOperator.get_save_file_name("{0}.proto.xml".format(text), caption="Save protocol")
 
         if not filename:
             return

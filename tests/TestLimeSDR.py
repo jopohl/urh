@@ -103,14 +103,12 @@ class TestLimeSDR(unittest.TestCase):
             limesdr.print_last_error()
             print("Setup stream", limesdr.setup_stream(4000000000))
             print("Start stream", limesdr.start_stream())
-            print("Send samples", limesdr.send_stream(samples_to_send, 100))
+            print("Send samples", limesdr.send_stream(samples_to_send.view(np.float32), 100))
             print("Stop stream", limesdr.stop_stream())
             print("Destroy stream", limesdr.destroy_stream())
 
         print("-" * 20)
         print("Close:", limesdr.close())
-        print("Is Open 0:", limesdr.is_open(0))
-        print("Is Open 1:", limesdr.is_open(1))
 
 if __name__ == "__main__":
     unittest.main()

@@ -134,14 +134,7 @@ class SignalFrameController(QFrame):
 
         else:
             self.ui.btnFilter.setDisabled(True)
-            suffix = ""
-            if not proto_analyzer.filename:
-                suffix = ""
-            elif proto_analyzer.filename.endswith(".proto"):
-                suffix = " (*.proto)"
-            elif proto_analyzer.filename.endswith(".txt"):
-                suffix = " (*.txt)"
-            self.ui.lSignalTyp.setText("Protocol" + suffix)
+            self.ui.lSignalTyp.setText("Protocol")
 
             scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
 

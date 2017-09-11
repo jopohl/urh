@@ -69,7 +69,11 @@ on_success:
 
 before_deploy:
   - ps: >-
+      & git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])");
       & GitReleaseNotes . /OutputFile ReleaseNotes.md;
+      & git checkout master;
+      echo "File content:";
+      cat ReleaseNotes.md;
       ${env:release_description} = ( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) -join "`n";
       echo "Release Description:" ${env:release_description};
 

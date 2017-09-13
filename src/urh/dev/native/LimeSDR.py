@@ -54,6 +54,7 @@ class LimeSDR(Device):
         if not cls.setup_device(ctrl_connection, device_identifier=None):
             return False
 
+        limesdr.enable_channel(True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name])
         limesdr.set_tx(is_tx)
 
         for parameter, value in parameters.items():
@@ -64,7 +65,7 @@ class LimeSDR(Device):
         ctrl_connection.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_connection.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))
 
-        limesdr.enable_channel(True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name])
+
 
         return True
 

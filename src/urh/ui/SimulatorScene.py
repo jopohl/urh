@@ -390,6 +390,7 @@ class SimulatorScene(QGraphicsScene):
         self.sim_proto_manager.add_items([rule], pos, parent)
 
         self.add_rule_condition(rule, ConditionType.IF)
+        return rule
 
     def add_rule_condition(self, rule: SimulatorRule, type: ConditionType):
         rule_condition = SimulatorRuleCondition(type)
@@ -400,21 +401,25 @@ class SimulatorScene(QGraphicsScene):
             pos -= 1
 
         self.sim_proto_manager.add_items([rule_condition], pos, rule)
+        return rule_condition
 
     def add_goto_action(self, ref_item, position):
         goto_action = SimulatorGotoAction()
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_items([goto_action], pos, parent)
+        return goto_action
 
     def add_program_action(self, ref_item, position):
         program_action = SimulatorProgramAction()
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_items([program_action], pos, parent)
+        return program_action
 
     def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None, destination=None):
         message = self.create_message(destination, plain_bits, pause, message_type, decoder, source)
         pos, parent = self.insert_at(ref_item, position, False)
         self.sim_proto_manager.add_items([message], pos, parent)
+        return message
 
     def create_message(self, destination, plain_bits, pause, message_type, decoder, source):
         if destination is None:

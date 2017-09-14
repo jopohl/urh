@@ -44,24 +44,41 @@ class SimulatorGraphicsView(QGraphicsView):
             ref_item = self.context_menu_item
             position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
 
-            self.scene().add_message(plain_bits=[0]*num_bits, pause=1000000, message_type=message_type,
+            message = self.scene().add_message(plain_bits=[0]*num_bits, pause=1000000, message_type=message_type,
                                      ref_item=ref_item, position=position)
+            self.jump_to_item(message)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):        
-        self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
+        rule = self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
+        if_cond = rule.children[0]
+        self.jump_to_item(if_cond)
 
     @pyqtSlot()
     def on_add_goto_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-        self.scene().add_goto_action(ref_item, position)
+        ga = self.scene().add_goto_action(ref_item, position)
+        self.jump_to_item(ga)
 
     @pyqtSlot()
     def on_add_program_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-        self.scene().add_program_action(ref_item, position)
+        pa = self.scene().add_program_action(ref_item, position)
+        self.jump_to_item(pa)
+
+    @pyqtSlot()
+    def on_add_else_if_cond_action_triggered(self):
+        rule = self.context_menu_item.parentItem().model_item
+        cond = self.scene().add_rule_condition(rule, ConditionType.ELSE_IF)
+        self.jump_to_item(cond)
+
+    @pyqtSlot()
+    def on_add_else_cond_action_triggered(self):
+        rule = self.context_menu_item.parentItem().model_item
+        cond = self.scene().add_rule_condition(rule, ConditionType.ELSE)
+        self.jump_to_item(cond)
 
     @pyqtSlot()
     def on_delete_action_triggered(self):
@@ -74,16 +91,6 @@ class SimulatorGraphicsView(QGraphicsView):
     @pyqtSlot()
     def on_clear_all_action_triggered(self):
         self.scene().clear_all()
-
-    @pyqtSlot()
-    def on_add_else_if_cond_action_triggered(self):
-        rule = self.context_menu_item.parentItem().model_item
-        self.scene().add_rule_condition(rule, ConditionType.ELSE_IF)
-
-    @pyqtSlot()
-    def on_add_else_cond_action_triggered(self):
-        rule = self.context_menu_item.parentItem().model_item
-        self.scene().add_rule_condition(rule, ConditionType.ELSE)
 
     @pyqtSlot()
     def on_source_action_triggered(self):
@@ -239,7 +246,7 @@ class SimulatorGraphicsView(QGraphicsView):
         if selected_items:
             selected_item = selected_items[0]
             next_item = selected_item.next()
-            self.jump_to_item(next_item)
+            self.jump_to_scene_item(next_item)
 
     def navigate_backward(self):
         selected_items = self.scene().selectedItems()
@@ -247,9 +254,12 @@ class SimulatorGraphicsView(QGraphicsView):
         if selected_items:
             selected_item = selected_items[0]
             prev_item = selected_item.prev()
-            self.jump_to_item(prev_item)
-        
+            self.jump_to_scene_item(prev_item)
+
     def jump_to_item(self, item):
+        self.jump_to_scene_item(self.scene().model_to_scene(item))
+
+    def jump_to_scene_item(self, item):
         if item:
             self.scene().clearSelection()
             self.centerOn(item)

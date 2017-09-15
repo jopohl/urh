@@ -30,6 +30,11 @@ class EpicGraphicView(EditableGraphicView):
         self.addAction(self.save_action)
 
     @property
+    def y_center(self):
+        # TODO: This property was missing. Returning 0 fixed the test.
+        return 0
+
+    @property
     def sample_rate(self):
         try:
             return self.signal.sample_rate

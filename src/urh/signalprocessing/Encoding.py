@@ -267,6 +267,12 @@ class Encoding(object):
                         self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
                         self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
                         self.cc1101_overwrite_crc = True if overwrite_crc == "1" else False
+                elif self.chain[i + 1].count(';') == 1:
+                    self.data_whitening_sync, self.data_whitening_polynomial = self.chain[i + 1].split(";")
+                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0):
+                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
+                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
+                        self.cc1101_overwrite_crc = False
 
             elif self.code_cut == operation:
                 if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:

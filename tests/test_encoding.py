@@ -230,3 +230,17 @@ class TestDecoding(QtTestCase):
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
+
+    def test_data_whitening(self):
+        e = Encoding()
+        nrz = util.hex2bit("aaaaaaaae9cae9caf3ac94ee8cb9e7afe729ff31d05d57")
+        de_whitened, err, _ = e.code_data_whitening(True, nrz)  # Decoding
+
+        e.cc1101_overwrite_crc = False
+        nrz2, err, _ = e.code_data_whitening(False, de_whitened) # Encoding without overwriting CRC
+
+        e.cc1101_overwrite_crc = True
+        nrz3, err, _ = e.code_data_whitening(False, de_whitened)  # Encoding with overwriting CRC
+
+        self.assertEqual(nrz, nrz2)
+        self.assertEqual(nrz, nrz3)

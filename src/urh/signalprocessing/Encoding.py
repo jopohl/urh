@@ -3,6 +3,7 @@ import copy
 import array
 
 from urh import constants
+from urh.util.GenericCRC import GenericCRC
 from urh.util import util
 
 
@@ -39,6 +40,7 @@ class Encoding(object):
         self.morse_high = 3
         self.morse_wait = 1
         self.__symbol_len = 1
+        self.cc1101_overwrite_crc = False
 
         # Configure CC1101 Date Whitening
         polynomial = array.array("B", [False, False, True, False, False, False, False, True])  # x^5+x^0
@@ -377,6 +379,13 @@ class Encoding(object):
         if len(keystream) < inpt_to - whitening_start_pos:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Error 31338
 
+        # Overwrite crc16 in encoding case
+        if not decoding and self.cc1101_overwrite_crc:
+            c = GenericCRC(polynomial="16_standard", start_value=True)
+            crc = c.crc(inpt[whitening_start_pos:inpt_to - 16])
+            for i in range(0, 15):
+                inpt[inpt_to - 15 + i] = crc[i]
+
         # Apply keystream (xor)
         for i in range(whitening_start_pos, inpt_to):
             inpt[i] ^= keystream[i - whitening_start_pos]
@@ -451,7 +460,8 @@ class Encoding(object):
         :param inpt:
         :return:
         """
-        return self.apply_data_whitening(decoding, inpt)
+        inpt_copy = array.array("B", inpt)
+        return self.apply_data_whitening(decoding, inpt_copy)
 
     def code_lsb_first(self, decoding, inpt):
         output = array.array("B", inpt)

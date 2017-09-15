@@ -106,6 +106,7 @@ class DecoderWidgetController(QDialog):
         self.ui.external_encoder.textEdited.connect(self.handle_external)
         self.ui.datawhitening_sync.textEdited.connect(self.handle_datawhitening)
         self.ui.datawhitening_polynomial.textEdited.connect(self.handle_datawhitening)
+        self.ui.datawhitening_overwrite_crc.clicked.connect(self.handle_datawhitening)
 
         self.ui.decoderchain.itemChanged.connect(self.decoderchainUpdate)
         self.ui.decoderchain.internalMove.connect(self.decoderchainUpdate)
@@ -285,7 +286,7 @@ class DecoderWidgetController(QDialog):
                     self.chainstr.append(self.chainoptions[op])
                 else:
                     self.chainoptions[op] = ""
-                    self.chainstr.append("0xe9cae9ca;0x21")  # Default
+                    self.chainstr.append("0xe9cae9ca;0x21;0")  # Default
             elif constants.DECODING_CUT in op:
                 # Add cut parameters
                 if op in self.chainoptions:
@@ -610,24 +611,29 @@ class DecoderWidgetController(QDialog):
             if not decoderEdit:
                 self.ui.datawhitening_sync.setText("0xe9cae9ca")
                 self.ui.datawhitening_polynomial.setText("0x21")
+                self.ui.datawhitening_overwrite_crc.setChecked(False)
             else:
                 if element in self.chainoptions:
                     value = self.chainoptions[element]
                     if value == "":
                         self.ui.datawhitening_sync.setText("0xe9cae9ca")
                         self.ui.datawhitening_polynomial.setText("0x21")
+                        self.ui.datawhitening_overwrite_crc.setChecked(False)
                     else:
                         try:
-                            whitening_sync, whitening_polynomial = value.split(";")
+                            whitening_sync, whitening_polynomial, whitening_overwrite_crc = value.split(";")
                             self.ui.datawhitening_sync.setText(whitening_sync)
                             self.ui.datawhitening_polynomial.setText(whitening_polynomial)
+                            self.ui.datawhitening_overwrite_crc.setChecked(True if whitening_overwrite_crc == "1" else False)
 
                         except ValueError:
                             self.ui.datawhitening_sync.setText("0xe9cae9ca")
                             self.ui.datawhitening_polynomial.setText("0x21")
+                            self.ui.datawhitening_overwrite_crc.setChecked(False)
 
             self.ui.datawhitening_sync.setEnabled(decoderEdit)
             self.ui.datawhitening_polynomial.setEnabled(decoderEdit)
+            self.ui.datawhitening_overwrite_crc.setEnabled(decoderEdit)
 
         elif constants.DECODING_CUT in element:
             txt += "This function enables you to cut data from your messages, in order to shorten or align them for a " \
@@ -714,7 +720,8 @@ class DecoderWidgetController(QDialog):
 
     @pyqtSlot()
     def handle_datawhitening(self):
-        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text()
+        datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + \
+                           "1" if self.ui.datawhitening_overwrite_crc.isChecked() else "0"
         if constants.DECODING_DATAWHITENING in self.active_message:
             self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()

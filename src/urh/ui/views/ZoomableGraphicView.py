@@ -54,11 +54,15 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     @property
     def y_center(self):
-        if self.scene_type == 0:
-            # Normal scene
+        try:
+            if self.scene_type == 0:
+                # Normal scene
+                return 0
+            else:
+                return -self.signal.qad_center
+        except Exception as e:
+            logger.error("Could not access y_center property: {0}. Falling back to 0".format(e))
             return 0
-        else:
-            return -self.signal.qad_center
 
     def create_context_menu(self):
         menu = QMenu()

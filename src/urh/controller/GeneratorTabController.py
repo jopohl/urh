@@ -421,7 +421,7 @@ class GeneratorTabController(QWidget):
             message = self.table_model.protocol.messages[i]
             modulator = self.__get_modulator_of_message(message)
             # We do not need to modulate the pause extra, as result is already initialized with zeros
-            modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
+            modulator.modulate(start=0, data=message.encoded_bits, pause=0)
             buffer[pos:pos + len(modulator.modulated_samples)] = modulator.modulated_samples
             pos += len(modulator.modulated_samples) + message.pause
             self.ui.prBarGeneration.setValue(i + 1)

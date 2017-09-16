@@ -66,7 +66,6 @@ class ContinuousModulator(object):
         logger.debug("Stopped continuous modulation")
 
     def modulate_continuously(self):
-        pos = 0
         while True:
             start = self.current_message_index.value
             for i in range(start, len(self.messages)):
@@ -76,7 +75,7 @@ class ContinuousModulator(object):
                 message = self.messages[i]
                 self.current_message_index.value = i
                 modulator = self.modulators[message.modulator_index]  # type: Modulator
-                modulator.modulate(start=pos, data=message.encoded_bits, pause=message.pause)
+                modulator.modulate(start=0, data=message.encoded_bits, pause=message.pause)
                 while not self.ring_buffer.will_fit(len(modulator.modulated_samples)):
                     if self.abort.value:
                         return
@@ -84,4 +83,3 @@ class ContinuousModulator(object):
                     # Wait till there is space in buffer
                     time.sleep(self.WAIT_TIMEOUT)
                 self.ring_buffer.push(modulator.modulated_samples)
-                pos += len(modulator.modulated_samples)

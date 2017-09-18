@@ -72,7 +72,9 @@ before_deploy:
       & git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])");
       & GitReleaseNotes . /OutputFile ReleaseNotes.md;
       & git checkout master;
-      ${env:release_description} = "This release fixes the following issues: `n`n" + (( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) -join "`n");
+      echo "File content:";
+      cat ReleaseNotes.md;
+      ${env:release_description} = "These issues were fixed in this release: `n`n" + ((( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) | Select-Object -SkipLast 2) -join "`n");
       echo "Release Description:" ${env:release_description};
 
 deploy:

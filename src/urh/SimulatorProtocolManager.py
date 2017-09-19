@@ -173,6 +173,7 @@ class SimulatorProtocolManager(QObject):
         first_msg = None
         next_item = None
         redundant_messages = []
+        updated_messages = []
         repeat_counter = 0
 
         while current_item is not None:
@@ -189,12 +190,14 @@ class SimulatorProtocolManager(QObject):
 
                 if repeat_counter:
                     first_msg.repeat += repeat_counter
+                    updated_messages.append(first_msg)
 
                 current_item = current_msg.next()
             else:
                 current_item = current_item.next()
 
         self.delete_items(redundant_messages)
+        self.items_updated.emit(updated_messages)
 
     def get_all_messages(self):
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]

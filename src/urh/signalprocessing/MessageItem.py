@@ -15,6 +15,9 @@ class MessageItem(GraphicsItem):
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
+        
+        self.repeat_text = QGraphicsTextItem(self)
+        self.repeat_text.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 0:
@@ -26,8 +29,13 @@ class MessageItem(GraphicsItem):
         #width += 5
         width += sum([lbl.boundingRect().width() for lbl in labels])
         width += 5 * (len(labels) - 1)
+        width += self.repeat_text.boundingRect().width()
+        
         return width
 
+    def refresh(self):
+        self.repeat_text.setPlainText("(" + str(self.model_item.repeat) + "x)" if self.model_item.repeat > 1 else "")
+	
     def labels(self):
         self.refresh_unlabeled_range_marker()
         unlabeled_range_items = [uri for uri in self.childItems() if isinstance(uri, UnlabeledRangeItem)]
@@ -93,6 +101,8 @@ class MessageItem(GraphicsItem):
         for label in labels:
             label.setPos(start_x, start_y)
             start_x += label.boundingRect().width() + 5
+            
+        self.repeat_text.setPos(start_x, start_y)
 
         if labels:
             start_y += labels[0].boundingRect().height() + 5

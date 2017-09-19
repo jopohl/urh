@@ -166,6 +166,7 @@ class SimulatorTabController(QWidget):
 
     def on_repeat_value_changed(self, value):
         self.active_item.repeat = value
+        self.sim_proto_manager.items_updated.emit([self.active_item])
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())

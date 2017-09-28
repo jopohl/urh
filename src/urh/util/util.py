@@ -2,9 +2,20 @@ import array
 import os
 import sys
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit
 
+from urh import constants
 from urh.util.Logger import logger
+
+
+def set_icon_theme():
+    if sys.platform != "linux" or constants.SETTINGS.value("icon_theme_index", 0, int) == 0:
+        # noinspection PyUnresolvedReferences
+        import urh.ui.xtra_icons_rc
+        QIcon.setThemeName("oxy")
+    else:
+        QIcon.setThemeName("")
 
 
 def set_windows_lib_path():

@@ -92,6 +92,17 @@ class TestAnalysisTabGUI(QtTestCase):
 
         self.assertEqual(self.cfc.ui.lSearchTotal.text(), "18")
 
+    def test_search_without_results(self):
+        search_str = "deadbeef42"
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        self.cfc.ui.tblViewProtocol.clearSelection()
+        self.cfc.ui.lineEditSearch.setText(search_str)
+
+        self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="before search")
+        self.cfc.ui.btnSearchSelectFilter.click()
+        self.assertEqual(self.cfc.ui.lSearchTotal.text(), "-")
+        self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="after search")
+
     def test_show_diff(self):
         hidden_columns_before = [i for i in range(self.cfc.protocol_model.col_count)
                                  if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]

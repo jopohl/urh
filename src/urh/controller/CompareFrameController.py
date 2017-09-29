@@ -786,7 +786,6 @@ class CompareFrameController(QWidget):
                 self.ui.btnNextSearch.setEnabled(True)
 
     def clear_search(self):
-        self.ui.lineEditSearch.clear()
         self.ui.btnPrevSearch.setEnabled(False)
         self.ui.btnNextSearch.setEnabled(False)
         self.ui.lSearchTotal.setText("-")

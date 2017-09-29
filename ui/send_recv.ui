@@ -46,9 +46,9 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-544</y>
          <width>426</width>
-         <height>1238</height>
+         <height>1294</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -448,63 +448,10 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
            <property name="topMargin">
             <number>0</number>
            </property>
-           <item row="7" column="0">
-            <widget class="QLabel" name="lReceiveBufferFullText">
-             <property name="text">
-              <string>Receive buffer full:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="19" column="0">
-            <widget class="QProgressBar" name="progressBar">
-             <property name="value">
-              <number>0</number>
-             </property>
-             <property name="format">
-              <string>%v/%m</string>
-             </property>
-            </widget>
-           </item>
            <item row="18" column="0">
-            <widget class="QLabel" name="lSamplesSentText">
+            <widget class="QLabel" name="labelCurrentMessage">
              <property name="text">
-              <string>Samples sent:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="12" column="0">
-            <widget class="QLabel" name="lTimeText">
-             <property name="text">
-              <string>Time (in seconds):</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="lSamplesCapturedText">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Samples captured:</string>
+              <string>Current message:</string>
              </property>
             </widget>
            </item>
@@ -663,6 +610,66 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
              </item>
             </layout>
            </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="lReceiveBufferFullText">
+             <property name="text">
+              <string>Receive buffer full:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="21" column="0">
+            <widget class="QProgressBar" name="progressBarSample">
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="format">
+              <string>%v/%m</string>
+             </property>
+            </widget>
+           </item>
+           <item row="20" column="0">
+            <widget class="QLabel" name="lSamplesSentText">
+             <property name="text">
+              <string>Current sample:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="12" column="0">
+            <widget class="QLabel" name="lTimeText">
+             <property name="text">
+              <string>Time (in seconds):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="lSamplesCapturedText">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Samples captured:</string>
+             </property>
+            </widget>
+           </item>
            <item row="9" column="0">
             <widget class="QLabel" name="lSignalSizeText">
              <property name="sizePolicy">
@@ -778,6 +785,16 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="19" column="0">
+            <widget class="QProgressBar" name="progressBarMessage">
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="format">
+              <string>%v/%m</string>
              </property>
             </widget>
            </item>

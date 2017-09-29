@@ -11,7 +11,7 @@ from urh.util import FileOperator
 
 
 class SendDialogController(SendRecvDialogController):
-    def __init__(self, project_manager, modulated_data, parent=None, testing_mode=False):
+    def __init__(self, project_manager, modulated_data, modulation_msg_indices, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewSend
@@ -24,10 +24,14 @@ class SendDialogController(SendRecvDialogController):
         self.ui.btnStart.setToolTip("Send data")
         self.ui.btnStop.setToolTip("Stop sending")
         self.device_is_sending = False
+        self.modulation_msg_indices = modulation_msg_indices
+
+        if self.modulation_msg_indices is not None:
+            self.ui.progressBarMessage.setMaximum(len(self.modulation_msg_indices))
 
         if modulated_data is not None:
             # modulated_data is none in continuous send mode
-            self.ui.progressBar.setMaximum(len(modulated_data))
+            self.ui.progressBarSample.setMaximum(len(modulated_data))
             samp_rate = self.ui.spinBoxSampleRate.value()
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_manager = SignalSceneManager(signal, parent=self)
@@ -56,9 +60,18 @@ class SendDialogController(SendRecvDialogController):
         y, h = self.ui.graphicsViewSend.view_rect().y(), self.ui.graphicsViewSend.view_rect().height()
         self.send_indicator.setRect(0, y - h, width, 2 * h + abs(y))
 
+    def set_current_message_progress_bar_value(self, current_sample: int):
+        if self.modulation_msg_indices is not None:
+            msg_index = next((i for i, sample in enumerate(self.modulation_msg_indices) if sample >= current_sample),
+                             len(self.modulation_msg_indices))
+            self.ui.progressBarMessage.setValue(msg_index)
+
     def update_view(self):
         if super().update_view():
             self._update_send_indicator(self.device.current_index)
+            self.ui.progressBarSample.setValue(self.device.current_index)
+            self.set_current_message_progress_bar_value(self.device.current_index)
+
             if not self.device.sending_finished:
                 self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
             else:
@@ -85,7 +98,7 @@ class SendDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_signal_data_edited(self):
         signal = self.scene_manager.signal
-        self.ui.progressBar.setMaximum(signal.num_samples)
+        self.ui.progressBarSample.setMaximum(signal.num_samples)
         self.device.samples_to_send = signal.data
         self.scene_manager.init_scene()
         self.ui.graphicsViewSend.redraw_view()
@@ -93,7 +106,7 @@ class SendDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_start_clicked(self):
         super().on_start_clicked()
-        if self.ui.progressBar.value() >= self.ui.progressBar.maximum() - 1:
+        if self.ui.progressBarSample.value() >= self.ui.progressBarSample.maximum() - 1:
             self.on_clear_clicked()
 
         if self.device_is_sending:

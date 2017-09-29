@@ -64,7 +64,7 @@ class SendDialogController(SendRecvDialogController):
         if self.modulation_msg_indices is not None:
             msg_index = next((i for i, sample in enumerate(self.modulation_msg_indices) if sample >= current_sample),
                              len(self.modulation_msg_indices))
-            self.ui.progressBarMessage.setValue(msg_index)
+            self.ui.progressBarMessage.setValue(msg_index + 1)
 
     def update_view(self):
         if super().update_view():

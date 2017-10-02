@@ -175,8 +175,7 @@ class SimulatorTabController(QWidget):
     def on_selected_tab_changed(self, index: int):
         if index == 0:
             if self.active_item is not None:
-                scene_item = self.simulator_scene.model_to_scene(self.active_item)
-                self.ui.gvSimulator.jump_to_item(scene_item)
+                self.ui.gvSimulator.jump_to_item(self.active_item)
             else:
                 self.update_ui()
         else:
@@ -377,7 +376,6 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_nav_line_edit_return_pressed(self):
         nav_text = self.ui.navLineEdit.text()
-        target_item = None
 
         curr_item = self.sim_proto_manager.rootItem
 
@@ -394,12 +392,7 @@ class SimulatorTabController(QWidget):
             if isinstance(curr_item, SimulatorRule):
                 curr_item = curr_item.children[0]
 
-            target_item = self.simulator_scene.model_to_scene(curr_item)
-
-        if target_item is not None:
-            self.ui.gvSimulator.jump_to_item(target_item)
-        else:
-            self.update_ui()
+        self.ui.gvSimulator.jump_to_item(curr_item)
 
     @pyqtSlot()
     def on_btn_choose_ext_prog_clicked(self):

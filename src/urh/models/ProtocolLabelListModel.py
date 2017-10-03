@@ -10,7 +10,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 class ProtocolLabelListModel(QAbstractListModel):
     protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
-    protolabel_type_edited = pyqtSignal()
+    protocol_label_name_changed = pyqtSignal(ProtocolLabel)
     label_removed = pyqtSignal(ProtocolLabel)
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
@@ -57,7 +57,7 @@ class ProtocolLabelListModel(QAbstractListModel):
             self.message_type.change_field_type_of_label(proto_label,
                                                          self.controller.field_types_by_caption.get(value, None))
 
-            self.protolabel_type_edited.emit()
+            self.protocol_label_name_changed.emit(proto_label)
 
         return True
 

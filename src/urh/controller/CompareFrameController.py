@@ -259,7 +259,8 @@ class CompareFrameController(QWidget):
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
-        self.protocol_label_list_model.protolabel_type_edited.connect(self.label_value_model.update)
+
+        self.protocol_label_list_model.protocol_label_name_changed.connect(self.on_protocol_label_name_changed)
         self.protocol_label_list_model.label_removed.connect(self.on_label_removed)
 
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)
@@ -1464,3 +1465,8 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_participant_edited(self):
         self.refresh_assigned_participants_ui()
+
+    @pyqtSlot(ProtocolLabel)
+    def on_protocol_label_name_changed(self, label: ProtocolLabel):
+        self.label_value_model.update()
+        self.protocol_model.refresh_tooltip_for_label(label)

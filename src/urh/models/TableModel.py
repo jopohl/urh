@@ -6,8 +6,10 @@ from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack
 
 from urh import constants
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.InsertColumn import InsertColumn
+from urh.util import util
 
 
 class TableModel(QAbstractTableModel):
@@ -39,7 +41,6 @@ class TableModel(QAbstractTableModel):
         self.bold_fonts = defaultdict(lambda: False)
         self.italic_fonts = defaultdict(lambda: False)
         self.text_colors = defaultdict(lambda: None)
-        self.tooltips = defaultdict(lambda: None)
         self.vertical_header_text = defaultdict(lambda: None)
         self.vertical_header_colors = defaultdict(lambda: None)
 
@@ -127,7 +128,7 @@ class TableModel(QAbstractTableModel):
             self.display_data = None
 
         # Cache background colors for performance
-        self.refresh_bgcolors_and_tooltips()
+        self.refresh_bgcolors()
         self.refresh_fonts()  # Will be overriden
         self.refresh_vertical_header()
 
@@ -148,9 +149,8 @@ class TableModel(QAbstractTableModel):
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return self.row_count
 
-    def refresh_bgcolors_and_tooltips(self):
+    def refresh_bgcolors(self):
         self.background_colors.clear()
-        self.tooltips.clear()
         label_colors = constants.LABEL_COLORS
 
         for i, message in enumerate(self.protocol.messages):
@@ -159,7 +159,6 @@ class TableModel(QAbstractTableModel):
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):
                     self.background_colors[i, j] = bg_color
-                    self.tooltips[i, j] = lbl.name
 
     def refresh_fonts(self):
         """
@@ -223,10 +222,28 @@ class TableModel(QAbstractTableModel):
             return self.text_colors[i, j]
 
         elif role == Qt.ToolTipRole:
-            return self.tooltips[i, j]
-
+            return self.get_tooltip(i, j)
         else:
             return None
+
+    def get_tooltip(self, row: int, column: int) -> str:
+        msg = self.protocol.messages[row]
+        try:
+            lbl = next(lbl for lbl in msg.message_type
+                       if column in range(*msg.get_label_range(lbl, self.proto_view, self.decode)))
+        except StopIteration:
+            return ""
+
+        result = lbl.name
+        if isinstance(lbl, ChecksumLabel):
+            calculated_crc = lbl.calculate_checksum_for_message(msg, use_decoded_bits=self.decode)
+            start, end = msg.get_label_range(lbl=lbl, view=0, decode=self.decode)
+            bits = msg.decoded_bits if self.decode else msg.plain_bits
+            color = "green" if bits[start:end] == calculated_crc else "red"
+            expected = util.convert_bits_to_string(calculated_crc, self.proto_view)
+            result += '<br><font color="{}">Expected <b>{}</b></font>'.format(color, expected)
+
+        return result
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
         if role == Qt.EditRole:

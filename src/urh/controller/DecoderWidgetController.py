@@ -721,7 +721,7 @@ class DecoderWidgetController(QDialog):
     @pyqtSlot()
     def handle_datawhitening(self):
         datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + \
-                           "1" if self.ui.datawhitening_overwrite_crc.isChecked() else "0"
+                           ("1" if self.ui.datawhitening_overwrite_crc.isChecked() else "0")
         if constants.DECODING_DATAWHITENING in self.active_message:
             self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()

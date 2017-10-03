@@ -5,6 +5,7 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.signalprocessing.FieldType import FieldType
 
 
 class TestAnalysisTabGUI(QtTestCase):
@@ -237,7 +238,8 @@ class TestAnalysisTabGUI(QtTestCase):
             self.assertEqual(table_model.data(table_model.index(2, i), Qt.ToolTipRole), "", msg=str(i))
 
         self.cfc.add_protocol_label(20, 24, 2, 0, edit_label_name=False)
-        model.setData(model.index(1, 0), "crc", Qt.EditRole)
+        checksum_field_type = next(ft for ft in self.cfc.field_types if ft.function == FieldType.Function.CHECKSUM)
+        model.setData(model.index(1, 0), checksum_field_type.caption, Qt.EditRole)
         for i in range(20, 24):
             self.assertIn("Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole))
 

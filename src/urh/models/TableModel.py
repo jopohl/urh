@@ -161,13 +161,6 @@ class TableModel(QAbstractTableModel):
                     self.background_colors[i, j] = bg_color
                     self.tooltips[i, j] = lbl.name
 
-    def refresh_tooltip_for_label(self, label):
-        for i, message in enumerate(self.protocol.messages):
-            if label in message.message_type:
-                start, end = message.get_label_range(label, self.proto_view, self.decode)
-                for j in range(start, end):
-                    self.tooltips[i, j] = label.name
-
     def refresh_fonts(self):
         """
         Will be overriden

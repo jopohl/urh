@@ -5,6 +5,7 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.signalprocessing.FieldType import FieldType
 
 
 class TestAnalysisTabGUI(QtTestCase):
@@ -223,6 +224,27 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
         self.cfc.protocol_label_list_model.delete_label_at(0)
         self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 0)
+
+    def test_label_tooltip(self):
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
+        self.cfc.add_protocol_label(0, 16, 2, 0, edit_label_name=False)
+        model = self.cfc.protocol_label_list_model
+        model.setData(model.index(0, 0), "test", Qt.EditRole)
+        table_model = self.cfc.protocol_model
+        for i in range(0, 16):
+            self.assertEqual(table_model.data(table_model.index(2, i), Qt.ToolTipRole), "test", msg=str(i))
+
+        for i in range(17, 100):
+            self.assertEqual(table_model.data(table_model.index(2, i), Qt.ToolTipRole), "", msg=str(i))
+
+        self.cfc.add_protocol_label(20, 24, 2, 0, edit_label_name=False)
+        checksum_field_type = next(ft for ft in self.cfc.field_types if ft.function == FieldType.Function.CHECKSUM)
+        model.setData(model.index(1, 0), checksum_field_type.caption, Qt.EditRole)
+        for i in range(20, 24):
+            self.assertIn("Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole))
+
+        for i in range(0, 20):
+            self.assertNotIn("Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole))
 
     def test_protocol_tree_context_menu(self):
         self.cfc.ui.treeViewProtocols.context_menu_pos = QPoint(0, 0)

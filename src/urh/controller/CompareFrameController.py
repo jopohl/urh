@@ -259,7 +259,7 @@ class CompareFrameController(QWidget):
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
-        self.protocol_label_list_model.protolabel_type_edited.connect(self.label_value_model.update)
+        self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
         self.protocol_label_list_model.label_removed.connect(self.on_label_removed)
 
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)

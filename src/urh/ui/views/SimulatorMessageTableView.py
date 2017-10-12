@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QMenu, QActionGroup
 
 from urh.ui.views.TableView import TableView
 
+from urh.signalprocessing.SimulatorItem import SimulatorItem
+
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 
 from PyQt5.QtCore import pyqtSignal
@@ -85,8 +87,13 @@ class SimulatorMessageTableView(TableView):
 
     @pyqtSlot()
     def on_encoding_action_triggered(self):
+        updated_messages = []
+        
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.sender().data()
+            updated_messages.append(self.model().protocol.messages[row])
+        print("HALLO")
+        SimulatorItem.protocol_manager.items_updated.emit(updated_messages)
 
     @pyqtSlot()
     def on_modulation_action_triggered(self):

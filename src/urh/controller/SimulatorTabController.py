@@ -267,6 +267,7 @@ class SimulatorTabController(QWidget):
             if isinstance(self.active_item, SimulatorMessage):
                 text += " (" + self.active_item.message_type.name + ")"
                 self.ui.spinBoxRepeat.setValue(self.active_item.repeat)
+                self.ui.lblEncodingDecoding.setText(self.active_item.decoder.name)
 
             self.ui.lblMsgFieldsValues.setText(text)
         else:
@@ -336,6 +337,7 @@ class SimulatorTabController(QWidget):
         elif isinstance(self.active_item, SimulatorMessage):
             self.simulator_message_field_model.update()
             self.ui.spinBoxRepeat.setValue(self.active_item.repeat)
+            self.ui.lblEncodingDecoding.setText(self.active_item.decoder.name)
 
             self.ui.detail_view_widget.setCurrentIndex(2)
         elif (isinstance(self.active_item, SimulatorRuleCondition) and

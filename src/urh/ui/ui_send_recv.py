@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:38 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -61,7 +63,6 @@ class Ui_SendRecvDialog(object):
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 507, 1554))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.label_sniff_Tolerance = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)
         self.label_sniff_Tolerance.setObjectName("label_sniff_Tolerance")
@@ -437,7 +438,6 @@ class Ui_SendRecvDialog(object):
         self.scrollAreaContents_rx.setGeometry(QtCore.QRect(0, 0, 213, 66))
         self.scrollAreaContents_rx.setObjectName("scrollAreaContents_rx")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.scrollAreaContents_rx)
-        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.scrollArea_2.setWidget(self.scrollAreaContents_rx)
         self.gridLayout_5.addWidget(self.scrollArea_2, 0, 0, 1, 1)
@@ -454,7 +454,6 @@ class Ui_SendRecvDialog(object):
         self.scrollAreaContents_tx.setGeometry(QtCore.QRect(-199, -139, 405, 454))
         self.scrollAreaContents_tx.setObjectName("scrollAreaContents_tx")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.scrollAreaContents_tx)
-        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.btnEditModulation = QtWidgets.QPushButton(self.scrollAreaContents_tx)
         self.btnEditModulation.setObjectName("btnEditModulation")
@@ -609,7 +608,6 @@ class Ui_SendRecvDialog(object):
         self.page_receive = QtWidgets.QWidget()
         self.page_receive.setObjectName("page_receive")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.page_receive)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.graphicsViewReceive = LiveGraphicView(self.page_receive)
         self.graphicsViewReceive.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -620,7 +618,6 @@ class Ui_SendRecvDialog(object):
         self.page_send = QtWidgets.QWidget()
         self.page_send.setObjectName("page_send")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_send)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.graphicsViewSend = EditableGraphicView(self.page_send)
         self.graphicsViewSend.setMouseTracking(True)
@@ -639,7 +636,6 @@ class Ui_SendRecvDialog(object):
         self.page_continuous_send = QtWidgets.QWidget()
         self.page_continuous_send.setObjectName("page_continuous_send")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_continuous_send)
-        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.graphicsViewContinuousSend = LiveGraphicView(self.page_continuous_send)
         self.graphicsViewContinuousSend.setRenderHints(QtGui.QPainter.Antialiasing|QtGui.QPainter.TextAntialiasing)
@@ -649,7 +645,6 @@ class Ui_SendRecvDialog(object):
         self.page_sniff = QtWidgets.QWidget()
         self.page_sniff.setObjectName("page_sniff")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.page_sniff)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.graphicsView_sniff_Preview = LiveGraphicView(self.page_sniff)
         self.graphicsView_sniff_Preview.setObjectName("graphicsView_sniff_Preview")
@@ -829,7 +824,7 @@ class Ui_SendRecvDialog(object):
         self.btnAccept.setText(_translate("SendRecvDialog", "Accept data (Open in Analysis)"))
         self.label_y_scale.setText(_translate("SendRecvDialog", "Y-Scale"))
 
+from urh.ui.views.LiveGraphicView import LiveGraphicView
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.EditableGraphicView import EditableGraphicView
-from urh.ui.views.LiveGraphicView import LiveGraphicView
 from . import urh_rc

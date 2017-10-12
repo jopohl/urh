@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:39 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,7 +19,6 @@ class Ui_SimulationDialog(object):
         self.tab_simulation = QtWidgets.QWidget()
         self.tab_simulation.setObjectName("tab_simulation")
         self.gridLayout = QtWidgets.QGridLayout(self.tab_simulation)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.lblCurrentRepeatValue = QtWidgets.QLabel(self.tab_simulation)
         font = QtGui.QFont()
@@ -54,7 +55,6 @@ class Ui_SimulationDialog(object):
         self.tab_device = QtWidgets.QWidget()
         self.tab_device.setObjectName("tab_device")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab_device)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.textEditDevices = QtWidgets.QTextEdit(self.tab_device)
         self.textEditDevices.setReadOnly(True)

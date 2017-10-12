@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:40 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,8 +13,8 @@ class Ui_Interpretation(object):
         Interpretation.setObjectName("Interpretation")
         Interpretation.resize(631, 561)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Interpretation)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.scrollArea = ScrollArea(Interpretation)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -38,7 +40,6 @@ class Ui_Interpretation(object):
         self.scrlAreaSignals.setStyleSheet("")
         self.scrlAreaSignals.setObjectName("scrlAreaSignals")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrlAreaSignals)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(self.scrlAreaSignals)
         self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"

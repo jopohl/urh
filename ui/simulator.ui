@@ -538,6 +538,20 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Encoding/Decoding:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="lblEncodingDecoding">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="page_rule">

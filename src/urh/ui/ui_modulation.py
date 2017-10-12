@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:39 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -43,7 +45,6 @@ class Ui_DialogModulation(object):
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 984, 976))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
-        self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_7.setObjectName("gridLayout_7")
         self.lPlus = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
@@ -145,6 +146,7 @@ class Ui_DialogModulation(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_5.setFont(font)
+        self.label_5.setContentsMargins(4, 4, 4, 4)
         self.label_5.setObjectName("label_5")
         self.gridLayout_7.addWidget(self.label_5, 2, 0, 1, 1)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -154,6 +156,7 @@ class Ui_DialogModulation(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_4.setFont(font)
+        self.label_4.setContentsMargins(4, 4, 4, 4)
         self.label_4.setObjectName("label_4")
         self.gridLayout_7.addWidget(self.label_4, 0, 0, 1, 1)
         self.gVData = ZoomableGraphicView(self.scrollAreaWidgetContents_2)
@@ -390,6 +393,7 @@ class Ui_DialogModulation(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_7.setFont(font)
+        self.label_7.setContentsMargins(4, 4, 4, 4)
         self.label_7.setObjectName("label_7")
         self.gridLayout_7.addWidget(self.label_7, 7, 0, 1, 1)
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -402,6 +406,7 @@ class Ui_DialogModulation(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_6.setFont(font)
+        self.label_6.setContentsMargins(4, 4, 4, 4)
         self.label_6.setObjectName("label_6")
         self.gridLayout_7.addWidget(self.label_6, 4, 0, 1, 1)
         self.gridLayout_3 = QtWidgets.QGridLayout()
@@ -577,8 +582,8 @@ class Ui_DialogModulation(object):
         self.comboBoxModulationType.setItemText(3, _translate("DialogModulation", "Phase Shift Keying (PSK)"))
         self.lParameterfor1.setText(_translate("DialogModulation", "Amplitude for 1:"))
 
-from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ModulatorTreeView import ModulatorTreeView
-from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
 from . import urh_rc

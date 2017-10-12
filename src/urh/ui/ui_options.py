@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:39 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -92,7 +94,6 @@ class Ui_DialogOptions(object):
         self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.scrollAreaSpectrogramColormap.setWidget(self.scrollAreaWidgetSpectrogramColormapContents)
         self.verticalLayout_2.addWidget(self.scrollAreaSpectrogramColormap)
@@ -101,7 +102,6 @@ class Ui_DialogOptions(object):
         self.tabFieldtypes = QtWidgets.QWidget()
         self.tabFieldtypes.setObjectName("tabFieldtypes")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.tabFieldtypes)
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -134,7 +134,6 @@ class Ui_DialogOptions(object):
         self.tabDevices = QtWidgets.QWidget()
         self.tabDevices.setObjectName("tabDevices")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.tabDevices)
-        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")

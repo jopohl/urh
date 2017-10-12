@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:39 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -164,7 +166,6 @@ class Ui_Decoder(object):
         self.page_substitution = QtWidgets.QWidget()
         self.page_substitution.setObjectName("page_substitution")
         self.gridLayout = QtWidgets.QGridLayout(self.page_substitution)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.substitution_rows = QtWidgets.QSpinBox(self.page_substitution)
         self.substitution_rows.setMinimum(1)
@@ -186,7 +187,6 @@ class Ui_Decoder(object):
         self.page_external = QtWidgets.QWidget()
         self.page_external.setObjectName("page_external")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_external)
-        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -286,8 +286,6 @@ class Ui_Decoder(object):
         self.morse_wait.setObjectName("morse_wait")
         self.optionWidget.addWidget(self.page_morse)
         self.verticalLayout_5.addWidget(self.optionWidget)
-        self.optionWidget.raise_()
-        self.info.raise_()
         self.verticalLayout_3.addWidget(self.gb_infoandoptions)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout_4.addLayout(self.horizontalLayout)
@@ -367,5 +365,5 @@ class Ui_Decoder(object):
         self.decoding_errors_label.setText(_translate("Decoder", "[Decoding Errors = 0]"))
         self.label_2.setText(_translate("Decoder", "Signal {0,1}:"))
 
-from urh.ui.ListWidget import ListWidget
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.ListWidget import ListWidget

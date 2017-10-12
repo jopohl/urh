@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
+# Created: Thu Oct 12 09:06:39 2017
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -189,6 +191,7 @@ class Ui_SignalFrame(object):
         sizePolicy.setHeightForWidth(self.lSignalNr.sizePolicy().hasHeightForWidth())
         self.lSignalNr.setSizePolicy(sizePolicy)
         self.lSignalNr.setWordWrap(False)
+        self.lSignalNr.setContentsMargins(0, 0, 0, 0)
         self.lSignalNr.setIndent(-1)
         self.lSignalNr.setObjectName("lSignalNr")
         self.gridLayout.addWidget(self.lSignalNr, 0, 0, 1, 1)
@@ -286,9 +289,10 @@ class Ui_SignalFrame(object):
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(-1, -1, -1, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.stackedWidget = QtWidgets.QStackedWidget(self.layoutWidget)
         self.stackedWidget.setLineWidth(0)
@@ -296,8 +300,8 @@ class Ui_SignalFrame(object):
         self.pageSignal = QtWidgets.QWidget()
         self.pageSignal.setObjectName("pageSignal")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.pageSignal)
-        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_6.setSpacing(0)
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.gvLegend = LegendGraphicView(self.pageSignal)
         self.gvLegend.setMinimumSize(QtCore.QSize(0, 150))
@@ -344,8 +348,8 @@ class Ui_SignalFrame(object):
         self.pageSpectrogram = QtWidgets.QWidget()
         self.pageSpectrogram.setObjectName("pageSpectrogram")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.pageSpectrogram)
-        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setSpacing(0)
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.gvSpectrogram = SpectrogramGraphicView(self.pageSpectrogram)
         self.gvSpectrogram.setMouseTracking(True)
@@ -577,8 +581,8 @@ class Ui_SignalFrame(object):
         self.lSamplesTotal.setText(_translate("SignalFrame", "0"))
         self.lSamplesViewText.setText(_translate("SignalFrame", "Samples in view"))
 
+from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
 from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.LegendGraphicView import LegendGraphicView
-from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
 from urh.ui.views.TextEditProtocolView import TextEditProtocolView
 from . import urh_rc

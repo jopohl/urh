@@ -229,7 +229,7 @@ class ProtocolAnalyzer(object):
             print("and finally restart the application")
             sys.exit(1)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
 
         i = 0
         for bits, pause in zip(bit_data, pauses):
@@ -243,7 +243,7 @@ class ProtocolAnalyzer(object):
 
         self.qt_signals.protocol_updated.emit()
 
-    def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True):
+    def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True, pause_threshold=8):
         bit_sampl_pos = array.array("L", [])
         bit_sample_positions = []
 
@@ -275,7 +275,7 @@ class ProtocolAnalyzer(object):
 
             if cur_pulse_type == pause_type:
                 # OOK
-                if num_bits < 9:
+                if num_bits <= pause_threshold or pause_threshold == -1:
                     data_bits.extend([False] * num_bits)
                     if write_bit_sample_pos:
                         bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])

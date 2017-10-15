@@ -16,13 +16,13 @@ from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
+from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
-from urh.signalprocessing.Encoding import Encoding
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator
@@ -237,7 +237,8 @@ class CompareFrameController(QWidget):
         self.ui.chkBoxOnlyShowLabelsInProtocol.stateChanged.connect(self.on_check_box_show_only_labels_state_changed)
         self.ui.chkBoxShowOnlyDiffs.stateChanged.connect(self.on_check_box_show_only_diffs_state_changed)
 
-        self.protocol_model.vertical_header_color_status_changed.connect(self.ui.tblViewProtocol.on_vertical_header_color_status_changed)
+        self.protocol_model.vertical_header_color_status_changed.connect(
+            self.ui.tblViewProtocol.on_vertical_header_color_status_changed)
 
         self.ui.tblViewProtocol.show_interpretation_clicked.connect(self.show_interpretation_clicked.emit)
         self.ui.tblViewProtocol.protocol_view_change_clicked.connect(self.ui.cbProtoView.setCurrentIndex)
@@ -267,7 +268,8 @@ class CompareFrameController(QWidget):
 
         self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
         self.ui.listViewLabelNames.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
-        self.ui.listViewLabelNames.auto_message_type_update_triggered.connect(self.update_automatic_assigned_message_types)
+        self.ui.listViewLabelNames.auto_message_type_update_triggered.connect(
+            self.update_automatic_assigned_message_types)
         self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
 
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)
@@ -521,10 +523,6 @@ class CompareFrameController(QWidget):
         self.set_shown_protocols()
 
     def set_shown_protocols(self):
-        # Instant Visual Refresh of Tree
-        self.proto_tree_model.update()
-        self.ui.treeViewProtocols.expandAll()
-
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         relative_hidden_row_positions = {}
         for proto in self.rows_for_protocols.keys():
@@ -633,8 +631,8 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.scrollTo(mid_index)
 
     def expand_group_node(self, group_id):
-        self.ui.treeViewProtocols.expand(
-            self.proto_tree_model.createIndex(group_id, 0, self.proto_tree_model.rootItem.child(group_id)))
+        index = self.proto_tree_model.createIndex(group_id, 0, self.proto_tree_model.rootItem.child(group_id))
+        self.ui.treeViewProtocols.expand(index)
 
     def updateUI(self, ignore_table_model=False, resize_table=True):
         if not ignore_table_model:
@@ -642,7 +640,6 @@ class CompareFrameController(QWidget):
 
         self.protocol_label_list_model.update()
         self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
-        self.ui.treeViewProtocols.expandAll()
         self.label_value_model.update()
         self.protocol_label_list_model.update()
 
@@ -670,7 +667,7 @@ class CompareFrameController(QWidget):
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
         protocol_label_dialog = ProtocolLabelController(preselected_index=preselected_index,
-                                                   message=longest_message, viewtype=view_type, parent=self)
+                                                        message=longest_message, viewtype=view_type, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
@@ -1369,7 +1366,6 @@ class CompareFrameController(QWidget):
         # hexs = "".join(["{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)])
         hexs = "".join(hex_bits)
 
-
         self.ui.lBitsSelection.setText(bits)
         self.ui.lHexSelection.setText(hexs)
         self.__set_decoding_error_label(message)
@@ -1426,17 +1422,13 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(int)
     def on_ref_index_changed(self, new_ref_index: int):
-        if new_ref_index == -1:
-            self.proto_tree_model.reference_protocol = -1
-        else:
+        if new_ref_index != -1:
             i = 0
             visible_protos = [proto for proto in self.protocol_list if proto.show]
             for proto in visible_protos:
                 i += proto.num_messages
                 if i > new_ref_index:
-                    self.proto_tree_model.reference_protocol = proto
                     return
-            self.proto_tree_model.reference_protocol = -1
 
         self.set_show_only_status()
 

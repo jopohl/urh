@@ -275,7 +275,7 @@ class ProtocolAnalyzer(object):
 
             if cur_pulse_type == pause_type:
                 # OOK
-                if num_bits <= pause_threshold or pause_threshold == -1:
+                if num_bits <= pause_threshold or pause_threshold == 0:
                     data_bits.extend([False] * num_bits)
                     if write_bit_sample_pos:
                         bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])

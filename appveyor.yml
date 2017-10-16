@@ -68,10 +68,10 @@ on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
 
 before_deploy:
+  - ps: git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])")
+  - GitReleaseNotes . /OutputFile ReleaseNotes.md
+  - git checkout master
   - ps: >-
-      & git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])");
-      & GitReleaseNotes . /OutputFile ReleaseNotes.md;
-      & git checkout master;
       echo "File content:";
       cat ReleaseNotes.md;
       ${env:release_description} = "These issues were fixed in this release: `n`n" + ((( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) | Select-Object -SkipLast 2) -join "`n");

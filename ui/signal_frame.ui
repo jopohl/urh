@@ -676,7 +676,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      <item row="20" column="0">
       <widget class="QLabel" name="labelPauseThreshold">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Pause Threshold:</string>
@@ -686,7 +686,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      <item row="20" column="1">
       <widget class="QSpinBox" name="spinBoxPauseThreshold">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="specialValueText">
         <string>Disable</string>

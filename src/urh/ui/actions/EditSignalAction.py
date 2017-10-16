@@ -150,7 +150,7 @@ class EditSignalAction(QUndoCommand):
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
                     self.signal._qad[self.start:self.end] = self.orig_qad_part
-                except ValueError:
+                except (ValueError, TypeError):
                     self.signal._qad = None
                     logger.warning("Could not restore cached qad.")
 

@@ -167,6 +167,7 @@ class SignalFrameController(QFrame):
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
+            self.signal.pause_threshold_changed.connect(self.ui.spinBoxPauseThreshold.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
@@ -230,6 +231,7 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinbox_tolerance_editing_finished)
         self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinbox_noise_threshold_editing_finished)
         self.ui.spinBoxInfoLen.editingFinished.connect(self.on_spinbox_infolen_editing_finished)
+        self.ui.spinBoxPauseThreshold.editingFinished.connect(self.on_spinbox_pause_threshold_editing_finished)
 
     def refresh_signal_information(self, block=True):
         self.ui.spinBoxTolerance.blockSignals(block)
@@ -1109,6 +1111,14 @@ class SignalFrameController(QFrame):
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
             self.disable_auto_detection()
+
+    @pyqtSlot()
+    def on_spinbox_pause_threshold_editing_finished(self):
+        if self.signal.pause_threshold != self.ui.spinBoxPauseThreshold.value():
+            pause_threshold_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                           parameter_name="pause_threshold",
+                                                           parameter_value=self.ui.spinBoxPauseThreshold.value())
+            self.undo_stack.push(pause_threshold_action)
 
     @pyqtSlot()
     def refresh(self, draw_full_signal=False):

@@ -29,6 +29,7 @@ class Signal(QObject):
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
     modulation_type_changed = pyqtSignal()
+    pause_threshold_changed = pyqtSignal(int)
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
@@ -40,6 +41,7 @@ class Signal(QObject):
         self.__name = name
         self.__tolerance = 5
         self.__bit_len = 100
+        self.__pause_threshold = 8
         self._qad = None
         self.__qad_center = 0
         self._noise_threshold = 0
@@ -193,6 +195,18 @@ class Signal(QObject):
         if self.__qad_center != value:
             self.__qad_center = value
             self.qad_center_changed.emit(value)
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def pause_threshold(self) -> int:
+        return self.__pause_threshold
+
+    @pause_threshold.setter
+    def pause_threshold(self, value: int):
+        if self.__pause_threshold != value:
+            self.__pause_threshold = value
+            self.pause_threshold_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 

@@ -33,7 +33,7 @@
          <x>20</x>
          <y>20</y>
          <width>314</width>
-         <height>58</height>
+         <height>62</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
@@ -174,7 +174,7 @@
          <item>
           <widget class="QLabel" name="labelIconTheme">
            <property name="text">
-            <string>Choose icon theme:</string>
+            <string>Choose icon theme (requires restart):</string>
            </property>
           </widget>
          </item>
@@ -210,7 +210,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>616</width>
+               <width>644</width>
                <height>316</height>
               </rect>
              </property>

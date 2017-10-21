@@ -68,9 +68,9 @@ on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
 
 before_deploy:
-  - ps: git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])")
+  #- ps: git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])")
   - GitReleaseNotes . /OutputFile ReleaseNotes.md
-  - git checkout master
+  #- git checkout master
   - ps: >-
       echo "File content:";
       cat ReleaseNotes.md;

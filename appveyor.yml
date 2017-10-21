@@ -56,7 +56,6 @@ after_test:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze six appdirs packaging)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (choco install GitReleaseNotes.Portable -y))
   - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python build_cx.py))
   - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
 
@@ -67,19 +66,10 @@ artifacts:
 on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
 
-before_deploy:
-  #- ps: git checkout (python -c "from subprocess import check_output; print(check_output('git tag').decode('utf8').split('\n')[-3])")
-  - GitReleaseNotes . /OutputFile ReleaseNotes.md
-  #- git checkout master
-  - ps: >-
-      echo "File content:";
-      cat ReleaseNotes.md;
-      ${env:release_description} = "These issues were fixed in this release: `n`n" + ((( Get-Content -LiteralPath ReleaseNotes.md -Encoding UTF8 ) | Select-Object -SkipLast 2) -join "`n");
-      echo "Release Description:" ${env:release_description};
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)
-  description: $(release_description)
+  description: "This is a new URH release."
   provider: GitHub
   auth_token:
     secure: 7TPX876BQbnkqNGJYoKi9hnbnsH6vQFkF0fzSe7keguq4g6FAf3W5uPc/s2Ya0vH

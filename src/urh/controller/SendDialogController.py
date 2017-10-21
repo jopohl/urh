@@ -11,7 +11,7 @@ from urh.util import FileOperator
 
 
 class SendDialogController(SendRecvDialogController):
-    def __init__(self, project_manager, modulated_data, modulation_msg_indices, parent=None, testing_mode=False):
+    def __init__(self, project_manager, modulated_data, modulation_msg_indices=None, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewSend

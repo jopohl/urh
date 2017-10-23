@@ -69,13 +69,15 @@ class ChecksumLabel(ProtocolLabel):
 
     @classmethod
     def from_label(cls, label: ProtocolLabel):
-        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index, label.field_type,
+        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index,
+                               FieldType("Checksum", FieldType.Function.CHECKSUM),
                                label.fuzz_created, label.auto_created)
         result.apply_decoding = label.apply_decoding
         result.show = label.show
         result.fuzz_me = label.fuzz_me
         result.fuzz_values = label.fuzz_values
         result.display_format_index = label.display_format_index
+
         return result
 
     @classmethod

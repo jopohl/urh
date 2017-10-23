@@ -70,11 +70,12 @@ class ProjectManager(QObject):
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
-        try:
-            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in
-                    root.find("protocol").find("message_types").findall("message_type")]
-        except AttributeError:
-            return []
+        result = []
+        for msg_type_tag in root.find("protocol").find("message_types").findall("message_type"):
+            result.append(MessageType.from_xml(msg_type_tag))
+
+        return result
+
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:

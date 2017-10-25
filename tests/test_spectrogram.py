@@ -36,7 +36,7 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), "200")
         self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), "195,312kHz")
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if action.text().startswith("Create"))
+        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
         create_action.trigger()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
@@ -53,7 +53,7 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), "120")
         self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), "117,188kHz")
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if action.text().startswith("Create"))
+        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
         create_action.trigger()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 3)

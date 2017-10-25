@@ -1,5 +1,6 @@
-from PyQt5.QtCore import Qt
 import xml.etree.ElementTree as ET
+
+from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
@@ -129,18 +130,17 @@ class ProtocolLabel(object):
                                            "show": str(self.show),
                                            "display_format_index": str(self.display_format_index),
                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
-                                           "auto_created": str(self.auto_created),
-                                           "type_id": self.field_type.id if self.field_type is not None else ""})
+                                           "auto_created": str(self.auto_created)})
 
     @classmethod
-    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
+    def from_xml(cls, tag: ET.Element, field_types_by_caption=None):
         """
 
         :param tag:
-        :type field_types_by_type_id: dict[str, FieldType]
+        :type field_types_by_caption: dict[str, FieldType]
         :return:
         """
-        field_types_by_type_id = dict() if field_types_by_type_id is None else field_types_by_type_id
+        field_types_by_caption = dict() if field_types_by_caption is None else field_types_by_caption
 
         name = tag.get("name")
         start, end = int(tag.get("start", 0)), int(tag.get("end", 0)) - 1
@@ -153,10 +153,9 @@ class ProtocolLabel(object):
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.display_format_index = int(tag.get("display_format_index", 0))
         result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
-        type_id = tag.get("type_id", None)
 
-        if type_id and type_id in field_types_by_type_id:
-            result.field_type = field_types_by_type_id[type_id]
+        if result.name in field_types_by_caption:
+            result.field_type = field_types_by_caption[result.name]
         else:
             result.field_type = None
 

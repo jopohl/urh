@@ -1,13 +1,11 @@
-import ast
-
 import array
+import ast
+import xml.etree.ElementTree as ET
+from enum import Enum
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.util.GenericCRC import GenericCRC
-from enum import Enum
-import xml.etree.ElementTree as ET
-
 from urh.util.WSPChecksum import WSPChecksum
 
 
@@ -25,7 +23,7 @@ class ChecksumLabel(ProtocolLabel):
 
         self.__category = self.Category.generic
         self.__data_ranges = [[data_range_start, self.start]]  # type: list[list[int,int]]
-        self.checksum = GenericCRC(polynomial=0)   # type: GenericCRC or WSPChecksum
+        self.checksum = GenericCRC(polynomial=0)  # type: GenericCRC or WSPChecksum
 
     def calculate_checksum(self, bits: array.array) -> array.array:
         return self.checksum.calculate(bits)
@@ -69,20 +67,23 @@ class ChecksumLabel(ProtocolLabel):
 
     @classmethod
     def from_label(cls, label: ProtocolLabel):
-        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index,
-                               FieldType("Checksum", FieldType.Function.CHECKSUM),
+        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index, label.field_type,
                                label.fuzz_created, label.auto_created)
         result.apply_decoding = label.apply_decoding
         result.show = label.show
         result.fuzz_me = label.fuzz_me
         result.fuzz_values = label.fuzz_values
         result.display_format_index = label.display_format_index
-
         return result
 
     @classmethod
-    def from_xml(cls, tag: ET.Element, field_types_by_type_id=None):
-        lbl = super().from_xml(tag, field_types_by_type_id)
+    def from_xml(cls, tag: ET.Element, field_types_by_caption=None):
+        lbl = super().from_xml(tag, field_types_by_caption)
+        if lbl.field_type is None or lbl.field_type.function != FieldType.Function.CHECKSUM:
+            checksum_field_type = next(
+                (ft for ft in field_types_by_caption.values() if ft.function == FieldType.Function.CHECKSUM),
+                FieldType("checksum", FieldType.Function.CHECKSUM, display_format_index=1))
+            lbl.field_type = checksum_field_type
         result = cls.from_label(lbl)
         result.data_ranges = ast.literal_eval(tag.get("data_ranges", "[]"))
         result.category = cls.Category[tag.get("category", "generic")]

@@ -162,6 +162,7 @@ class SignalFrameController(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.gvSpectrogram.brickwall_filter_triggered.connect(self.on_brickwall_filter_triggered)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -1166,6 +1167,15 @@ class SignalFrameController(QFrame):
         signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
         signal.name = self.signal.name + " filtered with f_low={0:.4n} f_high={1:.4n} bw={2:.4n}".format(f_low, f_high,
                                                                                                        filter_bw)
+        self.signal_created.emit(signal)
+        self.unsetCursor()
+
+    @pyqtSlot(float, float)
+    def on_brickwall_filter_triggered(self, f_low: float, f_high: float):
+        self.setCursor(Qt.WaitCursor)
+        filtered = Filter.apply_brick_wall_bandpass(self.signal.data, f_low, f_high)
+        signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
+        signal.name = self.signal.name + " brick wall filtered with f_low={0:.4n} f_high={1:.4n}".format(f_low, f_high)
         self.signal_created.emit(signal)
         self.unsetCursor()
 

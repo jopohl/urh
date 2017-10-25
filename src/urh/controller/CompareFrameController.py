@@ -121,7 +121,6 @@ class CompareFrameController(QWidget):
         self.__set_default_message_type_ui_status()
 
         self.field_types = FieldType.load_from_xml()
-        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
     # region properties
@@ -967,14 +966,13 @@ class CompareFrameController(QWidget):
 
     def reload_field_types(self):
         self.field_types = FieldType.load_from_xml()
-        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
     def refresh_field_types_for_labels(self):
         self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
             for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
-                mt.change_field_type_of_label(lbl, self.field_types_by_id.get(lbl.field_type.id, None))
+                mt.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))
 
         self.update_field_type_combobox()
 

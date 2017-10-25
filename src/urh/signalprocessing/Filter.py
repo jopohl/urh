@@ -1,16 +1,18 @@
-import numpy as np
 import math
+from enum import Enum
+
+import numpy as np
 
 from urh import constants
 from urh.cythonext import signalFunctions
-from enum import Enum
-
+from urh.util import util
 from urh.util.Logger import logger
 
 
 class FilterType(Enum):
     moving_average = "moving average"
     custom = "custom"
+
 
 class Filter(object):
     BANDWIDTHS = {
@@ -55,9 +57,9 @@ class Filter(object):
     @classmethod
     def fft_convolve_1d(cls, x: np.ndarray, h: np.ndarray):
         n = len(x) + len(h) - 1
-        n_opt = 1 << (n-1).bit_length()  # Get next power of 2
+        n_opt = 1 << (n - 1).bit_length()  # Get next power of 2
         if np.issubdtype(x.dtype, np.complexfloating) or np.issubdtype(h.dtype, np.complexfloating):
-            fft, ifft = np.fft.fft, np.fft.ifft    # use complex fft
+            fft, ifft = np.fft.fft, np.fft.ifft  # use complex fft
         else:
             fft, ifft = np.fft.rfft, np.fft.irfft  # use real fft
 
@@ -66,14 +68,33 @@ class Filter(object):
         return result[too_much: -too_much]
 
     @classmethod
-    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float=None, filter_bw=0.08):
+    def apply_brick_wall_bandpass(cls, data, f_low, f_high):
+        assert -0.5 <= f_low <= 0.5
+        assert -0.5 <= f_high <= 0.5
+
+        if f_low > f_high:
+            f_low, f_high = f_high, f_low
+
+        spectrum = np.fft.fftshift(np.fft.fft(data))
+
+        lower_border = int((f_low + 0.5) * len(spectrum))
+        higher_border = int((f_high + 0.5) * len(spectrum))
+
+        spectrum[:lower_border] = np.complex(0, 0)
+        spectrum[higher_border:] = np.complex(0, 0)
+        return np.fft.ifft(np.fft.ifftshift(spectrum))
+
+    @classmethod
+    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float = None, filter_bw=0.08):
         if sample_rate is not None:
             f_low /= sample_rate
             f_high /= sample_rate
 
-        assert 0 <= f_low <= 0.5
-        assert 0 <= f_high <= 0.5
-        assert f_low <= f_high
+        if f_low > f_high:
+            f_low, f_high = f_high, f_low
+
+        f_low = util.clip(f_low, 0, 0.5)
+        f_high = util.clip(f_high, 0, 0.5)
 
         h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
 

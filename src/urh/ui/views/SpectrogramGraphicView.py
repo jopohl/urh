@@ -8,13 +8,12 @@ from urh.signalprocessing.Filter import Filter
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
-from urh.util import util
-
 
 class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
     y_scale_changed = pyqtSignal(float)
     bandpass_filter_triggered = pyqtSignal(float, float)
+    brickwall_filter_triggered = pyqtSignal(float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -50,7 +49,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
         if self.something_is_selected:
             filter_bw = Filter.read_configured_filter_bw()
-            text = self.tr("Create signal from frequency selection (filter bw={0:n})".format(filter_bw))
+            text = self.tr("Apply bandpass filter (filter bw={0:n})".format(filter_bw))
             create_from_frequency_selection = menu.addAction(text)
             create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
@@ -58,6 +57,11 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
         configure_filter_bw.setIcon(QIcon.fromTheme("configure"))
+
+        if self.something_is_selected:
+            menu.addSeparator()
+            create_from_selection_brick_wall = menu.addAction("Apply brick wall filter (may be slow!)")
+            create_from_selection_brick_wall.triggered.connect(self.on_create_from_frequency_selection_brickwall_triggered)
 
         return menu
 
@@ -80,16 +84,17 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
+        self.bandpass_filter_triggered.emit(*self.__get_freqs())
+
+    @pyqtSlot()
+    def on_create_from_frequency_selection_brickwall_triggered(self):
+        self.brickwall_filter_triggered.emit(*self.__get_freqs())
+
+    def __get_freqs(self):
         sh = self.sceneRect().height()
         y1, y2 = sh / 2 - self.selection_area.start, sh / 2 - self.selection_area.end
         f_low, f_high = y1 / self.sceneRect().height(), y2 / self.sceneRect().height()
-        f_low = util.clip(f_low, 0, 0.5)
-        f_high = util.clip(f_high, 0, 0.5)
-
-        if f_low > f_high:
-            f_low, f_high = f_high, f_low
-
-        self.bandpass_filter_triggered.emit(f_low, f_high)
+        return f_low, f_high
 
     @pyqtSlot()
     def on_configure_filter_bw_triggered(self):

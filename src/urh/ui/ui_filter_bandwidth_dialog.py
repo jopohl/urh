@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogFilterBandwidth(object):
     def setupUi(self, DialogFilterBandwidth):
         DialogFilterBandwidth.setObjectName("DialogFilterBandwidth")
-        DialogFilterBandwidth.resize(497, 382)
+        DialogFilterBandwidth.resize(502, 426)
         self.verticalLayout = QtWidgets.QVBoxLayout(DialogFilterBandwidth)
         self.verticalLayout.setSpacing(7)
         self.verticalLayout.setObjectName("verticalLayout")

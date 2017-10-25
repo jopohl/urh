@@ -10,7 +10,7 @@ from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.InsertColumn import InsertColumn
 from urh.util import util
-
+import array
 
 class TableModel(QAbstractTableModel):
     data_edited = pyqtSignal(int, int)
@@ -72,6 +72,25 @@ class TableModel(QAbstractTableModel):
         if self._refindex >= 0:
             self._diffs = self.protocol.find_differences(self._refindex, self._proto_view)
         self.update()
+
+    def __pad_until_index(self, row: int, bit_pos: int):
+        """
+        Pad message in given row with zeros until given column so user can enter values behind end of message
+        :return:
+        """
+        try:
+            new_bits = array.array("B", [0] * max(0, bit_pos - len(self.protocol.messages[row])))
+            if len(new_bits) == 0:
+                return True
+
+            self.protocol.messages[row].plain_bits = self.protocol.messages[row].plain_bits + new_bits
+            msg = self.protocol.messages[row]
+            self.display_data[row] = msg.plain_bits if self.proto_view == 0 else msg.plain_hex_array if self.proto_view == 1 else msg.plain_ascii_array
+        except IndexError:
+            return False
+
+        return True
+
 
     def headerData(self, section: int, orientation, role=Qt.DisplayRole):
         if orientation == Qt.Vertical:
@@ -246,41 +265,37 @@ class TableModel(QAbstractTableModel):
         return result
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
-        if role == Qt.EditRole:
-            i = index.row()
-            j = index.column()
-            hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
+        if role != Qt.EditRole:
+            return True
 
-            if self.proto_view == 0:
-                if value in ("0", "1"):
-                    try:
-                        self.protocol.messages[i][j] = bool(int(value))
-                        self.display_data[i][j] = int(value)
-                        self.data_edited.emit(i, j)
-                    except IndexError:
-                        return False
-            elif self.proto_view == 1:
-                if value in hex_chars:
-                    converted_j = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
-                    bits = "{0:04b}".format(int(value, 16))
-                    for k in range(4):
-                        try:
-                            self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
-                        except IndexError:
-                            break
-                    self.display_data[i][j] = int(value, 16)
-                    self.data_edited.emit(i, j)
-            elif self.proto_view == 2 and len(value) == 1:
-                converted_j = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
-                bits = "{0:08b}".format(ord(value))
-                for k in range(8):
-                    try:
-                        self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
-                    except IndexError:
-                        break
-                self.display_data[i][j] = ord(value)
-                self.data_edited.emit(i, j)
+        i = index.row()
+        j = index.column()
+        hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
+
+        if i >= len(self.protocol.messages):
+            return False
+
+        if self.proto_view == 0 and value in ("0", "1") and self.__pad_until_index(i, j+1):
+            self.protocol.messages[i][j] = bool(int(value))
+            self.display_data[i][j] = int(value)
+        elif self.proto_view == 1 and value in hex_chars and self.__pad_until_index(i, (j+1)*4):
+            converted_j = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
+            bits = "{0:04b}".format(int(value, 16))
+            for k in range(4):
+                self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
+            self.display_data[i][j] = int(value, 16)
+        elif self.proto_view == 2 and len(value) == 1 and self.__pad_until_index(i, (j+1)*8):
+            converted_j = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
+            bits = "{0:08b}".format(ord(value))
+            for k in range(8):
+                self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
+            self.display_data[i][j] = ord(value)
+        else:
+            return False
+
+        self.data_edited.emit(i, j)
         return True
+
 
     def find_protocol_value(self, value):
         self.search_results.clear()

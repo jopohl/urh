@@ -24,43 +24,62 @@ class TestSpectrogram(QtTestCase):
         self.add_signal_to_form("two_channels.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        self.__prepare_channel_separation(signal_frame)
+
+        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101")
+        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001")
+
+    def test_channel_separation_brick_wall_filter(self):
+        super().setUp()
+        self.add_signal_to_form("three_channels.complex")
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
+
+        signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        self.__prepare_channel_separation(signal_frame)
+
+        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101",
+                                    filter_type="brickwall", center=0.4)
+        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001",
+                                    filter_type="brickwall", center=0.4)
+        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111",
+                                    filter_type="brickwall", center=0.4)
+
+    def __prepare_channel_separation(self, signal_frame):
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
+        signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.spinBoxNoiseTreshold.setValue(0)
         signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.assertEqual(signal_frame.signal.num_samples, 800)
         signal_frame.ui.cbSignalView.setCurrentIndex(2)
         self.assertTrue(signal_frame.spectrogram_is_active)
-        signal_frame.ui.spinBoxSelectionStart.setValue(650)
-        signal_frame.ui.spinBoxSelectionEnd.setValue(849)
-        signal_frame.ui.spinBoxSelectionEnd.setValue(850)
 
-        self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), "200")
-        self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), "195,312kHz")
+    def __test_extract_channel(self, signal_frame, freq1, freq2, bandwidth: str, target_bits: str,
+                               filter_type="windowed_sinc", center=None):
+        num_frames = self.form.signal_tab_controller.num_frames
+
+        signal_frame.ui.spinBoxSelectionStart.setValue(freq1)
+        signal_frame.ui.spinBoxSelectionEnd.setValue(freq2 - 1)
+        signal_frame.ui.spinBoxSelectionEnd.setValue(freq2)
+
+        self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), str(freq2 - freq1))
+        self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), bandwidth)
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
+        if filter_type == "windowed_sinc":
+            create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
+        elif filter_type == "brickwall":
+            create_action = next(action for action in menu.actions() if "brickwall" in action.text().replace(" ", ""))
+        else:
+            raise ValueError("Unknown filter type")
         create_action.trigger()
 
-        self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
-        filtered_frame1 = self.form.signal_tab_controller.signal_frames[1]
-        filtered_frame1.ui.cbModulationType.setCurrentText("ASK")
-        filtered_frame1.ui.spinBoxInfoLen.setValue(100)
-        filtered_frame1.ui.spinBoxInfoLen.editingFinished.emit()
+        self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames + 1)
+        filtered_frame = self.form.signal_tab_controller.signal_frames[1]
+        filtered_frame.ui.cbModulationType.setCurrentText("ASK")
+        filtered_frame.ui.spinBoxInfoLen.setValue(100)
+        filtered_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        if center is not None:
+            filtered_frame.ui.spinBoxCenterOffset.setValue(center)
+            filtered_frame.ui.spinBoxCenterOffset.editingFinished.emit()
 
-        self.assertEqual(len(filtered_frame1.proto_analyzer.plain_bits_str), 1)
-        self.assertEqual(filtered_frame1.proto_analyzer.plain_bits_str[0], "11001101")
-
-        signal_frame.ui.spinBoxSelectionStart.setValue(500)
-        signal_frame.ui.spinBoxSelectionEnd.setValue(620)
-        self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), "120")
-        self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), "117,188kHz")
-        menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
-        create_action.trigger()
-
-        self.assertEqual(self.form.signal_tab_controller.num_frames, 3)
-        filtered_frame2 = self.form.signal_tab_controller.signal_frames[1]
-        filtered_frame2.ui.cbModulationType.setCurrentText("ASK")
-        filtered_frame2.ui.spinBoxInfoLen.setValue(100)
-        filtered_frame2.ui.spinBoxInfoLen.editingFinished.emit()
-
-        self.assertEqual(len(filtered_frame2.proto_analyzer.plain_bits_str), 1)
-        self.assertEqual(filtered_frame2.proto_analyzer.plain_bits_str[0], "10101001")
+        self.assertEqual(len(filtered_frame.proto_analyzer.plain_bits_str), 1)
+        self.assertEqual(filtered_frame.proto_analyzer.plain_bits_str[0], target_bits)

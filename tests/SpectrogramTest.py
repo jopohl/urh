@@ -142,6 +142,7 @@ class SpectrogramTest(unittest.TestCase):
 
         channel1_data = array.array("B", [1, 0, 1, 0, 1, 0, 0, 1])
         channel2_data = array.array("B", [1, 1, 0, 0, 1, 1, 0, 1])
+        channel3_data = array.array("B", [1, 0, 0, 1, 0, 1, 1, 1])
 
         filter_bw = 0.1
 
@@ -150,15 +151,19 @@ class SpectrogramTest(unittest.TestCase):
         filter_freq2_high = 1.5*channel2_freq
         filter_freq2_low = 0.5 * channel2_freq
 
-        modulator1, modulator2 = Modulator("test"), Modulator("test2")
+        modulator1, modulator2, modulator3 = Modulator("test"), Modulator("test2"), Modulator("test3")
         modulator1.carrier_freq_hz = channel1_freq
         modulator2.carrier_freq_hz = channel2_freq
-        modulator1.sample_rate = modulator2.sample_rate = sample_rate
+        modulator3.carrier_freq_hz = -channel2_freq
+        modulator1.sample_rate = modulator2.sample_rate = modulator3.sample_rate = sample_rate
         modulator1.modulate(channel1_data)
         modulator2.modulate(channel2_data)
-        data1, data2 = modulator1.modulated_samples, modulator2.modulated_samples
+        modulator3.modulate(channel3_data)
+        data1, data2, data3 = modulator1.modulated_samples, modulator2.modulated_samples, modulator3.modulated_samples
 
-        mixed_signal = data1 + data2
+        mixed_signal = data1 + data2 + data3
+
+        mixed_signal.tofile("/tmp/three_channels.complex")
 
         plt.subplot("221")
         plt.title("Signal")

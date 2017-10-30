@@ -189,18 +189,25 @@ class SpectrogramTest(unittest.TestCase):
 
 
     def test_bandpass_h(self):
-        f_low = 0.31
-        f_high = 0.44
+        f_low = -0.4
+        f_high = -0.3
         bw = 0.01
 
-        h = Filter.design_windowed_sinc_bandpass(f_low=f_low, f_high=f_high, bw=bw)
+        f_shift = (f_low + f_high) / 2
+        f_c = (f_high - f_low) / 2
+
+        N = Filter.get_filter_length_from_bandwidth(bw)
+
+        h = Filter.design_windowed_sinc_lpf(f_c, bw=bw) * np.exp(np.complex(0,1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))
+
+        #h = Filter.design_windowed_sinc_bandpass(f_low=f_low, f_high=f_high, bw=bw)
         #h = Filter.design_windowed_sinc_lpf(0.42, bw=0.08)
 
         impulse = np.exp(1j * np.linspace(0, 1, 50))
 
         plt.subplot("221")
-        plt.title("f_low={} f_high={} bw=0.05".format(f_low, f_high, bw))
-        plt.plot(np.fft.rfft(h))
+        plt.title("f_low={} f_high={} bw={}".format(f_low, f_high, bw))
+        plt.plot(np.fft.fftfreq(1024), np.fft.fft(h, 1024))
 
         plt.subplot("222")
         plt.plot(h)

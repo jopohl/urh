@@ -93,8 +93,8 @@ class Filter(object):
         if f_low > f_high:
             f_low, f_high = f_high, f_low
 
-        f_low = util.clip(f_low, 0, 0.5)
-        f_high = util.clip(f_high, 0, 0.5)
+        f_low = util.clip(f_low, -0.5, 0.5)
+        f_high = util.clip(f_high, -0.5, 0.5)
 
         h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
 
@@ -127,14 +127,11 @@ class Filter(object):
 
     @classmethod
     def design_windowed_sinc_bandpass(cls, f_low, f_high, bw):
-        lp1 = cls.design_windowed_sinc_lpf(f_low, bw)
-        lp2 = cls.design_windowed_sinc_lpf(f_high, bw)
+        f_shift = (f_low + f_high) / 2
+        f_c = (f_high - f_low) / 2
 
-        lp2_spectral_inverse = np.negative(lp2)
-        lp2_spectral_inverse[len(lp2_spectral_inverse) // 2] += 1
+        N = Filter.get_filter_length_from_bandwidth(bw)
 
-        band_reject_kernel = lp1 + lp2_spectral_inverse
-        band_pass_kernel = np.negative(band_reject_kernel)
-        band_pass_kernel[len(band_pass_kernel) // 2] += 1
-
-        return band_pass_kernel
+        # https://dsp.stackexchange.com/questions/41361/how-to-implement-bandpass-filter-on-complex-valued-signal
+        return Filter.design_windowed_sinc_lpf(f_c, bw=bw) * \
+               np.exp(np.complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))

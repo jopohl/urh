@@ -68,23 +68,6 @@ class Filter(object):
         return result[too_much: -too_much]
 
     @classmethod
-    def apply_brick_wall_bandpass(cls, data, f_low, f_high):
-        assert -0.5 <= f_low <= 0.5
-        assert -0.5 <= f_high <= 0.5
-
-        if f_low > f_high:
-            f_low, f_high = f_high, f_low
-
-        spectrum = np.fft.fftshift(np.fft.fft(data))
-
-        lower_border = int((f_low + 0.5) * len(spectrum))
-        higher_border = int((f_high + 0.5) * len(spectrum))
-
-        spectrum[:lower_border] = np.complex(0, 0)
-        spectrum[higher_border:] = np.complex(0, 0)
-        return np.fft.ifft(np.fft.ifftshift(spectrum))
-
-    @classmethod
     def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float = None, filter_bw=0.08):
         if sample_rate is not None:
             f_low /= sample_rate

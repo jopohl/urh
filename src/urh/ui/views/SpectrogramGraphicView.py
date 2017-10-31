@@ -13,7 +13,6 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
     y_scale_changed = pyqtSignal(float)
     bandpass_filter_triggered = pyqtSignal(float, float)
-    brickwall_filter_triggered = pyqtSignal(float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -58,11 +57,6 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
         configure_filter_bw.setIcon(QIcon.fromTheme("configure"))
 
-        if self.something_is_selected:
-            menu.addSeparator()
-            create_from_selection_brick_wall = menu.addAction("Apply brick wall filter (may be slow!)")
-            create_from_selection_brick_wall.triggered.connect(self.on_create_from_frequency_selection_brickwall_triggered)
-
         return menu
 
     def zoom_to_selection(self, start: int, end: int):
@@ -85,10 +79,6 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
         self.bandpass_filter_triggered.emit(*self.__get_freqs())
-
-    @pyqtSlot()
-    def on_create_from_frequency_selection_brickwall_triggered(self):
-        self.brickwall_filter_triggered.emit(*self.__get_freqs())
 
     def __get_freqs(self):
         sh = self.sceneRect().height()

@@ -27,6 +27,11 @@ from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 
+def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
+    result_array = np.frombuffer(result_array.get_obj(), dtype=np.complex64)
+    result_array[:] = Filter.apply_bandpass_filter(data, f_low, f_high, filter_bw=filter_bw)
+
+
 class SignalFrameController(QFrame):
     closed = pyqtSignal(QWidget)
     signal_created = pyqtSignal(Signal)
@@ -1171,7 +1176,7 @@ class SignalFrameController(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=self.__perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
+        p = Process(target=perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 
@@ -1192,11 +1197,6 @@ class SignalFrameController(QFrame):
                                                                                                          filter_bw)
         self.signal_created.emit(signal)
         QApplication.instance().restoreOverrideCursor()
-
-    @staticmethod
-    def __perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
-        result_array = np.frombuffer(result_array.get_obj(), dtype=np.complex64)
-        result_array[:] = Filter.apply_bandpass_filter(data, f_low, f_high, filter_bw=filter_bw)
 
     def on_signal_data_edited(self):
         self.refresh_signal()

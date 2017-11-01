@@ -65,6 +65,13 @@ class MainController(QMainWindow):
         self.undo_group.addStack(self.generator_tab_controller.generator_undo_stack)
         self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
 
+        self.cancel_action = QAction(self.tr("Cancel"), self)
+        self.cancel_action.setShortcut(QKeySequence.Cancel)
+        self.cancel_action.triggered.connect(self.on_cancel_triggered)
+        self.cancel_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
+        self.addAction(self.cancel_action)
+
         self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
 
@@ -812,3 +819,8 @@ class MainController(QMainWindow):
     @pyqtSlot(int, Signal)
     def on_signal_created(self, index: int, signal: Signal):
         self.add_signal(signal, index=index)
+
+    @pyqtSlot()
+    def on_cancel_triggered(self):
+        for signal_frame in self.signal_tab_controller.signal_frames:
+            signal_frame.cancel_filtering()

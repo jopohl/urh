@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QMenu
 
 from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
@@ -44,6 +44,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     def create_context_menu(self):
         menu = QMenu()
+        menu.setToolTipsVisible(True)
         self._add_zoom_actions_to_menu(menu)
 
         if self.something_is_selected:
@@ -52,6 +53,12 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             create_from_frequency_selection = menu.addAction(text)
             create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
+
+            try:
+                cancel_button = QKeySequence.keyBindings(QKeySequence.Cancel)[0].toString()
+                create_from_frequency_selection.setToolTip("You can abort filtering with <b>{}</b>.".format(cancel_button))
+            except:
+                pass
 
         configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)

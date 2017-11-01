@@ -68,11 +68,7 @@ class Filter(object):
         return result[too_much: -too_much]
 
     @staticmethod
-    def apply_bandpass_filter(data, f_low, f_high, sample_rate: float = None, filter_bw=0.08):
-        if sample_rate is not None:
-            f_low /= sample_rate
-            f_high /= sample_rate
-
+    def apply_bandpass_filter(data, f_low, f_high, filter_bw=0.08):
         if f_low > f_high:
             f_low, f_high = f_high, f_low
 

@@ -46,7 +46,6 @@ before_script:
 
 script:
   - pytest -s -v --cov=src/urh --cov-config .coveragerc tests
-  - coverage combine
   - pip3 install .
   - urh autoclose
 

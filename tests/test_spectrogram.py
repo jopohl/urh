@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QTimer
+
 from tests.QtTestCase import QtTestCase
 from urh import colormaps
 from urh.signalprocessing.Signal import Signal
@@ -43,6 +45,26 @@ class TestSpectrogram(QtTestCase):
                                     center=0.4)
         self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111",
                                     center=0.4)
+
+    def test_cancel_filtering(self):
+        super().setUp()
+        self.add_signal_to_form("two_participants.complex")
+        signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        signal_frame.ui.cbSignalView.setCurrentIndex(2)
+        signal_frame.ui.spinBoxSelectionStart.setValue(100)
+        signal_frame.ui.spinBoxSelectionEnd.setValue(200)
+        menu = signal_frame.ui.gvSpectrogram.create_context_menu()
+        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
+        timer = QTimer()
+        timer.setSingleShot(True)
+        timer.timeout.connect(self.form.cancel_action.trigger)
+        timer.setInterval(5)
+        timer.start()
+
+        create_action.trigger()
+
+        self.assertTrue(signal_frame.filter_abort_wanted)
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
 
     def __prepare_channel_separation(self, signal_frame):
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

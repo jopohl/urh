@@ -8,6 +8,7 @@ from urh.signalprocessing.Filter import Filter
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.util.Logger import logger
 
 
 class SpectrogramGraphicView(ZoomableGraphicView):
@@ -54,7 +55,14 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             create_from_frequency_selection = menu.addAction(text)
             create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
-            create_from_frequency_selection.setToolTip("You can abort filtering with <b>Esc</b>.")
+
+            try:
+                cancel_button = "or ".join(k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel))
+            except Exception as e:
+                logger.debug("Error reading cancel button:", str(e))
+                cancel_button = "Esc"
+
+            create_from_frequency_selection.setToolTip("You can abort filtering with <b>{}</b>.".format(cancel_button))
 
         configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)

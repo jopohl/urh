@@ -52,6 +52,7 @@ class MainController(QMainWindow):
                                                                project_manager=self.project_manager)
         self.compare_frame_controller.ui.splitter.setSizes([1, 1000000])
 
+
         self.ui.tab_protocol.layout().addWidget(self.compare_frame_controller)
 
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
@@ -65,7 +66,7 @@ class MainController(QMainWindow):
         self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
 
         self.cancel_action = QAction(self.tr("Cancel"), self)
-        self.cancel_action.setShortcut("Esc")
+        self.cancel_action.setShortcut(QKeySequence.Cancel if hasattr(QKeySequence, "Cancel") else "Esc")
         self.cancel_action.triggered.connect(self.on_cancel_triggered)
         self.cancel_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
@@ -630,11 +631,11 @@ class MainController(QMainWindow):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        bit_len = signal.bit_len if signal else 100
+        bit_len = signal.bit_len          if signal else 100
         mod_type = signal.modulation_type if signal else 1
-        tolerance = signal.tolerance if signal else 5
-        noise = signal.noise_threshold if signal else 0.001
-        center = signal.qad_center if signal else 0.02
+        tolerance = signal.tolerance      if signal else 5
+        noise = signal.noise_threshold    if signal else 0.001
+        center = signal.qad_center        if signal else 0.02
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                             self.compare_frame_controller.decodings,
@@ -775,8 +776,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):
-        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if
-                        protocol in protocols}
+        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols}
 
         for frame in frame_protos:
             self.close_signal_frame(frame)

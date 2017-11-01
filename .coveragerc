@@ -1,5 +1,6 @@
 [run]
-concurrency = multiprocessing
+parallel=True
+concurrency=multiprocessing
 omit = 
        /src/urh/tests/* 
        */__init__.py

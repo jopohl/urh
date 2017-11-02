@@ -456,9 +456,9 @@ class Signal(QObject):
         comments = {";", " "}
         with open(csv_filename, encoding="utf-8-sig") as f:
             csv_reader = csv.reader(f, delimiter=",")
-            data = [line for line in csv_reader if line[0][0] not in comments]
+            csv_data = [line for line in csv_reader if line[0][0] not in comments]
 
-        arr = np.asarray(data, dtype=np.float32)
+        arr = np.asarray(csv_data, dtype=np.float32)
 
         data = np.empty(len(arr), dtype=np.complex64)
         data.real = arr[:, 0]

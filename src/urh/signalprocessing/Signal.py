@@ -1,3 +1,4 @@
+import codecs
 import os
 import struct
 import tarfile
@@ -453,7 +454,7 @@ class Signal(QObject):
 
     @staticmethod
     def csv_to_complex_file(csv_filename: str) -> str:
-        with open(csv_filename, encoding="utf-8-sig") as f:
+        with codecs.open(csv_filename, encoding="utf-8-sig") as f:
             arr = np.loadtxt(f, delimiter=",", comments=[";", " "])
 
         data = np.empty(len(arr), dtype=np.complex64)

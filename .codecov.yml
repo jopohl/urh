@@ -1,7 +1,6 @@
 codecov:
-  notify:
-    require_ci_to_pass: false
-    after_n_builds: 1
+  ci:
+    - "!ci.appveyor.com"
 
 coverage:
   precision: 1

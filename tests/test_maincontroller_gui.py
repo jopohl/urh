@@ -60,3 +60,17 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertIsNotNone(w)
         self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
         w.close()
+
+    def test_import_csv(self):
+        try:
+            os.remove(self.get_path_for_filename("csvtest.complex"))
+        except FileNotFoundError:
+            pass
+
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
+        self.form.add_files([self.get_path_for_filename("csvtest.csv")])
+        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 100)
+        self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest.complex")))
+        self.form.add_files([self.get_path_for_filename("csvtest.csv")])
+        self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
+        self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest_1.complex")))

@@ -1,11 +1,12 @@
 import math
 
 import numpy as np
+import time
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
-    QCheckBox, QApplication
+from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
+from multiprocessing import Process, Array
 
 from urh import constants
 from urh.controller.FilterDialogController import FilterDialogController
@@ -24,6 +25,11 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
+
+
+def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
+    result_array = np.frombuffer(result_array.get_obj(), dtype=np.complex64)
+    result_array[:] = Filter.apply_bandpass_filter(data, f_low, f_high, filter_bw=filter_bw)
 
 
 class SignalFrameController(QFrame):
@@ -60,6 +66,8 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.messages = proto_analyzer.messages
 
         self.ui.gvSignal.participants = project_manager.participants
+
+        self.filter_abort_wanted = False
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
@@ -268,6 +276,9 @@ class SignalFrameController(QFrame):
         self.ui.cbSignalView.hide()
         self.ui.cbModulationType.hide()
         self.ui.btnSaveSignal.hide()
+
+    def cancel_filtering(self):
+        self.filter_abort_wanted = True
 
     def update_number_selected_samples(self):
         if self.spectrogram_is_active:
@@ -1160,14 +1171,32 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(float, float)
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
-        self.setCursor(Qt.WaitCursor)
+        self.filter_abort_wanted = False
+
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
-        filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high, filter_bw=filter_bw)
+        filtered = Array("f", 2 * self.signal.num_samples)
+        p = Process(target=perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
+        p.daemon = True
+        p.start()
+
+        while p.is_alive():
+            QApplication.instance().processEvents()
+
+            if self.filter_abort_wanted:
+                p.terminate()
+                p.join()
+                QApplication.instance().restoreOverrideCursor()
+                return
+
+            time.sleep(0.1)
+
+        filtered = np.frombuffer(filtered.get_obj(), dtype=np.complex64)
         signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
         signal.name = self.signal.name + " filtered with f_low={0:.4n} f_high={1:.4n} bw={2:.4n}".format(f_low, f_high,
-                                                                                                       filter_bw)
+                                                                                                         filter_bw)
         self.signal_created.emit(signal)
-        self.unsetCursor()
+        QApplication.instance().restoreOverrideCursor()
 
     def on_signal_data_edited(self):
         self.refresh_signal()

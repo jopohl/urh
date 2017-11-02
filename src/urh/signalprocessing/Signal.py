@@ -1,4 +1,4 @@
-import codecs
+import csv
 import os
 import struct
 import tarfile
@@ -19,7 +19,6 @@ class Signal(QObject):
     """
     Representation of a loaded signal (complex file).
     """
-
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "QAM"]
 
@@ -94,8 +93,8 @@ class Signal(QObject):
                 if not self.qad_demod_file_loaded:
                     # Complex To Real WAV File load
                     self._fulldata = np.empty(n, dtype=np.complex64, order="C")
-                    self._fulldata.real = np.multiply(1/256, np.subtract(unsigned_bytes, 128))
-                    self._fulldata.imag = [-1/128] * n
+                    self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
+                    self._fulldata.imag = [-1 / 128] * n
                 else:
                     self._fulldata = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128).astype(np.int8)).astype(
                         np.float32)
@@ -120,7 +119,6 @@ class Signal(QObject):
         if val != self.sample_rate:
             self.__sample_rate = val
             self.sample_rate_changed.emit(val)
-
 
     @property
     def parameter_cache(self) -> dict:
@@ -258,6 +256,7 @@ class Signal(QObject):
             return self.data.real
         except AttributeError:
             return np.zeros(0, dtype=np.float32)
+
     @property
     def wave_data(self):
         return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))
@@ -454,8 +453,12 @@ class Signal(QObject):
 
     @staticmethod
     def csv_to_complex_file(csv_filename: str) -> str:
-        with codecs.open(csv_filename, encoding="utf-8-sig") as f:
-            arr = np.loadtxt(f, delimiter=",", comments=[";", " "])
+        comments = {";", " "}
+        with open(csv_filename, encoding="utf-8-sig") as f:
+            csv_reader = csv.reader(f, delimiter=",")
+            data = [line for line in csv_reader if line[0][0] not in comments]
+
+        arr = np.asarray(data, dtype=np.float32)
 
         data = np.empty(len(arr), dtype=np.complex64)
         data.real = arr[:, 0]

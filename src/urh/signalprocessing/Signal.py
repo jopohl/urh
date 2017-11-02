@@ -450,3 +450,27 @@ class Signal(QObject):
         signal._fulldata = samples
 
         return signal
+
+    @staticmethod
+    def csv_to_complex_file(csv_filename: str) -> str:
+        with open(csv_filename, encoding="utf-8-sig") as f:
+            arr = np.loadtxt(f, delimiter=",", comments=[";", " "])
+
+        data = np.empty(len(arr), dtype=np.complex64)
+        data.real = arr[:, 0]
+        data.imag = arr[:, 1]
+        data = data / abs(data.max())
+
+        target_filename = csv_filename.rstrip(".csv")
+        if os.path.exists(target_filename + ".complex"):
+            i = 1
+            while os.path.exists(target_filename + "_" + str(i) + ".complex"):
+                i += 1
+        else:
+            i = None
+
+        target_filename = target_filename if not i else target_filename + "_" + str(i)
+        target_filename += ".complex"
+
+        data.tofile(target_filename)
+        return target_filename

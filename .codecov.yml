@@ -1,3 +1,8 @@
+codecov:
+  notify:
+    require_ci_to_pass: false
+    after_n_builds: 1
+
 coverage:
   precision: 1
   round: down

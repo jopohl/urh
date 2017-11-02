@@ -52,7 +52,6 @@ class MainController(QMainWindow):
                                                                project_manager=self.project_manager)
         self.compare_frame_controller.ui.splitter.setSizes([1, 1000000])
 
-
         self.ui.tab_protocol.layout().addWidget(self.compare_frame_controller)
 
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
@@ -160,6 +159,7 @@ class MainController(QMainWindow):
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
+        self.ui.actionSamples_from_csv.triggered.connect(self.on_import_samples_from_csv_action_triggered)
 
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
@@ -368,6 +368,9 @@ class MainController(QMainWindow):
                 self.add_fuzz_profile(file)
             elif file.endswith(".txt"):
                 self.add_plain_bits_from_txt(file)
+            elif file.endswith(".csv"):
+                self.__import_csv(file, group_id)
+                continue
             elif os.path.basename(file) == constants.PROJECT_FILE:
                 self.project_manager.set_project_folder(os.path.split(file)[0])
             else:
@@ -631,11 +634,11 @@ class MainController(QMainWindow):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        bit_len = signal.bit_len          if signal else 100
+        bit_len = signal.bit_len if signal else 100
         mod_type = signal.modulation_type if signal else 1
-        tolerance = signal.tolerance      if signal else 5
-        noise = signal.noise_threshold    if signal else 0.001
-        center = signal.qad_center        if signal else 0.02
+        tolerance = signal.tolerance if signal else 5
+        noise = signal.noise_threshold if signal else 0.001
+        center = signal.qad_center if signal else 0.02
 
         psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                             self.compare_frame_controller.decodings,
@@ -776,7 +779,8 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list)
     def on_cfc_close_wanted(self, protocols: list):
-        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if protocol in protocols}
+        frame_protos = {sframe: protocol for sframe, protocol in self.signal_protocol_dict.items() if
+                        protocol in protocols}
 
         for frame in frame_protos:
             self.close_signal_frame(frame)
@@ -824,3 +828,28 @@ class MainController(QMainWindow):
     def on_cancel_triggered(self):
         for signal_frame in self.signal_tab_controller.signal_frames:
             signal_frame.cancel_filtering()
+
+    @pyqtSlot()
+    def on_import_samples_from_csv_action_triggered(self):
+        dialog = QFileDialog(self)
+        dialog.setDirectory(FileOperator.RECENT_PATH)
+        dialog.setWindowTitle("Import csv")
+        dialog.setFileMode(QFileDialog.ExistingFiles)
+        dialog.setNameFilter("CSV files (*.csv);;All files (*)")
+        dialog.setOptions(QFileDialog.DontResolveSymlinks)
+        dialog.setViewMode(QFileDialog.Detail)
+
+        if dialog.exec_():
+            self.setCursor(Qt.WaitCursor)
+            for file_name in dialog.selectedFiles():
+                try:
+                    self.__import_csv(file_name)
+                except Exception as e:
+                    logger.error("Error reading csv {0}: {1}".format(file_name, e))
+            self.unsetCursor()
+
+    def __import_csv(self, file_name, group_id=0):
+        self.setCursor(Qt.WaitCursor)
+        complex_file = Signal.csv_to_complex_file(file_name)
+        self.add_files([complex_file], group_id=group_id)
+        self.unsetCursor()

@@ -95,7 +95,7 @@ class SpectrogramTest(unittest.TestCase):
         b = 0.05
         data = x
 
-        y = Filter.apply_bandpass_filter(data, lowcut, highcut, fs, filter_bw=b)
+        y = Filter.apply_bandpass_filter(data, lowcut / fs, highcut / fs, filter_bw=b)
 
         plt.plot(y, label='Filtered signal (%g Hz)' % f0)
         plt.plot(data, label='Noisy signal')
@@ -175,12 +175,12 @@ class SpectrogramTest(unittest.TestCase):
         plt.imshow(np.transpose(spectrogram.data), aspect="auto", cmap="magma")
         plt.ylim(0, spectrogram.freq_bins)
 
-        chann1_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq1_low, filter_freq1_high, sample_rate, filter_bw)
+        chann1_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq1_low / sample_rate, filter_freq1_high / sample_rate, filter_bw)
         plt.subplot("223")
         plt.title("Channel 1 Filtered ({})".format("".join(map(str, channel1_data))))
         plt.plot(chann1_filtered)
 
-        chann2_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq2_low, filter_freq2_high, sample_rate, filter_bw)
+        chann2_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq2_low / sample_rate, filter_freq2_high / sample_rate, filter_bw)
         plt.subplot("224")
         plt.title("Channel 2 Filtered ({})".format("".join(map(str, channel2_data))))
         plt.plot(chann2_filtered)

@@ -1,3 +1,7 @@
+codecov:
+  ci:
+    - "!ci.appveyor.com"
+
 coverage:
   precision: 1
   round: down

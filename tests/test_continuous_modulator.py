@@ -20,7 +20,7 @@ class TestContinuousModulator(unittest.TestCase):
         self.assertTrue(continuous_modulator.ring_buffer.is_empty)
         continuous_modulator.start()
         self.assertTrue(continuous_modulator.process.is_alive())
-        time.sleep(0.5)
+        time.sleep(1.0)
         self.assertFalse(continuous_modulator.ring_buffer.is_empty)
         self.assertGreater(continuous_modulator.current_message_index.value, 0)
         continuous_modulator.stop()

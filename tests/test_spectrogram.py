@@ -21,16 +21,6 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(image.height(), 42)
         self.assertEqual(image.width(), len(colormaps.chosen_colormap_numpy_bgra))
 
-    def test_channel_separation(self):
-        super().setUp()
-        self.add_signal_to_form("two_channels.complex")
-        self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
-        signal_frame = self.form.signal_tab_controller.signal_frames[0]
-        self.__prepare_channel_separation(signal_frame)
-
-        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101")
-        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001")
-
     def test_channel_separation_with_negative_frequency(self):
         super().setUp()
         self.add_signal_to_form("three_channels.complex")
@@ -39,12 +29,9 @@ class TestSpectrogram(QtTestCase):
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         self.__prepare_channel_separation(signal_frame)
 
-        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101",
-                                    center=0.4)
-        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001",
-                                    center=0.4)
-        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111",
-                                    center=0.4)
+        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101")
+        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001")
+        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111")
 
     def test_cancel_filtering(self):
         super().setUp()

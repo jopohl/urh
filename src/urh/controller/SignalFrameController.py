@@ -1038,7 +1038,7 @@ class SignalFrameController(QFrame):
             self.ui.btnAutoDetect.setChecked(False)
 
     def on_participant_changed(self):
-        if self.proto_analyzer:
+        if hasattr(self, "proto_analyzer") and self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
     def resizeEvent(self, event: QResizeEvent):

@@ -9,8 +9,8 @@ from urh.signalprocessing.Modulator import Modulator
 
 
 class TestContinuousModulator(unittest.TestCase):
-    NUM_MESSAGES = 20
-    BITS_PER_MESSAGE = 100
+    NUM_MESSAGES = 10
+    BITS_PER_MESSAGE = 80
 
     def test_modulate_continuously(self):
         modulator = Modulator("Test")
@@ -20,7 +20,7 @@ class TestContinuousModulator(unittest.TestCase):
         self.assertTrue(continuous_modulator.ring_buffer.is_empty)
         continuous_modulator.start()
         self.assertTrue(continuous_modulator.process.is_alive())
-        time.sleep(1.0)
+        time.sleep(0.5)
         self.assertFalse(continuous_modulator.ring_buffer.is_empty)
         self.assertGreater(continuous_modulator.current_message_index.value, 0)
         continuous_modulator.stop()
@@ -28,7 +28,7 @@ class TestContinuousModulator(unittest.TestCase):
 
     def __create_messages(self):
         mt = MessageType("test")
-        return [Message([True] * self.BITS_PER_MESSAGE, 1000, mt) for _ in range(self.NUM_MESSAGES)]
+        return [Message([True] * self.BITS_PER_MESSAGE, 500, mt) for _ in range(self.NUM_MESSAGES)]
 
 if __name__ == '__main__':
     unittest.main()

@@ -120,12 +120,17 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.spinBoxTolerance.setValue(10)
         frame.ui.spinBoxTolerance.editingFinished.emit()
 
+        frame.signal.pause_threshold = 42
+        frame.signal.message_length_divisor = 10
+
         frame.apply_to_all_clicked.emit(frame.signal)
 
         self.assertEqual(42, frame2.ui.spinBoxInfoLen.value())
         self.assertEqual(0.1, frame2.ui.spinBoxCenterOffset.value())
         self.assertEqual(0.5, frame2.ui.spinBoxNoiseTreshold.value())
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())
+        self.assertEqual(42, frame2.signal.pause_threshold)
+        self.assertEqual(10, frame2.signal.message_length_divisor)
 
     def test_save_all(self):
         self.add_signal_to_form("esaver.complex")

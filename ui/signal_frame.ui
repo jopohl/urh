@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>506</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,6 +70,72 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
+     <item row="12" column="0">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="9" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>7</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="cbModulationType">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>ASK</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="effgfdg">FSK</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PSK</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btnAdvancedModulationSettings">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset theme="configure">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="labelModulation">
+       <property name="text">
+        <string>Modulation:</string>
+       </property>
+      </widget>
+     </item>
      <item row="22" column="0">
       <widget class="QCheckBox" name="chkBoxSyncSelection">
        <property name="toolTip">
@@ -83,7 +149,7 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
+     <item row="19" column="1">
       <widget class="QSlider" name="sliderSpectrogramMin">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -131,7 +197,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="labelNoise">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -275,7 +341,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="14" column="0">
+     <item row="15" column="0">
       <widget class="QLabel" name="lSignalViewText">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -293,7 +359,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="12" column="0" colspan="2">
+     <item row="13" column="0" colspan="2">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -362,7 +428,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="10" column="0" colspan="2">
+     <item row="11" column="0" colspan="2">
       <widget class="QPushButton" name="btnAutoDetect">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -388,24 +454,32 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+     <item row="15" column="1">
+      <widget class="QComboBox" name="cbSignalView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-      </spacer>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Modulation:</string>
-       </property>
+       <item>
+        <property name="text">
+         <string>Analog</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Demodulated</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Spectrogram</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="0" column="0" colspan="2">
@@ -564,64 +638,14 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </item>
       </layout>
      </item>
-     <item row="14" column="1">
-      <widget class="QComboBox" name="cbSignalView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Analog</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Demodulated</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Spectrogram</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QComboBox" name="cbModulationType">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>ASK</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string extracomment="effgfdg">FSK</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>PSK</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="17" column="0">
+     <item row="18" column="0">
       <widget class="QLabel" name="labelFFTWindowSize">
        <property name="text">
         <string>FFT Window Size:</string>
        </property>
       </widget>
      </item>
-     <item row="17" column="1">
+     <item row="18" column="1">
       <widget class="QSlider" name="sliderFFTWindowSize">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -640,7 +664,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="19" column="1">
+     <item row="20" column="1">
       <widget class="QSlider" name="sliderSpectrogramMax">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -659,46 +683,17 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
+     <item row="19" column="0">
       <widget class="QLabel" name="labelSpectrogramMin">
        <property name="text">
         <string>Data&lt;sub&gt;min&lt;/sub&gt;:</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="20" column="0">
       <widget class="QLabel" name="labelSpectrogramMax">
        <property name="text">
         <string>Data&lt;sub&gt;max&lt;/sub&gt;:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="20" column="0">
-      <widget class="QLabel" name="labelPauseThreshold">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Pause Threshold:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="20" column="1">
-      <widget class="QSpinBox" name="spinBoxPauseThreshold">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pause threshold gives you control &lt;span style=&quot; font-weight:600;&quot;&gt;when to insert a message break.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.&lt;/p&gt;&lt;p&gt;Special value is 0 to disable message breaking completely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="specialValueText">
-        <string>Disable</string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>8</number>
        </property>
       </widget>
      </item>

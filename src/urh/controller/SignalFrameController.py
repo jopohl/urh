@@ -1,14 +1,15 @@
 import math
+import time
+from multiprocessing import Process, Array
 
 import numpy as np
-import time
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
-from multiprocessing import Process, Array
 
 from urh import constants
+from urh.controller.AdvancedModulationOptionsController import AdvancedModulationOptionsController
 from urh.controller.FilterDialogController import FilterDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
@@ -170,12 +171,12 @@ class SignalFrameController(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.btnAdvancedModulationSettings.clicked.connect(self.on_btn_advanced_modulation_settings_clicked)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
-            self.signal.pause_threshold_changed.connect(self.ui.spinBoxPauseThreshold.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.show_modulation_type)
@@ -239,7 +240,6 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinbox_tolerance_editing_finished)
         self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinbox_noise_threshold_editing_finished)
         self.ui.spinBoxInfoLen.editingFinished.connect(self.on_spinbox_infolen_editing_finished)
-        self.ui.spinBoxPauseThreshold.editingFinished.connect(self.on_spinbox_pause_threshold_editing_finished)
 
     def refresh_signal_information(self, block=True):
         self.ui.spinBoxTolerance.blockSignals(block)
@@ -276,6 +276,12 @@ class SignalFrameController(QFrame):
         self.ui.cbSignalView.hide()
         self.ui.cbModulationType.hide()
         self.ui.btnSaveSignal.hide()
+        self.ui.btnAutoDetect.hide()
+        self.ui.btnAdvancedModulationSettings.hide()
+        self.ui.lCenterOffset.hide()
+        self.ui.spinBoxNoiseTreshold.hide()
+        self.ui.labelNoise.hide()
+        self.ui.labelModulation.hide()
 
     def cancel_filtering(self):
         self.filter_abort_wanted = True
@@ -1124,14 +1130,6 @@ class SignalFrameController(QFrame):
             self.disable_auto_detection()
 
     @pyqtSlot()
-    def on_spinbox_pause_threshold_editing_finished(self):
-        if self.signal.pause_threshold != self.ui.spinBoxPauseThreshold.value():
-            pause_threshold_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                           parameter_name="pause_threshold",
-                                                           parameter_value=self.ui.spinBoxPauseThreshold.value())
-            self.undo_stack.push(pause_threshold_action)
-
-    @pyqtSlot()
     def refresh(self, draw_full_signal=False):
         self.refresh_signal(draw_full_signal=draw_full_signal)
         self.refresh_signal_information(block=True)
@@ -1210,3 +1208,27 @@ class SignalFrameController(QFrame):
             self.__set_duration()
 
         self.show_protocol()  # update times
+
+    @pyqtSlot(int)
+    def on_pause_threshold_edited(self, pause_threshold: int):
+        if self.signal.pause_threshold != pause_threshold:
+            pause_threshold_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                           parameter_name="pause_threshold",
+                                                           parameter_value=pause_threshold)
+            self.undo_stack.push(pause_threshold_action)
+
+    @pyqtSlot(int)
+    def on_message_length_divisor_edited(self, message_length_divisor: int):
+        if self.signal.pause_threshold != message_length_divisor:
+            message_length_divisor_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                                  parameter_name="message_length_divisor",
+                                                                  parameter_value=message_length_divisor)
+            self.undo_stack.push(message_length_divisor_action)
+
+    @pyqtSlot()
+    def on_btn_advanced_modulation_settings_clicked(self):
+        dialog = AdvancedModulationOptionsController(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
+        dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
+        dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
+        dialog.exec_()
+

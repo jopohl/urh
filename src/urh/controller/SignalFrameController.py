@@ -179,7 +179,7 @@ class SignalFrameController(QFrame):
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
-            self.signal.modulation_type_changed.connect(self.show_modulation_type)
+            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentIndex)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
@@ -253,7 +253,8 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
-        self.show_modulation_type()
+        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
         self.ui.spinBoxTolerance.blockSignals(False)
         self.ui.spinBoxCenterOffset.blockSignals(False)
@@ -1057,11 +1058,14 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(int)
     def on_combobox_modulation_type_index_changed(self, index: int):
-        modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="modulation_type",
-                                                  parameter_value=index)
+        if index != self.signal.modulation_type:
+            modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                      parameter_name="modulation_type",
+                                                      parameter_value=index)
 
-        self.undo_stack.push(modulation_action)
+            self.undo_stack.push(modulation_action)
+
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):

@@ -28,7 +28,7 @@ class Signal(QObject):
     qad_center_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
-    modulation_type_changed = pyqtSignal()
+    modulation_type_changed = pyqtSignal(int)
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
@@ -153,7 +153,7 @@ class Signal(QObject):
             if self.auto_detect_on_modulation_changed:
                 self.auto_detect(emit_update=False)
 
-            self.modulation_type_changed.emit()
+            self.modulation_type_changed.emit(self.__modulation_type)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 

@@ -59,7 +59,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             try:
                 cancel_button = " or ".join(k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel))
             except Exception as e:
-                logger.debug("Error reading cancel button:", str(e))
+                logger.debug("Error reading cancel button: " + str(e))
                 cancel_button = "Esc"
 
             create_from_frequency_selection.setToolTip("You can abort filtering with <b>{}</b>.".format(cancel_button))

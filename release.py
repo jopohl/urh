@@ -96,7 +96,8 @@ def release():
     try:
         os.chdir("urh")
     except FileNotFoundError:
-        input("Could not clone AUR package. Please clone manually in {}".format(os.path.relpath(os.curdir)))
+        input("Could not clone AUR package. Please clone manually in {}".format(os.path.realpath(os.curdir)))
+        os.chdir("urh")
 
     for line in fileinput.input("PKGBUILD", inplace=True):
         if line.startswith("pkgver="):

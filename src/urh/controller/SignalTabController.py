@@ -192,6 +192,14 @@ class SignalTabController(QWidget):
                     frame.signal.bit_len = signal.bit_len
                     proto_needs_update = True
 
+                if frame.signal.pause_threshold != signal.pause_threshold:
+                    frame.signal.pause_threshold = signal.pause_threshold
+                    proto_needs_update = True
+
+                if frame.signal.message_length_divisor != signal.message_length_divisor:
+                    frame.signal.message_length_divisor = signal.message_length_divisor
+                    proto_needs_update = True
+
                 frame.signal.block_protocol_update = False
 
                 if proto_needs_update:

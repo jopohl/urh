@@ -58,7 +58,7 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This setting only affects ASK demodulation.&lt;/p&gt;&lt;p&gt;With the message divisor length you can configure a &lt;span style=&quot; font-weight:600;&quot;&gt;minimum message length&lt;/span&gt; in a flexible way.&lt;/p&gt;&lt;p&gt;URH will try to demodulate signals in such a way, that the resulting message has a number of bits that is divisble by the configured divisor.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With the message &lt;span style=&quot; font-weight:600;&quot;&gt;divisor length&lt;/span&gt; you can control the minimum message length in a flexible way. URH will try to demodulate signals in such a way, that the resulting message has a number of bits that is divisble by the configured divisor. &lt;br/&gt;&lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How does the zero padding work? Remaining zero bits are taken from the pause behind the message if possible.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

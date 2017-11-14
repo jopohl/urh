@@ -441,7 +441,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
            <item>
             <widget class="QStackedWidget" name="detail_view_widget">
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="page_empty"/>
              <widget class="QWidget" name="page_goto_action">

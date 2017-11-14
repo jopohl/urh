@@ -306,7 +306,7 @@ class Ui_SimulatorTab(object):
 
         self.retranslateUi(SimulatorTab)
         self.tabWidget.setCurrentIndex(0)
-        self.detail_view_widget.setCurrentIndex(0)
+        self.detail_view_widget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(SimulatorTab)
 
     def retranslateUi(self, SimulatorTab):
@@ -329,7 +329,7 @@ class Ui_SimulatorTab(object):
         self.label_9.setText(_translate("SimulatorTab", "Goto:"))
         self.label_10.setText(_translate("SimulatorTab", "Repeat:"))
         self.label_11.setText(_translate("SimulatorTab", "Labels:"))
-        self.label_2.setText(_translate("SimulatorTab", "Encoding/Decoding:"))
+        self.label_2.setText(_translate("SimulatorTab", "Coding:"))
         self.lblEncodingDecoding.setText(_translate("SimulatorTab", "-"))
         self.label_12.setText(_translate("SimulatorTab", "Condition:"))
         self.ruleCondLineEdit.setPlaceholderText(_translate("SimulatorTab", "not (item1.crc == 0b1010 and item2.length >=3)"))

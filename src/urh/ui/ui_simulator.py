@@ -306,7 +306,7 @@ class Ui_SimulatorTab(object):
 
         self.retranslateUi(SimulatorTab)
         self.tabWidget.setCurrentIndex(0)
-        self.detail_view_widget.setCurrentIndex(2)
+        self.detail_view_widget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(SimulatorTab)
 
     def retranslateUi(self, SimulatorTab):

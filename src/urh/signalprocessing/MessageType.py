@@ -170,7 +170,7 @@ class MessageType(list):
 
     @staticmethod
     def from_xml(tag: ET.Element):
-        field_types_by_type_id = {ft.id: ft for ft in FieldType.load_from_xml()}
+        field_types_by_caption = {ft.caption: ft for ft in FieldType.load_from_xml()}
 
         name = tag.get("name", "blank")
         id = tag.get("id", None)
@@ -178,9 +178,9 @@ class MessageType(list):
         assigned_by_logic_analyzer = bool(int(tag.get("assigned_by_logic_analyzer", 0)))
         labels = []
         for lbl_tag in tag.findall("label"):
-            labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
+            labels.append(ProtocolLabel.from_xml(lbl_tag, field_types_by_caption=field_types_by_caption))
         for lbl_tag in tag.findall("checksum_label"):
-            labels.append(ChecksumLabel.from_xml(lbl_tag, field_types_by_type_id=field_types_by_type_id))
+            labels.append(ChecksumLabel.from_xml(lbl_tag, field_types_by_caption=field_types_by_caption))
         result = MessageType(name=name, iterable=labels, id=id, ruleset=Ruleset.from_xml(tag.find("ruleset")))
         result.assigned_by_ruleset = assigned_by_ruleset
         result.assigned_by_logic_analyzer = assigned_by_logic_analyzer

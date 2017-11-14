@@ -1,3 +1,4 @@
+import csv
 import os
 import struct
 import tarfile
@@ -19,7 +20,6 @@ class Signal(QObject):
     Representation of a loaded signal (complex file).
     """
 
-
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "QAM"]
 
     bit_len_changed = pyqtSignal(int)
@@ -28,7 +28,7 @@ class Signal(QObject):
     qad_center_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
-    modulation_type_changed = pyqtSignal()
+    modulation_type_changed = pyqtSignal(int)
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
@@ -40,6 +40,8 @@ class Signal(QObject):
         self.__name = name
         self.__tolerance = 5
         self.__bit_len = 100
+        self.__pause_threshold = 8
+        self.__message_length_divisor = 1
         self._qad = None
         self.__qad_center = 0
         self._noise_threshold = 0
@@ -91,8 +93,8 @@ class Signal(QObject):
                 if not self.qad_demod_file_loaded:
                     # Complex To Real WAV File load
                     self._fulldata = np.empty(n, dtype=np.complex64, order="C")
-                    self._fulldata.real = np.multiply(1/256, np.subtract(unsigned_bytes, 128))
-                    self._fulldata.imag = [-1/128] * n
+                    self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
+                    self._fulldata.imag = [-1 / 128] * n
                 else:
                     self._fulldata = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128).astype(np.int8)).astype(
                         np.float32)
@@ -117,7 +119,6 @@ class Signal(QObject):
         if val != self.sample_rate:
             self.__sample_rate = val
             self.sample_rate_changed.emit(val)
-
 
     @property
     def parameter_cache(self) -> dict:
@@ -152,7 +153,7 @@ class Signal(QObject):
             if self.auto_detect_on_modulation_changed:
                 self.auto_detect(emit_update=False)
 
-            self.modulation_type_changed.emit()
+            self.modulation_type_changed.emit(self.__modulation_type)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 
@@ -193,6 +194,28 @@ class Signal(QObject):
         if self.__qad_center != value:
             self.__qad_center = value
             self.qad_center_changed.emit(value)
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def pause_threshold(self) -> int:
+        return self.__pause_threshold
+
+    @pause_threshold.setter
+    def pause_threshold(self, value: int):
+        if self.__pause_threshold != value:
+            self.__pause_threshold = value
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def message_length_divisor(self) -> int:
+        return self.__message_length_divisor
+
+    @message_length_divisor.setter
+    def message_length_divisor(self, value: int):
+        if self.__message_length_divisor != value:
+            self.__message_length_divisor = value
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 
@@ -243,6 +266,7 @@ class Signal(QObject):
             return self.data.real
         except AttributeError:
             return np.zeros(0, dtype=np.float32)
+
     @property
     def wave_data(self):
         return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))
@@ -436,3 +460,31 @@ class Signal(QObject):
         signal._fulldata = samples
 
         return signal
+
+    @staticmethod
+    def csv_to_complex_file(csv_filename: str) -> str:
+        comments = {";", " "}
+        with open(csv_filename, encoding="utf-8-sig") as f:
+            csv_reader = csv.reader(f, delimiter=",")
+            csv_data = [line for line in csv_reader if line[0][0] not in comments]
+
+        arr = np.asarray(csv_data, dtype=np.float32)
+
+        data = np.empty(len(arr), dtype=np.complex64)
+        data.real = arr[:, 0]
+        data.imag = arr[:, 1]
+        data = data / abs(data.max())
+
+        target_filename = csv_filename.rstrip(".csv")
+        if os.path.exists(target_filename + ".complex"):
+            i = 1
+            while os.path.exists(target_filename + "_" + str(i) + ".complex"):
+                i += 1
+        else:
+            i = None
+
+        target_filename = target_filename if not i else target_filename + "_" + str(i)
+        target_filename += ".complex"
+
+        data.tofile(target_filename)
+        return target_filename

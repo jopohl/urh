@@ -1,16 +1,18 @@
-import numpy as np
 import math
+from enum import Enum
+
+import numpy as np
 
 from urh import constants
 from urh.cythonext import signalFunctions
-from enum import Enum
-
+from urh.util import util
 from urh.util.Logger import logger
 
 
 class FilterType(Enum):
     moving_average = "moving average"
     custom = "custom"
+
 
 class Filter(object):
     BANDWIDTHS = {
@@ -31,33 +33,33 @@ class Filter(object):
 
         return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 
-    @classmethod
-    def read_configured_filter_bw(cls) -> float:
+    @staticmethod
+    def read_configured_filter_bw() -> float:
         bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
 
-        if bw_type in cls.BANDWIDTHS:
-            return cls.BANDWIDTHS[bw_type]
+        if bw_type in Filter.BANDWIDTHS:
+            return Filter.BANDWIDTHS[bw_type]
 
         if bw_type.lower() == "custom":
             return constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)
 
         return 0.08
 
-    @classmethod
-    def get_bandwidth_from_filter_length(cls, N):
+    @staticmethod
+    def get_bandwidth_from_filter_length(N):
         return 4 / N
 
-    @classmethod
-    def get_filter_length_from_bandwidth(cls, bw):
+    @staticmethod
+    def get_filter_length_from_bandwidth(bw):
         N = int(math.ceil((4 / bw)))
         return N + 1 if N % 2 == 0 else N  # Ensure N is odd.
 
-    @classmethod
-    def fft_convolve_1d(cls, x: np.ndarray, h: np.ndarray):
+    @staticmethod
+    def fft_convolve_1d(x: np.ndarray, h: np.ndarray):
         n = len(x) + len(h) - 1
-        n_opt = 1 << (n-1).bit_length()  # Get next power of 2
+        n_opt = 1 << (n - 1).bit_length()  # Get next power of 2
         if np.issubdtype(x.dtype, np.complexfloating) or np.issubdtype(h.dtype, np.complexfloating):
-            fft, ifft = np.fft.fft, np.fft.ifft    # use complex fft
+            fft, ifft = np.fft.fft, np.fft.ifft  # use complex fft
         else:
             fft, ifft = np.fft.rfft, np.fft.irfft  # use real fft
 
@@ -65,17 +67,15 @@ class Filter(object):
         too_much = (len(result) - len(x)) // 2  # Center result
         return result[too_much: -too_much]
 
-    @classmethod
-    def apply_bandpass_filter(cls, data, f_low, f_high, sample_rate: float=None, filter_bw=0.08):
-        if sample_rate is not None:
-            f_low /= sample_rate
-            f_high /= sample_rate
+    @staticmethod
+    def apply_bandpass_filter(data, f_low, f_high, filter_bw=0.08):
+        if f_low > f_high:
+            f_low, f_high = f_high, f_low
 
-        assert 0 <= f_low <= 0.5
-        assert 0 <= f_high <= 0.5
-        assert f_low <= f_high
+        f_low = util.clip(f_low, -0.5, 0.5)
+        f_high = util.clip(f_high, -0.5, 0.5)
 
-        h = cls.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
+        h = Filter.design_windowed_sinc_bandpass(f_low, f_high, filter_bw)
 
         # Choose normal or FFT convolution based on heuristic described in
         # https://softwareengineering.stackexchange.com/questions/171757/computational-complexity-of-correlation-in-time-vs-multiplication-in-frequency-s/
@@ -84,11 +84,11 @@ class Filter(object):
             return np.convolve(data, h, 'same')
         else:
             logger.debug("Use FFT convolve")
-            return cls.fft_convolve_1d(data, h)
+            return Filter.fft_convolve_1d(data, h)
 
-    @classmethod
-    def design_windowed_sinc_lpf(cls, fc, bw):
-        N = cls.get_filter_length_from_bandwidth(bw)
+    @staticmethod
+    def design_windowed_sinc_lpf(fc, bw):
+        N = Filter.get_filter_length_from_bandwidth(bw)
 
         # Compute sinc filter impulse response
         h = np.sinc(2 * fc * (np.arange(N) - (N - 1) / 2.))
@@ -104,16 +104,13 @@ class Filter(object):
 
         return h_unity
 
-    @classmethod
-    def design_windowed_sinc_bandpass(cls, f_low, f_high, bw):
-        lp1 = cls.design_windowed_sinc_lpf(f_low, bw)
-        lp2 = cls.design_windowed_sinc_lpf(f_high, bw)
+    @staticmethod
+    def design_windowed_sinc_bandpass(f_low, f_high, bw):
+        f_shift = (f_low + f_high) / 2
+        f_c = (f_high - f_low) / 2
 
-        lp2_spectral_inverse = np.negative(lp2)
-        lp2_spectral_inverse[len(lp2_spectral_inverse) // 2] += 1
+        N = Filter.get_filter_length_from_bandwidth(bw)
 
-        band_reject_kernel = lp1 + lp2_spectral_inverse
-        band_pass_kernel = np.negative(band_reject_kernel)
-        band_pass_kernel[len(band_pass_kernel) // 2] += 1
-
-        return band_pass_kernel
+        # https://dsp.stackexchange.com/questions/41361/how-to-implement-bandpass-filter-on-complex-valued-signal
+        return Filter.design_windowed_sinc_lpf(f_c, bw=bw) * \
+               np.exp(np.complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))

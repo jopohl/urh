@@ -42,8 +42,11 @@ class OptionsController(QDialog):
         # We use bundled native device backends on windows, so no need to reconfigure them
         self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
         self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
+        self.ui.labelIconTheme.setVisible(sys.platform == "linux")
+        self.ui.comboBoxIconTheme.setVisible(sys.platform == "linux")
 
         self.ui.comboBoxTheme.setCurrentIndex(constants.SETTINGS.value("theme_index", 0, int))
+        self.ui.comboBoxIconTheme.setCurrentIndex(constants.SETTINGS.value("icon_theme_index", 0, int))
         self.ui.checkBoxShowConfirmCloseDialog.setChecked(
             not constants.SETTINGS.value('not_show_close_dialog', False, bool))
         self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', True, bool))
@@ -139,6 +142,7 @@ class OptionsController(QDialog):
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
         self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
+        self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -300,6 +304,11 @@ class OptionsController(QDialog):
             QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
         else:
             QApplication.instance().setStyle(constants.SETTINGS.value("default_theme", type=str))
+
+    @pyqtSlot(int)
+    def on_combobox_icon_theme_index_changed(self, index: int):
+        constants.SETTINGS.setValue('icon_theme_index', index)
+        util.set_icon_theme()
 
     @pyqtSlot(bool)
     def on_checkbox_hold_shift_to_drag_clicked(self, checked: bool):

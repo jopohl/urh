@@ -37,8 +37,8 @@ class TestAutoAssignments(QtTestCase):
         self.decodings.append(Encoding(['Manchester I', 'Edge Trigger']))
         self.decodings.append(Encoding(['Manchester II', 'Edge Trigger', 'Invert']))
         self.decodings.append(Encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
-        self.decodings.append(Encoding(['DeWhitening Special', constants.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21']))
-        self.decodings.append(Encoding(['DeWhitening', constants.DECODING_DATAWHITENING, '0x67686768;0x21']))
+        self.decodings.append(Encoding(['DeWhitening Special', constants.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21;0']))
+        self.decodings.append(Encoding(['DeWhitening', constants.DECODING_DATAWHITENING, '0x67686768;0x21;0']))
 
     def test_message_type_assign_by_value(self):
         start = 8

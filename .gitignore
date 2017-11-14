@@ -36,3 +36,5 @@ src/urh.egg-info/
 tests/data/URHProject.xml
 src/urh/cythonext/*.html
 /tests/show_gui
+
+misc/*

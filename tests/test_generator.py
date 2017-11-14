@@ -1,5 +1,6 @@
 import array
 import os
+import tempfile
 
 from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
@@ -195,6 +196,44 @@ class TestGenerator(QtTestCase):
         self.form.generator_tab_controller.generator_undo_stack.redo()
         self.assertEqual(l1 + 1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
 
+
+    def test_edit_data(self):
+        # load some bits from txt
+        filename = os.path.join(tempfile.gettempdir(), "testdata.txt")
+        data = ["101010101111", "1010101011110000", "10101010000111111"]
+
+        with open(filename, "w") as f:
+            f.writelines("\n".join(data))
+
+        self.wait_before_new_file()
+        self.form.add_files([filename])
+        self.add_signal_to_generator(signal_index=0)
+        self.form.generator_tab_controller.ui.cbViewType.setCurrentText("Bit")
+
+        table_model = self.form.generator_tab_controller.table_model
+        self.assertEqual(table_model.rowCount(), 3)
+
+        self.assertEqual(table_model.display_data[1][7], 0)
+        self.__set_model_data(table_model, row=1, column=7, value="1")
+        self.assertEqual(table_model.display_data[1][7], 1)
+        self.__set_model_data(table_model, row=1, column=7, value="0")
+        self.assertEqual(table_model.display_data[1][7], 0)
+
+        self.form.generator_tab_controller.ui.cbViewType.setCurrentText("Hex")
+        self.assertEqual(table_model.display_data[2][1], 10)
+        self.__set_model_data(table_model, row=2, column=1, value="e")
+        self.assertEqual(table_model.display_data[2][1], 14)
+
+        self.assertLess(len(table_model.display_data[1]), 5)
+        self.__set_model_data(table_model, row=1, column=4, value="3")
+        self.assertEqual(table_model.display_data[1][4], 3)
+
+        self.assertEqual(table_model.protocol.plain_hex_str[0], "aaf")
+        self.__set_model_data(table_model, row=0, column=4, value="b")
+        self.assertEqual(table_model.protocol.plain_hex_str[0], "aaf0b")
+
+    def __set_model_data(self, model, row, column, value):
+        model.setData(model.createIndex(row, column), value, role=Qt.EditRole)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

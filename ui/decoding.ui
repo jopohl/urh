@@ -478,6 +478,19 @@
                <string>Data whitening polynomial (LFSR, hex, w/o first bit)</string>
               </property>
              </widget>
+             <widget class="QCheckBox" name="datawhitening_overwrite_crc">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>60</y>
+                <width>491</width>
+                <height>20</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Overwrite CRC16 field with correct value when encoding</string>
+              </property>
+             </widget>
             </widget>
             <widget class="QWidget" name="page_cut">
              <widget class="QLineEdit" name="cutmark">

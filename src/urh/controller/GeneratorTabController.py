@@ -61,6 +61,8 @@ class GeneratorTabController(QWidget):
         self.rfcat_plugin = RfCatPlugin()
         self.init_rfcat_plugin()
 
+        self.modulation_msg_indices = []
+
         self.refresh_modulators()
         self.on_selected_modulation_changed()
         self.set_fuzzing_ui_status()
@@ -415,15 +417,17 @@ class GeneratorTabController(QWidget):
         self.ui.prBarGeneration.show()
         self.ui.prBarGeneration.setValue(0)
         self.ui.prBarGeneration.setMaximum(self.table_model.row_count)
+        self.modulation_msg_indices.clear()
 
         pos = 0
         for i in range(0, self.table_model.row_count):
             message = self.table_model.protocol.messages[i]
             modulator = self.__get_modulator_of_message(message)
             # We do not need to modulate the pause extra, as result is already initialized with zeros
-            modulator.modulate(start=pos, data=message.encoded_bits, pause=0)
+            modulator.modulate(start=0, data=message.encoded_bits, pause=0)
             buffer[pos:pos + len(modulator.modulated_samples)] = modulator.modulated_samples
             pos += len(modulator.modulated_samples) + message.pause
+            self.modulation_msg_indices.append(pos)
             self.ui.prBarGeneration.setValue(i + 1)
             QApplication.instance().processEvents()
 
@@ -572,7 +576,8 @@ class GeneratorTabController(QWidget):
             try:
                 if modulated_data is not None:
                     try:
-                        dialog = SendDialogController(self.project_manager, modulated_data=modulated_data, parent=self)
+                        dialog = SendDialogController(self.project_manager, modulated_data=modulated_data,
+                                                      modulation_msg_indices=self.modulation_msg_indices, parent=self)
                     except MemoryError:
                         # Not enough memory for device buffer so we need to create a continuous send dialog
                         del modulated_data

@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -33,7 +33,7 @@
          <x>20</x>
          <y>20</y>
          <width>314</width>
-         <height>58</height>
+         <height>62</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
@@ -170,6 +170,31 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="labelIconTheme">
+           <property name="text">
+            <string>Choose icon theme (requires restart):</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBoxIconTheme">
+           <item>
+            <property name="text">
+             <string>bundled icons (default)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>native icon theme</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBoxSpectrogramColormap">
          <property name="title">
           <string>Spectrogram Colormap</string>
@@ -185,8 +210,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>28</height>
+               <width>644</width>
+               <height>316</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>

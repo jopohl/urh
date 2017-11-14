@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created: Thu Oct 12 11:23:46 2017
-#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,8 +11,8 @@ class Ui_SimulatorTab(object):
         SimulatorTab.setObjectName("SimulatorTab")
         SimulatorTab.resize(827, 485)
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(SimulatorTab)
-        self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.scrollArea = QtWidgets.QScrollArea(SimulatorTab)
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -24,6 +22,7 @@ class Ui_SimulatorTab(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 827, 485))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.splitter_2 = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter_2.setStyleSheet("QSplitter::handle:vertical {\n"
@@ -78,8 +77,8 @@ class Ui_SimulatorTab(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab)
-        self.verticalLayout.setSpacing(7)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(7)
         self.verticalLayout.setObjectName("verticalLayout")
         self.gvSimulator = SimulatorGraphicsView(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -209,6 +208,7 @@ class Ui_SimulatorTab(object):
         self.page_goto_action = QtWidgets.QWidget()
         self.page_goto_action.setObjectName("page_goto_action")
         self.verticalLayout_7 = QtWidgets.QGridLayout(self.page_goto_action)
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.label_9 = QtWidgets.QLabel(self.page_goto_action)
         self.label_9.setObjectName("label_9")
@@ -224,6 +224,7 @@ class Ui_SimulatorTab(object):
         self.page_message = QtWidgets.QWidget()
         self.page_message.setObjectName("page_message")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_message)
+        self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.label_10 = QtWidgets.QLabel(self.page_message)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -263,6 +264,7 @@ class Ui_SimulatorTab(object):
         self.page_rule = QtWidgets.QWidget()
         self.page_rule.setObjectName("page_rule")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.page_rule)
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_12 = QtWidgets.QLabel(self.page_rule)
         self.label_12.setObjectName("label_12")
@@ -276,6 +278,7 @@ class Ui_SimulatorTab(object):
         self.page_ext_prog_action = QtWidgets.QWidget()
         self.page_ext_prog_action.setObjectName("page_ext_prog_action")
         self.gridLayout_9 = QtWidgets.QGridLayout(self.page_ext_prog_action)
+        self.gridLayout_9.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.label_13 = QtWidgets.QLabel(self.page_ext_prog_action)
         self.label_13.setObjectName("label_13")
@@ -334,8 +337,8 @@ class Ui_SimulatorTab(object):
         self.label_14.setText(_translate("SimulatorTab", "External program:"))
         self.btnChooseExtProg.setText(_translate("SimulatorTab", "..."))
 
+from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
-from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView
 from . import urh_rc

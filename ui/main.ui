@@ -322,12 +322,22 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
     <property name="title">
      <string>Fi&amp;le</string>
     </property>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-import"/>
+     </property>
+     <addaction name="actionSamples_from_csv"/>
+    </widget>
     <addaction name="actionNew_Project"/>
     <addaction name="actionProject_settings"/>
     <addaction name="actionSave_project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_directory"/>
+    <addaction name="menuImport"/>
     <addaction name="separator"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
@@ -697,6 +707,14 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
    </property>
    <property name="text">
     <string>&amp;Show file tree</string>
+   </property>
+  </action>
+  <action name="actionSamples_from_csv">
+   <property name="icon">
+    <iconset theme="text-csv"/>
+   </property>
+   <property name="text">
+    <string>IQ samples from csv</string>
    </property>
   </action>
  </widget>

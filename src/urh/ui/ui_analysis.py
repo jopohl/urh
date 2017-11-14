@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created: Thu Oct 12 09:06:39 2017
-#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,8 +20,8 @@ class Ui_TabAnalysis(object):
         TabAnalysis.setProperty("lineWidth", 1)
         TabAnalysis.setProperty("midLineWidth", 0)
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(TabAnalysis)
-        self.verticalLayout_7.setSpacing(0)
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_7.setSpacing(0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.scrollArea = QtWidgets.QScrollArea(TabAnalysis)
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -35,6 +33,7 @@ class Ui_TabAnalysis(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1331, 740))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.splitter_2 = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter_2.setStyleSheet("QSplitter::handle:vertical {\n"
@@ -71,8 +70,8 @@ class Ui_TabAnalysis(object):
         self.tab_protocols = QtWidgets.QWidget()
         self.tab_protocols.setObjectName("tab_protocols")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab_protocols)
-        self.verticalLayout_3.setSpacing(7)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(7)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.treeViewProtocols = ProtocolTreeView(self.tab_protocols)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
@@ -205,8 +204,8 @@ class Ui_TabAnalysis(object):
         self.pageButtonAnalyzer = QtWidgets.QWidget()
         self.pageButtonAnalyzer.setObjectName("pageButtonAnalyzer")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.pageButtonAnalyzer)
-        self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.btnAnalyze = QtWidgets.QToolButton(self.pageButtonAnalyzer)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -222,8 +221,8 @@ class Ui_TabAnalysis(object):
         self.pageProgressBar = QtWidgets.QWidget()
         self.pageProgressBar.setObjectName("pageProgressBar")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.pageProgressBar)
-        self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.progressBarLogicAnalyzer = QtWidgets.QProgressBar(self.pageProgressBar)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -242,7 +241,6 @@ class Ui_TabAnalysis(object):
         self.verticalLayout.setContentsMargins(11, 11, 11, 11)
         self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout_2 = QtWidgets.QGridLayout()
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.btnSaveProto = QtWidgets.QToolButton(self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -484,7 +482,6 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_4.setContentsMargins(11, 11, 11, 11)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -615,8 +612,8 @@ class Ui_TabAnalysis(object):
         self.lblLabelValues.setText(_translate("TabAnalysis", "Label values for message"))
         self.listViewLabelNames.setToolTip(_translate("TabAnalysis", "Manage your estimations for protocol fields here. To add custom field types use Rightclick -> Edit."))
 
-from urh.ui.views.ProtocolTreeView import ProtocolTreeView
-from urh.ui.views.ProtocolLabelListView import ProtocolLabelListView
 from urh.ui.views.LabelValueTableView import LabelValueTableView
+from urh.ui.views.ProtocolLabelListView import ProtocolLabelListView
 from urh.ui.views.ProtocolTableView import ProtocolTableView
+from urh.ui.views.ProtocolTreeView import ProtocolTreeView
 from . import urh_rc

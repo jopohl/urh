@@ -89,17 +89,13 @@ class SimulatorTabController(QWidget):
 
         for msg in self.sim_proto_manager.get_all_messages():
             for lbl in (lbl for lbl in msg.message_type if lbl.field_type is not None):
-                if lbl.field_type.id not in self.field_types_by_id:
-                    lbl.field_type = None
-                else:
-                    lbl.field_type = self.field_types_by_id[lbl.field_type.id]
+                msg.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))
 
         self.update_field_name_column()
         self.update_ui()
 
     def reload_field_types(self):
         self.field_types = FieldType.load_from_xml()
-        self.field_types_by_id = {field_type.id: field_type for field_type in self.field_types}
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
     def update_field_name_column(self):

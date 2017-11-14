@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created: Thu Oct 12 09:06:38 2017
-#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 

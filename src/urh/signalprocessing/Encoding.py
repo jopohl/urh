@@ -3,6 +3,7 @@ import copy
 import array
 
 from urh import constants
+from urh.util.GenericCRC import GenericCRC
 from urh.util import util
 
 
@@ -39,6 +40,7 @@ class Encoding(object):
         self.morse_high = 3
         self.morse_wait = 1
         self.__symbol_len = 1
+        self.cc1101_overwrite_crc = False
 
         # Configure CC1101 Date Whitening
         polynomial = array.array("B", [False, False, True, False, False, False, False, True])  # x^5+x^0
@@ -106,7 +108,7 @@ class Encoding(object):
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
-                    self.chain.append("0xe9cae9ca;0x21")  # Default Sync Bytes
+                    self.chain.append("0xe9cae9ca;0x21;0")  # Default Sync Bytes
             elif constants.DECODING_CARRIER in names[i]:
                 self.chain.append(self.code_carrier)
                 i += 1
@@ -259,11 +261,19 @@ class Encoding(object):
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:
-                if self.chain[i + 1].count(';') == 1:
+                if self.chain[i + 1].count(';') == 2:
+                    self.data_whitening_sync, self.data_whitening_polynomial, overwrite_crc = self.chain[i + 1].split(";")
+                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0 and len(overwrite_crc) > 0):
+                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
+                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
+                        self.cc1101_overwrite_crc = True if overwrite_crc == "1" else False
+                elif self.chain[i + 1].count(';') == 1:
                     self.data_whitening_sync, self.data_whitening_polynomial = self.chain[i + 1].split(";")
                     if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0):
                         self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
                         self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
+                        self.cc1101_overwrite_crc = False
+
             elif self.code_cut == operation:
                 if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
                     self.cutmode, tmp = self.chain[i + 1].split(";")
@@ -344,6 +354,10 @@ class Encoding(object):
             if inpt[-1] == inpt[-2]:
                 inpt_to -= 1
 
+        # # Crop last bit, if len not multiple of 8
+        # if decoding and inpt_to % 8 != 0:
+        #     inpt_to -= (8 - (inpt_to % 8)) % 8
+
         # inpt empty, polynomial or syncbytes are zero! (Shouldn't happen)
         if inpt_to < 1 or len_polynomial < 1 or len_sync < 1:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Misc Error
@@ -376,6 +390,16 @@ class Encoding(object):
         # If data whitening polynomial is wrong, keystream can be less than needed. Check and exit.
         if len(keystream) < inpt_to - whitening_start_pos:
             return inpt[inpt_from:inpt_to], 0, self.ErrorState.MISC  # Error 31338
+
+        # Overwrite crc16 in encoding case
+        if not decoding and self.cc1101_overwrite_crc:
+            # Remove additional bits
+            offset = inpt_to % 8
+            data_end = inpt_to - 16 - offset
+            c = GenericCRC(polynomial="16_standard", start_value=True)
+            crc = c.crc(inpt[whitening_start_pos:data_end])
+            for i in range(0, 16):
+                inpt[data_end + i] = crc[i]
 
         # Apply keystream (xor)
         for i in range(whitening_start_pos, inpt_to):
@@ -451,7 +475,8 @@ class Encoding(object):
         :param inpt:
         :return:
         """
-        return self.apply_data_whitening(decoding, inpt)
+        inpt_copy = array.array("B", inpt)
+        return self.apply_data_whitening(decoding, inpt_copy)
 
     def code_lsb_first(self, decoding, inpt):
         output = array.array("B", inpt)

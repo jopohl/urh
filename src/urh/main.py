@@ -79,10 +79,7 @@ def main():
     app = QApplication(["URH"] + sys.argv[1:])
     app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
 
-    if sys.platform != "linux":
-        # noinspection PyUnresolvedReferences
-        import urh.ui.xtra_icons_rc
-        QIcon.setThemeName("oxy")
+    util.set_icon_theme()
 
     constants.SETTINGS.setValue("default_theme", app.style().objectName())
 

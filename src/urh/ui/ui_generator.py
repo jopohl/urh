@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #
-# Created: Thu Oct 12 09:06:39 2017
-#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,8 +11,8 @@ class Ui_GeneratorTab(object):
         GeneratorTab.setObjectName("GeneratorTab")
         GeneratorTab.resize(1081, 699)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(GeneratorTab)
-        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.scrollArea = QtWidgets.QScrollArea(GeneratorTab)
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -24,6 +22,7 @@ class Ui_GeneratorTab(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1159, 686))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
@@ -87,8 +86,8 @@ class Ui_GeneratorTab(object):
         self.tab_fuzzing = QtWidgets.QWidget()
         self.tab_fuzzing.setObjectName("tab_fuzzing")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.tab_fuzzing)
-        self.verticalLayout_9.setSpacing(6)
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_9.setSpacing(6)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.listViewProtoLabels = GeneratorListView(self.tab_fuzzing)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -113,6 +112,7 @@ class Ui_GeneratorTab(object):
         self.pageFuzzingUI = QtWidgets.QWidget()
         self.pageFuzzingUI.setObjectName("pageFuzzingUI")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.pageFuzzingUI)
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.btnFuzz = QtWidgets.QPushButton(self.pageFuzzingUI)
         self.btnFuzz.setObjectName("btnFuzz")
@@ -131,6 +131,7 @@ class Ui_GeneratorTab(object):
         self.pageFuzzingProgressBar = QtWidgets.QWidget()
         self.pageFuzzingProgressBar.setObjectName("pageFuzzingProgressBar")
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.pageFuzzingProgressBar)
+        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.progressBarFuzzing = QtWidgets.QProgressBar(self.pageFuzzingProgressBar)
         self.progressBarFuzzing.setProperty("value", 24)
@@ -382,8 +383,8 @@ class Ui_GeneratorTab(object):
         self.lEstimatedTime.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.</p></body></html>"))
         self.lEstimatedTime.setText(_translate("GeneratorTab", "Estimated Time: "))
 
-from urh.ui.views.GeneratorTableView import GeneratorTableView
 from urh.ui.GeneratorListWidget import GeneratorListWidget
-from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.GeneratorListView import GeneratorListView
+from urh.ui.views.GeneratorTableView import GeneratorTableView
+from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from . import urh_rc

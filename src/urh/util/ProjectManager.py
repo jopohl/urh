@@ -70,11 +70,12 @@ class ProjectManager(QObject):
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
-        try:
-            return [MessageType.from_xml(msg_type_tag) for msg_type_tag in
-                    root.find("protocol").find("message_types").findall("message_type")]
-        except AttributeError:
-            return []
+        result = []
+        for msg_type_tag in root.find("protocol").find("message_types").findall("message_type"):
+            result.append(MessageType.from_xml(msg_type_tag))
+
+        return result
+
 
     def set_project_folder(self, path, ask_for_new_project=True):
         if path != self.project_path:
@@ -184,6 +185,8 @@ class ProjectManager(QObject):
         signal_tag.set("auto_detect_on_modulation_changed", str(signal.auto_detect_on_modulation_changed))
         signal_tag.set("modulation_type", str(signal.modulation_type))
         signal_tag.set("sample_rate", str(signal.sample_rate))
+        signal_tag.set("pause_threshold", str(signal.pause_threshold))
+        signal_tag.set("message_length_divisor", str(signal.message_length_divisor))
 
         messages = ET.SubElement(signal_tag, "messages")
         for message in messages:
@@ -341,6 +344,8 @@ class ProjectManager(QObject):
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
                 signal.bit_len = int(sig_tag.get("bit_length", 100))
                 signal.modulation_type = int(sig_tag.get("modulation_type", 0))
+                signal.pause_threshold = int(sig_tag.get("pause_threshold", 8))
+                signal.message_length_divisor = int(sig_tag.get("message_length_divisor", 1))
                 break
 
         return True

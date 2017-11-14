@@ -37,6 +37,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def __get_send_dialog(self):
         send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
+                                           modulation_msg_indices=None,
                                            testing_mode=True, parent=self.form)
         if self.SHOW:
             send_dialog.show()

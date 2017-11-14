@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QMenu
 
 from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
@@ -8,7 +8,7 @@ from urh.signalprocessing.Filter import Filter
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
-from urh.util import util
+from urh.util.Logger import logger
 
 
 class SpectrogramGraphicView(ZoomableGraphicView):
@@ -46,14 +46,23 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     def create_context_menu(self):
         menu = QMenu()
+        menu.setToolTipsVisible(True)
         self._add_zoom_actions_to_menu(menu)
 
         if self.something_is_selected:
             filter_bw = Filter.read_configured_filter_bw()
-            text = self.tr("Create signal from frequency selection (filter bw={0:n})".format(filter_bw))
+            text = self.tr("Apply bandpass filter (filter bw={0:n})".format(filter_bw))
             create_from_frequency_selection = menu.addAction(text)
             create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
+
+            try:
+                cancel_button = " or ".join(k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel))
+            except Exception as e:
+                logger.debug("Error reading cancel button: " + str(e))
+                cancel_button = "Esc"
+
+            create_from_frequency_selection.setToolTip("You can abort filtering with <b>{}</b>.".format(cancel_button))
 
         configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
@@ -80,16 +89,13 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
+        self.bandpass_filter_triggered.emit(*self.__get_freqs())
+
+    def __get_freqs(self):
         sh = self.sceneRect().height()
         y1, y2 = sh / 2 - self.selection_area.start, sh / 2 - self.selection_area.end
         f_low, f_high = y1 / self.sceneRect().height(), y2 / self.sceneRect().height()
-        f_low = util.clip(f_low, 0, 0.5)
-        f_high = util.clip(f_high, 0, 0.5)
-
-        if f_low > f_high:
-            f_low, f_high = f_high, f_low
-
-        self.bandpass_filter_triggered.emit(f_low, f_high)
+        return f_low, f_high
 
     @pyqtSlot()
     def on_configure_filter_bw_triggered(self):

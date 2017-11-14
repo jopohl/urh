@@ -230,3 +230,23 @@ class TestDecoding(QtTestCase):
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
+
+    def test_data_whitening(self):
+        e = Encoding()
+        nrz1 = util.string2bits("101010101010101010101010101010101110100111001010111010011100101011110011101011001001010011101110100011001011100111100111101011111110011100101001111111110011000111010000010111010101011100")
+        nrz2 = util.string2bits("101010101010101010101010101010101110100111001010111010011100101011110001101011001011010000011101101101011101101110110011010010011010001010010010000101111001100111000100001001111110000000001000000010011")
+        de_whitened1, err, _ = e.code_data_whitening(True, nrz1)  # Decoding
+        de_whitened2, err, _ = e.code_data_whitening(True, nrz2)  # Decoding
+
+        e.cc1101_overwrite_crc = False
+        nrz1_, err, _ = e.code_data_whitening(False, de_whitened1)  # Encoding without overwriting CRC
+        nrz2_, err, _ = e.code_data_whitening(False, de_whitened2)  # Encoding without overwriting CRC
+
+        e.cc1101_overwrite_crc = True
+        nrz1__, err, _ = e.code_data_whitening(False, de_whitened1)  # Encoding with overwriting CRC
+        nrz2__, err, _ = e.code_data_whitening(False, de_whitened2)  # Encoding with overwriting CRC
+
+        self.assertEqual(nrz1, nrz1_)
+        self.assertEqual(nrz1, nrz1__)
+        self.assertEqual(nrz2, nrz2_)
+        self.assertEqual(nrz2, nrz2__)

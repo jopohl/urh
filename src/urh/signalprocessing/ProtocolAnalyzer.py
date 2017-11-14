@@ -229,7 +229,10 @@ class ProtocolAnalyzer(object):
             print("and finally restart the application")
             sys.exit(1)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
+        if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":
+            self.__ensure_message_length_multiple(bit_data, signal.bit_len, pauses, bit_sample_pos,
+                                                  signal.message_length_divisor)
 
         i = 0
         for bits, pause in zip(bit_data, pauses):
@@ -243,7 +246,33 @@ class ProtocolAnalyzer(object):
 
         self.qt_signals.protocol_updated.emit()
 
-    def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True):
+    @staticmethod
+    def __ensure_message_length_multiple(bit_data, bit_len: int, pauses, bit_sample_pos, divisor: int):
+        """
+        In case of ASK modulation, this method tries to use pauses after messages as zero bits so that
+        the bit lengths of messages are divisible by divisor
+        :param bit_data: List of bit arrays
+        :param bit_len: Bit length that was used for demodulation
+        :param pauses: List of pauses
+        :param bit_sample_pos: List of Array of bit sample positions
+        :param divisor: Divisor the messages should be divisible by
+        """
+        for i in range(len(bit_data)):
+            missing_bits = (divisor - (len(bit_data[i]) % divisor)) % divisor
+            if missing_bits > 0 and pauses[i] >= bit_len * missing_bits:
+                bit_data[i].extend([0] * missing_bits)
+                pauses[i] = pauses[i] - missing_bits * bit_len
+
+                try:
+                    bit_sample_pos[i][-1] = bit_sample_pos[i][-2] + bit_len
+                except IndexError as e:
+                    logger.warning("Error padding message " + str(e))
+                    continue
+
+                bit_sample_pos[i].extend([bit_sample_pos[i][-1] + (k + 1) * bit_len for k in range(missing_bits - 1)])
+                bit_sample_pos[i].append(bit_sample_pos[i][-1] + pauses[i])
+
+    def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True, pause_threshold=8):
         bit_sampl_pos = array.array("L", [])
         bit_sample_positions = []
 
@@ -275,7 +304,7 @@ class ProtocolAnalyzer(object):
 
             if cur_pulse_type == pause_type:
                 # OOK
-                if num_bits < 9:
+                if num_bits <= pause_threshold or pause_threshold == 0:
                     data_bits.extend([False] * num_bits)
                     if write_bit_sample_pos:
                         bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
@@ -388,7 +417,8 @@ class ProtocolAnalyzer(object):
         last_index = len(self.messages[-1].plain_bits) + 1
         return start_message, start_index, last_message, last_index
 
-    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool, update_label_ranges=True):
+    def delete_messages(self, msg_start: int, msg_end: int, start: int, end: int, view: int, decoded: bool,
+                        update_label_ranges=True):
         removable_msg_indices = []
 
         for i in range(msg_start, msg_end + 1):

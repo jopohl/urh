@@ -1,13 +1,15 @@
 import math
+import time
+from multiprocessing import Process, Array
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
 from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, \
-    QCheckBox, QApplication
+from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
 
 from urh import constants
+from urh.controller.AdvancedModulationOptionsController import AdvancedModulationOptionsController
 from urh.controller.FilterDialogController import FilterDialogController
 from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SignalDetailsController import SignalDetailsController
@@ -24,6 +26,11 @@ from urh.util import FileOperator
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
+
+
+def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
+    result_array = np.frombuffer(result_array.get_obj(), dtype=np.complex64)
+    result_array[:] = Filter.apply_bandpass_filter(data, f_low, f_high, filter_bw=filter_bw)
 
 
 class SignalFrameController(QFrame):
@@ -60,6 +67,8 @@ class SignalFrameController(QFrame):
         self.ui.txtEdProto.messages = proto_analyzer.messages
 
         self.ui.gvSignal.participants = project_manager.participants
+
+        self.filter_abort_wanted = False
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.project_manager = project_manager
@@ -162,6 +171,7 @@ class SignalFrameController(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.btnAdvancedModulationSettings.clicked.connect(self.on_btn_advanced_modulation_settings_clicked)
 
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
@@ -169,7 +179,7 @@ class SignalFrameController(QFrame):
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
-            self.signal.modulation_type_changed.connect(self.show_modulation_type)
+            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentIndex)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
@@ -243,7 +253,8 @@ class SignalFrameController(QFrame):
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
         self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
-        self.show_modulation_type()
+        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
         self.ui.spinBoxTolerance.blockSignals(False)
         self.ui.spinBoxCenterOffset.blockSignals(False)
@@ -266,6 +277,15 @@ class SignalFrameController(QFrame):
         self.ui.cbSignalView.hide()
         self.ui.cbModulationType.hide()
         self.ui.btnSaveSignal.hide()
+        self.ui.btnAutoDetect.hide()
+        self.ui.btnAdvancedModulationSettings.hide()
+        self.ui.lCenterOffset.hide()
+        self.ui.spinBoxNoiseTreshold.hide()
+        self.ui.labelNoise.hide()
+        self.ui.labelModulation.hide()
+
+    def cancel_filtering(self):
+        self.filter_abort_wanted = True
 
     def update_number_selected_samples(self):
         if self.spectrogram_is_active:
@@ -1019,7 +1039,7 @@ class SignalFrameController(QFrame):
             self.ui.btnAutoDetect.setChecked(False)
 
     def on_participant_changed(self):
-        if self.proto_analyzer:
+        if hasattr(self, "proto_analyzer") and self.proto_analyzer:
             self.proto_analyzer.qt_signals.protocol_updated.emit()
 
     def resizeEvent(self, event: QResizeEvent):
@@ -1038,11 +1058,14 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(int)
     def on_combobox_modulation_type_index_changed(self, index: int):
-        modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="modulation_type",
-                                                  parameter_value=index)
+        if index != self.signal.modulation_type:
+            modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                      parameter_name="modulation_type",
+                                                      parameter_value=index)
 
-        self.undo_stack.push(modulation_action)
+            self.undo_stack.push(modulation_action)
+
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
@@ -1150,14 +1173,32 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot(float, float)
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
-        self.setCursor(Qt.WaitCursor)
+        self.filter_abort_wanted = False
+
+        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
-        filtered = Filter.apply_bandpass_filter(self.signal.data, f_low, f_high, filter_bw=filter_bw)
+        filtered = Array("f", 2 * self.signal.num_samples)
+        p = Process(target=perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
+        p.daemon = True
+        p.start()
+
+        while p.is_alive():
+            QApplication.instance().processEvents()
+
+            if self.filter_abort_wanted:
+                p.terminate()
+                p.join()
+                QApplication.instance().restoreOverrideCursor()
+                return
+
+            time.sleep(0.1)
+
+        filtered = np.frombuffer(filtered.get_obj(), dtype=np.complex64)
         signal = self.signal.create_new(new_data=filtered.astype(np.complex64))
         signal.name = self.signal.name + " filtered with f_low={0:.4n} f_high={1:.4n} bw={2:.4n}".format(f_low, f_high,
-                                                                                                       filter_bw)
+                                                                                                         filter_bw)
         self.signal_created.emit(signal)
-        self.unsetCursor()
+        QApplication.instance().restoreOverrideCursor()
 
     def on_signal_data_edited(self):
         self.refresh_signal()
@@ -1171,3 +1212,27 @@ class SignalFrameController(QFrame):
             self.__set_duration()
 
         self.show_protocol()  # update times
+
+    @pyqtSlot(int)
+    def on_pause_threshold_edited(self, pause_threshold: int):
+        if self.signal.pause_threshold != pause_threshold:
+            pause_threshold_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                           parameter_name="pause_threshold",
+                                                           parameter_value=pause_threshold)
+            self.undo_stack.push(pause_threshold_action)
+
+    @pyqtSlot(int)
+    def on_message_length_divisor_edited(self, message_length_divisor: int):
+        if self.signal.pause_threshold != message_length_divisor:
+            message_length_divisor_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                                  parameter_name="message_length_divisor",
+                                                                  parameter_value=message_length_divisor)
+            self.undo_stack.push(message_length_divisor_action)
+
+    @pyqtSlot()
+    def on_btn_advanced_modulation_settings_clicked(self):
+        dialog = AdvancedModulationOptionsController(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
+        dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
+        dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
+        dialog.exec_()
+

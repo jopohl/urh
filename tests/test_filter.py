@@ -108,5 +108,15 @@ class TestFilter(QtTestCase):
         np.testing.assert_array_almost_equal(result_np, result_fft)
         print("fft convolve time", t_fft, "np convolve time", t_np)
 
+    def test_bandpass_filter(self):
+        # GUI tests for bandpass filter are in test_spectrogram.py
+        sig1 = np.sin(2 * np.pi * 0.2 * np.arange(0, 100))
+        sig2 = np.sin(2 * np.pi * 0.3 * np.arange(0, 100))
+        sig = sig1 + sig2
+
+        filtered1 = Filter.apply_bandpass_filter(sig, 0.1, 0.2)
+        filtered2 = Filter.apply_bandpass_filter(sig, 0.2, 0.1)
+        self.assertTrue(np.array_equal(filtered1, filtered2))
+
 if __name__ == '__main__':
     unittest.main()

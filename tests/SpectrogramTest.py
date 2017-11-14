@@ -95,7 +95,7 @@ class SpectrogramTest(unittest.TestCase):
         b = 0.05
         data = x
 
-        y = Filter.apply_bandpass_filter(data, lowcut, highcut, fs, filter_bw=b)
+        y = Filter.apply_bandpass_filter(data, lowcut / fs, highcut / fs, filter_bw=b)
 
         plt.plot(y, label='Filtered signal (%g Hz)' % f0)
         plt.plot(data, label='Noisy signal')
@@ -142,6 +142,7 @@ class SpectrogramTest(unittest.TestCase):
 
         channel1_data = array.array("B", [1, 0, 1, 0, 1, 0, 0, 1])
         channel2_data = array.array("B", [1, 1, 0, 0, 1, 1, 0, 1])
+        channel3_data = array.array("B", [1, 0, 0, 1, 0, 1, 1, 1])
 
         filter_bw = 0.1
 
@@ -150,15 +151,19 @@ class SpectrogramTest(unittest.TestCase):
         filter_freq2_high = 1.5*channel2_freq
         filter_freq2_low = 0.5 * channel2_freq
 
-        modulator1, modulator2 = Modulator("test"), Modulator("test2")
+        modulator1, modulator2, modulator3 = Modulator("test"), Modulator("test2"), Modulator("test3")
         modulator1.carrier_freq_hz = channel1_freq
         modulator2.carrier_freq_hz = channel2_freq
-        modulator1.sample_rate = modulator2.sample_rate = sample_rate
+        modulator3.carrier_freq_hz = -channel2_freq
+        modulator1.sample_rate = modulator2.sample_rate = modulator3.sample_rate = sample_rate
         modulator1.modulate(channel1_data)
         modulator2.modulate(channel2_data)
-        data1, data2 = modulator1.modulated_samples, modulator2.modulated_samples
+        modulator3.modulate(channel3_data)
+        data1, data2, data3 = modulator1.modulated_samples, modulator2.modulated_samples, modulator3.modulated_samples
 
-        mixed_signal = data1 + data2
+        mixed_signal = data1 + data2 + data3
+
+        mixed_signal.tofile("/tmp/three_channels.complex")
 
         plt.subplot("221")
         plt.title("Signal")
@@ -170,12 +175,12 @@ class SpectrogramTest(unittest.TestCase):
         plt.imshow(np.transpose(spectrogram.data), aspect="auto", cmap="magma")
         plt.ylim(0, spectrogram.freq_bins)
 
-        chann1_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq1_low, filter_freq1_high, sample_rate, filter_bw)
+        chann1_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq1_low / sample_rate, filter_freq1_high / sample_rate, filter_bw)
         plt.subplot("223")
         plt.title("Channel 1 Filtered ({})".format("".join(map(str, channel1_data))))
         plt.plot(chann1_filtered)
 
-        chann2_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq2_low, filter_freq2_high, sample_rate, filter_bw)
+        chann2_filtered = Filter.apply_bandpass_filter(mixed_signal, filter_freq2_low / sample_rate, filter_freq2_high / sample_rate, filter_bw)
         plt.subplot("224")
         plt.title("Channel 2 Filtered ({})".format("".join(map(str, channel2_data))))
         plt.plot(chann2_filtered)
@@ -184,18 +189,25 @@ class SpectrogramTest(unittest.TestCase):
 
 
     def test_bandpass_h(self):
-        f_low = 0.31
-        f_high = 0.44
+        f_low = -0.4
+        f_high = -0.3
         bw = 0.01
 
-        h = Filter.design_windowed_sinc_bandpass(f_low=f_low, f_high=f_high, bw=bw)
+        f_shift = (f_low + f_high) / 2
+        f_c = (f_high - f_low) / 2
+
+        N = Filter.get_filter_length_from_bandwidth(bw)
+
+        h = Filter.design_windowed_sinc_lpf(f_c, bw=bw) * np.exp(np.complex(0,1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))
+
+        #h = Filter.design_windowed_sinc_bandpass(f_low=f_low, f_high=f_high, bw=bw)
         #h = Filter.design_windowed_sinc_lpf(0.42, bw=0.08)
 
         impulse = np.exp(1j * np.linspace(0, 1, 50))
 
         plt.subplot("221")
-        plt.title("f_low={} f_high={} bw=0.05".format(f_low, f_high, bw))
-        plt.plot(np.fft.rfft(h))
+        plt.title("f_low={} f_high={} bw={}".format(f_low, f_high, bw))
+        plt.plot(np.fft.fftfreq(1024), np.fft.fft(h, 1024))
 
         plt.subplot("222")
         plt.plot(h)

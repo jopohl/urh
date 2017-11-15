@@ -11,6 +11,7 @@ from urh.util.Logger import logger
 
 class CSVImportDialogController(QDialog):
     PREVIEW_ROWS = 100
+    COLUMNS = {"T": 0, "I": 1, "Q": 2}
 
     def __init__(self, filename="", parent=None):
         super().__init__(parent)
@@ -27,7 +28,7 @@ class CSVImportDialogController(QDialog):
         self.ui.lineEditFilename.setText(filename)
         self.update_file()
 
-        self.ui.tableWidgetPreview.setColumnHidden(2, True)
+        self.ui.tableWidgetPreview.setColumnHidden(self.COLUMNS["T"], True)
         self.update_preview()
 
         self.create_connects()
@@ -48,7 +49,12 @@ class CSVImportDialogController(QDialog):
         enable = self.__file_can_be_opened(filename)
         if enable:
             with open(self.filename, encoding="utf-8-sig") as f:
-                self.ui.plainTextEditFilePreview.setPlainText("".join(next(f) for _ in range(self.PREVIEW_ROWS)))
+                lines = []
+                for i, line in enumerate(f):
+                    if i >= self.PREVIEW_ROWS:
+                        break
+                    lines.append(line.strip())
+                self.ui.plainTextEditFilePreview.setPlainText("\n".join(lines))
         else:
             self.ui.plainTextEditFilePreview.clear()
 
@@ -119,8 +125,6 @@ class CSVImportDialogController(QDialog):
 
         self.ui.tableWidgetPreview.setRowCount(self.PREVIEW_ROWS)
 
-        table_header_cols = {"I": 0, "Q": 1, "T": 2}
-
         with open(self.filename, encoding="utf-8-sig") as f:
             csv_reader = csv.reader(f, delimiter=self.ui.comboBoxCSVSeparator.currentText())
             row = -1
@@ -130,9 +134,9 @@ class CSVImportDialogController(QDialog):
                 result = self.parse_csv_line(line, i_data_col, q_data_col, timestamp_col)
                 if result is not None:
                     for key, value in result.items():
-                        self.ui.tableWidgetPreview.setItem(row, table_header_cols[key], self.__create_item(value))
+                        self.ui.tableWidgetPreview.setItem(row, self.COLUMNS[key], self.__create_item(value))
                 else:
-                    for col in table_header_cols.values():
+                    for col in self.COLUMNS.values():
                         self.ui.tableWidgetPreview.setItem(row, col, self.__create_item("Invalid"))
 
                 if row >= self.PREVIEW_ROWS - 1:
@@ -169,16 +173,16 @@ class CSVImportDialogController(QDialog):
         self.update_preview()
 
     @pyqtSlot(int)
-    def on_spinbox_i_data_column_value_changed(self, index: int):
+    def on_spinbox_i_data_column_value_changed(self, value: int):
         self.update_preview()
 
     @pyqtSlot(int)
-    def on_spinbox_q_data_column_value_changed(self, index: int):
+    def on_spinbox_q_data_column_value_changed(self, value: int):
         self.update_preview()
 
     @pyqtSlot(int)
-    def on_spinbox_timestamp_value_changed(self, index: int):
-        self.ui.tableWidgetPreview.setColumnHidden(2, index == 0)
+    def on_spinbox_timestamp_value_changed(self, value: int):
+        self.ui.tableWidgetPreview.setColumnHidden(self.COLUMNS["T"], value == 0)
         self.update_preview()
 
 

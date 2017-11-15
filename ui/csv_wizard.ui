@@ -46,7 +46,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-add"/>
+        <iconset theme="list-add">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -127,17 +128,17 @@
         </attribute>
         <column>
          <property name="text">
+          <string>Timestamp</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>I</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Q</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Timestamp</string>
          </property>
         </column>
        </widget>

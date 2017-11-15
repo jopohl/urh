@@ -1,15 +1,19 @@
 import csv
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import QDialog, QInputDialog, QApplication, QTableWidgetItem, QCompleter, QDirModel, QFileDialog
+import os
+import numpy as np
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QInputDialog, QApplication, QCompleter, QDirModel, QFileDialog
 
 from urh.ui.ui_csv_wizard import Ui_DialogCSVImport
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Errors import Errors
-from urh.util.Logger import logger
 
 
 class CSVImportDialogController(QDialog):
+    data_imported = pyqtSignal(str, float)  # Complex Filename + Sample Rate
+
+
     PREVIEW_ROWS = 100
     COLUMNS = {"T": 0, "I": 1, "Q": 2}
 
@@ -34,6 +38,7 @@ class CSVImportDialogController(QDialog):
         self.create_connects()
 
     def create_connects(self):
+        self.accepted.connect(self.on_accepted)
         self.ui.lineEditFilename.editingFinished.connect(self.on_line_edit_filename_editing_finished)
         self.ui.btnChooseFile.clicked.connect(self.on_btn_choose_file_clicked)
         self.ui.btnAddSeparator.clicked.connect(self.on_btn_add_separator_clicked)
@@ -46,7 +51,7 @@ class CSVImportDialogController(QDialog):
         filename = self.ui.lineEditFilename.text()
         self.filename = filename
 
-        enable = self.__file_can_be_opened(filename)
+        enable = util.file_can_be_opened(filename)
         if enable:
             with open(self.filename, encoding="utf-8-sig") as f:
                 lines = []
@@ -66,23 +71,38 @@ class CSVImportDialogController(QDialog):
         self.ui.tableWidgetPreview.setEnabled(enable)
         self.ui.labelFileNotFound.setVisible(not enable)
 
-    def __is_number(self, number_str: str) -> bool:
-        try:
-            float(number_str)
-            return True
-        except:
-            return False
+    def update_preview(self):
+        if not util.file_can_be_opened(self.filename):
+            self.update_file()
+            return
 
-    def __file_can_be_opened(self, filename: str):
-        try:
-            open(filename, "r").close()
-            return True
-        except Exception as e:
-            if not isinstance(e, FileNotFoundError):
-                logger.debug(str(e))
-            return False
+        i_data_col = self.ui.spinBoxIDataColumn.value() - 1
+        q_data_col = self.ui.spinBoxQDataColumn.value() - 1
+        timestamp_col = self.ui.spinBoxTimestampColumn.value() - 1
 
-    def parse_csv_line(self, csv_line: str, i_data_col: int, q_data_col: int, timestamp_col: int):
+        self.ui.tableWidgetPreview.setRowCount(self.PREVIEW_ROWS)
+
+        with open(self.filename, encoding="utf-8-sig") as f:
+            csv_reader = csv.reader(f, delimiter=self.ui.comboBoxCSVSeparator.currentText())
+            row = -1
+
+            for line in csv_reader:
+                row += 1
+                result = self.parse_csv_line(line, i_data_col, q_data_col, timestamp_col)
+                if result is not None:
+                    for key, value in result.items():
+                        self.ui.tableWidgetPreview.setItem(row, self.COLUMNS[key], util.create_table_item(value))
+                else:
+                    for col in self.COLUMNS.values():
+                        self.ui.tableWidgetPreview.setItem(row, col, util.create_table_item("Invalid"))
+
+                if row >= self.PREVIEW_ROWS - 1:
+                    break
+
+            self.ui.tableWidgetPreview.setRowCount(row + 1)
+
+    @staticmethod
+    def parse_csv_line(csv_line: str, i_data_col: int, q_data_col: int, timestamp_col: int):
         result = dict()
 
         if i_data_col >= 0:
@@ -109,40 +129,38 @@ class CSVImportDialogController(QDialog):
 
         return result
 
-    def __create_item(self, content):
-        item = QTableWidgetItem(str(content))
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-        return item
-
-    def update_preview(self):
-        if not self.__file_can_be_opened(self.filename):
-            self.update_file()
-            return
-
-        i_data_col = self.ui.spinBoxIDataColumn.value() - 1
-        q_data_col = self.ui.spinBoxQDataColumn.value() - 1
-        timestamp_col = self.ui.spinBoxTimestampColumn.value() - 1
-
-        self.ui.tableWidgetPreview.setRowCount(self.PREVIEW_ROWS)
-
-        with open(self.filename, encoding="utf-8-sig") as f:
-            csv_reader = csv.reader(f, delimiter=self.ui.comboBoxCSVSeparator.currentText())
-            row = -1
-
+    @staticmethod
+    def parse_csv_file(filename: str, separator: str, i_data_col: int, q_data_col=-1, t_data_col=-1):
+        iq_data = []
+        timestamps = [] if t_data_col > -1 else None
+        with open(filename, encoding="utf-8-sig") as f:
+            csv_reader = csv.reader(f, delimiter=separator)
             for line in csv_reader:
-                row += 1
-                result = self.parse_csv_line(line, i_data_col, q_data_col, timestamp_col)
-                if result is not None:
-                    for key, value in result.items():
-                        self.ui.tableWidgetPreview.setItem(row, self.COLUMNS[key], self.__create_item(value))
-                else:
-                    for col in self.COLUMNS.values():
-                        self.ui.tableWidgetPreview.setItem(row, col, self.__create_item("Invalid"))
+                parsed = CSVImportDialogController.parse_csv_line(line, i_data_col, q_data_col, t_data_col)
+                if parsed is None:
+                    continue
 
-                if row >= self.PREVIEW_ROWS - 1:
-                    break
+                iq_data.append(complex(parsed["I"], parsed["Q"]))
+                if timestamps is not None:
+                    timestamps.append(parsed["T"])
 
-            self.ui.tableWidgetPreview.setRowCount(row + 1)
+        iq_data = np.asarray(iq_data, dtype=np.complex64)
+        sample_rate = CSVImportDialogController.estimate_sample_rate(timestamps)
+        return iq_data / abs(iq_data.max()), sample_rate
+
+    @staticmethod
+    def estimate_sample_rate(timestamps):
+        if timestamps is None or len(timestamps) < 2:
+            return None
+
+        previous_timestamp = timestamps[0]
+        durations = []
+
+        for timestamp in timestamps[1:CSVImportDialogController.PREVIEW_ROWS]:
+            durations.append(abs(timestamp-previous_timestamp))
+            previous_timestamp = timestamp
+
+        return 1 / (sum(durations) / len(durations))
 
     @pyqtSlot()
     def on_line_edit_filename_editing_finished(self):
@@ -185,6 +203,30 @@ class CSVImportDialogController(QDialog):
         self.ui.tableWidgetPreview.setColumnHidden(self.COLUMNS["T"], value == 0)
         self.update_preview()
 
+    @pyqtSlot()
+    def on_accepted(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+
+        iq_data, sample_rate = self.parse_csv_file(self.filename, self.ui.comboBoxCSVSeparator.currentText(),
+                                                   self.ui.spinBoxIDataColumn.value()-1,
+                                                   self.ui.spinBoxQDataColumn.value()-1,
+                                                   self.ui.spinBoxTimestampColumn.value()-1)
+
+        target_filename = self.filename.rstrip(".csv")
+        if os.path.exists(target_filename + ".complex"):
+            i = 1
+            while os.path.exists(target_filename + "_" + str(i) + ".complex"):
+                i += 1
+        else:
+            i = None
+
+        target_filename = target_filename if not i else target_filename + "_" + str(i)
+        target_filename += ".complex"
+
+        iq_data.tofile(target_filename)
+
+        self.data_imported.emit(target_filename, sample_rate if sample_rate is not None else 0)
+        QApplication.restoreOverrideCursor()
 
 if __name__ == '__main__':
     app = QApplication(["urh"])

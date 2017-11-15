@@ -10,6 +10,10 @@ class TestCSVImportDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         self.dialog = CSVImportDialogController()
+
+        if self.SHOW:
+            self.dialog.show()
+
         self.i_column = self.dialog.COLUMNS["I"]
         self.q_column = self.dialog.COLUMNS["Q"]
         self.t_column = self.dialog.COLUMNS["T"]

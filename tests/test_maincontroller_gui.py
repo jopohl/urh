@@ -1,9 +1,11 @@
 import os
 import tempfile
 
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.CSVImportDialogController import CSVImportDialogController
 from urh.controller.OptionsController import OptionsController
 
 
@@ -61,12 +63,25 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
         w.close()
 
+    def __accept_csv_dialog(self):
+        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialogController)), None)
+        w.accept()
+
     def test_import_csv(self):
+        timer = QTimer()
+        timer.setInterval(10)
+        timer.setSingleShot(True)
+        timer.timeout.connect(self.__accept_csv_dialog)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
+        timer.start()
         self.form.add_files([self.get_path_for_filename("csvtest.csv")])
+
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 100)
         self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest.complex")))
+        timer.start()
         self.form.add_files([self.get_path_for_filename("csvtest.csv")])
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest_1.complex")))
 

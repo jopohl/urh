@@ -6,6 +6,7 @@ from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.FuzzingDialogController import FuzzingDialogController
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.Modulator import Modulator
 
 
 class TestFuzzingDialog(QtTestCase):
@@ -21,6 +22,8 @@ class TestFuzzingDialog(QtTestCase):
 
         self.gframe = self.form.generator_tab_controller
         self.gframe.ui.cbViewType.setCurrentIndex(1)  # hex view
+        self.gframe.modulators.append(Modulator("Prevent Modulation bootstrap when adding first protocol"))
+        self.gframe.refresh_modulators()
 
         # Dewhitening mit SyncByte 0x9a7d9a7d, Data Whitening Poly 0x21, Compute and apply CRC16 via X0r,
         # Rest auf False anlegen und setzen

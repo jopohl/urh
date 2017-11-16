@@ -77,7 +77,15 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
             except MemoryError:
                 logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
-                self.receive_buffer = np.zeros(num_samples // 2, dtype=np.complex64, order='C')
+                i = 0
+                while True:
+                    try:
+                        i += 2
+                        self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
+                        logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
+                        break
+                    except MemoryError:
+                        continue
         else:
             self.received_bits = []
 

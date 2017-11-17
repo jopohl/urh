@@ -532,12 +532,12 @@ class Device(QObject):
                 logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
                 self.receive_process.terminate()
                 self.receive_process.join()
-                self.child_ctrl_conn.close()
-                self.child_data_conn.close()
 
         self.is_receiving = False
         self.parent_ctrl_conn.close()
         self.parent_data_conn.close()
+        self.child_ctrl_conn.close()
+        self.child_data_conn.close()
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
@@ -567,10 +567,10 @@ class Device(QObject):
                 logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
                 self.transmit_process.terminate()
                 self.transmit_process.join()
-                self.child_ctrl_conn.close()
 
         self.is_transmitting = False
         self.parent_ctrl_conn.close()
+        self.child_ctrl_conn.close()
 
     @staticmethod
     def unpack_complex(buffer, nvalues):
@@ -589,7 +589,8 @@ class Device(QObject):
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
-            except (EOFError, UnpicklingError, ConnectionResetError):
+            except (EOFError, UnpicklingError, OSError, ConnectionResetError) as e:
+                logger.info("Exiting read device message thread due to " + str(e))
                 break
         self.is_transmitting = False
         self.is_receiving = False

@@ -28,6 +28,9 @@ class SendDialogController(SendRecvDialogController):
 
         if self.modulation_msg_indices is not None:
             self.ui.progressBarMessage.setMaximum(len(self.modulation_msg_indices))
+        else:
+            self.ui.progressBarMessage.hide()
+            self.ui.labelCurrentMessage.hide()
 
         if modulated_data is not None:
             # modulated_data is none in continuous send mode

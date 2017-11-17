@@ -15,6 +15,8 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class Device(QObject):
+    JOIN_TIMEOUT = 1.0
+
     SEND_BUFFER_SIZE = 0
     CONTINUOUS_SEND_BUFFER_SIZE = 0
 
@@ -93,7 +95,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def shutdown_device(cls, ctrl_connection):
+    def shutdown_device(cls, ctrl_connection, is_tx: bool):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -150,7 +152,7 @@ class Device(QObject):
                     exit_requested = True
                     break
 
-        cls.shutdown_device(ctrl_connection)
+        cls.shutdown_device(ctrl_connection, is_tx=False)
         data_connection.close()
         ctrl_connection.close()
 
@@ -186,7 +188,7 @@ class Device(QObject):
         if send_config.sending_is_finished():
             logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
 
-        cls.shutdown_device(ctrl_connection)
+        cls.shutdown_device(ctrl_connection, is_tx=True)
         ctrl_connection.close()
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
@@ -517,7 +519,6 @@ class Device(QObject):
             self.device_messages.append(repr(e))
 
     def stop_rx_mode(self, msg):
-        self.is_receiving = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
         except (BrokenPipeError, OSError) as e:
@@ -526,13 +527,15 @@ class Device(QObject):
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
         if hasattr(self, "receive_process") and self.receive_process.is_alive():
-            self.receive_process.join(0.5)
+            self.receive_process.join(self.JOIN_TIMEOUT)
             if self.receive_process.is_alive():
                 logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
                 self.receive_process.terminate()
                 self.receive_process.join()
                 self.child_ctrl_conn.close()
                 self.child_data_conn.close()
+
+        self.is_receiving = False
         self.parent_ctrl_conn.close()
         self.parent_data_conn.close()
 
@@ -551,7 +554,6 @@ class Device(QObject):
         self.transmit_process.start()
 
     def stop_tx_mode(self, msg):
-        self.is_transmitting = False
         try:
             self.parent_ctrl_conn.send(self.Command.STOP.name)
         except (BrokenPipeError, OSError) as e:
@@ -560,12 +562,14 @@ class Device(QObject):
         logger.info("{0}: Stopping TX Mode: {1}".format(self.__class__.__name__, msg))
 
         if hasattr(self, "transmit_process") and self.transmit_process.is_alive():
-            self.transmit_process.join(0.5)
+            self.transmit_process.join(self.JOIN_TIMEOUT)
             if self.transmit_process.is_alive():
                 logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
                 self.transmit_process.terminate()
                 self.transmit_process.join()
                 self.child_ctrl_conn.close()
+
+        self.is_transmitting = False
         self.parent_ctrl_conn.close()
 
     @staticmethod
@@ -585,7 +589,6 @@ class Device(QObject):
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
-                time.sleep(0.1)
             except (EOFError, UnpicklingError, ConnectionResetError):
                 break
         self.is_transmitting = False
@@ -623,8 +626,6 @@ class Device(QObject):
             except EOFError:
                 logger.info("EOF Error: Ending receive thread")
                 break
-
-            time.sleep(0.01)
 
         logger.debug("Exiting read_receive_queue thread.")
 

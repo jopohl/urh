@@ -8,23 +8,24 @@ from urh.util.Logger import logger
 TIMEOUT = 0.2
 
 cdef object f
+cdef int RUNNING = 0
 from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
-    global f
+    global f, RUNNING
     try:
         (<object> f)(transfer.buffer[0:transfer.valid_length])
-        return 0
+        return RUNNING
     except Exception as e:
         logger.error("Cython-HackRF:" + str(e))
         return -1
 
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
-    global f
+    global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
     cdef bytes bytebuf = (<object> f)(transfer.valid_length).tostring()
     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
-    return 0
+    return RUNNING
 
 cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
@@ -54,20 +55,26 @@ cpdef close():
     return chackrf.hackrf_close(_c_device)
 
 cpdef start_rx_mode(callback):
-    global f
+    global f, RUNNING
+    RUNNING = 0
     f = callback
     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
 
 cpdef stop_rx_mode():
+    global RUNNING
+    RUNNING = -1
     time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_rx(_c_device)
 
 cpdef start_tx_mode(callback):
-    global f
+    global f, RUNNING
+    RUNNING = 0
     f = callback
     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
 
 cpdef stop_tx_mode():
+    global RUNNING
+    RUNNING = -1
     time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_tx(_c_device)
 

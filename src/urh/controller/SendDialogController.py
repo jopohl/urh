@@ -119,7 +119,6 @@ class SendDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_stop_clicked(self):
-        self.device.stop("Stopped receiving: Stop button clicked")
         super().on_stop_clicked()
         self.on_clear_clicked()
 

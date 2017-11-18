@@ -88,14 +88,34 @@ class Signal(QObject):
             self._fulldata = np.fromfile(filename, dtype=np.complex64)
 
     def __load_wav_file(self, filename: str):
-        f = wave.open(filename, "r")
-        n = f.getnframes()
-        unsigned_bytes = struct.unpack('<{0:d}B'.format(n), f.readframes(n))
-        # Complex To Real WAV File load
-        self._fulldata = np.empty(n, dtype=np.complex64, order="C")
-        self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
-        self._fulldata.imag = [-1 / 128] * n
-        f.close()
+        wav = wave.open(filename, "r")
+        num_channels, sample_width, sample_rate, num_frames, comptype, compname = wav.getparams()
+
+        if sample_width == 1:
+            params = {"min": 0, "max": 255, "fmt": np.uint8}  # Unsigned Byte
+        elif sample_width == 2:
+            params = {"min": -32768, "max": 32767, "fmt": np.int16}
+        elif sample_width == 4:
+            params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
+        else:
+            raise ValueError("Can't handle sample width {0}".format(sample_width))
+
+        params["center"] = (params["min"] + params["max"]) / 2
+
+        data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
+        if num_channels == 1:
+            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
+            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+        elif num_channels == 2:
+            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
+            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
+            self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
+        else:
+            raise ValueError("Cam't handle {0} channels".format(num_channels))
+
+        wav.close()
+
+        self.sample_rate = sample_rate
 
     def __load_compressed_complex(self, filename: str):
         obj = tarfile.open(filename, "r")
@@ -264,7 +284,7 @@ class Signal(QObject):
 
     @property
     def wave_data(self):
-        return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))
+        return (self.data.view(np.float32) * 32767).astype(np.int16)
 
     @property
     def changed(self) -> bool:

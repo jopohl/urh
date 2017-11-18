@@ -324,42 +324,49 @@ class MainController(QMainWindow):
         if num_files == 0:
             return
 
-        for i, file in enumerate(filepaths):
-            if not os.path.exists(file):
+        for i, filename in enumerate(filepaths):
+            if not os.path.exists(filename):
                 continue
 
-            if os.path.isdir(file):
+            if os.path.isdir(filename):
                 for f in self.signal_tab_controller.signal_frames:
                     self.close_signal_frame(f)
 
-                FileOperator.RECENT_PATH = file
-                self.project_manager.set_project_folder(file)
+                FileOperator.RECENT_PATH = filename
+                self.project_manager.set_project_folder(filename)
                 return
 
-            FileOperator.RECENT_PATH = os.path.split(file)[0]
+            FileOperator.RECENT_PATH = os.path.split(filename)[0]
 
-            if file.endswith(".complex"):
-                self.add_signalfile(file, group_id, enforce_sample_rate=enforce_sample_rate)
-            elif file.endswith(".coco"):
-                self.add_signalfile(file, group_id, enforce_sample_rate=enforce_sample_rate)
-            elif file.endswith(".proto") or file.endswith(".proto.xml"):
-                self.add_protocol_file(file)
-            elif file.endswith(".wav"):
-                self.add_signalfile(file, group_id, enforce_sample_rate=enforce_sample_rate)
-            elif file.endswith(".fuzz") or file.endswith(".fuzz.xml"):
-                self.add_fuzz_profile(file)
-            elif file.endswith(".txt"):
-                self.add_plain_bits_from_txt(file)
-            elif file.endswith(".csv"):
-                self.__import_csv(file, group_id)
+            if filename.endswith(".complex"):
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".coco"):
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".proto") or filename.endswith(".proto.xml"):
+                self.add_protocol_file(filename)
+            elif filename.endswith(".wav"):
+                try:
+                    import wave
+                    w = wave.open(filename)
+                    w.close()
+                except wave.Error as e:
+                    Errors.generic_error("Unsupported WAV type", "Only uncompressed WAVs (PCM) are supported.", str(e))
+                    continue
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".fuzz") or filename.endswith(".fuzz.xml"):
+                self.add_fuzz_profile(filename)
+            elif filename.endswith(".txt"):
+                self.add_plain_bits_from_txt(filename)
+            elif filename.endswith(".csv"):
+                self.__import_csv(filename, group_id)
                 continue
-            elif os.path.basename(file) == constants.PROJECT_FILE:
-                self.project_manager.set_project_folder(os.path.split(file)[0])
+            elif os.path.basename(filename) == constants.PROJECT_FILE:
+                self.project_manager.set_project_folder(os.path.split(filename)[0])
             else:
-                self.add_signalfile(file, group_id, enforce_sample_rate=enforce_sample_rate)
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
 
             if self.project_manager.project_file is None:
-                self.adjust_for_current_file(file)
+                self.adjust_for_current_file(filename)
 
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()

@@ -105,12 +105,12 @@ def save_data_dialog(signal_name: str, data, wav_only=False, parent=None) -> str
     return filename
 
 
-def save_data(data, filename: str):
+def save_data(data, filename: str, sample_rate=1e6):
     if filename.endswith(".wav"):
         f = wave.open(filename, "w")
-        f.setnchannels(1)
-        f.setsampwidth(1)
-        f.setframerate(1000000)
+        f.setnchannels(2)
+        f.setsampwidth(2)
+        f.setframerate(sample_rate)
         f.writeframes(data)
         f.close()
     elif filename.endswith(".coco"):
@@ -144,7 +144,7 @@ def save_signal(signal):
     else:
         data = signal.data
 
-    save_data(data, filename)
+    save_data(data, filename, sample_rate=signal.sample_rate)
 
 
 def rewrite_zip(zip_name):

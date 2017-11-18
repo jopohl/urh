@@ -106,10 +106,8 @@ class SignalFrameController(QFrame):
             self.configure_filter_action.triggered.connect(self.on_configure_filter_action_triggered)
             self.ui.btnFilter.setMenu(self.filter_menu)
 
-            if self.signal.qad_demod_file_loaded:
-                self.ui.lSignalTyp.setText("Quad-Demod Signal (*.wav)")
-            elif self.signal.wav_mode:
-                self.ui.lSignalTyp.setText("Realpart Signal (*.wav)")
+            if self.signal.wav_mode:
+                self.ui.lSignalTyp.setText("Signal (*.wav)")
             else:
                 self.ui.lSignalTyp.setText("Complex Signal")
 

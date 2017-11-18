@@ -34,8 +34,7 @@ class Signal(QObject):
     protocol_needs_update = pyqtSignal()
     data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
-    def __init__(self, filename: str, name: str, wav_is_qad_demod=False,
-                 modulation: str = None, sample_rate: float = 1e6, parent=None):
+    def __init__(self, filename: str, name: str, modulation: str = None, sample_rate: float = 1e6, parent=None):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
@@ -53,7 +52,6 @@ class Signal(QObject):
         self.auto_detect_on_modulation_changed = True
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
-        self.qad_demod_file_loaded = wav_is_qad_demod
         if modulation is None:
             modulation = "FSK"
         self.__modulation_type = self.MODULATION_TYPES.index(modulation)
@@ -68,8 +66,7 @@ class Signal(QObject):
                 self.__load_complex_file(filename)
 
             self.filename = filename
-            if not self.qad_demod_file_loaded:
-                self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
+            self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
         else:
             self.filename = ""
 
@@ -94,16 +91,10 @@ class Signal(QObject):
         f = wave.open(filename, "r")
         n = f.getnframes()
         unsigned_bytes = struct.unpack('<{0:d}B'.format(n), f.readframes(n))
-        if not self.qad_demod_file_loaded:
-            # Complex To Real WAV File load
-            self._fulldata = np.empty(n, dtype=np.complex64, order="C")
-            self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
-            self._fulldata.imag = [-1 / 128] * n
-        else:
-            self._fulldata = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128).astype(np.int8)).astype(
-                np.float32)
-            self._fulldata = np.ascontiguousarray(self._fulldata, dtype=np.float32)
-
+        # Complex To Real WAV File load
+        self._fulldata = np.empty(n, dtype=np.complex64, order="C")
+        self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
+        self._fulldata.imag = [-1 / 128] * n
         f.close()
 
     def __load_compressed_complex(self, filename: str):
@@ -256,7 +247,7 @@ class Signal(QObject):
     @property
     def qad(self):
         if self._qad is None:
-            self._qad = self.data if self.qad_demod_file_loaded else self.quad_demod()
+            self._qad = self.quad_demod()
 
         return self._qad
 

@@ -242,25 +242,6 @@ class MainController(QMainWindow):
                                      filename))
             return
 
-        already_qad_demodulated = False
-        if filename.endswith(".wav"):
-            cb = QCheckBox("Signal in file is already quadrature demodulated")
-            msg = self.tr("You selected a .wav file as signal.\n"
-                          "Universal Radio Hacker (URH) will interpret it as real part of the signal.\n"
-                          "Protocol results may be bad due to missing imaginary part.\n\n"
-                          "Load a complex file if you experience problems.\n"
-                          "You have been warned.")
-            msg_box = QMessageBox(QMessageBox.Information, "WAV file selected", msg)
-            msg_box.addButton(QMessageBox.Ok)
-            msg_box.addButton(QMessageBox.Abort)
-            msg_box.setCheckBox(cb)
-
-            reply = msg_box.exec()
-            if reply != QMessageBox.Ok:
-                return
-
-            already_qad_demodulated = cb.isChecked()
-
         sig_name = os.path.splitext(os.path.basename(filename))[0]
 
         # Use default sample rate for signal
@@ -270,7 +251,7 @@ class MainController(QMainWindow):
         else:
             sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated, sample_rate=sample_rate)
+        signal = Signal(filename, sig_name, sample_rate=sample_rate)
 
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)

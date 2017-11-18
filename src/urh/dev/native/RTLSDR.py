@@ -43,7 +43,7 @@ class RTLSDR(Device):
         data_conn.send_bytes(rtlsdr.read_sync())
 
     @classmethod
-    def shutdown_device(cls, ctrl_connection):
+    def shutdown_device(cls, ctrl_connection, is_tx: bool):
         logger.debug("RTLSDR: closing device")
         ret = rtlsdr.close()
         ctrl_connection.send("CLOSE:" + str(ret))

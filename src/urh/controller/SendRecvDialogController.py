@@ -367,7 +367,6 @@ class SendRecvDialogController(QDialog):
         self.device.sender_needs_restart.connect(self._restart_device_thread)
 
     def reset(self):
-        self.ui.txtEditErrors.clear()
         self.device.current_index = 0
         self.device.current_iteration = 0
         self.ui.lSamplesCaptured.setText("0")

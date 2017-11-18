@@ -34,8 +34,7 @@ class Signal(QObject):
     protocol_needs_update = pyqtSignal()
     data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
-    def __init__(self, filename: str, name: str, wav_is_qad_demod=False,
-                 modulation: str = None, sample_rate: float = 1e6, parent=None):
+    def __init__(self, filename: str, name: str, modulation: str = None, sample_rate: float = 1e6, parent=None):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
@@ -53,62 +52,78 @@ class Signal(QObject):
         self.auto_detect_on_modulation_changed = True
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
-        self.qad_demod_file_loaded = wav_is_qad_demod
         if modulation is None:
             modulation = "FSK"
         self.__modulation_type = self.MODULATION_TYPES.index(modulation)
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
         if len(filename) > 0:
-            # Daten auslesen
-            if not self.wav_mode:
-                if not filename.endswith(".coco"):
-                    if filename.endswith(".complex16u"):
-                        # two 8 bit unsigned integers
-                        raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
-                        self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-                        self._fulldata.real = (raw['r'] / 127.5) - 1.0
-                        self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-                    elif filename.endswith(".complex16s"):
-                        # two 8 bit signed integers
-                        raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
-                        self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-                        self._fulldata.real = (raw['r'] + 0.5) / 127.5
-                        self._fulldata.imag = (raw['i'] + 0.5) / 127.5
-                    else:
-                        self._fulldata = np.fromfile(filename, dtype=np.complex64)  # Uncompressed
-                else:
-                    obj = tarfile.open(filename, "r")
-                    members = obj.getmembers()
-                    obj.extract(members[0], QDir.tempPath())
-                    extracted_filename = os.path.join(QDir.tempPath(), obj.getnames()[0])
-                    self._fulldata = np.fromfile(extracted_filename, dtype=np.complex64)
-                    os.remove(extracted_filename)
-
-                self._fulldata = np.ascontiguousarray(self._fulldata, dtype=np.complex64)  # type: np.ndarray
+            if self.wav_mode:
+                self.__load_wav_file(filename)
+            elif filename.endswith(".coco"):
+                self.__load_compressed_complex(filename)
             else:
-                f = wave.open(filename, "r")
-                n = f.getnframes()
-                unsigned_bytes = struct.unpack('<{0:d}B'.format(n), f.readframes(n))
-                if not self.qad_demod_file_loaded:
-                    # Complex To Real WAV File load
-                    self._fulldata = np.empty(n, dtype=np.complex64, order="C")
-                    self._fulldata.real = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128))
-                    self._fulldata.imag = [-1 / 128] * n
-                else:
-                    self._fulldata = np.multiply(1 / 256, np.subtract(unsigned_bytes, 128).astype(np.int8)).astype(
-                        np.float32)
-                    self._fulldata = np.ascontiguousarray(self._fulldata, dtype=np.float32)
-
-                f.close()
+                self.__load_complex_file(filename)
 
             self.filename = filename
-
-            if not self.qad_demod_file_loaded:
-                self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
-
+            self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
         else:
             self.filename = ""
+
+    def __load_complex_file(self, filename: str):
+        if filename.endswith(".complex16u"):
+            # two 8 bit unsigned integers
+            raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
+            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
+            self._fulldata.real = (raw['r'] / 127.5) - 1.0
+            self._fulldata.imag = (raw['i'] / 127.5) - 1.0
+        elif filename.endswith(".complex16s"):
+            # two 8 bit signed integers
+            raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
+            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
+            self._fulldata.real = (raw['r'] + 0.5) / 127.5
+            self._fulldata.imag = (raw['i'] + 0.5) / 127.5
+        else:
+            # Uncompressed
+            self._fulldata = np.fromfile(filename, dtype=np.complex64)
+
+    def __load_wav_file(self, filename: str):
+        wav = wave.open(filename, "r")
+        num_channels, sample_width, sample_rate, num_frames, comptype, compname = wav.getparams()
+
+        if sample_width == 1:
+            params = {"min": 0, "max": 255, "fmt": np.uint8}  # Unsigned Byte
+        elif sample_width == 2:
+            params = {"min": -32768, "max": 32767, "fmt": np.int16}
+        elif sample_width == 4:
+            params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
+        else:
+            raise ValueError("Can't handle sample width {0}".format(sample_width))
+
+        params["center"] = (params["min"] + params["max"]) / 2
+
+        data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
+        if num_channels == 1:
+            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
+            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+        elif num_channels == 2:
+            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
+            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
+            self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
+        else:
+            raise ValueError("Cam't handle {0} channels".format(num_channels))
+
+        wav.close()
+
+        self.sample_rate = sample_rate
+
+    def __load_compressed_complex(self, filename: str):
+        obj = tarfile.open(filename, "r")
+        members = obj.getmembers()
+        obj.extract(members[0], QDir.tempPath())
+        extracted_filename = os.path.join(QDir.tempPath(), obj.getnames()[0])
+        self._fulldata = np.fromfile(extracted_filename, dtype=np.complex64)
+        os.remove(extracted_filename)
 
     @property
     def sample_rate(self):
@@ -252,7 +267,7 @@ class Signal(QObject):
     @property
     def qad(self):
         if self._qad is None:
-            self._qad = self.data if self.qad_demod_file_loaded else self.quad_demod()
+            self._qad = self.quad_demod()
 
         return self._qad
 
@@ -269,7 +284,7 @@ class Signal(QObject):
 
     @property
     def wave_data(self):
-        return bytearray(np.multiply(-1, (np.round(self.data.real * 127)).astype(np.int8)))
+        return (self.data.view(np.float32) * 32767).astype(np.int16)
 
     @property
     def changed(self) -> bool:

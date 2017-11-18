@@ -1,11 +1,12 @@
 from multiprocessing import Value
-from multiprocessing.connection import Connection
+
+import numpy as np
 
 from urh.util.RingBuffer import RingBuffer
 
 
 class SendConfig(object):
-    def __init__(self,  send_buffer, current_sent_index: Value, current_sending_repeat: Value,
+    def __init__(self, send_buffer, current_sent_index: Value, current_sending_repeat: Value,
                  total_samples: int, sending_repeats: int, continuous: bool = False,
                  pack_complex_method: callable = None, continuous_send_ring_buffer: RingBuffer = None):
         self.send_buffer = send_buffer
@@ -20,7 +21,7 @@ class SendConfig(object):
     def get_data_to_send(self, buffer_length: int):
         try:
             if self.sending_is_finished():
-                return b""
+                return np.array([], dtype=np.complex64)
 
             if self.continuous:
                 result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
@@ -30,7 +31,7 @@ class SendConfig(object):
             self.progress_send_status(len(result))
             return result
         except (BrokenPipeError, EOFError):
-            return b""
+            return np.array([], dtype=np.complex64)
 
     def sending_is_finished(self):
         if self.sending_repeats == 0:  # 0 = infinity

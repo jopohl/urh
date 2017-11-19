@@ -96,36 +96,25 @@ class Spectrogram(object):
         strides = (hop_size * samples.strides[-1], samples.strides[-1])
         frames = np.lib.stride_tricks.as_strided(samples, shape=shape, strides=strides)
 
-
-        result =  np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
-        #print(time.time()-t, len(frames), self.window_size)
-
-        return result
+        return np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
 
     def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
         # Only shift axis 1 (frequency) and not time
-        t = time.time()
         spectrogram = np.fft.fftshift(self.stft(samples), axes=(1,))
-        #print("FFTshift", time.time()-t)
 
         t = time.time()
-        with np.errstate(divide='ignore'):
+        #with np.errstate(divide='ignore'):
             #convert magnitudes to decibel, some log10 arguments may be zero, that's fine
-            #spectrogram = np.atleast_1d(10) * np.log10(util.abs2(spectrogram))
-            spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)
+            #spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)
+        spectrogram = util.arr2decibel(spectrogram.astype(np.complex64))
         print("Convert", time.time()-t)
 
         # Flip Array so Y axis goes from negative to positive
-        t = time.time()
-        result =  np.fliplr(spectrogram)
-       # print("FLIPR", time.time()-t)
-        return result
+        return np.fliplr(spectrogram)
+
     def create_spectrogram_image(self, sample_start: int=None, sample_end: int=None, step: int=None):
         spectrogram = self.__calculate_spectrogram(self.samples[sample_start:sample_end:step])
-        t = time.time()
-        img = self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
-        #print("IMG", time.time()-t)
-        return img
+        return self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
 
     def create_image_segments(self):
         n_segments = max(1, self.time_bins // self.MAX_LINES_PER_VIEW)
@@ -134,9 +123,7 @@ class Spectrogram(object):
 
         t = time.time()
         for i in range(0, len(self.samples), step):
-            t1 = time.time()
             image = self.create_spectrogram_image(sample_start=i, sample_end=i+step)
-          #  print("Segment", time.time()-t1)
             yield image
 
         print("Total", time.time()-t)

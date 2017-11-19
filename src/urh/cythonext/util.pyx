@@ -65,3 +65,18 @@ cpdef str longest_common_substring(str s1, str s2):
             else:
                 m[x, y] = 0
     return s1[x_longest - longest: x_longest]
+
+cpdef np.ndarray[np.float32_t, ndim=2] abs2(np.ndarray[np.complex128_t, ndim=2] arr):
+    cdef long x = arr.shape[0]
+    cdef long y  = arr.shape[1]
+    cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
+    cdef long i, j
+    cdef np.complex128_t item
+    cdef np.float64_t real, imag
+    for i in range(x):
+        for j in range(y):
+            item = arr[i, j]
+            real = item.real
+            imag = item.imag
+            result[i, j] = real * real + imag * imag
+    return result

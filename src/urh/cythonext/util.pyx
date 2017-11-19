@@ -75,15 +75,13 @@ cpdef str longest_common_substring(str s1, str s2):
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, ndim=2] arr):
-    cdef long x = arr.shape[0]
-    cdef long y  = arr.shape[1]
+    cdef long long x = arr.shape[0]
+    cdef long long y  = arr.shape[1]
+    cdef long long i, j
     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
-    cdef long i, j
     cdef np.float32_t factor = 10.0
-    cdef np.float32_t real, imag
+
     for i in prange(x, nogil=True, schedule='static'):
         for j in range(y):
-            real = arr[i, j].real
-            imag = arr[i, j].imag
-            result[i, j] = factor * log10(real * real + imag * imag)
+            result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result

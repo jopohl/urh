@@ -80,8 +80,6 @@ class Spectrogram(object):
         Perform Short-time Fourier transform to get the spectrogram for the given samples
         :return: short-time Fourier transform of the given signal
         """
-        import time
-        t = time.time()
         window = self.window_function(self.window_size)
         hop_size = self.hop_size
 
@@ -96,7 +94,12 @@ class Spectrogram(object):
         strides = (hop_size * samples.strides[-1], samples.strides[-1])
         frames = np.lib.stride_tricks.as_strided(samples, shape=shape, strides=strides)
 
-        return np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
+
+        import time
+        t = time.time()
+        result = np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
+        print("FFT", time.time()-t)
+        return result
 
     def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
         # Only shift axis 1 (frequency) and not time
@@ -126,7 +129,7 @@ class Spectrogram(object):
             image = self.create_spectrogram_image(sample_start=i, sample_end=i+step)
             yield image
 
-        print("Total", time.time()-t)
+        print("Total", time.time()-t, len(range(0, len(self.samples), step)))
 
     @staticmethod
     def apply_bgra_lookup(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> np.ndarray:

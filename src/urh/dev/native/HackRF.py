@@ -2,6 +2,8 @@ import numpy as np
 
 from multiprocessing.connection import Connection
 
+import time
+
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
 from urh.util.Logger import logger
@@ -24,13 +26,19 @@ class HackRF(Device):
         return ret == 0
 
     @classmethod
-    def shutdown_device(cls, ctrl_conn: Connection):
-        logger.debug("HackRF: closing device")
-        ret = hackrf.close()
-        ctrl_conn.send("CLOSE:" + str(ret))
+    def shutdown_device(cls, ctrl_conn: Connection, is_tx: bool):
+        if is_tx:
+            result = hackrf.stop_tx_mode()
+            ctrl_conn.send("STOP TX MODE:" + str(result))
+        else:
+            result = hackrf.stop_rx_mode()
+            ctrl_conn.send("STOP RX MODE:" + str(result))
 
-        ret = hackrf.exit()
-        ctrl_conn.send("EXIT:" + str(ret))
+        result = hackrf.close()
+        ctrl_conn.send("CLOSE:" + str(result))
+
+        result = hackrf.exit()
+        ctrl_conn.send("EXIT:" + str(result))
 
         return True
 

@@ -37,7 +37,7 @@ class USRP(Device):
         return super().init_device(ctrl_connection, is_tx, parameters)
 
     @classmethod
-    def shutdown_device(cls, ctrl_connection):
+    def shutdown_device(cls, ctrl_connection, is_tx: bool):
         usrp.stop_stream()
         usrp.destroy_stream()
         ret = usrp.close()

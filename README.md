@@ -36,6 +36,7 @@ Furthermore, you can [install urh from source](#installing-from-source) or run i
   - [Ubuntu/Debian](#ubuntudebian)
   - [Gentoo/Pentoo](#gentoopentoo)
   - [Fedora 25+](#fedora-25)
+  - [openSUSE](#opensuse)
 - [Windows](#windows)
 - [Mac OS X](#mac-os-x)
 
@@ -87,6 +88,18 @@ emerge -av urh
 ### Fedora 25+
 ```bash
 dnf install urh
+```
+
+### openSUSE
+If you use Tumbleweed (Rolling Release), you can install URH directly with
+```bash
+sudo zypper install urh
+```
+
+If you use Leap 42.2+ you need to add the ``` hardware:sdr ``` repo before:
+```bash
+sudo zypper addrepo -f https://download.opensuse.org/repositories/hardware:/sdr/openSUSE_Leap_42.3/hardware:sdr.repo
+sudo zypper install urh
 ```
 
 ### Windows

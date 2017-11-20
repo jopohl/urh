@@ -2,8 +2,9 @@ import array
 import os
 import sys
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 
 from urh import constants
 from urh.util.Logger import logger
@@ -119,3 +120,19 @@ def aggregate_bits(bits: array.array, size=4) -> array.array:
 
 def clip(value, minimum, maximum):
     return max(minimum, min(value, maximum))
+
+
+def file_can_be_opened(filename: str):
+    try:
+        open(filename, "r").close()
+        return True
+    except Exception as e:
+        if not isinstance(e, FileNotFoundError):
+            logger.debug(str(e))
+        return False
+
+
+def create_table_item(content):
+    item = QTableWidgetItem(str(content))
+    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+    return item

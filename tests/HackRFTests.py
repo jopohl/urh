@@ -9,7 +9,7 @@ from urh.util import util
 
 util.set_windows_lib_path()
 
-
+from urh.dev.native.lib import hackrf
 from urh.dev.native.HackRF import HackRF
 
 
@@ -105,6 +105,22 @@ class TestHackRF(unittest.TestCase):
 
         packed = HackRF.pack_complex(unpacked)
         self.assertEqual(received, packed)
+
+    def test_c_api(self):
+        def callback(n):
+            print("called")
+            return np.array([1], dtype=np.complex64)
+
+        print("init", hackrf.init())
+        print("open", hackrf.open())
+
+        print("start_tx", hackrf.start_tx_mode(callback))
+        time.sleep(1)
+
+        print("stop_tx", hackrf.stop_tx_mode())
+
+        print("close", hackrf.close())
+        print("exit", hackrf.exit())
 
 
 if __name__ == "__main__":

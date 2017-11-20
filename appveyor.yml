@@ -53,7 +53,7 @@ test_script:
   - python -m pytest -s
 
 after_test:
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze six appdirs packaging)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python build_cx.py))

@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, 
     QMessageBox, QApplication, QCheckBox
 
 from urh import constants, version
+from urh.controller.CSVImportDialogController import CSVImportDialogController
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.DecoderWidgetController import DecoderWidgetController
 from urh.controller.GeneratorTabController import GeneratorTabController
@@ -249,25 +250,6 @@ class MainController(QMainWindow):
                                      filename))
             return
 
-        already_qad_demodulated = False
-        if filename.endswith(".wav"):
-            cb = QCheckBox("Signal in file is already quadrature demodulated")
-            msg = self.tr("You selected a .wav file as signal.\n"
-                          "Universal Radio Hacker (URH) will interpret it as real part of the signal.\n"
-                          "Protocol results may be bad due to missing imaginary part.\n\n"
-                          "Load a complex file if you experience problems.\n"
-                          "You have been warned.")
-            msg_box = QMessageBox(QMessageBox.Information, "WAV file selected", msg)
-            msg_box.addButton(QMessageBox.Ok)
-            msg_box.addButton(QMessageBox.Abort)
-            msg_box.setCheckBox(cb)
-
-            reply = msg_box.exec()
-            if reply != QMessageBox.Ok:
-                return
-
-            already_qad_demodulated = cb.isChecked()
-
         sig_name = os.path.splitext(os.path.basename(filename))[0]
 
         # Use default sample rate for signal
@@ -277,7 +259,7 @@ class MainController(QMainWindow):
         else:
             sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        signal = Signal(filename, sig_name, wav_is_qad_demod=already_qad_demodulated, sample_rate=sample_rate)
+        signal = Signal(filename, sig_name, sample_rate=sample_rate)
 
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
@@ -345,47 +327,54 @@ class MainController(QMainWindow):
             Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    def add_files(self, filepaths, group_id=0):
+    def add_files(self, filepaths, group_id=0, enforce_sample_rate=None):
         num_files = len(filepaths)
         if num_files == 0:
             return
 
-        for i, file in enumerate(filepaths):
-            if not os.path.exists(file):
+        for i, filename in enumerate(filepaths):
+            if not os.path.exists(filename):
                 continue
 
-            if os.path.isdir(file):
+            if os.path.isdir(filename):
                 for f in self.signal_tab_controller.signal_frames:
                     self.close_signal_frame(f)
 
-                FileOperator.RECENT_PATH = file
-                self.project_manager.set_project_folder(file)
+                FileOperator.RECENT_PATH = filename
+                self.project_manager.set_project_folder(filename)
                 return
 
-            FileOperator.RECENT_PATH = os.path.split(file)[0]
+            FileOperator.RECENT_PATH = os.path.split(filename)[0]
 
-            if file.endswith(".complex"):
-                self.add_signalfile(file, group_id)
-            elif file.endswith(".coco"):
-                self.add_signalfile(file, group_id)
-            elif file.endswith(".proto") or file.endswith(".proto.xml"):
-                self.add_protocol_file(file)
-            elif file.endswith(".wav"):
-                self.add_signalfile(file, group_id)
-            elif file.endswith(".fuzz") or file.endswith(".fuzz.xml"):
-                self.add_fuzz_profile(file)
-            elif file.endswith(".txt"):
-                self.add_plain_bits_from_txt(file)
-            elif file.endswith(".csv"):
-                self.__import_csv(file, group_id)
+            if filename.endswith(".complex"):
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".coco"):
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".proto") or filename.endswith(".proto.xml"):
+                self.add_protocol_file(filename)
+            elif filename.endswith(".wav"):
+                try:
+                    import wave
+                    w = wave.open(filename)
+                    w.close()
+                except wave.Error as e:
+                    Errors.generic_error("Unsupported WAV type", "Only uncompressed WAVs (PCM) are supported.", str(e))
+                    continue
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
+            elif filename.endswith(".fuzz") or filename.endswith(".fuzz.xml"):
+                self.add_fuzz_profile(filename)
+            elif filename.endswith(".txt"):
+                self.add_plain_bits_from_txt(filename)
+            elif filename.endswith(".csv"):
+                self.__import_csv(filename, group_id)
                 continue
-            elif os.path.basename(file) == constants.PROJECT_FILE:
-                self.project_manager.set_project_folder(os.path.split(file)[0])
+            elif os.path.basename(filename) == constants.PROJECT_FILE:
+                self.project_manager.set_project_folder(os.path.split(filename)[0])
             else:
-                self.add_signalfile(file, group_id)
+                self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
 
             if self.project_manager.project_file is None:
-                self.adjust_for_current_file(file)
+                self.adjust_for_current_file(filename)
 
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()
@@ -841,25 +830,13 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_import_samples_from_csv_action_triggered(self):
-        dialog = QFileDialog(self)
-        dialog.setDirectory(FileOperator.RECENT_PATH)
-        dialog.setWindowTitle("Import csv")
-        dialog.setFileMode(QFileDialog.ExistingFiles)
-        dialog.setNameFilter("CSV files (*.csv);;All files (*)")
-        dialog.setOptions(QFileDialog.DontResolveSymlinks)
-        dialog.setViewMode(QFileDialog.Detail)
-
-        if dialog.exec_():
-            self.setCursor(Qt.WaitCursor)
-            for file_name in dialog.selectedFiles():
-                try:
-                    self.__import_csv(file_name)
-                except Exception as e:
-                    logger.error("Error reading csv {0}: {1}".format(file_name, e))
-            self.unsetCursor()
+        self.__import_csv(file_name="")
 
     def __import_csv(self, file_name, group_id=0):
-        self.setCursor(Qt.WaitCursor)
-        complex_file = Signal.csv_to_complex_file(file_name)
-        self.add_files([complex_file], group_id=group_id)
-        self.unsetCursor()
+        def on_data_imported(complex_file, sample_rate):
+            sample_rate = None if sample_rate == 0 else sample_rate
+            self.add_files([complex_file], group_id=group_id, enforce_sample_rate=sample_rate)
+
+        dialog = CSVImportDialogController(file_name, parent=self)
+        dialog.data_imported.connect(on_data_imported)
+        dialog.exec_()

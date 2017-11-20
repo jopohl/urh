@@ -28,6 +28,9 @@ class SendDialogController(SendRecvDialogController):
 
         if self.modulation_msg_indices is not None:
             self.ui.progressBarMessage.setMaximum(len(self.modulation_msg_indices))
+        else:
+            self.ui.progressBarMessage.hide()
+            self.ui.labelCurrentMessage.hide()
 
         if modulated_data is not None:
             # modulated_data is none in continuous send mode
@@ -116,7 +119,6 @@ class SendDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_stop_clicked(self):
-        self.device.stop("Stopped receiving: Stop button clicked")
         super().on_stop_clicked()
         self.on_clear_clicked()
 

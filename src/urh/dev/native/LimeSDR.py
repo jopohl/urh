@@ -70,7 +70,7 @@ class LimeSDR(Device):
         return True
 
     @classmethod
-    def shutdown_device(cls, ctrl_connection):
+    def shutdown_device(cls, ctrl_connection, is_tx: bool):
         limesdr.stop_stream()
         limesdr.destroy_stream()
         limesdr.disable_all_channels()

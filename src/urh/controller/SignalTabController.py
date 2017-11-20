@@ -74,10 +74,6 @@ class SignalTabController(QWidget):
 
         sig_frame.blockSignals(True)
 
-        if proto_analyzer.signal.qad_demod_file_loaded:
-            sig_frame.ui.cbSignalView.setCurrentIndex(1)
-            sig_frame.ui.cbSignalView.setDisabled(True)
-
         index = self.num_frames if index == -1 else index
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)

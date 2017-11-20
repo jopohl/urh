@@ -24,7 +24,7 @@ class AirSpy(Device):
         return ret == 0
 
     @classmethod
-    def shutdown_device(cls, ctrl_connection):
+    def shutdown_device(cls, ctrl_connection, is_tx=False):
         logger.debug("AirSpy: closing device")
         ret = airspy.stop_rx()
         ctrl_connection.send("Stop RX:" + str(ret))

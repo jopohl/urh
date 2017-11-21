@@ -70,10 +70,6 @@ cpdef str longest_common_substring(str s1, str s2):
                 m[x, y] = 0
     return s1[x_longest - longest: x_longest]
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, ndim=2] arr):
     cdef long long x = arr.shape[0]
     cdef long long y  = arr.shape[1]

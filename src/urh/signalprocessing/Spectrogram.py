@@ -107,7 +107,7 @@ class Spectrogram(object):
 
         t = time.time()
         #with np.errstate(divide='ignore'):
-            #convert magnitudes to decibel, some log10 arguments may be zero, that's fine
+           # convert magnitudes to decibel, some log10 arguments may be zero, that's fine
             #spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)
         spectrogram = util.arr2decibel(spectrogram.astype(np.complex64))
         print("Convert", time.time()-t)

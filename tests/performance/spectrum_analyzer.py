@@ -5,6 +5,7 @@ import time
 from PyQt5.QtWidgets import QApplication
 from multiprocessing import Process
 
+from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.util.ProjectManager import ProjectManager
@@ -19,7 +20,7 @@ def get_free_port():
 
 
 def send_data(port):
-    num_samples = 32768
+    num_samples = constants.SPECTRUM_BUFFER_SIZE
     frequency = 0.1
     divisor = 200
     pos = 0
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     main = MainController()
     port = get_free_port()
     dialog = SpectrumDialogController(ProjectManager(main))
+    dialog.showMaximized()
     dialog.ui.cbDevice.setCurrentText("Network SDR")
     dialog.device.set_server_port(port)
     dialog.ui.btnStart.click()
@@ -69,7 +71,6 @@ if __name__ == '__main__':
     frequency = 0.1
     divisor = 200
     pos = 0
-    dialog.showMaximized()
     app.exec_()
     p.terminate()
     p.join()

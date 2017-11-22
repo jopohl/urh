@@ -24,7 +24,7 @@ class GridScene(ZoomableScene):
             font_width = self.font_metrics.width(Formatter.big_value_with_suffix(self.center_freq) + "   ")
             x_grid_size = int(view_rect.width() / parent_width * font_width)
             # x_grid_size = int(0.1 * view_rect.width()) if 0.1 * view_rect.width() > 1 else 1
-            y_grid_size = view_rect.height() / parent_width * font_width
+            y_grid_size = 1
             x_mid = np.where(self.frequencies == 0)[0]
             x_mid = int(x_mid[0]) if len(x_mid) > 0 else 0
 
@@ -44,7 +44,6 @@ class GridScene(ZoomableScene):
             scale_y = view_rect.height() / parent_width
             painter.scale(scale_x, scale_y)
 
-            font_height = self.font_metrics.height()
             counter = -1  # Counter for Label for every second line
 
             for x in x_range:
@@ -61,8 +60,7 @@ class GridScene(ZoomableScene):
                     counter = 0
                     value = Formatter.big_value_with_suffix(self.center_freq)
                 font_width = self.font_metrics.width(value)
-                painter.drawText(x / scale_x - font_width / 2,
-                                 bottom / scale_y + font_height, value)
+                painter.drawText(x / scale_x - font_width / 2, bottom / scale_y, value)
 
     def get_freq_for_pos(self, x: int) ->  float:
         try:

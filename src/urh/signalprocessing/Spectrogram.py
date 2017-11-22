@@ -108,7 +108,7 @@ class Spectrogram(object):
     def create_spectrogram_image(self, sample_start: int=None, sample_end: int=None, step: int=None, transpose=False):
         spectrogram = self.__calculate_spectrogram(self.samples[sample_start:sample_end:step])
         if transpose:
-            spectrogram = spectrogram.T
+            spectrogram = np.flipud(spectrogram.T)
         return self.create_image(spectrogram, colormaps.chosen_colormap_numpy_bgra, self.data_min, self.data_max)
 
     def create_image_segments(self):

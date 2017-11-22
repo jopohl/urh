@@ -30,7 +30,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
         scene = QGraphicsScene()
         self.ui.graphicsViewSpectrogram.setScene(scene)
-        scene.setSceneRect(0, 0, 1024, 1024)
+        scene.setSceneRect(0, 0, 1024, 25 * 1024)
         self.spectrogram_y_pos = 0
 
         self.init_device()
@@ -67,13 +67,16 @@ class SpectrumDialogController(SendRecvDialogController):
             self.graphics_view.fitInView(self.graphics_view.sceneRect())
 
             spectrogram = Spectrogram(self.device.data)
+            spectrogram.data_min = -70
+            spectrogram.data_max = 10
             scene = self.ui.graphicsViewSpectrogram.scene()
             pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
-            scene.setSceneRect(scene.sceneRect().adjusted(0, 0, 0, pixmap.height()))
             item = scene.addPixmap(pixmap)
-            item.setPos(0, self.spectrogram_y_pos)
+            item.moveBy(0, self.spectrogram_y_pos)
             self.spectrogram_y_pos += pixmap.height()
-            self.ui.graphicsViewSpectrogram.fitInView(scene.sceneRect())
+            if self.spectrogram_y_pos >= scene.sceneRect().height():
+                scene.setSceneRect(0, 0, 1024, self.spectrogram_y_pos)
+                self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue( self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
@@ -104,6 +107,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_device_started(self):
+        self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.scene().sceneRect())
         super().on_device_started()
         self.ui.btnClear.setEnabled(True)
         self.ui.spinBoxPort.setEnabled(False)

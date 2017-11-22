@@ -1011,7 +1011,17 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
             <widget class="LiveGraphicView" name="graphicsViewFFT"/>
            </item>
            <item>
-            <widget class="QGraphicsView" name="graphicsViewSpectrogram"/>
+            <widget class="QGraphicsView" name="graphicsViewSpectrogram">
+             <property name="renderHints">
+              <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+             </property>
+             <property name="cacheMode">
+              <set>QGraphicsView::CacheNone</set>
+             </property>
+             <property name="viewportUpdateMode">
+              <enum>QGraphicsView::MinimalViewportUpdate</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

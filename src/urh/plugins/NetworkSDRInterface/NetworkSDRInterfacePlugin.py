@@ -39,6 +39,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
             else:
                 received = np.frombuffer(self.data, dtype=np.complex64)
+                if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
+                    self.server.current_receive_index = 0
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
                 self.server.current_receive_index += len(received)

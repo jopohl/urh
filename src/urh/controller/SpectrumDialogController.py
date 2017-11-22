@@ -1,3 +1,4 @@
+import time
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QWheelEvent, QIcon
 
@@ -57,7 +58,7 @@ class SpectrumDialogController(SendRecvDialogController):
             self.scene_manager.plot_data = y
             self.scene_manager.init_scene()
             self.scene_manager.show_full_scene()
-            self.graphics_view.update()
+            self.graphics_view.fitInView(self.graphics_view.sceneRect())
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()

@@ -262,7 +262,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.graphics_view.zoom(0.8)
         QApplication.instance().processEvents()
         QTest.qWait(50)
-        self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
+        self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
 
         self.__close_dialog(send_dialog)
 

@@ -190,8 +190,13 @@ class Modulator(object):
         else:
             f = self.carrier_freq_hz
 
-        arg = ((2 * np.pi * f * t + phi) * 1j).astype(np.complex64)
-        self.modulated_samples[:total_samples - pause] = a * np.exp(arg)
+        # it may be tempting to do this with complex exp, but exp overflows for large values!
+        # arg = ((2 * np.pi * f * t + phi) * 1j).astype(np.complex64)
+        # self.modulated_samples[:total_samples - pause] = a * np.exp(arg)
+
+        arg = (2 * np.pi * f * t + phi)
+        self.modulated_samples[:total_samples - pause].real = a * np.cos(arg)
+        self.modulated_samples[:total_samples - pause].imag = a * np.sin(arg)
 
     def gauss_fir(self, bt=0.5, filter_width=1):
         """

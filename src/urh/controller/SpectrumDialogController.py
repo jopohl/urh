@@ -1,9 +1,10 @@
-import time
 from PyQt5.QtCore import QTimer, pyqtSlot
-from PyQt5.QtGui import QWheelEvent, QIcon
+from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap
+from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
+from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.painting.FFTSceneManager import FFTSceneManager
 
 
@@ -11,9 +12,9 @@ class SpectrumDialogController(SendRecvDialogController):
     def __init__(self, project_manager, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
-        self.graphics_view = self.ui.graphicsViewReceive
+        self.graphics_view = self.ui.graphicsViewFFT
         self.update_interval = 1
-        self.ui.stackedWidget.setCurrentWidget(self.ui.page_receive)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_spectrum)
         self.hide_receive_ui_items()
         self.hide_send_ui_items()
 
@@ -26,6 +27,11 @@ class SpectrumDialogController(SendRecvDialogController):
 
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
+
+        scene = QGraphicsScene()
+        self.ui.graphicsViewSpectrogram.setScene(scene)
+        scene.setSceneRect(0, 0, 1024, 1024)
+        self.spectrogram_y_pos = 0
 
         self.init_device()
         self.set_bandwidth_status()
@@ -59,6 +65,15 @@ class SpectrumDialogController(SendRecvDialogController):
             self.scene_manager.init_scene()
             self.scene_manager.show_full_scene()
             self.graphics_view.fitInView(self.graphics_view.sceneRect())
+
+            spectrogram = Spectrogram(self.device.data)
+            scene = self.ui.graphicsViewSpectrogram.scene()
+            pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
+            scene.setSceneRect(scene.sceneRect().adjusted(0, 0, 0, pixmap.height()))
+            item = scene.addPixmap(pixmap)
+            item.setPos(0, self.spectrogram_y_pos)
+            self.spectrogram_y_pos += pixmap.height()
+            self.ui.graphicsViewSpectrogram.fitInView(scene.sceneRect())
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
@@ -114,4 +129,3 @@ class SpectrumDialogController(SendRecvDialogController):
     def on_slider_baseband_gain_value_changed(self, value: int):
         super().on_slider_baseband_gain_value_changed(value)
         self.bb_gain_timer.start(250)
-

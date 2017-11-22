@@ -1,12 +1,12 @@
-import numpy as np
 import math
 
-import time
+import numpy as np
 from PyQt5.QtGui import QImage
 
 from urh import colormaps
-from urh.util.Logger import logger
 from urh.cythonext import util
+from urh.util.Logger import logger
+
 
 class Spectrogram(object):
     MAX_LINES_PER_VIEW = 1000
@@ -94,23 +94,13 @@ class Spectrogram(object):
         strides = (hop_size * samples.strides[-1], samples.strides[-1])
         frames = np.lib.stride_tricks.as_strided(samples, shape=shape, strides=strides)
 
-
-        import time
-        t = time.time()
         result = np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
-        print("FFT", time.time()-t)
         return result
 
     def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
         # Only shift axis 1 (frequency) and not time
         spectrogram = np.fft.fftshift(self.stft(samples), axes=(1,))
-
-        t = time.time()
-        #with np.errstate(divide='ignore'):
-           # convert magnitudes to decibel, some log10 arguments may be zero, that's fine
-            #spectrogram = np.atleast_1d(10) * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)
         spectrogram = util.arr2decibel(spectrogram.astype(np.complex64))
-        print("Convert", time.time()-t)
 
         # Flip Array so Y axis goes from negative to positive
         return np.fliplr(spectrogram)
@@ -126,12 +116,9 @@ class Spectrogram(object):
         step = self.time_bins / n_segments
         step = max(1, int((step / self.hop_size) * self.hop_size ** 2))
 
-        t = time.time()
         for i in range(0, len(self.samples), step):
             image = self.create_spectrogram_image(sample_start=i, sample_end=i+step)
             yield image
-
-        print("Total", time.time()-t, len(range(0, len(self.samples), step)))
 
     @staticmethod
     def apply_bgra_lookup(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> np.ndarray:

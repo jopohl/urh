@@ -27,11 +27,15 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
 
     samples_per_pixel = <long long>(num_samples / pixels_on_path)
 
+    cdef int num_threads = 0
+    if samples_per_pixel < 20000:
+        num_threads = 1
+
     if samples_per_pixel > 1:
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
         values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
-        for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static'):
+        for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static', num_threads=num_threads):
             chunk_end = i + samples_per_pixel
             if chunk_end >= end:
                 chunk_end = end

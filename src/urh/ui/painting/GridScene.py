@@ -1,7 +1,8 @@
 import numpy as np
 from PyQt5.QtCore import QRectF, QLineF, Qt
-from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen
+from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
+from urh import constants
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
@@ -12,7 +13,16 @@ class GridScene(ZoomableScene):
         self.font_metrics = QFontMetrics(QFont())
         self.center_freq = 433.92e6
         self.frequencies = []
+        self.frequency_marker = None
         super().__init__(parent)
+        self.setSceneRect(0,0,10,10)
+
+    def __calc_x_y_scale(self, rect):
+        view_rect = self.parent().view_rect() if hasattr(self.parent(), "view_rect") else rect
+        parent_width = self.parent().width() if hasattr(self.parent(), "width") else 750
+        scale_x = view_rect.width() / parent_width
+        scale_y = view_rect.height() / parent_width
+        return scale_x, scale_y
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
         # freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
@@ -40,14 +50,13 @@ class GridScene(ZoomableScene):
                     + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
 
             painter.drawLines(lines)
-            scale_x = view_rect.width() / parent_width
-            scale_y = view_rect.height() / parent_width
-            painter.scale(scale_x, scale_y)
+            scale_x, scale_y = self.__calc_x_y_scale(rect)
 
+            painter.scale(scale_x, scale_y)
             counter = -1  # Counter for Label for every second line
 
             for x in x_range:
-                freq =  self.frequencies[x]
+                freq = self.frequencies[x]
                 counter += 1
 
                 if freq != 0 and (counter % 2 != 0): # Label for every second line
@@ -62,9 +71,47 @@ class GridScene(ZoomableScene):
                 font_width = self.font_metrics.width(value)
                 painter.drawText(x / scale_x - font_width / 2, bottom / scale_y, value)
 
+    def draw_frequency_marker(self, x_pos, frequency):
+        if frequency is None:
+            self.clear_frequency_marker()
+            return
+
+        y1 = self.sceneRect().y()
+        y2 = self.sceneRect().y() + self.sceneRect().height()
+
+        if self.frequency_marker is None:
+            pen = QPen(constants.LINECOLOR, Qt.FlatCap)
+            self.frequency_marker = [None, None]
+            self.frequency_marker[0] = self.addLine(x_pos, y1, x_pos, y2, pen)
+            self.frequency_marker[1] = self.addSimpleText("")
+            self.frequency_marker[1].setBrush(QBrush(constants.LINECOLOR))
+            font = QFont()
+            font.setBold(True)
+            font.setPointSize(int(font.pointSize() * 1.25)+1)
+            self.frequency_marker[1].setFont(font)
+
+        self.frequency_marker[0].setLine(x_pos, y1, x_pos, y2)
+        scale_x, scale_y = self.__calc_x_y_scale(self.sceneRect())
+        self.frequency_marker[1].setTransform(QTransform.fromScale(scale_x, scale_y), False)
+        self.frequency_marker[1].setText("Tune to " + Formatter.big_value_with_suffix(frequency))
+        font_metric = QFontMetrics(self.frequency_marker[1].font())
+        text_width = font_metric.width("Tune to") * scale_x
+        text_width += (font_metric.width(" ") * scale_x) / 2
+        self.frequency_marker[1].setPos(x_pos-text_width, 0.95*y1)
+
+    def clear_frequency_marker(self):
+        if self.frequency_marker is not None:
+            self.removeItem(self.frequency_marker[0])
+            self.removeItem(self.frequency_marker[1])
+        self.frequency_marker = None
+
     def get_freq_for_pos(self, x: int) ->  float:
         try:
             f = self.frequencies[x]
         except IndexError:
             return None
         return self.center_freq + f
+
+    def clear(self):
+        self.clear_frequency_marker()
+        super().clear()

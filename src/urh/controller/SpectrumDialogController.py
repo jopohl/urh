@@ -28,10 +28,8 @@ class SpectrumDialogController(SendRecvDialogController):
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
 
-        scene = QGraphicsScene()
-        self.ui.graphicsViewSpectrogram.setScene(scene)
-        scene.setSceneRect(0, 0, 1024, 25 * 1024)
-        self.spectrogram_y_pos = 0
+        self.ui.graphicsViewSpectrogram.setScene(QGraphicsScene())
+        self.__clear_spectrogram()
 
         self.init_device()
         self.set_bandwidth_status()
@@ -50,6 +48,25 @@ class SpectrumDialogController(SendRecvDialogController):
 
         self.create_connects()
 
+    def __clear_spectrogram(self):
+        self.ui.graphicsViewSpectrogram.scene().clear()
+        window_size = Spectrogram.DEFAULT_FFT_WINDOW_SIZE
+        self.ui.graphicsViewSpectrogram.scene().setSceneRect(0, 0, window_size, 20 * window_size)
+        self.spectrogram_y_pos = 0
+
+    def __update_spectrogram(self):
+        spectrogram = Spectrogram(self.device.data)
+        spectrogram.data_min = -70
+        spectrogram.data_max = 10
+        scene = self.ui.graphicsViewSpectrogram.scene()
+        pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
+        scene.addPixmap(pixmap).moveBy(0, self.spectrogram_y_pos)
+        self.spectrogram_y_pos += pixmap.height()
+        if self.spectrogram_y_pos >= scene.sceneRect().height():
+            scene.setSceneRect(0, 0, Spectrogram.DEFAULT_FFT_WINDOW_SIZE, self.spectrogram_y_pos)
+            self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue(
+                self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
+
     def create_connects(self):
         super().create_connects()
         self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
@@ -66,17 +83,7 @@ class SpectrumDialogController(SendRecvDialogController):
             self.scene_manager.show_full_scene()
             self.graphics_view.fitInView(self.graphics_view.sceneRect())
 
-            spectrogram = Spectrogram(self.device.data)
-            spectrogram.data_min = -70
-            spectrogram.data_max = 10
-            scene = self.ui.graphicsViewSpectrogram.scene()
-            pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
-            item = scene.addPixmap(pixmap)
-            item.moveBy(0, self.spectrogram_y_pos)
-            self.spectrogram_y_pos += pixmap.height()
-            if self.spectrogram_y_pos >= scene.sceneRect().height():
-                scene.setSceneRect(0, 0, 1024, self.spectrogram_y_pos)
-                self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue( self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
+            self.__update_spectrogram()
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()
@@ -116,6 +123,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     @pyqtSlot()
     def on_clear_clicked(self):
+        self.__clear_spectrogram()
         self.scene_manager.clear_path()
         self.scene_manager.clear_peak()
 

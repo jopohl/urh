@@ -1,10 +1,8 @@
-from PyQt5.QtCore import pyqtSignal, QRect
+from PyQt5.QtCore import pyqtSignal, QEvent
 from PyQt5.QtGui import QWheelEvent, QMouseEvent
-from PyQt5.QtWidgets import QToolTip
 
 from urh.ui.painting.GridScene import GridScene
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
-from urh.util.Formatter import Formatter
 
 
 class LiveGraphicView(ZoomableGraphicView):
@@ -22,6 +20,11 @@ class LiveGraphicView(ZoomableGraphicView):
             return
 
         super().wheelEvent(event)
+
+    def leaveEvent(self, event: QEvent):
+        super().leaveEvent(event)
+        if isinstance(self.scene(), GridScene):
+            self.scene().clear_frequency_marker()
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)

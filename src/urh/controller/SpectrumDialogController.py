@@ -67,6 +67,15 @@ class SpectrumDialogController(SendRecvDialogController):
             self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue(
                 self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
 
+    def _eliminate_graphic_view(self):
+        super()._eliminate_graphic_view()
+        if self.ui.graphicsViewSpectrogram.scene() is not None:
+            self.ui.graphicsViewSpectrogram.scene().clear()
+            self.ui.graphicsViewSpectrogram.scene().setParent(None)
+            self.ui.graphicsViewSpectrogram.setScene(None)
+
+        self.ui.graphicsViewSpectrogram = None
+
     def create_connects(self):
         super().create_connects()
         self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)

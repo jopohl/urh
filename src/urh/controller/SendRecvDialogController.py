@@ -124,6 +124,12 @@ class SendRecvDialogController(QDialog):
     def device(self, value):
         self.__device = value
 
+    def _eliminate_graphic_view(self):
+        if self.graphics_view is not None:
+            self.graphics_view.eliminate()
+
+        self.graphics_view = None
+
     def hide_send_ui_items(self):
         for item in ("spinBoxNRepeat", "labelNRepeat", "lblCurrentRepeatValue", "progressBarMessage",
                      "lblRepeatText", "lSamplesSentText", "progressBarSample", "labelCurrentMessage"):
@@ -640,10 +646,7 @@ class SendRecvDialogController(QDialog):
 
         self.scene_manager.eliminate()
 
-        if self.graphics_view is not None:
-            self.graphics_view.eliminate()
-
-        self.graphics_view = None
+        self._eliminate_graphic_view()
 
         super().closeEvent(event)
 

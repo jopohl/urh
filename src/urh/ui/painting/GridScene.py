@@ -93,7 +93,7 @@ class GridScene(ZoomableScene):
         self.frequency_marker[0].setLine(x_pos, y1, x_pos, y2)
         scale_x, scale_y = self.__calc_x_y_scale(self.sceneRect())
         self.frequency_marker[1].setTransform(QTransform.fromScale(scale_x, scale_y), False)
-        self.frequency_marker[1].setText("Tune to " + Formatter.big_value_with_suffix(frequency))
+        self.frequency_marker[1].setText("Tune to " + Formatter.big_value_with_suffix(frequency, decimals=3))
         font_metric = QFontMetrics(self.frequency_marker[1].font())
         text_width = font_metric.width("Tune to") * scale_x
         text_width += (font_metric.width(" ") * scale_x) / 2

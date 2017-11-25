@@ -83,7 +83,8 @@ class SpectrumDialogController(SendRecvDialogController):
         self.graphics_view.wheel_event_triggered.connect(self.on_graphics_view_wheel_event_triggered)
 
     def resizeEvent(self, event: QResizeEvent):
-        self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.sceneRect())
+        if self.ui.graphicsViewSpectrogram and self.ui.graphicsViewSpectrogram.sceneRect():
+            self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.sceneRect())
 
     def update_view(self):
         if super().update_view():

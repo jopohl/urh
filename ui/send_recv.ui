@@ -47,8 +47,8 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>426</width>
-         <height>1294</height>
+         <width>441</width>
+         <height>1212</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -1012,6 +1012,12 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
            </item>
            <item>
             <widget class="QGraphicsView" name="graphicsViewSpectrogram">
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
              <property name="renderHints">
               <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
              </property>

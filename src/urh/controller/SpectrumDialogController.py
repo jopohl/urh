@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QTimer, pyqtSlot
-from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap
+from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.controller.SendRecvDialogController import SendRecvDialogController
@@ -53,6 +53,7 @@ class SpectrumDialogController(SendRecvDialogController):
         window_size = Spectrogram.DEFAULT_FFT_WINDOW_SIZE
         self.ui.graphicsViewSpectrogram.scene().setSceneRect(0, 0, window_size, 20 * window_size)
         self.spectrogram_y_pos = 0
+        self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.sceneRect())
 
     def __update_spectrogram(self):
         spectrogram = Spectrogram(self.device.data)
@@ -80,6 +81,9 @@ class SpectrumDialogController(SendRecvDialogController):
         super().create_connects()
         self.graphics_view.freq_clicked.connect(self.on_graphics_view_freq_clicked)
         self.graphics_view.wheel_event_triggered.connect(self.on_graphics_view_wheel_event_triggered)
+
+    def resizeEvent(self, event: QResizeEvent):
+        self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.sceneRect())
 
     def update_view(self):
         if super().update_view():

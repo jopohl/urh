@@ -2,7 +2,8 @@ import os
 import socket
 
 import numpy as np
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
@@ -148,8 +149,22 @@ class TestSendRecvDialog(QtTestCase):
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
+        self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
+        w = spectrum_dialog.ui.graphicsViewFFT.viewport()
+
+        # this actually gets the click to the view
+        # QTest.mouseMove(w, QPoint(80,80))
+        event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
+                            Qt.LeftButton, Qt.NoModifier)
+        QApplication.postEvent(w, event)
+        QApplication.instance().processEvents()
+        self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 
         spectrum_dialog.ui.btnStop.click()
+
+        self.assertGreater(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)
+        spectrum_dialog.ui.btnClear.click()
+        self.assertEqual(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)
 
         self.__close_dialog(spectrum_dialog)
 
@@ -262,7 +277,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.graphics_view.zoom(0.8)
         QApplication.instance().processEvents()
         QTest.qWait(50)
-        self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
+        self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
 
         self.__close_dialog(send_dialog)
 

@@ -17,7 +17,7 @@ class LinearBuffer(object):
         self.__data_available += len(data)
 
     def pop(self, number):
-        result = self.data[self.read_current:self.read_current+number]
+        result = np.take(self.data, range(self.read_current, self.read_current+number), mode="wrap")
         self.read_current = (self.read_current + number) % len(self.data)
         self.__data_available -= number
         self.__data_available = max(0, self.__data_available)

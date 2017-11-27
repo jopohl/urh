@@ -130,18 +130,14 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
                                 self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
 
         i = 0
         first_msg = True
 
         for bits, pause in zip(bit_data, pauses):
             if first_msg or self.messages[-1].pause > 8 * bit_len:
-                # Create new Message
-                middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
-                start, end = middle_bit_pos, middle_bit_pos + bit_len
-                rssi = np.mean(np.abs(self.signal._fulldata[start:end]))
-                message = Message(bits, pause, bit_len=bit_len, rssi=rssi, message_type=self.default_message_type,
+                message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
                                   decoder=self.decoder)
                 self.messages.append(message)
                 first_msg = False

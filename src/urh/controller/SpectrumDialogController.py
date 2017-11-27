@@ -1,3 +1,4 @@
+import numpy as np
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QGraphicsScene
@@ -55,8 +56,8 @@ class SpectrumDialogController(SendRecvDialogController):
         self.spectrogram_y_pos = 0
         self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.sceneRect())
 
-    def __update_spectrogram(self):
-        spectrogram = Spectrogram(self.device.data)
+    def __update_spectrogram(self, spectrum_data):
+        spectrogram = Spectrogram(spectrum_data)
         spectrogram.data_min = -80
         spectrogram.data_max = 10
         scene = self.ui.graphicsViewSpectrogram.scene()
@@ -88,16 +89,20 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def update_view(self):
         if super().update_view():
-            x, y = self.device.spectrum
-            if x is None or y is None:
+            spectrum_data = self.device.spectrum
+            if spectrum_data is None:
                 return
-            self.scene_manager.scene.frequencies = x
-            self.scene_manager.plot_data = y
+
+            w = np.abs(np.fft.fft(spectrum_data))
+            freqs = np.fft.fftfreq(len(w), 1 / self.device.sample_rate)
+            idx = np.argsort(freqs)
+            self.scene_manager.scene.frequencies = freqs[idx].astype(np.float32)
+            self.scene_manager.plot_data = w[idx].astype(np.float32)
             self.scene_manager.init_scene()
             self.scene_manager.show_full_scene()
             self.graphics_view.fitInView(self.graphics_view.sceneRect())
 
-            self.__update_spectrogram()
+            self.__update_spectrogram(spectrum_data)
 
     def init_device(self):
         device_name = self.ui.cbDevice.currentText()

@@ -9,8 +9,10 @@ from pickle import UnpicklingError
 import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from urh import constants
 from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
+from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -241,9 +243,13 @@ class Device(QObject):
         self.device_ip = "192.168.10.2"  # For USRP and RTLSDRTCP
 
         self.receive_buffer = None
+        self.spectrum_buffer = None # type: RingBuffer
 
-        self.spectrum_x = None
-        self.spectrum_y = None
+    def _start_spectrum_thread(self):
+        self.spectrum_buffer = RingBuffer(constants.SPECTRUM_BUFFER_SIZE)
+        self.read_recv_buffer_thread = threading.Thread(target=self.read_for_spectrum_analyzer)
+        self.read_recv_buffer_thread.daemon = True
+        self.read_recv_buffer_thread.start()
 
     def _start_read_rcv_buffer_thread(self):
         self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
@@ -510,7 +516,11 @@ class Device(QObject):
         self.receive_process = Process(target=self.receive_process_function,
                                        args=self.receive_process_arguments)
         self.receive_process.daemon = True
-        self._start_read_rcv_buffer_thread()
+
+        if self.is_in_spectrum_mode:
+            self._start_spectrum_thread()
+        else:
+            self._start_read_rcv_buffer_thread()
         self._start_read_message_thread()
         try:
             self.receive_process.start()
@@ -622,6 +632,30 @@ class Device(QObject):
                     self.current_recv_index += n_samples
 
                     self.rcv_index_changed.emit(old_index, self.current_recv_index)
+            except (BrokenPipeError, OSError):
+                pass
+            except EOFError:
+                logger.info("EOF Error: Ending receive thread")
+                break
+
+        logger.debug("Exiting read_receive_queue thread.")
+
+    def read_for_spectrum_analyzer(self):
+        while self.is_receiving:
+            try:
+                byte_buffer = self.parent_data_conn.recv_bytes()
+                self.current_recv_index = 1  # to show that we are working
+
+                n_samples = len(byte_buffer) // self.BYTES_PER_SAMPLE
+                end = n_samples * self.BYTES_PER_SAMPLE
+                data = self.unpack_complex(byte_buffer[:end], n_samples)
+
+                while not self.spectrum_buffer.will_fit(n_samples) and self.is_receiving:
+                    time.sleep(0.001)
+
+                if self.is_receiving:
+                    self.spectrum_buffer.push(data)
+
             except (BrokenPipeError, OSError):
                 pass
             except EOFError:

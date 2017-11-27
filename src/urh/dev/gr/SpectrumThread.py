@@ -1,3 +1,5 @@
+import time
+
 from urh import constants
 import numpy as np
 
@@ -5,15 +7,15 @@ import zmq
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
+from urh.util.RingBuffer import RingBuffer
 
 
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
         self.buf_size = constants.SPECTRUM_BUFFER_SIZE
+        self.spectrum_buffer = RingBuffer(self.buf_size)
         self.data = np.zeros(self.buf_size, dtype=np.complex64)
-        self.x = None
-        self.y = None
 
     def run(self):
         logger.debug("Spectrum Thread: Init Process")
@@ -44,29 +46,13 @@ class SpectrumThread(AbstractBaseThread):
                     continue
 
                 try:
-                    tmp = np.fromstring(rcvd, dtype=np.complex64)
+                    self.current_index = 1  # show GUI we are working
 
-                    len_tmp = len(tmp)
-
-                    if self.data is None:
-                        self.data = np.zeros(self.buf_size, dtype=np.complex64)  # type: np.ndarray
-
-                    if self.current_index + len_tmp >= len(self.data):
-                        self.data[self.current_index:] = tmp[:len(self.data) - self.current_index]
-                        tmp = tmp[len(self.data) - self.current_index:]
-                        w = np.abs(np.fft.fft(self.data))
-                        freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
-                        idx = np.argsort(freqs)
-                        self.x = freqs[idx].astype(np.float32)
-                        self.y = w[idx].astype(np.float32)
-
-                        self.data = np.zeros(len(self.data), dtype=np.complex64)
-                        self.data[0:len(tmp)] = tmp
-                        self.current_index = len(tmp)
-                        continue
-
-                    self.data[self.current_index:self.current_index + len_tmp] = tmp
-                    self.current_index += len_tmp
+                    data = np.fromstring(rcvd, dtype=np.complex64)
+                    n_samples = len(data)
+                    while not self.spectrum_buffer.will_fit(n_samples):
+                        time.sleep(0.001)
+                    self.spectrum_buffer.push(data)
                     rcvd = b""
                 except ValueError:
                     self.stop("Could not receive data. Is your Hardware ok?")

@@ -11,8 +11,8 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh import constants
 from urh.dev.native.SendConfig import SendConfig
+from urh.util.LinearBuffer import LinearBuffer
 from urh.util.Logger import logger
-from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -243,10 +243,10 @@ class Device(QObject):
         self.device_ip = "192.168.10.2"  # For USRP and RTLSDRTCP
 
         self.receive_buffer = None
-        self.spectrum_buffer = None # type: RingBuffer
+        self.spectrum_buffer = None  # type: LinearBuffer
 
     def _start_spectrum_thread(self):
-        self.spectrum_buffer = RingBuffer(constants.SPECTRUM_BUFFER_SIZE)
+        self.spectrum_buffer = LinearBuffer(constants.SPECTRUM_BUFFER_SIZE)
         self.read_recv_buffer_thread = threading.Thread(target=self.read_for_spectrum_analyzer)
         self.read_recv_buffer_thread.daemon = True
         self.read_recv_buffer_thread.start()
@@ -650,11 +650,7 @@ class Device(QObject):
                 end = n_samples * self.BYTES_PER_SAMPLE
                 data = self.unpack_complex(byte_buffer[:end], n_samples)
 
-                while not self.spectrum_buffer.will_fit(n_samples) and self.is_receiving:
-                    time.sleep(0.001)
-
-                if self.is_receiving:
-                    self.spectrum_buffer.push(data)
+                self.spectrum_buffer.push(data)
 
             except (BrokenPipeError, OSError):
                 pass

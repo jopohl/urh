@@ -503,9 +503,10 @@ class VirtualDevice(QObject):
     def spectrum(self):
         if self.mode == Mode.spectrum:
             if self.backend == Backends.grc or self.backend == Backends.native:
-                while self.__dev.spectrum_buffer.current_index < constants.SPECTRUM_READING_SIZE and self.is_running:
-                    time.sleep(0.001)
-                return self.__dev.spectrum_buffer.pop(constants.SPECTRUM_READING_SIZE) if self.is_running else None
+                if self.is_running and self.__dev.spectrum_buffer.data_available(constants.SPECTRUM_READING_SIZE):
+                    return self.__dev.spectrum_buffer.pop(constants.SPECTRUM_READING_SIZE)
+                else:
+                    return None
             elif self.backend == Backends.network:
                 return self.__dev.receive_buffer
         else:

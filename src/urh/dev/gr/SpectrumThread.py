@@ -1,20 +1,17 @@
-import time
-
-from urh import constants
 import numpy as np
-
 import zmq
 
+from urh import constants
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
+from urh.util.LinearBuffer import LinearBuffer
 from urh.util.Logger import logger
-from urh.util.RingBuffer import RingBuffer
 
 
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
         self.buf_size = constants.SPECTRUM_BUFFER_SIZE
-        self.spectrum_buffer = RingBuffer(self.buf_size)
+        self.spectrum_buffer = LinearBuffer(self.buf_size)
         self.data = np.zeros(self.buf_size, dtype=np.complex64)
 
     def run(self):
@@ -49,9 +46,6 @@ class SpectrumThread(AbstractBaseThread):
                     self.current_index = 1  # show GUI we are working
 
                     data = np.fromstring(rcvd, dtype=np.complex64)
-                    n_samples = len(data)
-                    while not self.spectrum_buffer.will_fit(n_samples):
-                        time.sleep(0.001)
                     self.spectrum_buffer.push(data)
                     rcvd = b""
                 except ValueError:

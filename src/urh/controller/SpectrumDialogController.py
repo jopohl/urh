@@ -14,7 +14,6 @@ class SpectrumDialogController(SendRecvDialogController):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewFFT
-        self.update_interval = 1
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_spectrum)
         self.hide_receive_ui_items()
         self.hide_send_ui_items()
@@ -90,7 +89,7 @@ class SpectrumDialogController(SendRecvDialogController):
     def update_view(self):
         if super().update_view():
             spectrum_data = self.device.spectrum
-            if spectrum_data is None:
+            if spectrum_data is None or len(spectrum_data) == 0:
                 return
 
             w = np.abs(np.fft.fft(spectrum_data))

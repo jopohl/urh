@@ -1,9 +1,9 @@
 import time
 from enum import Enum
 
-import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
+from urh import constants
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
 from urh.dev.native.Device import Device
@@ -38,6 +38,8 @@ class VirtualDevice(QObject):
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
+
+        self.is_running = False
 
         freq = config.DEFAULT_FREQUENCY if freq is None else freq
         sample_rate = config.DEFAULT_SAMPLE_RATE if sample_rate is None else sample_rate
@@ -500,13 +502,13 @@ class VirtualDevice(QObject):
     @property
     def spectrum(self):
         if self.mode == Mode.spectrum:
-            if self.backend == Backends.grc:
-                return self.__dev.x, self.__dev.y
-            elif self.backend == Backends.native or self.backend == Backends.network:
-                w = np.abs(np.fft.fft(self.__dev.receive_buffer))
-                freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
-                idx = np.argsort(freqs)
-                return freqs[idx].astype(np.float32), w[idx].astype(np.float32)
+            if self.backend == Backends.grc or self.backend == Backends.native:
+                if self.is_running and self.__dev.spectrum_buffer.data_available(constants.SPECTRUM_READING_SIZE):
+                    return self.__dev.spectrum_buffer.pop(constants.SPECTRUM_READING_SIZE)
+                else:
+                    return None
+            elif self.backend == Backends.network:
+                return self.__dev.receive_buffer
         else:
             raise ValueError("Spectrum x only available in spectrum mode")
 
@@ -579,9 +581,11 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     def emit_stopped_signal(self):
+        self.is_running = False
         self.stopped.emit()
 
     def emit_started_signal(self):
+        self.is_running = True
         self.started.emit()
 
     def emit_sender_needs_restart(self):

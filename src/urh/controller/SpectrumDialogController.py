@@ -70,7 +70,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def _eliminate_graphic_view(self):
         super()._eliminate_graphic_view()
-        if self.ui.graphicsViewSpectrogram.scene() is not None:
+        if self.ui.graphicsViewSpectrogram is not None and self.ui.graphicsViewSpectrogram.scene() is not None:
             self.ui.graphicsViewSpectrogram.scene().clear()
             self.ui.graphicsViewSpectrogram.scene().setParent(None)
             self.ui.graphicsViewSpectrogram.setScene(None)

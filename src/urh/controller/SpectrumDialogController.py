@@ -57,7 +57,7 @@ class SpectrumDialogController(SendRecvDialogController):
 
     def __update_spectrogram(self):
         spectrogram = Spectrogram(self.device.data)
-        spectrogram.data_min = -70
+        spectrogram.data_min = -80
         spectrogram.data_max = 10
         scene = self.ui.graphicsViewSpectrogram.scene()
         pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))

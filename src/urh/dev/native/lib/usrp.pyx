@@ -2,7 +2,7 @@ from cusrp cimport *
 import numpy as np
 # noinspection PyUnresolvedReferences
 cimport numpy as np
-from libc.stdlib cimport malloc
+from libc.stdlib cimport malloc, free
 # noinspection PyUnresolvedReferences
 from cython.view cimport array as cvarray  # needed for converting of malloc array to python array
 
@@ -94,24 +94,34 @@ cpdef uhd_error destroy_stream():
 cpdef uhd_error recv_stream(connection, int num_samples):
     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+    if not result:
+        raise MemoryError()
+
     cdef int current_index = 0
     cdef int i = 0
 
 
     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))
+    if not buff:
+        raise MemoryError()
+
     cdef void ** buffs = <void **> &buff
     cdef size_t items_received
 
 
-    while current_index < 2*num_samples:
-        uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
-        memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
-        #for i in range(current_index, current_index+2*items_received):
-        #    result[i] = buff[i-current_index]
+    try:
+        while current_index < 2*num_samples:
+            uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
+            memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
+            #for i in range(current_index, current_index+2*items_received):
+            #    result[i] = buff[i-current_index]
 
-        current_index += 2*items_received
+            current_index += 2*items_received
 
-    connection.send_bytes(<float[:2*num_samples]>result)
+        connection.send_bytes(<float[:2*num_samples]>result)
+    finally:
+        free(buff)
+        free(result)
 
 cpdef uhd_error send_stream(float[::1] samples):
     cdef size_t sample_count = len(samples)
@@ -120,16 +130,22 @@ cpdef uhd_error send_stream(float[::1] samples):
     cdef size_t num_samps_sent = 0
 
     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
+    if not buff:
+        raise MemoryError()
+
     cdef const void ** buffs = <const void **> &buff
 
-    for i in range(0, sample_count):
-        buff[index] = samples[i]
-        index += 1
-        if index >= 2*max_num_tx_samples:
-            index = 0
-            uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+    try:
+        for i in range(0, sample_count):
+            buff[index] = samples[i]
+            index += 1
+            if index >= 2*max_num_tx_samples:
+                index = 0
+                uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
 
-    uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
+        uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
+    finally:
+        free(buff)
 
 
 cpdef str get_device_representation():

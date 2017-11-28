@@ -2,7 +2,7 @@
 # this fallback does not include set_tuner_bandwidth , as it is not supported e.g. in Manjaro and Ubuntu packages
 
 cimport crtlsdr
-from libc.stdlib cimport malloc
+from libc.stdlib cimport malloc, free
 
 ctypedef unsigned char uint8_t
 ctypedef unsigned short uint16_t
@@ -283,11 +283,15 @@ cpdef bytes read_sync(int num_samples=8 * 32 * 512):
     :return:
     """
     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
+    if not samples:
+        raise MemoryError()
+
     cdef int n_read = 0
-
-    crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
-
-    return bytes(samples[0:n_read])
+    try:
+        crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
+        return bytes(samples[0:n_read])
+    finally:
+        free(samples)
 
 cpdef int read_async(callback, connection):
     """

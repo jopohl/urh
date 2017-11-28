@@ -1444,6 +1444,33 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 /* PyObjectCallOneArg.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
 
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
+/* SwapException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSwap(type, value, tb)  __Pyx__ExceptionSwap(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
+/* SaveResetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+#else
+#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
+#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#endif
+
 /* RaiseArgTupleInvalid.proto */
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
@@ -1541,31 +1568,12 @@ static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void);
 /* ExtTypeTest.proto */
 static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
 
-/* SaveResetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
-#else
-#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
-#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
-#endif
-
 /* PyErrExceptionMatches.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
 static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
 #else
 #define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
-#endif
-
-/* GetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
 #endif
 
 /* BytesEquals.proto */
@@ -1595,14 +1603,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *
 
 /* GetModuleGlobalName.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
-
-/* SwapException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_ExceptionSwap(type, value, tb)  __Pyx__ExceptionSwap(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb);
-#endif
 
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
@@ -2106,11 +2106,11 @@ int __pyx_module_is_main_src__urh__dev__native__lib__usrp = 0;
 
 /* Implementation of 'src.urh.dev.native.lib.usrp' */
 static PyObject *__pyx_builtin_print;
+static PyObject *__pyx_builtin_MemoryError;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ImportError;
-static PyObject *__pyx_builtin_MemoryError;
 static PyObject *__pyx_builtin_enumerate;
 static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_Ellipsis;
@@ -3479,6 +3479,15 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_recv_stream(PyObject 
   struct __pyx_array_obj *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  char const *__pyx_t_9;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
   __Pyx_RefNannySetupContext("recv_stream", 0);
 
   /* "src/urh/dev/native/lib/usrp.pyx":95
@@ -3486,7 +3495,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_recv_stream(PyObject 
  * cpdef uhd_error recv_stream(connection, int num_samples):
  *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples             # <<<<<<<<<<<<<<
  *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
- *     cdef int current_index = 0
+ *     if not result:
  */
   __pyx_v_num_samples = ((((int)(((size_t)__pyx_v_num_samples) / __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_rx_samples)) + 1) * __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_rx_samples);
 
@@ -3494,22 +3503,50 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_recv_stream(PyObject 
  * cpdef uhd_error recv_stream(connection, int num_samples):
  *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
  *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))             # <<<<<<<<<<<<<<
- *     cdef int current_index = 0
- *     cdef int i = 0
+ *     if not result:
+ *         raise MemoryError()
  */
   __pyx_v_result = ((float *)malloc(((__pyx_v_num_samples * 2) * (sizeof(float)))));
 
   /* "src/urh/dev/native/lib/usrp.pyx":97
  *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
  *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+ *     if not result:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  __pyx_t_1 = ((!(__pyx_v_result != 0)) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/usrp.pyx":98
+ *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+ *     if not result:
+ *         raise MemoryError()             # <<<<<<<<<<<<<<
+ * 
+ *     cdef int current_index = 0
+ */
+    PyErr_NoMemory(); __PYX_ERR(0, 98, __pyx_L1_error)
+
+    /* "src/urh/dev/native/lib/usrp.pyx":97
+ *     num_samples = (<int>(num_samples / max_num_rx_samples) + 1) * max_num_rx_samples
+ *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+ *     if not result:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  }
+
+  /* "src/urh/dev/native/lib/usrp.pyx":100
+ *         raise MemoryError()
+ * 
  *     cdef int current_index = 0             # <<<<<<<<<<<<<<
  *     cdef int i = 0
  * 
  */
   __pyx_v_current_index = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":98
- *     cdef float* result = <float*>malloc(num_samples * 2 * sizeof(float))
+  /* "src/urh/dev/native/lib/usrp.pyx":101
+ * 
  *     cdef int current_index = 0
  *     cdef int i = 0             # <<<<<<<<<<<<<<
  * 
@@ -3517,133 +3554,248 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_recv_stream(PyObject 
  */
   __pyx_v_i = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":101
+  /* "src/urh/dev/native/lib/usrp.pyx":104
  * 
  * 
  *     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))             # <<<<<<<<<<<<<<
- *     cdef void ** buffs = <void **> &buff
- *     cdef size_t items_received
+ *     if not buff:
+ *         raise MemoryError()
  */
   __pyx_v_buff = ((float *)malloc(((__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_rx_samples * 2) * (sizeof(float)))));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":102
+  /* "src/urh/dev/native/lib/usrp.pyx":105
  * 
  *     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))
+ *     if not buff:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  __pyx_t_1 = ((!(__pyx_v_buff != 0)) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/usrp.pyx":106
+ *     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))
+ *     if not buff:
+ *         raise MemoryError()             # <<<<<<<<<<<<<<
+ * 
+ *     cdef void ** buffs = <void **> &buff
+ */
+    PyErr_NoMemory(); __PYX_ERR(0, 106, __pyx_L1_error)
+
+    /* "src/urh/dev/native/lib/usrp.pyx":105
+ * 
+ *     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))
+ *     if not buff:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  }
+
+  /* "src/urh/dev/native/lib/usrp.pyx":108
+ *         raise MemoryError()
+ * 
  *     cdef void ** buffs = <void **> &buff             # <<<<<<<<<<<<<<
  *     cdef size_t items_received
  * 
  */
   __pyx_v_buffs = ((void **)(&__pyx_v_buff));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":106
+  /* "src/urh/dev/native/lib/usrp.pyx":112
  * 
  * 
- *     while current_index < 2*num_samples:             # <<<<<<<<<<<<<<
- *         uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
- *         memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
+ *     try:             # <<<<<<<<<<<<<<
+ *         while current_index < 2*num_samples:
+ *             uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
  */
-  while (1) {
-    __pyx_t_1 = ((__pyx_v_current_index < (2 * __pyx_v_num_samples)) != 0);
-    if (!__pyx_t_1) break;
+  /*try:*/ {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":107
+    /* "src/urh/dev/native/lib/usrp.pyx":113
  * 
- *     while current_index < 2*num_samples:
- *         uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)             # <<<<<<<<<<<<<<
- *         memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
- *         #for i in range(current_index, current_index+2*items_received):
+ *     try:
+ *         while current_index < 2*num_samples:             # <<<<<<<<<<<<<<
+ *             uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
+ *             memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
  */
-    uhd_rx_streamer_recv(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_rx_streamer_handle, __pyx_v_buffs, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_rx_samples, (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_rx_metadata_handle), 3.0, 0, (&__pyx_v_items_received));
+    while (1) {
+      __pyx_t_1 = ((__pyx_v_current_index < (2 * __pyx_v_num_samples)) != 0);
+      if (!__pyx_t_1) break;
 
-    /* "src/urh/dev/native/lib/usrp.pyx":108
- *     while current_index < 2*num_samples:
- *         uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
- *         memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))             # <<<<<<<<<<<<<<
- *         #for i in range(current_index, current_index+2*items_received):
- *         #    result[i] = buff[i-current_index]
+      /* "src/urh/dev/native/lib/usrp.pyx":114
+ *     try:
+ *         while current_index < 2*num_samples:
+ *             uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)             # <<<<<<<<<<<<<<
+ *             memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
+ *             #for i in range(current_index, current_index+2*items_received):
  */
-    memcpy((&(__pyx_v_result[__pyx_v_current_index])), (&(__pyx_v_buff[0])), ((2 * __pyx_v_items_received) * (sizeof(float))));
+      uhd_rx_streamer_recv(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_rx_streamer_handle, __pyx_v_buffs, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_rx_samples, (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_rx_metadata_handle), 3.0, 0, (&__pyx_v_items_received));
 
-    /* "src/urh/dev/native/lib/usrp.pyx":112
- *         #    result[i] = buff[i-current_index]
- * 
- *         current_index += 2*items_received             # <<<<<<<<<<<<<<
- * 
- *     connection.send_bytes(<float[:2*num_samples]>result)
+      /* "src/urh/dev/native/lib/usrp.pyx":115
+ *         while current_index < 2*num_samples:
+ *             uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
+ *             memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))             # <<<<<<<<<<<<<<
+ *             #for i in range(current_index, current_index+2*items_received):
+ *             #    result[i] = buff[i-current_index]
  */
-    __pyx_v_current_index = (__pyx_v_current_index + (2 * __pyx_v_items_received));
+      memcpy((&(__pyx_v_result[__pyx_v_current_index])), (&(__pyx_v_buff[0])), ((2 * __pyx_v_items_received) * (sizeof(float))));
+
+      /* "src/urh/dev/native/lib/usrp.pyx":119
+ *             #    result[i] = buff[i-current_index]
+ * 
+ *             current_index += 2*items_received             # <<<<<<<<<<<<<<
+ * 
+ *         connection.send_bytes(<float[:2*num_samples]>result)
+ */
+      __pyx_v_current_index = (__pyx_v_current_index + (2 * __pyx_v_items_received));
+    }
+
+    /* "src/urh/dev/native/lib/usrp.pyx":121
+ *             current_index += 2*items_received
+ * 
+ *         connection.send_bytes(<float[:2*num_samples]>result)             # <<<<<<<<<<<<<<
+ *     finally:
+ *         free(buff)
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_connection, __pyx_n_s_send_bytes); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 121, __pyx_L6_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (!__pyx_v_result) {
+      PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
+      __PYX_ERR(0, 121, __pyx_L6_error)
+    }
+    __pyx_t_6 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_float);
+    __pyx_t_5 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)(2 * __pyx_v_num_samples)));
+    if (unlikely(!__pyx_t_6 || !__pyx_t_5 || !PyBytes_AsString(__pyx_t_6))) __PYX_ERR(0, 121, __pyx_L6_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_4 = __pyx_array_new(__pyx_t_5, sizeof(float), PyBytes_AS_STRING(__pyx_t_6), (char *) "c", (char *) __pyx_v_result);
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L6_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_6)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_6);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+      }
+    }
+    if (!__pyx_t_6) {
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_t_4)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L6_error)
+      __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_2);
+    } else {
+      #if CYTHON_FAST_PYCALL
+      if (PyFunction_Check(__pyx_t_3)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)__pyx_t_4)};
+        __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L6_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
+      } else
+      #endif
+      #if CYTHON_FAST_PYCCALL
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)__pyx_t_4)};
+        __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L6_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
+      } else
+      #endif
+      {
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 121, __pyx_L6_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6); __pyx_t_6 = NULL;
+        __Pyx_GIVEREF(((PyObject *)__pyx_t_4));
+        PyTuple_SET_ITEM(__pyx_t_5, 0+1, ((PyObject *)__pyx_t_4));
+        __pyx_t_4 = 0;
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L6_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      }
+    }
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":114
- *         current_index += 2*items_received
+  /* "src/urh/dev/native/lib/usrp.pyx":123
+ *         connection.send_bytes(<float[:2*num_samples]>result)
+ *     finally:
+ *         free(buff)             # <<<<<<<<<<<<<<
+ *         free(result)
  * 
- *     connection.send_bytes(<float[:2*num_samples]>result)             # <<<<<<<<<<<<<<
+ */
+  /*finally:*/ {
+    /*normal exit:*/{
+      free(__pyx_v_buff);
+
+      /* "src/urh/dev/native/lib/usrp.pyx":124
+ *     finally:
+ *         free(buff)
+ *         free(result)             # <<<<<<<<<<<<<<
  * 
  * cpdef uhd_error send_stream(float[::1] samples):
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_connection, __pyx_n_s_send_bytes); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  if (!__pyx_v_result) {
-    PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
-    __PYX_ERR(0, 114, __pyx_L1_error)
-  }
-  __pyx_t_6 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_float);
-  __pyx_t_5 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)(2 * __pyx_v_num_samples)));
-  if (unlikely(!__pyx_t_6 || !__pyx_t_5 || !PyBytes_AsString(__pyx_t_6))) __PYX_ERR(0, 114, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = __pyx_array_new(__pyx_t_5, sizeof(float), PyBytes_AS_STRING(__pyx_t_6), (char *) "c", (char *) __pyx_v_result);
-  if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 114, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_6)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
+      free(__pyx_v_result);
+      goto __pyx_L7;
     }
-  }
-  if (!__pyx_t_6) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_t_4)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
-    __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
-    __Pyx_GOTREF(__pyx_t_2);
-  } else {
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_3)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)__pyx_t_4)};
-      __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
+    __pyx_L6_error:;
+    /*exception exit:*/{
+      __Pyx_PyThreadState_declare
+      __Pyx_PyThreadState_assign
+      __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0; __pyx_t_13 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0;
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
-    } else
-    #endif
-    #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)__pyx_t_4)};
-      __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
-    } else
-    #endif
-    {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 114, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6); __pyx_t_6 = NULL;
-      __Pyx_GIVEREF(((PyObject *)__pyx_t_4));
-      PyTuple_SET_ITEM(__pyx_t_5, 0+1, ((PyObject *)__pyx_t_4));
-      __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_XDECREF(((PyObject *)__pyx_t_4)); __pyx_t_4 = 0;
+      if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_13, &__pyx_t_14, &__pyx_t_15);
+      if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_10, &__pyx_t_11, &__pyx_t_12) < 0)) __Pyx_ErrFetch(&__pyx_t_10, &__pyx_t_11, &__pyx_t_12);
+      __Pyx_XGOTREF(__pyx_t_10);
+      __Pyx_XGOTREF(__pyx_t_11);
+      __Pyx_XGOTREF(__pyx_t_12);
+      __Pyx_XGOTREF(__pyx_t_13);
+      __Pyx_XGOTREF(__pyx_t_14);
+      __Pyx_XGOTREF(__pyx_t_15);
+      __pyx_t_7 = __pyx_lineno; __pyx_t_8 = __pyx_clineno; __pyx_t_9 = __pyx_filename;
+      {
+
+        /* "src/urh/dev/native/lib/usrp.pyx":123
+ *         connection.send_bytes(<float[:2*num_samples]>result)
+ *     finally:
+ *         free(buff)             # <<<<<<<<<<<<<<
+ *         free(result)
+ * 
+ */
+        free(__pyx_v_buff);
+
+        /* "src/urh/dev/native/lib/usrp.pyx":124
+ *     finally:
+ *         free(buff)
+ *         free(result)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef uhd_error send_stream(float[::1] samples):
+ */
+        free(__pyx_v_result);
+      }
+      if (PY_MAJOR_VERSION >= 3) {
+        __Pyx_XGIVEREF(__pyx_t_13);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_14, __pyx_t_15);
+      }
+      __Pyx_XGIVEREF(__pyx_t_10);
+      __Pyx_XGIVEREF(__pyx_t_11);
+      __Pyx_XGIVEREF(__pyx_t_12);
+      __Pyx_ErrRestore(__pyx_t_10, __pyx_t_11, __pyx_t_12);
+      __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0; __pyx_t_13 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0;
+      __pyx_lineno = __pyx_t_7; __pyx_clineno = __pyx_t_8; __pyx_filename = __pyx_t_9;
+      goto __pyx_L1_error;
     }
+    __pyx_L7:;
   }
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "src/urh/dev/native/lib/usrp.pyx":94
  *         return uhd_tx_streamer_free(&tx_streamer_handle)
@@ -3753,8 +3905,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_16recv_stream(CYTHON
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":116
- *     connection.send_bytes(<float[:2*num_samples]>result)
+/* "src/urh/dev/native/lib/usrp.pyx":126
+ *         free(result)
  * 
  * cpdef uhd_error send_stream(float[::1] samples):             # <<<<<<<<<<<<<<
  *     cdef size_t sample_count = len(samples)
@@ -3773,11 +3925,11 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
   __Pyx_RefNannyDeclarations
   size_t __pyx_t_1;
   int __pyx_t_2;
-  Py_ssize_t __pyx_t_3;
-  int __pyx_t_4;
+  int __pyx_t_3;
+  Py_ssize_t __pyx_t_4;
   __Pyx_RefNannySetupContext("send_stream", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":117
+  /* "src/urh/dev/native/lib/usrp.pyx":127
  * 
  * cpdef uhd_error send_stream(float[::1] samples):
  *     cdef size_t sample_count = len(samples)             # <<<<<<<<<<<<<<
@@ -3787,7 +3939,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
   __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_samples); 
   __pyx_v_sample_count = __pyx_t_1;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":119
+  /* "src/urh/dev/native/lib/usrp.pyx":129
  *     cdef size_t sample_count = len(samples)
  *     cdef int i
  *     cdef int index = 0             # <<<<<<<<<<<<<<
@@ -3796,7 +3948,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
  */
   __pyx_v_index = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":120
+  /* "src/urh/dev/native/lib/usrp.pyx":130
  *     cdef int i
  *     cdef int index = 0
  *     cdef size_t num_samps_sent = 0             # <<<<<<<<<<<<<<
@@ -3805,103 +3957,156 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
  */
   __pyx_v_num_samps_sent = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":122
+  /* "src/urh/dev/native/lib/usrp.pyx":132
  *     cdef size_t num_samps_sent = 0
  * 
  *     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))             # <<<<<<<<<<<<<<
- *     cdef const void ** buffs = <const void **> &buff
- * 
+ *     if not buff:
+ *         raise MemoryError()
  */
   __pyx_v_buff = ((float *)malloc(((__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples * 2) * (sizeof(float)))));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":123
+  /* "src/urh/dev/native/lib/usrp.pyx":133
  * 
  *     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
+ *     if not buff:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  __pyx_t_2 = ((!(__pyx_v_buff != 0)) != 0);
+  if (__pyx_t_2) {
+
+    /* "src/urh/dev/native/lib/usrp.pyx":134
+ *     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
+ *     if not buff:
+ *         raise MemoryError()             # <<<<<<<<<<<<<<
+ * 
+ *     cdef const void ** buffs = <const void **> &buff
+ */
+    PyErr_NoMemory(); __PYX_ERR(0, 134, __pyx_L1_error)
+
+    /* "src/urh/dev/native/lib/usrp.pyx":133
+ * 
+ *     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
+ *     if not buff:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  }
+
+  /* "src/urh/dev/native/lib/usrp.pyx":136
+ *         raise MemoryError()
+ * 
  *     cdef const void ** buffs = <const void **> &buff             # <<<<<<<<<<<<<<
  * 
- *     for i in range(0, sample_count):
+ *     try:
  */
   __pyx_v_buffs = ((void const **)(&__pyx_v_buff));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":125
+  /* "src/urh/dev/native/lib/usrp.pyx":138
  *     cdef const void ** buffs = <const void **> &buff
  * 
- *     for i in range(0, sample_count):             # <<<<<<<<<<<<<<
- *         buff[index] = samples[i]
- *         index += 1
+ *     try:             # <<<<<<<<<<<<<<
+ *         for i in range(0, sample_count):
+ *             buff[index] = samples[i]
  */
-  __pyx_t_1 = __pyx_v_sample_count;
-  for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
-    __pyx_v_i = __pyx_t_2;
+  /*try:*/ {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":126
+    /* "src/urh/dev/native/lib/usrp.pyx":139
  * 
- *     for i in range(0, sample_count):
- *         buff[index] = samples[i]             # <<<<<<<<<<<<<<
- *         index += 1
- *         if index >= 2*max_num_tx_samples:
+ *     try:
+ *         for i in range(0, sample_count):             # <<<<<<<<<<<<<<
+ *             buff[index] = samples[i]
+ *             index += 1
  */
-    __pyx_t_3 = __pyx_v_i;
-    (__pyx_v_buff[__pyx_v_index]) = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_3)) )));
+    __pyx_t_1 = __pyx_v_sample_count;
+    for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_1; __pyx_t_3+=1) {
+      __pyx_v_i = __pyx_t_3;
 
-    /* "src/urh/dev/native/lib/usrp.pyx":127
- *     for i in range(0, sample_count):
- *         buff[index] = samples[i]
- *         index += 1             # <<<<<<<<<<<<<<
- *         if index >= 2*max_num_tx_samples:
- *             index = 0
+      /* "src/urh/dev/native/lib/usrp.pyx":140
+ *     try:
+ *         for i in range(0, sample_count):
+ *             buff[index] = samples[i]             # <<<<<<<<<<<<<<
+ *             index += 1
+ *             if index >= 2*max_num_tx_samples:
  */
-    __pyx_v_index = (__pyx_v_index + 1);
+      __pyx_t_4 = __pyx_v_i;
+      (__pyx_v_buff[__pyx_v_index]) = (*((float *) ( /* dim=0 */ ((char *) (((float *) __pyx_v_samples.data) + __pyx_t_4)) )));
 
-    /* "src/urh/dev/native/lib/usrp.pyx":128
- *         buff[index] = samples[i]
- *         index += 1
- *         if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
- *             index = 0
- *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+      /* "src/urh/dev/native/lib/usrp.pyx":141
+ *         for i in range(0, sample_count):
+ *             buff[index] = samples[i]
+ *             index += 1             # <<<<<<<<<<<<<<
+ *             if index >= 2*max_num_tx_samples:
+ *                 index = 0
  */
-    __pyx_t_4 = ((__pyx_v_index >= (2 * __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples)) != 0);
-    if (__pyx_t_4) {
+      __pyx_v_index = (__pyx_v_index + 1);
 
-      /* "src/urh/dev/native/lib/usrp.pyx":129
- *         index += 1
- *         if index >= 2*max_num_tx_samples:
- *             index = 0             # <<<<<<<<<<<<<<
- *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+      /* "src/urh/dev/native/lib/usrp.pyx":142
+ *             buff[index] = samples[i]
+ *             index += 1
+ *             if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
+ *                 index = 0
+ *                 uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+ */
+      __pyx_t_2 = ((__pyx_v_index >= (2 * __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples)) != 0);
+      if (__pyx_t_2) {
+
+        /* "src/urh/dev/native/lib/usrp.pyx":143
+ *             index += 1
+ *             if index >= 2*max_num_tx_samples:
+ *                 index = 0             # <<<<<<<<<<<<<<
+ *                 uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
  * 
  */
-      __pyx_v_index = 0;
+        __pyx_v_index = 0;
 
-      /* "src/urh/dev/native/lib/usrp.pyx":130
- *         if index >= 2*max_num_tx_samples:
- *             index = 0
- *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
+        /* "src/urh/dev/native/lib/usrp.pyx":144
+ *             if index >= 2*max_num_tx_samples:
+ *                 index = 0
+ *                 uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
  * 
- *     uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
+ *         uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
  */
-      uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples, (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
+        uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_max_num_tx_samples, (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
 
-      /* "src/urh/dev/native/lib/usrp.pyx":128
- *         buff[index] = samples[i]
- *         index += 1
- *         if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
- *             index = 0
- *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+        /* "src/urh/dev/native/lib/usrp.pyx":142
+ *             buff[index] = samples[i]
+ *             index += 1
+ *             if index >= 2*max_num_tx_samples:             # <<<<<<<<<<<<<<
+ *                 index = 0
+ *                 uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
  */
+      }
     }
+
+    /* "src/urh/dev/native/lib/usrp.pyx":146
+ *                 uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+ * 
+ *         uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
+ *     finally:
+ *         free(buff)
+ */
+    uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, ((size_t)(((long)__pyx_v_index) / 2)), (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":132
- *             uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
- * 
- *     uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)             # <<<<<<<<<<<<<<
+  /* "src/urh/dev/native/lib/usrp.pyx":148
+ *         uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
+ *     finally:
+ *         free(buff)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  uhd_tx_streamer_send(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_buffs, ((size_t)(((long)__pyx_v_index) / 2)), (&__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_metadata_handle), 0.1, (&__pyx_v_num_samps_sent));
+  /*finally:*/ {
+    /*normal exit:*/{
+      free(__pyx_v_buff);
+      goto __pyx_L6;
+    }
+    __pyx_L6:;
+  }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":116
- *     connection.send_bytes(<float[:2*num_samples]>result)
+  /* "src/urh/dev/native/lib/usrp.pyx":126
+ *         free(result)
  * 
  * cpdef uhd_error send_stream(float[::1] samples):             # <<<<<<<<<<<<<<
  *     cdef size_t sample_count = len(samples)
@@ -3910,6 +4115,11 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__Pyx_mem
 
   /* function exit code */
   __pyx_r = (uhd_error) 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.usrp.send_stream", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (uhd_error) 0;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3922,7 +4132,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_4usrp_19send_stream(PyObje
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("send_stream (wrapper)", 0);
   assert(__pyx_arg_samples); {
-    __pyx_v_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(__pyx_arg_samples); if (unlikely(!__pyx_v_samples.memview)) __PYX_ERR(0, 116, __pyx_L3_error)
+    __pyx_v_samples = __Pyx_PyObject_to_MemoryviewSlice_dc_float(__pyx_arg_samples); if (unlikely(!__pyx_v_samples.memview)) __PYX_ERR(0, 126, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3943,7 +4153,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_18send_stream(CYTHON
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("send_stream", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__pyx_v_samples, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_send_stream(__pyx_v_samples, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3961,7 +4171,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_18send_stream(CYTHON
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":135
+/* "src/urh/dev/native/lib/usrp.pyx":151
  * 
  * 
  * cpdef str get_device_representation():             # <<<<<<<<<<<<<<
@@ -3978,7 +4188,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representa
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_device_representation", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":136
+  /* "src/urh/dev/native/lib/usrp.pyx":152
  * 
  * cpdef str get_device_representation():
  *     cdef size_t size = 3000             # <<<<<<<<<<<<<<
@@ -3987,7 +4197,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representa
  */
   __pyx_v_size = 0xBB8;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":137
+  /* "src/urh/dev/native/lib/usrp.pyx":153
  * cpdef str get_device_representation():
  *     cdef size_t size = 3000
  *     cdef char * result = <char *> malloc(size * sizeof(char))             # <<<<<<<<<<<<<<
@@ -3996,7 +4206,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representa
  */
   __pyx_v_result = ((char *)malloc((__pyx_v_size * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":138
+  /* "src/urh/dev/native/lib/usrp.pyx":154
  *     cdef size_t size = 3000
  *     cdef char * result = <char *> malloc(size * sizeof(char))
  *     uhd_usrp_get_pp_string(_c_device, result, size)             # <<<<<<<<<<<<<<
@@ -4005,7 +4215,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representa
  */
   uhd_usrp_get_pp_string(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp__c_device, __pyx_v_result, __pyx_v_size);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":139
+  /* "src/urh/dev/native/lib/usrp.pyx":155
  *     cdef char * result = <char *> malloc(size * sizeof(char))
  *     uhd_usrp_get_pp_string(_c_device, result, size)
  *     return result.decode("UTF-8")             # <<<<<<<<<<<<<<
@@ -4013,14 +4223,14 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representa
  * cpdef uhd_error set_sample_rate(double sample_rate):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_decode_c_string(__pyx_v_result, 0, strlen(__pyx_v_result), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_decode_c_string(__pyx_v_result, 0, strlen(__pyx_v_result), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 139, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 155, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":135
+  /* "src/urh/dev/native/lib/usrp.pyx":151
  * 
  * 
  * cpdef str get_device_representation():             # <<<<<<<<<<<<<<
@@ -4058,7 +4268,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_20get_device_represe
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_device_representation", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representation(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_device_representation(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4075,7 +4285,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_20get_device_represe
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":141
+/* "src/urh/dev/native/lib/usrp.pyx":157
  *     return result.decode("UTF-8")
  * 
  * cpdef uhd_error set_sample_rate(double sample_rate):             # <<<<<<<<<<<<<<
@@ -4090,7 +4300,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(doubl
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("set_sample_rate", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":142
+  /* "src/urh/dev/native/lib/usrp.pyx":158
  * 
  * cpdef uhd_error set_sample_rate(double sample_rate):
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4100,7 +4310,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(doubl
   __pyx_t_1 = (__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_IS_TX != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":143
+    /* "src/urh/dev/native/lib/usrp.pyx":159
  * cpdef uhd_error set_sample_rate(double sample_rate):
  *     if IS_TX:
  *         return uhd_usrp_set_tx_rate(_c_device, sample_rate, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4110,7 +4320,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(doubl
     __pyx_r = uhd_usrp_set_tx_rate(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp__c_device, __pyx_v_sample_rate, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_CHANNEL);
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/usrp.pyx":142
+    /* "src/urh/dev/native/lib/usrp.pyx":158
  * 
  * cpdef uhd_error set_sample_rate(double sample_rate):
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4119,7 +4329,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(doubl
  */
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":145
+  /* "src/urh/dev/native/lib/usrp.pyx":161
  *         return uhd_usrp_set_tx_rate(_c_device, sample_rate, CHANNEL)
  *     else:
  *         return uhd_usrp_set_rx_rate(_c_device, sample_rate, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4131,7 +4341,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(doubl
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":141
+  /* "src/urh/dev/native/lib/usrp.pyx":157
  *     return result.decode("UTF-8")
  * 
  * cpdef uhd_error set_sample_rate(double sample_rate):             # <<<<<<<<<<<<<<
@@ -4153,7 +4363,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_4usrp_23set_sample_rate(Py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_sample_rate (wrapper)", 0);
   assert(__pyx_arg_sample_rate); {
-    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(__pyx_arg_sample_rate); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
+    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(__pyx_arg_sample_rate); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 157, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4174,7 +4384,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_22set_sample_rate(CY
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_sample_rate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(__pyx_v_sample_rate, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_sample_rate(__pyx_v_sample_rate, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4191,7 +4401,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_22set_sample_rate(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":147
+/* "src/urh/dev/native/lib/usrp.pyx":163
  *         return uhd_usrp_set_rx_rate(_c_device, sample_rate, CHANNEL)
  * 
  * cpdef uhd_error set_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
@@ -4206,7 +4416,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(double 
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("set_bandwidth", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":148
+  /* "src/urh/dev/native/lib/usrp.pyx":164
  * 
  * cpdef uhd_error set_bandwidth(double bandwidth):
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4216,7 +4426,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(double 
   __pyx_t_1 = (__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_IS_TX != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":149
+    /* "src/urh/dev/native/lib/usrp.pyx":165
  * cpdef uhd_error set_bandwidth(double bandwidth):
  *     if IS_TX:
  *         return uhd_usrp_set_tx_bandwidth(_c_device, bandwidth, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4226,7 +4436,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(double 
     __pyx_r = uhd_usrp_set_tx_bandwidth(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp__c_device, __pyx_v_bandwidth, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_CHANNEL);
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/usrp.pyx":148
+    /* "src/urh/dev/native/lib/usrp.pyx":164
  * 
  * cpdef uhd_error set_bandwidth(double bandwidth):
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4235,7 +4445,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(double 
  */
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":151
+  /* "src/urh/dev/native/lib/usrp.pyx":167
  *         return uhd_usrp_set_tx_bandwidth(_c_device, bandwidth, CHANNEL)
  *     else:
  *         return uhd_usrp_set_rx_bandwidth(_c_device, bandwidth, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4247,7 +4457,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(double 
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":147
+  /* "src/urh/dev/native/lib/usrp.pyx":163
  *         return uhd_usrp_set_rx_rate(_c_device, sample_rate, CHANNEL)
  * 
  * cpdef uhd_error set_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
@@ -4269,7 +4479,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_4usrp_25set_bandwidth(PyOb
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_bandwidth (wrapper)", 0);
   assert(__pyx_arg_bandwidth); {
-    __pyx_v_bandwidth = __pyx_PyFloat_AsDouble(__pyx_arg_bandwidth); if (unlikely((__pyx_v_bandwidth == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L3_error)
+    __pyx_v_bandwidth = __pyx_PyFloat_AsDouble(__pyx_arg_bandwidth); if (unlikely((__pyx_v_bandwidth == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 163, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4290,7 +4500,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_24set_bandwidth(CYTH
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_bandwidth", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(__pyx_v_bandwidth, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_bandwidth(__pyx_v_bandwidth, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4307,7 +4517,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_24set_bandwidth(CYTH
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":153
+/* "src/urh/dev/native/lib/usrp.pyx":169
  *         return uhd_usrp_set_rx_bandwidth(_c_device, bandwidth, CHANNEL)
  * 
  * cpdef uhd_error set_rf_gain(double normalized_gain):             # <<<<<<<<<<<<<<
@@ -4322,7 +4532,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(double __
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("set_rf_gain", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":159
+  /* "src/urh/dev/native/lib/usrp.pyx":175
  *     :return:
  *     """
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4332,7 +4542,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(double __
   __pyx_t_1 = (__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_IS_TX != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":160
+    /* "src/urh/dev/native/lib/usrp.pyx":176
  *     """
  *     if IS_TX:
  *         return uhd_usrp_set_normalized_tx_gain(_c_device, normalized_gain, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4342,7 +4552,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(double __
     __pyx_r = uhd_usrp_set_normalized_tx_gain(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp__c_device, __pyx_v_normalized_gain, __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_CHANNEL);
     goto __pyx_L0;
 
-    /* "src/urh/dev/native/lib/usrp.pyx":159
+    /* "src/urh/dev/native/lib/usrp.pyx":175
  *     :return:
  *     """
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4351,7 +4561,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(double __
  */
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":162
+  /* "src/urh/dev/native/lib/usrp.pyx":178
  *         return uhd_usrp_set_normalized_tx_gain(_c_device, normalized_gain, CHANNEL)
  *     else:
  *         return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)             # <<<<<<<<<<<<<<
@@ -4363,7 +4573,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(double __
     goto __pyx_L0;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":153
+  /* "src/urh/dev/native/lib/usrp.pyx":169
  *         return uhd_usrp_set_rx_bandwidth(_c_device, bandwidth, CHANNEL)
  * 
  * cpdef uhd_error set_rf_gain(double normalized_gain):             # <<<<<<<<<<<<<<
@@ -4386,7 +4596,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_4usrp_27set_rf_gain(PyObje
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_rf_gain (wrapper)", 0);
   assert(__pyx_arg_normalized_gain); {
-    __pyx_v_normalized_gain = __pyx_PyFloat_AsDouble(__pyx_arg_normalized_gain); if (unlikely((__pyx_v_normalized_gain == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L3_error)
+    __pyx_v_normalized_gain = __pyx_PyFloat_AsDouble(__pyx_arg_normalized_gain); if (unlikely((__pyx_v_normalized_gain == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4407,7 +4617,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_26set_rf_gain(CYTHON
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_rf_gain", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(__pyx_v_normalized_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_rf_gain(__pyx_v_normalized_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4424,7 +4634,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_26set_rf_gain(CYTHON
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":164
+/* "src/urh/dev/native/lib/usrp.pyx":180
  *         return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)
  * 
  * cpdef uhd_error set_center_freq(double center_freq):             # <<<<<<<<<<<<<<
@@ -4445,7 +4655,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("set_center_freq", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":166
+  /* "src/urh/dev/native/lib/usrp.pyx":182
  * cpdef uhd_error set_center_freq(double center_freq):
  *     cdef uhd_tune_request_t tune_request
  *     tune_request.target_freq = center_freq             # <<<<<<<<<<<<<<
@@ -4454,7 +4664,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
  */
   __pyx_v_tune_request.target_freq = __pyx_v_center_freq;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":167
+  /* "src/urh/dev/native/lib/usrp.pyx":183
  *     cdef uhd_tune_request_t tune_request
  *     tune_request.target_freq = center_freq
  *     tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO             # <<<<<<<<<<<<<<
@@ -4463,7 +4673,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
  */
   __pyx_v_tune_request.rf_freq_policy = UHD_TUNE_REQUEST_POLICY_AUTO;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":168
+  /* "src/urh/dev/native/lib/usrp.pyx":184
  *     tune_request.target_freq = center_freq
  *     tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
  *     tune_request.dsp_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO             # <<<<<<<<<<<<<<
@@ -4472,7 +4682,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
  */
   __pyx_v_tune_request.dsp_freq_policy = UHD_TUNE_REQUEST_POLICY_AUTO;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":171
+  /* "src/urh/dev/native/lib/usrp.pyx":187
  * 
  *     cdef uhd_tune_result_t tune_result
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4482,7 +4692,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
   __pyx_t_1 = (__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_IS_TX != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":172
+    /* "src/urh/dev/native/lib/usrp.pyx":188
  *     cdef uhd_tune_result_t tune_result
  *     if IS_TX:
  *         result = uhd_usrp_set_tx_freq(_c_device, &tune_request, CHANNEL, &tune_result)             # <<<<<<<<<<<<<<
@@ -4491,7 +4701,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
  */
     __pyx_v_result = uhd_usrp_set_tx_freq(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp__c_device, (&__pyx_v_tune_request), __pyx_v_3src_3urh_3dev_6native_3lib_4usrp_CHANNEL, (&__pyx_v_tune_result));
 
-    /* "src/urh/dev/native/lib/usrp.pyx":171
+    /* "src/urh/dev/native/lib/usrp.pyx":187
  * 
  *     cdef uhd_tune_result_t tune_result
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4501,7 +4711,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
     goto __pyx_L3;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":174
+  /* "src/urh/dev/native/lib/usrp.pyx":190
  *         result = uhd_usrp_set_tx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
  *     else:
  *         result = uhd_usrp_set_rx_freq(_c_device, &tune_request, CHANNEL, &tune_result)             # <<<<<<<<<<<<<<
@@ -4513,18 +4723,18 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
   }
   __pyx_L3:;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":176
+  /* "src/urh/dev/native/lib/usrp.pyx":192
  *         result = uhd_usrp_set_rx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
  * 
  *     print("USRP target frequency", tune_result.target_rf_freq, "actual frequency", tune_result.actual_rf_freq)             # <<<<<<<<<<<<<<
  * 
  *     return result
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_tune_result.target_rf_freq); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_tune_result.target_rf_freq); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_tune_result.actual_rf_freq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_tune_result.actual_rf_freq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyTuple_New(4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_kp_u_USRP_target_frequency);
   __Pyx_GIVEREF(__pyx_kp_u_USRP_target_frequency);
@@ -4538,12 +4748,12 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
   PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_t_3);
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":178
+  /* "src/urh/dev/native/lib/usrp.pyx":194
  *     print("USRP target frequency", tune_result.target_rf_freq, "actual frequency", tune_result.actual_rf_freq)
  * 
  *     return result             # <<<<<<<<<<<<<<
@@ -4553,7 +4763,7 @@ static uhd_error __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(doubl
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":164
+  /* "src/urh/dev/native/lib/usrp.pyx":180
  *         return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)
  * 
  * cpdef uhd_error set_center_freq(double center_freq):             # <<<<<<<<<<<<<<
@@ -4581,7 +4791,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_4usrp_29set_center_freq(Py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_center_freq (wrapper)", 0);
   assert(__pyx_arg_center_freq); {
-    __pyx_v_center_freq = __pyx_PyFloat_AsDouble(__pyx_arg_center_freq); if (unlikely((__pyx_v_center_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L3_error)
+    __pyx_v_center_freq = __pyx_PyFloat_AsDouble(__pyx_arg_center_freq); if (unlikely((__pyx_v_center_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4602,7 +4812,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_28set_center_freq(CY
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_center_freq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(__pyx_v_center_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uhd_error(__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_set_center_freq(__pyx_v_center_freq, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4619,7 +4829,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_28set_center_freq(CY
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/usrp.pyx":180
+/* "src/urh/dev/native/lib/usrp.pyx":196
  *     return result
  * 
  * cpdef str get_last_error():             # <<<<<<<<<<<<<<
@@ -4637,7 +4847,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("get_last_error", 0);
 
-  /* "src/urh/dev/native/lib/usrp.pyx":181
+  /* "src/urh/dev/native/lib/usrp.pyx":197
  * 
  * cpdef str get_last_error():
  *     cdef char * error_msg = <char *> malloc(200 * sizeof(char))             # <<<<<<<<<<<<<<
@@ -4646,7 +4856,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
  */
   __pyx_v_error_msg = ((char *)malloc((0xC8 * (sizeof(char)))));
 
-  /* "src/urh/dev/native/lib/usrp.pyx":183
+  /* "src/urh/dev/native/lib/usrp.pyx":199
  *     cdef char * error_msg = <char *> malloc(200 * sizeof(char))
  * 
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4656,7 +4866,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
   __pyx_t_1 = (__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_IS_TX != 0);
   if (__pyx_t_1) {
 
-    /* "src/urh/dev/native/lib/usrp.pyx":184
+    /* "src/urh/dev/native/lib/usrp.pyx":200
  * 
  *     if IS_TX:
  *         uhd_tx_streamer_last_error(tx_streamer_handle, error_msg, 200)             # <<<<<<<<<<<<<<
@@ -4665,7 +4875,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
  */
     uhd_tx_streamer_last_error(__pyx_v_3src_3urh_3dev_6native_3lib_4usrp_tx_streamer_handle, __pyx_v_error_msg, 0xC8);
 
-    /* "src/urh/dev/native/lib/usrp.pyx":183
+    /* "src/urh/dev/native/lib/usrp.pyx":199
  *     cdef char * error_msg = <char *> malloc(200 * sizeof(char))
  * 
  *     if IS_TX:             # <<<<<<<<<<<<<<
@@ -4675,7 +4885,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
     goto __pyx_L3;
   }
 
-  /* "src/urh/dev/native/lib/usrp.pyx":186
+  /* "src/urh/dev/native/lib/usrp.pyx":202
  *         uhd_tx_streamer_last_error(tx_streamer_handle, error_msg, 200)
  *     else:
  *         uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)             # <<<<<<<<<<<<<<
@@ -4687,29 +4897,29 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(CYTHON
   }
   __pyx_L3:;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":187
+  /* "src/urh/dev/native/lib/usrp.pyx":203
  *     else:
  *         uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
  *     error_msg_py = error_msg.decode("UTF-8")             # <<<<<<<<<<<<<<
  *     return error_msg_py
  */
-  __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_error_msg, 0, strlen(__pyx_v_error_msg), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_decode_c_string(__pyx_v_error_msg, 0, strlen(__pyx_v_error_msg), NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_error_msg_py = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":188
+  /* "src/urh/dev/native/lib/usrp.pyx":204
  *         uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
  *     error_msg_py = error_msg.decode("UTF-8")
  *     return error_msg_py             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(PyUnicode_CheckExact(__pyx_v_error_msg_py))||((__pyx_v_error_msg_py) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_error_msg_py)->tp_name), 0))) __PYX_ERR(0, 188, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_v_error_msg_py))||((__pyx_v_error_msg_py) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_error_msg_py)->tp_name), 0))) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_INCREF(__pyx_v_error_msg_py);
   __pyx_r = ((PyObject*)__pyx_v_error_msg_py);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/usrp.pyx":180
+  /* "src/urh/dev/native/lib/usrp.pyx":196
  *     return result
  * 
  * cpdef str get_last_error():             # <<<<<<<<<<<<<<
@@ -4748,7 +4958,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_4usrp_30get_last_error(CYT
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_last_error", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_4usrp_get_last_error(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -21342,11 +21552,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 57, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 139, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 235, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 823, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 1013, __pyx_L1_error)
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(2, 146, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(2, 149, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(2, 2, __pyx_L1_error)
   __pyx_builtin_Ellipsis = __Pyx_GetBuiltinName(__pyx_n_s_Ellipsis); if (!__pyx_builtin_Ellipsis) __PYX_ERR(2, 398, __pyx_L1_error)
@@ -22526,8 +22736,151 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 }
 #endif
 
+/* GetException */
+#if CYTHON_FAST_THREAD_STATE
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
+#endif
+    PyObject *local_type, *local_value, *local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_FAST_THREAD_STATE
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    #if PY_MAJOR_VERSION >= 3
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
+    }
+    #endif
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = local_type;
+    tstate->exc_state.exc_value = local_value;
+    tstate->exc_state.exc_traceback = local_tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
+    return 0;
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
+}
+
+/* SwapException */
+  #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = *type;
+    tstate->exc_state.exc_value = *value;
+    tstate->exc_state.exc_traceback = *tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = *type;
+    tstate->exc_value = *value;
+    tstate->exc_traceback = *tb;
+    #endif
+    *type = tmp_type;
+    *value = tmp_value;
+    *tb = tmp_tb;
+}
+#else
+static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyErr_GetExcInfo(&tmp_type, &tmp_value, &tmp_tb);
+    PyErr_SetExcInfo(*type, *value, *tb);
+    *type = tmp_type;
+    *value = tmp_value;
+    *tb = tmp_tb;
+}
+#endif
+
+/* SaveResetException */
+  #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    #if PY_VERSION_HEX >= 0x030700A2
+    *type = tstate->exc_state.exc_type;
+    *value = tstate->exc_state.exc_value;
+    *tb = tstate->exc_state.exc_traceback;
+    #else
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    #endif
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
+}
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = type;
+    tstate->exc_state.exc_value = value;
+    tstate->exc_state.exc_traceback = tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+}
+#endif
+
 /* RaiseArgTupleInvalid */
-static void __Pyx_RaiseArgtupleInvalid(
+  static void __Pyx_RaiseArgtupleInvalid(
     const char* func_name,
     int exact,
     Py_ssize_t num_min,
@@ -22553,7 +22906,7 @@ static void __Pyx_RaiseArgtupleInvalid(
 }
 
 /* RaiseDoubleKeywords */
-static void __Pyx_RaiseDoubleKeywordsError(
+  static void __Pyx_RaiseDoubleKeywordsError(
     const char* func_name,
     PyObject* kw_name)
 {
@@ -22567,7 +22920,7 @@ static void __Pyx_RaiseDoubleKeywordsError(
 }
 
 /* ParseKeywords */
-static int __Pyx_ParseOptionalKeywords(
+  static int __Pyx_ParseOptionalKeywords(
     PyObject *kwds,
     PyObject **argnames[],
     PyObject *kwds2,
@@ -22669,7 +23022,7 @@ bad:
 }
 
 /* MemviewSliceInit */
-static int
+  static int
 __Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
                         int ndim,
                         __Pyx_memviewslice *memviewslice,
@@ -22807,7 +23160,7 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
 }
 
 /* decode_c_string */
-static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
+  static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
          const char* cstring, Py_ssize_t start, Py_ssize_t stop,
          const char* encoding, const char* errors,
          PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors)) {
@@ -22840,7 +23193,7 @@ static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
 }
 
 /* RaiseException */
-#if PY_MAJOR_VERSION < 3
+  #if PY_MAJOR_VERSION < 3
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
                         CYTHON_UNUSED PyObject *cause) {
     __Pyx_PyThreadState_declare
@@ -22999,25 +23352,25 @@ bad:
 #endif
 
 /* RaiseTooManyValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+  static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
     PyErr_Format(PyExc_ValueError,
                  "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
 }
 
 /* RaiseNeedMoreValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+  static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
     PyErr_Format(PyExc_ValueError,
                  "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
                  index, (index == 1) ? "" : "s");
 }
 
 /* RaiseNoneIterError */
-static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
+  static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
 }
 
 /* ExtTypeTest */
-static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
+  static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
     if (unlikely(!type)) {
         PyErr_SetString(PyExc_SystemError, "Missing type object");
         return 0;
@@ -23029,47 +23382,8 @@ static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
     return 0;
 }
 
-/* SaveResetException */
-#if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    #if PY_VERSION_HEX >= 0x030700A2
-    *type = tstate->exc_state.exc_type;
-    *value = tstate->exc_state.exc_value;
-    *tb = tstate->exc_state.exc_traceback;
-    #else
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
-    #endif
-    Py_XINCREF(*type);
-    Py_XINCREF(*value);
-    Py_XINCREF(*tb);
-}
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    #if PY_VERSION_HEX >= 0x030700A2
-    tmp_type = tstate->exc_state.exc_type;
-    tmp_value = tstate->exc_state.exc_value;
-    tmp_tb = tstate->exc_state.exc_traceback;
-    tstate->exc_state.exc_type = type;
-    tstate->exc_state.exc_value = value;
-    tstate->exc_state.exc_traceback = tb;
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-}
-#endif
-
 /* PyErrExceptionMatches */
-#if CYTHON_FAST_THREAD_STATE
+  #if CYTHON_FAST_THREAD_STATE
 static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
     Py_ssize_t i, n;
     n = PyTuple_GET_SIZE(tuple);
@@ -23092,76 +23406,6 @@ static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tsta
     return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
 }
 #endif
-
-/* GetException */
-#if CYTHON_FAST_THREAD_STATE
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
-#endif
-    PyObject *local_type, *local_value, *local_tb;
-#if CYTHON_FAST_THREAD_STATE
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    local_type = tstate->curexc_type;
-    local_value = tstate->curexc_value;
-    local_tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-#else
-    PyErr_Fetch(&local_type, &local_value, &local_tb);
-#endif
-    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
-#if CYTHON_FAST_THREAD_STATE
-    if (unlikely(tstate->curexc_type))
-#else
-    if (unlikely(PyErr_Occurred()))
-#endif
-        goto bad;
-    #if PY_MAJOR_VERSION >= 3
-    if (local_tb) {
-        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
-            goto bad;
-    }
-    #endif
-    Py_XINCREF(local_tb);
-    Py_XINCREF(local_type);
-    Py_XINCREF(local_value);
-    *type = local_type;
-    *value = local_value;
-    *tb = local_tb;
-#if CYTHON_FAST_THREAD_STATE
-    #if PY_VERSION_HEX >= 0x030700A2
-    tmp_type = tstate->exc_state.exc_type;
-    tmp_value = tstate->exc_state.exc_value;
-    tmp_tb = tstate->exc_state.exc_traceback;
-    tstate->exc_state.exc_type = local_type;
-    tstate->exc_state.exc_value = local_value;
-    tstate->exc_state.exc_traceback = local_tb;
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#else
-    PyErr_SetExcInfo(local_type, local_value, local_tb);
-#endif
-    return 0;
-bad:
-    *type = 0;
-    *value = 0;
-    *tb = 0;
-    Py_XDECREF(local_type);
-    Py_XDECREF(local_value);
-    Py_XDECREF(local_tb);
-    return -1;
-}
 
 /* BytesEquals */
   static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
@@ -23354,40 +23598,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject
     }
     return result;
 }
-
-/* SwapException */
-    #if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    #if PY_VERSION_HEX >= 0x030700A2
-    tmp_type = tstate->exc_state.exc_type;
-    tmp_value = tstate->exc_state.exc_value;
-    tmp_tb = tstate->exc_state.exc_traceback;
-    tstate->exc_state.exc_type = *type;
-    tstate->exc_state.exc_value = *value;
-    tstate->exc_state.exc_traceback = *tb;
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = *type;
-    tstate->exc_value = *value;
-    tstate->exc_traceback = *tb;
-    #endif
-    *type = tmp_type;
-    *value = tmp_value;
-    *tb = tmp_tb;
-}
-#else
-static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    PyErr_GetExcInfo(&tmp_type, &tmp_value, &tmp_tb);
-    PyErr_SetExcInfo(*type, *value, *tb);
-    *type = tmp_type;
-    *value = tmp_value;
-    *tb = tmp_tb;
-}
-#endif
 
 /* Import */
     static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {

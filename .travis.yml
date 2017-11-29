@@ -40,11 +40,15 @@ install:
 
 before_script:
   - touch tests/show_gui
-  - python3 src/urh/cythonext/build.py
 
 script:
-  - pytest --cov=src/urh --cov-config .coveragerc tests
+  - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
+  - pytest --cov=src/urh --cov-config .coveragerc tests 2> /tmp/test_errors.txt
   - pip3 install .
   - urh autoclose
+
+after_failure:
+  - cat /tmp/build_log.txt
+  - cat /tmp/test_errors.txt
 
 after_success: codecov

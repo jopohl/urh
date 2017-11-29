@@ -227,6 +227,9 @@ class TestSendRecvDialog(QtTestCase):
 
         time.sleep(1)  # wait an extra second for CI
 
+        continuous_send_dialog.ui.btnStop.click()
+        receive_dialog.ui.btnStop.click()
+
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
         expected = gframe.modulate_data(expected)
@@ -236,6 +239,9 @@ class TestSendRecvDialog(QtTestCase):
         for i in range(len(expected)):
             self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
             self.assertAlmostEqual(receive_dialog.device.data[i+len(expected)], expected[i], msg=str(i), places=4)
+
+        self.__close_dialog(receive_dialog)
+        self.__close_dialog(continuous_send_dialog)
 
     def test_sniff(self):
         # add a signal so we can use it

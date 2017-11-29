@@ -50,7 +50,7 @@ build_script:
   - python setup.py build_ext --inplace
 
 test_script:
-  - python -m pytest -s
+  - python -m pytest --capture=yes
 
 after_test:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging)

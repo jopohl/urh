@@ -18,5 +18,5 @@ test:
   override:                                                  
     - touch tests/show_gui
     - python3 src/urh/cythonext/build.py
-    - pytest -s -v tests
+    - pytest --capture=yes tests
 

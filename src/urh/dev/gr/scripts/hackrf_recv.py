@@ -15,6 +15,8 @@ try:
         gnuradio_path = f.read().strip()
 
     os.environ["PATH"] = os.path.join(gnuradio_path, "bin")
+    # Append script path at end to prevent conflicts in case of frozen interpreter
+    sys.path.append(sys.path.pop(0))
     sys.path.insert(0, os.path.join(gnuradio_path, "lib", "site-packages"))
 
 except IOError:

@@ -17,7 +17,7 @@ class ContinuousModulator(object):
     BUFFER_SIZE_MB = 100
     WAIT_TIMEOUT = 0.1
 
-    def __init__(self, messages, modulators):
+    def __init__(self, messages, modulators, num_repeats=-1):
         """
         
         :type messages: list of Message 
@@ -25,13 +25,14 @@ class ContinuousModulator(object):
         """
         self.messages = messages
         self.modulators = modulators
+        self.num_repeats = num_repeats  # -1 or 0 = infinite
 
         self.ring_buffer = RingBuffer(int(self.BUFFER_SIZE_MB*10**6)//8)
 
         self.current_message_index = Value("L", 0)
 
         self.abort = Value("i", 0)
-        self.process = Process(target=self.modulate_continuously)
+        self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
         self.process.daemon = True
 
     @property
@@ -41,7 +42,7 @@ class ContinuousModulator(object):
     def start(self):
         self.abort.value = 0
         try:
-            self.process = Process(target=self.modulate_continuously)
+            self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
             self.process.daemon = True
             self.process.start()
         except RuntimeError as e:
@@ -65,8 +66,9 @@ class ContinuousModulator(object):
 
         logger.debug("Stopped continuous modulation")
 
-    def modulate_continuously(self):
-        while True:
+    def modulate_continuously(self, num_repeats):
+        rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
+        for _ in rng:
             start = self.current_message_index.value
             for i in range(start, len(self.messages)):
                 if self.abort.value:
@@ -83,3 +85,4 @@ class ContinuousModulator(object):
                     # Wait till there is space in buffer
                     time.sleep(self.WAIT_TIMEOUT)
                 self.ring_buffer.push(modulator.modulated_samples)
+            self.current_message_index.value = 0

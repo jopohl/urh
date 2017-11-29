@@ -94,9 +94,9 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-544</y>
-         <width>426</width>
-         <height>1294</height>
+         <y>0</y>
+         <width>441</width>
+         <height>1212</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -1376,7 +1376,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="page_receive">
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1430,6 +1430,32 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
             <widget class="LiveGraphicView" name="graphicsViewContinuousSend">
              <property name="renderHints">
               <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_spectrum">
+          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,1">
+           <item>
+            <widget class="LiveGraphicView" name="graphicsViewFFT"/>
+           </item>
+           <item>
+            <widget class="QGraphicsView" name="graphicsViewSpectrogram">
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="renderHints">
+              <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+             </property>
+             <property name="cacheMode">
+              <set>QGraphicsView::CacheNone</set>
+             </property>
+             <property name="viewportUpdateMode">
+              <enum>QGraphicsView::MinimalViewportUpdate</enum>
              </property>
             </widget>
            </item>

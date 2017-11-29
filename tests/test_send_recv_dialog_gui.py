@@ -2,7 +2,9 @@ import os
 import socket
 
 import numpy as np
-from PyQt5.QtCore import QDir
+import time
+from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
@@ -15,16 +17,17 @@ from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
+
 
 class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 1000
 
     def setUp(self):
         super().setUp()
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
@@ -47,10 +50,9 @@ class TestSendRecvDialog(QtTestCase):
         return send_dialog
 
     def __get_continuous_send_dialog(self):
-        messages = [Message([True]*100, 1000, self.form.compare_frame_controller.active_message_type) for _ in range(10)]
-        modulators = [Modulator("Test")]
-
-        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager, messages, modulators,
+        gframe = self.form.generator_tab_controller
+        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager,
+                                                                gframe.table_model.protocol.messages, gframe.modulators,
                                                                 self.form.generator_tab_controller.total_modulated_samples,
                                                                 parent=self.form, testing_mode=True)
         if self.SHOW:
@@ -90,6 +92,15 @@ class TestSendRecvDialog(QtTestCase):
         dialog.deleteLater()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
+
+    def __add_first_signal_to_generator(self):
+        generator_frame = self.form.generator_tab_controller
+        generator_frame.ui.cbViewType.setCurrentIndex(0)
+        item = generator_frame.tree_model.rootItem.children[0].children[0]
+        index = generator_frame.tree_model.createIndex(0, 0, item)
+        mimedata = generator_frame.tree_model.mimeData([index])
+        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
+        QApplication.instance().processEvents()
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
@@ -148,8 +159,22 @@ class TestSendRecvDialog(QtTestCase):
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
+        self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
+        w = spectrum_dialog.ui.graphicsViewFFT.viewport()
+
+        # this actually gets the click to the view
+        # QTest.mouseMove(w, QPoint(80,80))
+        event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
+                            Qt.LeftButton, Qt.NoModifier)
+        QApplication.postEvent(w, event)
+        QApplication.instance().processEvents()
+        self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 
         spectrum_dialog.ui.btnStop.click()
+
+        self.assertGreater(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)
+        spectrum_dialog.ui.btnClear.click()
+        self.assertEqual(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)
 
         self.__close_dialog(spectrum_dialog)
 
@@ -183,20 +208,48 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(receive_dialog)
         self.__close_dialog(send_dialog)
 
+    def test_continuous_send_dialog(self):
+        self.add_signal_to_form("esaver.complex")
+        QApplication.instance().processEvents()
+        self.__add_first_signal_to_generator()
+
+        port = self.__get_free_port()
+        receive_dialog = self.__get_recv_dialog()
+        receive_dialog.device.set_server_port(port)
+        receive_dialog.ui.btnStart.click()
+
+        continuous_send_dialog = self.__get_continuous_send_dialog()
+        continuous_send_dialog.device.set_client_port(port)
+        continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
+        continuous_send_dialog.ui.btnStart.click()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.SEND_RECV_TIMEOUT * 5)
+
+        gframe = self.form.generator_tab_controller
+        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
+        expected = gframe.modulate_data(expected)
+
+        self.assertEqual(receive_dialog.device.current_index, 2 * len(expected))
+
+        for i in range(len(expected)):
+            self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
+
+        continuous_send_dialog.ui.btnStop.click()
+        receive_dialog.ui.btnStop.click()
+        continuous_send_dialog.ui.btnClear.click()
+        receive_dialog.ui.btnClear.click()
+
+        self.__close_dialog(receive_dialog)
+        self.__close_dialog(continuous_send_dialog)
+
     def test_sniff(self):
         # add a signal so we can use it
         self.add_signal_to_form("esaver.complex")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 
-        # Move with encoding to generator
+        self.__add_first_signal_to_generator()
         generator_frame = self.form.generator_tab_controller
-        generator_frame.ui.cbViewType.setCurrentIndex(0)
-        item = generator_frame.tree_model.rootItem.children[0].children[0]
-        index = generator_frame.tree_model.createIndex(0, 0, item)
-        mimedata = generator_frame.tree_model.mimeData([index])
-        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
-        QApplication.instance().processEvents()
         self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
         QApplication.instance().processEvents()
@@ -262,7 +315,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.graphics_view.zoom(0.8)
         QApplication.instance().processEvents()
         QTest.qWait(50)
-        self.assertLessEqual(send_dialog.graphics_view.view_rect().width(), view_width)
+        self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
 
         self.__close_dialog(send_dialog)
 

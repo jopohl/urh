@@ -50,7 +50,10 @@ class AbstractBaseThread(QThread):
             gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
             with open(os.path.join(tempfile.gettempdir(), "gnuradio_path.txt"), "w") as f:
                 f.write(gnuradio_dir)
-            self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "python.exe")
+            if os.path.isfile(os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")):
+                self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")
+            else:
+                self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "python.exe")
         else:
             self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
 

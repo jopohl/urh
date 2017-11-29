@@ -766,7 +766,7 @@ static const char *__pyx_f[] = {
 };
 
 /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":7
- * from libc.stdlib cimport malloc
+ * from libc.stdlib cimport malloc, free
  * 
  * ctypedef unsigned char uint8_t             # <<<<<<<<<<<<<<
  * ctypedef unsigned short uint16_t
@@ -1034,6 +1034,33 @@ static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
 #define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
 #endif
 
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
+/* SwapException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSwap(type, value, tb)  __Pyx__ExceptionSwap(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
+/* SaveResetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+#else
+#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
+#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#endif
+
 /* CLineInTraceback.proto */
 #ifdef CYTHON_CLINE_IN_TRACEBACK
 #define __Pyx_CLineForTraceback(tstate, c_line)  (((CYTHON_CLINE_IN_TRACEBACK)) ? c_line : 0)
@@ -1145,6 +1172,7 @@ int __pyx_module_is_main_src__urh__dev__native__lib__rtlsdr_fallback = 0;
 
 /* Implementation of 'src.urh.dev.native.lib.rtlsdr_fallback' */
 static PyObject *__pyx_builtin_range;
+static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_f[] = "f";
 static const char __pyx_k_gain[] = "gain";
 static const char __pyx_k_main[] = "__main__";
@@ -1155,8 +1183,10 @@ static const char __pyx_k_callback[] = "callback";
 static const char __pyx_k_rtl_freq[] = "rtl_freq";
 static const char __pyx_k_connection[] = "connection";
 static const char __pyx_k_tuner_freq[] = "tuner_freq";
+static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_num_samples[] = "num_samples";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
+static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_n_s_callback;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_connection;
@@ -3984,8 +4014,19 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync
   int __pyx_v_n_read;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
+  int __pyx_t_5;
+  char const *__pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_13 = NULL;
   __Pyx_RefNannySetupContext("read_sync", 0);
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
@@ -3997,50 +4038,139 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync
  *     :return:
  *     """
  *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))             # <<<<<<<<<<<<<<
- *     cdef int n_read = 0
- * 
+ *     if not samples:
+ *         raise MemoryError()
  */
   __pyx_v_samples = ((__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t *)malloc(((2 * __pyx_v_num_samples) * (sizeof(__pyx_t_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_uint8_t)))));
 
   /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":286
  *     """
  *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
- *     cdef int n_read = 0             # <<<<<<<<<<<<<<
+ *     if not samples:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
  * 
- *     crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
+ */
+  __pyx_t_1 = ((!(__pyx_v_samples != 0)) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":287
+ *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
+ *     if not samples:
+ *         raise MemoryError()             # <<<<<<<<<<<<<<
+ * 
+ *     cdef int n_read = 0
+ */
+    PyErr_NoMemory(); __PYX_ERR(0, 287, __pyx_L1_error)
+
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":286
+ *     """
+ *     cdef uint8_t *samples = <uint8_t *> malloc(2*num_samples * sizeof(uint8_t))
+ *     if not samples:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  }
+
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":289
+ *         raise MemoryError()
+ * 
+ *     cdef int n_read = 0             # <<<<<<<<<<<<<<
+ *     try:
+ *         crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
  */
   __pyx_v_n_read = 0;
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":288
- *     cdef int n_read = 0
- * 
- *     crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)             # <<<<<<<<<<<<<<
- * 
- *     return bytes(samples[0:n_read])
- */
-  rtlsdr_read_sync(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, ((void *)__pyx_v_samples), __pyx_v_num_samples, (&__pyx_v_n_read));
-
   /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":290
- *     crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
  * 
- *     return bytes(samples[0:n_read])             # <<<<<<<<<<<<<<
+ *     cdef int n_read = 0
+ *     try:             # <<<<<<<<<<<<<<
+ *         crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
+ *         return bytes(samples[0:n_read])
+ */
+  /*try:*/ {
+
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":291
+ *     cdef int n_read = 0
+ *     try:
+ *         crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)             # <<<<<<<<<<<<<<
+ *         return bytes(samples[0:n_read])
+ *     finally:
+ */
+    rtlsdr_read_sync(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, ((void *)__pyx_v_samples), __pyx_v_num_samples, (&__pyx_v_n_read));
+
+    /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":292
+ *     try:
+ *         crtlsdr.rtlsdr_read_sync(_c_device, <void *>samples, num_samples, &n_read)
+ *         return bytes(samples[0:n_read])             # <<<<<<<<<<<<<<
+ *     finally:
+ *         free(samples)
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_samples) + 0, __pyx_v_n_read - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 292, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_r = ((PyObject*)__pyx_t_2);
+    __pyx_t_2 = 0;
+    goto __pyx_L4_return;
+  }
+
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":294
+ *         return bytes(samples[0:n_read])
+ *     finally:
+ *         free(samples)             # <<<<<<<<<<<<<<
  * 
  * cpdef int read_async(callback, connection):
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_samples) + 0, __pyx_v_n_read - 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
-  __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_r = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
+  /*finally:*/ {
+    __pyx_L5_error:;
+    /*exception exit:*/{
+      __Pyx_PyThreadState_declare
+      __Pyx_PyThreadState_assign
+      __pyx_t_7 = 0; __pyx_t_8 = 0; __pyx_t_9 = 0; __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0;
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_10, &__pyx_t_11, &__pyx_t_12);
+      if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9) < 0)) __Pyx_ErrFetch(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9);
+      __Pyx_XGOTREF(__pyx_t_7);
+      __Pyx_XGOTREF(__pyx_t_8);
+      __Pyx_XGOTREF(__pyx_t_9);
+      __Pyx_XGOTREF(__pyx_t_10);
+      __Pyx_XGOTREF(__pyx_t_11);
+      __Pyx_XGOTREF(__pyx_t_12);
+      __pyx_t_4 = __pyx_lineno; __pyx_t_5 = __pyx_clineno; __pyx_t_6 = __pyx_filename;
+      {
+        free(__pyx_v_samples);
+      }
+      if (PY_MAJOR_VERSION >= 3) {
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_XGIVEREF(__pyx_t_11);
+        __Pyx_XGIVEREF(__pyx_t_12);
+        __Pyx_ExceptionReset(__pyx_t_10, __pyx_t_11, __pyx_t_12);
+      }
+      __Pyx_XGIVEREF(__pyx_t_7);
+      __Pyx_XGIVEREF(__pyx_t_8);
+      __Pyx_XGIVEREF(__pyx_t_9);
+      __Pyx_ErrRestore(__pyx_t_7, __pyx_t_8, __pyx_t_9);
+      __pyx_t_7 = 0; __pyx_t_8 = 0; __pyx_t_9 = 0; __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0;
+      __pyx_lineno = __pyx_t_4; __pyx_clineno = __pyx_t_5; __pyx_filename = __pyx_t_6;
+      goto __pyx_L1_error;
+    }
+    __pyx_L4_return: {
+      __pyx_t_13 = __pyx_r;
+      __pyx_r = 0;
+      free(__pyx_v_samples);
+      __pyx_r = __pyx_t_13;
+      __pyx_t_13 = 0;
+      goto __pyx_L0;
+    }
+  }
 
   /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":279
  *     return crtlsdr.rtlsdr_reset_buffer(_c_device)
@@ -4052,8 +4182,8 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_sync
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_sync", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -4148,8 +4278,8 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_54read_s
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":292
- *     return bytes(samples[0:n_read])
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":296
+ *         free(samples)
  * 
  * cpdef int read_async(callback, connection):             # <<<<<<<<<<<<<<
  *     """
@@ -4162,16 +4292,16 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(PyOb
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("read_async", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":300
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":304
  *     """
  *     global f
  *     f = callback             # <<<<<<<<<<<<<<
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_f, __pyx_v_callback) < 0) __PYX_ERR(0, 300, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_f, __pyx_v_callback) < 0) __PYX_ERR(0, 304, __pyx_L1_error)
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":301
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":305
  *     global f
  *     f = callback
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)             # <<<<<<<<<<<<<<
@@ -4181,8 +4311,8 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(PyOb
   __pyx_r = rtlsdr_read_async(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_callback_recv, ((void *)__pyx_v_connection), 0, 0);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":292
- *     return bytes(samples[0:n_read])
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":296
+ *         free(samples)
  * 
  * cpdef int read_async(callback, connection):             # <<<<<<<<<<<<<<
  *     """
@@ -4230,11 +4360,11 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_a
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_connection)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, 1); __PYX_ERR(0, 292, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, 1); __PYX_ERR(0, 296, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_async") < 0)) __PYX_ERR(0, 292, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_async") < 0)) __PYX_ERR(0, 296, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4247,7 +4377,7 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_57read_a
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 292, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("read_async", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 296, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.urh.dev.native.lib.rtlsdr_fallback.read_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4266,7 +4396,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_a
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("read_async", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(__pyx_v_callback, __pyx_v_connection, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_read_async(__pyx_v_callback, __pyx_v_connection, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4283,7 +4413,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_56read_a
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":303
+/* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":307
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  * cpdef int cancel_async():             # <<<<<<<<<<<<<<
@@ -4297,7 +4427,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(CY
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("cancel_async", 0);
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":309
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":313
  *     :return: 0 on success
  *     """
  *     return crtlsdr.rtlsdr_cancel_async(_c_device)             # <<<<<<<<<<<<<<
@@ -4305,7 +4435,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(CY
   __pyx_r = rtlsdr_cancel_async(__pyx_v_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback__c_device);
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":303
+  /* "src/urh/dev/native/lib/rtlsdr_fallback.pyx":307
  *     return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
  * 
  * cpdef int cancel_async():             # <<<<<<<<<<<<<<
@@ -4339,7 +4469,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_58cancel
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("cancel_async", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3src_3urh_3dev_6native_3lib_15rtlsdr_fallback_cancel_async(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4423,6 +4553,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {&__pyx_n_s_callback, __pyx_k_callback, sizeof(__pyx_k_callback), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_connection, __pyx_k_connection, sizeof(__pyx_k_connection), 0, 0, 1, 1},
@@ -4439,6 +4570,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 154, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 287, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -5218,8 +5350,151 @@ bad:
     return -1;
 }
 
+/* GetException */
+  #if CYTHON_FAST_THREAD_STATE
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
+#endif
+    PyObject *local_type, *local_value, *local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_FAST_THREAD_STATE
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    #if PY_MAJOR_VERSION >= 3
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
+    }
+    #endif
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = local_type;
+    tstate->exc_state.exc_value = local_value;
+    tstate->exc_state.exc_traceback = local_tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
+    return 0;
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
+}
+
+/* SwapException */
+    #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = *type;
+    tstate->exc_state.exc_value = *value;
+    tstate->exc_state.exc_traceback = *tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = *type;
+    tstate->exc_value = *value;
+    tstate->exc_traceback = *tb;
+    #endif
+    *type = tmp_type;
+    *value = tmp_value;
+    *tb = tmp_tb;
+}
+#else
+static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyErr_GetExcInfo(&tmp_type, &tmp_value, &tmp_tb);
+    PyErr_SetExcInfo(*type, *value, *tb);
+    *type = tmp_type;
+    *value = tmp_value;
+    *tb = tmp_tb;
+}
+#endif
+
+/* SaveResetException */
+    #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    #if PY_VERSION_HEX >= 0x030700A2
+    *type = tstate->exc_state.exc_type;
+    *value = tstate->exc_state.exc_value;
+    *tb = tstate->exc_state.exc_traceback;
+    #else
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    #endif
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
+}
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if PY_VERSION_HEX >= 0x030700A2
+    tmp_type = tstate->exc_state.exc_type;
+    tmp_value = tstate->exc_state.exc_value;
+    tmp_tb = tstate->exc_state.exc_traceback;
+    tstate->exc_state.exc_type = type;
+    tstate->exc_state.exc_value = value;
+    tstate->exc_state.exc_traceback = tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+}
+#endif
+
 /* CLineInTraceback */
-  #ifndef CYTHON_CLINE_IN_TRACEBACK
+    #ifndef CYTHON_CLINE_IN_TRACEBACK
 static int __Pyx_CLineForTraceback(CYTHON_UNUSED PyThreadState *tstate, int c_line) {
     PyObject *use_cline;
     PyObject *ptype, *pvalue, *ptraceback;
@@ -5256,7 +5531,7 @@ static int __Pyx_CLineForTraceback(CYTHON_UNUSED PyThreadState *tstate, int c_li
 #endif
 
 /* CodeObjectCache */
-  static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
+    static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
     int start = 0, mid = 0, end = count - 1;
     if (end >= 0 && code_line > entries[end].code_line) {
         return count;
@@ -5336,7 +5611,7 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object) {
 }
 
 /* AddTraceback */
-  #include "compile.h"
+    #include "compile.h"
 #include "frameobject.h"
 #include "traceback.h"
 static PyCodeObject* __Pyx_CreateCodeObjectForTraceback(
@@ -5421,7 +5696,7 @@ bad:
 }
 
 /* CIntFromPyVerify */
-  #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
+    #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
 #define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 1)
@@ -5443,7 +5718,7 @@ bad:
     }
 
 /* CIntToPy */
-  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_unsigned_int(unsigned int value) {
+    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_unsigned_int(unsigned int value) {
     const unsigned int neg_one = (unsigned int) -1, const_zero = (unsigned int) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -5474,7 +5749,7 @@ bad:
 }
 
 /* CIntToPy */
-  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -5505,7 +5780,7 @@ bad:
 }
 
 /* CIntToPy */
-  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_rtlsdr_tuner(rtlsdr_tuner value) {
+    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_rtlsdr_tuner(rtlsdr_tuner value) {
     const rtlsdr_tuner neg_one = (rtlsdr_tuner) -1, const_zero = (rtlsdr_tuner) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -5536,7 +5811,7 @@ bad:
 }
 
 /* CIntFromPy */
-  static CYTHON_INLINE unsigned int __Pyx_PyInt_As_unsigned_int(PyObject *x) {
+    static CYTHON_INLINE unsigned int __Pyx_PyInt_As_unsigned_int(PyObject *x) {
     const unsigned int neg_one = (unsigned int) -1, const_zero = (unsigned int) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -5725,7 +6000,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-  static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
+    static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -5914,7 +6189,7 @@ raise_neg_overflow:
 }
 
 /* CIntToPy */
-  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
     const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -5945,7 +6220,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-  static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
+    static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
     const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -6134,7 +6409,7 @@ raise_neg_overflow:
 }
 
 /* FastTypeChecks */
-  #if CYTHON_COMPILING_IN_CPYTHON
+    #if CYTHON_COMPILING_IN_CPYTHON
 static int __Pyx_InBases(PyTypeObject *a, PyTypeObject *b) {
     while (a) {
         a = a->tp_base;
@@ -6206,7 +6481,7 @@ static CYTHON_INLINE int __Pyx_PyErr_GivenExceptionMatches2(PyObject *err, PyObj
 #endif
 
 /* CheckBinaryVersion */
-  static int __Pyx_check_binary_version(void) {
+    static int __Pyx_check_binary_version(void) {
     char ctversion[4], rtversion[4];
     PyOS_snprintf(ctversion, 4, "%d.%d", PY_MAJOR_VERSION, PY_MINOR_VERSION);
     PyOS_snprintf(rtversion, 4, "%s", Py_GetVersion());
@@ -6222,7 +6497,7 @@ static CYTHON_INLINE int __Pyx_PyErr_GivenExceptionMatches2(PyObject *err, PyObj
 }
 
 /* InitStrings */
-  static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
+    static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
     while (t->p) {
         #if PY_MAJOR_VERSION < 3
         if (t->is_unicode) {

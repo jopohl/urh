@@ -225,9 +225,6 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
-        continuous_send_dialog.ui.btnStop.click()
-        receive_dialog.ui.btnStop.click()
-
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
         expected = gframe.modulate_data(expected)
@@ -236,6 +233,11 @@ class TestSendRecvDialog(QtTestCase):
 
         for i in range(len(expected)):
             self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
+
+        continuous_send_dialog.ui.btnStop.click()
+        receive_dialog.ui.btnStop.click()
+        continuous_send_dialog.ui.btnClear.click()
+        receive_dialog.ui.btnClear.click()
 
         self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)

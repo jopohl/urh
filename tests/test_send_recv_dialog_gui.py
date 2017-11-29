@@ -2,6 +2,7 @@ import os
 import socket
 
 import numpy as np
+import time
 from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
@@ -223,6 +224,8 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
+
+        time.sleep(1)  # wait an extra second for CI
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)

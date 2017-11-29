@@ -17,10 +17,9 @@ from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSendRecvDialog(QtTestCase):
@@ -28,6 +27,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def setUp(self):
         super().setUp()
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
@@ -225,8 +225,6 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
-        time.sleep(1)  # wait an extra second for CI
-
         continuous_send_dialog.ui.btnStop.click()
         receive_dialog.ui.btnStop.click()
 
@@ -238,7 +236,6 @@ class TestSendRecvDialog(QtTestCase):
 
         for i in range(len(expected)):
             self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
-            self.assertAlmostEqual(receive_dialog.device.data[i+len(expected)], expected[i], msg=str(i), places=4)
 
         self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)

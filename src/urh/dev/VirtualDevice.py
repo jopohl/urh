@@ -126,7 +126,7 @@ class VirtualDevice(QObject):
         elif self.backend == Backends.network:
             self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode,
                                                    resume_on_full_receive_buffer=resume_on_full_receive_buffer,
-                                                   spectrum=self.mode == Mode.spectrum)
+                                                   spectrum=self.mode == Mode.spectrum, sending=self.mode == Mode.send)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:

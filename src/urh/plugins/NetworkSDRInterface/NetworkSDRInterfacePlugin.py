@@ -41,7 +41,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
                 self.server.current_receive_index += len(received)
 
-    def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False):
+    def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
         """
 
         :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
@@ -74,24 +74,25 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.num_samples_to_send = None  # Only used for continuous send mode
 
         self.raw_mode = raw_mode
-        if self.raw_mode:
-            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
-                                                                self.is_in_spectrum_mode)
-            try:
-                self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
-            except MemoryError:
-                logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
-                i = 0
-                while True:
-                    try:
-                        i += 2
-                        self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
-                        logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
-                        break
-                    except MemoryError:
-                        continue
-        else:
-            self.received_bits = []
+        if not sending:
+            if self.raw_mode:
+                num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                                    self.is_in_spectrum_mode)
+                try:
+                    self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
+                except MemoryError:
+                    logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
+                    i = 0
+                    while True:
+                        try:
+                            i += 2
+                            self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
+                            logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
+                            break
+                        except MemoryError:
+                            continue
+            else:
+                self.received_bits = []
 
     @property
     def is_sending(self) -> bool:

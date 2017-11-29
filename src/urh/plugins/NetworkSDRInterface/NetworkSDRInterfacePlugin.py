@@ -15,6 +15,7 @@ from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
+from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -54,6 +55,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
         self.server_ip = ""
 
+        self.samples_to_send = None # set in virtual device constructor
+
         self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
 
@@ -70,6 +73,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_repeats = 1  # only used in raw mode
         self.current_sent_sample = 0
         self.current_sending_repeat = 0
+
+        self.sending_is_continuous = False
+        self.continuous_send_ring_buffer = None
+        self.num_samples_to_send = None  # Only used for continuous send mode
 
         self.raw_mode = raw_mode
         if self.raw_mode:
@@ -100,6 +107,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if value != self.__is_sending:
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
+
+    @property
+    def sending_finished(self) -> bool:
+        return self.current_sending_repeat >= self.sending_repeats if self.sending_repeats > 1 else False
 
     @property
     def received_data(self):
@@ -177,16 +188,41 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
 
-        if num_repeats == -1:
+        if num_repeats <= 0:
             # forever
             rng = iter(int, 1)
         else:
             rng = range(0, num_repeats)
 
         for _ in rng:
+            if self.__sending_interrupt_requested:
+                break
             self.send_data(byte_data)
             self.current_sent_sample = len(data)
             self.current_sending_repeat += 1
+
+    def send_raw_data_continuously(self, ring_buffer: RingBuffer, num_samples_to_send: int, num_repeats: int):
+        if num_repeats <= 0:
+            # forever
+            rng = iter(int, 1)
+        else:
+            rng = range(0, num_repeats)
+
+        samples_per_iteration = 65536
+
+        for _ in rng:
+            if self.__sending_interrupt_requested:
+                break
+            while self.current_sent_sample < num_samples_to_send:
+                if self.__sending_interrupt_requested:
+                    break
+                data = ring_buffer.pop(samples_per_iteration, ensure_even_length=True)
+                self.send_data(data)
+                self.current_sent_sample += len(data)
+            self.current_sending_repeat += 1
+            self.current_sent_sample = 0
+
+        self.current_sent_sample = num_samples_to_send
 
     def __send_messages(self, messages, sample_rates):
         """
@@ -235,8 +271,14 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
-        self.sending_thread = threading.Thread(target=self.send_raw_data,
-                                               args=(self.samples_to_send, self.sending_repeats))
+        if self.sending_is_continuous:
+            self.sending_thread = threading.Thread(target=self.send_raw_data_continuously,
+                                                   args=(self.continuous_send_ring_buffer,
+                                                         self.num_samples_to_send, self.sending_repeats))
+        else:
+            self.sending_thread = threading.Thread(target=self.send_raw_data,
+                                                   args=(self.samples_to_send, self.sending_repeats))
+
         self.sending_thread.daemon = True
         self.sending_thread.start()
 

@@ -96,7 +96,7 @@ class ContinuousSendDialogController(SendDialogController):
         try:
             self.device.is_send_continuous = True
             self.device.continuous_send_ring_buffer = self.continuous_modulator.ring_buffer
-            self.device.total_samples_to_send = self.total_samples
+            self.device.num_samples_to_send = self.total_samples
 
             self._create_device_connects()
         except ValueError as e:

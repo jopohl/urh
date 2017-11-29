@@ -27,8 +27,8 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
-    native_only_msg = "Continuous send mode is only supported for native backend. " \
-                      "You can change the configured device backend in options."
+    continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
+                          "You can change the configured device backend in options."
 
     def __init__(self, backend_handler, name: str, mode: Mode, freq=None, sample_rate=None, bandwidth=None,
                  gain=None, if_gain=None, baseband_gain=None, samples_to_send=None,
@@ -177,46 +177,46 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
-    def total_samples_to_send(self):
-        if self.backend == Backends.native:
-            return self.__dev.total_samples_to_send
+    def num_samples_to_send(self) -> int:
+        if self.backend in (Backends.native, Backends.network):
+            return self.__dev.num_samples_to_send
         else:
-            raise ValueError()
+            raise ValueError(self.continuous_send_msg)
 
-    @total_samples_to_send.setter
-    def total_samples_to_send(self, value):
-        if self.backend == Backends.native:
-            self.__dev.total_samples_to_send = value
+    @num_samples_to_send.setter
+    def num_samples_to_send(self, value: int):
+        if self.backend in (Backends.native, Backends.network):
+            self.__dev.num_samples_to_send = value
         else:
-            raise ValueError(self.native_only_msg)
+            raise ValueError(self.continuous_send_msg)
 
     @property
     def is_send_continuous(self) -> bool:
-        if self.backend == Backends.native:
+        if self.backend in (Backends.native, Backends.network):
             return self.__dev.sending_is_continuous
         else:
-            raise ValueError(self.native_only_msg)
+            raise ValueError(self.continuous_send_msg)
 
     @is_send_continuous.setter
     def is_send_continuous(self, value: bool):
-        if self.backend == Backends.native:
+        if self.backend in (Backends.native, Backends.network):
             self.__dev.sending_is_continuous = value
         else:
-            raise ValueError(self.native_only_msg)
+            raise ValueError(self.continuous_send_msg)
 
     @property
     def continuous_send_ring_buffer(self):
-        if self.backend == Backends.native:
+        if self.backend in (Backends.native, Backends.network):
             return self.__dev.continuous_send_ring_buffer
         else:
-            raise ValueError(self.native_only_msg)
+            raise ValueError(self.continuous_send_msg)
 
     @continuous_send_ring_buffer.setter
     def continuous_send_ring_buffer(self, value):
-        if self.backend == Backends.native:
+        if self.backend in (Backends.native, Backends.network):
             self.__dev.continuous_send_ring_buffer = value
         else:
-            raise ValueError(self.native_only_msg)
+            raise ValueError(self.continuous_send_msg)
 
     @property
     def is_in_spectrum_mode(self):
@@ -490,10 +490,8 @@ class VirtualDevice(QObject):
     def sending_finished(self):
         if self.backend == Backends.grc:
             return self.__dev.current_iteration is None
-        elif self.backend == Backends.native:
+        elif self.backend in (Backends.native, Backends.network):
             return self.__dev.sending_finished
-        elif self.backend == Backends.network:
-            return self.__dev.current_sent_sample == len(self.samples_to_send)
         else:
             raise ValueError("Unsupported Backend")
 
@@ -544,6 +542,7 @@ class VirtualDevice(QObject):
             self.emit_stopped_signal()
         elif self.backend == Backends.network:
             self.__dev.stop_tcp_server()
+            self.__dev.stop_sending_thread()
             self.emit_stopped_signal()
         elif self.backend == Backends.none:
             pass

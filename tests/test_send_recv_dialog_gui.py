@@ -21,6 +21,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
+
 class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 1000
 
@@ -48,10 +49,9 @@ class TestSendRecvDialog(QtTestCase):
         return send_dialog
 
     def __get_continuous_send_dialog(self):
-        messages = [Message([True]*100, 1000, self.form.compare_frame_controller.active_message_type) for _ in range(10)]
-        modulators = [Modulator("Test")]
-
-        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager, messages, modulators,
+        gframe = self.form.generator_tab_controller
+        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager,
+                                                                gframe.table_model.protocol.messages, gframe.modulators,
                                                                 self.form.generator_tab_controller.total_modulated_samples,
                                                                 parent=self.form, testing_mode=True)
         if self.SHOW:
@@ -91,6 +91,15 @@ class TestSendRecvDialog(QtTestCase):
         dialog.deleteLater()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
+
+    def __add_first_signal_to_generator(self):
+        generator_frame = self.form.generator_tab_controller
+        generator_frame.ui.cbViewType.setCurrentIndex(0)
+        item = generator_frame.tree_model.rootItem.children[0].children[0]
+        index = generator_frame.tree_model.createIndex(0, 0, item)
+        mimedata = generator_frame.tree_model.mimeData([index])
+        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
+        QApplication.instance().processEvents()
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
@@ -198,20 +207,41 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(receive_dialog)
         self.__close_dialog(send_dialog)
 
+    def test_continuous_send_dialog(self):
+        self.add_signal_to_form("esaver.complex")
+        QApplication.instance().processEvents()
+        self.__add_first_signal_to_generator()
+
+        port = self.__get_free_port()
+        receive_dialog = self.__get_recv_dialog()
+        receive_dialog.device.set_server_port(port)
+        receive_dialog.ui.btnStart.click()
+
+        continuous_send_dialog = self.__get_continuous_send_dialog()
+        continuous_send_dialog.device.set_client_port(port)
+        continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
+        continuous_send_dialog.ui.btnStart.click()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
+
+        gframe = self.form.generator_tab_controller
+        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
+        expected = gframe.modulate_data(expected)
+
+        self.assertEqual(receive_dialog.device.current_index, 2 * len(expected))
+
+        for i in range(len(expected)):
+            self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
+            self.assertAlmostEqual(receive_dialog.device.data[i+len(expected)], expected[i], msg=str(i), places=4)
+
     def test_sniff(self):
         # add a signal so we can use it
         self.add_signal_to_form("esaver.complex")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 
-        # Move with encoding to generator
+        self.__add_first_signal_to_generator()
         generator_frame = self.form.generator_tab_controller
-        generator_frame.ui.cbViewType.setCurrentIndex(0)
-        item = generator_frame.tree_model.rootItem.children[0].children[0]
-        index = generator_frame.tree_model.createIndex(0, 0, item)
-        mimedata = generator_frame.tree_model.mimeData([index])
-        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
-        QApplication.instance().processEvents()
         self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
         QApplication.instance().processEvents()

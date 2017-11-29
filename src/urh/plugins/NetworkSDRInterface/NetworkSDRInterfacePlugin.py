@@ -182,12 +182,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
-
-        if num_repeats <= 0:
-            # forever
-            rng = iter(int, 1)
-        else:
-            rng = range(0, num_repeats)
+        rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
         for _ in rng:
             if self.__sending_interrupt_requested:
@@ -197,13 +192,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.current_sending_repeat += 1
 
     def send_raw_data_continuously(self, ring_buffer: RingBuffer, num_samples_to_send: int, num_repeats: int):
-        if num_repeats <= 0:
-            # forever
-            rng = iter(int, 1)
-        else:
-            rng = range(0, num_repeats)
-
-        samples_per_iteration = 65536
+        rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
+        samples_per_iteration = 65536 // 2
 
         for _ in rng:
             if self.__sending_interrupt_requested:
@@ -211,7 +201,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             while self.current_sent_sample < num_samples_to_send:
                 if self.__sending_interrupt_requested:
                     break
-                data = ring_buffer.pop(samples_per_iteration, ensure_even_length=True)
+                n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
+                data = ring_buffer.pop(n, ensure_even_length=True)
                 self.send_data(data)
                 self.current_sent_sample += len(data)
             self.current_sending_repeat += 1

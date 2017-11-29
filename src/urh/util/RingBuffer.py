@@ -62,13 +62,16 @@ class RingBuffer(object):
 
         self.__increase_current_index_by(n)
 
-    def pop(self, number: int) -> np.ndarray:
+    def pop(self, number: int, ensure_even_length=False) -> np.ndarray:
         """
         Pop number of elements. If there are not enough elements, all remaining elements are returned and the
         buffer is cleared afterwards. If buffer is empty, an empty numpy array is returned.
         """
         if number > self.current_index:
             number = self.current_index
+
+        if ensure_even_length:
+            number -= number % 2
 
         with self.__data.get_lock():
             self.current_index -= number

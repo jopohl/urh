@@ -1,20 +1,16 @@
+import socket
 import socketserver
 import threading
-
 import time
 
 import numpy as np
-import psutil
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSignal
-import socket
+from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal
 
-from urh import constants
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
+from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -45,7 +41,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
                 self.server.current_receive_index += len(received)
 
-    def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False):
+    def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
         """
 
         :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
@@ -53,6 +49,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         super().__init__(name="NetworkSDRInterface")
         self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
         self.server_ip = ""
+
+        self.samples_to_send = None  # set in virtual device constructor
 
         self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
@@ -71,25 +69,30 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.current_sent_sample = 0
         self.current_sending_repeat = 0
 
+        self.sending_is_continuous = False
+        self.continuous_send_ring_buffer = None
+        self.num_samples_to_send = None  # Only used for continuous send mode
+
         self.raw_mode = raw_mode
-        if self.raw_mode:
-            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
-                                                                self.is_in_spectrum_mode)
-            try:
-                self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
-            except MemoryError:
-                logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
-                i = 0
-                while True:
-                    try:
-                        i += 2
-                        self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
-                        logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
-                        break
-                    except MemoryError:
-                        continue
-        else:
-            self.received_bits = []
+        if not sending:
+            if self.raw_mode:
+                num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                                    self.is_in_spectrum_mode)
+                try:
+                    self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
+                except MemoryError:
+                    logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
+                    i = 0
+                    while True:
+                        try:
+                            i += 2
+                            self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
+                            logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
+                            break
+                        except MemoryError:
+                            continue
+            else:
+                self.received_bits = []
 
     @property
     def is_sending(self) -> bool:
@@ -100,6 +103,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if value != self.__is_sending:
             self.__is_sending = value
             self.sending_status_changed.emit(self.__is_sending)
+
+    @property
+    def sending_finished(self) -> bool:
+        return self.current_sending_repeat >= self.sending_repeats if self.sending_repeats > 0 else False
 
     @property
     def received_data(self):
@@ -176,17 +183,33 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
-
-        if num_repeats == -1:
-            # forever
-            rng = iter(int, 1)
-        else:
-            rng = range(0, num_repeats)
+        rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
         for _ in rng:
+            if self.__sending_interrupt_requested:
+                break
             self.send_data(byte_data)
             self.current_sent_sample = len(data)
             self.current_sending_repeat += 1
+
+    def send_raw_data_continuously(self, ring_buffer: RingBuffer, num_samples_to_send: int, num_repeats: int):
+        rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
+        samples_per_iteration = 65536 // 2
+
+        for _ in rng:
+            if self.__sending_interrupt_requested:
+                break
+            while self.current_sent_sample < num_samples_to_send:
+                if self.__sending_interrupt_requested:
+                    break
+                n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
+                data = ring_buffer.pop(n, ensure_even_length=True)
+                self.send_data(data)
+                self.current_sent_sample += len(data)
+            self.current_sending_repeat += 1
+            self.current_sent_sample = 0
+
+        self.current_sent_sample = num_samples_to_send
 
     def __send_messages(self, messages, sample_rates):
         """
@@ -235,8 +258,14 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
-        self.sending_thread = threading.Thread(target=self.send_raw_data,
-                                               args=(self.samples_to_send, self.sending_repeats))
+        if self.sending_is_continuous:
+            self.sending_thread = threading.Thread(target=self.send_raw_data_continuously,
+                                                   args=(self.continuous_send_ring_buffer,
+                                                         self.num_samples_to_send, self.sending_repeats))
+        else:
+            self.sending_thread = threading.Thread(target=self.send_raw_data,
+                                                   args=(self.samples_to_send, self.sending_repeats))
+
         self.sending_thread.daemon = True
         self.sending_thread.start()
 

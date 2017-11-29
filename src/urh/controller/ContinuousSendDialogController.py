@@ -22,7 +22,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.total_samples = total_samples
         self.ui.progressBarMessage.setMaximum(len(messages))
 
-        self.continuous_modulator = ContinuousModulator(messages, modulators)
+        self.continuous_modulator = ContinuousModulator(messages, modulators, num_repeats=self.ui.spinBoxNRepeat.value())
         self.scene_manager = ContinuousSceneManager(ring_buffer=self.continuous_modulator.ring_buffer, parent=self)
         self.scene_manager.init_scene()
         self.graphics_view.setScene(self.scene_manager.scene)
@@ -70,6 +70,7 @@ class ContinuousSendDialogController(SendDialogController):
 
     @pyqtSlot()
     def on_start_clicked(self):
+        self.ui.spinBoxNRepeat.editingFinished.emit()  # inform continuous modulator
         if not self.continuous_modulator.is_running:
             self.continuous_modulator.start()
         super().on_start_clicked()
@@ -80,6 +81,11 @@ class ContinuousSendDialogController(SendDialogController):
         self.continuous_modulator.current_message_index.value = 0
         self.scene_manager.clear_path()
         self.reset()
+
+    @pyqtSlot()
+    def on_num_repeats_changed(self):
+        super().on_num_repeats_changed()
+        self.continuous_modulator.num_repeats = self.ui.spinBoxNRepeat.value()
 
     def on_selected_device_changed(self):
         self.ui.txtEditErrors.clear()
@@ -96,7 +102,7 @@ class ContinuousSendDialogController(SendDialogController):
         try:
             self.device.is_send_continuous = True
             self.device.continuous_send_ring_buffer = self.continuous_modulator.ring_buffer
-            self.device.total_samples_to_send = self.total_samples
+            self.device.num_samples_to_send = self.total_samples
 
             self._create_device_connects()
         except ValueError as e:

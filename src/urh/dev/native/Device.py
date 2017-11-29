@@ -214,7 +214,7 @@ class Device(QObject):
         self.is_in_spectrum_mode = False
         self.sending_is_continuous = False
         self.continuous_send_ring_buffer = None
-        self.total_samples_to_send = None  # None = get automatically. This value needs to be known in continuous send mode
+        self.num_samples_to_send = None  # None = get automatically. This value needs to be known in continuous send mode
         self._current_sent_sample = Value("L", 0)
         self._current_sending_repeat = Value("L", 0)
 
@@ -282,7 +282,10 @@ class Device(QObject):
 
     @property
     def send_config(self) -> SendConfig:
-        total_samples = len(self.send_buffer) if self.total_samples_to_send is None else 2 * self.total_samples_to_send
+        if self.num_samples_to_send is None:
+            total_samples = len(self.send_buffer)
+        else:
+            total_samples = 2 * self.num_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
                           pack_complex_method=self.pack_complex,

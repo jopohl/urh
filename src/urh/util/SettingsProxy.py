@@ -7,11 +7,16 @@ from urh.util.Logger import logger
 
 
 class SettingsProxy(object):
+    OVERWRITE_RECEIVE_BUFFER_SIZE = None
+
     """
     Centralize common settings operations
     """
     @staticmethod
     def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: bool) -> int:
+        if SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE:
+            return SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE
+
         if resume_on_full_receive_buffer:
             if spectrum_mode:
                 num_samples = constants.SPECTRUM_BUFFER_SIZE

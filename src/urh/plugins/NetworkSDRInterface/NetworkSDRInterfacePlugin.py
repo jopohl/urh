@@ -1,16 +1,11 @@
+import socket
 import socketserver
 import threading
-
 import time
 
 import numpy as np
-import psutil
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSignal
-import socket
+from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal
 
-from urh import constants
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
@@ -55,7 +50,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
         self.server_ip = ""
 
-        self.samples_to_send = None # set in virtual device constructor
+        self.samples_to_send = None  # set in virtual device constructor
 
         self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
@@ -110,7 +105,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     @property
     def sending_finished(self) -> bool:
-        return self.current_sending_repeat >= self.sending_repeats if self.sending_repeats > 1 else False
+        return self.current_sending_repeat >= self.sending_repeats if self.sending_repeats > 0 else False
 
     @property
     def received_data(self):

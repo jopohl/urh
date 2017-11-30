@@ -33,7 +33,6 @@ class Ui_TabAnalysis(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1331, 740))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.splitter_2 = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter_2.setStyleSheet("QSplitter::handle:vertical {\n"

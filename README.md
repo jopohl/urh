@@ -6,7 +6,6 @@
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
 
 [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
-[![Slack](https://slackinstralsund.herokuapp.com/badge.svg)](https://slackinstralsund.herokuapp.com/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 

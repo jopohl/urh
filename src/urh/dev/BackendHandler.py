@@ -164,11 +164,10 @@ class BackendHandler(object):
                 self.gnuradio_installed = False
                 return
         else:
-            # we are on a nice unix with gnuradio installed to default python path
-            devnull = "NUL" if os.name == "nt" else "/dev/null"
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-                # Subprocess.call gives memory error, so we use os.system
-                self.gnuradio_installed = os.system(self.python2_exe + ' -c "import gnuradio" 2>' + devnull) == 0
+                # Use shell=True to prevent console window popping up on windows
+                self.gnuradio_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
+                                               shell=True, stderr=DEVNULL) == 0
                 constants.SETTINGS.setValue("python2_exe", self.python2_exe)
             else:
                 self.gnuradio_installed = False

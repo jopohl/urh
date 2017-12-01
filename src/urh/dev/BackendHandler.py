@@ -168,7 +168,7 @@ class BackendHandler(object):
             devnull = "NUL" if os.name == "nt" else "/dev/null"
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
                 # Subprocess.call gives memory error, so we use os.system
-                self.gnuradio_installed = os.system(self.python2_exe + " -c 'import gnuradio' 2>" + devnull) == 0
+                self.gnuradio_installed = os.system(self.python2_exe + ' -c "import gnuradio" 2>' + devnull) == 0
                 constants.SETTINGS.setValue("python2_exe", self.python2_exe)
             else:
                 self.gnuradio_installed = False

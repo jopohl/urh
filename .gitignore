@@ -16,7 +16,7 @@ src/urh/controller/__pycache__/
 src/urh/cythonext/__pycache__/
 src/urh/dev/__pycache__/
 src/urh/dev/gr/__pycache__/
-src/urh/dev/gr/scripts/InputHandlerThread.pyc
+*.pyc
 src/urh/dev/native/__pycache__/
 src/urh/dev/native/lib/__pycache__/
 src/urh/models/__pycache__/

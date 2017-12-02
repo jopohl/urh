@@ -39,20 +39,18 @@ Furthermore, you can [install urh from source](#installing-from-source) or run i
 - [Windows](#windows)
 - [Mac OS X](#mac-os-x)
 
-__Dependencies__
-- Python 3.4+
-- numpy / psutil / zmq
-- PyQt5
-- C++ Compiler
+## Dependencies
 
-__Optional__
-- librtlsdr (for native RTL-SDR device backend)
-- libhackrf (for native HackRF device backend)
-- libairspy (for native AirSPy device backend)
-- liblimesdr (for native LimeSDR device backend)
-- libuhd (for native USRP device backend)
-- rfcat (for RfCat plugin to send e.g. with YardStick One)
-- gnuradio / gnuradio-osmosdr (for GNU Radio device backends) 
+| Required  | Optional |
+| ------------- | ------------- |
+|  Python 3.4+  | librtlsdr (for native RTL-SDR support)  |
+| python-numpy  | libhackrf (for native HackRF support)  |
+| python-psutil  | libairspy (for native AirSPy support)  |
+| python-zmq  | liblimesdr (for native LimeSDR support)  |
+| PyQt5  | libuhd (for native USRP suppport)  |
+| C++ Compiler | rfcat (for RfCat plugin to send e.g. with YardStick One) |
+|   | gnuradio / gnuradio-osmosdr (for GNU Radio device backends)  |
+
 
 ## Installation examples
 ### Arch Linux

@@ -695,10 +695,6 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
-            if self.sender().new_project:
-                for f in self.signal_tab_controller.signal_frames:
-                    self.close_signal_frame(f)
-
             self.project_manager.from_dialog(self.sender())
 
     @pyqtSlot()

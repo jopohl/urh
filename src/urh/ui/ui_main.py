@@ -342,7 +342,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_interpretation), _translate("MainWindow", "Interpretation"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_protocol), _translate("MainWindow", "Analysis"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_generator), _translate("MainWindow", "Generator"))
-        self.labelNonProjectMode.setText(_translate("MainWindow", "<html><head/><body><p>Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via <a href=\"open_new_project_dialog\"><span style=\" text-decoration: underline; color:#0000ff;\">File -&gt; New Project</span></a>. <a href=\"dont_show_non_project_again\"><span style=\" text-decoration: underline; color:#0000ff;\">Don\'t show this hint</span></a></p></body></html>"))
+        self.labelNonProjectMode.setText(_translate("MainWindow", "<html><head/><body><p>Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via File -&gt; <a href=\"open_new_project_dialog\"><span style=\" text-decoration: underline; color:#0000ff;\">New Project</span></a>. <a href=\"dont_show_non_project_again\"><span style=\" text-decoration: underline; color:#0000ff;\">Don\'t show this hint</span></a></p></body></html>"))
         self.menuFile.setTitle(_translate("MainWindow", "Fi&le"))
         self.menuImport.setTitle(_translate("MainWindow", "Import"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edi&t"))

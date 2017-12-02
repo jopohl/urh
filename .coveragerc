@@ -18,3 +18,5 @@ exclude_lines =
     def mouseReleaseEvent
     def on_import_samples_from_csv_action_triggered
     def show_open_dialog
+    def on_new_project_action_triggered
+    def on_label_non_project_mode_link_activated

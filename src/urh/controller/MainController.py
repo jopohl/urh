@@ -845,6 +845,8 @@ class MainController(QMainWindow):
         if link == "dont_show_non_project_again":
             self.ui.labelNonProjectMode.hide()
             constants.SETTINGS.setValue("show_non_project_warning", False)
+        elif link == "open_new_project_dialog":
+            self.on_new_project_action_triggered()
 
     @pyqtSlot(bool)
     def on_project_loaded_status_changed(self, project_loaded: bool):

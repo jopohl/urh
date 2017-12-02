@@ -307,7 +307,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
        <string notr="true">background: rgba(255,255,0,64)</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via the File -&amp;gt; New Project.  &lt;a href=&quot;dont_show_non_project_again&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Don't show this hint&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via &lt;a href=&quot;open_new_project_dialog&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;File -&amp;gt; New Project&lt;/span&gt;&lt;/a&gt;. &lt;a href=&quot;dont_show_non_project_again&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Don't show this hint&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>

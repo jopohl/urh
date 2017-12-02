@@ -10,6 +10,7 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
+from urh import version
 
 try:
     locale.setlocale(locale.LC_ALL, '')
@@ -47,6 +48,10 @@ def fix_windows_stdout_stderr():
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--version":
+        print(version.VERSION)
+        sys.exit(0)
+
     fix_windows_stdout_stderr()
 
     if sys.version_info < (3, 4):

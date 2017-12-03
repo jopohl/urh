@@ -589,6 +589,7 @@ class SignalFrameController(QFrame):
 
         self.ui.gvLegend.eliminate()
         self.ui.gvSignal.eliminate()
+        self.ui.gvSpectrogram.eliminate()
 
         self.scene_manager = None
         self.signal = None

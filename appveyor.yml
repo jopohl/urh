@@ -50,6 +50,7 @@ build_script:
   - python setup.py build_ext --inplace
 
 test_script:
+  - python src\urh\main.py --version
   - python -m pytest
 
 after_test:

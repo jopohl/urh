@@ -24,7 +24,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_4" stretch="100,1">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="styleSheet">
@@ -301,6 +301,19 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="labelNonProjectMode">
+      <property name="styleSheet">
+       <string notr="true">background: rgba(255,255,0,64)</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via File -&amp;gt; &lt;a href=&quot;open_new_project_dialog&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;New Project&lt;/span&gt;&lt;/a&gt;. &lt;a href=&quot;dont_show_non_project_again&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Don't show this hint&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -309,7 +322,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -321,7 +334,8 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
       <string>Import</string>
      </property>
      <property name="icon">
-      <iconset theme="document-import"/>
+      <iconset theme="document-import">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <addaction name="actionSamples_from_csv"/>
     </widget>
@@ -705,7 +719,8 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </action>
   <action name="actionSamples_from_csv">
    <property name="icon">
-    <iconset theme="text-csv"/>
+    <iconset theme="text-csv">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>IQ samples from csv</string>

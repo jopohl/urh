@@ -17,6 +17,7 @@ dependencies:
 test:
   override:                                                  
     - touch tests/show_gui
+    - python3 src/urh/main.py --version
     - python3 src/urh/cythonext/build.py
     - pytest tests
 

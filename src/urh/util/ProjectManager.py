@@ -76,9 +76,8 @@ class ProjectManager(QObject):
 
         return result
 
-
     def set_project_folder(self, path, ask_for_new_project=True):
-        if path != self.project_path:
+        if path != self.project_path and self.project_loaded:
             self.main_controller.close_all()
         FileOperator.RECENT_PATH = path
         self.project_path = path

@@ -167,15 +167,15 @@ class TestAWRE(QtTestCase):
         expected_address2 = '78e289'
 
 
-        print(Address.find_candidates(candidates_participant_1))
-        print(Address.find_candidates(candidates_participant_2))
+        #print(Address.find_candidates(candidates_participant_1))
+        #print(Address.find_candidates(candidates_participant_2))
         combined = candidates_participant_1+candidates_participant_2
         combined.sort(key=len)
         score = Address.find_candidates(combined)
-        print(score)
-        print("=================")
-        print(sorted(score, key=lambda k: score[k], reverse=True))
-        print()
+        #print(score)
+        #print("=================")
+        #print(sorted(score, key=lambda k: score[k], reverse=True))
+        #print()
 
         highscored = sorted(score, key=lambda k: score[k], reverse=True)[:2]
         self.assertIn(expected_address1, highscored)

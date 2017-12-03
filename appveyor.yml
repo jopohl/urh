@@ -24,6 +24,7 @@ environment:
 
 
 max_jobs: 4
+clone_depth: 5
 
 branches:
   only:

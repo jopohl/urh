@@ -33,6 +33,9 @@ branches:
     - master
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
 
+git:
+  depth: 5
+
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]; then sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil; fi
   - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then pip3 install -r requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
@@ -46,8 +49,9 @@ before_script:
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - pytest --cov=src/urh --cov-config .coveragerc tests 2> /tmp/test_errors.txt
+  - pytest -s --cov-report= --cov=src/urh --cov-config .coveragerc tests 2> /tmp/test_errors.txt
   - pip3 install .
+  - urh --version
   - urh autoclose
 
 after_failure:

@@ -36,7 +36,7 @@ class TestSignalTabGUI(QtTestCase):
         frame = self.form.signal_tab_controller.signal_frames[0]
         QApplication.instance().processEvents()
         x_zoom = frame.ui.spinBoxXZoom.value()
-        self.assertEqual(x_zoom, 100)
+        self.assertIn(x_zoom, range(100, 111))
 
         for _ in range(10):
             frame.ui.gvSignal.zoom(1.1)

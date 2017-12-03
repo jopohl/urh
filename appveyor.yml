@@ -24,6 +24,7 @@ environment:
 
 
 max_jobs: 4
+clone_depth: 5
 
 branches:
   only:
@@ -50,6 +51,7 @@ build_script:
   - python setup.py build_ext --inplace > build_log.txt
 
 test_script:
+  - python src\urh\main.py --version
   - python -m pytest
 
 after_test:

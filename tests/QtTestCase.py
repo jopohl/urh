@@ -37,6 +37,17 @@ class QtTestCase(unittest.TestCase):
         if self.SHOW:
             self.form.show()
 
+    def tearDown(self):
+        if hasattr(self, "dialog"):
+            self.dialog.close()
+        if hasattr(self, "form"):
+            self.form.close_all()
+            self.form.close()
+            sip.delete(self.form)
+            self.form = None
+        QApplication.instance().processEvents()
+        QTest.qWait(self.CLOSE_TIMEOUT)
+
     def wait_before_new_file(self):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
@@ -57,13 +68,3 @@ class QtTestCase(unittest.TestCase):
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
-
-    def tearDown(self):
-        if hasattr(self, "dialog"):
-            self.dialog.close()
-        if hasattr(self, "form"):
-            self.form.close_all()
-            if self.SHOW:
-                self.form.close()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)

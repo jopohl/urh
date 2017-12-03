@@ -126,6 +126,8 @@ class MainController(QMainWindow):
 
         self.ui.actionAbout_Qt.setIcon(QIcon(":/qt-project.org/qmessagebox/images/qtlogo-64.png"))
 
+        self.__set_non_project_warning_visibility()
+
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()
 
@@ -134,6 +136,10 @@ class MainController(QMainWindow):
 
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
+
+    def __set_non_project_warning_visibility(self):
+        show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
+        self.ui.labelNonProjectMode.setVisible(show)
 
     def create_connects(self):
         self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
@@ -188,9 +194,7 @@ class MainController(QMainWindow):
         self.project_save_timer.timeout.connect(self.project_manager.save_project)
 
         self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
-        self.project_manager.project_loaded_status_changed.connect(self.ui.actionProject_settings.setVisible)
-        self.project_manager.project_loaded_status_changed.connect(self.ui.actionSave_project.setVisible)
-        self.project_manager.project_loaded_status_changed.connect(self.ui.actionConvert_Folder_to_Project.setDisabled)
+        self.project_manager.project_loaded_status_changed.connect(self.on_project_loaded_status_changed)
         self.project_manager.project_updated.connect(self.on_project_updated)
 
         self.ui.textEditProjectDescription.textChanged.connect(self.on_text_edit_project_description_text_changed)
@@ -200,6 +204,8 @@ class MainController(QMainWindow):
 
         self.ui.actionShowFileTree.triggered.connect(self.on_action_show_filetree_triggered)
         self.ui.actionShowFileTree.setShortcut(QKeySequence("F10"))
+
+        self.ui.labelNonProjectMode.linkActivated.connect(self.on_label_non_project_mode_link_activated)
 
         self.ui.menuFile.addSeparator()
         for i in range(constants.MAX_RECENT_FILE_NR):
@@ -668,6 +674,13 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_new_project_action_triggered(self):
         pdc = ProjectDialogController(parent=self)
+        try:
+            path = os.path.dirname(self.signal_tab_controller.signal_frames[0].signal.filename)
+        except (IndexError, AttributeError, TypeError):
+            path = None
+
+        if path:
+            pdc.set_path(path)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 
@@ -689,10 +702,6 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
-            if self.sender().new_project:
-                for f in self.signal_tab_controller.signal_frames:
-                    self.close_signal_frame(f)
-
             self.project_manager.from_dialog(self.sender())
 
     @pyqtSlot()
@@ -830,3 +839,18 @@ class MainController(QMainWindow):
         dialog = CSVImportDialogController(file_name, parent=self)
         dialog.data_imported.connect(on_data_imported)
         dialog.exec_()
+
+    @pyqtSlot(str)
+    def on_label_non_project_mode_link_activated(self, link: str):
+        if link == "dont_show_non_project_again":
+            self.ui.labelNonProjectMode.hide()
+            constants.SETTINGS.setValue("show_non_project_warning", False)
+        elif link == "open_new_project_dialog":
+            self.on_new_project_action_triggered()
+
+    @pyqtSlot(bool)
+    def on_project_loaded_status_changed(self, project_loaded: bool):
+        self.ui.actionProject_settings.setVisible(project_loaded)
+        self.ui.actionSave_project.setVisible(project_loaded)
+        self.ui.actionConvert_Folder_to_Project.setDisabled(project_loaded)
+        self.__set_non_project_warning_visibility()

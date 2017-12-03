@@ -251,6 +251,5 @@ class TestAnalysisTabGUI(QtTestCase):
         menu = self.cfc.ui.treeViewProtocols.create_context_menu()
         actions = ["Create a new group", "Sort Group Elements", "Delete group"]
         menu_action_names = [action.text() for action in menu.actions() if action.text()]
-        print(menu_action_names)
         for action in menu_action_names:
             self.assertIn(action, actions)

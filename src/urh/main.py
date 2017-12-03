@@ -2,7 +2,6 @@
 
 import locale
 import re
-import time
 import os
 import sys
 
@@ -53,21 +52,6 @@ def main():
         print("You need at least Python 3.4 for this application!")
         sys.exit(1)
 
-    t = time.time()
-    if GENERATE_UI and not hasattr(sys, 'frozen'):
-        try:
-            urh_dir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))
-            sys.path.append(urh_dir)
-            sys.path.append(os.path.join(urh_dir, "src"))
-
-            import generate_ui
-
-            generate_ui.gen()
-
-            print("Time for generating UI: %.2f seconds" % (time.time() - t))
-        except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script can't be found. This is okay in release.")
-
     urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
 
@@ -76,9 +60,21 @@ def main():
 
     src_dir = os.path.join(prefix, "src")
     if os.path.exists(src_dir) and not prefix.startswith("/usr") and not re.match(r"(?i)c:\\program", prefix):
-        # Started locally, not installed
-        print("Adding {0} to pythonpath. This is only important when running URH from source.".format(src_dir))
+        # Started locally, not installed -> add directory to path
         sys.path.insert(0, src_dir)
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--version":
+        import urh.version
+        print(urh.version.VERSION)
+        sys.exit(0)
+
+    if GENERATE_UI and not hasattr(sys, 'frozen'):
+        try:
+            sys.path.append(prefix)
+            import generate_ui
+            generate_ui.gen()
+        except (ImportError, FileNotFoundError):
+            print("Will not regenerate UI, because script can't be found. This is okay in release.")
 
     from urh.util import util
     util.set_windows_lib_path()

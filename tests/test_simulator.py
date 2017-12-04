@@ -1,29 +1,19 @@
-import unittest
 import time
-import tests.utils_testing
 from collections import defaultdict
-from tests.QtTestCase import QtTestCase
-from urh import constants
-from urh.controller.MainController import MainController
-from urh.ui.SimulatorScene import RuleItem
-from urh.ui.SimulatorScene import ParticipantItem
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 
-from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh import SimulatorSettings
-from urh.util.Simulator import Simulator
-from urh.dev.BackendHandler import BackendHandler
-
-from PyQt5.QtWidgets import QMenu
 from PyQt5.QtTest import QSignalSpy
-from PyQt5.QtCore import QEventLoop, QTimer
 
+from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import constants, SimulatorSettings
+from urh.controller.MainController import MainController
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.util.SettingsProxy import SettingsProxy
+from urh.util.Simulator import Simulator
 
 
 class TestSimulator(QtTestCase):
@@ -42,11 +32,13 @@ class TestSimulator(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(3)
         self.cfc.proto_analyzer.auto_assign_labels()
 
-        self.network_sdr_plugin = NetworkSDRInterfacePlugin(raw_mode=True)
-        self.backend_handler = BackendHandler()
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10**6
+
+        self.network_sdr_plugin_sender = NetworkSDRInterfacePlugin(raw_mode=True)
+        self.network_sdr_plugin_receiver = NetworkSDRInterfacePlugin(raw_mode=True)
 
     def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len) # Restore Symbol Length
+        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len)  # Restore Symbol Length
 
     def test_performance(self):
         part_a = Participant("Device A", shortname="A", color_index=0)
@@ -69,66 +61,48 @@ class TestSimulator(QtTestCase):
         self.stc.sim_proto_manager.participants[0].recv_profile = profile
         self.stc.sim_proto_manager.participants[1].send_profile = profile
 
-        msg_a = SimulatorMessage(part_b, [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0,0,1,1]*8 + [1,0,1,1,1,0,0,1,1,1]*4,
-                                   100000, MessageType("empty_message_type"), source=part_a)
+        msg_a = SimulatorMessage(part_b,
+                                 [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
+                                 100000, MessageType("empty_message_type"), source=part_a)
 
-        msg_b = SimulatorMessage(part_a, [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1,1,0,0]*8 + [1,0,1,1,1,0,0,1,1,1]*4,
-                                   100000, MessageType("empty_message_type"), source=part_b)
-
-        msg_dummy = Message([0]*16, 100000, MessageType("empty"), participant=part_b)
+        msg_b = SimulatorMessage(part_a,
+                                 [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1, 1, 0, 0] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
+                                 100000, MessageType("empty_message_type"), source=part_b)
 
         self.stc.sim_proto_manager.add_items([msg_a, msg_b], 0, None)
         self.stc.sim_proto_manager.update_active_participants()
 
         simulator = Simulator(self.stc.sim_proto_manager, self.gtc.modulators, self.stc.sim_expression_parser,
-                                self.form.project_manager)
+                              self.form.project_manager)
 
         port = self.__get_free_port()
-        sniffer = next (iter (simulator.profile_sniffer_dict.values()))
+        sniffer = next(iter(simulator.profile_sniffer_dict.values()))
         sniffer.rcv_device.set_server_port(port)
-        self.network_sdr_plugin.client_port = port
 
-        sender = next (iter (simulator.profile_sender_dict.values()))
-        recv_sniffer = ProtocolSniffer(profile["bit_length"], profile["center"], profile["noise"], profile["tolerance"],
-                                       0, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, self.backend_handler, raw_mode=True)
-        recv_sniffer.rcv_device.sample_rate = 10 ** 6
+        self.network_sdr_plugin_sender.client_port = port
+
+        sender = next(iter(simulator.profile_sender_dict.values()))
         sender.device.set_client_port(port + 1)
-        recv_sniffer.rcv_device.set_server_port(port + 1)
+        sender.device._VirtualDevice__dev.name = "simulator_sender"
+        self.network_sdr_plugin_receiver.server_port = port + 1
 
+        self.network_sdr_plugin_receiver.start_tcp_server_for_receiving()
+        self.network_sdr_plugin_receiver.server.name = "receiver"
+
+        spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
         simulator.start()
 
         modulator = Modulator("test_modulator")
         modulator.samples_per_bit = 100
-        recv_sniffer.sniff()
+        modulator.carrier_freq_hz = 55e3
+        modulator.modulate(msg_a.encoded_bits)
 
         t = time.time()
-
-        modulator.modulate(msg_a.encoded_bits)
-        modulator.modulated_samples.tofile("/tmp/test.complex")
-        self.network_sdr_plugin.send_raw_data(modulator.modulated_samples, 1)
-
-        modulator.modulate(msg_dummy.encoded_bits)
-        self.network_sdr_plugin.send_raw_data(modulator.modulated_samples, 7)
-
-        msg = None
-        loop = QEventLoop()
-        recv_sniffer.qt_signals.data_sniffed.connect(loop.quit)
-
-        timer = QTimer()
-        timer.setSingleShot(True)
-        timer.timeout.connect(loop.quit)
-        timer.start(5000)
-
-        while timer.isActive():
-            if len(recv_sniffer.messages):
-                msg = recv_sniffer.messages[0]
-                self.assertEqual(msg.encoded_bits_str, msg_b.encoded_bits_str)
-                break
-
-            loop.exec()
-
+        self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
+        timeout = spy.wait(1000)
         elapsed = time.time() - t
-        timer.stop()
+        self.assertTrue(timeout)
+        self.assertGreater(self.network_sdr_plugin_receiver.current_receive_index, 0)
         self.assertLess(elapsed, 0.2)
 
     def __get_free_port(self):

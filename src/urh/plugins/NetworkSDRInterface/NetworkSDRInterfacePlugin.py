@@ -35,10 +35,15 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(self.data))
             else:
                 received = np.frombuffer(self.data, dtype=np.complex64)
+                if len(received) == 0:
+                    return
+
                 if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
+                    self.server.previous_receive_index = 0
                     self.server.current_receive_index = 0
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
+                self.server.previous_receive_index = self.server.current_receive_index
                 self.server.current_receive_index += len(received)
 
     def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
@@ -152,6 +157,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
+            self.server.previous_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
 
@@ -199,10 +205,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         for _ in rng:
             if self.__sending_interrupt_requested:
                 break
-            while self.current_sent_sample < num_samples_to_send:
+            while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
                 if self.__sending_interrupt_requested:
                     break
-                n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
+                if num_samples_to_send is None:
+                    n = samples_per_iteration
+                else:
+                    n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
                 data = ring_buffer.pop(n, ensure_even_length=True)
                 self.send_data(data)
                 self.current_sent_sample += len(data)
@@ -304,7 +313,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def __emit_rcv_index_changed(self):
         # for updating received bits in protocol sniffer
         if hasattr(self, "received_bits") and self.received_bits:
-            self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
+            # int arguments are just for compatibility with native and grc backend
+            self.rcv_index_changed.emit(0, 0)
+        elif self.raw_mode and self.server.previous_receive_index != self.server.current_receive_index:
+            self.rcv_index_changed.emit(self.server.previous_receive_index, self.server.current_receive_index)
 
     @pyqtSlot(str)
     def on_lopenprotosniffer_link_activated(self, link: str):

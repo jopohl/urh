@@ -20,7 +20,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler, raw_mode=False):
+                 modulation_type: int, device: str, backend_handler: BackendHandler, raw_mode=False, real_time=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -38,6 +38,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
+        self.real_time = real_time
         self.data_cache = []
         self.conseq_non_data = 0
         self.reading_data = False
@@ -80,20 +81,16 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
         old_nmsgs = len(self.messages)
-        if self.rcv_device.backend in (Backends.native, Backends.grc):
+        if self.rcv_device.is_raw_mode:
             if old_index == new_index:
                 return
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
-
-            if not self.rcv_device.is_raw_mode:
-                for bit_str in self.rcv_device.data:
-                    msg = Message.from_plain_bits_str(bit_str)
-                    msg.decoder = self.decoder
-                    self.messages.append(msg)
-            else:
-                self.__demodulate_data(self.rcv_device.data[old_index:new_index])
+            for bit_str in self.rcv_device.data:
+                msg = Message.from_plain_bits_str(bit_str)
+                msg.decoder = self.decoder
+                self.messages.append(msg)
 
             self.rcv_device.free_data()  # do not store received bits twice
 
@@ -124,7 +121,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         if self.reading_data:
             self.data_cache.append(data)
-            return
+            if not self.real_time:
+                return
         elif len(self.data_cache) == 0:
             return
 
@@ -157,9 +155,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             i += 1
 
     def __are_bits_in_data(self, data):
-        if not len(data):
-            return False
-
         self.signal._fulldata = data
         self.signal._qad = None
 

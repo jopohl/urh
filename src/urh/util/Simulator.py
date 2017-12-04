@@ -67,7 +67,7 @@ class Simulator(QObject):
                     device = recv_profile['device']
 
                     sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
-                                              modulation, device, self.backend_handler, raw_mode=True)
+                                              modulation, device, self.backend_handler, raw_mode=True, real_time=True)
 
                     self.load_device_parameter(sniffer.rcv_device, recv_profile, is_rx=True)
                     self.profile_sniffer_dict[recv_profile['name']] = sniffer

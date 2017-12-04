@@ -189,7 +189,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        QTest.qWait(5 * self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
@@ -223,7 +223,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
-        QTest.qWait(10 * self.SEND_RECV_TIMEOUT)
+        QTest.qWait(15 * self.SEND_RECV_TIMEOUT)
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)

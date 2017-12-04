@@ -25,6 +25,9 @@ matrix:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
 
+notifications:
+  email: false
+
 branches:
   only:
     - master

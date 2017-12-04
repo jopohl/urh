@@ -8,7 +8,7 @@ from subprocess import call
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory, \
-    QRadioButton, QVBoxLayout, QPlainTextEdit
+    QRadioButton, QFileDialog
 
 from urh import constants, colormaps
 from urh.controller.PluginController import PluginController
@@ -125,6 +125,8 @@ class OptionsController(QDialog):
     def create_connects(self):
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
+        self.ui.btnChoosePython2Interpreter.clicked.connect(self.on_btn_choose_python2_interpreter_clicked)
+        self.ui.btnChooseGnuRadioDirectory.clicked.connect(self.on_btn_choose_gnuradio_directory_clicked)
         self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
         self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
         self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
@@ -328,6 +330,24 @@ class OptionsController(QDialog):
         self.set_gnuradio_status()
 
     @pyqtSlot()
+    def on_btn_choose_python2_interpreter_clicked(self):
+        if sys.platform == "win32":
+            dialog_filter = "Executable (*.exe);;All files (*.*)"
+        else:
+            dialog_filter = ""
+        filename, _ = QFileDialog.getOpenFileName(self, self.tr("Choose python2 interpreter"), filter=dialog_filter)
+        if filename:
+            self.ui.lineEditPython2Interpreter.setText(filename)
+            self.set_gnuradio_status()
+
+    @pyqtSlot()
+    def on_btn_choose_gnuradio_directory_clicked(self):
+        directory = QFileDialog.getExistingDirectory(self, "Choose GNU Radio directory")
+        if directory:
+            self.ui.lineEditGnuradioDirectory.setText(directory)
+            self.set_gnuradio_status()
+
+    @pyqtSlot()
     def on_chk_box_device_enabled_clicked(self):
         self.selected_device.is_enabled = bool(self.ui.chkBoxDeviceEnabled.isChecked())
         self.selected_device.write_settings()
@@ -370,7 +390,7 @@ class OptionsController(QDialog):
     @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
-                            else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
+            else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
         num_natives = self.backend_handler.num_native_backends
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
         new_natives = len(extensions) - num_natives
@@ -406,7 +426,6 @@ class OptionsController(QDialog):
             except OSError:
                 pass
 
-
     @pyqtSlot()
     def on_btn_health_check_clicked(self):
         info = ExtensionHelper.perform_health_check()
@@ -416,7 +435,6 @@ class OptionsController(QDialog):
 
         d = util.create_textbox_dialog(info, "Health check for native extensions", self)
         d.show()
-
 
     @staticmethod
     def write_default_options():

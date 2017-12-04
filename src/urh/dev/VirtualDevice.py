@@ -205,6 +205,13 @@ class VirtualDevice(QObject):
             raise ValueError(self.continuous_send_msg)
 
     @property
+    def is_raw_mode(self) -> bool:
+        if self.backend == Backends.network:
+            return self.__dev.raw_mode
+        else:
+            return True
+
+    @property
     def continuous_send_ring_buffer(self):
         if self.backend in (Backends.native, Backends.network):
             return self.__dev.continuous_send_ring_buffer

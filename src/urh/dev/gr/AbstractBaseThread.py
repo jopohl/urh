@@ -268,7 +268,10 @@ class AbstractBaseThread(QThread):
                 break
 
         result = b"".join(result)
-        return result.decode("utf-8")
+        try:
+            return result.decode("utf-8")
+        except UnicodeDecodeError:
+            return "Could not decode device message"
 
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):

@@ -23,10 +23,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     current_send_message_changed = pyqtSignal(int)
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
-        def __init__(self, callback, *args, **keys):
-            self.callback = callback
-            socketserver.BaseRequestHandler.__init__(self, *args, **keys)
-
         def handle(self):
             received = self.request.recv(4096)
             self.data = received
@@ -43,7 +39,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                     self.server.current_receive_index = 0
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
-                self.callback(self.server.current_receive_index, self.server.current_receive_index + len(received))
                 self.server.current_receive_index += len(received)
 
     def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
@@ -63,7 +58,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.receive_check_timer = QTimer()
         self.receive_check_timer.setInterval(250)
         # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
-        #self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
+        self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
 
         self.is_in_spectrum_mode = spectrum
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer
@@ -153,8 +148,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.settings_frame.lOpenProtoSniffer.linkActivated.connect(self.on_lopenprotosniffer_link_activated)
 
     def start_tcp_server_for_receiving(self):
-        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.handler_factory(self.__emit_rcv_index_changed))
-
+        self.server = socketserver.TCPServer((self.server_ip, self.server_port), self.MyTCPHandler)
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
@@ -205,15 +199,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         for _ in rng:
             if self.__sending_interrupt_requested:
                 break
-            while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
+            while self.current_sent_sample < num_samples_to_send:
                 if self.__sending_interrupt_requested:
                     break
-
-                if num_samples_to_send is None:
-                    n = samples_per_iteration
-                else:
-                    n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
-
+                n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
                 data = ring_buffer.pop(n, ensure_even_length=True)
                 self.send_data(data)
                 self.current_sent_sample += len(data)
@@ -312,15 +301,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_port = self.settings_frame.spinBoxServerPort.value()
         self.qsettings.setValue('server_port', str(self.server_port))
 
-    def __emit_rcv_index_changed(self, old_index=123, new_index=456):
-        self.rcv_index_changed.emit(old_index, new_index)
+    def __emit_rcv_index_changed(self):
+        # for updating received bits in protocol sniffer
+        if hasattr(self, "received_bits") and self.received_bits:
+            self.rcv_index_changed.emit(0, 0)  # int arguments are just for compatibility with native and grc backend
 
     @pyqtSlot(str)
     def on_lopenprotosniffer_link_activated(self, link: str):
         if link == "open_proto_sniffer":
             self.show_proto_sniff_dialog_clicked.emit()
-
-    def handler_factory(self, callback):
-        def createHandler(*args, **keys):
-            return self.MyTCPHandler(callback, *args, **keys)
-        return createHandler

@@ -22,7 +22,6 @@ class Ui_GeneratorTab(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1159, 686))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
         self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
@@ -112,7 +111,6 @@ class Ui_GeneratorTab(object):
         self.pageFuzzingUI = QtWidgets.QWidget()
         self.pageFuzzingUI.setObjectName("pageFuzzingUI")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.pageFuzzingUI)
-        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.btnFuzz = QtWidgets.QPushButton(self.pageFuzzingUI)
         self.btnFuzz.setObjectName("btnFuzz")
@@ -131,7 +129,6 @@ class Ui_GeneratorTab(object):
         self.pageFuzzingProgressBar = QtWidgets.QWidget()
         self.pageFuzzingProgressBar.setObjectName("pageFuzzingProgressBar")
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.pageFuzzingProgressBar)
-        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.progressBarFuzzing = QtWidgets.QProgressBar(self.pageFuzzingProgressBar)
         self.progressBarFuzzing.setProperty("value", 24)

@@ -298,6 +298,12 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
          </property>
         </layout>
        </widget>
+       <widget class="QWidget" name="tab_simulator">
+        <attribute name="title">
+         <string>Simulator</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_7"/>
+       </widget>
       </widget>
      </widget>
     </item>

@@ -18,6 +18,7 @@ from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogCont
 from urh.controller.ReceiveDialogController import ReceiveDialogController
 from urh.controller.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
+from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileIconProvider import FileIconProvider
@@ -58,6 +59,13 @@ class MainController(QMainWindow):
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
                                                                self.project_manager,
                                                                parent=self.ui.tab_generator)
+
+        self.simulator_tab_controller = SimulatorTabController(parent=self.ui.tab_simulator,
+                                                               compare_frame_controller=self.compare_frame_controller,
+                                                               generator_tab_controller=self.generator_tab_controller,
+                                                               project_manager=self.project_manager)
+
+        self.ui.tab_simulator.layout().addWidget(self.simulator_tab_controller)
 
         self.undo_group = QUndoGroup()
         self.undo_group.addStack(self.signal_tab_controller.signal_undo_stack)
@@ -389,6 +397,7 @@ class MainController(QMainWindow):
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
+        self.simulator_tab_controller.close_all()
         self.generator_tab_controller.table_model.protocol.clear()
         self.generator_tab_controller.refresh_tree()
         self.generator_tab_controller.refresh_table()
@@ -799,6 +808,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
         self.generator_tab_controller.init_rfcat_plugin()
+        self.simulator_tab_controller.refresh_field_types_for_labels()
 
         if "default_view" in changed_options:
             self.apply_default_view(int(changed_options["default_view"]))

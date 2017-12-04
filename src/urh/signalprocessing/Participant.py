@@ -1,10 +1,13 @@
 import uuid
 import xml.etree.ElementTree as ET
 
+from urh import SimulatorSettings
+
 
 class Participant(object):
 
-    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "relative_rssi", "__id"]
+    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate",
+                 "__recv_profile", "__send_profile", "relative_rssi", "__id"]
 
     def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
         self.name = name if name else "unknown"
@@ -12,6 +15,9 @@ class Participant(object):
         self.address_hex = address_hex if address_hex else ""
         self.color_index = color_index
         self.show = True
+        self.simulate = False
+        self.__recv_profile = None
+        self.__send_profile = None
 
         self.relative_rssi = relative_rssi
 
@@ -22,6 +28,28 @@ class Participant(object):
 
     def __eq__(self, other):
         return isinstance(other, Participant) and self.id_match(other.id)
+
+    @property
+    def recv_profile(self):
+        if not self.__recv_profile in SimulatorSettings.profiles:
+            self.__recv_profile = None
+
+        return self.__recv_profile
+
+    @recv_profile.setter
+    def recv_profile(self, value):
+        self.__recv_profile = value
+
+    @property
+    def send_profile(self):
+        if self.__send_profile not in SimulatorSettings.profiles:
+            self.__send_profile = None
+
+        return self.__send_profile
+
+    @send_profile.setter
+    def send_profile(self, value):
+        self.__send_profile = value
 
     @property
     def id(self):

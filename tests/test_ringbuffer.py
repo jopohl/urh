@@ -25,7 +25,7 @@ class TestRingBuffer(unittest.TestCase):
         ring_buffer = RingBuffer(size=5)
         add1 = np.array([1, 2, 3], dtype=np.complex64)
         ring_buffer.push(add1)
-        self.assertTrue(np.array_equal(add1, ring_buffer.pop(40, pad_zeros=False)))
+        self.assertTrue(np.array_equal(add1, ring_buffer.pop(40)))
         self.assertTrue(ring_buffer.is_empty)
 
         add2 = np.array([1, 2, 3, 4], dtype=np.complex64)

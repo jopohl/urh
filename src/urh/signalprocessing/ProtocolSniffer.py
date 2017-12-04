@@ -20,7 +20,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler):
+                 modulation_type: int, device: str, backend_handler: BackendHandler, raw_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -32,7 +32,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
-                                        resume_on_full_receive_buffer=True, raw_mode=False)
+                                        resume_on_full_receive_buffer=True, raw_mode=raw_mode)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
@@ -86,10 +86,14 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
-            for bit_str in self.rcv_device.data:
-                msg = Message.from_plain_bits_str(bit_str)
-                msg.decoder = self.decoder
-                self.messages.append(msg)
+
+            if not self.rcv_device.is_raw_mode:
+                for bit_str in self.rcv_device.data:
+                    msg = Message.from_plain_bits_str(bit_str)
+                    msg.decoder = self.decoder
+                    self.messages.append(msg)
+            else:
+                self.__demodulate_data(self.rcv_device.data[old_index:new_index])
 
             self.rcv_device.free_data()  # do not store received bits twice
 
@@ -153,6 +157,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             i += 1
 
     def __are_bits_in_data(self, data):
+        if not len(data):
+            return False
+
         self.signal._fulldata = data
         self.signal._qad = None
 

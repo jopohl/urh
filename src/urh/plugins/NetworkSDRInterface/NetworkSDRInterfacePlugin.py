@@ -12,6 +12,7 @@ from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
+from urh.util.util import profile
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
@@ -187,6 +188,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         except Exception as e:
             return str(e)
 
+    @profile
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever

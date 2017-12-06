@@ -23,6 +23,8 @@ from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
 
 from urh.signalprocessing.Encoding import Encoding
+from urh.util.util import profile
+
 
 class Simulator(QObject):
     simulation_started = pyqtSignal()
@@ -267,7 +269,7 @@ class Simulator(QObject):
                     result = numpy.random.randint(lbl.random_min, lbl.random_max + 1)
                     self.set_label_value(new_message, lbl, result)
 
-            print("Random values: " + str(time.perf_counter() - start_time))
+            #print("Random values: " + str(time.perf_counter() - start_time))
 
             # calculate checksums ...
 
@@ -281,12 +283,12 @@ class Simulator(QObject):
                     new_message.plain_bits[start:end] = checksum + array.array("B", [0] *(
                     (end - start) - len(checksum)))
 
-            print("Checksums: " + str(time.perf_counter() - start_time))
+#            print("Checksums: " + str(time.perf_counter() - start_time))
 
             start_time = time.perf_counter()
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
 
-            print("Send message: " + str(time.perf_counter() - start_time))
+   #         print("Send message: " + str(time.perf_counter() - start_time))
 
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
@@ -301,7 +303,7 @@ class Simulator(QObject):
             while self.is_simulating and not self.simulation_is_finished() and retry < SimulatorSettings.retries:
                 start_time = time.perf_counter()
                 received_msg = self.receive_message(sniffer)
-                print("Receive message: " + str(time.perf_counter() - start_time))
+                #print("Receive message: " + str(time.perf_counter() - start_time))
 
                 if not self.is_simulating:
                     return
@@ -335,7 +337,7 @@ class Simulator(QObject):
 
                 start_time = time.perf_counter()
                 check_result = self.check_message(received_msg, new_message)
-                print("Check message: " + str(time.perf_counter() - start_time) + " " + str(check_result))
+                #print("Check message: " + str(time.perf_counter() - start_time) + " " + str(check_result))
 
                 if check_result:
                     decoded_msg = Message(received_msg.decoded_bits, 0,
@@ -413,6 +415,7 @@ class Simulator(QObject):
         sender = self.profile_sender_dict[lsm.participant.send_profile['name']]
         self.send_message(lsm.send_recv_messages[-1], lsm.repeat, sender, lsm.modulator_index)
 
+    @profile
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
         modulator.modulate(message.encoded_bits, pause=message.pause)
@@ -423,6 +426,7 @@ class Simulator(QObject):
             sender.push_data(modulator.modulated_samples)
             curr_repeat += 1
 
+    @profile
     def receive_message(self, sniffer):
         msg = None
         loop = QEventLoop()

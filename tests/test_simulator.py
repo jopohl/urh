@@ -1,8 +1,7 @@
-import threading
 import time
-from collections import defaultdict, deque
+from collections import defaultdict
 
-import sys
+import yappi
 from PyQt5.QtTest import QSignalSpy
 
 from tests.QtTestCase import QtTestCase
@@ -16,66 +15,6 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.util.SettingsProxy import SettingsProxy
 from urh.util.Simulator import Simulator
-
-
-try:
-    from resource import getrusage, RUSAGE_SELF
-except ImportError:
-    RUSAGE_SELF = 0
-    def getrusage(who=0):
-        return [0.0, 0.0] # on non-UNIX platforms cpu_time always 0.0
-
-p_stats = None
-p_start_time = None
-
-def profiler(frame, event, arg):
-    if event not in ('call','return'): return profiler
-    #### gather stats ####
-    rusage = getrusage(RUSAGE_SELF)
-    t_cpu = rusage[0] + rusage[1] # user time + system time
-    code = frame.f_code
-    fun = (code.co_name, code.co_filename, code.co_firstlineno)
-    #### get stack with functions entry stats ####
-    ct = threading.currentThread()
-    try:
-        p_stack = ct.p_stack
-    except AttributeError:
-        ct.p_stack = deque()
-        p_stack = ct.p_stack
-    #### handle call and return ####
-    if event == 'call':
-        p_stack.append((time.time(), t_cpu, fun))
-    elif event == 'return':
-        try:
-            t,t_cpu_prev,f = p_stack.pop()
-            assert f == fun
-        except IndexError: # TODO investigate
-            t,t_cpu_prev,f = p_start_time, 0.0, None
-        call_cnt, t_sum, t_cpu_sum = p_stats.get(fun, (0, 0.0, 0.0))
-        p_stats[fun] = (call_cnt+1, t_sum+time.time()-t, t_cpu_sum+t_cpu-t_cpu_prev)
-    return profiler
-
-
-def profile_on():
-    global p_stats, p_start_time
-    p_stats = {}
-    p_start_time = time.time()
-    threading.setprofile(profiler)
-    sys.setprofile(profiler)
-
-
-def profile_off():
-    threading.setprofile(None)
-    sys.setprofile(None)
-
-def get_profile_stats():
-    """
-    returns dict[function_tuple] -> stats_tuple
-    where
-      function_tuple = (function_name, filename, lineno)
-      stats_tuple = (call_cnt, real_time, cpu_time)
-    """
-    return p_stats
 
 
 class TestSimulator(QtTestCase):
@@ -94,7 +33,7 @@ class TestSimulator(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(3)
         self.cfc.proto_analyzer.auto_assign_labels()
 
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10**6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
 
         self.network_sdr_plugin_sender = NetworkSDRInterfacePlugin(raw_mode=True)
         self.network_sdr_plugin_receiver = NetworkSDRInterfacePlugin(raw_mode=True)
@@ -144,9 +83,10 @@ class TestSimulator(QtTestCase):
         self.network_sdr_plugin_sender.client_port = port
 
         sender = next(iter(simulator.profile_sender_dict.values()))
-        sender.device.set_client_port(port + 1)
+        port = self.__get_free_port()
+        sender.device.set_client_port(port)
         sender.device._VirtualDevice__dev.name = "simulator_sender"
-        self.network_sdr_plugin_receiver.server_port = port + 1
+        self.network_sdr_plugin_receiver.server_port = port
 
         self.network_sdr_plugin_receiver.start_tcp_server_for_receiving()
         self.network_sdr_plugin_receiver.server.name = "receiver"
@@ -159,14 +99,15 @@ class TestSimulator(QtTestCase):
         modulator.carrier_freq_hz = 55e3
         modulator.modulate(msg_a.encoded_bits)
 
+        yappi.start()
         t = time.time()
-        profile_on()
+
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
-        timeout = spy.wait(1000)
+        timeout = spy.wait(2000)
         elapsed = time.time() - t
-        profile_off()
-        from pprint import pprint
-        pprint(get_profile_stats())
+        yappi.get_func_stats().print_all()
+        yappi.get_thread_stats().print_all()
+
         self.assertTrue(timeout)
         self.assertGreater(self.network_sdr_plugin_receiver.current_receive_index, 0)
         self.assertLess(elapsed, 0.2)

@@ -219,7 +219,8 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        QTest.qWait(10)
+        time.sleep(1)  # ensure server is up
 
         continuous_send_dialog = self.__get_continuous_send_dialog()
         continuous_send_dialog.device.set_client_port(port)

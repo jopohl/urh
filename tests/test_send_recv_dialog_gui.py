@@ -23,6 +23,32 @@ from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
 
+def receive(port, current_index, target_index):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+    s.bind(("", port))
+    s.listen(1)
+
+    conn, addr = s.accept()
+
+    while True:
+        data = conn.recv(65536 * 8)
+
+        if len(data) > 0:
+            while len(data) % 8 != 0:
+                data += conn.recv(len(data) % 8)
+
+            arr = np.frombuffer(data, dtype=np.complex64)
+            current_index.value += len(arr)
+
+        if current_index.value == target_index:
+            break
+
+    conn.close()
+    s.close()
+
+
 class TestSendRecvDialog(QtTestCase):
     SEND_RECV_TIMEOUT = 1000
 
@@ -210,31 +236,6 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(send_dialog)
 
     def test_continuous_send_dialog(self):
-        def receive(port, current_index, target_index):
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-            s.bind(("", port))
-            s.listen(1)
-
-            conn, addr = s.accept()
-
-            while True:
-                data = conn.recv(65536 * 8)
-
-                if len(data) > 0:
-                    while len(data) % 8 != 0:
-                        data += conn.recv(len(data) % 8)
-
-                    arr = np.frombuffer(data, dtype=np.complex64)
-                    current_index.value += len(arr)
-
-                if current_index.value == target_index:
-                    break
-
-            conn.close()
-            s.close()
-
         self.add_signal_to_form("esaver.complex")
         self.__add_first_signal_to_generator()
 

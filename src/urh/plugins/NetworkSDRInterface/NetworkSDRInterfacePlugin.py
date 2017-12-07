@@ -257,6 +257,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.current_sent_sample = 0
 
             self.current_sent_sample = num_samples_to_send
+            print("{} finished send_raw_data_continuously".format(self.DEBUG_NAME))
         finally:
             self.shutdown_socket(sock)
 

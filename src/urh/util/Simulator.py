@@ -422,6 +422,7 @@ class Simulator(QObject):
         curr_repeat = 0
 
         while curr_repeat < repeat:
+            print("[SIMULATOR] Pushing {} samples to ringbuffer".format(len(modulator.modulated_samples)))
             sender.push_data(modulator.modulated_samples)
             curr_repeat += 1
 
@@ -449,6 +450,9 @@ class Simulator(QObject):
 
         # just to be sure ...
         timer.stop()
+
+        print("[SIMULATOR] received message", msg)
+
         return msg
 
     def set_label_value(self, message, label, value):

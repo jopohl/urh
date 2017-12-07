@@ -99,18 +99,20 @@ class TestSimulator(QtTestCase):
         modulator.carrier_freq_hz = 55e3
         modulator.modulate(msg_a.encoded_bits)
 
-        yappi.start()
+        #yappi.start()
         t = time.time()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
         timeout = spy.wait(2000)
         elapsed = time.time() - t
-        yappi.get_func_stats().print_all()
-        yappi.get_thread_stats().print_all()
+        #yappi.get_func_stats().print_all()
+        #yappi.get_thread_stats().print_all()
 
         self.assertTrue(timeout)
+        print(self.network_sdr_plugin_receiver.current_receive_index, len(modulator.modulated_samples))
         self.assertGreater(self.network_sdr_plugin_receiver.current_receive_index, 0)
         self.assertLess(elapsed, 0.2)
+        print("Elapsed time", elapsed)
 
     def __get_free_port(self):
         import socket

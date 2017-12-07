@@ -79,7 +79,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def sniff(self):
         self.rcv_device.start()
 
-    @profile
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
         old_nmsgs = len(self.messages)
@@ -107,7 +106,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if not self.__store_data:
             self.messages.clear()
 
-    @profile
     def __demodulate_data(self, data):
         """
         Demodulates received IQ data and adds demodulated bits to messages

@@ -415,7 +415,6 @@ class Simulator(QObject):
         sender = self.profile_sender_dict[lsm.participant.send_profile['name']]
         self.send_message(lsm.send_recv_messages[-1], lsm.repeat, sender, lsm.modulator_index)
 
-    @profile
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
         modulator.modulate(message.encoded_bits, pause=message.pause)
@@ -426,7 +425,6 @@ class Simulator(QObject):
             sender.push_data(modulator.modulated_samples)
             curr_repeat += 1
 
-    @profile
     def receive_message(self, sniffer):
         msg = None
         loop = QEventLoop()

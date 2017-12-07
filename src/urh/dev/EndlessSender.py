@@ -1,5 +1,4 @@
 import numpy as np
-
 from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.util.RingBuffer import RingBuffer
 

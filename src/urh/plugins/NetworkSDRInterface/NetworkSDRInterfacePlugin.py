@@ -177,13 +177,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if hasattr(self, "server_thread"):
             self.server_thread.join()
 
-    def send_data(self, data) -> str:
-        # Create a socket (SOCK_STREAM means a TCP socket)
+    def send_data(self, data, sock: socket.socket) -> str:
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                # Connect to server and send data
-                sock.connect((self.client_ip, self.client_port))
-                sock.sendall(data)
+            sock.sendall(data)
             return ""
         except Exception as e:
             return str(e)
@@ -193,39 +189,64 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         byte_data = data.tostring()
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
-        for _ in rng:
-            if self.__sending_interrupt_requested:
-                break
-            self.send_data(byte_data)
-            self.current_sent_sample = len(data)
-            self.current_sending_repeat += 1
+        sock = self.prepare_send_connection()
+
+        try:
+            for _ in rng:
+                if self.__sending_interrupt_requested:
+                    break
+                self.send_data(byte_data, sock)
+                self.current_sent_sample = len(data)
+                self.current_sending_repeat += 1
+        finally:
+            self.shutdown_socket(sock)
+
+    def prepare_send_connection(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.connect((self.client_ip, self.client_port))
+        return sock
+
+    def shutdown_socket(self, sock):
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        sock.close()
 
     def send_raw_data_continuously(self, ring_buffer: RingBuffer, num_samples_to_send: int, num_repeats: int):
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
         samples_per_iteration = 65536 // 2
+        sock = self.prepare_send_connection()
 
-        for _ in rng:
-            if self.__sending_interrupt_requested:
-                break
-            while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
+        try:
+            for _ in rng:
                 if self.__sending_interrupt_requested:
                     break
+                while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
+                    if self.__sending_interrupt_requested:
+                        break
 
-                while ring_buffer.is_empty:
-                    time.sleep(0.1)
+                    while ring_buffer.is_empty:
+                        time.sleep(0.1)
 
-                if num_samples_to_send is None:
-                    n = samples_per_iteration
-                else:
-                    n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
+                    if num_samples_to_send is None:
+                        n = samples_per_iteration
+                    else:
+                        n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
 
-                data = ring_buffer.pop(n, ensure_even_length=True)
-                self.send_data(data)
-                self.current_sent_sample += len(data)
-            self.current_sending_repeat += 1
-            self.current_sent_sample = 0
+                    data = ring_buffer.pop(n, ensure_even_length=True)
+                    if len(data) > 0:
+                        print("Sending {0} samples".format(len(data)))
+                        self.send_data(data, sock)
+                        self.current_sent_sample += len(data)
+                self.current_sending_repeat += 1
+                self.current_sent_sample = 0
 
-        self.current_sent_sample = num_samples_to_send
+            self.current_sent_sample = num_samples_to_send
+        finally:
+            self.shutdown_socket(sock)
 
     def __send_messages(self, messages, sample_rates):
         """
@@ -237,26 +258,31 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         :return:
         """
         self.is_sending = True
-        for i, msg in enumerate(messages):
-            if self.__sending_interrupt_requested:
-                break
-            assert isinstance(msg, Message)
-            wait_time = msg.pause / sample_rates[i]
-
-            self.current_send_message_changed.emit(i)
-            error = self.send_data(self.bit_str_to_bytearray(msg.encoded_bits_str))
-            if not error:
-                logger.debug("Sent message {0}/{1}".format(i + 1, len(messages)))
-                logger.debug("Waiting message pause: {0:.2f}s".format(wait_time))
+        sock = self.prepare_send_connection()
+        try:
+            for i, msg in enumerate(messages):
                 if self.__sending_interrupt_requested:
                     break
-                time.sleep(wait_time)
-            else:
-                self.is_sending = False
-                Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port), msg=error)
-                break
-        logger.debug("Sending finished")
-        self.is_sending = False
+                assert isinstance(msg, Message)
+                wait_time = msg.pause / sample_rates[i]
+
+                self.current_send_message_changed.emit(i)
+                error = self.send_data(self.bit_str_to_bytearray(msg.encoded_bits_str), sock)
+                if not error:
+                    logger.debug("Sent message {0}/{1}".format(i + 1, len(messages)))
+                    logger.debug("Waiting message pause: {0:.2f}s".format(wait_time))
+                    if self.__sending_interrupt_requested:
+                        break
+                    time.sleep(wait_time)
+                else:
+                    self.is_sending = False
+                    Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port),
+                                         msg=error)
+                    break
+            logger.debug("Sending finished")
+            self.is_sending = False
+        finally:
+            self.shutdown_socket(sock)
 
     def start_message_sending_thread(self, messages, sample_rates):
         """

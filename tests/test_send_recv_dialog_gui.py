@@ -226,6 +226,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
         QTest.qWait(self.SEND_RECV_TIMEOUT)
+        time.sleep(2)
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)

@@ -22,8 +22,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
 
-    DEBUG_NAME = None
-
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             received = self.request.recv(65536 * 8)
@@ -43,14 +41,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 while len(self.data) % 8 != 0:
                     self.data += self.request.recv(len(self.data) % 8)
 
-                if NetworkSDRInterfacePlugin.DEBUG_NAME is not None:
-                    print("{} received {} bytes".format(NetworkSDRInterfacePlugin.DEBUG_NAME, len(self.data)))
-
                 received = np.frombuffer(self.data, dtype=np.complex64)
-
-                if NetworkSDRInterfacePlugin.DEBUG_NAME is not None:
-                    print("{} received {} samples".format(NetworkSDRInterfacePlugin.DEBUG_NAME, len(received)))
-                    print("{} current_receive_index: {} length buffer: {}".format(NetworkSDRInterfacePlugin.DEBUG_NAME, self.server.current_receive_index, len(self.server.receive_buffer)))
 
                 if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
                     self.server.previous_receive_index = 0
@@ -254,9 +245,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
                     data = ring_buffer.pop(n, ensure_even_length=True)
                     if len(data) > 0:
-                        if self.DEBUG_NAME is not None:
-                            print("{} sending {} samples".format(self.DEBUG_NAME, len(data)))
-
                         self.send_data(data, sock)
                         self.current_sent_sample += len(data)
 
@@ -266,9 +254,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.current_sent_sample = 0
 
             self.current_sent_sample = num_samples_to_send
-
-            if self.DEBUG_NAME is not None:
-                print("{} finished send_raw_data_continuously".format(self.DEBUG_NAME))
         finally:
             self.shutdown_socket(sock)
 
@@ -336,8 +321,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_thread.start()
 
     def stop_sending_thread(self):
-        if self.DEBUG_NAME is not None:
-            print("{} calling stop sending thread".format(self.DEBUG_NAME))
         self.__sending_interrupt_requested = True
 
         if hasattr(self, "sending_thread"):

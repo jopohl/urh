@@ -7,6 +7,7 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+from multiprocessing import Process, Value
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -209,42 +210,59 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(send_dialog)
 
     def test_continuous_send_dialog(self):
+        def receive(port, current_index, target_index):
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            s.bind(("", port))
+            s.listen(1)
+
+            conn, addr = s.accept()
+
+            while True:
+                data = conn.recv(65536 * 8)
+
+                if len(data) > 0:
+                    while len(data) % 8 != 0:
+                        data += conn.recv(len(data) % 8)
+
+                    arr = np.frombuffer(data, dtype=np.complex64)
+                    current_index.value += len(arr)
+
+                if current_index.value == target_index:
+                    break
+
+            conn.close()
+            s.close()
+
         self.add_signal_to_form("esaver.complex")
         self.__add_first_signal_to_generator()
 
-        NetworkSDRInterfacePlugin.DEBUG_NAME = "test_cont_send"
-
         port = self.__get_free_port()
-        receive_dialog = self.__get_recv_dialog()
-        receive_dialog.device.set_server_port(port)
-        receive_dialog.ui.btnStart.click()
-        QTest.qWait(10)
-        time.sleep(1)  # ensure server is up
+
+        gframe = self.form.generator_tab_controller
+        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
+        expected = gframe.modulate_data(expected)
+        current_index = Value("L", 0)
+
+        process = Process(target=receive, args=(port, current_index, 2*len(expected)))
+        process.daemon = True
+        process.start()
+        time.sleep(0.1)  # ensure server is up
 
         continuous_send_dialog = self.__get_continuous_send_dialog()
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(10 * self.SEND_RECV_TIMEOUT)
+        QTest.qWait(0)
+        process.join(3)
 
-        gframe = self.form.generator_tab_controller
-        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
-        expected = gframe.modulate_data(expected)
-
-        self.assertEqual(receive_dialog.device.current_index, 2 * len(expected))
-
-        for i in range(len(expected)):
-            self.assertEqual(receive_dialog.device.data[i], expected[i], msg=str(i))
+        self.assertEqual(current_index.value, 2 * len(expected))
 
         continuous_send_dialog.ui.btnStop.click()
-        receive_dialog.ui.btnStop.click()
         continuous_send_dialog.ui.btnClear.click()
-        receive_dialog.ui.btnClear.click()
         QTest.qWait(1)
 
-        NetworkSDRInterfacePlugin.DEBUG_NAME = None
-
-        self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)
 
 

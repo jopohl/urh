@@ -42,11 +42,7 @@ class QtTestCase(unittest.TestCase):
             self.dialog.close()
         if hasattr(self, "form"):
             self.form.close_all()
-            QTest.qWait(self.CLOSE_TIMEOUT)
-
             self.form.close()
-            QTest.qWait(self.CLOSE_TIMEOUT)
-
             sip.delete(self.form)
             self.form = None
         QTest.qSleep(1)

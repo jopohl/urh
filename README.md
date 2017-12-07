@@ -2,11 +2,10 @@
 [![Linux Build Status](https://img.shields.io/travis/jopohl/urh/master.svg?label=Linux)](https://travis-ci.org/jopohl/urh)
 [![Windows Build status](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
 [![OSX Build Status](https://img.shields.io/circleci/project/github/jopohl/urh/master.svg?label=OSX)](https://circleci.com/gh/jopohl/urh/tree/master)
-[![Code Climate](https://codeclimate.com/github/jopohl/urh/badges/gpa.svg)](https://codeclimate.com/github/jopohl/urh)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
-
+[![codecov](https://codecov.io/gh/jopohl/urh/branch/master/graph/badge.svg)](https://codecov.io/gh/jopohl/urh)
+[![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
 [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
@@ -26,6 +25,8 @@ Like to see things in action? Watch URH on YouTube!
 [![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
+
+Support the development: [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 # Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
@@ -159,16 +160,16 @@ python setup.py install
 
 And start the application by typing ``` urh ``` in a terminal.
 
-# External decodings
+### External decodings
 See [wiki](https://github.com/jopohl/urh/wiki/External-decodings) for a list of external decodings provided by our community! Thanks for that!
 
-# Screenshots
-## Get the data out of raw signals
+### Screenshots
+#### Get the data out of raw signals
 ![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
 
 
-## Keep an overview even on complex protocols
+#### Keep an overview even on complex protocols
  ![Analysis phase](http://i.imgur.com/ubAL3pE.png)
 
-## Record and send signals
+#### Record and send signals
  ![Record](http://i.imgur.com/BfQpg23.png)

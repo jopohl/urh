@@ -138,9 +138,11 @@ class TestSimulator(QtTestCase):
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
         QTest.qWait(0)
-        receive_process.join()
+        receive_process.join(10)
 
         print("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
+
+        self.assertLess(elapsed.value, 200)
 
         #timeout = spy.wait(2000)
         #yappi.get_func_stats().print_all()

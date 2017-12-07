@@ -236,14 +236,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         try:
             for _ in rng:
-                if self.__sending_interrupt_requested:
-                    break
                 while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
+                    while ring_buffer.is_empty and not self.__sending_interrupt_requested:
+                        time.sleep(0.1)
+
                     if self.__sending_interrupt_requested:
                         break
-
-                    while ring_buffer.is_empty:
-                        time.sleep(0.1)
 
                     if num_samples_to_send is None:
                         n = samples_per_iteration
@@ -329,6 +327,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_thread.start()
 
     def stop_sending_thread(self):
+        print("{} calling stop sending thread".format(self.DEBUG_NAME))
         self.__sending_interrupt_requested = True
         self.sending_stop_requested.emit()
 

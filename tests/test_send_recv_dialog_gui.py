@@ -210,7 +210,6 @@ class TestSendRecvDialog(QtTestCase):
 
     def test_continuous_send_dialog(self):
         self.add_signal_to_form("esaver.complex")
-        QApplication.instance().processEvents()
         self.__add_first_signal_to_generator()
 
         NetworkSDRInterfacePlugin.DEBUG_NAME = "test_cont_send"

@@ -44,6 +44,19 @@ class RingBuffer(object):
     def data(self):
         return np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
 
+    @property
+    def view_data(self):
+        """
+        Get a representation of the ring buffer for plotting. This is expensive, so it should only be used in frontend
+        :return:
+        """
+        left, right = self.left_index, self.left_index + len(self)
+        if left > right:
+            left, right = right, left
+
+        data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+        return np.concatenate((data[left:right], data[right:], data[:left]))
+
     def clear(self):
         self.left_index = 0
         self.right_index = 0

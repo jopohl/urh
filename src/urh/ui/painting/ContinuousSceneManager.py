@@ -14,7 +14,7 @@ class ContinuousSceneManager(SceneManager):
 
     @property
     def plot_data(self):
-        return self.ring_buffer.data.real
+        return self.ring_buffer.view_data.real
 
     @plot_data.setter
     def plot_data(self, value):

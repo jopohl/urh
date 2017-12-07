@@ -22,7 +22,7 @@ from urh.util.SettingsProxy import SettingsProxy
 from urh.util.Simulator import Simulator
 
 
-def receive(port, current_index, target_index):
+def receive(port, current_index, target_index, elapsed):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -49,7 +49,7 @@ def receive(port, current_index, target_index):
         if current_index.value == target_index:
             break
 
-    print("PROCESS TIME: {0:.2f}ms".format(1000 * (time.time()-t)))
+    elapsed.value = 1000 * (time.time()-t)
     s.close()
 
 
@@ -123,8 +123,9 @@ class TestSimulator(QtTestCase):
         sender.device._VirtualDevice__dev.name = "simulator_sender"
 
         current_index = Value("L")
+        elapsed = Value("f")
         target_num_samples = 113600
-        receive_process = Process(target=receive, args=(port, current_index, target_num_samples))
+        receive_process = Process(target=receive, args=(port, current_index, target_num_samples, elapsed))
         receive_process.daemon = True
         receive_process.start()
 
@@ -142,24 +143,14 @@ class TestSimulator(QtTestCase):
         #yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
-        t = time.time()
         QTest.qWait(1000)
         receive_process.join()
-        #time.sleep(5)
 
+        print("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
 
         #timeout = spy.wait(2000)
-        elapsed = time.time() - t
         #yappi.get_func_stats().print_all()
         #yappi.get_thread_stats().print_all()
-
-        #self.assertTrue(timeout)
-        #print(self.network_sdr_plugin_receiver.current_receive_index, len(modulator.modulated_samples))
-        #self.assertGreater(self.network_sdr_plugin_receiver.current_receive_index, 0)
-        #self.assertLess(elapsed, 0.2)
-
-        #self.assertEqual(current_index.value, target_num_samples)
-        #print("Elapsed time", elapsed)
 
     def __get_free_port(self):
         import socket

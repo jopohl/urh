@@ -245,9 +245,10 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         QTest.qWait(1)
 
-
         self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)
+
+        NetworkSDRInterfacePlugin.DEBUG_NAME = None
 
     def test_sniff(self):
         # add a signal so we can use it

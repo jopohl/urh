@@ -225,8 +225,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
-        time.sleep(2)
+        QTest.qWait(10 * self.SEND_RECV_TIMEOUT)
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
@@ -243,10 +242,11 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog.ui.btnClear.click()
         QTest.qWait(1)
 
+        NetworkSDRInterfacePlugin.DEBUG_NAME = None
+
         self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)
 
-        NetworkSDRInterfacePlugin.DEBUG_NAME = None
 
     def test_sniff(self):
         # add a signal so we can use it

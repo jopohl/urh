@@ -397,7 +397,6 @@ class MainController(QMainWindow):
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
-        self.simulator_tab_controller.close_all()
         self.generator_tab_controller.table_model.protocol.clear()
         self.generator_tab_controller.refresh_tree()
         self.generator_tab_controller.refresh_table()

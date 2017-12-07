@@ -415,6 +415,3 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def refresh_tree(self):
         self.ui.treeProtocols.expandAll()
-
-    def close_all(self):
-        self.refresh_tree()

@@ -245,7 +245,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
                     data = ring_buffer.pop(n, ensure_even_length=True)
                     if len(data) > 0:
-                        print("Sending {0} samples".format(len(data)))
                         self.send_data(data, sock)
                         self.current_sent_sample += len(data)
                 self.current_sending_repeat += 1

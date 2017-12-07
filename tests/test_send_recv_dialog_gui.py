@@ -217,13 +217,15 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
+        QApplication.instance().processEvents()
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         continuous_send_dialog = self.__get_continuous_send_dialog()
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
-        QTest.qWait(15 * self.SEND_RECV_TIMEOUT)
+        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
@@ -238,6 +240,9 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog.ui.btnStop.click()
         continuous_send_dialog.ui.btnClear.click()
         receive_dialog.ui.btnClear.click()
+        QApplication.instance().processEvents()
+        QTest.qWait(1)
+
 
         self.__close_dialog(receive_dialog)
         self.__close_dialog(continuous_send_dialog)

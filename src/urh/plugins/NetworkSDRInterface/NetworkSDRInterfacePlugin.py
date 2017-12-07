@@ -184,7 +184,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 # Connect to server and send data
                 sock.connect((self.client_ip, self.client_port))
                 sock.sendall(data)
-                return ""
+            return ""
         except Exception as e:
             return str(e)
 
@@ -210,10 +210,15 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             while num_samples_to_send is None or self.current_sent_sample < num_samples_to_send:
                 if self.__sending_interrupt_requested:
                     break
+
+                while ring_buffer.is_empty:
+                    time.sleep(0.1)
+
                 if num_samples_to_send is None:
                     n = samples_per_iteration
                 else:
                     n = max(0, min(samples_per_iteration, num_samples_to_send - self.current_sent_sample))
+
                 data = ring_buffer.pop(n, ensure_even_length=True)
                 self.send_data(data)
                 self.current_sent_sample += len(data)

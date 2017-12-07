@@ -84,7 +84,17 @@ class RingBuffer(object):
 
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-            result = np.take(data, range(self.left_index, self.left_index+number), mode="wrap")
+
+            result = np.empty(number, dtype=np.complex64)
+
+            if self.left_index + number > len(data):
+                end = len(data) - self.left_index
+            else:
+                end = number
+
+            result[:end] = data[self.left_index:self.left_index + end]
+            if end < number:
+                result[end:] = data[:number-end]
 
         self.left_index += number
         self.__length.value -= number

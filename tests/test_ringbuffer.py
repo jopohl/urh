@@ -39,6 +39,11 @@ class TestRingBuffer(unittest.TestCase):
         self.assertTrue(np.array_equal(add3[0:1], popped_item), msg=popped_item)
         self.assertFalse(ring_buffer.is_empty)
 
+        add4 = np.array([7, 8, 9, 10], dtype=np.complex64)
+        ring_buffer.push(add4)
+        self.assertFalse(ring_buffer.will_fit(1))
+        self.assertTrue(np.array_equal(np.concatenate((np.atleast_1d(add3[1]), add4)), ring_buffer.pop(5)))
+
     def test_continuous_pop(self):
         ring_buffer = RingBuffer(size=10)
         values = np.array(list(range(10)), dtype=np.complex64)

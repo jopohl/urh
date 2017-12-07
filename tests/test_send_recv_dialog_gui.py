@@ -7,7 +7,7 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from multiprocessing import Process, Value
+from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -18,12 +18,13 @@ from urh.controller.SendDialogController import SendDialogController
 from urh.controller.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.ContinuousModulator import ContinuousModulator
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
 
-def receive(port, current_index, target_index):
+def receive(port, current_index, target_index, buffer):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -40,6 +41,8 @@ def receive(port, current_index, target_index):
                 data += conn.recv(len(data) % 8)
 
             arr = np.frombuffer(data, dtype=np.complex64)
+            data = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
+            data[current_index.value:current_index.value+len(arr)] = arr
             current_index.value += len(arr)
 
         if current_index.value == target_index:
@@ -245,11 +248,14 @@ class TestSendRecvDialog(QtTestCase):
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
+        buffer = Array("f", 4 * len(expected))
 
-        process = Process(target=receive, args=(port, current_index, 2*len(expected)))
+        process = Process(target=receive, args=(port, current_index, 2*len(expected), buffer))
         process.daemon = True
         process.start()
         time.sleep(0.1)  # ensure server is up
+
+        ContinuousModulator.BUFFER_SIZE_MB = 10
 
         continuous_send_dialog = self.__get_continuous_send_dialog()
         continuous_send_dialog.device.set_client_port(port)
@@ -262,12 +268,15 @@ class TestSendRecvDialog(QtTestCase):
         # CI sometimes swallows a sample
         self.assertIn(current_index.value, range(2 * len(expected) - 1, 2 * len(expected) + 1))
 
+        buffer = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
+        for i in range(len(expected)):
+            self.assertEqual(buffer[i], expected[i], msg=str(i))
+
         continuous_send_dialog.ui.btnStop.click()
         continuous_send_dialog.ui.btnClear.click()
         QTest.qWait(1)
 
         self.__close_dialog(continuous_send_dialog)
-
 
     def test_sniff(self):
         # add a signal so we can use it

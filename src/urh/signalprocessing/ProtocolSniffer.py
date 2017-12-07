@@ -21,7 +21,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler, raw_mode=False, real_time=False):
+                 modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False, real_time=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -31,9 +31,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
+        self.network_raw_mode = network_raw_mode
         self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
-                                        resume_on_full_receive_buffer=True, raw_mode=raw_mode)
+                                        resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
@@ -71,7 +72,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
-                                            resume_on_full_receive_buffer=True, raw_mode=False)
+                                            resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)

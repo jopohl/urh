@@ -49,6 +49,7 @@ def receive(port, current_index, target_index, elapsed):
         if current_index.value == target_index:
             break
 
+    conn.close()
     elapsed.value = 1000 * (time.time()-t)
     s.close()
 

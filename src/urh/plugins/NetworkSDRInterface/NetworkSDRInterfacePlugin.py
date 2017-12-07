@@ -12,7 +12,6 @@ from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
 from urh.util.SettingsProxy import SettingsProxy
-from urh.util.util import profile
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
@@ -22,6 +21,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
+
+    DEBUG_NAME = None
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -41,6 +42,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             else:
                 while len(self.data) % 8 != 0:
                     self.data += self.request.recv(len(self.data) % 8)
+
+                if NetworkSDRInterfacePlugin.DEBUG_NAME is not None:
+                    print("{} received {} bytes".format(NetworkSDRInterfacePlugin.DEBUG_NAME, len(self.data)))
 
                 received = np.frombuffer(self.data, dtype=np.complex64)
 
@@ -191,7 +195,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         except Exception as e:
             return str(e)
 
-    @profile
     def send_raw_data(self, data: np.ndarray, num_repeats: int):
         byte_data = data.tostring()
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
@@ -245,6 +248,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
                     data = ring_buffer.pop(n, ensure_even_length=True)
                     if len(data) > 0:
+                        if self.DEBUG_NAME is not None:
+                            print("{} sending {} samples".format(self.DEBUG_NAME, len(data)))
+
                         self.send_data(data, sock)
                         self.current_sent_sample += len(data)
                 self.current_sending_repeat += 1

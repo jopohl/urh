@@ -213,6 +213,8 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         self.__add_first_signal_to_generator()
 
+        NetworkSDRInterfacePlugin.DEBUG_NAME = "test_cont_send"
+
         port = self.__get_free_port()
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)

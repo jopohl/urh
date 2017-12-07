@@ -339,6 +339,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if self.DEBUG_NAME is not None:
             print("{} calling stop sending thread".format(self.DEBUG_NAME))
         self.__sending_interrupt_requested = True
+
+        if hasattr(self, "sending_thread"):
+            self.sending_thread.join()
+
         self.sending_stop_requested.emit()
 
     @staticmethod

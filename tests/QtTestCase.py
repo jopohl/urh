@@ -42,15 +42,14 @@ class QtTestCase(unittest.TestCase):
             self.dialog.close()
         if hasattr(self, "form"):
             self.form.close_all()
-            QApplication.instance().processEvents()
             QTest.qWait(self.CLOSE_TIMEOUT)
 
             self.form.close()
-            QApplication.instance().processEvents()
             QTest.qWait(self.CLOSE_TIMEOUT)
 
             sip.delete(self.form)
             self.form = None
+        QTest.qSleep(1)
         QTest.qWait(self.CLOSE_TIMEOUT)
 
     def wait_before_new_file(self):

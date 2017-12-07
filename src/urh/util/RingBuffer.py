@@ -9,41 +9,44 @@ class RingBuffer(object):
     def __init__(self, size: int):
         self.__data = Array("f", 2*size)
         self.size = size
-        self.__current_index = Value("L", 0)
+        self.__left_index = Value("L", 0)
+        self.__right_index = Value("L", 0)
+        self.__length = Value("L", 0)
+
+    def __len__(self):
+        return self.__length.value
 
     @property
-    def current_index(self):
-        return self.__current_index.value
+    def left_index(self):
+        return self.__left_index.value
 
-    @current_index.setter
-    def current_index(self, value):
-        self.__current_index.value = value
+    @left_index.setter
+    def left_index(self, value):
+        self.__left_index.value = value % self.size
+
+    @property
+    def right_index(self):
+        return self.__right_index.value
+
+    @right_index.setter
+    def right_index(self, value):
+        self.__right_index.value = value % self.size
 
     @property
     def is_empty(self) -> bool:
-        return self.current_index == 0
+        return len(self) == 0
 
     @property
     def space_left(self):
-        return self.size - self.current_index
+        return self.size - len(self)
 
     @property
     def data(self):
         return np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
 
-    def __getitem__(self, index):
-        return self.data[index]
-
-    def __repr__(self):
-        return "RingBuffer " + str(self.data)
-
-    def __increase_current_index_by(self, n: int):
-        self.current_index += n
-        if self.current_index > self.size:
-            self.current_index = self.size
-
     def clear(self):
-        self.current_index = 0
+        self.left_index = 0
+        self.right_index = 0
 
     def will_fit(self, number_values: int) -> bool:
         return number_values <= self.space_left
@@ -51,18 +54,22 @@ class RingBuffer(object):
     def push(self, values: np.ndarray):
         """
         Push values to buffer. If buffer can't store all values a ValueError is raised
-        :param values: 
-        :return: 
         """
         n = len(values)
+        if len(self) + n > self.size:
+            raise ValueError("Too much data to push to RingBuffer")
 
+        slide_1 = np.s_[self.right_index:min(self.right_index + n, self.size)]
+        slide_2 = np.s_[:max(self.right_index + n - self.size, 0)]
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-            data[self.current_index:self.current_index+n] = values
+            data[slide_1] = values[:slide_1.stop - slide_1.start]
+            data[slide_2] = values[slide_1.stop - slide_1.start:]
+            self.right_index += n
 
-        self.__increase_current_index_by(n)
+        self.__length.value += n
 
-    def pop(self, number: int, ensure_even_length=False, pad_zeros=False) -> np.ndarray:
+    def pop(self, number: int, ensure_even_length=False):
         """
         Pop number of elements. If there are not enough elements, all remaining elements are returned and the
         buffer is cleared afterwards. If buffer is empty, an empty numpy array is returned.
@@ -70,21 +77,16 @@ class RingBuffer(object):
         if ensure_even_length:
             number -= number % 2
 
-        too_much = number - self.current_index
+        if len(self) == 0 or number == 0:
+            return np.array([], dtype=np.complex64)
 
-        if too_much > 0:
-            number = self.current_index
+        number = min(number, len(self))
 
         with self.__data.get_lock():
-            self.current_index -= number
-
-            if pad_zeros and too_much > 0:
-                result = np.zeros(too_much+number, dtype=np.complex64)
-                result[0:number] = np.copy(self.data[0:number])
-            else:
-                result = np.copy(self.data[0:number])
-
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-            data[:] = np.roll(data, -number)
+            result = np.take(data, range(self.left_index, self.left_index+number), mode="wrap")
+
+        self.left_index += number
+        self.__length.value -= number
 
         return result

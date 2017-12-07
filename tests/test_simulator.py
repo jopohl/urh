@@ -55,9 +55,6 @@ def receive(port, current_index, target_index, elapsed):
 
 class TestSimulator(QtTestCase):
     def setUp(self):
-        self.old_sym_len = constants.SETTINGS.value('rel_symbol_length', type=int)
-        constants.SETTINGS.setValue('rel_symbol_length', 0)  # Disable Symbols for this Test
-
         self.form = MainController()
         self.cfc = self.form.compare_frame_controller
         self.stc = self.form.simulator_tab_controller
@@ -72,9 +69,6 @@ class TestSimulator(QtTestCase):
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
 
         self.network_sdr_plugin_sender = NetworkSDRInterfacePlugin(raw_mode=True)
-
-    def tearDown(self):
-        constants.SETTINGS.setValue('rel_symbol_length', self.old_sym_len)  # Restore Symbol Length
 
     def test_performance(self):
         part_a = Participant("Device A", shortname="A", color_index=0)

@@ -1,9 +1,11 @@
 import socket
 import time
+
+import numpy as np
 from PyQt5 import QtTest
 from collections import defaultdict
 
-import yappi
+#import yappi
 from PyQt5.QtTest import QSignalSpy, QTest
 from multiprocessing import Process, Value
 
@@ -20,17 +22,35 @@ from urh.util.SettingsProxy import SettingsProxy
 from urh.util.Simulator import Simulator
 
 
-def receive(port, current_index):
+def receive(port, current_index, target_index):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     s.bind(("", port))
     s.listen(1)
+
     conn, addr = s.accept()
     print('Receiver got connection from address:', addr)
+
+    start = False
     while True:
-        data = conn.recv(4096)
+        data = conn.recv(65536*8)
+        if not start:
+            start = True
+            t = time.time()
+
         if len(data) > 0:
-            print("Received {} bytes".format(len(data)))
+            while len(data) % 8 != 0:
+                data += conn.recv(len(data) % 8)
+
+            arr = np.frombuffer(data, dtype=np.complex64)
+            current_index.value += len(arr)
+
+        if current_index.value == target_index:
+            break
+
+    print("PROCESS TIME: {0:.2f}ms".format(1000 * (time.time()-t)))
+    s.close()
 
 
 class TestSimulator(QtTestCase):
@@ -103,9 +123,13 @@ class TestSimulator(QtTestCase):
         sender.device._VirtualDevice__dev.name = "simulator_sender"
 
         current_index = Value("L")
-        receive_process = Process(target=receive, args=(port, current_index))
+        target_num_samples = 113600
+        receive_process = Process(target=receive, args=(port, current_index, target_num_samples))
         receive_process.daemon = True
         receive_process.start()
+
+        # Ensure receiver is running
+        time.sleep(0.1)
 
         #spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
         simulator.start()
@@ -116,11 +140,13 @@ class TestSimulator(QtTestCase):
         modulator.modulate(msg_a.encoded_bits)
 
         #yappi.start()
-        t = time.time()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
+        t = time.time()
+        QTest.qWait(1000)
+        receive_process.join()
         #time.sleep(5)
-        QTest.qWait(5000)
+
 
         #timeout = spy.wait(2000)
         elapsed = time.time() - t
@@ -131,7 +157,9 @@ class TestSimulator(QtTestCase):
         #print(self.network_sdr_plugin_receiver.current_receive_index, len(modulator.modulated_samples))
         #self.assertGreater(self.network_sdr_plugin_receiver.current_receive_index, 0)
         #self.assertLess(elapsed, 0.2)
-        print("Elapsed time", elapsed)
+
+        #self.assertEqual(current_index.value, target_num_samples)
+        #print("Elapsed time", elapsed)
 
     def __get_free_port(self):
         import socket

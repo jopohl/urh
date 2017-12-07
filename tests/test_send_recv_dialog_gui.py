@@ -255,7 +255,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
         QTest.qWait(0)
-        process.join(3)
+        process.join(5)
 
         self.assertEqual(current_index.value, 2 * len(expected))
 

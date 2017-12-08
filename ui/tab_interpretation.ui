@@ -139,7 +139,7 @@ stop:1 rgba(255, 255, 255, 0));
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

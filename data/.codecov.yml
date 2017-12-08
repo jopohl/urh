@@ -1,6 +1,8 @@
 codecov:
   ci:
     - "!ci.appveyor.com"
+    - "!codeclimate.com"
+    - "!circleci.com"
 
 coverage:
   precision: 1

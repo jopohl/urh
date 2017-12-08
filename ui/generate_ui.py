@@ -17,9 +17,9 @@ def gen():
         rcc_path = os.path.join(bindir, "pyrcc5")
 
     file_dir = os.path.dirname(os.path.realpath(__file__))
-    ui_path = os.path.join(file_dir, "ui")
+    ui_path = file_dir
     rc_path = file_dir
-    out_path = os.path.join(file_dir, "src", "urh", "ui")
+    out_path = os.path.join(file_dir, "..", "src", "urh", "ui")
 
     ui_files = [f for f in os.listdir(ui_path) if f.endswith(".ui")]
     rc_files = [f for f in os.listdir(rc_path) if f.endswith(".qrc")]
@@ -35,9 +35,8 @@ def gen():
             time_generated_file = 0
 
         if time_generated_file >= time_ui_file:
-            # Generated file is already there and newer than ui file, no need to recompile it
-            continue
-
+           # Generated file is already there and newer than ui file, no need to recompile it
+           continue
 
         call([uic_path, "--from-imports", file_path, "-o", out_file_path])
 
@@ -58,7 +57,6 @@ def gen():
             time_generated_file = os.path.getmtime(out_file_path)
         except os.error:
             time_generated_file = 0
-
 
         if time_generated_file < time_rc_file:
             # Only create, when generated file is old than rc file to prevent unneeded git pushes

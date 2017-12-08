@@ -163,7 +163,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset resource="../urh.qrc">
+           <iconset resource="urh.qrc">
             <normaloff>:/icons/data/icons/lock.svg</normaloff>:/icons/data/icons/lock.svg</iconset>
           </property>
           <property name="checkable">
@@ -1154,7 +1154,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   <tabstop>btnAccept</tabstop>
  </tabstops>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

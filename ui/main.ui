@@ -14,7 +14,7 @@
    <string>Universal Radio Hacker</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../urh.qrc">
+   <iconset resource="urh.qrc">
     <normaloff>:/icons/data/icons/appicon.png</normaloff>:/icons/data/icons/appicon.png</iconset>
   </property>
   <property name="tabShape">
@@ -608,7 +608,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </action>
   <action name="actionDecoding">
    <property name="icon">
-    <iconset resource="../urh.qrc">
+    <iconset resource="urh.qrc">
      <normaloff>:/icons/data/icons/decoding.svg</normaloff>:/icons/data/icons/decoding.svg</iconset>
    </property>
    <property name="text">
@@ -629,7 +629,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </action>
   <action name="actionSpectrum_Analyzer">
    <property name="icon">
-    <iconset resource="../urh.qrc">
+    <iconset resource="urh.qrc">
      <normaloff>:/icons/data/icons/spectrum.svg</normaloff>:/icons/data/icons/spectrum.svg</iconset>
    </property>
    <property name="text">
@@ -662,7 +662,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </action>
   <action name="actionSniff_protocol">
    <property name="icon">
-    <iconset resource="../urh.qrc">
+    <iconset resource="urh.qrc">
      <normaloff>:/icons/data/icons/sniffer.svg</normaloff>:/icons/data/icons/sniffer.svg</iconset>
    </property>
    <property name="text">
@@ -735,7 +735,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

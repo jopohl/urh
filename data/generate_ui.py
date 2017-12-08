@@ -16,7 +16,7 @@ def gen():
         uic_path = os.path.join(bindir, "pyuic5")
         rcc_path = os.path.join(bindir, "pyrcc5")
 
-    file_dir = os.path.dirname(os.path.realpath(__file__))
+    file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ui")
     ui_path = file_dir
     rc_path = file_dir
     out_path = os.path.join(file_dir, "..", "..", "src", "urh", "ui")

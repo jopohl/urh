@@ -76,7 +76,7 @@ def copy_icons(icon_names: set):
     tree = ET.ElementTree(root)
     tree.write("/tmp/xtra_icons.qrc")
     call(["pyrcc5", "/tmp/xtra_icons.qrc", "-o", "/tmp/xtra_icons_rc.py"])
-    tar_path = os.path.dirname(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    tar_path = os.path.dirname(os.path.join(os.path.dirname(__file__), "..", ".."))
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.copy("/tmp/xtra_icons_rc.py", tar_path)
 

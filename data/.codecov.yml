@@ -4,7 +4,6 @@ codecov:
     - "!codeclimate.com"
     - "!circleci.com"
 
-
 coverage:
   precision: 1
   round: down

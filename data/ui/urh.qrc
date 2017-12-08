@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>../icons/appicon.ico</file>
+    <file>../icons/appicon.png</file>
+    <file>../icons/decoding.svg</file>
+    <file>../icons/equals_qm.svg</file>
+    <file>../icons/equals.svg</file>
+    <file>../icons/lock.svg</file>
+    <file>../icons/modulation.svg</file>
+    <file>../icons/plus.svg</file>
+    <file>../icons/sniffer.svg</file>
+    <file>../icons/spectrum.svg</file>
+    <file>../icons/splitter_handle_horizontal.svg</file>
+    <file>../icons/splitter_handle_vertical.svg</file>
+    <file>../icons/unlock.svg</file>
+  </qresource>
+</RCC>

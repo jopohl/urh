@@ -52,7 +52,7 @@ class DirectoryTreeView(QTreeView):
             if current_index_info.isDir():
                 if os.path.isfile(os.path.join(current_index_info.filePath(), constants.PROJECT_FILE)):
                     open_action = menu.addAction("Open project")
-                    open_action.setIcon(QIcon(":/icons/data/icons/appicon.png"))
+                    open_action.setIcon(QIcon(":/icons/icons/appicon.png"))
                 else:
                     open_action = menu.addAction("Open folder")
                     open_action.setIcon(QIcon.fromTheme("folder-open"))

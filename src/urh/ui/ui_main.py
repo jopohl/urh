@@ -11,7 +11,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(798, 469)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/data/icons/appicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/icons/appicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         MainWindow.setDockNestingEnabled(False)
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
+"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)
@@ -252,7 +252,7 @@ class Ui_MainWindow(object):
         self.actionConvert_Folder_to_Project.setObjectName("actionConvert_Folder_to_Project")
         self.actionDecoding = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/data/icons/decoding.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/icons/decoding.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDecoding.setIcon(icon1)
         self.actionDecoding.setObjectName("actionDecoding")
         self.actionRecord = QtWidgets.QAction(MainWindow)
@@ -262,7 +262,7 @@ class Ui_MainWindow(object):
         self.actionRecord.setObjectName("actionRecord")
         self.actionSpectrum_Analyzer = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/data/icons/spectrum.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/icons/spectrum.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSpectrum_Analyzer.setIcon(icon2)
         self.actionSpectrum_Analyzer.setIconVisibleInMenu(True)
         self.actionSpectrum_Analyzer.setObjectName("actionSpectrum_Analyzer")
@@ -277,7 +277,7 @@ class Ui_MainWindow(object):
         self.actionNew_Project.setObjectName("actionNew_Project")
         self.actionSniff_protocol = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/data/icons/sniffer.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/icons/sniffer.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSniff_protocol.setIcon(icon3)
         self.actionSniff_protocol.setObjectName("actionSniff_protocol")
         self.actionProject_settings = QtWidgets.QAction(MainWindow)

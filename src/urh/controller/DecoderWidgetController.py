@@ -69,7 +69,7 @@ class DecoderWidgetController(QDialog):
 
         # Presets
         self.setWindowTitle("Decoding")
-        self.setWindowIcon(QIcon(":/icons/data/icons/decoding.svg"))
+        self.setWindowIcon(QIcon(":/icons/icons/decoding.svg"))
         self.setAcceptDrops(True)
         self.inpt_text = "10010110"
         self.ui.inpt.setText(self.inpt_text)

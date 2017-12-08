@@ -19,7 +19,7 @@ class SpectrumDialogController(SendRecvDialogController):
         self.hide_send_ui_items()
 
         self.setWindowTitle("Spectrum Analyzer")
-        self.setWindowIcon(QIcon(":/icons/data/icons/spectrum.svg"))
+        self.setWindowIcon(QIcon(":/icons/icons/spectrum.svg"))
         self.ui.btnStart.setToolTip(self.tr("Start"))
         self.ui.btnStop.setToolTip(self.tr("Stop"))
 

@@ -51,7 +51,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
 
         self.setWindowTitle(self.tr("Sniff Protocol"))
-        self.setWindowIcon(QIcon.fromTheme(":/icons/data/icons/sniffer.svg"))
+        self.setWindowIcon(QIcon.fromTheme(":/icons/icons/sniffer.svg"))
 
         self.encodings = encodings
         for encoding in self.encodings:

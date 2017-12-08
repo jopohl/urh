@@ -284,7 +284,7 @@ class Ui_SignalFrame(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"    image: url(:/icons/data/icons/splitter_handle_horizontal.svg);\n"
+"    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
 "}")
         self.splitter.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.splitter.setLineWidth(1)

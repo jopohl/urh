@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="urh.qrc">
-    <normaloff>:/icons/data/icons/appicon.png</normaloff>:/icons/data/icons/appicon.png</iconset>
+    <normaloff>:/icons/icons/appicon.png</normaloff>:/icons/icons/appicon.png</iconset>
   </property>
   <property name="tabShape">
    <enum>QTabWidget::Rounded</enum>
@@ -34,7 +34,7 @@ margin: 4px 0px;
 stop:0 rgba(255, 255, 255, 0), 
 stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
-image: url(:/icons/data/icons/splitter_handle_vertical.svg);
+image: url(:/icons/icons/splitter_handle_vertical.svg);
 }</string>
       </property>
       <property name="orientation">
@@ -615,7 +615,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   <action name="actionDecoding">
    <property name="icon">
     <iconset resource="urh.qrc">
-     <normaloff>:/icons/data/icons/decoding.svg</normaloff>:/icons/data/icons/decoding.svg</iconset>
+     <normaloff>:/icons/icons/decoding.svg</normaloff>:/icons/icons/decoding.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Decoding...</string>
@@ -636,7 +636,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   <action name="actionSpectrum_Analyzer">
    <property name="icon">
     <iconset resource="urh.qrc">
-     <normaloff>:/icons/data/icons/spectrum.svg</normaloff>:/icons/data/icons/spectrum.svg</iconset>
+     <normaloff>:/icons/icons/spectrum.svg</normaloff>:/icons/icons/spectrum.svg</iconset>
    </property>
    <property name="text">
     <string>Spectrum &amp;Analyzer...</string>
@@ -669,7 +669,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   <action name="actionSniff_protocol">
    <property name="icon">
     <iconset resource="urh.qrc">
-     <normaloff>:/icons/data/icons/sniffer.svg</normaloff>:/icons/data/icons/sniffer.svg</iconset>
+     <normaloff>:/icons/icons/sniffer.svg</normaloff>:/icons/icons/sniffer.svg</iconset>
    </property>
    <property name="text">
     <string>Sn&amp;iff protocol...</string>

@@ -10,7 +10,7 @@ OXYGEN_PATH = "/usr/share/icons/oxygen/base"
 
 def get_python_files():
     python_files = []
-    for path, subdirs, files in os.walk(os.path.join(os.curdir, "src")):
+    for path, subdirs, files in os.walk(os.path.join(os.curdir, "..", "src")):
         for name in files:
             if name.endswith(".py"):
                 python_files.append(os.path.join(path, name))
@@ -76,7 +76,7 @@ def copy_icons(icon_names: set):
     tree = ET.ElementTree(root)
     tree.write("/tmp/xtra_icons.qrc")
     call(["pyrcc5", "/tmp/xtra_icons.qrc", "-o", "/tmp/xtra_icons_rc.py"])
-    tar_path = os.path.dirname(os.path.abspath(__file__))
+    tar_path = os.path.dirname(os.path.join(os.path.dirname(__file__), "..", ".."))
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.copy("/tmp/xtra_icons_rc.py", tar_path)
 

@@ -3,14 +3,20 @@ import sys
 
 import cx_Freeze
 
-import src.urh.version as version
-
 def build_exe(build_cmd='build'):
     # have to make sure args looks right
     sys.argv = sys.argv[:1] + [build_cmd]
 
-    app_path = os.path.join(os.path.dirname(__file__), "src", "urh", "main.py")
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+    root_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
+    os.chdir(root_path)
+
+    app_path = os.path.join("src", "urh", "main.py")
+    assert os.path.isfile(app_path)
+    src_dir = os.path.join(os.curdir, "src")
+    assert os.path.isdir(src_dir)
+    sys.path.insert(0, src_dir)
+
+    import urh.version as version
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]
@@ -70,6 +76,7 @@ def build_exe(build_cmd='build'):
         executables=executables,
         options=options
     )
+
 
 if __name__ == '__main__':
     if sys.platform == "win32":

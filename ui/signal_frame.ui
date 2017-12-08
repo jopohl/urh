@@ -1306,7 +1306,7 @@ stop:1 rgba(255, 255, 255, 0));
   <tabstop>spinBoxSelectionEnd</tabstop>
  </tabstops>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

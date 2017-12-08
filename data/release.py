@@ -27,9 +27,9 @@ def release():
 
     current_branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("UTF-8").strip()
 
-    # if current_branch != "master":
-    #     print("You can only release from master!")
-    #     sys.exit(1)
+    if current_branch != "master":
+        print("You can only release from master!")
+        sys.exit(1)
 
     open(os.path.join(tempfile.gettempdir(), "urh_releasing"), "w").close()
 

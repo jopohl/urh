@@ -14,7 +14,7 @@
    <string>Modulation</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../urh.qrc">
+   <iconset resource="urh.qrc">
     <normaloff>:/icons/data/icons/modulation.svg</normaloff>:/icons/data/icons/modulation.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -98,7 +98,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../urh.qrc">:/icons/data/icons/plus.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/data/icons/plus.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -257,7 +257,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../urh.qrc">:/icons/data/icons/equals.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/data/icons/equals.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -368,7 +368,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../urh.qrc">:/icons/data/icons/equals_qm.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/data/icons/equals_qm.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1123,7 +1123,7 @@
   <tabstop>gVOriginalSignal</tabstop>
  </tabstops>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

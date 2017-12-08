@@ -735,7 +735,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

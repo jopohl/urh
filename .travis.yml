@@ -49,7 +49,7 @@ before_script:
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - pytest -s --cov-report= --cov=src/urh --cov-config .coveragerc tests 2> /tmp/test_errors.txt
+  - pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt
   - pip3 install .
   - urh --version
   - urh autoclose

@@ -24,6 +24,8 @@ matrix:
       env:
         - DISPLAY=:99.0
         - LIBOVERLAY_SCROLLBAR=0
+  allow_failures:
+    - python: 3.4_with_system_site_packages
 
 notifications:
   email: false

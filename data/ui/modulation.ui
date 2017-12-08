@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="urh.qrc">
-    <normaloff>:/icons/data/icons/modulation.svg</normaloff>:/icons/data/icons/modulation.svg</iconset>
+    <normaloff>:/icons/icons/modulation.svg</normaloff>:/icons/icons/modulation.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -98,7 +98,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="urh.qrc">:/icons/data/icons/plus.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/icons/plus.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -257,7 +257,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="urh.qrc">:/icons/data/icons/equals.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/icons/equals.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -368,7 +368,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="urh.qrc">:/icons/data/icons/equals_qm.svg</pixmap>
+          <pixmap resource="urh.qrc">:/icons/icons/equals_qm.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

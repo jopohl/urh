@@ -30,7 +30,7 @@ class Ui_GeneratorTab(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
+"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)

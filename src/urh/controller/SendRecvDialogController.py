@@ -655,11 +655,11 @@ class SendRecvDialogController(QDialog):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
         constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
         if self.bw_sr_are_locked:
-            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/lock.svg"))
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/icons/lock.svg"))
             self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
             self.ui.spinBoxBandwidth.editingFinished.emit()
         else:
-            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/data/icons/unlock.svg"))
+            self.ui.btnLockBWSR.setIcon(QIcon(":/icons/icons/unlock.svg"))
 
     @pyqtSlot(int)
     def on_slider_y_scale_value_changed(self, new_value: int):

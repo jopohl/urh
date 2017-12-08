@@ -19,7 +19,7 @@ def gen():
     file_dir = os.path.dirname(os.path.realpath(__file__))
     ui_path = file_dir
     rc_path = file_dir
-    out_path = os.path.join(file_dir, "..", "src", "urh", "ui")
+    out_path = os.path.join(file_dir, "..", "..", "src", "urh", "ui")
 
     ui_files = [f for f in os.listdir(ui_path) if f.endswith(".ui")]
     rc_files = [f for f in os.listdir(rc_path) if f.endswith(".qrc")]

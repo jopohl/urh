@@ -21,7 +21,7 @@ class Ui_SendRecvDialog(object):
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/data/icons/splitter_handle_vertical.svg);\n"
+"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
 "}")
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
@@ -80,7 +80,7 @@ class Ui_SendRecvDialog(object):
         self.gridLayout.addWidget(self.spinBoxSampleRate, 7, 1, 1, 2)
         self.btnLockBWSR = QtWidgets.QToolButton(self.scrollAreaWidgetContents_2)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/data/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnLockBWSR.setIcon(icon)
         self.btnLockBWSR.setCheckable(True)
         self.btnLockBWSR.setChecked(True)

@@ -70,7 +70,7 @@ def main():
 
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
-            sys.path.insert(0, prefix)
+            sys.path.insert(0, os.path.join(prefix, "data"))
             from ui import generate_ui
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
@@ -103,7 +103,7 @@ def main():
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(["URH"] + sys.argv[1:])
-    app.setWindowIcon(QIcon(":/icons/data/icons/appicon.png"))
+    app.setWindowIcon(QIcon(":/icons/icons/appicon.png"))
 
     util.set_icon_theme()
 

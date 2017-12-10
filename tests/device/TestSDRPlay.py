@@ -1,5 +1,7 @@
 import unittest
 
+import time
+
 from urh.util import util
 
 util.set_windows_lib_path()
@@ -15,5 +17,6 @@ class TestSDRPlay(unittest.TestCase):
         print(sdrplay.get_api_version())
         print(sdrplay.get_devices())
 
-        sdrplay.test2(pycallback)
-        #sdrplay.init_stream(50, 2e6, 433.92e6, 2e6, 500, pycallback)
+        print("Init stream", sdrplay.init_stream(50, 2e6, 433.92e6, 2e6, 500, pycallback))
+
+        time.sleep(3)

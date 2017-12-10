@@ -7,10 +7,23 @@ ctypedef csdrplay.mir_sdr_ErrT error_t
 cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged,
                               int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
 
+    cdef short* data = <short *>malloc(numSamples * sizeof(short))
+    if not data:
+        raise MemoryError()
 
-    func = <object> cbContext
-    func()  # python callback
-    return
+    cdef unsigned int i = 0
+    cdef unsigned int j = 0
+
+    try:
+        for i in range(0, numSamples):
+            data[j] = xi[i]
+            data[j+1] = xq[i]
+            j += 2
+        func = <object> cbContext
+        func(<short[:numSamples]>data)  # python callback
+        return
+    finally:
+        free(data)
 
 cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext):
     return

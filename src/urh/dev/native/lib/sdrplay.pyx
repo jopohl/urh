@@ -5,7 +5,9 @@ ctypedef csdrplay.mir_sdr_DeviceT device_type
 ctypedef csdrplay.mir_sdr_ErrT error_t
 
 cdef extern from "Python.h":
-    ctypedef int PyGILState_STATE
+    ctypedef enum PyGILState_STATE:
+        PyGILState_LOCKED
+        PyGILState_UNLOCKED
     PyGILState_STATE PyGILState_Ensure()
     void PyGILState_Release(PyGILState_STATE)
 

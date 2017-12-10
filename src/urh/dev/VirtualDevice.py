@@ -108,6 +108,10 @@ class VirtualDevice(QObject):
                     from urh.dev.native.USRP import USRP
                     self.__dev = USRP(freq, gain, sample_rate, bandwidth, gain,
                                       resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                elif name.startswith("sdrplay"):
+                    from urh.dev.native.SDRPlay import SDRPlay
+                    self.__dev = SDRPlay(freq, gain, bandwidth, gain, if_gain=if_gain,
+                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 

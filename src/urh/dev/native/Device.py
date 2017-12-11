@@ -98,7 +98,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection):
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -134,7 +134,7 @@ class Device(QObject):
             pass
 
         if cls.ASYNCHRONOUS:
-            cls.enter_async_receive_mode(data_connection)
+            cls.enter_async_receive_mode(data_connection, ctrl_connection)
         else:
             cls.prepare_sync_receive(ctrl_connection)
 

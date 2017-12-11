@@ -42,6 +42,12 @@ cpdef float get_api_version():
     csdrplay.mir_sdr_ApiVersion(&version)
     return version
 
+cpdef error_t set_device_index(unsigned int index):
+    return csdrplay.mir_sdr_SetDeviceIdx(index)
+
+cpdef error_t release_device_index():
+    return csdrplay.mir_sdr_ReleaseDeviceIdx()
+
 cpdef get_devices():
     cdef device_type *devs = <device_type*> malloc(256 * sizeof(device_type))
 
@@ -102,3 +108,6 @@ cpdef init_stream(int gain, double sample_rate, double center_freq, double bandw
     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
                                        _gain_change_callback, <void *> func)
+
+cpdef error_t close_stream():
+    csdrplay.mir_sdr_StreamUninit()

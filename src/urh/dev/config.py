@@ -99,7 +99,7 @@ DEVICE_CONFIG["SDRPlay"] = {
     "center_freq": dev_range(start=1*K, stop=2 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=10 * M, step=1),
     "bandwidth": [0, 200e3, 300e3, 600e3, 1536e3, 5000e3, 6000e3, 7000e3, 8000e3],
-    "rx_rf_gain":  list(range(0, 102)),
+    "rx_rf_gain":  list(range(20, 60)),
     "rx_if_gain": [0, 450, 1620, 2048]
 }
 

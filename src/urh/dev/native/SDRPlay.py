@@ -1,7 +1,11 @@
+from collections import OrderedDict
+from multiprocessing.connection import Connection
+
 import numpy as np
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import sdrplay
+from urh.util.Logger import logger
 
 
 class SDRPlay(Device):
@@ -31,6 +35,52 @@ class SDRPlay(Device):
             12: "HARDWARE VERSION ERROR",
             13: "OUT OF MEMORY ERROR"
         }
+
+    @classmethod
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+        ret = sdrplay.init_stream(cls.sdrplay_initial_gain, cls.sdrplay_initial_sample_rate, cls.sdrplay_initial_freq,
+                                  cls.sdrplay_initial_bandwidth, cls.sdrplay_initial_if_gain, data_connection)
+
+        ctrl_connection.send(
+            "Start RX MODE with \n  FREQUENCY={}\n  SAMPLE_RATE={}\n  BANDWIDTH={}\n  GAIN={}\n  IF_GAIN={}:{}".format(
+                cls.sdrplay_initial_freq, cls.sdrplay_initial_sample_rate, cls.sdrplay_initial_bandwidth, cls.sdrplay_initial_gain, cls.sdrplay_initial_if_gain, ret))
+
+        return ret
+
+    @classmethod
+    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+        if "identifier" in parameters:
+            identifier = parameters["identifier"]
+        else:
+            identifier = None
+
+        try:
+            device_number = int(identifier)
+            ret = sdrplay.set_device_index(device_number)
+            ctrl_connection.send("SET DEVICE NUMBER to {}:{}".format(device_number, ret))
+        except (TypeError, ValueError):
+            ret = 0  # let API choose the device
+
+        if ret != 0:
+            return False
+
+        cls.sdrplay_initial_freq = parameters[cls.Command.SET_FREQUENCY.name]
+        cls.sdrplay_initial_sample_rate = parameters[cls.Command.SET_SAMPLE_RATE.name]
+        cls.sdrplay_initial_bandwidth = parameters[cls.Command.SET_BANDWIDTH.name]
+        cls.sdrplay_initial_gain = parameters[cls.Command.SET_RF_GAIN.name]
+        cls.sdrplay_initial_if_gain = parameters[cls.Command.SET_IF_GAIN.name]
+        cls.sdrplay_device_index = identifier
+        return True
+
+    @classmethod
+    def shutdown_device(cls, ctrl_connection, is_tx: bool):
+        logger.debug("SDRPLAY: closing device")
+        ret = sdrplay.close_stream()
+        ctrl_connection.send("CLOSE STREAM:" + str(ret))
+
+        if cls.sdrplay_device_index is not None:
+            ret = sdrplay.release_device_index()
+            ctrl_connection.send("RELEASE DEVICE:" + str(ret))
 
     @staticmethod
     def unpack_complex(buffer):

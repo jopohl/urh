@@ -34,8 +34,9 @@ class AirSpy(Device):
         return True
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection):
-        airspy.start_rx(data_connection.send_bytes)
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+        ret = airspy.start_rx(data_connection.send_bytes)
+        ctrl_connection.send("Start RX MODE:" + str(ret))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

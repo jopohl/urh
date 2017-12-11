@@ -142,9 +142,7 @@ class SendRecvDialogController(QDialog):
             getattr(self.ui, item).hide()
 
     def set_sniff_ui_items_visible(self, visible: bool):
-        for item in self.ui.__dict__:
-            if "_sniff_" in item:
-                getattr(self.ui, item).setVisible(visible)
+        self.ui.groupBoxSniffSettings.setVisible(visible)
 
     def get_config_for_selected_device(self):
         device_name = self.ui.cbDevice.currentText()

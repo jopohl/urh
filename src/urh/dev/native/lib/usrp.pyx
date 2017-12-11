@@ -54,12 +54,10 @@ cpdef uhd_error setup_stream():
         uhd_rx_streamer_make(&rx_streamer_handle)
         uhd_usrp_get_rx_stream(_c_device, &stream_args, rx_streamer_handle)
         uhd_rx_streamer_num_channels(rx_streamer_handle, &num_channels)
-        print("Num channels", num_channels)
     else:
         uhd_tx_streamer_make(&tx_streamer_handle)
         uhd_usrp_get_tx_stream(_c_device, &stream_args, tx_streamer_handle)
         uhd_tx_streamer_num_channels(tx_streamer_handle, &num_channels)
-        print("Num channels", num_channels)
 
 cpdef uhd_error start_stream(int num_samples):
     if IS_TX:
@@ -188,8 +186,6 @@ cpdef uhd_error set_center_freq(double center_freq):
         result = uhd_usrp_set_tx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
     else:
         result = uhd_usrp_set_rx_freq(_c_device, &tune_request, CHANNEL, &tune_result)
-
-    print("USRP target frequency", tune_result.target_rf_freq, "actual frequency", tune_result.actual_rf_freq)
 
     return result
 

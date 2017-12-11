@@ -119,7 +119,6 @@ class VirtualDevice(QObject):
                 # For Unittests Only
                 self.__dev = Device(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                     resume_on_full_receive_buffer)
-                self.__dev.BYTES_PER_SAMPLE = 4
             else:
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.portnumber = portnumber

@@ -5,7 +5,6 @@ from urh.dev.native.lib import sdrplay
 
 
 class SDRPlay(Device):
-    BYTES_PER_SAMPLE = 4  # short (2 byte) for I and Q, respectively
     DEVICE_LIB = sdrplay
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -34,9 +33,11 @@ class SDRPlay(Device):
         }
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.int16), ('i', np.int16)])
-        result.real = (unpacked['r'] + 0.5) / 32767.5
-        result.imag = (unpacked['i'] + 0.5) / 32767.5
-        return result
+    def unpack_complex(buffer):
+        """
+        Conversion from short to float happens in c callback
+        :param buffer:
+        :param nvalues:
+        :return:
+        """
+        return np.frombuffer(buffer, dtype=np.complex64)

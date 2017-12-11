@@ -12,21 +12,23 @@ cdef extern from "Python.h":
     void PyGILState_Release(PyGILState_STATE)
 
 cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
-    cdef short* data = <short *>malloc(2*numSamples * sizeof(short))
+    cdef float* data = <float *>malloc(2*numSamples * sizeof(float))
 
     cdef unsigned int i = 0
     cdef unsigned int j = 0
 
     cdef PyGILState_STATE gstate
+
     try:
         for i in range(0, numSamples):
-            data[j] = xi[i]
-            data[j+1] = xq[i]
+            data[j] = (xi[i] + 0.5) / 32767.5
+            data[j+1] = (xq[i] + 0.5) / 32767.5
             j += 2
 
+
         gstate = PyGILState_Ensure()
-        func = <object> cbContext
-        func(<short[:2*numSamples]>data)  # python callback
+        conn = <object> cbContext
+        conn.send_bytes(<float[:2*numSamples]>data)  # python callback
         return
     finally:
         PyGILState_Release(gstate)

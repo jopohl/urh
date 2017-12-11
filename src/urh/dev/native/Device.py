@@ -33,7 +33,6 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    BYTES_PER_SAMPLE = None
     rcv_index_changed = pyqtSignal(int, int)
 
     ASYNCHRONOUS = False
@@ -576,7 +575,7 @@ class Device(QObject):
         self.child_ctrl_conn.close()
 
     @staticmethod
-    def unpack_complex(buffer, nvalues):
+    def unpack_complex(buffer):
         pass
 
     @staticmethod
@@ -604,7 +603,8 @@ class Device(QObject):
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
 
-                n_samples = len(byte_buffer) // self.BYTES_PER_SAMPLE
+                samples = self.unpack_complex(byte_buffer)
+                n_samples = len(samples)
                 if n_samples > 0:
                     if self.current_recv_index + n_samples >= len(self.receive_buffer):
                         if self.resume_on_full_receive_buffer:
@@ -617,10 +617,7 @@ class Device(QObject):
                                                                           len(self.receive_buffer)))
                             return
 
-                    end = n_samples * self.BYTES_PER_SAMPLE
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = \
-                        self.unpack_complex(byte_buffer[:end], n_samples)
-
+                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
                     old_index = self.current_recv_index
                     self.current_recv_index += n_samples
 

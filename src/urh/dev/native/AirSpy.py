@@ -8,7 +8,6 @@ from multiprocessing.connection import Connection
 
 
 class AirSpy(Device):
-    BYTES_PER_SAMPLE = 8
     DEVICE_LIB = airspy
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -48,9 +47,9 @@ class AirSpy(Device):
         self.bandwidth_is_adjustable = False
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
+    def unpack_complex(buffer):
         unpacked = np.frombuffer(buffer, dtype=[('r', np.float32), ('i', np.float32)])
+        result = np.empty(len(unpacked), dtype=np.complex64)
         result.real = unpacked["r"]
         result.imag = unpacked["i"]
         return result

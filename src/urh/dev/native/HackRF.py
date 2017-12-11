@@ -10,7 +10,6 @@ from urh.util.Logger import logger
 
 
 class HackRF(Device):
-    BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
     DEVICE_LIB = hackrf
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -75,9 +74,9 @@ class HackRF(Device):
         }
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
+    def unpack_complex(buffer):
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        result = np.empty(len(unpacked), dtype=np.complex64)
         result.real = (unpacked['r'] + 0.5) / 127.5
         result.imag = (unpacked['i'] + 0.5) / 127.5
         return result

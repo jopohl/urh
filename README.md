@@ -44,7 +44,8 @@ Furthermore, you can [install urh from source](#installing-from-source) or run i
 | python-psutil  | libairspy (for native AirSPy support)  |
 | python-zmq  | liblimesdr (for native LimeSDR support)  |
 | PyQt5  | libuhd (for native USRP suppport)  |
-| C++ Compiler | rfcat (for RfCat plugin to send e.g. with YardStick One) |
+| C++ Compiler | libsdrplay (for native SDRplay support) |
+| | rfcat (for RfCat plugin to send e.g. with YardStick One) |
 |   | gnuradio / gnuradio-osmosdr (for GNU Radio device backends)  |
 
 

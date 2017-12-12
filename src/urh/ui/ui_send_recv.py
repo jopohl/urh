@@ -52,10 +52,10 @@ class Ui_SendRecvDialog(object):
 "    subcontrol-origin: margin;\n"
 "}\n"
 "QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
+" image: url(:/icons/icons/collapse.svg)\n"
 "}\n"
 "QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
+" image: url(:/icons/icons/uncollapse.svg)\n"
 "}")
         self.groupBoxSniffSettings.setFlat(True)
         self.groupBoxSniffSettings.setCheckable(True)
@@ -304,10 +304,10 @@ class Ui_SendRecvDialog(object):
 "    subcontrol-origin: margin;\n"
 "}\n"
 "QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
+" image: url(:/icons/icons/collapse.svg)\n"
 "}\n"
 "QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
+" image: url(:/icons/icons/uncollapse.svg)\n"
 "}")
         self.groupBoxDeviceSettings.setFlat(True)
         self.groupBoxDeviceSettings.setCheckable(True)

@@ -77,10 +77,10 @@ QGroupBox::title {
     subcontrol-origin: margin;
 }
 QGroupBox::indicator:unchecked {
- image: url(:/icons/icons/uncollapse.svg)
+ image: url(:/icons/icons/collapse.svg)
 }
 QGroupBox::indicator:checked {
- image: url(:/icons/icons/collapse.svg)
+ image: url(:/icons/icons/uncollapse.svg)
 }</string>
           </property>
           <property name="title">
@@ -669,10 +669,10 @@ QGroupBox::title {
     subcontrol-origin: margin;
 }
 QGroupBox::indicator:unchecked {
- image: url(:/icons/icons/uncollapse.svg)
+ image: url(:/icons/icons/collapse.svg)
 }
 QGroupBox::indicator:checked {
- image: url(:/icons/icons/collapse.svg)
+ image: url(:/icons/icons/uncollapse.svg)
 }</string>
           </property>
           <property name="title">

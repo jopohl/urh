@@ -54,10 +54,11 @@ class SDRPlay(Device):
         if "identifier" in parameters:
             identifier = parameters["identifier"]
         else:
-            identifier = None
+            identifier = 0
 
         try:
             device_number = int(identifier)
+            ctrl_connection.send("\nCONNECTED DEVICES: {}".format("\n".join(map(str, sdrplay.get_devices()))))
             ret = sdrplay.set_device_index(device_number)
             ctrl_connection.send("SET DEVICE NUMBER to {}:{}".format(device_number, ret))
         except (TypeError, ValueError):

@@ -1,4 +1,5 @@
 cimport csdrplay
+import time
 from libc.stdlib cimport malloc, free
 
 ctypedef csdrplay.mir_sdr_DeviceT device_type
@@ -11,11 +12,21 @@ cdef extern from "Python.h":
     PyGILState_STATE PyGILState_Ensure()
     void PyGILState_Release(PyGILState_STATE)
 
+
+global reset_rx, reset_rx_request_received
+reset_rx = False
+reset_rx_request_received = False
+
 cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
     cdef float* data = <float *>malloc(2*numSamples * sizeof(float))
 
     cdef unsigned int i = 0
     cdef unsigned int j = 0
+
+    global reset_rx, reset_rx_request_received
+    if reset_rx:
+        reset_rx_request_received = True
+        return
 
     cdef PyGILState_STATE gstate
 
@@ -150,8 +161,17 @@ cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
                             int lna_state=0,
                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
     cdef int gRdBsystem, samplesPerPacket
-    result = csdrplay.mir_sdr_Reinit(&gain, sample_rate / 1e6, frequency / 1e6, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
-    return result
+    global reset_rx, reset_rx_request_received
+    reset_rx = True
+
+    while not reset_rx_request_received:
+        time.sleep(0.01)
+
+    try:
+        return csdrplay.mir_sdr_Reinit(&gain, sample_rate / 1e6, frequency / 1e6, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+    finally:
+        reset_rx = False
+        reset_rx_request_received = False
 
 cpdef error_t close_stream():
     csdrplay.mir_sdr_StreamUninit()

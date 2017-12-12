@@ -8,6 +8,7 @@ from multiprocessing import Process
 
 from urh.dev.native.SDRPlay import SDRPlay
 from urh.util import util
+import ctypes
 
 util.set_windows_lib_path()
 
@@ -16,7 +17,7 @@ from urh.dev.native.lib import sdrplay
 def recv(conn: Connection):
     while True:
         t = time.time()
-        result = SDRPlay.unpack_complex(conn.recv_bytes(), 100)
+        result = SDRPlay.unpack_complex(conn.recv_bytes())
         print("UNPACK", time.time()-t)
 
 class TestSDRPlay(unittest.TestCase):
@@ -29,15 +30,20 @@ class TestSDRPlay(unittest.TestCase):
 
         print(sdrplay.get_api_version())
         print(sdrplay.get_devices())
+        print(sdrplay.set_device_index(0))
 
         parent_conn, child_conn = Pipe()
         p = Process(target=recv, args=(parent_conn,))
         p.daemon = True
         p.start()
 
+        null_ptr = ctypes.POINTER(ctypes.c_voidp)()
         print("Init stream", sdrplay.init_stream(50, 2e6, 433.92e6, 2e6, 500, child_conn))
 
-        time.sleep(3)
+        time.sleep(2)
+        print("settings sample rate")
+        print("Set sample rate", sdrplay.set_sample_rate(2e6))
 
+        time.sleep(1)
         p.terminate()
         p.join()

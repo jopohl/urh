@@ -66,10 +66,15 @@ class SDRPlay(Device):
         else:
             identifier = 0
 
+        def device_dict_to_string(d):
+            hw_ver = d["hw_version"]
+            serial = d["serial"]
+            return "RSP {} ({})".format(hw_ver, serial)
+
         try:
             device_list = sdrplay.get_devices()
             device_number = int(identifier)
-            ctrl_connection.send("\nCONNECTED DEVICES: {}".format("\n".join(map(str, device_list))))
+            ctrl_connection.send("\nCONNECTED DEVICES: {}".format(", ".join(map(device_dict_to_string, device_list))))
             ret = sdrplay.set_device_index(device_number)
             ctrl_connection.send("SET DEVICE NUMBER to {}:{}".format(device_number, ret))
         except (TypeError, ValueError):

@@ -80,6 +80,14 @@ cpdef get_devices():
     finally:
         free(devs)
 
+cdef int calculate_gain_reduction(int gain):
+    """
+    Calculate gain reduction for API. Highest possible gain leads to lowest possible gain reduction
+    :param gain: 
+    :return: 
+    """
+    gain = max(20, min(gain, 59))
+    return 79 - gain
 
 cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):
     # get nearest bwtype
@@ -119,12 +127,13 @@ cpdef init_stream(int gain, double sample_rate, double center_freq, double bandw
     # get nearest ifgain
     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
 
-    lna_state = 0  # todo
+    lna_state = 0
     cdef int gRdBsystem = 0
     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
     cdef int samples_per_packet = 0
 
-    return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
+    cdef int gain_reduction = calculate_gain_reduction(gain)
+    return csdrplay.mir_sdr_StreamInit(&gain_reduction, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
                                        _gain_change_callback, <void *> func)
 
@@ -139,18 +148,29 @@ cpdef error_t set_bandwidth(double bandwidth):
     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
 
 cpdef error_t set_gain(int gain):
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)
+    return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=calculate_gain_reduction(gain))
 
 cpdef error_t set_if_gain(double if_gain):
     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
 
-cpdef error_t set_antenna_port(int port):
-    cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
-    if result == csdrplay.mir_sdr_Success:
-        return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)
-    else:
-        return result
+cpdef error_t set_antenna(int antenna):
+    cdef csdrplay.mir_sdr_RSPII_AntennaSelectT antenna_select
+    if antenna == 0 or antenna == 1:
+        result = csdrplay.mir_sdr_AmPortSelect(0)
+        if result != csdrplay.mir_sdr_Success:
+            return result
+
+        if antenna == 0:
+            antenna_select = csdrplay.mir_sdr_RSPII_ANTENNA_A
+        else:
+            antenna_select = csdrplay.mir_sdr_RSPII_ANTENNA_B
+
+        return csdrplay.mir_sdr_RSPII_AntennaControl(antenna_select)
+    elif antenna == 2:
+        print("hiz")
+        return csdrplay.mir_sdr_AmPortSelect(1)
+
 
 cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
                             double sample_rate=0, double frequency=0,

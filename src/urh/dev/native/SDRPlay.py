@@ -14,6 +14,7 @@ class SDRPlay(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS[Device.Command.SET_RF_GAIN.name] = "set_gain"
     DEVICE_METHODS[Device.Command.SET_IF_GAIN.name]["rx"] = "set_if_gain"
+    DEVICE_METHODS[Device.Command.SET_ANTENNA_INDEX.name] = "set_antenna"
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
@@ -38,6 +39,15 @@ class SDRPlay(Device):
             13: "OUT OF MEMORY ERROR"
         }
 
+    @property
+    def device_parameters(self):
+        return OrderedDict([(self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
+                            (self.Command.SET_FREQUENCY.name, self.frequency),
+                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                            (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_IF_GAIN.name, self.if_gain)])
+
     @classmethod
     def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
         ret = sdrplay.init_stream(cls.sdrplay_initial_gain, cls.sdrplay_initial_sample_rate, cls.sdrplay_initial_freq,
@@ -57,15 +67,19 @@ class SDRPlay(Device):
             identifier = 0
 
         try:
+            device_list = sdrplay.get_devices()
             device_number = int(identifier)
-            ctrl_connection.send("\nCONNECTED DEVICES: {}".format("\n".join(map(str, sdrplay.get_devices()))))
+            ctrl_connection.send("\nCONNECTED DEVICES: {}".format("\n".join(map(str, device_list))))
             ret = sdrplay.set_device_index(device_number)
             ctrl_connection.send("SET DEVICE NUMBER to {}:{}".format(device_number, ret))
         except (TypeError, ValueError):
-            ret = 0  # let API choose the device
-
-        if ret != 0:
             return False
+
+        if device_list[device_number]["hw_version"] == 2:
+            antenna = parameters[cls.Command.SET_ANTENNA_INDEX.name]
+            cls.process_command((cls.Command.SET_ANTENNA_INDEX.name, antenna), ctrl_connection, is_tx=False)
+        else:
+            ctrl_connection.send("Skipping antenna selection for RSP1 device")
 
         cls.sdrplay_initial_freq = parameters[cls.Command.SET_FREQUENCY.name]
         cls.sdrplay_initial_sample_rate = parameters[cls.Command.SET_SAMPLE_RATE.name]

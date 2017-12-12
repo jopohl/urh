@@ -3638,7 +3638,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_start_rx(PyObject *__pyx_
  *     f = callback
  *     PyEval_InitThreads()             # <<<<<<<<<<<<<<
  *     cairspy.airspy_set_sample_type(_c_device, cairspy.airspy_sample_type.AIRSPY_SAMPLE_FLOAT32_IQ)
- *     cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
+ *     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
  */
   PyEval_InitThreads();
 
@@ -3646,7 +3646,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_start_rx(PyObject *__pyx_
  *     f = callback
  *     PyEval_InitThreads()
  *     cairspy.airspy_set_sample_type(_c_device, cairspy.airspy_sample_type.AIRSPY_SAMPLE_FLOAT32_IQ)             # <<<<<<<<<<<<<<
- *     cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
+ *     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
  * 
  */
   airspy_set_sample_type(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, AIRSPY_SAMPLE_FLOAT32_IQ);
@@ -3654,11 +3654,12 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_start_rx(PyObject *__pyx_
   /* "src/urh/dev/native/lib/airspy.pyx":86
  *     PyEval_InitThreads()
  *     cairspy.airspy_set_sample_type(_c_device, cairspy.airspy_sample_type.AIRSPY_SAMPLE_FLOAT32_IQ)
- *     cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)             # <<<<<<<<<<<<<<
+ *     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)             # <<<<<<<<<<<<<<
  * 
  * cpdef int stop_rx():
  */
-  airspy_start_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv, NULL);
+  __pyx_r = airspy_start_rx(__pyx_v_3src_3urh_3dev_6native_3lib_6airspy__c_device, __pyx_f_3src_3urh_3dev_6native_3lib_6airspy__c_callback_recv, NULL);
+  goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/airspy.pyx":81
  *     return cairspy.airspy_set_vga_gain(_c_device, vga_gain)
@@ -3669,7 +3670,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_start_rx(PyObject *__pyx_
  */
 
   /* function exit code */
-  __pyx_r = 0;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3711,7 +3712,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_6airspy_18start_rx(CYTHON_
 }
 
 /* "src/urh/dev/native/lib/airspy.pyx":88
- *     cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
+ *     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
  * 
  * cpdef int stop_rx():             # <<<<<<<<<<<<<<
  *     time.sleep(0.01)
@@ -3754,7 +3755,7 @@ static int __pyx_f_3src_3urh_3dev_6native_3lib_6airspy_stop_rx(CYTHON_UNUSED int
   goto __pyx_L0;
 
   /* "src/urh/dev/native/lib/airspy.pyx":88
- *     cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
+ *     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
  * 
  * cpdef int stop_rx():             # <<<<<<<<<<<<<<
  *     time.sleep(0.01)

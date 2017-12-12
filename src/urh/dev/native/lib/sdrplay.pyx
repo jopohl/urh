@@ -117,7 +117,7 @@ cpdef init_stream(int gain, double sample_rate, double center_freq, double bandw
                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
                                        _gain_change_callback, <void *> func)
 
-cpdef error_t set_frequency(double frequency):
+cpdef error_t set_center_freq(double frequency):
     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
 
 cpdef error_t set_sample_rate(double sample_rate):
@@ -150,7 +150,8 @@ cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
                             int lna_state=0,
                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
     cdef int gRdBsystem, samplesPerPacket
-    return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+    result = csdrplay.mir_sdr_Reinit(&gain, sample_rate / 1e6, frequency / 1e6, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+    return result
 
 cpdef error_t close_stream():
     csdrplay.mir_sdr_StreamUninit()

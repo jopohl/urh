@@ -12,6 +12,8 @@ class SDRPlay(Device):
     DEVICE_LIB = sdrplay
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
+    DEVICE_METHODS[Device.Command.SET_RF_GAIN.name] = "set_gain"
+    DEVICE_METHODS[Device.Command.SET_IF_GAIN.name]["rx"] = "set_if_gain"
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

@@ -882,6 +882,7 @@ struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
 struct __pyx_memoryviewslice_obj;
+struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream;
 
 /* "src/urh/dev/native/lib/sdrplay.pyx":4
  * from libc.stdlib cimport malloc, free
@@ -900,6 +901,25 @@ typedef mir_sdr_DeviceT __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_device_type
  * cdef extern from "Python.h":
  */
 typedef mir_sdr_ErrT __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t;
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":144
+ *         return result
+ * 
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,             # <<<<<<<<<<<<<<
+ *                             double sample_rate=0, double frequency=0,
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+ */
+struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream {
+  int __pyx_n;
+  double sample_rate;
+  double frequency;
+  mir_sdr_Bw_MHzT bw_type;
+  int gain;
+  mir_sdr_If_kHzT if_type;
+  mir_sdr_LoModeT lo_mode;
+  int lna_state;
+  mir_sdr_SetGrModeT set_gr_mode;
+};
 
 /* "View.MemoryView":103
  * 
@@ -1329,6 +1349,9 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
 
+/* GetModuleGlobalName.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
+
 /* ArgTypeTest.proto */
 #define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
     ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
@@ -1370,9 +1393,6 @@ static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tsta
 
 /* GetAttr3.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
-
-/* GetModuleGlobalName.proto */
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
 /* ExtTypeTest.proto */
 static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
@@ -1519,6 +1539,12 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_Bw_MHzT 
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_If_kHzT value);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_ReasonForReinitT value);
+
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
+
 #if PY_MAJOR_VERSION < 3
     static int __Pyx_GetBuffer(PyObject *obj, Py_buffer *view, int flags);
     static void __Pyx_ReleaseBuffer(Py_buffer *view);
@@ -1559,17 +1585,29 @@ static CYTHON_INLINE unsigned int __Pyx_PyInt_As_unsigned_int(PyObject *);
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
-/* TypeInfoToFormat.proto */
-struct __pyx_typeinfo_string {
-    char string[3];
-};
-static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(__Pyx_TypeInfo *type);
+/* CIntFromPy.proto */
+static CYTHON_INLINE mir_sdr_ReasonForReinitT __Pyx_PyInt_As_mir_sdr_ReasonForReinitT(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE mir_sdr_Bw_MHzT __Pyx_PyInt_As_mir_sdr_Bw_MHzT(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE mir_sdr_If_kHzT __Pyx_PyInt_As_mir_sdr_If_kHzT(PyObject *);
+
+/* CIntFromPy.proto */
+static CYTHON_INLINE mir_sdr_LoModeT __Pyx_PyInt_As_mir_sdr_LoModeT(PyObject *);
+
+/* CIntFromPy.proto */
+static CYTHON_INLINE mir_sdr_SetGrModeT __Pyx_PyInt_As_mir_sdr_SetGrModeT(PyObject *);
+
+/* CIntFromPy.proto */
+static CYTHON_INLINE mir_sdr_ErrT __Pyx_PyInt_As_mir_sdr_ErrT(PyObject *);
+
+/* TypeInfoToFormat.proto */
+struct __pyx_typeinfo_string {
+    char string[3];
+};
+static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(__Pyx_TypeInfo *type);
 
 /* MemviewSliceCopyTemplate.proto */
 static __Pyx_memviewslice
@@ -1606,9 +1644,6 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *, int, int);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
@@ -1669,7 +1704,16 @@ static float __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_api_version(int __
 static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_device_index(unsigned int, int __pyx_skip_dispatch); /*proto*/
 static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_release_device_index(int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_devices(int __pyx_skip_dispatch); /*proto*/
+static mir_sdr_Bw_MHzT __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_bandwidth(double); /*proto*/
+static mir_sdr_If_kHzT __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_if_gain(double); /*proto*/
 static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int, double, double, double, double, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_frequency(double, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_sample_rate(double, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_bandwidth(double, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_gain(int, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_if_gain(double, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_antenna_port(int, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream(mir_sdr_ReasonForReinitT, int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream *__pyx_optional_args); /*proto*/
 static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_close_stream(int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
@@ -1724,11 +1768,11 @@ static const char __pyx_k_T[] = "T{";
   static const char __pyx_k_c[] = "c";
   static const char __pyx_k_s[] = "(%s)";
   static const char __pyx_k_id[] = "id";
-  static const char __pyx_k__20[] = "^";
-  static const char __pyx_k__21[] = "";
-  static const char __pyx_k__22[] = ":";
-static const char __pyx_k__23[] = "}";
-static const char __pyx_k__24[] = ",";
+  static const char __pyx_k__24[] = "^";
+  static const char __pyx_k__25[] = "";
+  static const char __pyx_k__26[] = ":";
+static const char __pyx_k__27[] = "}";
+static const char __pyx_k__28[] = ",";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_obj[] = "obj";
 static const char __pyx_k_base[] = "base";
@@ -1762,8 +1806,11 @@ static const char __pyx_k_serial[] = "serial";
 static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
+static const char __pyx_k_bw_type[] = "bw_type";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_if_gain[] = "if_gain";
+static const char __pyx_k_if_type[] = "if_type";
+static const char __pyx_k_lo_mode[] = "lo_mode";
 static const char __pyx_k_memview[] = "memview";
 static const char __pyx_k_Ellipsis[] = "Ellipsis";
 static const char __pyx_k_getstate[] = "__getstate__";
@@ -1774,6 +1821,8 @@ static const char __pyx_k_TypeError[] = "TypeError";
 static const char __pyx_k_available[] = "available";
 static const char __pyx_k_bandwidth[] = "bandwidth";
 static const char __pyx_k_enumerate[] = "enumerate";
+static const char __pyx_k_frequency[] = "frequency";
+static const char __pyx_k_lna_state[] = "lna_state";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_IndexError[] = "IndexError";
@@ -1787,16 +1836,19 @@ static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_center_freq[] = "center_freq";
 static const char __pyx_k_sample_rate[] = "sample_rate";
+static const char __pyx_k_set_gr_mode[] = "set_gr_mode";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
+static const char __pyx_k_reinit_stream[] = "reinit_stream";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
+static const char __pyx_k_reason_for_reinit[] = "reason_for_reinit";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
@@ -1842,15 +1894,16 @@ static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_n_s_View_MemoryView;
-static PyObject *__pyx_kp_b__20;
-static PyObject *__pyx_kp_b__21;
-static PyObject *__pyx_kp_b__22;
-static PyObject *__pyx_kp_b__23;
-static PyObject *__pyx_kp_u__24;
+static PyObject *__pyx_kp_b__24;
+static PyObject *__pyx_kp_b__25;
+static PyObject *__pyx_kp_b__26;
+static PyObject *__pyx_kp_b__27;
+static PyObject *__pyx_kp_u__28;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_u_available;
 static PyObject *__pyx_n_s_bandwidth;
 static PyObject *__pyx_n_s_base;
+static PyObject *__pyx_n_s_bw_type;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_u_c;
 static PyObject *__pyx_n_s_center_freq;
@@ -1868,6 +1921,7 @@ static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
+static PyObject *__pyx_n_s_frequency;
 static PyObject *__pyx_n_s_func;
 static PyObject *__pyx_n_s_gain;
 static PyObject *__pyx_n_s_getstate;
@@ -1875,10 +1929,13 @@ static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
 static PyObject *__pyx_n_u_hw_version;
 static PyObject *__pyx_n_s_id;
 static PyObject *__pyx_n_s_if_gain;
+static PyObject *__pyx_n_s_if_type;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_itemsize;
 static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
 static PyObject *__pyx_n_s_join;
+static PyObject *__pyx_n_s_lna_state;
+static PyObject *__pyx_n_s_lo_mode;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_mode;
@@ -1899,13 +1956,16 @@ static PyObject *__pyx_n_s_pyx_type;
 static PyObject *__pyx_n_s_pyx_unpickle_Enum;
 static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_reason_for_reinit;
 static PyObject *__pyx_n_s_reduce;
 static PyObject *__pyx_n_s_reduce_cython;
 static PyObject *__pyx_n_s_reduce_ex;
+static PyObject *__pyx_n_s_reinit_stream;
 static PyObject *__pyx_kp_u_s;
 static PyObject *__pyx_n_s_sample_rate;
 static PyObject *__pyx_n_s_send_bytes;
 static PyObject *__pyx_n_u_serial;
+static PyObject *__pyx_n_s_set_gr_mode;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_shape;
@@ -1928,7 +1988,14 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_2set_device_index
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_4release_device_index(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_6get_devices(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_8init_stream(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain, double __pyx_v_sample_rate, double __pyx_v_center_freq, double __pyx_v_bandwidth, double __pyx_v_if_gain, PyObject *__pyx_v_func); /* proto */
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10close_stream(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10set_frequency(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_frequency); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_12set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_sample_rate); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_14set_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_bandwidth); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_16set_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_18set_if_gain(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_if_gain); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_20set_antenna_port(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_port); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_22reinit_stream(CYTHON_UNUSED PyObject *__pyx_self, mir_sdr_ReasonForReinitT __pyx_v_reason_for_reinit, double __pyx_v_sample_rate, double __pyx_v_frequency, mir_sdr_Bw_MHzT __pyx_v_bw_type, int __pyx_v_gain, mir_sdr_If_kHzT __pyx_v_if_type, mir_sdr_LoModeT __pyx_v_lo_mode, int __pyx_v_lna_state, mir_sdr_SetGrModeT __pyx_v_set_gr_mode); /* proto */
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_24close_stream(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -1990,32 +2057,36 @@ static PyObject *__pyx_int_1620;
 static PyObject *__pyx_int_2048;
 static PyObject *__pyx_int_184977713;
 static PyObject *__pyx_int_neg_1;
-static PyObject *__pyx_tuple_;
-static PyObject *__pyx_tuple__2;
-static PyObject *__pyx_tuple__3;
-static PyObject *__pyx_tuple__4;
+static mir_sdr_Bw_MHzT __pyx_k_;
+static mir_sdr_If_kHzT __pyx_k__2;
+static mir_sdr_LoModeT __pyx_k__3;
+static mir_sdr_SetGrModeT __pyx_k__4;
 static PyObject *__pyx_tuple__5;
 static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_slice__14;
-static PyObject *__pyx_slice__15;
-static PyObject *__pyx_slice__16;
+static PyObject *__pyx_slice__18;
+static PyObject *__pyx_slice__19;
+static PyObject *__pyx_slice__20;
 static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_tuple__11;
 static PyObject *__pyx_tuple__12;
 static PyObject *__pyx_tuple__13;
+static PyObject *__pyx_tuple__14;
+static PyObject *__pyx_tuple__15;
+static PyObject *__pyx_tuple__16;
 static PyObject *__pyx_tuple__17;
-static PyObject *__pyx_tuple__18;
-static PyObject *__pyx_tuple__19;
-static PyObject *__pyx_tuple__25;
-static PyObject *__pyx_tuple__26;
-static PyObject *__pyx_tuple__27;
-static PyObject *__pyx_tuple__28;
+static PyObject *__pyx_tuple__21;
+static PyObject *__pyx_tuple__22;
+static PyObject *__pyx_tuple__23;
 static PyObject *__pyx_tuple__29;
 static PyObject *__pyx_tuple__30;
-static PyObject *__pyx_codeobj__31;
+static PyObject *__pyx_tuple__31;
+static PyObject *__pyx_tuple__32;
+static PyObject *__pyx_tuple__33;
+static PyObject *__pyx_tuple__34;
+static PyObject *__pyx_codeobj__35;
 
 /* "src/urh/dev/native/lib/sdrplay.pyx":14
  *     void PyGILState_Release(PyGILState_STATE)
@@ -2797,7 +2868,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_devices(CYTHON
  *     finally:
  *         free(devs)             # <<<<<<<<<<<<<<
  * 
- * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+ * 
  */
   /*finally:*/ {
     __pyx_L5_error:;
@@ -2901,28 +2972,20 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_6get_devices(CYTH
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/sdrplay.pyx":72
- *         free(devs)
+/* "src/urh/dev/native/lib/sdrplay.pyx":73
  * 
- * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):             # <<<<<<<<<<<<<<
+ * 
+ * cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
  *     # get nearest bwtype
  *     bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_9init_stream(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __pyx_v_gain, double __pyx_v_sample_rate, double __pyx_v_center_freq, double __pyx_v_bandwidth, double __pyx_v_if_gain, PyObject *__pyx_v_func, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static mir_sdr_Bw_MHzT __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_bandwidth(double __pyx_v_bandwidth) {
   PyObject *__pyx_v_bandwidths = NULL;
   mir_sdr_Bw_MHzT __pyx_v_bw_type;
   PyObject *__pyx_v_best_match = NULL;
   PyObject *__pyx_v_bw = NULL;
-  mir_sdr_If_kHzT __pyx_v_if_type;
-  PyObject *__pyx_v_if_types = NULL;
-  PyObject *__pyx_v_i = NULL;
-  long __pyx_v_lna_state;
-  int __pyx_v_gRdBsystem;
-  mir_sdr_SetGrModeT __pyx_v_gr_mode;
-  int __pyx_v_samples_per_packet;
-  PyObject *__pyx_r = NULL;
+  mir_sdr_Bw_MHzT __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -2934,110 +2997,109 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
   PyObject *__pyx_t_8 = NULL;
   int __pyx_t_9;
   mir_sdr_Bw_MHzT __pyx_t_10;
-  mir_sdr_If_kHzT __pyx_t_11;
-  __Pyx_RefNannySetupContext("init_stream", 0);
+  __Pyx_RefNannySetupContext("get_nearest_bandwidth", 0);
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":74
- * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+  /* "src/urh/dev/native/lib/sdrplay.pyx":75
+ * cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):
  *     # get nearest bwtype
  *     bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,             # <<<<<<<<<<<<<<
  *                   300e3: csdrplay.mir_sdr_BW_0_300,
  *                   600e3: csdrplay.mir_sdr_BW_0_600,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_200); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_200); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_200e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_200e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":75
+  /* "src/urh/dev/native/lib/sdrplay.pyx":76
  *     # get nearest bwtype
  *     bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,
  *                   300e3: csdrplay.mir_sdr_BW_0_300,             # <<<<<<<<<<<<<<
  *                   600e3: csdrplay.mir_sdr_BW_0_600,
  *                   1536e3: csdrplay.mir_sdr_BW_1_536,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_300); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_300); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_300e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_300e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":76
+  /* "src/urh/dev/native/lib/sdrplay.pyx":77
  *     bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,
  *                   300e3: csdrplay.mir_sdr_BW_0_300,
  *                   600e3: csdrplay.mir_sdr_BW_0_600,             # <<<<<<<<<<<<<<
  *                   1536e3: csdrplay.mir_sdr_BW_1_536,
  *                   5000e3: csdrplay.mir_sdr_BW_5_000,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_600); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_0_600); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_600e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_600e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":77
+  /* "src/urh/dev/native/lib/sdrplay.pyx":78
  *                   300e3: csdrplay.mir_sdr_BW_0_300,
  *                   600e3: csdrplay.mir_sdr_BW_0_600,
  *                   1536e3: csdrplay.mir_sdr_BW_1_536,             # <<<<<<<<<<<<<<
  *                   5000e3: csdrplay.mir_sdr_BW_5_000,
  *                   6000e3: csdrplay.mir_sdr_BW_6_000,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_1_536); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_1_536); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_1536e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_1536e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":78
+  /* "src/urh/dev/native/lib/sdrplay.pyx":79
  *                   600e3: csdrplay.mir_sdr_BW_0_600,
  *                   1536e3: csdrplay.mir_sdr_BW_1_536,
  *                   5000e3: csdrplay.mir_sdr_BW_5_000,             # <<<<<<<<<<<<<<
  *                   6000e3: csdrplay.mir_sdr_BW_6_000,
  *                   7000e3: csdrplay.mir_sdr_BW_7_000,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_5_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_5_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_5000e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_5000e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":79
+  /* "src/urh/dev/native/lib/sdrplay.pyx":80
  *                   1536e3: csdrplay.mir_sdr_BW_1_536,
  *                   5000e3: csdrplay.mir_sdr_BW_5_000,
  *                   6000e3: csdrplay.mir_sdr_BW_6_000,             # <<<<<<<<<<<<<<
  *                   7000e3: csdrplay.mir_sdr_BW_7_000,
  *                   8000e3: csdrplay.mir_sdr_BW_8_000}
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_6_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_6_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_6000e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_6000e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":80
+  /* "src/urh/dev/native/lib/sdrplay.pyx":81
  *                   5000e3: csdrplay.mir_sdr_BW_5_000,
  *                   6000e3: csdrplay.mir_sdr_BW_6_000,
  *                   7000e3: csdrplay.mir_sdr_BW_7_000,             # <<<<<<<<<<<<<<
  *                   8000e3: csdrplay.mir_sdr_BW_8_000}
  * 
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_7_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_7_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_7000e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_7000e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":81
+  /* "src/urh/dev/native/lib/sdrplay.pyx":82
  *                   6000e3: csdrplay.mir_sdr_BW_6_000,
  *                   7000e3: csdrplay.mir_sdr_BW_7_000,
  *                   8000e3: csdrplay.mir_sdr_BW_8_000}             # <<<<<<<<<<<<<<
  * 
  *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = csdrplay.mir_sdr_Bw_MHzT.mir_sdr_BW_0_200
  */
-  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_8_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(mir_sdr_BW_8_000); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_float_8000e3, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_float_8000e3, __pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_bandwidths = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":83
+  /* "src/urh/dev/native/lib/sdrplay.pyx":84
  *                   8000e3: csdrplay.mir_sdr_BW_8_000}
  * 
  *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = csdrplay.mir_sdr_Bw_MHzT.mir_sdr_BW_0_200             # <<<<<<<<<<<<<<
@@ -3046,7 +3108,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
  */
   __pyx_v_bw_type = mir_sdr_BW_0_200;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":84
+  /* "src/urh/dev/native/lib/sdrplay.pyx":85
  * 
  *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = csdrplay.mir_sdr_Bw_MHzT.mir_sdr_BW_0_200
  *     best_match = 0             # <<<<<<<<<<<<<<
@@ -3056,7 +3118,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_best_match = __pyx_int_0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":85
+  /* "src/urh/dev/native/lib/sdrplay.pyx":86
  *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = csdrplay.mir_sdr_Bw_MHzT.mir_sdr_BW_0_200
  *     best_match = 0
  *     for bw in bandwidths:             # <<<<<<<<<<<<<<
@@ -3064,7 +3126,7 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
  *             best_match = bw
  */
   __pyx_t_3 = 0;
-  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_bandwidths, 1, ((PyObject *)NULL), (&__pyx_t_4), (&__pyx_t_5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_bandwidths, 1, ((PyObject *)NULL), (&__pyx_t_4), (&__pyx_t_5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_1);
   __pyx_t_1 = __pyx_t_2;
@@ -3072,52 +3134,52 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
   while (1) {
     __pyx_t_6 = __Pyx_dict_iter_next(__pyx_t_1, __pyx_t_4, &__pyx_t_3, &__pyx_t_2, NULL, NULL, __pyx_t_5);
     if (unlikely(__pyx_t_6 == 0)) break;
-    if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 86, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_XDECREF_SET(__pyx_v_bw, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "src/urh/dev/native/lib/sdrplay.pyx":86
+    /* "src/urh/dev/native/lib/sdrplay.pyx":87
  *     best_match = 0
  *     for bw in bandwidths:
  *         if abs(bw - bandwidth) < abs(best_match - bandwidth):             # <<<<<<<<<<<<<<
  *             best_match = bw
  *     bw_type = bandwidths[best_match]
  */
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_bandwidth); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_bandwidth); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = PyNumber_Subtract(__pyx_v_bw, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Subtract(__pyx_v_bw, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_Absolute(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_Absolute(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_bandwidth); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_bandwidth); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = PyNumber_Subtract(__pyx_v_best_match, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_Subtract(__pyx_v_best_match, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyNumber_Absolute(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Absolute(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyObject_RichCompare(__pyx_t_2, __pyx_t_7, Py_LT); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_8 = PyObject_RichCompare(__pyx_t_2, __pyx_t_7, Py_LT); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 87, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     if (__pyx_t_9) {
 
-      /* "src/urh/dev/native/lib/sdrplay.pyx":87
+      /* "src/urh/dev/native/lib/sdrplay.pyx":88
  *     for bw in bandwidths:
  *         if abs(bw - bandwidth) < abs(best_match - bandwidth):
  *             best_match = bw             # <<<<<<<<<<<<<<
  *     bw_type = bandwidths[best_match]
- * 
+ *     return bw_type
  */
       __Pyx_INCREF(__pyx_v_bw);
       __Pyx_DECREF_SET(__pyx_v_best_match, __pyx_v_bw);
 
-      /* "src/urh/dev/native/lib/sdrplay.pyx":86
+      /* "src/urh/dev/native/lib/sdrplay.pyx":87
  *     best_match = 0
  *     for bw in bandwidths:
  *         if abs(bw - bandwidth) < abs(best_match - bandwidth):             # <<<<<<<<<<<<<<
@@ -3128,237 +3190,33 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":88
+  /* "src/urh/dev/native/lib/sdrplay.pyx":89
  *         if abs(bw - bandwidth) < abs(best_match - bandwidth):
  *             best_match = bw
  *     bw_type = bandwidths[best_match]             # <<<<<<<<<<<<<<
+ *     return bw_type
  * 
- *     # get nearest ifgain
  */
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_bandwidths, __pyx_v_best_match); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_bandwidths, __pyx_v_best_match); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_10 = ((mir_sdr_Bw_MHzT)__Pyx_PyInt_As_mir_sdr_Bw_MHzT(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_10 = ((mir_sdr_Bw_MHzT)__Pyx_PyInt_As_mir_sdr_Bw_MHzT(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_bw_type = __pyx_t_10;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":91
+  /* "src/urh/dev/native/lib/sdrplay.pyx":90
+ *             best_match = bw
+ *     bw_type = bandwidths[best_match]
+ *     return bw_type             # <<<<<<<<<<<<<<
  * 
- *     # get nearest ifgain
- *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero             # <<<<<<<<<<<<<<
- *     best_match = 0
- *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
+ * cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
  */
-  __pyx_v_if_type = mir_sdr_IF_Zero;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":92
- *     # get nearest ifgain
- *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
- *     best_match = 0             # <<<<<<<<<<<<<<
- *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
- *                 450: csdrplay.mir_sdr_IF_0_450,
- */
-  __Pyx_INCREF(__pyx_int_0);
-  __Pyx_DECREF_SET(__pyx_v_best_match, __pyx_int_0);
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":93
- *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
- *     best_match = 0
- *     if_types = {0: csdrplay.mir_sdr_IF_Zero,             # <<<<<<<<<<<<<<
- *                 450: csdrplay.mir_sdr_IF_0_450,
- *                 1620: csdrplay.mir_sdr_IF_1_620,
- */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_8 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_Zero); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_int_0, __pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":94
- *     best_match = 0
- *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
- *                 450: csdrplay.mir_sdr_IF_0_450,             # <<<<<<<<<<<<<<
- *                 1620: csdrplay.mir_sdr_IF_1_620,
- *                 2048: csdrplay.mir_sdr_IF_2_048}
- */
-  __pyx_t_8 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_0_450); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 94, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_int_450, __pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":95
- *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
- *                 450: csdrplay.mir_sdr_IF_0_450,
- *                 1620: csdrplay.mir_sdr_IF_1_620,             # <<<<<<<<<<<<<<
- *                 2048: csdrplay.mir_sdr_IF_2_048}
- *     for i in if_types:
- */
-  __pyx_t_8 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_1_620); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_int_1620, __pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":96
- *                 450: csdrplay.mir_sdr_IF_0_450,
- *                 1620: csdrplay.mir_sdr_IF_1_620,
- *                 2048: csdrplay.mir_sdr_IF_2_048}             # <<<<<<<<<<<<<<
- *     for i in if_types:
- *         if abs(i - if_gain) < abs(best_match - if_gain):
- */
-  __pyx_t_8 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_2_048); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 96, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_int_2048, __pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_v_if_types = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":97
- *                 1620: csdrplay.mir_sdr_IF_1_620,
- *                 2048: csdrplay.mir_sdr_IF_2_048}
- *     for i in if_types:             # <<<<<<<<<<<<<<
- *         if abs(i - if_gain) < abs(best_match - if_gain):
- *             best_match = i
- */
-  __pyx_t_4 = 0;
-  __pyx_t_8 = __Pyx_dict_iterator(__pyx_v_if_types, 1, ((PyObject *)NULL), (&__pyx_t_3), (&__pyx_t_5)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_1);
-  __pyx_t_1 = __pyx_t_8;
-  __pyx_t_8 = 0;
-  while (1) {
-    __pyx_t_6 = __Pyx_dict_iter_next(__pyx_t_1, __pyx_t_3, &__pyx_t_4, &__pyx_t_8, NULL, NULL, __pyx_t_5);
-    if (unlikely(__pyx_t_6 == 0)) break;
-    if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 97, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_8);
-    __pyx_t_8 = 0;
-
-    /* "src/urh/dev/native/lib/sdrplay.pyx":98
- *                 2048: csdrplay.mir_sdr_IF_2_048}
- *     for i in if_types:
- *         if abs(i - if_gain) < abs(best_match - if_gain):             # <<<<<<<<<<<<<<
- *             best_match = i
- * 
- */
-    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_if_gain); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = PyNumber_Subtract(__pyx_v_i, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyNumber_Absolute(__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_if_gain); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_2 = PyNumber_Subtract(__pyx_v_best_match, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyNumber_Absolute(__pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyObject_RichCompare(__pyx_t_8, __pyx_t_7, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (__pyx_t_9) {
-
-      /* "src/urh/dev/native/lib/sdrplay.pyx":99
- *     for i in if_types:
- *         if abs(i - if_gain) < abs(best_match - if_gain):
- *             best_match = i             # <<<<<<<<<<<<<<
- * 
- *     if_type = if_types[best_match]
- */
-      __Pyx_INCREF(__pyx_v_i);
-      __Pyx_DECREF_SET(__pyx_v_best_match, __pyx_v_i);
-
-      /* "src/urh/dev/native/lib/sdrplay.pyx":98
- *                 2048: csdrplay.mir_sdr_IF_2_048}
- *     for i in if_types:
- *         if abs(i - if_gain) < abs(best_match - if_gain):             # <<<<<<<<<<<<<<
- *             best_match = i
- * 
- */
-    }
-  }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":101
- *             best_match = i
- * 
- *     if_type = if_types[best_match]             # <<<<<<<<<<<<<<
- * 
- *     lna_state = 0  # todo
- */
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_if_types, __pyx_v_best_match); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = ((mir_sdr_If_kHzT)__Pyx_PyInt_As_mir_sdr_If_kHzT(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 101, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_if_type = __pyx_t_11;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":103
- *     if_type = if_types[best_match]
- * 
- *     lna_state = 0  # todo             # <<<<<<<<<<<<<<
- *     cdef int gRdBsystem = 0
- *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
- */
-  __pyx_v_lna_state = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":104
- * 
- *     lna_state = 0  # todo
- *     cdef int gRdBsystem = 0             # <<<<<<<<<<<<<<
- *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
- *     cdef int samples_per_packet = 0
- */
-  __pyx_v_gRdBsystem = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":105
- *     lna_state = 0  # todo
- *     cdef int gRdBsystem = 0
- *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR             # <<<<<<<<<<<<<<
- *     cdef int samples_per_packet = 0
- * 
- */
-  __pyx_v_gr_mode = mir_sdr_USE_RSP_SET_GR;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":106
- *     cdef int gRdBsystem = 0
- *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
- *     cdef int samples_per_packet = 0             # <<<<<<<<<<<<<<
- * 
- *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
- */
-  __pyx_v_samples_per_packet = 0;
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":108
- *     cdef int samples_per_packet = 0
- * 
- *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,             # <<<<<<<<<<<<<<
- *                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
- *                                        _gain_change_callback, <void *> func)
- */
-  __Pyx_XDECREF(__pyx_r);
-
-  /* "src/urh/dev/native/lib/sdrplay.pyx":110
- *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
- *                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
- *                                        _gain_change_callback, <void *> func)             # <<<<<<<<<<<<<<
- * 
- * cpdef error_t close_stream():
- */
-  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(mir_sdr_StreamInit((&__pyx_v_gain), (__pyx_v_sample_rate / 1e6), (__pyx_v_center_freq / 1e6), __pyx_v_bw_type, __pyx_v_if_type, __pyx_v_lna_state, (&__pyx_v_gRdBsystem), __pyx_v_gr_mode, (&__pyx_v_samples_per_packet), __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay__rx_stream_callback, __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay__gain_change_callback, ((void *)__pyx_v_func))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = __pyx_v_bw_type;
   goto __pyx_L0;
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":72
- *         free(devs)
+  /* "src/urh/dev/native/lib/sdrplay.pyx":73
  * 
- * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):             # <<<<<<<<<<<<<<
+ * 
+ * cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
  *     # get nearest bwtype
  *     bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,
  */
@@ -3369,14 +3227,344 @@ static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.init_stream", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.get_nearest_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_Bw_MHzT) 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_bandwidths);
   __Pyx_XDECREF(__pyx_v_best_match);
   __Pyx_XDECREF(__pyx_v_bw);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":92
+ *     return bw_type
+ * 
+ * cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
+ *     best_match = 0
+ */
+
+static mir_sdr_If_kHzT __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_if_gain(double __pyx_v_if_gain) {
+  mir_sdr_If_kHzT __pyx_v_if_type;
+  PyObject *__pyx_v_best_match = NULL;
+  PyObject *__pyx_v_if_types = NULL;
+  PyObject *__pyx_v_i = NULL;
+  mir_sdr_If_kHzT __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  Py_ssize_t __pyx_t_3;
+  Py_ssize_t __pyx_t_4;
+  int __pyx_t_5;
+  int __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  int __pyx_t_9;
+  mir_sdr_If_kHzT __pyx_t_10;
+  __Pyx_RefNannySetupContext("get_nearest_if_gain", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":93
+ * 
+ * cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero             # <<<<<<<<<<<<<<
+ *     best_match = 0
+ *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
+ */
+  __pyx_v_if_type = mir_sdr_IF_Zero;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":94
+ * cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
+ *     best_match = 0             # <<<<<<<<<<<<<<
+ *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
+ *                 450: csdrplay.mir_sdr_IF_0_450,
+ */
+  __Pyx_INCREF(__pyx_int_0);
+  __pyx_v_best_match = __pyx_int_0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":95
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
+ *     best_match = 0
+ *     if_types = {0: csdrplay.mir_sdr_IF_Zero,             # <<<<<<<<<<<<<<
+ *                 450: csdrplay.mir_sdr_IF_0_450,
+ *                 1620: csdrplay.mir_sdr_IF_1_620,
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_Zero); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_0, __pyx_t_2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":96
+ *     best_match = 0
+ *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
+ *                 450: csdrplay.mir_sdr_IF_0_450,             # <<<<<<<<<<<<<<
+ *                 1620: csdrplay.mir_sdr_IF_1_620,
+ *                 2048: csdrplay.mir_sdr_IF_2_048}
+ */
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_0_450); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_450, __pyx_t_2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":97
+ *     if_types = {0: csdrplay.mir_sdr_IF_Zero,
+ *                 450: csdrplay.mir_sdr_IF_0_450,
+ *                 1620: csdrplay.mir_sdr_IF_1_620,             # <<<<<<<<<<<<<<
+ *                 2048: csdrplay.mir_sdr_IF_2_048}
+ *     for i in if_types:
+ */
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_1_620); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_1620, __pyx_t_2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":98
+ *                 450: csdrplay.mir_sdr_IF_0_450,
+ *                 1620: csdrplay.mir_sdr_IF_1_620,
+ *                 2048: csdrplay.mir_sdr_IF_2_048}             # <<<<<<<<<<<<<<
+ *     for i in if_types:
+ *         if abs(i - if_gain) < abs(best_match - if_gain):
+ */
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_If_kHzT(mir_sdr_IF_2_048); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_2048, __pyx_t_2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_if_types = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":99
+ *                 1620: csdrplay.mir_sdr_IF_1_620,
+ *                 2048: csdrplay.mir_sdr_IF_2_048}
+ *     for i in if_types:             # <<<<<<<<<<<<<<
+ *         if abs(i - if_gain) < abs(best_match - if_gain):
+ *             best_match = i
+ */
+  __pyx_t_3 = 0;
+  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_if_types, 1, ((PyObject *)NULL), (&__pyx_t_4), (&__pyx_t_5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_1);
+  __pyx_t_1 = __pyx_t_2;
+  __pyx_t_2 = 0;
+  while (1) {
+    __pyx_t_6 = __Pyx_dict_iter_next(__pyx_t_1, __pyx_t_4, &__pyx_t_3, &__pyx_t_2, NULL, NULL, __pyx_t_5);
+    if (unlikely(__pyx_t_6 == 0)) break;
+    if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "src/urh/dev/native/lib/sdrplay.pyx":100
+ *                 2048: csdrplay.mir_sdr_IF_2_048}
+ *     for i in if_types:
+ *         if abs(i - if_gain) < abs(best_match - if_gain):             # <<<<<<<<<<<<<<
+ *             best_match = i
+ * 
+ */
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_if_gain); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_7 = PyNumber_Subtract(__pyx_v_i, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = PyNumber_Absolute(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_if_gain); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_8 = PyNumber_Subtract(__pyx_v_best_match, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = PyNumber_Absolute(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = PyObject_RichCompare(__pyx_t_2, __pyx_t_7, Py_LT); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    if (__pyx_t_9) {
+
+      /* "src/urh/dev/native/lib/sdrplay.pyx":101
+ *     for i in if_types:
+ *         if abs(i - if_gain) < abs(best_match - if_gain):
+ *             best_match = i             # <<<<<<<<<<<<<<
+ * 
+ *     if_type = if_types[best_match]
+ */
+      __Pyx_INCREF(__pyx_v_i);
+      __Pyx_DECREF_SET(__pyx_v_best_match, __pyx_v_i);
+
+      /* "src/urh/dev/native/lib/sdrplay.pyx":100
+ *                 2048: csdrplay.mir_sdr_IF_2_048}
+ *     for i in if_types:
+ *         if abs(i - if_gain) < abs(best_match - if_gain):             # <<<<<<<<<<<<<<
+ *             best_match = i
+ * 
+ */
+    }
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":103
+ *             best_match = i
+ * 
+ *     if_type = if_types[best_match]             # <<<<<<<<<<<<<<
+ *     return if_type
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_if_types, __pyx_v_best_match); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_10 = ((mir_sdr_If_kHzT)__Pyx_PyInt_As_mir_sdr_If_kHzT(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_if_type = __pyx_t_10;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":104
+ * 
+ *     if_type = if_types[best_match]
+ *     return if_type             # <<<<<<<<<<<<<<
+ * 
+ * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+ */
+  __pyx_r = __pyx_v_if_type;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":92
+ *     return bw_type
+ * 
+ * cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
+ *     best_match = 0
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.get_nearest_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_If_kHzT) 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_best_match);
   __Pyx_XDECREF(__pyx_v_if_types);
   __Pyx_XDECREF(__pyx_v_i);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":106
+ *     return if_type
+ * 
+ * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     # get nearest ifgain
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_9init_stream(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(int __pyx_v_gain, double __pyx_v_sample_rate, double __pyx_v_center_freq, double __pyx_v_bandwidth, double __pyx_v_if_gain, PyObject *__pyx_v_func, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  mir_sdr_Bw_MHzT __pyx_v_bw_type;
+  mir_sdr_If_kHzT __pyx_v_if_type;
+  long __pyx_v_lna_state;
+  int __pyx_v_gRdBsystem;
+  mir_sdr_SetGrModeT __pyx_v_gr_mode;
+  int __pyx_v_samples_per_packet;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("init_stream", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":107
+ * 
+ * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)             # <<<<<<<<<<<<<<
+ *     # get nearest ifgain
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+ */
+  __pyx_v_bw_type = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_bandwidth(__pyx_v_bandwidth);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":109
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     # get nearest ifgain
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)             # <<<<<<<<<<<<<<
+ * 
+ *     lna_state = 0  # todo
+ */
+  __pyx_v_if_type = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_if_gain(__pyx_v_if_gain);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":111
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+ * 
+ *     lna_state = 0  # todo             # <<<<<<<<<<<<<<
+ *     cdef int gRdBsystem = 0
+ *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
+ */
+  __pyx_v_lna_state = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":112
+ * 
+ *     lna_state = 0  # todo
+ *     cdef int gRdBsystem = 0             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
+ *     cdef int samples_per_packet = 0
+ */
+  __pyx_v_gRdBsystem = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":113
+ *     lna_state = 0  # todo
+ *     cdef int gRdBsystem = 0
+ *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR             # <<<<<<<<<<<<<<
+ *     cdef int samples_per_packet = 0
+ * 
+ */
+  __pyx_v_gr_mode = mir_sdr_USE_RSP_SET_GR;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":114
+ *     cdef int gRdBsystem = 0
+ *     cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
+ *     cdef int samples_per_packet = 0             # <<<<<<<<<<<<<<
+ * 
+ *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
+ */
+  __pyx_v_samples_per_packet = 0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":116
+ *     cdef int samples_per_packet = 0
+ * 
+ *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,             # <<<<<<<<<<<<<<
+ *                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
+ *                                        _gain_change_callback, <void *> func)
+ */
+  __Pyx_XDECREF(__pyx_r);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":118
+ *     return csdrplay.mir_sdr_StreamInit(&gain, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
+ *                                        &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
+ *                                        _gain_change_callback, <void *> func)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_frequency(double frequency):
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(mir_sdr_StreamInit((&__pyx_v_gain), (__pyx_v_sample_rate / 1e6), (__pyx_v_center_freq / 1e6), __pyx_v_bw_type, __pyx_v_if_type, __pyx_v_lna_state, (&__pyx_v_gRdBsystem), __pyx_v_gr_mode, (&__pyx_v_samples_per_packet), __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay__rx_stream_callback, __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay__gain_change_callback, ((void *)__pyx_v_func))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":106
+ *     return if_type
+ * 
+ * cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     # get nearest ifgain
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.init_stream", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -3425,35 +3613,35 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_9init_stream(PyOb
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sample_rate)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 1); __PYX_ERR(0, 72, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 1); __PYX_ERR(0, 106, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_center_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 2); __PYX_ERR(0, 72, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 2); __PYX_ERR(0, 106, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_bandwidth)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 3); __PYX_ERR(0, 72, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 3); __PYX_ERR(0, 106, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_if_gain)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 4); __PYX_ERR(0, 72, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 4); __PYX_ERR(0, 106, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_func)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 5); __PYX_ERR(0, 72, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, 5); __PYX_ERR(0, 106, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "init_stream") < 0)) __PYX_ERR(0, 72, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "init_stream") < 0)) __PYX_ERR(0, 106, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -3465,16 +3653,16 @@ static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_9init_stream(PyOb
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
-    __pyx_v_gain = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
-    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
-    __pyx_v_center_freq = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_center_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
-    __pyx_v_bandwidth = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_bandwidth == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
-    __pyx_v_if_gain = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_if_gain == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+    __pyx_v_gain = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_v_center_freq = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_center_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_v_bandwidth = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_bandwidth == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_v_if_gain = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_if_gain == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
     __pyx_v_func = values[5];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 72, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("init_stream", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 106, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.init_stream", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3493,7 +3681,7 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_8init_stream(CYTH
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("init_stream", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(__pyx_v_gain, __pyx_v_sample_rate, __pyx_v_center_freq, __pyx_v_bandwidth, __pyx_v_if_gain, __pyx_v_func, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_init_stream(__pyx_v_gain, __pyx_v_sample_rate, __pyx_v_center_freq, __pyx_v_bandwidth, __pyx_v_if_gain, __pyx_v_func, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3510,28 +3698,1024 @@ static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_8init_stream(CYTH
   return __pyx_r;
 }
 
-/* "src/urh/dev/native/lib/sdrplay.pyx":112
+/* "src/urh/dev/native/lib/sdrplay.pyx":120
  *                                        _gain_change_callback, <void *> func)
+ * 
+ * cpdef error_t set_frequency(double frequency):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
+ * 
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11set_frequency(PyObject *__pyx_self, PyObject *__pyx_arg_frequency); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_frequency(double __pyx_v_frequency, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_5;
+  __Pyx_RefNannySetupContext("set_frequency", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":121
+ * 
+ * cpdef error_t set_frequency(double frequency):
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_sample_rate(double sample_rate):
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_reinit_stream); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_CHANGE_RF_FREQ); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_frequency); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_frequency, __pyx_t_4) < 0) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_5 = ((mir_sdr_ErrT)__Pyx_PyInt_As_mir_sdr_ErrT(__pyx_t_4)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 121, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_5;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":120
+ *                                        _gain_change_callback, <void *> func)
+ * 
+ * cpdef error_t set_frequency(double frequency):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.set_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_ErrT) 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11set_frequency(PyObject *__pyx_self, PyObject *__pyx_arg_frequency); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11set_frequency(PyObject *__pyx_self, PyObject *__pyx_arg_frequency) {
+  double __pyx_v_frequency;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_frequency (wrapper)", 0);
+  assert(__pyx_arg_frequency); {
+    __pyx_v_frequency = __pyx_PyFloat_AsDouble(__pyx_arg_frequency); if (unlikely((__pyx_v_frequency == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10set_frequency(__pyx_self, ((double)__pyx_v_frequency));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10set_frequency(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_frequency) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_frequency", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_frequency(__pyx_v_frequency, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_frequency", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":123
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
+ * 
+ * cpdef error_t set_sample_rate(double sample_rate):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)
+ * 
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_13set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_sample_rate(double __pyx_v_sample_rate, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_1;
+  struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream __pyx_t_2;
+  __Pyx_RefNannySetupContext("set_sample_rate", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":124
+ * 
+ * cpdef error_t set_sample_rate(double sample_rate):
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_bandwidth(double bandwidth):
+ */
+  __pyx_t_2.__pyx_n = 1;
+  __pyx_t_2.sample_rate = __pyx_v_sample_rate;
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream(mir_sdr_CHANGE_FS_FREQ, 0, &__pyx_t_2); 
+  __pyx_r = __pyx_t_1;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":123
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
+ * 
+ * cpdef error_t set_sample_rate(double sample_rate):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_13set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_13set_sample_rate(PyObject *__pyx_self, PyObject *__pyx_arg_sample_rate) {
+  double __pyx_v_sample_rate;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_sample_rate (wrapper)", 0);
+  assert(__pyx_arg_sample_rate); {
+    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(__pyx_arg_sample_rate); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_12set_sample_rate(__pyx_self, ((double)__pyx_v_sample_rate));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_12set_sample_rate(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_sample_rate) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_sample_rate", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_sample_rate(__pyx_v_sample_rate, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_sample_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":126
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)
+ * 
+ * cpdef error_t set_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_15set_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bandwidth); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_bandwidth(double __pyx_v_bandwidth, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  mir_sdr_Bw_MHzT __pyx_v_bw_type;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_5;
+  __Pyx_RefNannySetupContext("set_bandwidth", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":127
+ * 
+ * cpdef error_t set_bandwidth(double bandwidth):
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+ * 
+ */
+  __pyx_v_bw_type = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_bandwidth(__pyx_v_bandwidth);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":128
+ * cpdef error_t set_bandwidth(double bandwidth):
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_gain(int gain):
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_reinit_stream); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_CHANGE_BW_TYPE); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_PyInt_From_mir_sdr_Bw_MHzT(__pyx_v_bw_type); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_bw_type, __pyx_t_4) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_5 = ((mir_sdr_ErrT)__Pyx_PyInt_As_mir_sdr_ErrT(__pyx_t_4)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_5;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":126
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)
+ * 
+ * cpdef error_t set_bandwidth(double bandwidth):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.set_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_ErrT) 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_15set_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bandwidth); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_15set_bandwidth(PyObject *__pyx_self, PyObject *__pyx_arg_bandwidth) {
+  double __pyx_v_bandwidth;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_bandwidth (wrapper)", 0);
+  assert(__pyx_arg_bandwidth); {
+    __pyx_v_bandwidth = __pyx_PyFloat_AsDouble(__pyx_arg_bandwidth); if (unlikely((__pyx_v_bandwidth == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_14set_bandwidth(__pyx_self, ((double)__pyx_v_bandwidth));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_14set_bandwidth(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_bandwidth) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_bandwidth", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_bandwidth(__pyx_v_bandwidth, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_bandwidth", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":130
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+ * 
+ * cpdef error_t set_gain(int gain):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)
+ * 
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_17set_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_gain(int __pyx_v_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_5;
+  __Pyx_RefNannySetupContext("set_gain", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":131
+ * 
+ * cpdef error_t set_gain(int gain):
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_if_gain(double if_gain):
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_reinit_stream); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_CHANGE_GR); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_gain); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_gain, __pyx_t_4) < 0) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_5 = ((mir_sdr_ErrT)__Pyx_PyInt_As_mir_sdr_ErrT(__pyx_t_4)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_5;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":130
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+ * 
+ * cpdef error_t set_gain(int gain):             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.set_gain", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_ErrT) 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_17set_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_17set_gain(PyObject *__pyx_self, PyObject *__pyx_arg_gain) {
+  int __pyx_v_gain;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_gain (wrapper)", 0);
+  assert(__pyx_arg_gain); {
+    __pyx_v_gain = __Pyx_PyInt_As_int(__pyx_arg_gain); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 130, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_16set_gain(__pyx_self, ((int)__pyx_v_gain));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_16set_gain(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_gain) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_gain", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_gain(__pyx_v_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":133
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)
+ * 
+ * cpdef error_t set_if_gain(double if_gain):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_19set_if_gain(PyObject *__pyx_self, PyObject *__pyx_arg_if_gain); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_if_gain(double __pyx_v_if_gain, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  mir_sdr_If_kHzT __pyx_v_if_type;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_5;
+  __Pyx_RefNannySetupContext("set_if_gain", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":134
+ * 
+ * cpdef error_t set_if_gain(double if_gain):
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)             # <<<<<<<<<<<<<<
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+ * 
+ */
+  __pyx_v_if_type = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_get_nearest_if_gain(__pyx_v_if_gain);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":135
+ * cpdef error_t set_if_gain(double if_gain):
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t set_antenna_port(int port):
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_reinit_stream); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_CHANGE_IF_TYPE); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_PyInt_From_mir_sdr_If_kHzT(__pyx_v_if_type); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_if_type, __pyx_t_4) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_5 = ((mir_sdr_ErrT)__Pyx_PyInt_As_mir_sdr_ErrT(__pyx_t_4)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_5;
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":133
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=gain)
+ * 
+ * cpdef error_t set_if_gain(double if_gain):             # <<<<<<<<<<<<<<
+ *     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_WriteUnraisable("src.urh.dev.native.lib.sdrplay.set_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = (mir_sdr_ErrT) 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_19set_if_gain(PyObject *__pyx_self, PyObject *__pyx_arg_if_gain); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_19set_if_gain(PyObject *__pyx_self, PyObject *__pyx_arg_if_gain) {
+  double __pyx_v_if_gain;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_if_gain (wrapper)", 0);
+  assert(__pyx_arg_if_gain); {
+    __pyx_v_if_gain = __pyx_PyFloat_AsDouble(__pyx_arg_if_gain); if (unlikely((__pyx_v_if_gain == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_18set_if_gain(__pyx_self, ((double)__pyx_v_if_gain));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_18set_if_gain(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_if_gain) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_if_gain", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_if_gain(__pyx_v_if_gain, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_if_gain", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":137
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+ * 
+ * cpdef error_t set_antenna_port(int port):             # <<<<<<<<<<<<<<
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
+ *     if result == csdrplay.mir_sdr_Success:
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_21set_antenna_port(PyObject *__pyx_self, PyObject *__pyx_arg_port); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_antenna_port(int __pyx_v_port, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_v_result;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("set_antenna_port", 0);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":138
+ * 
+ * cpdef error_t set_antenna_port(int port):
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)             # <<<<<<<<<<<<<<
+ *     if result == csdrplay.mir_sdr_Success:
+ *         return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)
+ */
+  __pyx_v_result = mir_sdr_AmPortSelect(__pyx_v_port);
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":139
+ * cpdef error_t set_antenna_port(int port):
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
+ *     if result == csdrplay.mir_sdr_Success:             # <<<<<<<<<<<<<<
+ *         return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)
+ *     else:
+ */
+  __pyx_t_1 = ((__pyx_v_result == mir_sdr_Success) != 0);
+  if (__pyx_t_1) {
+
+    /* "src/urh/dev/native/lib/sdrplay.pyx":140
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
+ *     if result == csdrplay.mir_sdr_Success:
+ *         return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)             # <<<<<<<<<<<<<<
+ *     else:
+ *         return result
+ */
+    __pyx_r = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream(mir_sdr_CHANGE_AM_PORT, 0, NULL);
+    goto __pyx_L0;
+
+    /* "src/urh/dev/native/lib/sdrplay.pyx":139
+ * cpdef error_t set_antenna_port(int port):
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
+ *     if result == csdrplay.mir_sdr_Success:             # <<<<<<<<<<<<<<
+ *         return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)
+ *     else:
+ */
+  }
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":142
+ *         return reinit_stream(csdrplay.mir_sdr_CHANGE_AM_PORT)
+ *     else:
+ *         return result             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
+ */
+  /*else*/ {
+    __pyx_r = __pyx_v_result;
+    goto __pyx_L0;
+  }
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":137
+ *     return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+ * 
+ * cpdef error_t set_antenna_port(int port):             # <<<<<<<<<<<<<<
+ *     cdef error_t result = csdrplay.mir_sdr_AmPortSelect(port)
+ *     if result == csdrplay.mir_sdr_Success:
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_21set_antenna_port(PyObject *__pyx_self, PyObject *__pyx_arg_port); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_21set_antenna_port(PyObject *__pyx_self, PyObject *__pyx_arg_port) {
+  int __pyx_v_port;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_antenna_port (wrapper)", 0);
+  assert(__pyx_arg_port); {
+    __pyx_v_port = __Pyx_PyInt_As_int(__pyx_arg_port); if (unlikely((__pyx_v_port == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_antenna_port", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_20set_antenna_port(__pyx_self, ((int)__pyx_v_port));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_20set_antenna_port(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_port) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("set_antenna_port", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_set_antenna_port(__pyx_v_port, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.set_antenna_port", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":144
+ *         return result
+ * 
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,             # <<<<<<<<<<<<<<
+ *                             double sample_rate=0, double frequency=0,
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+ */
+
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_23reinit_stream(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream(mir_sdr_ReasonForReinitT __pyx_v_reason_for_reinit, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream *__pyx_optional_args) {
+  double __pyx_v_sample_rate = ((double)0.0);
+  double __pyx_v_frequency = ((double)0.0);
+  mir_sdr_Bw_MHzT __pyx_v_bw_type = __pyx_k_;
+  int __pyx_v_gain = ((int)0);
+  mir_sdr_If_kHzT __pyx_v_if_type = __pyx_k__2;
+  mir_sdr_LoModeT __pyx_v_lo_mode = __pyx_k__3;
+  int __pyx_v_lna_state = ((int)0);
+  mir_sdr_SetGrModeT __pyx_v_set_gr_mode = __pyx_k__4;
+  int __pyx_v_gRdBsystem;
+  int __pyx_v_samplesPerPacket;
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("reinit_stream", 0);
+  if (__pyx_optional_args) {
+    if (__pyx_optional_args->__pyx_n > 0) {
+      __pyx_v_sample_rate = __pyx_optional_args->sample_rate;
+      if (__pyx_optional_args->__pyx_n > 1) {
+        __pyx_v_frequency = __pyx_optional_args->frequency;
+        if (__pyx_optional_args->__pyx_n > 2) {
+          __pyx_v_bw_type = __pyx_optional_args->bw_type;
+          if (__pyx_optional_args->__pyx_n > 3) {
+            __pyx_v_gain = __pyx_optional_args->gain;
+            if (__pyx_optional_args->__pyx_n > 4) {
+              __pyx_v_if_type = __pyx_optional_args->if_type;
+              if (__pyx_optional_args->__pyx_n > 5) {
+                __pyx_v_lo_mode = __pyx_optional_args->lo_mode;
+                if (__pyx_optional_args->__pyx_n > 6) {
+                  __pyx_v_lna_state = __pyx_optional_args->lna_state;
+                  if (__pyx_optional_args->__pyx_n > 7) {
+                    __pyx_v_set_gr_mode = __pyx_optional_args->set_gr_mode;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":153
+ *                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
+ *     cdef int gRdBsystem, samplesPerPacket
+ *     return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)             # <<<<<<<<<<<<<<
+ * 
+ * cpdef error_t close_stream():
+ */
+  __pyx_r = mir_sdr_Reinit((&__pyx_v_gain), __pyx_v_sample_rate, __pyx_v_frequency, __pyx_v_bw_type, __pyx_v_if_type, __pyx_v_lo_mode, __pyx_v_lna_state, (&__pyx_v_gRdBsystem), __pyx_v_set_gr_mode, (&__pyx_v_samplesPerPacket), __pyx_v_reason_for_reinit);
+  goto __pyx_L0;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":144
+ *         return result
+ * 
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,             # <<<<<<<<<<<<<<
+ *                             double sample_rate=0, double frequency=0,
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_23reinit_stream(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_23reinit_stream(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  mir_sdr_ReasonForReinitT __pyx_v_reason_for_reinit;
+  double __pyx_v_sample_rate;
+  double __pyx_v_frequency;
+  mir_sdr_Bw_MHzT __pyx_v_bw_type;
+  int __pyx_v_gain;
+  mir_sdr_If_kHzT __pyx_v_if_type;
+  mir_sdr_LoModeT __pyx_v_lo_mode;
+  int __pyx_v_lna_state;
+  mir_sdr_SetGrModeT __pyx_v_set_gr_mode;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("reinit_stream (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_reason_for_reinit,&__pyx_n_s_sample_rate,&__pyx_n_s_frequency,&__pyx_n_s_bw_type,&__pyx_n_s_gain,&__pyx_n_s_if_type,&__pyx_n_s_lo_mode,&__pyx_n_s_lna_state,&__pyx_n_s_set_gr_mode,0};
+    PyObject* values[9] = {0,0,0,0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  9: values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
+        CYTHON_FALLTHROUGH;
+        case  8: values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
+        CYTHON_FALLTHROUGH;
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_reason_for_reinit)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sample_rate);
+          if (value) { values[1] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_frequency);
+          if (value) { values[2] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_bw_type);
+          if (value) { values[3] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gain);
+          if (value) { values[4] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_if_type);
+          if (value) { values[5] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  6:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lo_mode);
+          if (value) { values[6] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  7:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lna_state);
+          if (value) { values[7] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  8:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_set_gr_mode);
+          if (value) { values[8] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reinit_stream") < 0)) __PYX_ERR(0, 144, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  9: values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
+        CYTHON_FALLTHROUGH;
+        case  8: values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
+        CYTHON_FALLTHROUGH;
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_reason_for_reinit = ((mir_sdr_ReasonForReinitT)__Pyx_PyInt_As_mir_sdr_ReasonForReinitT(values[0])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L3_error)
+    if (values[1]) {
+      __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
+    } else {
+      __pyx_v_sample_rate = ((double)0.0);
+    }
+    if (values[2]) {
+      __pyx_v_frequency = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_frequency == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
+    } else {
+      __pyx_v_frequency = ((double)0.0);
+    }
+    if (values[3]) {
+      __pyx_v_bw_type = ((mir_sdr_Bw_MHzT)__Pyx_PyInt_As_mir_sdr_Bw_MHzT(values[3])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L3_error)
+    } else {
+      __pyx_v_bw_type = __pyx_k_;
+    }
+    if (values[4]) {
+      __pyx_v_gain = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_gain == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L3_error)
+    } else {
+      __pyx_v_gain = ((int)0);
+    }
+    if (values[5]) {
+      __pyx_v_if_type = ((mir_sdr_If_kHzT)__Pyx_PyInt_As_mir_sdr_If_kHzT(values[5])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 148, __pyx_L3_error)
+    } else {
+      __pyx_v_if_type = __pyx_k__2;
+    }
+    if (values[6]) {
+      __pyx_v_lo_mode = ((mir_sdr_LoModeT)__Pyx_PyInt_As_mir_sdr_LoModeT(values[6])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L3_error)
+    } else {
+      __pyx_v_lo_mode = __pyx_k__3;
+    }
+    if (values[7]) {
+      __pyx_v_lna_state = __Pyx_PyInt_As_int(values[7]); if (unlikely((__pyx_v_lna_state == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L3_error)
+    } else {
+      __pyx_v_lna_state = ((int)0);
+    }
+    if (values[8]) {
+      __pyx_v_set_gr_mode = ((mir_sdr_SetGrModeT)__Pyx_PyInt_As_mir_sdr_SetGrModeT(values[8])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 151, __pyx_L3_error)
+    } else {
+      __pyx_v_set_gr_mode = __pyx_k__4;
+    }
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("reinit_stream", 0, 1, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 144, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.reinit_stream", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_22reinit_stream(__pyx_self, __pyx_v_reason_for_reinit, __pyx_v_sample_rate, __pyx_v_frequency, __pyx_v_bw_type, __pyx_v_gain, __pyx_v_if_type, __pyx_v_lo_mode, __pyx_v_lna_state, __pyx_v_set_gr_mode);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_22reinit_stream(CYTHON_UNUSED PyObject *__pyx_self, mir_sdr_ReasonForReinitT __pyx_v_reason_for_reinit, double __pyx_v_sample_rate, double __pyx_v_frequency, mir_sdr_Bw_MHzT __pyx_v_bw_type, int __pyx_v_gain, mir_sdr_If_kHzT __pyx_v_if_type, mir_sdr_LoModeT __pyx_v_lo_mode, int __pyx_v_lna_state, mir_sdr_SetGrModeT __pyx_v_set_gr_mode) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_t_1;
+  struct __pyx_opt_args_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  __Pyx_RefNannySetupContext("reinit_stream", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_2.__pyx_n = 8;
+  __pyx_t_2.sample_rate = __pyx_v_sample_rate;
+  __pyx_t_2.frequency = __pyx_v_frequency;
+  __pyx_t_2.bw_type = __pyx_v_bw_type;
+  __pyx_t_2.gain = __pyx_v_gain;
+  __pyx_t_2.if_type = __pyx_v_if_type;
+  __pyx_t_2.lo_mode = __pyx_v_lo_mode;
+  __pyx_t_2.lna_state = __pyx_v_lna_state;
+  __pyx_t_2.set_gr_mode = __pyx_v_set_gr_mode;
+  __pyx_t_1 = __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_reinit_stream(__pyx_v_reason_for_reinit, 0, &__pyx_t_2); 
+  __pyx_t_3 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("src.urh.dev.native.lib.sdrplay.reinit_stream", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/urh/dev/native/lib/sdrplay.pyx":155
+ *     return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
  * 
  * cpdef error_t close_stream():             # <<<<<<<<<<<<<<
  *     csdrplay.mir_sdr_StreamUninit()
  */
 
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_25close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_close_stream(CYTHON_UNUSED int __pyx_skip_dispatch) {
   __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close_stream", 0);
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":113
+  /* "src/urh/dev/native/lib/sdrplay.pyx":156
  * 
  * cpdef error_t close_stream():
  *     csdrplay.mir_sdr_StreamUninit()             # <<<<<<<<<<<<<<
  */
   mir_sdr_StreamUninit();
 
-  /* "src/urh/dev/native/lib/sdrplay.pyx":112
- *                                        _gain_change_callback, <void *> func)
+  /* "src/urh/dev/native/lib/sdrplay.pyx":155
+ *     return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
  * 
  * cpdef error_t close_stream():             # <<<<<<<<<<<<<<
  *     csdrplay.mir_sdr_StreamUninit()
@@ -3544,25 +4728,25 @@ static __pyx_t_3src_3urh_3dev_6native_3lib_7sdrplay_error_t __pyx_f_3src_3urh_3d
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_25close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_25close_stream(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close_stream (wrapper)", 0);
-  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10close_stream(__pyx_self);
+  __pyx_r = __pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_24close_stream(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_10close_stream(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_3src_3urh_3dev_6native_3lib_7sdrplay_24close_stream(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("close_stream", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_close_stream(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_mir_sdr_ErrT(__pyx_f_3src_3urh_3dev_6native_3lib_7sdrplay_close_stream(0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3775,7 +4959,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if itemsize <= 0:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 131, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3807,7 +4991,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if not isinstance(format, bytes):
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3842,7 +5026,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_format, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 137, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_format, __pyx_t_5);
@@ -3922,7 +5106,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 146, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_Raise(__pyx_t_5, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -4206,7 +5390,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *             if self.dtype_is_object:
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 174, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 174, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -4444,7 +5628,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(stru
  *         info.buf = self.data
  *         info.len = self.len
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 190, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5160,7 +6344,7 @@ static PyObject *__pyx_pf___pyx_array___reduce_cython__(CYTHON_UNUSED struct __p
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -5213,7 +6397,7 @@ static PyObject *__pyx_pf___pyx_array_2__setstate_cython__(CYTHON_UNUSED struct 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7856,7 +9040,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  *         else:
  *             if len(self.view.format) == 1:
  */
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 486, __pyx_L5_except_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 486, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_Raise(__pyx_t_6, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -8695,7 +9879,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_7strides___get__(st
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 558, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 558, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -8809,7 +9993,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_10suboffsets___get_
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->view.ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__11, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 565, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__15, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_3;
@@ -9816,7 +11000,7 @@ static PyObject *__pyx_pf___pyx_memoryview___reduce_cython__(CYTHON_UNUSED struc
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9869,7 +11053,7 @@ static PyObject *__pyx_pf___pyx_memoryview_2__setstate_cython__(CYTHON_UNUSED st
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -10220,9 +11404,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
         __Pyx_GOTREF(__pyx_t_7);
         { Py_ssize_t __pyx_temp;
           for (__pyx_temp=0; __pyx_temp < ((__pyx_v_ndim - __pyx_t_8) + 1); __pyx_temp++) {
-            __Pyx_INCREF(__pyx_slice__14);
-            __Pyx_GIVEREF(__pyx_slice__14);
-            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__14);
+            __Pyx_INCREF(__pyx_slice__18);
+            __Pyx_GIVEREF(__pyx_slice__18);
+            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__18);
           }
         }
         __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_7); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 670, __pyx_L1_error)
@@ -10255,7 +11439,7 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
  *         else:
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__15); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 673, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__19); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 673, __pyx_L1_error)
       }
       __pyx_L7:;
 
@@ -10400,9 +11584,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     __Pyx_GOTREF(__pyx_t_3);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_nslices; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_slice__16);
-        __Pyx_GIVEREF(__pyx_slice__16);
-        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__16);
+        __Pyx_INCREF(__pyx_slice__20);
+        __Pyx_GIVEREF(__pyx_slice__20);
+        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__20);
       }
     }
     __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 684, __pyx_L1_error)
@@ -10526,7 +11710,7 @@ static PyObject *assert_direct_dimensions(Py_ssize_t *__pyx_v_suboffsets, int __
  * 
  * 
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 691, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 691, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -12697,7 +13881,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -12750,7 +13934,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUS
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -16468,8 +17652,8 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         else:
  *             alignment = b''
  */
-      __Pyx_INCREF(__pyx_kp_b__20);
-      __pyx_v_alignment = __pyx_kp_b__20;
+      __Pyx_INCREF(__pyx_kp_b__24);
+      __pyx_v_alignment = __pyx_kp_b__24;
 
       /* "BufferFormatFromTypeInfo":1457
  *         assert type.fields != NULL and type.fields.type != NULL
@@ -16489,8 +17673,8 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         parts = [b"T{"]
  */
     /*else*/ {
-      __Pyx_INCREF(__pyx_kp_b__21);
-      __pyx_v_alignment = __pyx_kp_b__21;
+      __Pyx_INCREF(__pyx_kp_b__25);
+      __pyx_v_alignment = __pyx_kp_b__25;
     }
     __pyx_L6:;
 
@@ -16549,7 +17733,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *             field += 1
  * 
  */
-      __pyx_t_3 = PyNumber_Add(__pyx_v_part, __pyx_kp_b__22); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 1467, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_Add(__pyx_v_part, __pyx_kp_b__26); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 1467, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __pyx_t_5 = __Pyx_PyBytes_FromString(__pyx_v_field->name); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1467, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -16557,7 +17741,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyNumber_Add(__pyx_t_6, __pyx_kp_b__22); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1467, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_Add(__pyx_t_6, __pyx_kp_b__26); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1467, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_parts, __pyx_t_5); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(1, 1467, __pyx_L1_error)
@@ -16582,7 +17766,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  */
     __pyx_t_5 = __Pyx_PyBytes_Join(__pyx_v_alignment, __pyx_v_parts); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1470, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_b__23); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 1470, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_b__27); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 1470, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (!(likely(PyBytes_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "bytes", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(1, 1470, __pyx_L1_error)
@@ -16654,7 +17838,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         else:
  *             result = fmt.string
  */
-      __pyx_t_6 = PyUnicode_Join(__pyx_kp_u__24, __pyx_v_extents); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 1475, __pyx_L1_error)
+      __pyx_t_6 = PyUnicode_Join(__pyx_kp_u__28, __pyx_v_extents); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 1475, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_5 = PyUnicode_Format(__pyx_kp_u_s, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1475, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -17412,7 +18596,14 @@ static PyMethodDef __pyx_methods[] = {
   {"release_device_index", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_5release_device_index, METH_NOARGS, 0},
   {"get_devices", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_7get_devices, METH_NOARGS, 0},
   {"init_stream", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_9init_stream, METH_VARARGS|METH_KEYWORDS, 0},
-  {"close_stream", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11close_stream, METH_NOARGS, 0},
+  {"set_frequency", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_11set_frequency, METH_O, 0},
+  {"set_sample_rate", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_13set_sample_rate, METH_O, 0},
+  {"set_bandwidth", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_15set_bandwidth, METH_O, 0},
+  {"set_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_17set_gain, METH_O, 0},
+  {"set_if_gain", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_19set_if_gain, METH_O, 0},
+  {"set_antenna_port", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_21set_antenna_port, METH_O, 0},
+  {"reinit_stream", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_23reinit_stream, METH_VARARGS|METH_KEYWORDS, 0},
+  {"close_stream", (PyCFunction)__pyx_pw_3src_3urh_3dev_6native_3lib_7sdrplay_25close_stream, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
@@ -17471,15 +18662,16 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_n_s_View_MemoryView, __pyx_k_View_MemoryView, sizeof(__pyx_k_View_MemoryView), 0, 0, 1, 1},
-  {&__pyx_kp_b__20, __pyx_k__20, sizeof(__pyx_k__20), 0, 0, 0, 0},
-  {&__pyx_kp_b__21, __pyx_k__21, sizeof(__pyx_k__21), 0, 0, 0, 0},
-  {&__pyx_kp_b__22, __pyx_k__22, sizeof(__pyx_k__22), 0, 0, 0, 0},
-  {&__pyx_kp_b__23, __pyx_k__23, sizeof(__pyx_k__23), 0, 0, 0, 0},
-  {&__pyx_kp_u__24, __pyx_k__24, sizeof(__pyx_k__24), 0, 1, 0, 0},
+  {&__pyx_kp_b__24, __pyx_k__24, sizeof(__pyx_k__24), 0, 0, 0, 0},
+  {&__pyx_kp_b__25, __pyx_k__25, sizeof(__pyx_k__25), 0, 0, 0, 0},
+  {&__pyx_kp_b__26, __pyx_k__26, sizeof(__pyx_k__26), 0, 0, 0, 0},
+  {&__pyx_kp_b__27, __pyx_k__27, sizeof(__pyx_k__27), 0, 0, 0, 0},
+  {&__pyx_kp_u__28, __pyx_k__28, sizeof(__pyx_k__28), 0, 1, 0, 0},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_u_available, __pyx_k_available, sizeof(__pyx_k_available), 0, 1, 0, 1},
   {&__pyx_n_s_bandwidth, __pyx_k_bandwidth, sizeof(__pyx_k_bandwidth), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
+  {&__pyx_n_s_bw_type, __pyx_k_bw_type, sizeof(__pyx_k_bw_type), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
   {&__pyx_n_s_center_freq, __pyx_k_center_freq, sizeof(__pyx_k_center_freq), 0, 0, 1, 1},
@@ -17497,6 +18689,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
+  {&__pyx_n_s_frequency, __pyx_k_frequency, sizeof(__pyx_k_frequency), 0, 0, 1, 1},
   {&__pyx_n_s_func, __pyx_k_func, sizeof(__pyx_k_func), 0, 0, 1, 1},
   {&__pyx_n_s_gain, __pyx_k_gain, sizeof(__pyx_k_gain), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
@@ -17504,10 +18697,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_u_hw_version, __pyx_k_hw_version, sizeof(__pyx_k_hw_version), 0, 1, 0, 1},
   {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
   {&__pyx_n_s_if_gain, __pyx_k_if_gain, sizeof(__pyx_k_if_gain), 0, 0, 1, 1},
+  {&__pyx_n_s_if_type, __pyx_k_if_type, sizeof(__pyx_k_if_type), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
   {&__pyx_kp_s_itemsize_0_for_cython_array, __pyx_k_itemsize_0_for_cython_array, sizeof(__pyx_k_itemsize_0_for_cython_array), 0, 0, 1, 0},
   {&__pyx_n_s_join, __pyx_k_join, sizeof(__pyx_k_join), 0, 0, 1, 1},
+  {&__pyx_n_s_lna_state, __pyx_k_lna_state, sizeof(__pyx_k_lna_state), 0, 0, 1, 1},
+  {&__pyx_n_s_lo_mode, __pyx_k_lo_mode, sizeof(__pyx_k_lo_mode), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
@@ -17528,13 +18724,16 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_pyx_unpickle_Enum, __pyx_k_pyx_unpickle_Enum, sizeof(__pyx_k_pyx_unpickle_Enum), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_reason_for_reinit, __pyx_k_reason_for_reinit, sizeof(__pyx_k_reason_for_reinit), 0, 0, 1, 1},
   {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
+  {&__pyx_n_s_reinit_stream, __pyx_k_reinit_stream, sizeof(__pyx_k_reinit_stream), 0, 0, 1, 1},
   {&__pyx_kp_u_s, __pyx_k_s, sizeof(__pyx_k_s), 0, 1, 0, 0},
   {&__pyx_n_s_sample_rate, __pyx_k_sample_rate, sizeof(__pyx_k_sample_rate), 0, 0, 1, 1},
   {&__pyx_n_s_send_bytes, __pyx_k_send_bytes, sizeof(__pyx_k_send_bytes), 0, 0, 1, 1},
   {&__pyx_n_u_serial, __pyx_k_serial, sizeof(__pyx_k_serial), 0, 1, 0, 1},
+  {&__pyx_n_s_set_gr_mode, __pyx_k_set_gr_mode, sizeof(__pyx_k_set_gr_mode), 0, 0, 1, 1},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
@@ -17579,9 +18778,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if itemsize <= 0:
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 131, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "View.MemoryView":134
  * 
@@ -17590,9 +18789,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if not isinstance(format, bytes):
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 134, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "View.MemoryView":137
  * 
@@ -17601,9 +18800,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         self._format = format  # keep a reference to the byte string
  *         self.format = self._format
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(1, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "View.MemoryView":146
  * 
@@ -17612,9 +18811,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 146, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(1, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "View.MemoryView":174
  *             self.data = <char *>malloc(self.len)
@@ -17623,9 +18822,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if self.dtype_is_object:
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 174, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(1, 174, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "View.MemoryView":190
  *             bufmode = PyBUF_F_CONTIGUOUS | PyBUF_ANY_CONTIGUOUS
@@ -17634,9 +18833,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         info.buf = self.data
  *         info.len = self.len
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -17644,18 +18843,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
 
   /* "View.MemoryView":486
  *             result = struct.unpack(self.view.format, bytesitem)
@@ -17664,9 +18863,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         else:
  *             if len(self.view.format) == 1:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(1, 486, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(1, 486, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
 
   /* "View.MemoryView":558
  *         if self.view.strides == NULL:
@@ -17675,9 +18874,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 558, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(1, 558, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
 
   /* "View.MemoryView":565
  *     def suboffsets(self):
@@ -17686,12 +18885,12 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([suboffset for suboffset in self.view.suboffsets[:self.view.ndim]])
  */
-  __pyx_tuple__11 = PyTuple_New(1); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(1, 565, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
+  __pyx_tuple__15 = PyTuple_New(1); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(1, 565, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_tuple__11, 0, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_tuple__11);
+  PyTuple_SET_ITEM(__pyx_tuple__15, 0, __pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_tuple__15);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -17699,18 +18898,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "View.MemoryView":670
  *         if item is Ellipsis:
@@ -17719,9 +18918,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 seen_ellipsis = True
  *             else:
  */
-  __pyx_slice__14 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__14)) __PYX_ERR(1, 670, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__14);
-  __Pyx_GIVEREF(__pyx_slice__14);
+  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) __PYX_ERR(1, 670, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__18);
+  __Pyx_GIVEREF(__pyx_slice__18);
 
   /* "View.MemoryView":673
  *                 seen_ellipsis = True
@@ -17730,9 +18929,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             have_slices = True
  *         else:
  */
-  __pyx_slice__15 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__15)) __PYX_ERR(1, 673, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__15);
-  __Pyx_GIVEREF(__pyx_slice__15);
+  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) __PYX_ERR(1, 673, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__19);
+  __Pyx_GIVEREF(__pyx_slice__19);
 
   /* "View.MemoryView":684
  *     nslices = ndim - len(result)
@@ -17741,9 +18940,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *     return have_slices or nslices, tuple(result)
  */
-  __pyx_slice__16 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__16)) __PYX_ERR(1, 684, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__16);
-  __Pyx_GIVEREF(__pyx_slice__16);
+  __pyx_slice__20 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__20)) __PYX_ERR(1, 684, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__20);
+  __Pyx_GIVEREF(__pyx_slice__20);
 
   /* "View.MemoryView":691
  *     for suboffset in suboffsets[:ndim]:
@@ -17752,9 +18951,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 691, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(1, 691, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -17762,18 +18961,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__18);
-  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__22);
+  __Pyx_GIVEREF(__pyx_tuple__22);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_tuple__23 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__23);
+  __Pyx_GIVEREF(__pyx_tuple__23);
 
   /* "View.MemoryView":284
  *         return self.name
@@ -17782,9 +18981,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_tuple__25 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(1, 284, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__25);
-  __Pyx_GIVEREF(__pyx_tuple__25);
+  __pyx_tuple__29 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(1, 284, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__29);
+  __Pyx_GIVEREF(__pyx_tuple__29);
 
   /* "View.MemoryView":285
  * 
@@ -17793,9 +18992,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_tuple__26 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(1, 285, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__26);
-  __Pyx_GIVEREF(__pyx_tuple__26);
+  __pyx_tuple__30 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(1, 285, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__30);
+  __Pyx_GIVEREF(__pyx_tuple__30);
 
   /* "View.MemoryView":286
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -17804,9 +19003,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__27 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(1, 286, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__27);
-  __Pyx_GIVEREF(__pyx_tuple__27);
+  __pyx_tuple__31 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(1, 286, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__31);
+  __Pyx_GIVEREF(__pyx_tuple__31);
 
   /* "View.MemoryView":289
  * 
@@ -17815,9 +19014,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_tuple__28 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(1, 289, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__28);
-  __Pyx_GIVEREF(__pyx_tuple__28);
+  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(1, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
 
   /* "View.MemoryView":290
  * 
@@ -17826,19 +19025,19 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__29 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(1, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__29);
-  __Pyx_GIVEREF(__pyx_tuple__29);
+  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(1, 290, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__33);
+  __Pyx_GIVEREF(__pyx_tuple__33);
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Enum(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     if __pyx_checksum != 0xb068931:
  *         from pickle import PickleError as __pyx_PickleError
  */
-  __pyx_tuple__30 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__30);
-  __Pyx_GIVEREF(__pyx_tuple__30);
-  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_tuple__34 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__34);
+  __Pyx_GIVEREF(__pyx_tuple__34);
+  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -18053,6 +19252,78 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
+  /* "src/urh/dev/native/lib/sdrplay.pyx":146
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
+ *                             double sample_rate=0, double frequency=0,
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,             # <<<<<<<<<<<<<<
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
+ */
+  __pyx_k_ = mir_sdr_BW_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":148
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,             # <<<<<<<<<<<<<<
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
+ *                             int lna_state=0,
+ */
+  __pyx_k__2 = mir_sdr_IF_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":149
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,             # <<<<<<<<<<<<<<
+ *                             int lna_state=0,
+ *                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
+ */
+  __pyx_k__3 = mir_sdr_LO_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":151
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
+ *                             int lna_state=0,
+ *                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):             # <<<<<<<<<<<<<<
+ *     cdef int gRdBsystem, samplesPerPacket
+ *     return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+ */
+  __pyx_k__4 = mir_sdr_USE_SET_GR;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":146
+ * cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
+ *                             double sample_rate=0, double frequency=0,
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,             # <<<<<<<<<<<<<<
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
+ */
+  __pyx_k_ = mir_sdr_BW_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":148
+ *                             csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,             # <<<<<<<<<<<<<<
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
+ *                             int lna_state=0,
+ */
+  __pyx_k__2 = mir_sdr_IF_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":149
+ *                             int gain=0,
+ *                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,             # <<<<<<<<<<<<<<
+ *                             int lna_state=0,
+ *                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
+ */
+  __pyx_k__3 = mir_sdr_LO_Undefined;
+
+  /* "src/urh/dev/native/lib/sdrplay.pyx":151
+ *                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
+ *                             int lna_state=0,
+ *                             csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):             # <<<<<<<<<<<<<<
+ *     cdef int gRdBsystem, samplesPerPacket
+ *     return csdrplay.mir_sdr_Reinit(&gain, sample_rate, frequency, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+ */
+  __pyx_k__4 = mir_sdr_USE_SET_GR;
+
   /* "src/urh/dev/native/lib/sdrplay.pyx":1
  * cimport csdrplay             # <<<<<<<<<<<<<<
  * from libc.stdlib cimport malloc, free
@@ -18083,7 +19354,7 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 284, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__29, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(generic);
   __Pyx_DECREF_SET(generic, __pyx_t_1);
@@ -18097,7 +19368,7 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__26, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 285, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__30, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(strided);
   __Pyx_DECREF_SET(strided, __pyx_t_1);
@@ -18111,7 +19382,7 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__27, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 286, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__31, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(indirect);
   __Pyx_DECREF_SET(indirect, __pyx_t_1);
@@ -18125,7 +19396,7 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__28, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 289, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(contiguous);
   __Pyx_DECREF_SET(contiguous, __pyx_t_1);
@@ -18139,7 +19410,7 @@ static int __pyx_pymod_exec_sdrplay(PyObject *__pyx_pyinit_module)
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__29, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 290, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__33, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(indirect_contiguous);
   __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_1);
@@ -19163,8 +20434,26 @@ bad:
     return -1;
 }
 
+/* GetModuleGlobalName */
+    static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
+}
+
 /* ArgTypeTest */
-    static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
+      static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
 {
     if (unlikely(!type)) {
         PyErr_SetString(PyExc_SystemError, "Missing type object");
@@ -19185,7 +20474,7 @@ bad:
 }
 
 /* RaiseException */
-    #if PY_MAJOR_VERSION < 3
+      #if PY_MAJOR_VERSION < 3
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
                         CYTHON_UNUSED PyObject *cause) {
     __Pyx_PyThreadState_declare
@@ -19344,7 +20633,7 @@ bad:
 #endif
 
 /* BytesEquals */
-    static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
+      static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
 #if CYTHON_COMPILING_IN_PYPY
     return PyObject_RichCompareBool(s1, s2, equals);
 #else
@@ -19391,7 +20680,7 @@ bad:
 }
 
 /* UnicodeEquals */
-    static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
+      static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
 #if CYTHON_COMPILING_IN_PYPY
     return PyObject_RichCompareBool(s1, s2, equals);
 #else
@@ -19490,7 +20779,7 @@ return_ne:
 }
 
 /* GetAttr */
-    static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *o, PyObject *n) {
+      static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *o, PyObject *n) {
 #if CYTHON_USE_TYPE_SLOTS
 #if PY_MAJOR_VERSION >= 3
     if (likely(PyUnicode_Check(n)))
@@ -19503,7 +20792,7 @@ return_ne:
 }
 
 /* PyErrExceptionMatches */
-    #if CYTHON_FAST_THREAD_STATE
+      #if CYTHON_FAST_THREAD_STATE
 static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
     Py_ssize_t i, n;
     n = PyTuple_GET_SIZE(tuple);
@@ -19528,7 +20817,7 @@ static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tsta
 #endif
 
 /* GetAttr3 */
-    static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
+      static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
     if (unlikely(!__Pyx_PyErr_ExceptionMatches(PyExc_AttributeError)))
@@ -19540,24 +20829,6 @@ static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tsta
 static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject *d) {
     PyObject *r = __Pyx_GetAttr(o, n);
     return (likely(r)) ? r : __Pyx_GetAttr3Default(d);
-}
-
-/* GetModuleGlobalName */
-    static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-    result = PyDict_GetItem(__pyx_d, name);
-    if (likely(result)) {
-        Py_INCREF(result);
-    } else {
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    if (!result) {
-        PyErr_Clear();
-#endif
-        result = __Pyx_GetBuiltinName(name);
-    }
-    return result;
 }
 
 /* ExtTypeTest */
@@ -20370,6 +21641,68 @@ static CYTHON_INLINE int __pyx_memview_set_float(const char *itemp, PyObject *ob
     }
 }
 
+/* CIntToPy */
+      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_mir_sdr_ReasonForReinitT(mir_sdr_ReasonForReinitT value) {
+    const mir_sdr_ReasonForReinitT neg_one = (mir_sdr_ReasonForReinitT) -1, const_zero = (mir_sdr_ReasonForReinitT) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(mir_sdr_ReasonForReinitT) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(mir_sdr_ReasonForReinitT),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
+      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
+                                     little, !is_unsigned);
+    }
+}
+
 #if PY_MAJOR_VERSION < 3
 static int __Pyx_GetBuffer(PyObject *obj, Py_buffer *view, int flags) {
     if (PyObject_CheckBuffer(obj)) return PyObject_GetBuffer(obj, view, flags);
@@ -20841,48 +22174,193 @@ raise_neg_overflow:
     return (int) -1;
 }
 
-/* TypeInfoToFormat */
-      static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(__Pyx_TypeInfo *type) {
-    struct __pyx_typeinfo_string result = { {0} };
-    char *buf = (char *) result.string;
-    size_t size = type->size;
-    switch (type->typegroup) {
-        case 'H':
-            *buf = 'c';
-            break;
-        case 'I':
-        case 'U':
-            if (size == 1)
-                *buf = (type->is_unsigned) ? 'B' : 'b';
-            else if (size == 2)
-                *buf = (type->is_unsigned) ? 'H' : 'h';
-            else if (size == 4)
-                *buf = (type->is_unsigned) ? 'I' : 'i';
-            else if (size == 8)
-                *buf = (type->is_unsigned) ? 'Q' : 'q';
-            break;
-        case 'P':
-            *buf = 'P';
-            break;
-        case 'C':
-         {
-            __Pyx_TypeInfo complex_type = *type;
-            complex_type.typegroup = 'R';
-            complex_type.size /= 2;
-            *buf++ = 'Z';
-            *buf = __Pyx_TypeInfoToFormat(&complex_type).string[0];
-            break;
-         }
-        case 'R':
-            if (size == 4)
-                *buf = 'f';
-            else if (size == 8)
-                *buf = 'd';
-            else
-                *buf = 'g';
-            break;
+/* CIntFromPy */
+      static CYTHON_INLINE mir_sdr_ReasonForReinitT __Pyx_PyInt_As_mir_sdr_ReasonForReinitT(PyObject *x) {
+    const mir_sdr_ReasonForReinitT neg_one = (mir_sdr_ReasonForReinitT) -1, const_zero = (mir_sdr_ReasonForReinitT) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(mir_sdr_ReasonForReinitT) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (mir_sdr_ReasonForReinitT) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_ReasonForReinitT) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) >= 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((((mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) >= 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((((((mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) >= 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((((((((mir_sdr_ReasonForReinitT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (mir_sdr_ReasonForReinitT) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ReasonForReinitT, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ReasonForReinitT, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_ReasonForReinitT) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((mir_sdr_ReasonForReinitT)-1)*(((((mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) ((((((mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((mir_sdr_ReasonForReinitT)-1)*(((((((mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) ((((((((mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) (((mir_sdr_ReasonForReinitT)-1)*(((((((((mir_sdr_ReasonForReinitT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_ReasonForReinitT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ReasonForReinitT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ReasonForReinitT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ReasonForReinitT) ((((((((((mir_sdr_ReasonForReinitT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ReasonForReinitT)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ReasonForReinitT, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_ReasonForReinitT) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ReasonForReinitT, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            mir_sdr_ReasonForReinitT val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (mir_sdr_ReasonForReinitT) -1;
+        }
+    } else {
+        mir_sdr_ReasonForReinitT val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (mir_sdr_ReasonForReinitT) -1;
+        val = __Pyx_PyInt_As_mir_sdr_ReasonForReinitT(tmp);
+        Py_DECREF(tmp);
+        return val;
     }
-    return result;
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to mir_sdr_ReasonForReinitT");
+    return (mir_sdr_ReasonForReinitT) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to mir_sdr_ReasonForReinitT");
+    return (mir_sdr_ReasonForReinitT) -1;
 }
 
 /* CIntFromPy */
@@ -21261,6 +22739,617 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to mir_sdr_If_kHzT");
     return (mir_sdr_If_kHzT) -1;
+}
+
+/* CIntFromPy */
+      static CYTHON_INLINE mir_sdr_LoModeT __Pyx_PyInt_As_mir_sdr_LoModeT(PyObject *x) {
+    const mir_sdr_LoModeT neg_one = (mir_sdr_LoModeT) -1, const_zero = (mir_sdr_LoModeT) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(mir_sdr_LoModeT) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (mir_sdr_LoModeT) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_LoModeT) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) >= 2 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((((mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) >= 3 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((((((mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) >= 4 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((((((((mir_sdr_LoModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (mir_sdr_LoModeT) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(mir_sdr_LoModeT) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_LoModeT, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_LoModeT) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_LoModeT, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_LoModeT) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(mir_sdr_LoModeT) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((mir_sdr_LoModeT)-1)*(((((mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) ((((((mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(mir_sdr_LoModeT) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((mir_sdr_LoModeT)-1)*(((((((mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) ((((((((mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(mir_sdr_LoModeT) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) (((mir_sdr_LoModeT)-1)*(((((((((mir_sdr_LoModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_LoModeT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_LoModeT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_LoModeT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_LoModeT) ((((((((((mir_sdr_LoModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_LoModeT)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(mir_sdr_LoModeT) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_LoModeT, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_LoModeT) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_LoModeT, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            mir_sdr_LoModeT val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (mir_sdr_LoModeT) -1;
+        }
+    } else {
+        mir_sdr_LoModeT val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (mir_sdr_LoModeT) -1;
+        val = __Pyx_PyInt_As_mir_sdr_LoModeT(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to mir_sdr_LoModeT");
+    return (mir_sdr_LoModeT) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to mir_sdr_LoModeT");
+    return (mir_sdr_LoModeT) -1;
+}
+
+/* CIntFromPy */
+      static CYTHON_INLINE mir_sdr_SetGrModeT __Pyx_PyInt_As_mir_sdr_SetGrModeT(PyObject *x) {
+    const mir_sdr_SetGrModeT neg_one = (mir_sdr_SetGrModeT) -1, const_zero = (mir_sdr_SetGrModeT) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(mir_sdr_SetGrModeT) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (mir_sdr_SetGrModeT) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_SetGrModeT) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) >= 2 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((((mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) >= 3 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((((((mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) >= 4 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((((((((mir_sdr_SetGrModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (mir_sdr_SetGrModeT) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(mir_sdr_SetGrModeT) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_SetGrModeT, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_SetGrModeT) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_SetGrModeT, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_SetGrModeT) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((mir_sdr_SetGrModeT)-1)*(((((mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) ((((((mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((mir_sdr_SetGrModeT)-1)*(((((((mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) ((((((((mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) (((mir_sdr_SetGrModeT)-1)*(((((((((mir_sdr_SetGrModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_SetGrModeT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_SetGrModeT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_SetGrModeT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_SetGrModeT) ((((((((((mir_sdr_SetGrModeT)digits[3]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[2]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[1]) << PyLong_SHIFT) | (mir_sdr_SetGrModeT)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(mir_sdr_SetGrModeT) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_SetGrModeT, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_SetGrModeT) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_SetGrModeT, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            mir_sdr_SetGrModeT val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (mir_sdr_SetGrModeT) -1;
+        }
+    } else {
+        mir_sdr_SetGrModeT val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (mir_sdr_SetGrModeT) -1;
+        val = __Pyx_PyInt_As_mir_sdr_SetGrModeT(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to mir_sdr_SetGrModeT");
+    return (mir_sdr_SetGrModeT) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to mir_sdr_SetGrModeT");
+    return (mir_sdr_SetGrModeT) -1;
+}
+
+/* CIntFromPy */
+      static CYTHON_INLINE mir_sdr_ErrT __Pyx_PyInt_As_mir_sdr_ErrT(PyObject *x) {
+    const mir_sdr_ErrT neg_one = (mir_sdr_ErrT) -1, const_zero = (mir_sdr_ErrT) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(mir_sdr_ErrT) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (mir_sdr_ErrT) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_ErrT) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(mir_sdr_ErrT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) >= 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((((mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_ErrT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) >= 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((((((mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_ErrT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) >= 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((((((((mir_sdr_ErrT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (mir_sdr_ErrT) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(mir_sdr_ErrT) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ErrT, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_ErrT) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ErrT, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (mir_sdr_ErrT) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(mir_sdr_ErrT) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((mir_sdr_ErrT)-1)*(((((mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(mir_sdr_ErrT) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 2 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) ((((((mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(mir_sdr_ErrT) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((mir_sdr_ErrT)-1)*(((((((mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(mir_sdr_ErrT) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 3 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) ((((((((mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(mir_sdr_ErrT) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) (((mir_sdr_ErrT)-1)*(((((((((mir_sdr_ErrT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(mir_sdr_ErrT) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(mir_sdr_ErrT, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(mir_sdr_ErrT) - 1 > 4 * PyLong_SHIFT) {
+                            return (mir_sdr_ErrT) ((((((((((mir_sdr_ErrT)digits[3]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[2]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[1]) << PyLong_SHIFT) | (mir_sdr_ErrT)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(mir_sdr_ErrT) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ErrT, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(mir_sdr_ErrT) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(mir_sdr_ErrT, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            mir_sdr_ErrT val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (mir_sdr_ErrT) -1;
+        }
+    } else {
+        mir_sdr_ErrT val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (mir_sdr_ErrT) -1;
+        val = __Pyx_PyInt_As_mir_sdr_ErrT(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to mir_sdr_ErrT");
+    return (mir_sdr_ErrT) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to mir_sdr_ErrT");
+    return (mir_sdr_ErrT) -1;
+}
+
+/* TypeInfoToFormat */
+      static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(__Pyx_TypeInfo *type) {
+    struct __pyx_typeinfo_string result = { {0} };
+    char *buf = (char *) result.string;
+    size_t size = type->size;
+    switch (type->typegroup) {
+        case 'H':
+            *buf = 'c';
+            break;
+        case 'I':
+        case 'U':
+            if (size == 1)
+                *buf = (type->is_unsigned) ? 'B' : 'b';
+            else if (size == 2)
+                *buf = (type->is_unsigned) ? 'H' : 'h';
+            else if (size == 4)
+                *buf = (type->is_unsigned) ? 'I' : 'i';
+            else if (size == 8)
+                *buf = (type->is_unsigned) ? 'Q' : 'q';
+            break;
+        case 'P':
+            *buf = 'P';
+            break;
+        case 'C':
+         {
+            __Pyx_TypeInfo complex_type = *type;
+            complex_type.typegroup = 'R';
+            complex_type.size /= 2;
+            *buf++ = 'Z';
+            *buf = __Pyx_TypeInfoToFormat(&complex_type).string[0];
+            break;
+         }
+        case 'R':
+            if (size == 4)
+                *buf = 'f';
+            else if (size == 8)
+                *buf = 'd';
+            else
+                *buf = 'g';
+            break;
+    }
+    return result;
 }
 
 /* MemviewSliceCopyTemplate */
@@ -21655,37 +23744,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to long");
     return (long) -1;
-}
-
-/* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
-    const int neg_one = (int) -1, const_zero = (int) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(int) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(int) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(int),
-                                     little, !is_unsigned);
-    }
 }
 
 /* CIntToPy */

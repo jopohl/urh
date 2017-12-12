@@ -28,19 +28,14 @@ Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsu
 
 Support the development: [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
-# Installation
+## Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
 Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source. Below you find more specific installation instructions for:
-- Linux Distributions:
-  - [Arch Linux](#arch-linux)
-  - [Ubuntu/Debian](#ubuntudebian)
-  - [Gentoo/Pentoo](#gentoopentoo)
-  - [Fedora 25+](#fedora-25)
-  - [openSUSE](#opensuse)
+- [Linux](#linux)
 - [Windows](#windows)
 - [Mac OS X](#mac-os-x)
 
-## Dependencies
+### Dependencies
 
 | Required  | Optional |
 | ------------- | ------------- |
@@ -53,18 +48,23 @@ Furthermore, you can [install urh from source](#installing-from-source) or run i
 |   | gnuradio / gnuradio-osmosdr (for GNU Radio device backends)  |
 
 
-## Installation examples
-### Arch Linux
-```bash
-yaourt -S urh
-```
+### Linux
+#### Via Package Manager
+If you run any of the following linux distributions you can easily install URH using your package manager.
 
-### Ubuntu/Debian
-If you want to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is:
-- AirSpy: ``` libairspy-dev ```
-- HackRF: ``` libhackrf-dev ```
-- RTL-SDR: ``` librtlsdr-dev  ```
-- USRP: ``` libuhd-dev  ```
+| Distribution  | Install with |
+| ------------- | ------------- |
+|  Arch Linux  |  ``` yaourt -S urh ```  |
+|  Gentoo / Pentoo  | ``` emerge -av urh ``` |
+| Fedora 25+ | ``` dnf install urh ```  |
+| openSUSE  | ``` zypper install urh ```  |
+
+
+#### Generic way with pip
+If your distribution does not provide a package for URH you can install it using ```pip3 install urh```. Below you find more detailed instruction for Ubuntu/Debian.
+
+##### Ubuntu/Debian
+If you want to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.
 
 If your device does not have a ``` -dev ``` package, e.g. LimeSDR, you need to manually create a symlink to the ``` .so ```, like this:
 ```bash
@@ -78,27 +78,7 @@ sudo apt-get update
 sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
 ```
-### Gentoo/Pentoo
-```bash
-emerge -av urh
-```
 
-### Fedora 25+
-```bash
-dnf install urh
-```
-
-### openSUSE
-If you use Tumbleweed (Rolling Release), you can install URH directly with
-```bash
-sudo zypper install urh
-```
-
-If you use Leap 42.2+ you need to add the ``` hardware:sdr ``` repo before:
-```bash
-sudo zypper addrepo -f https://download.opensuse.org/repositories/hardware:/sdr/openSUSE_Leap_42.3/hardware:sdr.repo
-sudo zypper install urh
-```
 
 ### Windows
 #### MSI Installer
@@ -112,9 +92,7 @@ If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 20
 
 __It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__
 
-1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/).
-  - Make sure you tick the _Add Python to PATH_ checkbox on first page in Python installer.
-  - Choose a __64 Bit__ Python version for native device support.
+1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ Python version for native device support.
 2. In a terminal, type: ``` pip install urh ```.
 3. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar to start the application.
 
@@ -126,20 +104,13 @@ corresponding native device support.
 3. In a terminal, type: ``` pip3 install urh ```.
 4. Type ``` urh ``` in a terminal to get it started.
 
-## Update your installation
-If you installed URH via pip you can keep it up to date with
-```bash
-pip3 install --upgrade urh
-```
-If this shouldn't work you can try:
-```bash
-python3 -m pip install --upgrade urh
-```
+### Update your installation
+If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
 
-## Running from source
+### Running from source
 If you like to live on bleeding edge, you can run URH from source.
 
-### Without installation
+#### Without installation
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
@@ -149,7 +120,7 @@ cd urh/src/urh
 
 Note, before first usage the C++ extensions will be built.
 
-### Installing from source
+#### Installing from source
 To install from source you need to have ``` python-setuptools ``` installed. You can get it e.g. with ``` pip install setuptools ```. 
 Once the setuptools are installed use: 
 ```bash

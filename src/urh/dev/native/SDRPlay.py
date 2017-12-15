@@ -80,7 +80,9 @@ class SDRPlay(Device):
         except (TypeError, ValueError):
             return False
 
-        if device_list[device_number]["hw_version"] == 2:
+        device_model = device_list[device_number]["hw_version"]
+        sdrplay.set_gr_mode_for_dev_model(device_model)
+        if device_model == 2:
             antenna = parameters[cls.Command.SET_ANTENNA_INDEX.name]
             cls.process_command((cls.Command.SET_ANTENNA_INDEX.name, antenna), ctrl_connection, is_tx=False)
         else:

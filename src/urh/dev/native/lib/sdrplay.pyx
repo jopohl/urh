@@ -13,6 +13,9 @@ cdef extern from "Python.h":
     void PyGILState_Release(PyGILState_STATE)
 
 
+
+cdef csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_RSP_SET_GR
+
 global reset_rx, reset_rx_request_received
 reset_rx = False
 reset_rx_request_received = False
@@ -47,6 +50,13 @@ cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum,
 
 cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext):
     return
+
+cpdef void set_gr_mode_for_dev_model(int dev_model):
+    global set_gr_mode
+    if dev_model == 1:
+        set_gr_mode = csdrplay.mir_sdr_USE_SET_GR_ALT_MODE
+    else:
+        set_gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
 
 cpdef float get_api_version():
     cdef float version = 0.0
@@ -123,18 +133,19 @@ cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
     return if_type
 
 cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+    global set_gr_mode
+
     cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
     # get nearest ifgain
     cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
 
     lna_state = 0
     cdef int gRdBsystem = 0
-    cdef csdrplay.mir_sdr_SetGrModeT gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
     cdef int samples_per_packet = 0
 
     cdef int gain_reduction = calculate_gain_reduction(gain)
     return csdrplay.mir_sdr_StreamInit(&gain_reduction, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
-                                       &gRdBsystem, gr_mode, &samples_per_packet, _rx_stream_callback,
+                                       &gRdBsystem, set_gr_mode, &samples_per_packet, _rx_stream_callback,
                                        _gain_change_callback, <void *> func)
 
 cpdef error_t set_center_freq(double frequency):
@@ -178,10 +189,9 @@ cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
                             int gain=0,
                             csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
                             csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
-                            int lna_state=0,
-                            csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_SET_GR):
+                            int lna_state=0):
     cdef int gRdBsystem, samplesPerPacket
-    global reset_rx, reset_rx_request_received
+    global reset_rx, reset_rx_request_received, set_gr_mode
     reset_rx = True
 
     while not reset_rx_request_received:

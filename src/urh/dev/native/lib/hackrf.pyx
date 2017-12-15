@@ -56,7 +56,7 @@ cpdef reopen():
 cpdef close():
     return chackrf.hackrf_close(_c_device)
 
-cpdef start_rx_mode(callback):
+cpdef int start_rx_mode(callback):
     global f, RUNNING
     RUNNING = 0
     f = callback

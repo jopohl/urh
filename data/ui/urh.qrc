@@ -4,6 +4,8 @@
     <file>../icons/appicon.png</file>
     <file>../icons/decoding.svg</file>
     <file>../icons/equals_qm.svg</file>
+    <file>../icons/collapse.svg</file>
+    <file>../icons/uncollapse.svg</file>
     <file>../icons/equals.svg</file>
     <file>../icons/lock.svg</file>
     <file>../icons/modulation.svg</file>

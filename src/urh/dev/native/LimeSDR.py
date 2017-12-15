@@ -19,7 +19,6 @@ class LimeSDR(Device):
     LIME_TIMEOUT_RECEIVE_MS = 10
     LIME_TIMEOUT_SEND_MS = 500
 
-    BYTES_PER_SAMPLE = 8  # We use dataFmt_t.LMS_FMT_F32 so we have 32 bit floats for I and Q
     DEVICE_LIB = limesdr
     ASYNCHRONOUS = False
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -121,12 +120,8 @@ class LimeSDR(Device):
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01)])
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.float32), ('i', np.float32)])
-        result.real = unpacked["r"]
-        result.imag = unpacked["i"]
-        return result
+    def unpack_complex(buffer):
+        return np.frombuffer(buffer, dtype=np.complex64)
 
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):

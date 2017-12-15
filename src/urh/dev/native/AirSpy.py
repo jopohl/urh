@@ -8,7 +8,6 @@ from multiprocessing.connection import Connection
 
 
 class AirSpy(Device):
-    BYTES_PER_SAMPLE = 8
     DEVICE_LIB = airspy
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -35,8 +34,9 @@ class AirSpy(Device):
         return True
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection):
-        airspy.start_rx(data_connection.send_bytes)
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+        ret = airspy.start_rx(data_connection.send_bytes)
+        ctrl_connection.send("Start RX MODE:" + str(ret))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
@@ -48,9 +48,9 @@ class AirSpy(Device):
         self.bandwidth_is_adjustable = False
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
+    def unpack_complex(buffer):
         unpacked = np.frombuffer(buffer, dtype=[('r', np.float32), ('i', np.float32)])
+        result = np.empty(len(unpacked), dtype=np.complex64)
         result.real = unpacked["r"]
         result.imag = unpacked["i"]
         return result

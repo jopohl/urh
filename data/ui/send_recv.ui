@@ -47,8 +47,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>614</width>
-         <height>1526</height>
+         <width>611</width>
+         <height>1548</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -294,6 +294,16 @@ QGroupBox::indicator:checked {
            <property name="topMargin">
             <number>0</number>
            </property>
+           <item row="19" column="0">
+            <widget class="QProgressBar" name="progressBarMessage">
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="format">
+              <string>%v/%m</string>
+             </property>
+            </widget>
+           </item>
            <item row="18" column="0">
             <widget class="QLabel" name="labelCurrentMessage">
              <property name="text">
@@ -324,22 +334,6 @@ QGroupBox::indicator:checked {
               <string>Current sample:</string>
              </property>
             </widget>
-           </item>
-           <item row="2" column="0">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item row="12" column="0">
             <widget class="QLabel" name="lTimeText">
@@ -479,16 +473,6 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="19" column="0">
-            <widget class="QProgressBar" name="progressBarMessage">
-             <property name="value">
-              <number>0</number>
-             </property>
-             <property name="format">
-              <string>%v/%m</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0" colspan="2">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
@@ -508,21 +492,15 @@ QGroupBox::indicator:checked {
               <widget class="QToolButton" name="btnStart">
                <property name="minimumSize">
                 <size>
-                 <width>42</width>
-                 <height>42</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>42</width>
-                 <height>42</height>
+                 <width>64</width>
+                 <height>64</height>
                 </size>
                </property>
                <property name="toolTip">
                 <string>Record signal</string>
                </property>
                <property name="text">
-                <string/>
+                <string>Start</string>
                </property>
                <property name="icon">
                 <iconset theme="media-record">
@@ -534,27 +512,24 @@ QGroupBox::indicator:checked {
                  <height>32</height>
                 </size>
                </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextUnderIcon</enum>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="btnStop">
                <property name="minimumSize">
                 <size>
-                 <width>42</width>
-                 <height>42</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>42</width>
-                 <height>42</height>
+                 <width>64</width>
+                 <height>64</height>
                 </size>
                </property>
                <property name="toolTip">
                 <string>Stop recording</string>
                </property>
                <property name="text">
-                <string/>
+                <string>Stop</string>
                </property>
                <property name="icon">
                 <iconset theme="media-playback-stop">
@@ -566,20 +541,17 @@ QGroupBox::indicator:checked {
                  <height>32</height>
                 </size>
                </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextUnderIcon</enum>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="btnSave">
                <property name="minimumSize">
                 <size>
-                 <width>42</width>
-                 <height>42</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>42</width>
-                 <height>42</height>
+                 <width>64</width>
+                 <height>64</height>
                 </size>
                </property>
                <property name="text">
@@ -595,27 +567,24 @@ QGroupBox::indicator:checked {
                  <height>32</height>
                 </size>
                </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextUnderIcon</enum>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="btnClear">
                <property name="minimumSize">
                 <size>
-                 <width>42</width>
-                 <height>42</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>42</width>
-                 <height>42</height>
+                 <width>64</width>
+                 <height>64</height>
                 </size>
                </property>
                <property name="toolTip">
                 <string>Clear</string>
                </property>
                <property name="text">
-                <string/>
+                <string>Clear</string>
                </property>
                <property name="icon">
                 <iconset theme="view-refresh">
@@ -626,6 +595,9 @@ QGroupBox::indicator:checked {
                  <width>32</width>
                  <height>32</height>
                 </size>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextUnderIcon</enum>
                </property>
               </widget>
              </item>
@@ -643,6 +615,22 @@ QGroupBox::indicator:checked {
               </spacer>
              </item>
             </layout>
+           </item>
+           <item row="2" column="0">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>

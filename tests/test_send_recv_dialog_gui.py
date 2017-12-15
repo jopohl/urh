@@ -261,9 +261,9 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(0)
-        time.sleep(5)
-        process.join(5)
+        QTest.qWait(100)
+        time.sleep(10)
+        process.join(10)
 
         # CI sometimes swallows a sample
         self.assertIn(current_index.value, range(2 * len(expected) - 1, 2 * len(expected) + 1))

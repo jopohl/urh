@@ -44,7 +44,7 @@ class HackRF(Device):
     @classmethod
     def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
         ret = hackrf.start_rx_mode(data_connection.send_bytes)
-        ctrl_connection.send_bytes("Start RX MODE:", str(ret))
+        ctrl_connection.send("Start RX MODE:" + str(ret))
 
     @classmethod
     def enter_async_send_mode(cls, callback):

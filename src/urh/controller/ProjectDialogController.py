@@ -146,8 +146,9 @@ class ProjectDialogController(QDialog):
 
         self.create_connects()
         # add two participants
-        self.ui.btnAddParticipant.click()
-        self.ui.btnAddParticipant.click()
+        if self.participant_table_model.rowCount() == 0:
+            self.ui.btnAddParticipant.click()
+            self.ui.btnAddParticipant.click()
 
         if new_project:
             self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))

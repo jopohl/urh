@@ -385,7 +385,7 @@ class ProtocolAnalyzer(object):
         :return: start_message index, start index, end message index, end index
         """
         start_message, start_index, end_message, end_index = -1, -1, -1, -1
-        if not self.messages:
+        if not self.messages or not self.messages[0].bit_sample_pos:
             return start_message, start_index, end_message, end_index
 
         if selection_start + selection_width < self.messages[0].bit_sample_pos[0]:

@@ -56,6 +56,8 @@ class ModulatorDialogController(QDialog):
         except TypeError:
             pass
 
+        self.set_modulation_profile_status()
+
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()
         return s[s.rindex("(") + 1:s.rindex(")")]
@@ -316,6 +318,12 @@ class ModulatorDialogController(QDialog):
 
             self.ui.lSamplesInViewOrigSignal.setStyleSheet("")
             self.ui.lSamplesInViewModulated.setStyleSheet("")
+
+    def set_modulation_profile_status(self):
+        visible = constants.SETTINGS.value("multiple_modulations", False, bool)
+        self.ui.btnAddModulation.setVisible(visible)
+        self.ui.btnRemoveModulation.setVisible(visible)
+        self.ui.comboBoxCustomModulations.setVisible(visible)
 
     def resizeEvent(self, event: QResizeEvent):
         self.update_views()

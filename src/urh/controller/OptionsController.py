@@ -67,6 +67,8 @@ class OptionsController(QDialog):
         self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10 ** 6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
 
+        self.ui.checkBoxMultipleModulations.setChecked(constants.SETTINGS.value("multiple_modulations", False, bool))
+
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
@@ -145,6 +147,7 @@ class OptionsController(QDialog):
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
         self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
         self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
+        self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -435,6 +438,10 @@ class OptionsController(QDialog):
 
         d = util.create_textbox_dialog(info, "Health check for native extensions", self)
         d.show()
+
+    @pyqtSlot()
+    def on_checkbox_multiple_modulations_clicked(self):
+        constants.SETTINGS.setValue("multiple_modulations", self.ui.checkBoxMultipleModulations.isChecked())
 
     @staticmethod
     def write_default_options():

@@ -106,7 +106,11 @@ corresponding native device support.
 4. Type ``` urh ``` in a terminal to get it started.
 
 ### Update your installation
+#### Pip
 If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
+
+#### MSI
+If you experience issues after updating URH using the ``` .msi ``` installer on Windows, please perform a __full uninstallation__. That is, uninstall URH via Windows and after that remove the installation folder (something like ``` C:\Program Files\Universal Radio Hacker ```). Now, install the new version using the recent ```.msi ```.
 
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.

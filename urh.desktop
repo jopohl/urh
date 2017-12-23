@@ -1,6 +1,5 @@
 [Desktop Entry]
 Type=Application
-Version=1.9.1
 Name=Universal Radio Hacker
 Comment=investigate wireless protocols like a boss
 Exec=/usr/bin/urh

@@ -44,15 +44,8 @@ def release():
     with open(version_file, "w") as f:
         f.write('VERSION = "{0}" \n'.format(cur_version))
 
-    desktop_file = os.path.realpath(os.path.join(script_dir, "urh.desktop"))
-    for line in fileinput.input(desktop_file, inplace=True):
-        if line.startswith("Version="):
-            print("Version=" + cur_version)
-        else:
-            print(line, end="")
-
     # Publish new version number
-    call(["git", "add", version_file, desktop_file])
+    call(["git", "add", version_file])
     call(["git", "commit", "-m", "version" + cur_version])
     call(["git", "push"])
 

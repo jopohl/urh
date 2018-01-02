@@ -18,11 +18,9 @@ The Universal Radio Hacker is a software for investigating unknown wireless prot
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 
+To get started, you can download the __official userguide__ [here](https://github.com/jopohl/urh/blob/master/data/userguide.pdf) or watch our video series on URH [on YouTube](https://www.youtube.com/watch?v=kuubkTDAxwA).
+
 Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices.
-
-Like to see things in action? Watch URH on YouTube!
-
-[![Youtube Image](http://i.imgur.com/5HGzP2T.png)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 
 Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
 

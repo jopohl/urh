@@ -6,6 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
 [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
 [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 
 The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
@@ -18,13 +19,12 @@ The Universal Radio Hacker is a software for investigating unknown wireless prot
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 
-To get started, you can download the __official userguide__ (PDF) [here](https://github.com/jopohl/urh/raw/master/data/userguide.pdf) or watch the __demonstration videos__ [on YouTube](https://www.youtube.com/watch?v=kuubkTDAxwA).
+To get started, you can
+* download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf)
+* watch the __demonstration videos__ [on YouTube](https://www.youtube.com/watch?v=kuubkTDAxwA)
+* check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices.
 
-Check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices.
-
-Want to stay in touch? Join our [Slack Channel](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
-
-Support the development: [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
+Want to stay in touch? Chat with us on [Slack](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
 
 ## Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
@@ -49,7 +49,7 @@ Furthermore, you can [install urh from source](#installing-from-source) or run i
 
 ### Linux
 #### Via Package Manager
-If you run any of the following linux distributions you can easily install URH using your package manager.
+If you run any of the following linux distributions you can install URH using your package manager.
 
 | Distribution  | Install with |
 | ------------- | ------------- |
@@ -60,7 +60,7 @@ If you run any of the following linux distributions you can easily install URH u
 
 
 #### Generic way with pip
-If your distribution does not provide a package for URH you can install it using ```pip3 install urh```. Below you find more detailed instruction for Ubuntu/Debian.
+If your distribution does not provide a package for URH you can install it using ```pip3 install urh```. Below you find more detailed instructions for Ubuntu/Debian.
 
 ##### Ubuntu/Debian
 If you want to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.

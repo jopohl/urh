@@ -97,11 +97,16 @@ class LabelValueTableModel(QAbstractTableModel):
                 except IndexError:
                     return None
 
-                if lbl.display_format_index == 3:  # decimal
+                if lbl.display_format_index in (3, 4):  # decimal or bcd
                     try:
                         data = str(int(data, 2))
                     except ValueError:
                         return None
+                    if lbl.display_format_index == 4:
+                        # bcd
+                        code = ["0000", "0001", "0010", "0011", "0100",
+                                "0101", "0110", "0111", "1000", "1001"]
+                        data = "".join(code[int(digit)] for digit in data)
 
                 if calculated_crc is not None:
                     data += " (should be {0})".format(

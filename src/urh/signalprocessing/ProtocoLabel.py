@@ -14,7 +14,8 @@ class ProtocolLabel(object):
     start and end always refer to bit view!
     """
 
-    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
+    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII",
+                       "Decimal", "Binary Coded Decimal (BCD)"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
     __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",

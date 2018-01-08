@@ -275,4 +275,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 1)), "Decimal")
         self.assertEqual(model.data(model.index(0, 2)), "2151")
 
+        model.setData(model.index(0, 1), 4, role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 1)), "Binary Coded Decimal (BCD)")
+        self.assertEqual(model.data(model.index(0, 2)), "0010000101010001")
 

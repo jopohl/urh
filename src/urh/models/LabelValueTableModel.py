@@ -1,7 +1,4 @@
-import array
-
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
-from PyQt5.QtGui import QColor
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -87,24 +84,28 @@ class LabelValueTableModel(QAbstractTableModel):
             elif j == 1:
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                start, end = self.message.get_label_range(lbl, lbl.display_format_index % 3, True)
-                if lbl.display_format_index in (0, 1, 2):
+                try:
+                    if lbl.display_format_index == 1:
+                        start, end = self.message.get_label_range(lbl, 1, True)
+                        data = self.hex_str[self.message_index][start:end]
+                    elif lbl.display_format_index == 2:
+                        start, end = self.message.get_label_range(lbl, 2, True)
+                        data = self.ascii_str[self.message_index][start:end]
+                    else:
+                        start, end = self.message.get_label_range(lbl, 0, True)
+                        data = self.bit_str[self.message_index][start:end]
+                except IndexError:
+                    return None
+
+                if lbl.display_format_index == 3:  # decimal
                     try:
-                        data = self.bit_str[self.message_index][start:end] if lbl.display_format_index == 0 \
-                            else self.hex_str[self.message_index][start:end] if lbl.display_format_index == 1 \
-                            else self.ascii_str[self.message_index][start:end] if lbl.display_format_index == 2 \
-                            else ""
-                    except IndexError:
-                        return None
-                else:
-                    # decimal
-                    try:
-                        data = str(int(self.bit_str[self.message_index][start:end], 2))
-                    except (IndexError, ValueError):
+                        data = str(int(data, 2))
+                    except ValueError:
                         return None
 
                 if calculated_crc is not None:
-                    data += " (should be {0})".format(util.convert_bits_to_string(calculated_crc, lbl.display_format_index))
+                    data += " (should be {0})".format(
+                        util.convert_bits_to_string(calculated_crc, lbl.display_format_index))
 
                 return data
 
@@ -121,9 +122,12 @@ class LabelValueTableModel(QAbstractTableModel):
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
-            lbl = self.display_labels[index.row()]
+            row = index.row()
+            lbl = self.display_labels[row]
             if index.column() == 1:
                 lbl.display_format_index = value
+                self.dataChanged.emit(self.index(row, 0),
+                                      self.index(row, self.columnCount()))
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)

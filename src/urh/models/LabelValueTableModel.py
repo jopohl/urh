@@ -97,21 +97,18 @@ class LabelValueTableModel(QAbstractTableModel):
                 except IndexError:
                     return None
 
-                if lbl.display_format_index == 3:  # decimal or bcd
+                if lbl.display_format_index == 3:  # decimal
                     try:
                         data = str(int(data, 2))
                     except ValueError:
                         return None
-                elif lbl.display_format_index == 4:
+                elif lbl.display_format_index == 4:  # bcd
                     # Pad data
                     while len(data) % 4 != 0:
                         data += "0"
-                    error_symbol = "?"
-                    lut = {"0000": "0", "0001": "1", "0010": "2", "0011": "3", "0100": "4",
-                           "0101": "5", "0110": "6", "0111": "7", "1000": "8", "1001": "9",
-                           "1010": error_symbol, "1011": error_symbol, "1100": error_symbol,
-                           "1101": error_symbol, "1110": error_symbol, "1111": error_symbol}
 
+                    error_symbol = "?"
+                    lut = {"{0:04b}".format(i): str(i) if i < 10 else error_symbol for i in range(16)}
                     data = "".join(lut[data[i:i+4]] for i in range(0, len(data), 4))
 
                 if calculated_crc is not None:

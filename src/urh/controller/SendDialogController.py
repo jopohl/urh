@@ -126,6 +126,7 @@ class SendDialogController(SendRecvDialogController):
     def on_device_stopped(self):
         super().on_device_stopped()
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
+        self.ui.btnStart.setText("Start")
         self.ui.btnStart.setToolTip("Start sending")
         self.device_is_sending = False
 
@@ -135,6 +136,7 @@ class SendDialogController(SendRecvDialogController):
         self.device_is_sending = True
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-pause"))
+        self.ui.btnStart.setText("Pause")
         self.set_device_ui_items_enabled(False)
 
     @pyqtSlot()

@@ -151,6 +151,14 @@ class BackendHandler(object):
         except ImportError:
             return False
 
+    @property
+    def __sdrplay_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import sdrplay
+            return True
+        except ImportError:
+            return False
+
     def set_gnuradio_installed_status(self):
         if self.use_gnuradio_install_dir:
             # We are probably on windows with a bundled gnuradio installation
@@ -213,6 +221,10 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtltcp":
+            supports_rx, supports_tx = True, False
+            backends.add(Backends.native)
+
+        if devname.lower() == "sdrplay" and self.__sdrplay_native_enabled:
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 

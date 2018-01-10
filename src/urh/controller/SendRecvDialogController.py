@@ -1,5 +1,6 @@
 import locale
 import time
+from statistics import median
 
 from PyQt5.QtCore import pyqtSlot, QTimer, QRegExp, pyqtSignal, Qt
 from PyQt5.QtGui import QCloseEvent, QRegExpValidator, QIcon, QTransform
@@ -141,9 +142,7 @@ class SendRecvDialogController(QDialog):
             getattr(self.ui, item).hide()
 
     def set_sniff_ui_items_visible(self, visible: bool):
-        for item in self.ui.__dict__:
-            if "_sniff_" in item:
-                getattr(self.ui, item).setVisible(visible)
+        self.ui.groupBoxSniffSettings.setVisible(visible)
 
     def get_config_for_selected_device(self):
         device_name = self.ui.cbDevice.currentText()
@@ -156,16 +155,18 @@ class SendRecvDialogController(QDialog):
         prefix = self.rx_tx_prefix
 
         if prefix + "rf_gain" in conf:
-            gain = min(conf[prefix + "rf_gain"], key=lambda x: abs(x - self.ui.spinBoxGain.value()))
+            key = prefix + "rf_gain"
+            gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxGain.setValue(gain)
             self.ui.spinBoxGain.valueChanged.emit(gain)
         if prefix + "if_gain" in conf:
-            if_gain = min(conf[prefix + "if_gain"], key=lambda x: abs(x - self.ui.spinBoxIFGain.value()))
+            key = prefix + "if_gain"
+            if_gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxIFGain.setValue(if_gain)
             self.ui.spinBoxIFGain.valueChanged.emit(if_gain)
         if prefix + "baseband_gain" in conf:
-            baseband_gain = min(conf[prefix + "baseband_gain"],
-                                key=lambda x: abs(x - self.ui.spinBoxBasebandGain.value()))
+            key = prefix + "baseband_gain"
+            baseband_gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxBasebandGain.setValue(baseband_gain)
             self.ui.spinBoxBasebandGain.valueChanged.emit(baseband_gain)
 

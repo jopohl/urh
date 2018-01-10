@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -33,10 +33,17 @@
          <x>20</x>
          <y>20</y>
          <width>314</width>
-         <height>62</height>
+         <height>90</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelFuzzingSamples">
+          <property name="text">
+           <string>Samples</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBoxDefaultFuzzingPause">
           <property name="toolTip">
@@ -57,10 +64,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelFuzzingSamples">
+        <item row="2" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxMultipleModulations">
           <property name="text">
-           <string>Samples</string>
+           <string>Enable modulation profiles</string>
           </property>
          </widget>
         </item>
@@ -210,7 +217,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>616</width>
+               <width>644</width>
                <height>316</height>
               </rect>
              </property>
@@ -330,14 +337,14 @@
            <item>
             <widget class="QRadioButton" name="rbNativeBackend">
              <property name="text">
-              <string>Native backend (recommended)</string>
+              <string>&amp;Native backend (recommended)</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QRadioButton" name="rbGnuradioBackend">
              <property name="text">
-              <string>Gnuradio backend</string>
+              <string>&amp;Gnuradio backend</string>
              </property>
             </widget>
            </item>
@@ -532,7 +539,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Python2 interpreter</string>
+             <string>&amp;Python2 interpreter</string>
             </property>
            </widget>
           </item>
@@ -542,7 +549,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Gnuradio Directory</string>
+             <string>Gn&amp;uradio Directory</string>
             </property>
            </widget>
           </item>

@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
+from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
 from urh.controller.FuzzingDialogController import FuzzingDialogController
@@ -68,6 +69,8 @@ class GeneratorTabController(QWidget):
         self.set_fuzzing_ui_status()
         self.ui.prBarGeneration.hide()
         self.create_connects(compare_frame_controller)
+
+        self.set_modulation_profile_status()
 
     def __get_modulator_of_message(self, message: Message) -> Modulator:
         if message.modulator_index > len(self.modulators) - 1:
@@ -268,6 +271,10 @@ class GeneratorTabController(QWidget):
         modulator_dialog.finished.connect(self.refresh_pause_list)
 
         return modulator_dialog, selected_message
+
+    def set_modulation_profile_status(self):
+        visible = constants.SETTINGS.value("multiple_modulations", False, bool)
+        self.ui.cBoxModulations.setVisible(visible)
 
     def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialogController):
         dialog.on_modulation_type_changed()  # for drawing modulated signal initially

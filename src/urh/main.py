@@ -70,8 +70,8 @@ def main():
 
     if GENERATE_UI and not hasattr(sys, 'frozen'):
         try:
-            sys.path.insert(0, os.path.join(prefix, "data"))
-            from ui import generate_ui
+            sys.path.insert(0, os.path.join(prefix))
+            from data import generate_ui
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
             print("Will not regenerate UI, because script can't be found. This is okay in release.")

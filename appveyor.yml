@@ -43,7 +43,7 @@ install:
   - python -c "import struct; print(struct.calcsize('P') * 8)"
   - pip install --disable-pip-version-check --user --upgrade pip
 
-  - pip install -r requirements.txt
+  - pip install -r data\requirements.txt
   - pip install pytest
 
 build_script:

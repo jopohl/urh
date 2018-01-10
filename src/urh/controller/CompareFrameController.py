@@ -82,7 +82,7 @@ class CompareFrameController(QWidget):
         self.assign_message_type_action.setChecked(True)
         self.assign_labels_action = self.analyze_menu.addAction(self.tr("Assign labels"))
         self.assign_labels_action.setCheckable(True)
-        self.assign_labels_action.setChecked(True)
+        self.assign_labels_action.setChecked(False)
         self.ui.btnAnalyze.setMenu(self.analyze_menu)
 
         self.ui.lFilterShown.hide()

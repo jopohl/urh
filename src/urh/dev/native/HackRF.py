@@ -10,7 +10,6 @@ from urh.util.Logger import logger
 
 
 class HackRF(Device):
-    BYTES_PER_SAMPLE = 2  # HackRF device produces 8 bit unsigned IQ data
     DEVICE_LIB = hackrf
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
@@ -43,8 +42,9 @@ class HackRF(Device):
         return True
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection):
-        hackrf.start_rx_mode(data_connection.send_bytes)
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+        ret = hackrf.start_rx_mode(data_connection.send_bytes)
+        ctrl_connection.send("Start RX MODE:" + str(ret))
 
     @classmethod
     def enter_async_send_mode(cls, callback):
@@ -75,9 +75,9 @@ class HackRF(Device):
         }
 
     @staticmethod
-    def unpack_complex(buffer, nvalues: int):
-        result = np.empty(nvalues, dtype=np.complex64)
+    def unpack_complex(buffer):
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
+        result = np.empty(len(unpacked), dtype=np.complex64)
         result.real = (unpacked['r'] + 0.5) / 127.5
         result.imag = (unpacked['i'] + 0.5) / 127.5
         return result

@@ -328,7 +328,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -353,9 +353,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionOpen_directory"/>
     <addaction name="menuImport"/>
     <addaction name="separator"/>
+    <addaction name="actionSpectrum_Analyzer"/>
     <addaction name="actionRecord"/>
     <addaction name="actionSniff_protocol"/>
-    <addaction name="actionSpectrum_Analyzer"/>
     <addaction name="separator"/>
     <addaction name="actionSaveAllSignals"/>
     <addaction name="actionClose_all"/>

@@ -807,6 +807,7 @@ class MainController(QMainWindow):
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
         self.generator_tab_controller.init_rfcat_plugin()
+        self.generator_tab_controller.set_modulation_profile_status()
         self.simulator_tab_controller.refresh_field_types_for_labels()
 
         if "default_view" in changed_options:

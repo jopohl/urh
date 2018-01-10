@@ -9,12 +9,13 @@ from urh.util.Formatter import Formatter
 
 class ProtocolLabel(object):
     """
-    Eine Eigenschaft des Protokolls (zum Beispiel Temperatur), die an einer bestimmten Stelle steht.
-    Die Stelle wird durch (from, to) beschrieben und der Wert der Eigenschaft durch Value.
-    From und To beziehen sich immer auf die Bitdarstellung des Protokolls!
+    This represents a field in the protocol, e.g. temperature
+    Field range is described by (start, end) and it's value by value
+    start and end always refer to bit view!
     """
 
-    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal"]
+    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII",
+                       "Decimal", "Binary Coded Decimal (BCD)"]
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
     __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",

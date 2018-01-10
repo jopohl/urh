@@ -69,11 +69,7 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
         pm = self.project_manager
 
         if index == self.editor.count() - 1:
-            signal = None
-            for proto in self.compare_frame_controller.protocol_list:
-                signal = proto.signal
-                if signal:
-                    break
+            signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list if proto.signal), None)
 
             if signal:
                 bit_len = signal.bit_len
@@ -88,6 +84,7 @@ class SimulatorSettingsComboBoxDelegate(QItemDelegate):
                 noise = 0.001
                 center = 0.02
 
+            print(index)
             dialog = SendRecvSettingsDialogController(pm, noise, center, bit_len, tolerance, mod_type,
                                                       self.generator_tab_controller, parent=self.editor)
 

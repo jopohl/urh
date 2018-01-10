@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QDialog, QGraphicsView, QMessageBox
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QDialog, QMessageBox
 
-from urh.ui.SimulatorScene import SimulatorScene
-from urh.ui.ui_simulate_dialog import Ui_SimulateDialog
-from urh.ui.delegates.SimulatorSettingsComboBoxDelegate import SimulatorSettingsComboBoxDelegate
-from urh.models.SimulatorSettingsTableModel import SimulatorSettingsTableModel
-from urh.util.ProjectManager import ProjectManager
-from urh.SimulatorProtocolManager import SimulatorProtocolManager
 from urh import SimulatorSettings
+from urh.models.SimulatorSettingsTableModel import SimulatorSettingsTableModel
+from urh.ui.SimulatorScene import SimulatorScene
+from urh.ui.delegates.SimulatorSettingsComboBoxDelegate import SimulatorSettingsComboBoxDelegate
+from urh.ui.ui_simulate_dialog import Ui_SimulateDialog
+
 
 class SimulateDialogController(QDialog):
     simulator_settings_confirmed = pyqtSignal()
@@ -29,9 +28,9 @@ class SimulateDialogController(QDialog):
         self.ui.tableViewSimulate.setModel(self.simulator_settings_model)
 
         self.ui.tableViewSimulate.setItemDelegateForColumn(1, SimulatorSettingsComboBoxDelegate(
-                                                           controller=self, is_rx=True, parent=self.ui.tableViewSimulate))
+            controller=self, is_rx=True, parent=self.ui.tableViewSimulate))
         self.ui.tableViewSimulate.setItemDelegateForColumn(2, SimulatorSettingsComboBoxDelegate(
-                                                           controller=self, is_rx=False, parent=self.ui.tableViewSimulate))
+            controller=self, is_rx=False, parent=self.ui.tableViewSimulate))
 
         self.ui.spinBoxNRepeat.setValue(SimulatorSettings.num_repeat)
         self.ui.spinBoxTimeout.setValue(SimulatorSettings.timeout)
@@ -59,7 +58,7 @@ class SimulateDialogController(QDialog):
 
     def on_repeat_value_changed(self, value):
         SimulatorSettings.num_repeat = value
- 
+
     def on_timeout_value_changed(self, value):
         SimulatorSettings.timeout = value
 
@@ -85,12 +84,12 @@ class SimulateDialogController(QDialog):
         for part in self.sim_proto_manager.active_participants:
             if part.simulate and part.send_profile is None:
                 QMessageBox.critical(self, self.tr("Invalid simulation settings"),
-                    self.tr("Please set a send profile for participant '" + part.name) + "'.")
+                                     self.tr("Please set a send profile for participant '" + part.name) + "'.")
                 return
 
             if not part.simulate and part.recv_profile is None:
                 QMessageBox.critical(self, self.tr("Invalid simulation settings"),
-                    self.tr("Please set a receive profile for participant '" + part.name + "'."))
+                                     self.tr("Please set a receive profile for participant '" + part.name + "'."))
                 return
 
         self.close()
@@ -103,3 +102,22 @@ class SimulateDialogController(QDialog):
         self.ui.btnLog.setEnabled(len(self.simulator_scene.selectedItems()))
         self.ui.btnLogAll.setEnabled(not all_items_selected)
         self.ui.btnLogNone.setEnabled(any_item_selected)
+
+
+if __name__ == '__main__':
+    from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QPushButton
+    from urh.controller.MainController import MainController
+
+
+    app = QApplication([])
+    mc = MainController()
+    dialog = SimulateDialogController(controller=mc.simulator_tab_controller)
+    dialog.ui.tableDeviceProfiles.setRowCount(1)
+    dialog.ui.tableDeviceProfiles.setItem(0, 0, QTableWidgetItem())
+    dialog.ui.tableDeviceProfiles.itemAt(0, 0).setData(0, "HackRF 433MHz")
+    model = dialog.ui.tableDeviceProfiles.model()
+    dialog.ui.tableDeviceProfiles.setIndexWidget(model.index(0, 1), QPushButton("Configure..."))
+    dialog.ui.tableDeviceProfiles.setIndexWidget(model.index(0, 2), QPushButton("Configure..."))
+
+    dialog.showMaximized()
+    app.exec_()

@@ -14,7 +14,8 @@ from urh.util.ProjectManager import ProjectManager
 
 from PyQt5.QtCore import pyqtSignal, QObject
 
-class SimulatorProtocolManager(QObject):
+
+class SimulatorConfiguration(QObject):
     participants_changed = pyqtSignal()
     item_dict_updated = pyqtSignal()
 
@@ -70,7 +71,7 @@ class SimulatorProtocolManager(QObject):
     @staticmethod
     def __update_valid_states(node: SimulatorItem):
         for child in node.children:
-            SimulatorProtocolManager.__update_valid_states(child)
+            SimulatorConfiguration.__update_valid_states(child)
 
         node.is_valid = node.check()
 
@@ -95,7 +96,7 @@ class SimulatorProtocolManager(QObject):
 
     @property
     def active_participants(self):
-        if self.__active_participants == None:
+        if self.__active_participants is None:
             self.update_active_participants()
 
         return self.__active_participants
@@ -170,11 +171,8 @@ class SimulatorProtocolManager(QObject):
 
     def consolidate_messages(self):
         current_item = self.rootItem
-        first_msg = None
-        next_item = None
         redundant_messages = []
         updated_messages = []
-        repeat_counter = 0
 
         while current_item is not None:
             if isinstance(current_item, SimulatorMessage):
@@ -215,4 +213,4 @@ class SimulatorProtocolManager(QObject):
         items.append(node)
 
         for child in node.children:
-            SimulatorProtocolManager.__get_all_items(child, items)
+            SimulatorConfiguration.__get_all_items(child, items)

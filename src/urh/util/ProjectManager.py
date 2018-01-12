@@ -29,6 +29,11 @@ class ProjectManager(QObject):
                                 bandwidth=config.DEFAULT_BANDWIDTH,
                                 gain=config.DEFAULT_GAIN)
 
+        self.simulator_num_repeat = 1
+        self.simulator_retries = 10
+        self.simulator_timeout = 60
+        self.simulator_error_handling_index = 0
+
         self.modulation_was_edited = False
         self.device = "USRP"
         self.description = ""

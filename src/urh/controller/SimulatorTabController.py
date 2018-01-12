@@ -20,11 +20,9 @@ from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.SimulatorProtocolManager import SimulatorProtocolManager
+from urh.SimulatorConfiguration import SimulatorConfiguration
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.SimulateDialogController import SimulateDialogController
-from urh.controller.SimulationDialogController import SimulationDialogController
 from urh.controller.ModulatorDialogController import ModulatorDialogController
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
@@ -41,9 +39,9 @@ class SimulatorTabController(QWidget):
         self.generator_tab_controller = generator_tab_controller
         self.proto_analyzer = compare_frame_controller.proto_analyzer
 
-        self.sim_proto_manager = SimulatorProtocolManager(self.project_manager)
-        self.sim_expression_parser = SimulatorExpressionParser(self.sim_proto_manager)
-        SimulatorItem.protocol_manager = self.sim_proto_manager
+        self.simulator_config = SimulatorConfiguration(self.project_manager)
+        self.sim_expression_parser = SimulatorExpressionParser(self.simulator_config)
+        SimulatorItem.protocol_manager = self.simulator_config
         SimulatorItem.expression_parser = self.sim_expression_parser
 
         self.ui = Ui_SimulatorTab()
@@ -72,7 +70,7 @@ class SimulatorTabController(QWidget):
         self.ui.ruleCondLineEdit.setCompleter(QCompleter(self.completer_model, self.ui.ruleCondLineEdit))
         self.ui.ruleCondLineEdit.setToolTip(self.sim_expression_parser.rule_condition_help)
 
-        self.simulator_scene = SimulatorScene(mode=0, sim_proto_manager=self.sim_proto_manager)
+        self.simulator_scene = SimulatorScene(mode=0, simulator_config=self.simulator_config)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
         self.ui.gvSimulator.setScene(self.simulator_scene)
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
@@ -87,7 +85,7 @@ class SimulatorTabController(QWidget):
     def refresh_field_types_for_labels(self):
         self.reload_field_types()
 
-        for msg in self.sim_proto_manager.get_all_messages():
+        for msg in self.simulator_config.get_all_messages():
             for lbl in (lbl for lbl in msg.message_type if lbl.field_type is not None):
                 msg.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))
 
@@ -128,15 +126,15 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
         self.ui.gvSimulator.consolidate_messages_clicked.connect(self.consolidate_messages)
 
-        self.sim_proto_manager.items_added.connect(self.refresh_message_table)
-        self.sim_proto_manager.items_updated.connect(self.refresh_message_table)
-        self.sim_proto_manager.items_moved.connect(self.refresh_message_table)
-        self.sim_proto_manager.items_deleted.connect(self.refresh_message_table)
-        self.sim_proto_manager.participants_changed.connect(self.update_vertical_table_header)
-        self.sim_proto_manager.item_dict_updated.connect(self.on_item_dict_updated)
+        self.simulator_config.items_added.connect(self.refresh_message_table)
+        self.simulator_config.items_updated.connect(self.refresh_message_table)
+        self.simulator_config.items_moved.connect(self.refresh_message_table)
+        self.simulator_config.items_deleted.connect(self.refresh_message_table)
+        self.simulator_config.participants_changed.connect(self.update_vertical_table_header)
+        self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
 
     def consolidate_messages(self):
-        self.sim_proto_manager.consolidate_messages()
+        self.simulator_config.consolidate_messages()
 
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
@@ -158,11 +156,11 @@ class SimulatorTabController(QWidget):
             self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
 
             message.message_type.name = msg_type_name
-            self.sim_proto_manager.items_updated.emit([message])
+            self.simulator_config.items_updated.emit([message])
 
     def on_repeat_value_changed(self, value):
         self.active_item.repeat = value
-        self.sim_proto_manager.items_updated.emit([self.active_item])
+        self.simulator_config.items_updated.emit([self.active_item])
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
@@ -179,7 +177,7 @@ class SimulatorTabController(QWidget):
             self.update_vertical_table_header()
 
     def refresh_message_table(self):
-        self.simulator_message_table_model.protocol.messages[:] = self.sim_proto_manager.get_all_messages()
+        self.simulator_message_table_model.protocol.messages[:] = self.simulator_config.get_all_messages()
         self.simulator_message_table_model.update()
 
         if isinstance(self.active_item, SimulatorMessage):
@@ -192,7 +190,7 @@ class SimulatorTabController(QWidget):
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
-        lbl = self.sim_proto_manager.add_label(start=start, end=end, parent_item=con.messages[msg_index])
+        lbl = self.simulator_config.add_label(start=start, end=end, parent_item=con.messages[msg_index])
 
         try:
             index = self.simulator_message_field_model.message_type.index(lbl)
@@ -352,12 +350,12 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_show_simulate_dialog_action_triggered(self):
-        if not self.sim_proto_manager.protocol_valid():
+        if not self.simulator_config.protocol_valid():
             QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
                 self.tr("There are some problems with your protocol configuration. Please fix them first."))
             return
 
-        if not len(self.sim_proto_manager.get_all_messages()):
+        if not len(self.simulator_config.get_all_messages()):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
@@ -367,15 +365,15 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_simulation_settings_confirmed(self):
-        s = SimulationDialogController(self.sim_proto_manager, self.generator_tab_controller.modulators,
-            self.sim_expression_parser, self.project_manager, parent=self)
+        s = SimulationDialogController(self.simulator_config, self.generator_tab_controller.modulators,
+                                       self.sim_expression_parser, self.project_manager, parent=self)
         s.show()
 
     @pyqtSlot()
     def on_nav_line_edit_return_pressed(self):
         nav_text = self.ui.navLineEdit.text()
 
-        curr_item = self.sim_proto_manager.rootItem
+        curr_item = self.simulator_config.rootItem
 
         index_list = nav_text.split(".")
         index_list = list(map(int, index_list))
@@ -410,7 +408,7 @@ class SimulatorTabController(QWidget):
         self.item_updated(self.active_item)
 
     def item_updated(self, item: SimulatorItem):
-        self.sim_proto_manager.items_updated.emit([item])
+        self.simulator_config.items_updated.emit([item])
 
     @pyqtSlot()
     def refresh_tree(self):

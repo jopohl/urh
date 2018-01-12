@@ -89,8 +89,8 @@ class TestSimulator(QtTestCase):
         profile["error_tolerance"] = 5
         profile['sample_rate'] = 10 ** 6
         SimulatorSettings.profiles.append(profile)
-        self.stc.sim_proto_manager.participants[0].recv_profile = profile
-        self.stc.sim_proto_manager.participants[1].send_profile = profile
+        self.stc.simulator_config.participants[0].recv_profile = profile
+        self.stc.simulator_config.participants[1].send_profile = profile
 
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
@@ -100,10 +100,10 @@ class TestSimulator(QtTestCase):
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1, 1, 0, 0] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
                                  100000, MessageType("empty_message_type"), source=part_b)
 
-        self.stc.sim_proto_manager.add_items([msg_a, msg_b], 0, None)
-        self.stc.sim_proto_manager.update_active_participants()
+        self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
+        self.stc.simulator_config.update_active_participants()
 
-        simulator = Simulator(self.stc.sim_proto_manager, self.gtc.modulators, self.stc.sim_expression_parser,
+        simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
                               self.form.project_manager)
 
         port = self.__get_free_port()

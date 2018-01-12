@@ -63,7 +63,7 @@ class SimulatorMessageTableModel(TableModel):
             except IndexError:
                 continue
 
-        self.parent().sim_proto_manager.delete_items(removable_messages)
+        self.parent().simulator_config.delete_items(removable_messages)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         if not index.isValid():

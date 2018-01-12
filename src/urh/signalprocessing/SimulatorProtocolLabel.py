@@ -85,6 +85,14 @@ class SimulatorProtocolLabel(SimulatorItem):
     def apply_decoding(self):
         return self.label.apply_decoding
 
+    @property
+    def show(self):
+        return self.label.show
+
+    @show.setter
+    def show(self, value):
+        self.label.show = value
+
     def check(self):
         result = True
 

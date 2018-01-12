@@ -4,7 +4,7 @@ import operator as op
 
 from PyQt5.QtCore import pyqtSignal, QObject
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.SimulatorProtocolManager import SimulatorProtocolManager
+from urh.SimulatorConfiguration import SimulatorConfiguration
 
 class SimulatorExpressionParser(QObject):
     formula_help = "<html><head/><body><p><b>Formula</b></p><p><i>Operators:</i> <code>+</code> (Addition), <code>-</code> (Subtraction), <code>*</code> (Multiplication), <code>/</code> (Division)</p><p><i>Bitwise operations:</i> <code>|</code> (Or), <code>^</code> (Exclusive Or), <code>&amp;</code> (And), <code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift), <code>~</code> (Inversion)</p><p><i>Numeric literals:</i> <code>14</code> (dec), <code>0xe</code> (hex), <code>0b1110</code> (bin), <code>0o16</code> (oct)</p><i>Examples:</i><ul><li><code>item1.sequence_number + 1</code></li><li><code>~ (item1.preamble ^ 0b1110)</code></li></ul></body></html>"
@@ -40,10 +40,10 @@ class SimulatorExpressionParser(QObject):
     operators.update(op_formula)
     operators.update(op_cond)
 
-    def __init__(self, sim_proto_manager: SimulatorProtocolManager):
+    def __init__(self, config: SimulatorConfiguration):
         super().__init__()
 
-        self.sim_proto_manager = sim_proto_manager
+        self.simulator_config = config
 
     def validate_expression(self, expr, is_formula=True):
         valid = True
@@ -85,7 +85,7 @@ class SimulatorExpressionParser(QObject):
 
     def evaluate_attribute_node(self, node, to_string=False):
         label_identifier = node.value.id + "." + node.attr
-        label = self.sim_proto_manager.item_dict[label_identifier]
+        label = self.simulator_config.item_dict[label_identifier]
         message = label.parent()
 
         start, end = message.get_label_range(label, 2 if to_string else 0, False)
@@ -155,13 +155,13 @@ class SimulatorExpressionParser(QObject):
                 node.lineno, node.col_offset)
 
     def is_valid_label_identifier(self, identifier):
-        return (identifier in self.sim_proto_manager.item_dict and
-            isinstance(self.sim_proto_manager.item_dict[identifier], SimulatorProtocolLabel))
+        return (identifier in self.simulator_config.item_dict and
+                isinstance(self.simulator_config.item_dict[identifier], SimulatorProtocolLabel))
 
     def label_identifier(self):
         identifier = []
 
-        for key in self.sim_proto_manager.item_dict:
+        for key in self.simulator_config.item_dict:
             if self.is_valid_label_identifier(key):
                 identifier.append(key)
 

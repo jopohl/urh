@@ -19,7 +19,7 @@ from urh.signalprocessing.RuleItem import RuleItem, RuleConditionItem
 from urh.signalprocessing.MessageItem import MessageItem
 from urh.signalprocessing.ParticipantItem import ParticipantItem
 from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.SimulatorProtocolManager import SimulatorProtocolManager
+from urh.SimulatorConfiguration import SimulatorConfiguration
 
 class SimulatorScene(QGraphicsScene):
     model_to_scene_class_mapping = {
@@ -31,32 +31,32 @@ class SimulatorScene(QGraphicsScene):
         SimulatorProtocolLabel: LabelItem
     }
 
-    def __init__(self, mode: int, sim_proto_manager: SimulatorProtocolManager, parent=None):
+    def __init__(self, mode: int, simulator_config: SimulatorConfiguration, parent=None):
         super().__init__(parent)
         self.mode = mode
-        self.sim_proto_manager = sim_proto_manager
+        self.simulator_config = simulator_config
         self.tree_root_item = None
 
         self.participants_dict = {}
         self.participants = []
 
-        self.broadcast_part = self.insert_participant(self.sim_proto_manager.broadcast_part)
+        self.broadcast_part = self.insert_participant(self.simulator_config.broadcast_part)
         self.not_assigned_part = self.insert_participant(None)
         self.update_participants(refresh=False)
 
         self.items_dict = {}
 
-        self.on_items_added([item for item in self.sim_proto_manager.rootItem.children])
+        self.on_items_added([item for item in self.simulator_config.rootItem.children])
 
         self.create_connects()
 
     def create_connects(self):
-        self.sim_proto_manager.participants_changed.connect(self.update_participants)
+        self.simulator_config.participants_changed.connect(self.update_participants)
 
-        self.sim_proto_manager.items_deleted.connect(self.on_items_deleted)
-        self.sim_proto_manager.items_updated.connect(self.on_items_updated)
-        self.sim_proto_manager.items_moved.connect(self.on_items_moved)
-        self.sim_proto_manager.items_added.connect(self.on_items_added)
+        self.simulator_config.items_deleted.connect(self.on_items_deleted)
+        self.simulator_config.items_updated.connect(self.on_items_updated)
+        self.simulator_config.items_moved.connect(self.on_items_moved)
+        self.simulator_config.items_added.connect(self.on_items_added)
 
     def on_items_deleted(self, items):
         for item in items:
@@ -99,7 +99,7 @@ class SimulatorScene(QGraphicsScene):
 
     def model_to_scene(self, model_item: SimulatorItem):
         if (model_item is None or
-                model_item is self.sim_proto_manager.rootItem):
+                model_item is self.simulator_config.rootItem):
             return None
 
         return self.items_dict[model_item]
@@ -153,7 +153,7 @@ class SimulatorScene(QGraphicsScene):
         items = self.selectedItems()
         self.clearSelection()
 
-        self.sim_proto_manager.delete_items([item.model_item for item in items])
+        self.simulator_config.delete_items([item.model_item for item in items])
 
     def log_selected_items(self, logging_active: bool):
         items = self.selectedItems()
@@ -164,7 +164,7 @@ class SimulatorScene(QGraphicsScene):
         for item in items:
             item.model_item.logging_active = logging_active
 
-        self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
+        self.simulator_config.items_updated.emit([item.model_item for item in items])
 
     def log_toggle_selected_items(self):
         items = self.selectedItems()
@@ -172,7 +172,7 @@ class SimulatorScene(QGraphicsScene):
         for item in items:
             item.model_item.logging_active = not item.model_item.logging_active
 
-        self.sim_proto_manager.items_updated.emit([item.model_item for item in items])
+        self.simulator_config.items_updated.emit([item.model_item for item in items])
 
     def log_all_items(self, logging_active: bool):
         self.log_items(self.selectable_items(), logging_active)
@@ -183,20 +183,20 @@ class SimulatorScene(QGraphicsScene):
 
     def move_items(self, items, ref_item, position):
         new_pos, new_parent = self.insert_at(ref_item, position)
-        self.sim_proto_manager.move_items(items, new_pos, new_parent)
+        self.simulator_config.move_items(items, new_pos, new_parent)
 
     def select_all_items(self):
-        for item in self.sim_proto_manager.rootItem.children:
+        for item in self.simulator_config.rootItem.children:
             scene_item = self.model_to_scene(item)
             scene_item.select_all()
 
     def update_numbering(self):
-        for item in self.sim_proto_manager.rootItem.children:
+        for item in self.simulator_config.rootItem.children:
             scene_item = self.model_to_scene(item)
             scene_item.update_numbering()
 
     def update_valid_states(self):
-        self.sim_proto_manager.update_valid_states()
+        self.simulator_config.update_valid_states()
 
     def update_view(self):
         self.update_numbering()
@@ -208,7 +208,7 @@ class SimulatorScene(QGraphicsScene):
         self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0 , 0, 0))
 
     def update_participants(self, refresh=True):
-        participants = self.sim_proto_manager.participants
+        participants = self.simulator_config.participants
 
         for key in list(self.participants_dict.keys()):
             if key is None:
@@ -229,7 +229,7 @@ class SimulatorScene(QGraphicsScene):
             self.update_view()
 
     def update_items_dict(self):
-        sim_items = self.sim_proto_manager.get_all_items()
+        sim_items = self.simulator_config.get_all_items()
 
         for key in list(self.items_dict.keys()):
             if key not in sim_items:
@@ -297,7 +297,7 @@ class SimulatorScene(QGraphicsScene):
         x_pos = 0
         y_pos = 30
 
-        for item in self.sim_proto_manager.rootItem.children:
+        for item in self.simulator_config.rootItem.children:
             scene_item = self.model_to_scene(item)
             scene_item.update_position(x_pos, y_pos)
             y_pos += round(scene_item.boundingRect().height())
@@ -316,12 +316,12 @@ class SimulatorScene(QGraphicsScene):
             ref_item = ref_item.model_item
 
         if ref_item is None:
-            parent_item = self.sim_proto_manager.rootItem
-            insert_position = self.sim_proto_manager.n_top_level_items()
+            parent_item = self.simulator_config.rootItem
+            insert_position = self.simulator_config.n_top_level_items()
         elif insert_rule:
-            parent_item = self.sim_proto_manager.rootItem
+            parent_item = self.simulator_config.rootItem
 
-            while ref_item.parent() != self.sim_proto_manager.rootItem:
+            while ref_item.parent() != self.simulator_config.rootItem:
                 ref_item = ref_item.parent()
 
             insert_position = ref_item.get_pos()
@@ -330,7 +330,7 @@ class SimulatorScene(QGraphicsScene):
                 parent_item = ref_item
                 insert_position = parent_item.child_count()
             else:
-                parent_item = self.sim_proto_manager.rootItem
+                parent_item = self.simulator_config.rootItem
                 insert_position = ref_item.parent().get_pos()
         else:
             parent_item = ref_item.parent()
@@ -387,7 +387,7 @@ class SimulatorScene(QGraphicsScene):
     def add_rule(self, ref_item, position):
         rule = SimulatorRule()
         pos, parent = self.insert_at(ref_item, position, True)
-        self.sim_proto_manager.add_items([rule], pos, parent)
+        self.simulator_config.add_items([rule], pos, parent)
 
         self.add_rule_condition(rule, ConditionType.IF)
         return rule
@@ -400,30 +400,30 @@ class SimulatorScene(QGraphicsScene):
         if type is ConditionType.ELSE_IF and rule.has_else_condition():
             pos -= 1
 
-        self.sim_proto_manager.add_items([rule_condition], pos, rule)
+        self.simulator_config.add_items([rule_condition], pos, rule)
         return rule_condition
 
     def add_goto_action(self, ref_item, position):
         goto_action = SimulatorGotoAction()
         pos, parent = self.insert_at(ref_item, position, False)
-        self.sim_proto_manager.add_items([goto_action], pos, parent)
+        self.simulator_config.add_items([goto_action], pos, parent)
         return goto_action
 
     def add_program_action(self, ref_item, position):
         program_action = SimulatorProgramAction()
         pos, parent = self.insert_at(ref_item, position, False)
-        self.sim_proto_manager.add_items([program_action], pos, parent)
+        self.simulator_config.add_items([program_action], pos, parent)
         return program_action
 
     def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None, destination=None):
         message = self.create_message(destination, plain_bits, pause, message_type, decoder, source)
         pos, parent = self.insert_at(ref_item, position, False)
-        self.sim_proto_manager.add_items([message], pos, parent)
+        self.simulator_config.add_items([message], pos, parent)
         return message
 
     def create_message(self, destination, plain_bits, pause, message_type, decoder, source):
         if destination is None:
-            destination = self.sim_proto_manager.broadcast_part
+            destination = self.simulator_config.broadcast_part
 
         sim_message = SimulatorMessage(destination=destination, plain_bits=plain_bits, pause=pause,
                         message_type=MessageType(message_type.name), decoder=decoder, source=source)
@@ -435,7 +435,7 @@ class SimulatorScene(QGraphicsScene):
         return sim_message
 
     def clear_all(self):
-        self.sim_proto_manager.delete_items([item for item in self.sim_proto_manager.rootItem.children])
+        self.simulator_config.delete_items([item for item in self.simulator_config.rootItem.children])
 
     def add_protocols(self, ref_item, position, protocols_to_add: list):
         pos, parent = self.insert_at(ref_item, position)
@@ -448,11 +448,11 @@ class SimulatorScene(QGraphicsScene):
                 messages.append(self.create_message(destination, copy.copy(msg.decoded_bits),
                                 msg.pause, msg.message_type, msg.decoder, source))
 
-        self.sim_proto_manager.add_items(messages, pos, parent)
+        self.simulator_config.add_items(messages, pos, parent)
 
     def get_drag_nodes(self):
         drag_nodes = []
-        self.__get_drag_nodes(self.sim_proto_manager.rootItem, drag_nodes)
+        self.__get_drag_nodes(self.simulator_config.rootItem, drag_nodes)
         return drag_nodes
 
     def __get_drag_nodes(self, node: SimulatorItem, drag_nodes: list):
@@ -466,10 +466,10 @@ class SimulatorScene(QGraphicsScene):
 
     def detect_source_destination(self, message: Message):
         # TODO: use SRC_ADDRESS and DST_ADDRESS labels
-        participants = self.sim_proto_manager.participants
+        participants = self.simulator_config.participants
 
         source = None
-        destination = self.sim_proto_manager.broadcast_part
+        destination = self.simulator_config.broadcast_part
 
         if len(participants) == 2:
             source = participants[0]

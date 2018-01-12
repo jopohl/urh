@@ -9,6 +9,7 @@ from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
+from urh.controller.SimulatorDialogController import SimulatorDialogController
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -359,15 +360,10 @@ class SimulatorTabController(QWidget):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
-        s = SimulateDialogController(controller=self, parent=self)
-        s.simulator_settings_confirmed.connect(self.on_simulation_settings_confirmed)
-        s.show()
+        s = SimulatorDialogController(self.simulator_config, self.generator_tab_controller.modulators,
+                                      self.sim_expression_parser, self.project_manager, parent=self)
 
-    @pyqtSlot()
-    def on_simulation_settings_confirmed(self):
-        s = SimulationDialogController(self.simulator_config, self.generator_tab_controller.modulators,
-                                       self.sim_expression_parser, self.project_manager, parent=self)
-        s.show()
+        s.exec_()
 
     @pyqtSlot()
     def on_nav_line_edit_return_pressed(self):

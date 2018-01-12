@@ -10,7 +10,7 @@ from urh.util.ProjectManager import ProjectManager
 from urh.util.Simulator import Simulator
 
 
-class SimulationDialogController(QDialog):
+class SimulatorDialogController(QDialog):
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, parent=None):
         super().__init__(parent)
@@ -36,7 +36,6 @@ class SimulationDialogController(QDialog):
         self.timer = QTimer(self)
 
         self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager)
-        self.create_connects()
 
         self.update_buttons()
         self.create_connects()
@@ -47,7 +46,7 @@ class SimulationDialogController(QDialog):
 
         self.ui.btnLogAll.clicked.connect(self.on_btn_log_all_clicked)
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
-        self.ui.btnLog.clicked.connect(self.on_btn_log_clicked)
+        self.ui.btnToggleLog.clicked.connect(self.on_btn_toggle_clicked)
 
         self.ui.spinBoxNRepeat.valueChanged.connect(self.on_spinbox_num_repeat_value_changed)
         self.ui.spinBoxTimeout.valueChanged.connect(self.on_spinbox_timeout_value_changed)
@@ -78,14 +77,14 @@ class SimulationDialogController(QDialog):
     def on_btn_log_none_clicked(self):
         self.simulator_scene.log_all_items(False)
 
-    def on_btn_log_clicked(self):
+    def on_btn_toggle_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
         all_items_selected = all(item.model_item.logging_active for item in selectable_items)
         any_item_selected = any(item.model_item.logging_active for item in selectable_items)
-        self.ui.btnLog.setEnabled(len(self.simulator_scene.selectedItems()))
+        self.ui.btnToggleLog.setEnabled(len(self.simulator_scene.selectedItems()))
         self.ui.btnLogAll.setEnabled(not all_items_selected)
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
@@ -181,7 +180,7 @@ if __name__ == '__main__':
     simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
     simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
 
-    dialog = SimulationDialogController(mc.simulator_tab_controller.simulator_config,
+    dialog = SimulatorDialogController(mc.simulator_tab_controller.simulator_config,
                                         mc.generator_tab_controller.modulators,
                                         mc.simulator_tab_controller.sim_expression_parser,
                                         mc.project_manager)

@@ -151,7 +151,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnLog">
+          <widget class="QPushButton" name="btnToggleLog">
            <property name="text">
             <string>Toggle selected</string>
            </property>

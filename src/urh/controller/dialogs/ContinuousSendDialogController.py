@@ -92,8 +92,8 @@ class ContinuousSendDialogController(SendDialogController):
         super().on_selected_device_changed()
 
     def init_device(self):
-        device_name = self.ui.cbDevice.currentText()
-        num_repeats = self.ui.spinBoxNRepeat.value()
+        device_name = self.selected_device_name
+        num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
 
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.send,
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)

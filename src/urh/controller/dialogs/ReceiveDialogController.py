@@ -29,7 +29,7 @@ class ReceiveDialogController(SendRecvDialogController):
         self.scene_manager = None  # type: LiveSceneManager
 
         self.init_device()
-        self.set_bandwidth_status()
+        self.device_settings_widget.set_bandwidth_status()
 
         self.setWindowTitle("Record Signal")
         self.setWindowIcon(QIcon.fromTheme("media-record"))
@@ -69,8 +69,7 @@ class ReceiveDialogController(SendRecvDialogController):
             self.graphics_view.update()
 
     def init_device(self):
-        device_name = self.ui.cbDevice.currentText()
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.receive,
+        self.device = VirtualDevice(self.backend_handler, self.selected_device_name, Mode.receive,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
         self.scene_manager = LiveSceneManager(np.array([]), parent=self)

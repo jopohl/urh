@@ -35,12 +35,12 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
 
         self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
-                                       modulation_type_index, self.ui.cbDevice.currentText(), self.backend_handler)
+                                       modulation_type_index, self.selected_device_name, self.backend_handler)
 
         # set really in on_device_started
         self.scene_manager = None  # type: LiveSceneManager
         self.init_device()
-        self.set_bandwidth_status()
+        self.device_settings_widget.set_bandwidth_status()
 
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
@@ -107,18 +107,10 @@ class ProtocolSniffDialogController(SendRecvDialogController):
             getattr(self.ui, item).setVisible(visible)
 
     def init_device(self):
-        dev_name = self.ui.cbDevice.currentText()
-        self.sniffer.device_name = dev_name
+        self.sniffer.device_name = self.selected_device_name
 
         self._create_device_connects()
         self.scene_manager = SniffSceneManager(np.array([]), parent=self)
-
-    def emit_editing_finished_signals(self):
-        super().emit_editing_finished_signals()
-        self.ui.spinbox_sniff_Noise.editingFinished.emit()
-        self.ui.spinbox_sniff_Center.editingFinished.emit()
-        self.ui.spinbox_sniff_BitLen.editingFinished.emit()
-        self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
 
     def update_view(self):
         if super().update_view():

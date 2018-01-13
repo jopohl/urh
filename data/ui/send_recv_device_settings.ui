@@ -14,6 +14,18 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QGroupBox" name="groupBoxDeviceSettings">
      <property name="font">
@@ -494,8 +506,47 @@ QGroupBox::indicator:checked {
    <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>groupBoxDeviceSettings</tabstop>
+  <tabstop>cbDevice</tabstop>
+  <tabstop>lineEditDeviceArgs</tabstop>
+  <tabstop>comboBoxChannel</tabstop>
+  <tabstop>comboBoxAntenna</tabstop>
+  <tabstop>lineEditIP</tabstop>
+  <tabstop>spinBoxPort</tabstop>
+  <tabstop>spinBoxFreq</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>spinBoxBandwidth</tabstop>
+  <tabstop>btnLockBWSR</tabstop>
+  <tabstop>sliderGain</tabstop>
+  <tabstop>spinBoxGain</tabstop>
+  <tabstop>sliderIFGain</tabstop>
+  <tabstop>spinBoxIFGain</tabstop>
+  <tabstop>sliderBasebandGain</tabstop>
+  <tabstop>spinBoxBasebandGain</tabstop>
+  <tabstop>spinBoxFreqCorrection</tabstop>
+  <tabstop>comboBoxDirectSampling</tabstop>
+  <tabstop>spinBoxNRepeat</tabstop>
+ </tabstops>
  <resources>
   <include location="urh.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>groupBoxDeviceSettings</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

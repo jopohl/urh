@@ -81,8 +81,8 @@ class SendDialogController(SendRecvDialogController):
                 self.ui.lblCurrentRepeatValue.setText("Done")
 
     def init_device(self):
-        device_name = self.ui.cbDevice.currentText()
-        num_repeats = self.ui.spinBoxNRepeat.value()
+        device_name = self.selected_device_name
+        num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
         sts = self.scene_manager.signal._fulldata
 
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, samples_to_send=sts,

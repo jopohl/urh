@@ -278,6 +278,21 @@ class DeviceSettingsWidgetController(QWidget):
                 self.ui.spinBoxBandwidth.setToolTip("")
                 self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
 
+    def emit_editing_finished_signals(self):
+        self.ui.spinBoxFreq.editingFinished.emit()
+        self.ui.spinBoxBandwidth.editingFinished.emit()
+        self.ui.spinBoxGain.editingFinished.emit()
+        self.ui.spinBoxIFGain.editingFinished.emit()
+        self.ui.spinBoxBasebandGain.editingFinished.emit()
+        self.ui.spinBoxNRepeat.editingFinished.emit()
+        self.ui.spinBoxSampleRate.editingFinished.emit()
+        self.ui.spinBoxFreqCorrection.editingFinished.emit()
+        self.ui.lineEditIP.editingFinished.emit()
+        self.ui.spinBoxPort.editingFinished.emit()
+        self.ui.lineEditDeviceArgs.editingFinished.emit()
+        self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
+        self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
+
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()

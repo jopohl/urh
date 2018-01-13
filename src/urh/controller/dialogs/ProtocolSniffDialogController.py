@@ -112,6 +112,13 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self._create_device_connects()
         self.scene_manager = SniffSceneManager(np.array([]), parent=self)
 
+    def emit_editing_finished_signals(self):
+        super().emit_editing_finished_signals()
+        self.ui.spinbox_sniff_Noise.editingFinished.emit()
+        self.ui.spinbox_sniff_Center.editingFinished.emit()
+        self.ui.spinbox_sniff_BitLen.editingFinished.emit()
+        self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
+
     def update_view(self):
         if super().update_view():
             self.scene_manager.end = self.device.current_index

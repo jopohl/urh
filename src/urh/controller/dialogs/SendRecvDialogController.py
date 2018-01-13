@@ -133,6 +133,9 @@ class SendRecvDialogController(QDialog):
     def save_before_close(self):
         return True
 
+    def emit_editing_finished_signals(self):
+        self.device_settings_widget.emit_editing_finished_signals()
+
     @pyqtSlot()
     def on_selected_device_changed(self):
         self.scene_manager.plot_data = None
@@ -144,7 +147,7 @@ class SendRecvDialogController(QDialog):
 
     @pyqtSlot()
     def on_start_clicked(self):
-        pass
+        self.emit_editing_finished_signals()
 
     @pyqtSlot()
     def on_stop_clicked(self):
@@ -239,6 +242,9 @@ class SendRecvDialogController(QDialog):
         pass
 
     def closeEvent(self, event: QCloseEvent):
+        if self.device.backend is not Backends.none:
+            self.emit_editing_finished_signals()
+
         self.timer.stop()
 
         self.device.stop("Dialog closed. Killing recording process.")

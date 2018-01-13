@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.controller.dialogs.ProtocolLabelController import ProtocolLabelController
 
 class TestProtocolLabelDialog(QtTestCase):
 

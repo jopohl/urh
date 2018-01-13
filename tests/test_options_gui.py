@@ -1,5 +1,5 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.OptionsController import OptionsController
+from urh.controller.dialogs.OptionsController import OptionsController
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 

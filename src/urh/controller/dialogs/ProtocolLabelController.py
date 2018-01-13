@@ -1,9 +1,9 @@
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHeaderView, QWidget, QAbstractItemView
+from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
 from urh import constants
-from urh.controller.ChecksumWidgetController import ChecksumWidgetController
+from urh.controller.widgets.ChecksumWidgetController import ChecksumWidgetController
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType

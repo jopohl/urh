@@ -7,8 +7,8 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.CSVImportDialogController import CSVImportDialogController
-from urh.controller.OptionsController import OptionsController
+from urh.controller.dialogs.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.OptionsController import OptionsController
 
 
 class TestMaincontrollerGUI(QtTestCase):

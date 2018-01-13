@@ -1,9 +1,9 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
+from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
 
-from urh.controller.SignalFrameController import SignalFrameController
+from urh.controller.widgets.SignalFrameController import SignalFrameController
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
 

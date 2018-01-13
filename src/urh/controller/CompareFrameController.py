@@ -8,8 +8,8 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
-from urh.controller.MessageTypeDialogController import MessageTypeDialogController
-from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.controller.dialogs.MessageTypeDialogController import MessageTypeDialogController
+from urh.controller.dialogs.ProtocolLabelController import ProtocolLabelController
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel

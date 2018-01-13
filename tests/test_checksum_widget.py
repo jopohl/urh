@@ -1,8 +1,8 @@
 import array
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.ChecksumWidgetController import ChecksumWidgetController
-from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.controller.widgets.ChecksumWidgetController import ChecksumWidgetController
+from urh.controller.dialogs.ProtocolLabelController import ProtocolLabelController
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message

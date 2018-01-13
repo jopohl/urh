@@ -5,21 +5,21 @@ import traceback
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication, QCheckBox
+    QMessageBox, QApplication
 
 from urh import constants, version
-from urh.controller.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.CSVImportDialogController import CSVImportDialogController
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.DecoderWidgetController import DecoderWidgetController
+from urh.controller.dialogs.DecoderDialogController import DecoderDialogController
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.OptionsController import OptionsController
-from urh.controller.ProjectDialogController import ProjectDialogController
-from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.ReceiveDialogController import ReceiveDialogController
-from urh.controller.SignalFrameController import SignalFrameController
+from urh.controller.dialogs.OptionsController import OptionsController
+from urh.controller.dialogs.ProjectDialogController import ProjectDialogController
+from urh.controller.dialogs.ProtocolSniffDialogController import ProtocolSniffDialogController
+from urh.controller.dialogs.ReceiveDialogController import ReceiveDialogController
+from urh.controller.widgets.SignalFrameController import SignalFrameController
 from urh.controller.SignalTabController import SignalTabController
 from urh.controller.SimulatorTabController import SimulatorTabController
-from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
@@ -574,7 +574,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_decoding_dialog_triggered(self):
         signals = [sf.signal for sf in self.signal_tab_controller.signal_frames]
-        decoding_controller = DecoderWidgetController(
+        decoding_controller = DecoderDialogController(
             self.compare_frame_controller.decodings, signals,
             self.project_manager, parent=self)
         decoding_controller.finished.connect(self.update_decodings)

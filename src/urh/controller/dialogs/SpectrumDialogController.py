@@ -2,7 +2,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QGraphicsScene
 
-from urh.controller.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.painting.FFTSceneManager import FFTSceneManager

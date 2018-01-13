@@ -11,11 +11,11 @@ from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
-from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.ReceiveDialogController import ReceiveDialogController
-from urh.controller.SendDialogController import SendDialogController
-from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.controller.dialogs.ContinuousSendDialogController import ContinuousSendDialogController
+from urh.controller.dialogs.ProtocolSniffDialogController import ProtocolSniffDialogController
+from urh.controller.dialogs.ReceiveDialogController import ReceiveDialogController
+from urh.controller.dialogs.SendDialogController import SendDialogController
+from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator

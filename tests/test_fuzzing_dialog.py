@@ -1,10 +1,9 @@
-import array
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.controller.FuzzingDialogController import FuzzingDialogController
+from urh.controller.dialogs.FuzzingDialogController import FuzzingDialogController
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Modulator import Modulator
 

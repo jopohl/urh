@@ -1,5 +1,5 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
+from urh.controller.dialogs.FilterBandwidthDialogController import FilterBandwidthDialogController
 from urh.signalprocessing.Filter import Filter
 
 

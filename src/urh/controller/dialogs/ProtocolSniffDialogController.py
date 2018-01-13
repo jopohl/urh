@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QCompleter, QDirModel
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 
 from urh import constants
-from urh.controller.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.painting.LiveSceneManager import LiveSceneManager

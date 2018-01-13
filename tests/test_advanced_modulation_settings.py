@@ -2,7 +2,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.AdvancedModulationOptionsController import AdvancedModulationOptionsController
+from urh.controller.dialogs.AdvancedModulationOptionsController import AdvancedModulationOptionsController
 
 
 class TestAdvancedModulationSettings(QtTestCase):

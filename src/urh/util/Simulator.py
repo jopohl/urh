@@ -20,6 +20,20 @@ from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondi
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
+class SimulatorDeviceSettings(object):
+    def __init__(self, is_rx: bool):
+        self.is_rx = is_rx
+        self.bit_length = 100
+        self.center = 0
+        self.noise = 0
+        self.error_tolerance = 5
+        self.modulation_type = 0
+        self.device = ""
+
+        self.center_freq = 433.92e6
+        self.sample_rate = 1e6
+        self.bandwidth = 1e6
+        self.freq_correction = 0
 
 class Simulator(QObject):
     simulation_started = pyqtSignal()

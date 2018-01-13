@@ -9,7 +9,7 @@ from PyQt5.QtGui import QRegExpValidator, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 
 from urh import constants
-from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.signalprocessing.Participant import Participant
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_project import Ui_ProjectDialog

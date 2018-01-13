@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplic
     QRadioButton, QFileDialog
 
 from urh import constants, colormaps
-from urh.controller.PluginController import PluginController
+from urh.controller.widgets.PluginController import PluginController
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel

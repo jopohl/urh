@@ -3,7 +3,7 @@ import random
 import tempfile
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.CSVImportDialogController import CSVImportDialogController
 
 
 class TestCSVImportDialog(QtTestCase):

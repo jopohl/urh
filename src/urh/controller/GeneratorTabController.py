@@ -9,10 +9,10 @@ from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.ContinuousSendDialogController import ContinuousSendDialogController
-from urh.controller.FuzzingDialogController import FuzzingDialogController
-from urh.controller.ModulatorDialogController import ModulatorDialogController
-from urh.controller.SendDialogController import SendDialogController
+from urh.controller.dialogs.ContinuousSendDialogController import ContinuousSendDialogController
+from urh.controller.dialogs.FuzzingDialogController import FuzzingDialogController
+from urh.controller.dialogs.ModulatorDialogController import ModulatorDialogController
+from urh.controller.dialogs.SendDialogController import SendDialogController
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel

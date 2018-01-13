@@ -1,13 +1,12 @@
 import socket
 
 import numpy as np
-import time
 from PyQt5.QtWidgets import QApplication
 from multiprocessing import Process
 
 from urh import constants
 from urh.controller.MainController import MainController
-from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.util.ProjectManager import ProjectManager
 
 

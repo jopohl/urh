@@ -1,11 +1,9 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.controller.ChecksumWidgetController import ChecksumWidgetController
+from urh.controller.widgets.ChecksumWidgetController import ChecksumWidgetController
 from urh.signalprocessing.Encoding import Encoding
-from urh.util import util
 
 
 class TestCRCGUIIntegration(QtTestCase):

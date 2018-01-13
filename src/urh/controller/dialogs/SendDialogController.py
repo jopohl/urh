@@ -3,7 +3,7 @@ from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.controller.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager

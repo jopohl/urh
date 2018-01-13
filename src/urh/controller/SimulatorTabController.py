@@ -9,7 +9,7 @@ from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.controller.SimulatorDialogController import SimulatorDialogController
+from urh.controller.dialogs.SimulatorDialogController import SimulatorDialogController
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -24,7 +24,7 @@ from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.SimulatorConfiguration import SimulatorConfiguration
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.ModulatorDialogController import ModulatorDialogController
+from urh.controller.dialogs.ModulatorDialogController import ModulatorDialogController
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator

@@ -1,6 +1,6 @@
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.SignalDetailsController import SignalDetailsController
+from urh.controller.dialogs.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.Signal import Signal
 from urh.util.Formatter import Formatter
 

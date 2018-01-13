@@ -9,10 +9,10 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEven
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
 
 from urh import constants
-from urh.controller.AdvancedModulationOptionsController import AdvancedModulationOptionsController
-from urh.controller.FilterDialogController import FilterDialogController
-from urh.controller.SendDialogController import SendDialogController
-from urh.controller.SignalDetailsController import SignalDetailsController
+from urh.controller.dialogs.AdvancedModulationOptionsController import AdvancedModulationOptionsController
+from urh.controller.dialogs.FilterDialogController import FilterDialogController
+from urh.controller.dialogs.SendDialogController import SendDialogController
+from urh.controller.dialogs.SignalDetailsController import SignalDetailsController
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal

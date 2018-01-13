@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.MessageTypeDialogController import MessageTypeDialogController
+from urh.controller.dialogs.MessageTypeDialogController import MessageTypeDialogController
 from urh.signalprocessing.MessageType import MessageType
 
 

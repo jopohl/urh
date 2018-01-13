@@ -35,7 +35,7 @@ class SendDialogController(SendRecvDialogController):
         if modulated_data is not None:
             # modulated_data is none in continuous send mode
             self.ui.progressBarSample.setMaximum(len(modulated_data))
-            samp_rate = self.ui.spinBoxSampleRate.value()
+            samp_rate = self.device_settings_widget.ui.spinBoxSampleRate.value()
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,

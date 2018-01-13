@@ -68,7 +68,7 @@ class DeviceSettingsWidgetController(QWidget):
         dev_name = self.ui.cbDevice.currentText()
         self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
 
-        self.__device = VirtualDevice(self.backend_handler, dev_name, Mode.send if is_tx else Mode.receive)
+        self.__device = None  # type: VirtualDevice
 
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
@@ -298,7 +298,6 @@ class DeviceSettingsWidgetController(QWidget):
 
     @pyqtSlot()
     def on_spinbox_frequency_editing_finished(self):
-        print("freq")
         self.device.frequency = self.ui.spinBoxFreq.value()
 
     @pyqtSlot()

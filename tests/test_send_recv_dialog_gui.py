@@ -421,7 +421,8 @@ class TestSendRecvDialog(QtTestCase):
             dialog.device_settings_widget.ui.spinBoxFreqCorrection.setValue(40)
             dialog.device_settings_widget.ui.spinBoxFreqCorrection.editingFinished.emit()
             self.assertEqual(dialog.device.freq_correction, 40)
-
+            
+            dialog.device_settings_widget.ui.comboBoxDirectSampling.clear()
             self.assertEqual(dialog.device_settings_widget.ui.comboBoxDirectSampling.count(), 0)
             dialog.device_settings_widget.ui.comboBoxDirectSampling.addItem("test")
             dialog.device_settings_widget.ui.comboBoxDirectSampling.addItem("test1")

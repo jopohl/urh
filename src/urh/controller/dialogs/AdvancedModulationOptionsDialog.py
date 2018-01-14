@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QDialog
 from urh.ui.ui_advanced_modulation_settings import Ui_DialogAdvancedModSettings
 
 
-class AdvancedModulationOptionsController(QDialog):
+class AdvancedModulationOptionsDialog(QDialog):
     pause_threshold_edited = pyqtSignal(int)
     message_length_divisor_edited = pyqtSignal(int)
 

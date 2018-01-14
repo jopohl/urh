@@ -2,13 +2,13 @@ from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QGraphicsScene
 
-from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.painting.FFTSceneManager import FFTSceneManager
 
 
-class SpectrumDialogController(SendRecvDialogController):
+class SpectrumDialogController(SendRecvDialog):
     def __init__(self, project_manager, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 

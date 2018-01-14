@@ -3,14 +3,14 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 
-from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
 
 
-class ReceiveDialogController(SendRecvDialogController):
+class ReceiveDialog(SendRecvDialog):
     files_recorded = pyqtSignal(list, float)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):

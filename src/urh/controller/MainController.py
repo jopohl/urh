@@ -8,15 +8,15 @@ from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, 
     QMessageBox, QApplication
 
 from urh import constants, version
-from urh.controller.dialogs.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.dialogs.DecoderDialogController import DecoderDialogController
+from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.dialogs.OptionsController import OptionsController
-from urh.controller.dialogs.ProjectDialogController import ProjectDialogController
-from urh.controller.dialogs.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.dialogs.ReceiveDialogController import ReceiveDialogController
-from urh.controller.widgets.SignalFrameController import SignalFrameController
+from urh.controller.dialogs.OptionsDialog import OptionsDialog
+from urh.controller.dialogs.ProjectDialog import ProjectDialog
+from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
+from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
+from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.controller.SignalTabController import SignalTabController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
@@ -41,7 +41,7 @@ class MainController(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        OptionsController.write_default_options()
+        OptionsDialog.write_default_options()
 
         self.project_save_timer = QTimer()
         self.project_manager = ProjectManager(self)
@@ -88,7 +88,7 @@ class MainController(QMainWindow):
 
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 
-        self.signal_protocol_dict = {}  # type: dict[SignalFrameController, ProtocolAnalyzer]
+        self.signal_protocol_dict = {}  # type: dict[SignalFrame, ProtocolAnalyzer]
 
         self.ui.lnEdtTreeFilter.setClearButtonEnabled(True)
 
@@ -304,7 +304,7 @@ class MainController(QMainWindow):
         self.generator_tab_controller.tree_model.remove_protocol(protocol)
         protocol.eliminate()
 
-    def close_signal_frame(self, signal_frame: SignalFrameController):
+    def close_signal_frame(self, signal_frame: SignalFrame):
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
@@ -409,7 +409,7 @@ class MainController(QMainWindow):
         self.generator_tab_controller.generator_undo_stack.clear()
 
     def show_options_dialog_specific_tab(self, tab_index: int):
-        op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
+        op = OptionsDialog(self.plugin_manager.installed_plugins, parent=self)
         op.values_changed.connect(self.on_options_changed)
         op.ui.tabWidget.setCurrentIndex(tab_index)
         op.show()
@@ -426,7 +426,7 @@ class MainController(QMainWindow):
             sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
 
     def show_project_settings(self):
-        pdc = ProjectDialogController(new_project=False, project_manager=self.project_manager, parent=self)
+        pdc = ProjectDialog(new_project=False, project_manager=self.project_manager, parent=self)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 
@@ -574,7 +574,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_decoding_dialog_triggered(self):
         signals = [sf.signal for sf in self.signal_tab_controller.signal_frames]
-        decoding_controller = DecoderDialogController(
+        decoding_controller = DecoderDialog(
             self.compare_frame_controller.decodings, signals,
             self.project_manager, parent=self)
         decoding_controller.finished.connect(self.update_decodings)
@@ -618,7 +618,7 @@ class MainController(QMainWindow):
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
         try:
-            r = ReceiveDialogController(pm, parent=self)
+            r = ReceiveDialog(pm, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -637,10 +637,10 @@ class MainController(QMainWindow):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        psd = ProtocolSniffDialogController(project_manager=pm, signal=signal,
-                                            encodings=self.compare_frame_controller.decodings,
-                                            encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
-                                            parent=self)
+        psd = ProtocolSniffDialog(project_manager=pm, signal=signal,
+                                  encodings=self.compare_frame_controller.decodings,
+                                  encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
+                                  parent=self)
 
         if psd.has_empty_device_list:
             Errors.no_device()
@@ -675,7 +675,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
-        pdc = ProjectDialogController(parent=self)
+        pdc = ProjectDialog(parent=self)
         try:
             path = os.path.dirname(self.signal_tab_controller.signal_frames[0].signal.filename)
         except (IndexError, AttributeError, TypeError):
@@ -840,7 +840,7 @@ class MainController(QMainWindow):
             sample_rate = None if sample_rate == 0 else sample_rate
             self.add_files([complex_file], group_id=group_id, enforce_sample_rate=sample_rate)
 
-        dialog = CSVImportDialogController(file_name, parent=self)
+        dialog = CSVImportDialog(file_name, parent=self)
         dialog.data_imported.connect(on_data_imported)
         dialog.exec_()
 

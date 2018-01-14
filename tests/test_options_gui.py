@@ -1,12 +1,12 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.dialogs.OptionsController import OptionsController
+from urh.controller.dialogs.OptionsDialog import OptionsDialog
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
 class TestOptionsGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
+        self.dialog = OptionsDialog(self.form.plugin_manager.installed_plugins, parent=self.form)
 
         if self.SHOW:
             self.dialog.show()

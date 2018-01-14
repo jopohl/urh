@@ -9,10 +9,10 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEven
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
 
 from urh import constants
-from urh.controller.dialogs.AdvancedModulationOptionsController import AdvancedModulationOptionsController
-from urh.controller.dialogs.FilterDialogController import FilterDialogController
-from urh.controller.dialogs.SendDialogController import SendDialogController
-from urh.controller.dialogs.SignalDetailsController import SignalDetailsController
+from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
+from urh.controller.dialogs.FilterDialog import FilterDialog
+from urh.controller.dialogs.SendDialog import SendDialog
+from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
@@ -33,7 +33,7 @@ def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
     result_array[:] = Filter.apply_bandpass_filter(data, f_low, f_high, filter_bw=filter_bw)
 
 
-class SignalFrameController(QFrame):
+class SignalFrame(QFrame):
     closed = pyqtSignal(QWidget)
     signal_created = pyqtSignal(Signal)
     drag_started = pyqtSignal(QPoint)
@@ -83,7 +83,7 @@ class SignalFrameController(QFrame):
 
         self.dsp_filter = Filter([0.1] * 10, FilterType.moving_average)
         self.set_filter_button_caption()
-        self.filter_dialog = FilterDialogController(self.dsp_filter, parent=self)
+        self.filter_dialog = FilterDialog(self.dsp_filter, parent=self)
 
         self.proto_selection_timer = QTimer()  # For Update Proto Selection from ROI
         self.proto_selection_timer.setSingleShot(True)
@@ -742,7 +742,7 @@ class SignalFrameController(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialogController(project_manager, modulated_data=self.signal.data, parent=self)
+            dialog = SendDialog(project_manager, modulated_data=self.signal.data, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -1052,7 +1052,7 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_info_btn_clicked(self):
-        sdc = SignalDetailsController(self.signal, self)
+        sdc = SignalDetailsDialog(self.signal, self)
         sdc.show()
 
     @pyqtSlot(int)
@@ -1230,7 +1230,7 @@ class SignalFrameController(QFrame):
 
     @pyqtSlot()
     def on_btn_advanced_modulation_settings_clicked(self):
-        dialog = AdvancedModulationOptionsController(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
+        dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
         dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()

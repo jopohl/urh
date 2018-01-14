@@ -8,8 +8,8 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
-from urh.controller.dialogs.MessageTypeDialogController import MessageTypeDialogController
-from urh.controller.dialogs.ProtocolLabelController import ProtocolLabelController
+from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
@@ -665,8 +665,8 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        protocol_label_dialog = ProtocolLabelController(preselected_index=preselected_index,
-                                                        message=longest_message, viewtype=view_type, parent=self)
+        protocol_label_dialog = ProtocolLabelDialog(preselected_index=preselected_index,
+                                                    message=longest_message, viewtype=view_type, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
@@ -1070,7 +1070,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_btn_message_type_settings_clicked(self):
-        dialog = MessageTypeDialogController(self.active_message_type, parent=self)
+        dialog = MessageTypeDialog(self.active_message_type, parent=self)
         dialog.show()
         dialog.finished.connect(self.on_message_type_dialog_finished)
 

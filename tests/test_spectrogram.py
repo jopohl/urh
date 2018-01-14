@@ -45,8 +45,7 @@ class TestSpectrogram(QtTestCase):
         timer = QTimer()
         timer.setSingleShot(True)
         timer.timeout.connect(self.form.cancel_action.trigger)
-        timer.setInterval(5)
-        timer.start()
+        timer.start(1)
 
         create_action.trigger()
 

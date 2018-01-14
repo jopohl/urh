@@ -5,7 +5,7 @@ from urh.signalprocessing.Filter import Filter, FilterType
 from urh.ui.ui_filter_dialog import Ui_FilterDialog
 
 
-class FilterDialogController(QDialog):
+class FilterDialog(QDialog):
     filter_accepted = pyqtSignal(Filter)
 
     def __init__(self, dsp_filter: Filter, parent=None):

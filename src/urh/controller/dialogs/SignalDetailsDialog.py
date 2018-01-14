@@ -11,7 +11,7 @@ from urh.ui.ui_signal_details import Ui_SignalDetails
 from urh.util.Formatter import Formatter
 
 
-class SignalDetailsController(QDialog):
+class SignalDetailsDialog(QDialog):
     def __init__(self, signal, parent=None):
         super().__init__(parent)
         self.signal = signal

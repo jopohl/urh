@@ -9,10 +9,10 @@ from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.dialogs.ContinuousSendDialogController import ContinuousSendDialogController
-from urh.controller.dialogs.FuzzingDialogController import FuzzingDialogController
-from urh.controller.dialogs.ModulatorDialogController import ModulatorDialogController
-from urh.controller.dialogs.SendDialogController import SendDialogController
+from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
+from urh.controller.dialogs.FuzzingDialog import FuzzingDialog
+from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
+from urh.controller.dialogs.SendDialog import SendDialog
 from urh.models.GeneratorListModel import GeneratorListModel
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
@@ -193,7 +193,7 @@ class GeneratorTabController(QWidget):
 
     def refresh_modulators(self):
         current_index = 0
-        if type(self.sender()) == ModulatorDialogController:
+        if type(self.sender()) == ModulatorDialog:
             current_index = self.sender().ui.comboBoxCustomModulations.currentIndex()
         self.ui.cBoxModulations.clear()
         for modulator in self.modulators:
@@ -244,7 +244,7 @@ class GeneratorTabController(QWidget):
         self.ui.lParamForOne.setText(prefix + " for 1:")
         self.ui.lParamForOneValue.setText(cur_mod.param_for_one_str)
 
-    def prepare_modulation_dialog(self) -> (ModulatorDialogController, Message):
+    def prepare_modulation_dialog(self) -> (ModulatorDialog, Message):
         preselected_index = self.ui.cBoxModulations.currentIndex()
 
         min_row, max_row, start, end = self.ui.tableMessages.selection_range()
@@ -262,7 +262,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialogController(self.modulators, parent=self.parent())
+        modulator_dialog = ModulatorDialog(self.modulators, parent=self.parent())
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -276,7 +276,7 @@ class GeneratorTabController(QWidget):
         visible = constants.SETTINGS.value("multiple_modulations", False, bool)
         self.ui.cBoxModulations.setVisible(visible)
 
-    def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialogController):
+    def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialog):
         dialog.on_modulation_type_changed()  # for drawing modulated signal initially
         dialog.original_bits = bits
         dialog.ui.linEdDataBits.setText(bits)
@@ -447,8 +447,8 @@ class GeneratorTabController(QWidget):
 
         if self.label_list_model.message is not None:
             msg_index = self.table_model.protocol.messages.index(self.label_list_model.message)
-            fdc = FuzzingDialogController(protocol=self.table_model.protocol, label_index=label_index,
-                                          msg_index=msg_index, proto_view=view, parent=self)
+            fdc = FuzzingDialog(protocol=self.table_model.protocol, label_index=label_index,
+                                msg_index=msg_index, proto_view=view, parent=self)
             fdc.show()
             fdc.finished.connect(self.refresh_label_list)
             fdc.finished.connect(self.refresh_table)
@@ -583,18 +583,18 @@ class GeneratorTabController(QWidget):
             try:
                 if modulated_data is not None:
                     try:
-                        dialog = SendDialogController(self.project_manager, modulated_data=modulated_data,
-                                                      modulation_msg_indices=self.modulation_msg_indices, parent=self)
+                        dialog = SendDialog(self.project_manager, modulated_data=modulated_data,
+                                            modulation_msg_indices=self.modulation_msg_indices, parent=self)
                     except MemoryError:
                         # Not enough memory for device buffer so we need to create a continuous send dialog
                         del modulated_data
                         Errors.not_enough_ram_for_sending_precache(None)
-                        dialog = ContinuousSendDialogController(self.project_manager,
-                                                                self.table_model.protocol.messages,
-                                                                self.modulators, total_samples, parent=self)
+                        dialog = ContinuousSendDialog(self.project_manager,
+                                                      self.table_model.protocol.messages,
+                                                      self.modulators, total_samples, parent=self)
                 else:
-                    dialog = ContinuousSendDialogController(self.project_manager, self.table_model.protocol.messages,
-                                                            self.modulators, total_samples, parent=self)
+                    dialog = ContinuousSendDialog(self.project_manager, self.table_model.protocol.messages,
+                                                  self.modulators, total_samples, parent=self)
             except OSError as e:
                 logger.error(repr(e))
                 return

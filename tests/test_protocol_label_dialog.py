@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.dialogs.ProtocolLabelController import ProtocolLabelController
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 
 class TestProtocolLabelDialog(QtTestCase):
 
@@ -19,9 +19,9 @@ class TestProtocolLabelDialog(QtTestCase):
         self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False) # equals 40-55 in view
 
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), 2)
-        self.dialog = ProtocolLabelController(preselected_index=1,
-                                              message=self.cframe.proto_analyzer.messages[0],
-                                              viewtype=0, parent=self.cframe)
+        self.dialog = ProtocolLabelDialog(preselected_index=1,
+                                          message=self.cframe.proto_analyzer.messages[0],
+                                          viewtype=0, parent=self.cframe)
 
         if self.SHOW:
             self.dialog.show()

@@ -12,7 +12,7 @@ from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerConta
 from urh.ui.ui_fuzzing import Ui_FuzzingDialog
 
 
-class FuzzingDialogController(QDialog):
+class FuzzingDialog(QDialog):
     def __init__(self, protocol: ProtocolAnalyzerContainer, label_index: int, msg_index: int, proto_view: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_FuzzingDialog()

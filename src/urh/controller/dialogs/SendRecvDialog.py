@@ -6,7 +6,7 @@ from PyQt5.QtGui import QCloseEvent, QIcon, QTransform
 from PyQt5.QtWidgets import QDialog, QGraphicsView
 
 from urh import constants
-from urh.controller.widgets.DeviceSettingsWidgetController import DeviceSettingsWidgetController
+from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -16,7 +16,7 @@ from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
-class SendRecvDialogController(QDialog):
+class SendRecvDialog(QDialog):
     recording_parameters = pyqtSignal(str, dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
@@ -41,8 +41,8 @@ class SendRecvDialogController(QDialog):
 
         self.start = 0
 
-        self.device_settings_widget = DeviceSettingsWidgetController(project_manager, is_tx,
-                                                                     backend_handler=self.backend_handler)
+        self.device_settings_widget = DeviceSettingsWidget(project_manager, is_tx,
+                                                           backend_handler=self.backend_handler)
         self.ui.scrollAreaWidgetContents_2.layout().insertWidget(0, self.device_settings_widget)
 
         if testing_mode:

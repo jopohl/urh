@@ -13,7 +13,7 @@ from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_messagetype_options import Ui_DialogMessageType
 
 
-class MessageTypeDialogController(QDialog):
+class MessageTypeDialog(QDialog):
 
     def __init__(self, message_type: MessageType, parent=None):
         super().__init__(parent)

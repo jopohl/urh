@@ -16,7 +16,7 @@ from urh.util.Logger import logger
 from urh.util.WSPChecksum import WSPChecksum
 
 
-class ChecksumWidgetController(QWidget):
+class ChecksumWidget(QWidget):
     SPECIAL_CRCS = OrderedDict([
         ("CC1101", GenericCRC(polynomial="16_standard", start_value=True)),
     ])

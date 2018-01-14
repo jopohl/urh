@@ -10,7 +10,7 @@ from urh.util.ProjectManager import ProjectManager
 from urh.util.Simulator import Simulator
 
 
-class SimulatorDialogController(QDialog):
+class SimulatorDialog(QDialog):
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, parent=None):
         super().__init__(parent)
@@ -180,10 +180,10 @@ if __name__ == '__main__':
     simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
     simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
 
-    dialog = SimulatorDialogController(mc.simulator_tab_controller.simulator_config,
-                                        mc.generator_tab_controller.modulators,
-                                        mc.simulator_tab_controller.sim_expression_parser,
-                                        mc.project_manager)
+    dialog = SimulatorDialog(mc.simulator_tab_controller.simulator_config,
+                             mc.generator_tab_controller.modulators,
+                             mc.simulator_tab_controller.sim_expression_parser,
+                             mc.project_manager)
 
     dialog.show()
     app.exec_()

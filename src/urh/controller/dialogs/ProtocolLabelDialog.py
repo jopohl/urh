@@ -3,7 +3,7 @@ from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
 from urh import constants
-from urh.controller.widgets.ChecksumWidgetController import ChecksumWidgetController
+from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -17,7 +17,7 @@ from urh.ui.ui_properties_dialog import Ui_DialogLabels
 from urh.util.Logger import logger
 
 
-class ProtocolLabelController(QDialog):
+class ProtocolLabelDialog(QDialog):
     apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
@@ -70,7 +70,7 @@ class ProtocolLabelController(QDialog):
         for lbl in self.model.message_type: # type: ProtocolLabel
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
                 if isinstance(lbl, ChecksumLabel):
-                    w = ChecksumWidgetController(lbl, self.model.message, self.model.proto_view)
+                    w = ChecksumWidget(lbl, self.model.message, self.model.proto_view)
                     self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
                     logger.error("No Special Config Dialog for field type " + lbl.field_type.caption)

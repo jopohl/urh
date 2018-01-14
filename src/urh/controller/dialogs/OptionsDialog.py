@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplic
     QRadioButton, QFileDialog
 
 from urh import constants, colormaps
-from urh.controller.widgets.PluginController import PluginController
+from urh.controller.widgets.PluginFrame import PluginFrame
 from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
@@ -23,7 +23,7 @@ from urh.ui.ui_options import Ui_DialogOptions
 from urh.util import util
 
 
-class OptionsController(QDialog):
+class OptionsDialog(QDialog):
     values_changed = pyqtSignal(dict)
 
     def __init__(self, installed_plugins, highlighted_plugins=None, parent=None):
@@ -35,7 +35,7 @@ class OptionsController(QDialog):
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
         layout = QHBoxLayout(self.ui.tab_plugins)
-        self.plugin_controller = PluginController(installed_plugins, highlighted_plugins, parent=self)
+        self.plugin_controller = PluginFrame(installed_plugins, highlighted_plugins, parent=self)
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
 

@@ -10,7 +10,7 @@ from urh.util import FileOperator, util
 from urh.util.Errors import Errors
 
 
-class CSVImportDialogController(QDialog):
+class CSVImportDialog(QDialog):
     data_imported = pyqtSignal(str, float)  # Complex Filename + Sample Rate
 
 
@@ -136,7 +136,7 @@ class CSVImportDialogController(QDialog):
         with open(filename, encoding="utf-8-sig") as f:
             csv_reader = csv.reader(f, delimiter=separator)
             for line in csv_reader:
-                parsed = CSVImportDialogController.parse_csv_line(line, i_data_col, q_data_col, t_data_col)
+                parsed = CSVImportDialog.parse_csv_line(line, i_data_col, q_data_col, t_data_col)
                 if parsed is None:
                     continue
 
@@ -145,7 +145,7 @@ class CSVImportDialogController(QDialog):
                     timestamps.append(parsed["T"])
 
         iq_data = np.asarray(iq_data, dtype=np.complex64)
-        sample_rate = CSVImportDialogController.estimate_sample_rate(timestamps)
+        sample_rate = CSVImportDialog.estimate_sample_rate(timestamps)
         return iq_data / abs(iq_data.max()), sample_rate
 
     @staticmethod
@@ -156,7 +156,7 @@ class CSVImportDialogController(QDialog):
         previous_timestamp = timestamps[0]
         durations = []
 
-        for timestamp in timestamps[1:CSVImportDialogController.PREVIEW_ROWS]:
+        for timestamp in timestamps[1:CSVImportDialog.PREVIEW_ROWS]:
             durations.append(abs(timestamp-previous_timestamp))
             previous_timestamp = timestamp
 
@@ -230,5 +230,5 @@ class CSVImportDialogController(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(["urh"])
-    csv_dia = CSVImportDialogController()
+    csv_dia = CSVImportDialog()
     csv_dia.exec_()

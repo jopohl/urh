@@ -2,13 +2,13 @@ import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon
 
-from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 
 
-class ProtocolSniffDialogController(SendRecvDialogController):
+class ProtocolSniffDialog(SendRecvDialog):
     protocol_accepted = pyqtSignal(list)
 
     def __init__(self, project_manager, encodings, signal=None, encoding_index=0, parent=None, testing_mode=False):

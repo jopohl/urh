@@ -15,7 +15,7 @@ from urh.ui.ui_decoding import Ui_Decoder
 from urh.util.ProjectManager import ProjectManager
 
 
-class DecoderDialogController(QDialog):
+class DecoderDialog(QDialog):
     def __init__(self, decodings, signals, project_manager: ProjectManager,
                  parent=None):
         """

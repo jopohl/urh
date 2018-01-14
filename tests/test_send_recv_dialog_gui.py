@@ -11,10 +11,10 @@ from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.dialogs.ContinuousSendDialogController import ContinuousSendDialogController
-from urh.controller.dialogs.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.dialogs.ReceiveDialogController import ReceiveDialogController
-from urh.controller.dialogs.SendDialogController import SendDialogController
+from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
+from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
+from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
+from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
@@ -62,16 +62,16 @@ class TestSendRecvDialog(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
-        receive_dialog = ReceiveDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
+        receive_dialog = ReceiveDialog(self.form.project_manager, testing_mode=True, parent=self.form)
         if self.SHOW:
             receive_dialog.show()
 
         return receive_dialog
 
     def __get_send_dialog(self):
-        send_dialog = SendDialogController(self.form.project_manager, modulated_data=self.signal.data,
-                                           modulation_msg_indices=None,
-                                           testing_mode=True, parent=self.form)
+        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.data,
+                                 modulation_msg_indices=None,
+                                 testing_mode=True, parent=self.form)
         if self.SHOW:
             send_dialog.show()
 
@@ -81,10 +81,10 @@ class TestSendRecvDialog(QtTestCase):
 
     def __get_continuous_send_dialog(self):
         gframe = self.form.generator_tab_controller
-        continuous_send_dialog = ContinuousSendDialogController(self.form.project_manager,
-                                                                gframe.table_model.protocol.messages, gframe.modulators,
-                                                                self.form.generator_tab_controller.total_modulated_samples,
-                                                                parent=self.form, testing_mode=True)
+        continuous_send_dialog = ContinuousSendDialog(self.form.project_manager,
+                                                      gframe.table_model.protocol.messages, gframe.modulators,
+                                                      self.form.generator_tab_controller.total_modulated_samples,
+                                                      parent=self.form, testing_mode=True)
         if self.SHOW:
             continuous_send_dialog.show()
 
@@ -98,10 +98,10 @@ class TestSendRecvDialog(QtTestCase):
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        sniff_dialog = ProtocolSniffDialogController(project_manager=self.form.project_manager,
-                                                     signal=self.signal,
-                                                     encodings=self.form.compare_frame_controller.decodings,
-                                                     testing_mode=True, parent=self.form)
+        sniff_dialog = ProtocolSniffDialog(project_manager=self.form.project_manager,
+                                           signal=self.signal,
+                                           encodings=self.form.compare_frame_controller.decodings,
+                                           testing_mode=True, parent=self.form)
         if self.SHOW:
             sniff_dialog.show()
 

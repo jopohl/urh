@@ -6,7 +6,7 @@ from urh.signalprocessing.Filter import Filter
 from urh.ui.ui_filter_bandwidth_dialog import Ui_DialogFilterBandwidth
 
 
-class FilterBandwidthDialogController(QDialog):
+class FilterBandwidthDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogFilterBandwidth()

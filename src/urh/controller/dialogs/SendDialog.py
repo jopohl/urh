@@ -3,14 +3,14 @@ from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
 from PyQt5.QtWidgets import QMessageBox
 
 from urh import constants
-from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
 
 
-class SendDialogController(SendRecvDialogController):
+class SendDialog(SendRecvDialog):
     def __init__(self, project_manager, modulated_data, modulation_msg_indices=None, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
 

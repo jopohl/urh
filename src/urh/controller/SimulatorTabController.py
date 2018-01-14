@@ -9,7 +9,7 @@ from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.controller.dialogs.SimulatorDialogController import SimulatorDialogController
+from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -24,7 +24,7 @@ from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.SimulatorConfiguration import SimulatorConfiguration
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.dialogs.ModulatorDialogController import ModulatorDialogController
+from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -204,7 +204,7 @@ class SimulatorTabController(QWidget):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
         preselected_index = selected_message.modulator_index
 
-        modulator_dialog = ModulatorDialogController(self.generator_tab_controller.modulators, parent=self)
+        modulator_dialog = ModulatorDialog(self.generator_tab_controller.modulators, parent=self)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -360,8 +360,8 @@ class SimulatorTabController(QWidget):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
-        s = SimulatorDialogController(self.simulator_config, self.generator_tab_controller.modulators,
-                                      self.sim_expression_parser, self.project_manager, parent=self)
+        s = SimulatorDialog(self.simulator_config, self.generator_tab_controller.modulators,
+                            self.sim_expression_parser, self.project_manager, parent=self)
 
         s.exec_()
 

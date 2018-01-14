@@ -14,7 +14,7 @@ from urh.ui.ui_send_recv_device_settings import Ui_FormDeviceSettings
 from urh.util.ProjectManager import ProjectManager
 
 
-class DeviceSettingsWidgetController(QWidget):
+class DeviceSettingsWidget(QWidget):
     selected_device_changed = pyqtSignal()
     gain_edited = pyqtSignal()
 
@@ -426,7 +426,7 @@ if __name__ == '__main__':
 
     app = QApplication([])
     mc = MainController()
-    widget = DeviceSettingsWidgetController(mc.project_manager, is_tx=False)
+    widget = DeviceSettingsWidget(mc.project_manager, is_tx=False)
 
     widget.show()
     app.exec_()

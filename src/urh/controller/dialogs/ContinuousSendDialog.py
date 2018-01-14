@@ -1,14 +1,14 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QCloseEvent
 
-from urh.controller.dialogs.SendDialogController import SendDialogController
-from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
+from urh.controller.dialogs.SendDialog import SendDialog
+from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
 from urh.ui.painting.ContinuousSceneManager import ContinuousSceneManager
 
 
-class ContinuousSendDialogController(SendDialogController):
+class ContinuousSendDialog(SendDialog):
     def __init__(self, project_manager, messages, modulators, total_samples: int, parent, testing_mode=False):
         super().__init__(project_manager, modulated_data=None, modulation_msg_indices=None, parent=parent, testing_mode=testing_mode)
         self.messages = messages
@@ -37,7 +37,7 @@ class ContinuousSendDialogController(SendDialogController):
         self.create_connects()
 
     def create_connects(self):
-        SendRecvDialogController.create_connects(self)
+        SendRecvDialog.create_connects(self)
 
     def _update_send_indicator(self, width: int):
         pass

@@ -18,7 +18,7 @@ from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
 
-class ProjectDialogController(QDialog):
+class ProjectDialog(QDialog):
     class ProtocolParticipantModel(QAbstractTableModel):
         participant_rssi_edited = pyqtSignal()
 

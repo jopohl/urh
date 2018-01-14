@@ -9,7 +9,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
 
 
-class ModulatorDialogController(QDialog):
+class ModulatorDialog(QDialog):
     def __init__(self, modulators, parent=None):
         """
         :type modulators: list of Modulator

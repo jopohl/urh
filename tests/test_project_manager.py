@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
-from urh.controller.dialogs.ProjectDialogController import ProjectDialogController
+from urh.controller.dialogs.ProjectDialog import ProjectDialog
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
@@ -183,7 +183,7 @@ class TestProjectManager(QtTestCase):
         gain = 42
         descr = "URH rockz."
 
-        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form)
+        dialog = ProjectDialog(project_manager=self.form.project_manager, parent=self.form)
 
         dialog.ui.spinBoxFreq.setValue(frequency)
         self.assertEqual(dialog.freq, frequency)
@@ -248,7 +248,7 @@ class TestProjectManager(QtTestCase):
 
         self.form.project_manager.from_dialog(dialog)
 
-        dialog = ProjectDialogController(project_manager=self.form.project_manager, parent=self.form, new_project=False)
+        dialog = ProjectDialog(project_manager=self.form.project_manager, parent=self.form, new_project=False)
         self.assertEqual(dialog.ui.spinBoxFreq.value(), frequency)
         self.assertEqual(dialog.ui.spinBoxSampleRate.value(), sample_rate)
         self.assertEqual(dialog.ui.spinBoxBandwidth.value(), bandwidth)

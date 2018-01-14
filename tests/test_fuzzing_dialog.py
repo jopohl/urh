@@ -3,7 +3,7 @@ from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.controller.dialogs.FuzzingDialogController import FuzzingDialogController
+from urh.controller.dialogs.FuzzingDialog import FuzzingDialog
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Modulator import Modulator
 
@@ -59,8 +59,8 @@ class TestFuzzingDialog(QtTestCase):
         self.assertEqual(self.gframe.table_model.row_count, 1)
         self.assertEqual(len(self.gframe.table_model.protocol.protocol_labels), 3)
 
-        self.dialog = FuzzingDialogController(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0,
-                                              proto_view=0, parent=self.gframe)
+        self.dialog = FuzzingDialog(protocol=self.gframe.table_model.protocol, label_index=0, msg_index=0,
+                                    proto_view=0, parent=self.gframe)
         self.dialog.finished.connect(self.gframe.refresh_label_list)
         self.dialog.finished.connect(self.gframe.refresh_table)
         self.dialog.finished.connect(self.gframe.set_fuzzing_ui_status)

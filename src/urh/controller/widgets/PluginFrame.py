@@ -7,7 +7,7 @@ from urh.models.PluginListModel import PluginListModel
 from urh.ui.ui_plugins import Ui_FramePlugins
 
 
-class PluginController(QFrame):
+class PluginFrame(QFrame):
     def __init__(self, plugins, highlighted_plugins=None, parent=None):
         """
         :type plugins: list of Plugin

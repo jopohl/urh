@@ -583,7 +583,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def update_decodings(self):
-        self.compare_frame_controller.load_decodings()
+        self.project_manager.load_decodings()
         self.compare_frame_controller.fill_decoding_combobox()
         self.compare_frame_controller.refresh_existing_encodings()
 
@@ -638,7 +638,6 @@ class MainController(QMainWindow):
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
         psd = ProtocolSniffDialog(project_manager=pm, signal=signal,
-                                  encodings=self.compare_frame_controller.decodings,
                                   encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
                                   parent=self)
 

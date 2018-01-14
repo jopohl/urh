@@ -82,6 +82,11 @@ class Ui_SniffSettings(object):
         self.spinbox_sniff_BitLen.setObjectName("spinbox_sniff_BitLen")
         self.gridLayout_4.addWidget(self.spinbox_sniff_BitLen, 2, 1, 1, 1)
         self.comboBox_sniff_encoding = QtWidgets.QComboBox(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox_sniff_encoding.sizePolicy().hasHeightForWidth())
+        self.comboBox_sniff_encoding.setSizePolicy(sizePolicy)
         self.comboBox_sniff_encoding.setObjectName("comboBox_sniff_encoding")
         self.gridLayout_4.addWidget(self.comboBox_sniff_encoding, 6, 1, 1, 1)
         self.label_sniff_OutputFile = QtWidgets.QLabel(self.frame)
@@ -127,6 +132,14 @@ class Ui_SniffSettings(object):
         self.retranslateUi(SniffSettings)
         self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
         QtCore.QMetaObject.connectSlotsByName(SniffSettings)
+        SniffSettings.setTabOrder(self.groupBoxSniffSettings, self.spinbox_sniff_Noise)
+        SniffSettings.setTabOrder(self.spinbox_sniff_Noise, self.spinbox_sniff_Center)
+        SniffSettings.setTabOrder(self.spinbox_sniff_Center, self.spinbox_sniff_BitLen)
+        SniffSettings.setTabOrder(self.spinbox_sniff_BitLen, self.spinbox_sniff_ErrorTolerance)
+        SniffSettings.setTabOrder(self.spinbox_sniff_ErrorTolerance, self.combox_sniff_Modulation)
+        SniffSettings.setTabOrder(self.combox_sniff_Modulation, self.comboBox_sniff_viewtype)
+        SniffSettings.setTabOrder(self.comboBox_sniff_viewtype, self.comboBox_sniff_encoding)
+        SniffSettings.setTabOrder(self.comboBox_sniff_encoding, self.lineEdit_sniff_OutputFile)
 
     def retranslateUi(self, SniffSettings):
         _translate = QtCore.QCoreApplication.translate

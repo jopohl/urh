@@ -3,6 +3,9 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
+from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
+from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
+from urh.dev.BackendHandler import BackendHandler
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
@@ -36,6 +39,30 @@ class SimulatorDialog(QDialog):
         self.timer = QTimer(self)
 
         self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager)
+
+        self.backend_handler = BackendHandler()
+        self.device_settings_rx_widget = DeviceSettingsWidget(project_manager,
+                                                              is_tx=False,
+                                                              backend_handler=self.backend_handler)
+
+        self.sniff_settings_widget = SniffSettingsWidget(self.device_settings_rx_widget.ui.cbDevice.currentText(),
+                                                         project_manager,
+                                                         signal=None,
+                                                         backend_handler=self.backend_handler)
+        self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
+        self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
+
+        self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
+        self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
+
+        self.device_settings_tx_widget = DeviceSettingsWidget(project_manager,
+                                                              is_tx=True,
+                                                              backend_handler=self.backend_handler)
+        self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
+        self.device_settings_tx_widget.ui.labelNRepeat.hide()
+
+
+        self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
 
         self.update_buttons()
         self.create_connects()

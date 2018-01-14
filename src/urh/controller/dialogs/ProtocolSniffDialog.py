@@ -11,7 +11,7 @@ from urh.ui.painting.SniffSceneManager import SniffSceneManager
 class ProtocolSniffDialog(SendRecvDialog):
     protocol_accepted = pyqtSignal(list)
 
-    def __init__(self, project_manager, encodings, signal=None, encoding_index=0, parent=None, testing_mode=False):
+    def __init__(self, project_manager, signal=None, encoding_index=0, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
@@ -21,7 +21,7 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.ui.sliderYscale.hide()
         self.ui.label_y_scale.hide()
 
-        self.sniff_settings_widget = SniffSettingsWidget(encodings=encodings,
+        self.sniff_settings_widget = SniffSettingsWidget(project_manager=project_manager,
                                                          device_name=self.selected_device_name,
                                                          signal=signal,
                                                          encoding_index=encoding_index,

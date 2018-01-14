@@ -44,8 +44,6 @@ class CompareFrameController(QWidget):
 
         self.proto_analyzer = ProtocolAnalyzer(None)
         self.project_manager = project_manager
-        self.decodings = []  # type: list[Encoding]
-        self.load_decodings()
 
         self.ui = Ui_TabAnalysis()
         self.ui.setupUi(self)
@@ -348,53 +346,9 @@ class CompareFrameController(QWidget):
 
             self.ui.tblViewProtocol.resize_columns()
 
-    def load_decodings(self):
-        if self.project_manager.project_file:
-            prefix = os.path.realpath(os.path.dirname(self.project_manager.project_file))
-        else:
-            prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
-
-        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
-
-                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              constants.DECODING_INVERT]),
-
-                    Encoding(["Manchester I",
-                              constants.DECODING_EDGE]),
-
-                    Encoding(["Manchester II",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_INVERT]),
-
-                    Encoding(["Differential Manchester",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_DIFFERENTIAL])
-                    ]
-
-        try:
-            f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
-        except FileNotFoundError:
-            self.decodings[:] = fallback
-            return
-
-        if not f:
-            self.decodings[:] = fallback
-            return
-
-        self.decodings[:] = []  # :type: list[Encoding]
-
-        for line in f:
-            tmp_conf = []
-            for j in line.split(","):
-                tmp = j.strip()
-                tmp = tmp.replace("'", "")
-                if not "\n" in tmp and tmp != "":
-                    tmp_conf.append(tmp)
-            self.decodings.append(Encoding(tmp_conf))
-        f.close()
-
-        if len(self.decodings) == 0:
-            self.decodings[:] = fallback
+    @property
+    def decodings(self):
+        return self.project_manager.decodings
 
     def refresh_existing_encodings(self):
         """

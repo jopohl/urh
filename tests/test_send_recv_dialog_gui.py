@@ -100,8 +100,8 @@ class TestSendRecvDialog(QtTestCase):
     def __get_sniff_dialog(self):
         sniff_dialog = ProtocolSniffDialog(project_manager=self.form.project_manager,
                                            signal=self.signal,
-                                           encodings=self.form.compare_frame_controller.decodings,
-                                           testing_mode=True, parent=self.form)
+                                           testing_mode=True,
+                                           parent=self.form)
         if self.SHOW:
             sniff_dialog.show()
 

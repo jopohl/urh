@@ -5,13 +5,15 @@ from urh import constants
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_send_recv_sniff_settings import Ui_SniffSettings
+from urh.util.ProjectManager import ProjectManager
 
 
 class SniffSettingsWidget(QWidget):
     sniff_setting_edited = pyqtSignal()
     sniff_file_edited = pyqtSignal()
 
-    def __init__(self, encodings, device_name: str, signal=None, encoding_index=0, backend_handler=None, parent=None):
+    def __init__(self, device_name: str, project_manager: ProjectManager,
+                 signal=None, encoding_index=0, backend_handler=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
@@ -36,8 +38,9 @@ class SniffSettingsWidget(QWidget):
         self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
         self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
 
-        self.encodings = encodings
-        for encoding in self.encodings:
+        self.project_manager = project_manager
+
+        for encoding in self.project_manager.decodings:
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
         self.create_connects()
@@ -100,9 +103,9 @@ class SniffSettingsWidget(QWidget):
 
     @pyqtSlot(int)
     def on_combobox_sniff_encoding_index_changed(self, index: int):
-        if self.sniffer.decoder != self.encodings[index]:
-            self.sniffer.set_decoder_for_messages(self.encodings[index])
-            self.sniffer.decoder = self.encodings[index]
+        if self.sniffer.decoder != self.project_manager.decodings[index]:
+            self.sniffer.set_decoder_for_messages(self.project_manager.decodings[index])
+            self.sniffer.decoder = self.project_manager.decodings[index]
             self.sniff_setting_edited.emit()
 
     @pyqtSlot()

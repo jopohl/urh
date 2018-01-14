@@ -155,7 +155,14 @@ QGroupBox::indicator:checked {
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QComboBox" name="comboBox_sniff_encoding"/>
+          <widget class="QComboBox" name="comboBox_sniff_encoding">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="7" column="0">
           <widget class="QLabel" name="label_sniff_OutputFile">
@@ -248,6 +255,17 @@ QGroupBox::indicator:checked {
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>groupBoxSniffSettings</tabstop>
+  <tabstop>spinbox_sniff_Noise</tabstop>
+  <tabstop>spinbox_sniff_Center</tabstop>
+  <tabstop>spinbox_sniff_BitLen</tabstop>
+  <tabstop>spinbox_sniff_ErrorTolerance</tabstop>
+  <tabstop>combox_sniff_Modulation</tabstop>
+  <tabstop>comboBox_sniff_viewtype</tabstop>
+  <tabstop>comboBox_sniff_encoding</tabstop>
+  <tabstop>lineEdit_sniff_OutputFile</tabstop>
+ </tabstops>
  <resources>
   <include location="urh.qrc"/>
  </resources>

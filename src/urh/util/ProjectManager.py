@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 from urh import constants
 from urh.dev import config
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
+from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
@@ -34,12 +35,16 @@ class ProjectManager(QObject):
         self.simulator_timeout = 60
         self.simulator_error_handling_index = 0
 
+        self.__project_file = None
+
+        self.decodings = []  # type: list[Encoding]
+        self.load_decodings()
+
         self.modulation_was_edited = False
         self.device = "USRP"
         self.description = ""
         self.project_path = ""
         self.broadcast_address_hex = "ffff"
-        self.__project_file = None
         self.participants = []
 
     @property
@@ -59,6 +64,54 @@ class ProjectManager(QObject):
         for key, value in kwargs.items():
             self.device_conf[key] = value
         self.device = device
+
+    def load_decodings(self):
+        if self.project_file:
+            prefix = os.path.realpath(os.path.dirname(self.project_file))
+        else:
+            prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
+
+        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
+
+                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
+                              constants.DECODING_INVERT]),
+
+                    Encoding(["Manchester I",
+                              constants.DECODING_EDGE]),
+
+                    Encoding(["Manchester II",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_INVERT]),
+
+                    Encoding(["Differential Manchester",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_DIFFERENTIAL])
+                    ]
+
+        try:
+            f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
+        except FileNotFoundError:
+            self.decodings[:] = fallback
+            return
+
+        if not f:
+            self.decodings[:] = fallback
+            return
+
+        self.decodings[:] = []  # :type: list[Encoding]
+
+        for line in f:
+            tmp_conf = []
+            for j in line.split(","):
+                tmp = j.strip()
+                tmp = tmp.replace("'", "")
+                if not "\n" in tmp and tmp != "":
+                    tmp_conf.append(tmp)
+            self.decodings.append(Encoding(tmp_conf))
+        f.close()
+
+        if len(self.decodings) == 0:
+            self.decodings[:] = fallback
 
     def read_parameters(self, root):
         device_conf_tag = root.find("device_conf")

@@ -65,20 +65,6 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 
     @property
-    def device(self):
-        if hasattr(self, "sniffer"):
-            return self.sniffer.rcv_device
-        else:
-            return None
-
-    @device.setter
-    def device(self, value):
-        if hasattr(self, "sniffer"):
-            self.sniffer.rcv_device = value
-        else:
-            pass
-
-    @property
     def view_type(self):
         return self.ui.comboBox_sniff_viewtype.currentIndex()
 
@@ -108,6 +94,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     def init_device(self):
         self.sniffer.device_name = self.selected_device_name
+        self.device = self.sniffer.rcv_device
 
         self._create_device_connects()
         self.scene_manager = SniffSceneManager(np.array([]), parent=self)

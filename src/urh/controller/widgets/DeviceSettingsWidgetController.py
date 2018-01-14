@@ -18,14 +18,17 @@ class DeviceSettingsWidgetController(QWidget):
     selected_device_changed = pyqtSignal()
     gain_edited = pyqtSignal()
 
-    def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None):
+    def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_FormDeviceSettings()
         self.ui.setupUi(self)
 
         self.is_tx = is_tx
         self.is_rx = not is_tx
-        self.backend_handler = BackendHandler()
+        if backend_handler is None:
+            self.backend_handler = BackendHandler()
+        else:
+            self.backend_handler = backend_handler
 
         if self.is_rx:
             self.ui.spinBoxNRepeat.hide()

@@ -43,7 +43,8 @@ class SendRecvDialogController(QDialog):
 
         self.start = 0
 
-        self.device_settings_widget = DeviceSettingsWidgetController(project_manager, is_tx)
+        self.device_settings_widget = DeviceSettingsWidgetController(project_manager, is_tx,
+                                                                     backend_handler=self.backend_handler)
         self.ui.scrollAreaWidgetContents_2.layout().insertWidget(0, self.device_settings_widget)
 
         if testing_mode:

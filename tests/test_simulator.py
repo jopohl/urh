@@ -13,10 +13,13 @@ from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants, SimulatorSettings
 from urh.controller.MainController import MainController
+from urh.dev.BackendHandler import BackendHandler
+from urh.dev.EndlessSender import EndlessSender
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.util.SettingsProxy import SettingsProxy
 from urh.util.Simulator import Simulator
@@ -80,17 +83,12 @@ class TestSimulator(QtTestCase):
         self.form.project_manager.participants.append(part_b)
         self.form.project_manager.project_updated.emit()
 
-        profile = defaultdict(lambda: 0)
-        profile["name"] = "Profile"
-        profile["device"] = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        profile["bit_length"] = 100
-        profile["noise"] = 0.0010
-        profile["center"] = 0.0100
-        profile["error_tolerance"] = 5
-        profile['sample_rate'] = 10 ** 6
-        SimulatorSettings.profiles.append(profile)
-        self.stc.simulator_config.participants[0].recv_profile = profile
-        self.stc.simulator_config.participants[1].send_profile = profile
+        sniffer = ProtocolSniffer(100, 0.01, 0.001, 5, 1, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
+                                  network_raw_mode=True, real_time=True)
+        sender = EndlessSender(BackendHandler(), NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+
+        simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
+                              self.form.project_manager, sniffer=sniffer, sender=sender)
 
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
@@ -103,16 +101,13 @@ class TestSimulator(QtTestCase):
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
 
-        simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
-                              self.form.project_manager)
-
         port = self.__get_free_port()
-        sniffer = next(iter(simulator.profile_sniffer_dict.values()))
+        sniffer = simulator.sniffer
         sniffer.rcv_device.set_server_port(port)
 
         self.network_sdr_plugin_sender.client_port = port
 
-        sender = next(iter(simulator.profile_sender_dict.values()))
+        sender = simulator.sender
         port = self.__get_free_port()
         sender.device.set_client_port(port)
         sender.device._VirtualDevice__dev.name = "simulator_sender"

@@ -13,7 +13,8 @@ class SniffSettingsWidget(QWidget):
     sniff_file_edited = pyqtSignal()
 
     def __init__(self, device_name: str, project_manager: ProjectManager,
-                 signal=None, encoding_index=0, backend_handler=None, parent=None):
+                 signal=None, encoding_index=0, backend_handler=None,
+                 network_raw_mode=False, real_time=False, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
@@ -30,7 +31,9 @@ class SniffSettingsWidget(QWidget):
                                        tolerance=tolerance,
                                        modulation_type=modulation_type_index,
                                        device=device_name,
-                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler)
+                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler,
+                                       network_raw_mode=network_raw_mode,
+                                       real_time=real_time)
 
         self.ui.spinbox_sniff_Noise.setValue(noise)
         self.ui.spinbox_sniff_Center.setValue(center)

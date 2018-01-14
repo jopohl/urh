@@ -28,6 +28,15 @@ class EndlessSender(object):
         self.__device.num_sending_repeats = 0
         self.__device.continuous_send_ring_buffer = self.ringbuffer
 
+    @property
+    def device_name(self) -> str:
+        return self.device.name
+
+    @device_name.setter
+    def device_name(self, value: str):
+        if value != self.device_name:
+            self.device = VirtualDevice(backend_handler=self.device.backend_handler, name=value, mode=Mode.send)
+
     def start(self):
         self.device.start()
 

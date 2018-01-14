@@ -1,11 +1,12 @@
 import time
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
+from urh.dev.EndlessSender import EndlessSender
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
@@ -38,8 +39,6 @@ class SimulatorDialog(QDialog):
 
         self.timer = QTimer(self)
 
-        self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager)
-
         self.backend_handler = BackendHandler()
         self.device_settings_rx_widget = DeviceSettingsWidget(project_manager,
                                                               is_tx=False,
@@ -48,9 +47,15 @@ class SimulatorDialog(QDialog):
         self.sniff_settings_widget = SniffSettingsWidget(self.device_settings_rx_widget.ui.cbDevice.currentText(),
                                                          project_manager,
                                                          signal=None,
-                                                         backend_handler=self.backend_handler)
+                                                         backend_handler=self.backend_handler,
+                                                         real_time=True, network_raw_mode=True)
+
+        self.device_settings_rx_widget.device = self.sniff_settings_widget.sniffer.rcv_device
+
         self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
         self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
+
+        # TODO: Load Simulator RX settings from project
 
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
@@ -61,13 +66,24 @@ class SimulatorDialog(QDialog):
         self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
         self.device_settings_tx_widget.ui.labelNRepeat.hide()
 
-
         self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
+
+        send_device = self.device_settings_tx_widget.ui.cbDevice.currentText()
+        self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager,
+                                   sniffer=self.sniff_settings_widget.sniffer,
+                                   sender=EndlessSender(self.backend_handler, send_device))
+
+        self.device_settings_tx_widget.device = self.simulator.sender.device
+
+        # TODO: Load Simulator TX settings from project
 
         self.update_buttons()
         self.create_connects()
 
     def create_connects(self):
+        self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
+        self.device_settings_tx_widget.selected_device_changed.connect(self.on_selected_tx_device_changed)
+
         self.simulator_scene.selectionChanged.connect(self.update_buttons)
         self.simulator_config.items_updated.connect(self.update_buttons)
 
@@ -106,6 +122,18 @@ class SimulatorDialog(QDialog):
 
     def on_btn_toggle_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
+
+    @pyqtSlot()
+    def on_selected_rx_device_changed(self):
+        dev_name = self.device_settings_rx_widget.ui.cbDevice.currentText()
+        self.simulator.sniffer.device_name = dev_name
+        self.device_settings_rx_widget.device = self.simulator.sniffer.rcv_device
+
+    @pyqtSlot()
+    def on_selected_tx_device_changed(self):
+        dev_name = self.device_settings_tx_widget.ui.cbDevice.currentText()
+        self.simulator.sender.device_name = dev_name
+        self.device_settings_tx_widget.device = self.simulator.sender.device
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
@@ -152,6 +180,10 @@ class SimulatorDialog(QDialog):
             QMessageBox.critical(self, "Error saving log", e.args[0])
 
     def on_start_stop_clicked(self):
+        self.device_settings_rx_widget.emit_editing_finished_signals()
+        self.device_settings_tx_widget.emit_editing_finished_signals()
+        self.sniff_settings_widget.emit_editing_finished_signals()
+
         if self.simulator.is_simulating:
             self.simulator.stop()
         else:

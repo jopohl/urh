@@ -1,9 +1,6 @@
 import uuid
 import xml.etree.ElementTree as ET
 
-from urh import SimulatorSettings
-
-
 class Participant(object):
 
     __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate", "relative_rssi", "__id"]

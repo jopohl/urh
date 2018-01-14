@@ -1,17 +1,13 @@
 import socket
 import time
+from multiprocessing import Process, Value
 
 import numpy as np
-from PyQt5 import QtTest
-from collections import defaultdict
-
-#import yappi
-from PyQt5.QtTest import QSignalSpy, QTest
-from multiprocessing import Process, Value
+# import yappi
+from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh import constants, SimulatorSettings
 from urh.controller.MainController import MainController
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
@@ -37,7 +33,7 @@ def receive(port, current_index, target_index, elapsed):
 
     start = False
     while True:
-        data = conn.recv(65536*8)
+        data = conn.recv(65536 * 8)
         if not start:
             start = True
             t = time.time()
@@ -53,7 +49,7 @@ def receive(port, current_index, target_index, elapsed):
             break
 
     conn.close()
-    elapsed.value = 1000 * (time.time()-t)
+    elapsed.value = 1000 * (time.time() - t)
     s.close()
 
 
@@ -122,7 +118,7 @@ class TestSimulator(QtTestCase):
         # Ensure receiver is running
         time.sleep(1)
 
-        #spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
+        # spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
         simulator.start()
 
         modulator = Modulator("test_modulator")
@@ -130,7 +126,7 @@ class TestSimulator(QtTestCase):
         modulator.carrier_freq_hz = 55e3
         modulator.modulate(msg_a.encoded_bits)
 
-        #yappi.start()
+        # yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
         QTest.qWait(0)
@@ -141,9 +137,9 @@ class TestSimulator(QtTestCase):
         self.assertEqual(current_index.value, target_num_samples)
         self.assertLess(elapsed.value, 200)
 
-        #timeout = spy.wait(2000)
-        #yappi.get_func_stats().print_all()
-        #yappi.get_thread_stats().print_all()
+        # timeout = spy.wait(2000)
+        # yappi.get_func_stats().print_all()
+        # yappi.get_thread_stats().print_all()
 
     def __get_free_port(self):
         import socket

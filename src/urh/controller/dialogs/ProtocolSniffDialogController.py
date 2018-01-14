@@ -1,25 +1,18 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QCompleter, QDirModel
-from urh.ui.painting.SniffSceneManager import SniffSceneManager
 
-from urh import constants
 from urh.controller.dialogs.SendRecvDialogController import SendRecvDialogController
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
+from urh.ui.painting.SniffSceneManager import SniffSceneManager
 
 
 class ProtocolSniffDialogController(SendRecvDialogController):
     protocol_accepted = pyqtSignal(list)
 
-    def __init__(self, project_manager, noise,
-                 center, bit_length, tolerance, modulation_type_index, encodings, encoding_index=0,
-                 parent=None, testing_mode=False):
+    def __init__(self, project_manager, encodings, signal=None, encoding_index=0, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
-
-        self.set_sniff_ui_items_visible(True)
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_sniff)
@@ -28,14 +21,14 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.sliderYscale.hide()
         self.ui.label_y_scale.hide()
 
-        self.ui.spinbox_sniff_Noise.setValue(noise)
-        self.ui.spinbox_sniff_Center.setValue(center)
-        self.ui.spinbox_sniff_BitLen.setValue(bit_length)
-        self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
-        self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
+        self.sniff_settings_widget = SniffSettingsWidget(encodings=encodings,
+                                                         device_name=self.selected_device_name,
+                                                         signal=signal,
+                                                         encoding_index=encoding_index,
+                                                         backend_handler=self.backend_handler)
+        self.ui.scrollAreaWidgetContents_2.layout().insertWidget(1, self.sniff_settings_widget)
 
-        self.sniffer = ProtocolSniffer(bit_length, center, noise, tolerance,
-                                       modulation_type_index, self.selected_device_name, self.backend_handler)
+        self.sniffer = self.sniff_settings_widget.sniffer
 
         # set really in on_device_started
         self.scene_manager = None  # type: LiveSceneManager
@@ -45,52 +38,23 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
 
-        # Auto Complete like a Boss
-        completer = QCompleter()
-        completer.setModel(QDirModel(completer))
-        self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
-
         self.setWindowTitle(self.tr("Sniff Protocol"))
         self.setWindowIcon(QIcon.fromTheme(":/icons/icons/sniffer.svg"))
 
-        self.encodings = encodings
-        for encoding in self.encodings:
-            self.ui.comboBox_sniff_encoding.addItem(encoding.name)
-
         self.create_connects()
-
-        if encoding_index > -1:
-            self.ui.comboBox_sniff_encoding.setCurrentIndex(encoding_index)
-
-        self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 
     @property
     def view_type(self):
-        return self.ui.comboBox_sniff_viewtype.currentIndex()
+        return self.sniff_settings_widget.ui.comboBox_sniff_viewtype.currentIndex()
 
     def create_connects(self):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
 
+        self.sniff_settings_widget.sniff_setting_edited.connect(self.on_sniff_setting_edited)
+        self.sniff_settings_widget.sniff_file_edited.connect(self.on_sniff_file_edited)
         self.sniffer.qt_signals.data_sniffed.connect(self.on_data_sniffed)
         self.sniffer.qt_signals.sniff_device_errors_changed.connect(self.on_device_errors_changed)
-
-        self.ui.spinbox_sniff_Noise.editingFinished.connect(self.on_noise_edited)
-        self.ui.spinbox_sniff_Center.editingFinished.connect(self.on_center_edited)
-        self.ui.spinbox_sniff_BitLen.editingFinished.connect(self.on_bit_len_edited)
-        self.ui.spinbox_sniff_ErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
-        self.ui.combox_sniff_Modulation.currentIndexChanged.connect(self.on_modulation_changed)
-        self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
-        self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
-        self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
-
-    def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
-        super().set_device_ui_items_visibility(device_name, adjust_gains)
-        visible = device_name != NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        for item in ("spinbox_sniff_Noise", "combox_sniff_Modulation", "label_sniff_Modulation", "graphicsView_sniff_Preview",
-                     "spinbox_sniff_Center", "spinbox_sniff_BitLen", "spinbox_sniff_ErrorTolerance",
-                     "label_sniff_Noise", "label_sniff_Center", "label_sniff_BitLength", "label_sniff_Tolerance"):
-            getattr(self.ui, item).setVisible(visible)
 
     def init_device(self):
         self.sniffer.device_name = self.selected_device_name
@@ -101,10 +65,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     def emit_editing_finished_signals(self):
         super().emit_editing_finished_signals()
-        self.ui.spinbox_sniff_Noise.editingFinished.emit()
-        self.ui.spinbox_sniff_Center.editingFinished.emit()
-        self.ui.spinbox_sniff_BitLen.editingFinished.emit()
-        self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
+        self.sniff_settings_widget.emit_editing_finished_signals()
 
     def update_view(self):
         if super().update_view():
@@ -123,28 +84,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.set_device_ui_items_enabled(False)
 
     @pyqtSlot()
-    def on_noise_edited(self):
-        self.sniffer.signal._noise_threshold = self.ui.spinbox_sniff_Noise.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
-
-    @pyqtSlot()
-    def on_center_edited(self):
-        self.sniffer.signal.qad_center = self.ui.spinbox_sniff_Center.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
-
-    @pyqtSlot()
-    def on_bit_len_edited(self):
-        self.sniffer.signal.bit_len = self.ui.spinbox_sniff_BitLen.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
-
-    @pyqtSlot()
-    def on_tolerance_edited(self):
-        self.sniffer.signal.tolerance = self.ui.spinbox_sniff_ErrorTolerance.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
-
-    @pyqtSlot(int)
-    def on_modulation_changed(self, new_index: int):
-        self.sniffer.signal.silent_set_modulation_type(new_index)
+    def on_sniff_setting_edited(self):
         self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
 
     @pyqtSlot()
@@ -169,11 +109,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index)
         if new_data.strip():
             self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
-            self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
-
-    @pyqtSlot(int)
-    def on_view_type_changed(self, new_index: int):
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(new_index))
+            self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(
+                self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):
@@ -185,18 +122,5 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.txtEditErrors.append(txt)
 
     @pyqtSlot()
-    def on_line_edit_output_file_editing_finished(self):
-        text = self.ui.lineEdit_sniff_OutputFile.text()
-        if text and not text.endswith(".txt"):
-            text += ".txt"
-            self.ui.lineEdit_sniff_OutputFile.setText(text)
-
-        self.sniffer.sniff_file = text
+    def on_sniff_file_edited(self):
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))
-
-    @pyqtSlot(int)
-    def on_combobox_sniff_encoding_index_changed(self, index: int):
-        if self.sniffer.decoder != self.encodings[index]:
-            self.sniffer.set_decoder_for_messages(self.encodings[index])
-            self.sniffer.decoder = self.encodings[index]
-            self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))

@@ -637,14 +637,8 @@ class MainController(QMainWindow):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        bit_len = signal.bit_len if signal else 100
-        mod_type = signal.modulation_type if signal else 1
-        tolerance = signal.tolerance if signal else 5
-        noise = signal.noise_threshold if signal else 0.001
-        center = signal.qad_center if signal else 0.02
-
-        psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
-                                            self.compare_frame_controller.decodings,
+        psd = ProtocolSniffDialogController(project_manager=pm, signal=signal,
+                                            encodings=self.compare_frame_controller.decodings,
                                             encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
                                             parent=self)
 

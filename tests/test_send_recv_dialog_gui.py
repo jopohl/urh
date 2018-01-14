@@ -98,11 +98,9 @@ class TestSendRecvDialog(QtTestCase):
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        sniff_dialog = ProtocolSniffDialogController(self.form.project_manager, self.signal.noise_threshold,
-                                                     self.signal.qad_center,
-                                                     self.signal.bit_len, self.signal.tolerance,
-                                                     self.signal.modulation_type,
-                                                     self.form.compare_frame_controller.decodings,
+        sniff_dialog = ProtocolSniffDialogController(project_manager=self.form.project_manager,
+                                                     signal=self.signal,
+                                                     encodings=self.form.compare_frame_controller.decodings,
                                                      testing_mode=True, parent=self.form)
         if self.SHOW:
             sniff_dialog.show()
@@ -291,7 +289,7 @@ class TestSendRecvDialog(QtTestCase):
         QApplication.instance().processEvents()
         sniff_dialog = self.__get_sniff_dialog()
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
-        sniff_dialog.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
+        sniff_dialog.sniff_settings_widget.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
         port = self.__get_free_port()
 
@@ -317,8 +315,8 @@ class TestSendRecvDialog(QtTestCase):
 
         sniff_dialog.ui.btnClear.click()
         QApplication.instance().processEvents()
-        sniff_dialog.ui.lineEdit_sniff_OutputFile.setText(target_file)
-        sniff_dialog.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
+        sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.setText(target_file)
+        sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
         sniff_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())

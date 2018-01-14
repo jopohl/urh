@@ -56,7 +56,7 @@ margin: 4px 0px;
 stop:0 rgba(255, 255, 255, 0), 
 stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
-image: url(:/icons/data/icons/splitter_handle_horizontal.svg);
+image: url(:/icons/icons/splitter_handle_horizontal.svg);
 }</string>
          </property>
          <property name="orientation">
@@ -73,7 +73,7 @@ margin: 4px 0px;
 stop:0 rgba(255, 255, 255, 0), 
 stop:0.5 rgba(100, 100, 100, 100), 
 stop:1 rgba(255, 255, 255, 0));
-image: url(:/icons/data/icons/splitter_handle_vertical.svg);
+image: url(:/icons/icons/splitter_handle_vertical.svg);
 }</string>
           </property>
           <property name="orientation">
@@ -668,7 +668,7 @@ image: url(:/icons/data/icons/splitter_handle_vertical.svg);
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../urh.qrc"/>
+  <include location="urh.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
 from urh import constants
 from urh.dev import config
 from urh.dev.BackendHandler import BackendHandler, Backends
-from urh.dev.VirtualDevice import VirtualDevice, Mode
+from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv_device_settings import Ui_FormDeviceSettings

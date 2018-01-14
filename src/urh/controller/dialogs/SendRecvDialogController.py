@@ -31,8 +31,6 @@ class SendRecvDialogController(QDialog):
         self.ui.setupUi(self)
         self.ui.splitter.setHandleWidth(6)
 
-        self.set_sniff_ui_items_visible(False)
-
         self.graphics_view = None  # type: QGraphicsView
 
         self.backend_handler = BackendHandler()
@@ -94,9 +92,6 @@ class SendRecvDialogController(QDialog):
         for item in ("lSamplesCaptured", "lSamplesCapturedText", "lSignalSize", "lSignalSizeText",
                      "lTime", "lTimeText", "btnSave", "labelReceiveBufferFull", "lReceiveBufferFullText"):
             getattr(self.ui, item).hide()
-
-    def set_sniff_ui_items_visible(self, visible: bool):
-        self.ui.groupBoxSniffSettings.setVisible(visible)
 
     def set_device_ui_items_enabled(self, enabled: bool):
         self.device_settings_widget.setEnabled(enabled)

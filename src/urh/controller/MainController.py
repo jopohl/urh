@@ -613,6 +613,8 @@ class MainController(QMainWindow):
             th = self.generator_tab_controller.ui.tabWidget.tabBar().height()
             for i in range(self.generator_tab_controller.ui.tabWidget.count()):
                 self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
+            # Modulators may got changed from Simulator Dialog
+            self.generator_tab_controller.refresh_modulators()
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):

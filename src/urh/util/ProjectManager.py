@@ -76,8 +76,8 @@ class ProjectManager(QObject):
 
         return result
 
-    def set_project_folder(self, path, ask_for_new_project=True):
-        if path != self.project_path and self.project_loaded:
+    def set_project_folder(self, path, ask_for_new_project=True, close_all=True):
+        if close_all:
             self.main_controller.close_all()
         FileOperator.RECENT_PATH = path
         self.project_path = path
@@ -400,7 +400,7 @@ class ProjectManager(QObject):
     def from_dialog(self, dialog):
         if dialog.committed:
             if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, constants.PROJECT_FILE)):
-                self.set_project_folder(dialog.path, ask_for_new_project=False)
+                self.set_project_folder(dialog.path, ask_for_new_project=False, close_all=False)
             self.device_conf["frequency"] = dialog.freq
             self.device_conf["sample_rate"] = dialog.sample_rate
             self.device_conf["gain"] = dialog.gain

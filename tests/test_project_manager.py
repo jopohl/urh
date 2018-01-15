@@ -54,7 +54,7 @@ class TestProjectManager(QtTestCase):
         self.gframe.modulators.clear()
         self.assertEqual(len(self.gframe.modulators), 0)
 
-        self.form.project_manager.set_project_folder(self.form.project_manager.project_path)
+        self.form.project_manager.set_project_folder(self.form.project_manager.project_path, close_all=False)
         self.assertEqual(len(self.gframe.modulators), 2)
 
     def test_close_all(self):

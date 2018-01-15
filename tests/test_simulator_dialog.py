@@ -2,6 +2,7 @@ from array import array
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 
@@ -33,6 +34,14 @@ class TestSimulatorDialog(QtTestCase):
 
     def test_set_rx_parameters(self):
         rx_settings_widget = self.dialog.device_settings_rx_widget
+        bh = BackendContainer("test", {Backends.native}, True, True)
+        self.assertTrue(bh.is_enabled)
+        rx_settings_widget.backend_handler.device_backends["test"] = bh
+        rx_settings_widget.ui.cbDevice.addItem("test")
+        rx_settings_widget.ui.cbDevice.setCurrentText("test")
+        self.assertEqual(rx_settings_widget.device.name, "test")
+        self.assertEqual(rx_settings_widget.device.backend, Backends.native)
+
         simulator = self.dialog.simulator
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxFreq, 500e6)
         self.assertEqual(simulator.sniffer.rcv_device.frequency, 500e6)
@@ -89,6 +98,15 @@ class TestSimulatorDialog(QtTestCase):
     def test_set_tx_parameters(self):
         tx_settings_widget = self.dialog.device_settings_tx_widget
         simulator = self.dialog.simulator
+
+        bh = BackendContainer("test", {Backends.native}, True, True)
+        self.assertTrue(bh.is_enabled)
+        tx_settings_widget.backend_handler.device_backends["test"] = bh
+        tx_settings_widget.ui.cbDevice.addItem("test")
+        tx_settings_widget.ui.cbDevice.setCurrentText("test")
+        self.assertEqual(tx_settings_widget.device.name, "test")
+        self.assertEqual(tx_settings_widget.device.backend, Backends.native)
+
         self.__edit_spinbox_value(tx_settings_widget.ui.spinBoxFreq, 300e6)
         self.assertEqual(simulator.sender.device.frequency, 300e6)
 

@@ -135,6 +135,7 @@ class Ui_MainWindow(object):
         self.tab_simulator = QtWidgets.QWidget()
         self.tab_simulator.setObjectName("tab_simulator")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.tab_simulator)
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.tabWidget.addTab(self.tab_simulator, "")
         self.verticalLayout_4.addWidget(self.splitter)

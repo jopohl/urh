@@ -4,6 +4,7 @@ from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
+from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWidget
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
@@ -68,7 +69,10 @@ class SimulatorDialog(QDialog):
         self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
         self.device_settings_tx_widget.ui.labelNRepeat.hide()
 
+        self.modulation_settings_widget = ModulationSettingsWidget(modulators, parent=None)
+
         self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
+        self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(1, self.modulation_settings_widget)
 
         send_device = self.device_settings_tx_widget.ui.cbDevice.currentText()
         self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager,

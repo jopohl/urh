@@ -11,6 +11,7 @@ from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
@@ -47,7 +48,7 @@ class Simulator(QObject):
         self.protocol_manager = protocol_manager
         self.project_manager = project_manager
         self.expression_parser = expression_parser
-        self.modulators = modulators
+        self.modulators = modulators  # type: list[Modulator]
         self.backend_handler = BackendHandler()
 
         self.current_item = None

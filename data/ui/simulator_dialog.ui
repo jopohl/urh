@@ -163,7 +163,7 @@
      </widget>
      <widget class="QWidget" name="tabRX">
       <attribute name="title">
-       <string>Receive with</string>
+       <string>Receiving</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
@@ -202,7 +202,7 @@
      </widget>
      <widget class="QWidget" name="tabTX">
       <attribute name="title">
-       <string>Transmit with</string>
+       <string>Transmitting</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>

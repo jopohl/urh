@@ -19,6 +19,8 @@ class Modulator(object):
     """
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
+    MODULATION_TYPES_VERBOSE = ["Amplitude Shift Keying (ASK)", "Frequency Shift Keying (FSK)",
+                                "Phase Shift Keying (PSK)", "Gaussian Frequeny Shift Keying (GFSK)"]
 
     def __init__(self, name: str):
         self.carrier_freq_hz = 40 * 10 ** 3
@@ -94,6 +96,10 @@ class Modulator(object):
         val = val.upper()
         if val in self.MODULATION_TYPES:
             self.modulation_type = self.MODULATION_TYPES.index(val)
+
+    @property
+    def modulation_type_verbose_str(self):
+        return self.MODULATION_TYPES_VERBOSE[self.modulation_type]
 
     @property
     def param_for_zero_str(self):

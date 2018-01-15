@@ -54,6 +54,8 @@ class SimulatorDialog(QDialog):
 
         self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
         self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
+        self.sniff_settings_widget.ui.label_sniff_viewtype.hide()
+        self.sniff_settings_widget.ui.comboBox_sniff_viewtype.hide()
 
         # TODO: Load Simulator RX settings from project
 
@@ -180,13 +182,13 @@ class SimulatorDialog(QDialog):
             QMessageBox.critical(self, "Error saving log", e.args[0])
 
     def on_start_stop_clicked(self):
-        self.device_settings_rx_widget.emit_editing_finished_signals()
-        self.device_settings_tx_widget.emit_editing_finished_signals()
-        self.sniff_settings_widget.emit_editing_finished_signals()
-
         if self.simulator.is_simulating:
             self.simulator.stop()
         else:
+            self.device_settings_rx_widget.emit_editing_finished_signals()
+            self.device_settings_tx_widget.emit_editing_finished_signals()
+            self.sniff_settings_widget.emit_editing_finished_signals()
+
             self.simulator.start()
 
     def on_simulation_started(self):
@@ -214,35 +216,3 @@ class SimulatorDialog(QDialog):
         self.simulator.cleanup()
 
         super().closeEvent(event)
-
-
-if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
-    from urh.controller.MainController import MainController
-    from urh.signalprocessing.Participant import Participant
-    from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-    from array import array
-
-    app = QApplication([])
-    mc = MainController()
-    alice = Participant("Alice", "A")
-    bob = Participant("Bob", "B")
-    mc.project_manager.participants.append(alice)
-    mc.project_manager.participants.append(bob)
-    mc.project_manager.project_updated.emit()
-
-    mt = mc.compare_frame_controller.proto_analyzer.default_message_type
-    msg1 = SimulatorMessage(destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-    msg2 = SimulatorMessage(destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-
-    simulator_manager = mc.simulator_tab_controller.simulator_config
-    simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
-    simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
-
-    dialog = SimulatorDialog(mc.simulator_tab_controller.simulator_config,
-                             mc.generator_tab_controller.modulators,
-                             mc.simulator_tab_controller.sim_expression_parser,
-                             mc.project_manager)
-
-    dialog.show()
-    app.exec_()

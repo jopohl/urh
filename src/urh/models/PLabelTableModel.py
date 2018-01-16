@@ -23,10 +23,22 @@ class PLabelTableModel(QAbstractTableModel):
         super().__init__(parent)
         self.row_count = len(message.message_type)
         self.proto_view = 0
+        self.__message = None
         self.message = message
+
         self.message_type = message.message_type  # type: MessageType
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
         self.update()
+
+    @property
+    def message(self) -> Message:
+        return self.__message
+
+    @message.setter
+    def message(self, value: Message):
+        self.__message = value
+        # Ensure bit alignment positions in message are set
+        self.__message.split(decode=True)
 
     def update(self):
         self.beginResetModel()

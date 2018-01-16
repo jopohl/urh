@@ -262,20 +262,20 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.add_protocol_label(45, 56, 0, 0, edit_label_name=False)
         self.assertEqual(model.rowCount(), 1)
         self.assertEqual(model.data(model.index(0, 1)), "Bit")
-        self.assertEqual(model.data(model.index(0, 2)), "000011001110")
+        self.assertEqual(model.data(model.index(0, 3)), "000011001110")
 
         model.setData(model.index(0, 1), 1, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 1)), "Hex")
-        self.assertEqual(model.data(model.index(0, 2)), "0ce")
+        self.assertEqual(model.data(model.index(0, 3)), "0ce")
 
         model.setData(model.index(0, 1), 2, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 1)), "ASCII")
 
         model.setData(model.index(0, 1), 3, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 1)), "Decimal")
-        self.assertEqual(model.data(model.index(0, 2)), "206")
+        self.assertEqual(model.data(model.index(0, 3)), "206")
 
         model.setData(model.index(0, 1), 4, role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 1)), "Binary Coded Decimal (BCD)")
-        self.assertEqual(model.data(model.index(0, 2)), "0??")
+        self.assertEqual(model.data(model.index(0, 1)), "BCD")
+        self.assertEqual(model.data(model.index(0, 3)), "0??")
 

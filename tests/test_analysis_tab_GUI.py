@@ -279,3 +279,5 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 1)), "BCD")
         self.assertEqual(model.data(model.index(0, 3)), "0??")
 
+        self.assertIn("display type", model.data(model.index(0, 1), Qt.ToolTipRole))
+        self.assertIn("bit order", model.data(model.index(0, 2), Qt.ToolTipRole))

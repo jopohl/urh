@@ -1,16 +1,13 @@
+import array
 import copy
 import math
-import sys
 import xml.etree.ElementTree as ET
 
-import numpy as np
-
+from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.Encoding import Encoding
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
-import array
 
 
 class Message(object):

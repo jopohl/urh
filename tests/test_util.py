@@ -37,4 +37,3 @@ class TestUtil(QtTestCase):
         self.assertEqual(dialog.windowTitle(), "Test title")
         self.assertEqual(dialog.layout().itemAt(0).widget().toPlainText(), "Test content")
         dialog.close()
-

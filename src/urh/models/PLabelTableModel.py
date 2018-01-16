@@ -1,12 +1,9 @@
-import math
 from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
 from PyQt5.QtGui import QFont
 
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Message import Message
-from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 
 class PLabelTableModel(QAbstractTableModel):
@@ -26,19 +23,31 @@ class PLabelTableModel(QAbstractTableModel):
         super().__init__(parent)
         self.row_count = len(message.message_type)
         self.proto_view = 0
+        self.__message = None
         self.message = message
+
         self.message_type = message.message_type  # type: MessageType
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
         self.update()
+
+    @property
+    def message(self) -> Message:
+        return self.__message
+
+    @message.setter
+    def message(self, value: Message):
+        self.__message = value
+        # Ensure bit alignment positions in message are set
+        self.__message.split(decode=True)
 
     def update(self):
         self.beginResetModel()
         self.endResetModel()
 
-    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.header_labels)
 
-    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.message_type)
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -91,7 +100,7 @@ class PLabelTableModel(QAbstractTableModel):
                 self.special_status_label_changed.emit(self.message_type[i])
 
         elif j == 1:
-            lbl.start = self.message.convert_index(int(value-1), from_view=self.proto_view, to_view=0, decoded=True)[0]
+            lbl.start = self.message.convert_index(int(value - 1), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 2:
             lbl.end = self.message.convert_index(int(value), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 3:

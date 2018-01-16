@@ -1,14 +1,16 @@
+import array
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    header_labels = ["Name", 'Display format', 'Value']
+    header_labels = ["Name", 'Display format', 'Bit order', 'Value']
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
@@ -17,9 +19,24 @@ class LabelValueTableModel(QAbstractTableModel):
         self.__message_index = 0
         self.display_labels = controller.active_message_type  # type: MessageType
 
-        self.bit_str = self.proto_analyzer.decoded_proto_bits_str
-        self.hex_str = self.proto_analyzer.decoded_hex_str
-        self.ascii_str = self.proto_analyzer.decoded_ascii_str
+    def __display_data(self, lbl: ProtocolLabel, expected_checksum: array = None):
+        try:
+            data = self.message.decoded_bits[lbl.start:lbl.end]
+        except IndexError:
+            return None
+
+        lsb = lbl.display_bit_order_index == 1
+        lsd = lbl.display_bit_order_index == 2
+
+        data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd)
+        if data is None:
+            return None
+
+        if expected_checksum is not None:
+            data += " (should be {0})".format(
+                util.convert_bits_to_string(expected_checksum, lbl.display_format_index))
+
+        return data
 
     @property
     def message_index(self):
@@ -39,9 +56,6 @@ class LabelValueTableModel(QAbstractTableModel):
 
     def update(self):
         self.display_labels = self.controller.active_message_type
-        self.bit_str = self.proto_analyzer.decoded_proto_bits_str
-        self.hex_str = self.proto_analyzer.decoded_hex_str
-        self.ascii_str = self.proto_analyzer.decoded_ascii_str
         self.beginResetModel()
         self.endResetModel()
 
@@ -84,38 +98,9 @@ class LabelValueTableModel(QAbstractTableModel):
             elif j == 1:
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                try:
-                    if lbl.display_format_index == 1:
-                        start, end = self.message.get_label_range(lbl, 1, True)
-                        data = self.hex_str[self.message_index][start:end]
-                    elif lbl.display_format_index == 2:
-                        start, end = self.message.get_label_range(lbl, 2, True)
-                        data = self.ascii_str[self.message_index][start:end]
-                    else:
-                        start, end = self.message.get_label_range(lbl, 0, True)
-                        data = self.bit_str[self.message_index][start:end]
-                except IndexError:
-                    return None
-
-                if lbl.display_format_index == 3:  # decimal
-                    try:
-                        data = str(int(data, 2))
-                    except ValueError:
-                        return None
-                elif lbl.display_format_index == 4:  # bcd
-                    # Pad data
-                    while len(data) % 4 != 0:
-                        data += "0"
-
-                    error_symbol = "?"
-                    lut = {"{0:04b}".format(i): str(i) if i < 10 else error_symbol for i in range(16)}
-                    data = "".join(lut[data[i:i+4]] for i in range(0, len(data), 4))
-
-                if calculated_crc is not None:
-                    data += " (should be {0})".format(
-                        util.convert_bits_to_string(calculated_crc, lbl.display_format_index))
-
-                return data
+                return lbl.DISPLAY_BIT_ORDERS[lbl.display_bit_order_index]
+            elif j == 3:
+                return self.__display_data(lbl, calculated_crc)
 
         elif role == Qt.BackgroundColorRole:
             if isinstance(lbl, ChecksumLabel):
@@ -128,18 +113,39 @@ class LabelValueTableModel(QAbstractTableModel):
             else:
                 return None
 
+        elif role == Qt.ToolTipRole:
+            if j == 1:
+                return self.tr("Choose display type for the value of the label:"
+                               "<ul>"
+                               "<li>Bit</li>"
+                               "<li>Hexadecimal (Hex)</li>"
+                               "<li>ASCII chars</li>"
+                               "<li>Decimal Number</li>"
+                               "<li>Binary Coded Decimal (BCD)</li>"
+                               "</ul>")
+            if j == 2:
+                return self.tr("Choose bit order for the displayed value:"
+                               "<ul>"
+                               "<li>Most Significant Bit (MSB) [Default]</li>"
+                               "<li>Least Significant Bit (LSB)</li>"
+                               "<li>Least Significant Digit (LSD)</li>"
+                               "</ul>")
+
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
             row = index.row()
             lbl = self.display_labels[row]
-            if index.column() == 1:
-                lbl.display_format_index = value
+            if index.column() == 1 or index.column() == 2:
+                if index.column() == 1:
+                    lbl.display_format_index = value
+                elif index.column() == 2:
+                    lbl.display_bit_order_index = value
                 self.dataChanged.emit(self.index(row, 0),
                                       self.index(row, self.columnCount()))
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        if index.column() == 1:
+        if index.column() == 1 or index.column() == 2:
             flags |= Qt.ItemIsEditable
 
         return flags

@@ -53,7 +53,7 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
     :param lsd: Least Significant Digit -> Reverse result at end
     :return:
     """
-    bits_str = "".join("1" if b else "0" for b in bits)
+    bits_str = "".join(["1" if b else "0" for b in bits])
 
     if output_view_type == 4:
         # For BCD we need to enforce padding
@@ -71,7 +71,7 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
         result = bits_str
 
     elif output_view_type == 1:  # hex
-        result = "".join("{0:x}".format(int(bits_str[i:i + 4], 2)) for i in range(0, len(bits_str), 4))
+        result = "".join(["{0:x}".format(int(bits_str[i:i + 4], 2)) for i in range(0, len(bits_str), 4)])
 
     elif output_view_type == 2:  # ascii
         result = "".join(map(chr,
@@ -85,7 +85,7 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
     elif output_view_type == 4:  # bcd
         error_symbol = "?"
         lut = {"{0:04b}".format(i): str(i) if i < 10 else error_symbol for i in range(16)}
-        result = "".join(lut[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4))
+        result = "".join([lut[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4)])
     else:
         raise ValueError("Unknown view type")
 

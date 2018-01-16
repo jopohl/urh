@@ -157,12 +157,15 @@ class ProtocolLabel(object):
         result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
         result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
-        result.display_format_index = int(tag.get("display_format_index", 0))
         result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
 
         if result.name in field_types_by_caption:
             result.field_type = field_types_by_caption[result.name]
         else:
             result.field_type = None
+
+        # set this after result.field_type because this would change display_format_index to field_types default
+        result.display_format_index = int(tag.get("display_format_index", 0))
+        result.display_bit_order_index = int(tag.get("display_bit_order_index", 0))
 
         return result

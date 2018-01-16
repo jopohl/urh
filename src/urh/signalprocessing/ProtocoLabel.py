@@ -14,12 +14,15 @@ class ProtocolLabel(object):
     start and end always refer to bit view!
     """
 
-    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII",
-                       "Decimal", "Binary Coded Decimal (BCD)"]
+    DISPLAY_FORMATS = ["Bit", "Hex", "ASCII", "Decimal", "BCD"]
+
+    DISPLAY_BIT_ORDERS = ["MSB", "LSB", "LSD"]
+
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
     __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",
-                 "fuzz_created", "__field_type", "display_format_index", "auto_created", "copied")
+                 "fuzz_created", "__field_type", "display_format_index", "display_bit_order_index",
+                 "auto_created", "copied")
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
                  auto_created=False, field_type: FieldType = None):
@@ -39,6 +42,7 @@ class ProtocolLabel(object):
         self.__field_type = field_type  # type: FieldType
 
         self.display_format_index = 0 if field_type is None else field_type.display_format_index
+        self.display_bit_order_index = 0
 
         self.auto_created = auto_created
 
@@ -130,6 +134,7 @@ class ProtocolLabel(object):
                                            "apply_decoding": str(self.apply_decoding), "index": str(index),
                                            "show": str(self.show),
                                            "display_format_index": str(self.display_format_index),
+                                           "display_bit_order_index": str(self.display_bit_order_index),
                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
                                            "auto_created": str(self.auto_created)})
 

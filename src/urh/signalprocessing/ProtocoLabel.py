@@ -20,7 +20,7 @@ class ProtocolLabel(object):
 
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",
+    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "__fuzz_me", "fuzz_values",
                  "fuzz_created", "__field_type", "display_format_index", "display_bit_order_index",
                  "auto_created", "copied")
 
@@ -34,7 +34,7 @@ class ProtocolLabel(object):
         self.color_index = color_index
         self.show = Qt.Checked
 
-        self.fuzz_me = Qt.Checked
+        self.__fuzz_me = Qt.Checked
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
@@ -47,6 +47,16 @@ class ProtocolLabel(object):
         self.auto_created = auto_created
 
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
+
+    @property
+    def fuzz_me(self) -> int:
+        return self.__fuzz_me
+
+    @fuzz_me.setter
+    def fuzz_me(self, value):
+        if isinstance(value, bool):
+            value = Qt.Checked if value else Qt.Unchecked
+        self.__fuzz_me = value
 
     @property
     def is_preamble(self) -> bool:

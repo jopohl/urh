@@ -2,9 +2,11 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 
 from urh import constants
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.util import util
+
 
 class SimulatorMessageFieldModel(QAbstractTableModel):
     header_labels = ['Name', 'Display format', 'Value type', 'Value']
@@ -15,18 +17,17 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         super().__init__(parent)
 
         self.controller = controller # type: SimulatorTabController
-
-        self.message_type = None # type: MessageType
+        self.message_type = None  # type: MessageType
 
     def update(self):
         self.beginResetModel()
         self.message_type = self.controller.active_item.message_type
         self.endResetModel()
 
-    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.header_labels)
 
-    def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
+    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.message_type) if self.message_type is not None else 0
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -37,25 +38,9 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
         return super().headerData(section, orientation, role)
 
-    def value_str(self, label: SimulatorProtocolLabel):
-        message = label.parent()
-        start, end = message.get_label_range(label, label.display_format_index % 3, False)
-
-        if label.display_format_index == 0:
-            return message.plain_bits_str[start:end]
-        elif label.display_format_index == 1:
-            return message.plain_hex_str[start:end]
-        elif label.display_format_index == 2:
-            return message.plain_ascii_str[start:end]
-        elif label.display_format_index == 3:
-            try:
-                return int(message.plain_bits_str[start:end], 2)
-            except ValueError:
-                pass
-
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i, j = index.row(), index.column()
-        lbl = self.message_type[i]
+        lbl = self.message_type[i]  # type: SimulatorProtocolLabel
 
         if role == Qt.DisplayRole:
             if j == 0:
@@ -66,7 +51,14 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 return lbl.VALUE_TYPES[lbl.value_type_index]
             elif j == 3:
                 if lbl.value_type_index == 0:
-                    return self.value_str(lbl)
+                    message = lbl.parent()
+
+                    try:
+                        data = message.decoded_bits[lbl.start:lbl.end]
+                    except IndexError:
+                        return None
+
+                    return util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True)
                 elif lbl.value_type_index == 1:
                     return "-"
                 elif lbl.value_type_index == 2:
@@ -105,7 +97,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:
             i, j = index.row(), index.column()
-            label = self.message_type[i]
+            label = self.message_type[i]  # type: SimulatorProtocolLabel
 
             if j == 0:
                 label.name = value
@@ -126,14 +118,15 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 elif label.value_type_index == 4:
                     label.random_min = value[0]
                     label.random_max = value[1]
-
+            self.dataChanged.emit(self.index(i, 0),
+                                  self.index(i, self.columnCount()))
             self.protocol_label_updated.emit(label)
 
         return True
 
     def flags(self, index: QModelIndex):
         row, col = index.row(), index.column()
-        label = self.message_type[row]
+        label = self.message_type[row]  # type: SimulatorProtocolLabel
 
         flags = super().flags(index)
 

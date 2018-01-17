@@ -16,9 +16,9 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.util.SettingsProxy import SettingsProxy
-from urh.util.Simulator import Simulator
+from urh.simulator.Simulator import Simulator
 
 
 def receive(port, current_index, target_index, elapsed):

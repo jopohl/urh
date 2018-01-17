@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, QModelIndex, QAbstractListModel
 
-from urh.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 
 class SimulatorParticipantListModel(QAbstractListModel):

@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont, QColor
 from urh import constants
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.util import util
 
 

@@ -4,7 +4,7 @@ from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorMessage import SimulatorMessage
 
 
 class TestSimulatorDialog(QtTestCase):

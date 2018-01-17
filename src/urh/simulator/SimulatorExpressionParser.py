@@ -2,9 +2,9 @@ import ast
 import html
 import operator as op
 
-from PyQt5.QtCore import pyqtSignal, QObject
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.SimulatorConfiguration import SimulatorConfiguration
+from PyQt5.QtCore import QObject
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 class SimulatorExpressionParser(QObject):
     formula_help = "<html><head/><body><p><b>Formula</b></p><p><i>Operators:</i> <code>+</code> (Addition), <code>-</code> (Subtraction), <code>*</code> (Multiplication), <code>/</code> (Division)</p><p><i>Bitwise operations:</i> <code>|</code> (Or), <code>^</code> (Exclusive Or), <code>&amp;</code> (And), <code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift), <code>~</code> (Inversion)</p><p><i>Numeric literals:</i> <code>14</code> (dec), <code>0xe</code> (hex), <code>0b1110</code> (bin), <code>0o16</code> (oct)</p><i>Examples:</i><ul><li><code>item1.sequence_number + 1</code></li><li><code>~ (item1.preamble ^ 0b1110)</code></li></ul></body></html>"

@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView, QGraphicsEllipseItem
+from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView
 from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor, QBrush
 from PyQt5.QtCore import QRectF, Qt, QLineF
 
 from urh import constants
 
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorRule import SimulatorRule
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 class GraphicsItem(QGraphicsObject):
     font = None

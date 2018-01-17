@@ -7,7 +7,7 @@ from tests.QtTestCase import QtTestCase
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.SimulatorRule import ConditionType
+from urh.simulator.SimulatorRule import ConditionType
 
 
 class TestSimulatorTabGUI(QtTestCase):

@@ -1,7 +1,7 @@
 from enum import Enum
 import xml.etree.ElementTree as ET
 
-from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorItem import SimulatorItem
 
 
 class SimulatorRule(SimulatorItem):

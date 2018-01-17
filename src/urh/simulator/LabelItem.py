@@ -1,10 +1,8 @@
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPen, QFont, QColor
 from PyQt5.QtWidgets import QGraphicsTextItem
 
 class LabelItem(GraphicsItem):

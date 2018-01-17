@@ -3,8 +3,8 @@ import xml.etree.ElementTree as ET
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorRule import SimulatorRuleCondition
 from urh.util.Formatter import Formatter
 
 

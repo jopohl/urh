@@ -12,7 +12,7 @@ from urh.models.SimulatorParticipantListModel import SimulatorParticipantListMod
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
 from urh.util.ProjectManager import ProjectManager
-from urh.util.Simulator import Simulator
+from urh.simulator.Simulator import Simulator
 
 
 class SimulatorDialog(QDialog):

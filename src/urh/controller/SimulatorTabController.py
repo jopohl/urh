@@ -14,14 +14,14 @@ from urh.ui.SimulatorScene import SimulatorScene
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog

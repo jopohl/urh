@@ -1,7 +1,7 @@
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
 import xml.etree.ElementTree as ET
 
 from urh.util.Formatter import Formatter

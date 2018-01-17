@@ -1,25 +1,25 @@
 import copy
 
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView, QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-from urh.signalprocessing.LabelItem import LabelItem
-from urh.signalprocessing.ActionItem import ActionItem, GotoActionItem, ProgramActionItem
-from urh.signalprocessing.RuleItem import RuleItem, RuleConditionItem
-from urh.signalprocessing.MessageItem import MessageItem
-from urh.signalprocessing.ParticipantItem import ParticipantItem
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.LabelItem import LabelItem
+from urh.simulator.ActionItem import ActionItem, GotoActionItem, ProgramActionItem
+from urh.simulator.RuleItem import RuleItem, RuleConditionItem
+from urh.simulator.MessageItem import MessageItem
+from urh.simulator.ParticipantItem import ParticipantItem
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 class SimulatorScene(QGraphicsScene):
     model_to_scene_class_mapping = {

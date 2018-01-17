@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
 from PyQt5.QtCore import Qt, QRectF, QLineF
 from PyQt5.QtGui import QFont, QPen, QColor
 
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
 from urh import constants
 

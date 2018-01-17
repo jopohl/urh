@@ -1,5 +1,5 @@
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorRule import SimulatorRuleCondition
 import xml.etree.ElementTree as ET
 
 

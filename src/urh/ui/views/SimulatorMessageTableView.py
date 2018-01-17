@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMenu, QActionGroup
 
 from urh.ui.views.TableView import TableView
 
-from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorItem import SimulatorItem
 
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 

@@ -1,6 +1,6 @@
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.UnlabeledRangeItem import UnlabeledRangeItem
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.UnlabeledRangeItem import UnlabeledRangeItem
 
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
 from PyQt5.QtCore import QPointF, Qt

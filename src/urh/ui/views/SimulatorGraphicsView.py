@@ -2,12 +2,12 @@ from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstra
 from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from urh.signalprocessing.MessageItem import MessageItem
-from urh.signalprocessing.RuleItem import RuleConditionItem
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorRule import ConditionType
+from urh.simulator.MessageItem import MessageItem
+from urh.simulator.RuleItem import RuleConditionItem
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorRule import ConditionType
 from urh.signalprocessing.MessageType import MessageType
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorMessage import SimulatorMessage
 
 class SimulatorGraphicsView(QGraphicsView):
     message_updated = pyqtSignal(SimulatorMessage)

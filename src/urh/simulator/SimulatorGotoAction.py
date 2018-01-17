@@ -1,6 +1,6 @@
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 import xml.etree.ElementTree as ET
 
 

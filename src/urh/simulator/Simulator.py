@@ -6,18 +6,18 @@ import time
 import numpy
 from PyQt5.QtCore import QEventLoop, QTimer, pyqtSignal, QObject
 
-from urh.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.signalprocessing.SimulatorExpressionParser import SimulatorExpressionParser
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 

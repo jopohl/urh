@@ -2,14 +2,14 @@ import random
 from collections import OrderedDict
 
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
-from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
 from urh.util.ProjectManager import ProjectManager

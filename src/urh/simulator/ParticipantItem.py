@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.Participant import Participant
 
+
 class ParticipantItem(QGraphicsItem):
     def __init__(self, model_item: Participant, parent=None):
         super().__init__(parent)
@@ -17,7 +18,7 @@ class ParticipantItem(QGraphicsItem):
 
         self.refresh()
 
-    def update_position(self, x_pos = -1, y_pos = -1):
+    def update_position(self, x_pos=-1, y_pos=-1):
         if x_pos == -1:
             x_pos = self.x_pos()
 

@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QGraphicsTextItem
 from PyQt5.QtCore import QRectF
 
-from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
-from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.GraphicsItem import GraphicsItem
-from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorItem import SimulatorItem
 
 class ActionItem(GraphicsItem):
     def __init__(self, model_item: SimulatorItem, parent=None):

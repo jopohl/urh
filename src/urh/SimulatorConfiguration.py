@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
 from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
@@ -13,7 +14,7 @@ from urh import constants
 from urh.util.ProjectManager import ProjectManager
 
 from PyQt5.QtCore import pyqtSignal, QObject
-
+import xml.etree.ElementTree as ET
 
 class SimulatorConfiguration(QObject):
     participants_changed = pyqtSignal()
@@ -199,6 +200,30 @@ class SimulatorConfiguration(QObject):
 
     def get_all_messages(self):
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
+
+    def save_simulator_config_to_xml(self) -> ET.Element:
+        result = ET.Element("simulator_config")
+
+        for item in self.rootItem.children:
+            self.__save_item_to_xml(result, item)
+
+        return result
+
+    def __save_item_to_xml(self, tag: ET.Element, item):
+        if isinstance(item, SimulatorMessage):
+            # todo: are these arguments correct?
+            child_tag = item.to_xml(decoders=None, include_message_type=False, write_bits=True)
+        elif isinstance(item, SimulatorProtocolLabel):
+            child_tag = item.to_xml()
+        elif isinstance(item, SimulatorProgramAction):
+            child_tag = item.to_xml()
+        else:
+            raise ValueError("Unknown simulator item type {}".format(type(item)))
+
+        tag.append(child_tag)
+
+        for child in item.children:
+            self.__save_item_to_xml(child_tag, child)
 
     def get_all_items(self):
         items = []

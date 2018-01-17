@@ -921,7 +921,6 @@ class CompareFrameController(QWidget):
         self.participant_changed.emit()
 
     def refresh_field_types_for_labels(self):
-        self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
             for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
                 mt.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))

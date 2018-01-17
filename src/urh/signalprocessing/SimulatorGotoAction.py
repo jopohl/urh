@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 class SimulatorGotoAction(SimulatorItem):
     def __init__(self):
         super().__init__()
-        self.goto_target: str = None
+        self.goto_target = None  # type: str
 
     def set_parent(self, value):
         if value is not None:

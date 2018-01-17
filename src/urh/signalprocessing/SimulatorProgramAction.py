@@ -15,7 +15,7 @@ class SimulatorProgramAction(SimulatorItem):
 
         super().set_parent(value)
 
-    def to_xml(self):
+    def simulator_program_to_xml(self):
         attrib = dict()
         if self.ext_prog:
             attrib["ext_prog"] = self.ext_prog

@@ -7,6 +7,7 @@ from tests.QtTestCase import QtTestCase
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.SimulatorRule import ConditionType
 
 
 class TestSimulatorTabGUI(QtTestCase):
@@ -23,6 +24,11 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+
+        rule = stc.simulator_scene.add_rule(ref_item=None, position=0)
+        stc.simulator_scene.add_rule_condition(rule, ConditionType.ELSE_IF)
+
+        stc.simulator_scene.add_goto_action(None, 0)
 
         messages = stc.simulator_config.get_all_messages()
         self.assertEqual(len(messages), 3)

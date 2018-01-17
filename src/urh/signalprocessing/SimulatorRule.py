@@ -1,6 +1,8 @@
 from enum import Enum
+import xml.etree.ElementTree as ET
 
 from urh.signalprocessing.SimulatorItem import SimulatorItem
+
 
 class SimulatorRule(SimulatorItem):
     def __init__(self):
@@ -32,10 +34,18 @@ class SimulatorRule(SimulatorItem):
 
         return result
 
+    def simulator_rule_to_xml(self) -> ET.Element:
+        result = ET.Element("simulator_rule")
+        for condition in self.children:
+            assert isinstance(condition, SimulatorRuleCondition)
+            result.append(condition.simulator_rule_condition_to_xml())
+        return result
+
 class ConditionType(Enum):
     IF = "IF"
     ELSE_IF = "ELSE IF"
     ELSE = "ELSE"
+
 
 class SimulatorRuleCondition(SimulatorItem):
     def __init__(self, type: ConditionType):
@@ -63,3 +73,7 @@ class SimulatorRuleCondition(SimulatorItem):
 
         result, _, _ = self.expression_parser.validate_expression(self.condition, is_formula=False)
         return result
+
+    def simulator_rule_condition_to_xml(self):
+        return ET.Element("rule_condition", attrib={"type": self.type.value,
+                                                    "condition": self.condition})

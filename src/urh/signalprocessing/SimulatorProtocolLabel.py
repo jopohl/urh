@@ -105,7 +105,7 @@ class SimulatorProtocolLabel(SimulatorItem):
 
         return result
 
-    def to_xml(self) -> ET.Element:
+    def simulator_label_to_xml(self) -> ET.Element:
         result = ET.Element("simulator_label", attrib={"value_type_index": str(self.value_type_index),
                                                        "external_program": str(self.external_program),
                                                        "formula": str(self.formula),

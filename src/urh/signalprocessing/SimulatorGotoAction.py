@@ -1,11 +1,13 @@
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.signalprocessing.SimulatorProtocolLabel import SimulatorProtocolLabel
+import xml.etree.ElementTree as ET
+
 
 class SimulatorGotoAction(SimulatorItem):
     def __init__(self):
         super().__init__()
-        self.goto_target = None
+        self.goto_target: str = None
 
     def set_parent(self, value):
         if value is not None:
@@ -36,3 +38,10 @@ class SimulatorGotoAction(SimulatorItem):
     @property
     def target(self):
         return self.protocol_manager.item_dict[self.goto_target] if self.check() else None
+
+    def simulator_goto_action_to_xml(self) -> ET.Element:
+        attribs = dict()
+        if self.goto_target is not None:
+            attribs["goto_target"] = self.goto_target
+
+        return ET.Element("simulator_goto_action", attrib=attribs)

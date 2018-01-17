@@ -2,9 +2,10 @@ import random
 from collections import OrderedDict
 
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.SimulatorGotoAction import SimulatorGotoAction
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorProgramAction import SimulatorProgramAction
-from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType
+from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -214,9 +215,14 @@ class SimulatorConfiguration(QObject):
             # todo: are these arguments correct?
             child_tag = item.to_xml(decoders=None, include_message_type=False, write_bits=True)
         elif isinstance(item, SimulatorProtocolLabel):
-            child_tag = item.to_xml()
+            child_tag = item.simulator_label_to_xml()
         elif isinstance(item, SimulatorProgramAction):
-            child_tag = item.to_xml()
+            child_tag = item.simulator_program_to_xml()
+        elif isinstance(item, SimulatorRule):
+            tag.append(item.simulator_rule_to_xml())
+            return
+        elif isinstance(item, SimulatorGotoAction):
+            child_tag = item.simulator_goto_action_to_xml()
         else:
             raise ValueError("Unknown simulator item type {}".format(type(item)))
 

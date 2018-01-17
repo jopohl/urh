@@ -132,7 +132,7 @@ class MessageType(list):
                                                     "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
         for lbl in self:
             try:
-                result.append(lbl.to_xml(-1))
+                result.append(lbl.to_xml())
             except TypeError:
                 logger.error("Could not save label: " + str(lbl))
 

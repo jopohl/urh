@@ -2,6 +2,10 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.SimulatorItem import SimulatorItem
 from urh.signalprocessing.SimulatorMessage import SimulatorMessage
+import xml.etree.ElementTree as ET
+
+from urh.util.Formatter import Formatter
+
 
 class SimulatorProtocolLabel(SimulatorItem):
     VALUE_TYPES = ["Constant value", "Get live during simulation", "Formula", "External program", "Random value"]
@@ -22,7 +26,7 @@ class SimulatorProtocolLabel(SimulatorItem):
             assert isinstance(value, SimulatorMessage)
 
         super().set_parent(value)
-    
+
     def __lt__(self, other):
         if self.label.start != other.label.start:
             return self.label.start < other.label.start
@@ -98,5 +102,30 @@ class SimulatorProtocolLabel(SimulatorItem):
 
         if self.value_type_index == 2:
             result, _, _ = self.expression_parser.validate_expression(self.formula)
-        
+
         return result
+
+    def to_xml(self) -> ET.Element:
+        result = ET.Element("simulator_label", attrib={"value_type_index": str(self.value_type_index),
+                                                       "external_program": str(self.external_program),
+                                                       "formula": str(self.formula),
+                                                       "random_min": str(self.random_min),
+                                                       "random_max": str(self.random_max)})
+        result.append(self.label.to_xml())
+        return result
+
+    @classmethod
+    def from_xml(cls, tag: ET.Element, field_types_by_caption=None):
+        """
+
+        :param tag:
+        :type field_types_by_caption: dict[str, FieldType]
+        :return:
+        """
+        label = ProtocolLabel.from_xml(tag.find("label"), field_types_by_caption)
+        result = SimulatorProtocolLabel(label)
+        result.value_type_index = Formatter.str2val(tag.get("value_type_index", "0"), int)
+        result.external_program = tag.get("external_program", "")
+        result.formula = tag.get("formula", "")
+        result.random_min = Formatter.str2val(tag.get("random_min", "0"), int)
+        result.random_max = Formatter.str2val(tag.get("random_max", str(label.fuzz_maximum-1)), int)

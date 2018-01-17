@@ -128,11 +128,10 @@ class ProtocolLabel(object):
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
 
-    def to_xml(self, index: int) -> ET.Element:
+    def to_xml(self) -> ET.Element:
         return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end),
                                            "color_index": str(self.color_index),
-                                           "apply_decoding": str(self.apply_decoding), "index": str(index),
-                                           "show": str(self.show),
+                                           "apply_decoding": str(self.apply_decoding), "show": str(self.show),
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),

@@ -39,9 +39,15 @@ class SimulatorGotoAction(SimulatorItem):
     def target(self):
         return self.protocol_manager.item_dict[self.goto_target] if self.check() else None
 
-    def simulator_goto_action_to_xml(self) -> ET.Element:
+    def to_xml(self) -> ET.Element:
         attribs = dict()
         if self.goto_target is not None:
             attribs["goto_target"] = self.goto_target
 
         return ET.Element("simulator_goto_action", attrib=attribs)
+
+    @classmethod
+    def from_xml(cls, tag: ET.Element):
+        result = SimulatorGotoAction()
+        result.goto_target = tag.get("goto_target", None)
+        return result

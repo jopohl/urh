@@ -117,11 +117,15 @@ class CompareFrameController(QWidget):
         self.__set_decoding_error_label(None)
 
         self.__set_default_message_type_ui_status()
-
-        self.field_types = FieldType.load_from_xml()
-        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
-
     # region properties
+
+    @property
+    def field_types(self):
+        return self.project_manager.field_types
+
+    @property
+    def field_types_by_caption(self):
+        return self.project_manager.field_types_by_caption
 
     @property
     def active_group_ids(self):
@@ -915,10 +919,6 @@ class CompareFrameController(QWidget):
         self.protocol_model.refresh_vertical_header()
         self.ui.tblViewProtocol.resize_vertical_header()
         self.participant_changed.emit()
-
-    def reload_field_types(self):
-        self.field_types = FieldType.load_from_xml()
-        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
     def refresh_field_types_for_labels(self):
         self.reload_field_types()

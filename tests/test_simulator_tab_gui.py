@@ -45,6 +45,9 @@ class TestSimulatorTabGUI(QtTestCase):
 
         print(xml_str)
 
+        for child in xml_tag:
+            print(stc.simulator_config.load_simulator_item_from_xml(child, []))
+
     def __setup_project(self):
         assert isinstance(self.form, MainController)
         directory = os.path.join(tempfile.gettempdir(), "simulator_project")

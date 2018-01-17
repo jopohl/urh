@@ -202,6 +202,25 @@ class SimulatorConfiguration(QObject):
     def get_all_messages(self):
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
 
+    def load_simulator_item_from_xml(self, xml_tag: ET.Element, message_types) -> (SimulatorItem, bool):
+        finished = False
+        if xml_tag.tag == "simulator_message":
+            item = SimulatorMessage.new_from_xml(xml_tag, self.participants, self.project_manager.decodings,
+                                                 message_types)
+        elif xml_tag.tag == "simulator_label":
+            item = SimulatorProtocolLabel.from_xml(xml_tag, self.project_manager.field_types_by_caption)
+        elif xml_tag.tag == "simulator_program_action":
+            item = SimulatorProgramAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_rule":
+            item = SimulatorRule.from_xml(xml_tag)
+            finished = True
+        elif xml_tag.tag == "simulator_goto_action":
+            item = SimulatorGotoAction.from_xml(xml_tag)
+        else:
+            raise ValueError("Unknown simulator item tag: {}".format(xml_tag.text))
+
+        return item, finished
+
     def save_simulator_config_to_xml(self) -> ET.Element:
         result = ET.Element("simulator_config")
 
@@ -214,15 +233,11 @@ class SimulatorConfiguration(QObject):
         if isinstance(item, SimulatorMessage):
             # todo: are these arguments correct?
             child_tag = item.to_xml(decoders=None, include_message_type=False, write_bits=True)
-        elif isinstance(item, SimulatorProtocolLabel):
-            child_tag = item.simulator_label_to_xml()
-        elif isinstance(item, SimulatorProgramAction):
-            child_tag = item.simulator_program_to_xml()
+        elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorProgramAction, SimulatorGotoAction)):
+            child_tag = item.to_xml()
         elif isinstance(item, SimulatorRule):
-            tag.append(item.simulator_rule_to_xml())
+            tag.append(item.to_xml())
             return
-        elif isinstance(item, SimulatorGotoAction):
-            child_tag = item.simulator_goto_action_to_xml()
         else:
             raise ValueError("Unknown simulator item type {}".format(type(item)))
 

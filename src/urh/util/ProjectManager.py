@@ -9,6 +9,7 @@ from urh import constants
 from urh.dev import config
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
@@ -47,6 +48,10 @@ class ProjectManager(QObject):
         self.broadcast_address_hex = "ffff"
         self.participants = []
 
+        self.field_types = []  # type: list[FieldType]
+        self.field_types_by_caption = dict()
+        self.reload_field_types()
+
     @property
     def project_loaded(self) -> bool:
         return self.project_file is not None
@@ -59,6 +64,10 @@ class ProjectManager(QObject):
     def project_file(self, value):
         self.__project_file = value
         self.project_loaded_status_changed.emit(self.project_loaded)
+
+    def reload_field_types(self):
+        self.field_types = FieldType.load_from_xml()
+        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
     def set_recording_parameters(self, device: str, kwargs: dict):
         for key, value in kwargs.items():

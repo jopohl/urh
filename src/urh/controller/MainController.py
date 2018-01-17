@@ -798,6 +798,7 @@ class MainController(QMainWindow):
             for sf in self.signal_tab_controller.signal_frames:
                 sf.refresh_protocol()
 
+        self.project_manager.reload_field_types()
         self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()

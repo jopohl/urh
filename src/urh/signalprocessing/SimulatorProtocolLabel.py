@@ -105,7 +105,7 @@ class SimulatorProtocolLabel(SimulatorItem):
 
         return result
 
-    def simulator_label_to_xml(self) -> ET.Element:
+    def to_xml(self) -> ET.Element:
         result = ET.Element("simulator_label", attrib={"value_type_index": str(self.value_type_index),
                                                        "external_program": str(self.external_program),
                                                        "formula": str(self.formula),
@@ -129,3 +129,4 @@ class SimulatorProtocolLabel(SimulatorItem):
         result.formula = tag.get("formula", "")
         result.random_min = Formatter.str2val(tag.get("random_min", "0"), int)
         result.random_max = Formatter.str2val(tag.get("random_max", str(label.fuzz_maximum-1)), int)
+        return result

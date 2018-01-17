@@ -472,7 +472,7 @@ class Message(object):
         self.modulator_index = int(tag.get("modulator_index", self.modulator_index))
         self.pause = int(tag.get("pause", self.pause))
         decoding_index = tag.get("decoding_index", None)
-        if decoding_index:
+        if decoding_index and decoders is not None:
             try:
                 self.decoder = decoders[int(decoding_index)]
             except IndexError:

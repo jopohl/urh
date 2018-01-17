@@ -627,7 +627,9 @@ class ProtocolAnalyzer(object):
         # Save data
         data_tag = ET.SubElement(root, "messages")
         for i, message in enumerate(messages):
-            message_tag = message.to_xml(decoders=decodings, include_message_type=include_message_type, write_bits=write_bits)
+            message_tag = message.to_xml(decoders=decodings,
+                                         include_message_type=include_message_type,
+                                         write_bits=write_bits)
             data_tag.append(message_tag)
 
         # Save message types separatively as not saved in messages already
@@ -638,8 +640,8 @@ class ProtocolAnalyzer(object):
 
         return root
 
-    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_message_types=False,
-                    write_bits=False):
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol",
+                    include_message_types=False, write_bits=False):
         tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name,
                               include_message_type=include_message_types, write_bits=write_bits)
 

@@ -1,12 +1,16 @@
-import copy
+import xml.etree.ElementTree as ET
 
-from urh.signalprocessing.SimulatorItem import SimulatorItem
-from urh.signalprocessing.SimulatorRule import SimulatorRule, SimulatorRuleCondition
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.SimulatorItem import SimulatorItem
+from urh.signalprocessing.SimulatorRule import SimulatorRuleCondition
+from urh.util.Formatter import Formatter
+
 
 class SimulatorMessage(Message, SimulatorItem):
-    def __init__(self, destination, plain_bits, pause: int, message_type: MessageType, decoder=None, source=None):
+    def __init__(self, destination: Participant, plain_bits,
+                 pause: int, message_type: MessageType, decoder=None, source=None):
         Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
         SimulatorItem.__init__(self)
         self.destination = destination
@@ -80,3 +84,23 @@ class SimulatorMessage(Message, SimulatorItem):
         self.protocol_manager.delete_items(labels_remove)
         self.protocol_manager.add_items(labels_add, -1, self)
         del self.plain_bits[index]
+
+    def to_xml(self, decoders=None, include_message_type=False, write_bits=True) -> ET.Element:
+        result = ET.Element("simulator_message", attrib={"destination_id": self.destination.id,
+                                                         "repeat": str(self.repeat)})
+
+        result.append(super().to_xml(decoders, include_message_type, write_bits=write_bits))
+
+        return result
+
+    def from_xml(self, tag: ET.Element, participants, decoders=None, message_types=None):
+        super().from_xml(tag, participants, decoders, message_types)
+        self.destination = Participant.find_matching(tag.get("destination_id", ""), participants)
+        self.repeat = Formatter.str2val(tag.get("repeat", "1"), int, 1)
+
+    @classmethod
+    def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
+        msg = Message.new_from_xml(tag.find("message"), participants=participants, decoders=decoders, message_types=message_types)
+        destination = Participant.find_matching( tag.get("destination_id", ""), participants)
+        return SimulatorMessage(destination, msg.plain_bits, msg.pause, msg.message_type, msg.decoder, msg.participant)
+

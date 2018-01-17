@@ -42,6 +42,10 @@ class Participant(object):
         else:
             return False
 
+    @staticmethod
+    def find_matching(participant_id: str, participants: list):
+        return next((p for p in participants if p.id_match(participant_id)), None)
+
     def to_xml(self) -> ET.Element:
         root = ET.Element("participant")
         root.set("name", self.name)

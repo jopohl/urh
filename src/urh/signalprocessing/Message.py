@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -443,11 +444,15 @@ class Message(object):
         plain_bits = list(map(int, bits))
         return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
 
-    def to_xml(self, decoders=None, include_message_type=False) -> ET.Element:
+    def to_xml(self, decoders=None, include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element("message")
         root.set("message_type_id", self.message_type.id)
         root.set("modulator_index", str(self.modulator_index))
         root.set("pause", str(self.pause))
+
+        if write_bits:
+            root.set("bits", self.plain_bits_str)
+
         if decoders:
             try:
                 decoding_index = decoders.index(self.decoder)
@@ -474,10 +479,7 @@ class Message(object):
                 pass
 
         if part_id:
-            for participant in participants:
-                if participant.id_match(part_id):
-                    self.participant = participant
-                    break
+            self.participant = Participant.find_matching(part_id, participants)
             if self.participant is None:
                 logger.warning("No participant matched the id {0} from xml".format(part_id))
 
@@ -490,6 +492,13 @@ class Message(object):
         message_type_tag = tag.find("message_type")
         if message_type_tag:
             self.message_type = MessageType.from_xml(message_type_tag)
+
+    @classmethod
+    def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
+        assert "bits" in tag.attrib
+        result = cls.from_plain_bits_str(bits=tag.get("bits"))
+        result.from_xml(tag, participants, decoders=None, message_types=None)
+        return result
 
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]

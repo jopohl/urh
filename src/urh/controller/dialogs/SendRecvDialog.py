@@ -177,6 +177,36 @@ class SendRecvDialog(QDialog):
 
         self.timer.start(self.update_interval)
 
+    def __parse_error_messages(self, messages):
+        messages = messages.lower()
+
+        if "no devices found for" in messages:
+            self.device.stop_on_error("Could not establish connection to USRP")
+            Errors.usrp_found()
+            self.on_clear_clicked()
+
+        elif any(e in messages for e in ("hackrf_error_not_found", "hackrf_error_libusb")):
+            self.device.stop_on_error("Could not establish connection to HackRF")
+            Errors.hackrf_not_found()
+            self.on_clear_clicked()
+
+        elif "no module named gnuradio" in messages:
+            self.device.stop_on_error("Did not find gnuradio.")
+            Errors.gnuradio_not_installed()
+            self.on_clear_clicked()
+
+        elif "rtlsdr-open: error code: -1" in messages:
+            self.device.stop_on_error("Could not open a RTL-SDR device.")
+            self.on_clear_clicked()
+
+        elif "rtlsdr-open: error code: -12" in messages:
+            self.device.stop_on_error("Could not open a RTL-SDR device")
+            Errors.rtlsdr_sdr_driver()
+            self.on_clear_clicked()
+
+        elif "Address already in use" in messages:
+            self._restart_device_thread()
+
     def update_view(self):
         try:
             self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
@@ -186,28 +216,7 @@ class SendRecvDialog(QDialog):
         txt = self.ui.txtEditErrors.toPlainText()
         new_messages = self.device.read_messages()
 
-        if "No devices found for" in new_messages:
-            self.device.stop_on_error("Could not establish connection to USRP")
-            Errors.usrp_found()
-
-            self.on_clear_clicked()
-
-        elif any(e in new_messages for e in ("HACKRF_ERROR_NOT_FOUND", "HACKRF_ERROR_LIBUSB")):
-            self.device.stop_on_error("Could not establish connection to HackRF")
-            Errors.hackrf_not_found()
-            self.on_clear_clicked()
-
-        elif "No module named gnuradio" in new_messages:
-            self.device.stop_on_error("Did not find gnuradio.")
-            Errors.gnuradio_not_installed()
-            self.on_clear_clicked()
-
-        elif "RTLSDR-open: Error Code: -1" in new_messages:
-            self.device.stop_on_error("Could not open a RTL-SDR device.")
-            self.on_clear_clicked()
-
-        elif "Address already in use" in new_messages:
-            self._restart_device_thread()
+        self.__parse_error_messages(new_messages)
 
         if len(new_messages) > 1:
             self.ui.txtEditErrors.setPlainText(txt + new_messages)

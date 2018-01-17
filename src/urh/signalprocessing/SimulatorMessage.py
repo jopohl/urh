@@ -24,6 +24,10 @@ class SimulatorMessage(Message, SimulatorItem):
         super().set_parent(value)
 
     @property
+    def source(self):
+        return self.participant
+
+    @property
     def children(self):
         return self.message_type
 

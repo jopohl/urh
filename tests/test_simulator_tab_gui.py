@@ -12,9 +12,9 @@ from urh.signalprocessing.Participant import Participant
 class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        alice = Participant("Alice", "A")
-        bob = Participant("Bob", "B")
-        self.participants = [alice, bob]
+        self.carl = Participant("Carl", "C")
+        self.dennis = Participant("Dennis", "D")
+        self.participants = [self.carl, self.dennis]
 
     def test_save_and_load(self):
         stc = self.form.simulator_tab_controller  # type: SimulatorTabController
@@ -23,6 +23,11 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+
+        messages = stc.simulator_config.get_all_messages()
+        self.assertEqual(len(messages), 3)
+        for i, msg in enumerate(messages):
+            self.assertEqual(msg.source, self.carl, msg=str(i))
 
         # select items
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 0)
@@ -49,6 +54,9 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_signal_to_form("esaver.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
+
+        for i in range(3):
+            self.form.compare_frame_controller.proto_analyzer.messages[i].participant = self.carl
 
         self.form.compare_frame_controller.add_protocol_label(8, 16, 0, 0, False)
         self.assertEqual(self.form.compare_frame_controller.label_value_model.rowCount(), 1)

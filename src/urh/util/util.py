@@ -51,27 +51,58 @@ def get_windows_lib_path():
     return dll_dir
 
 
-def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False):
+def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False):
+    """
+    Convert bit array to string
+    :param bits: Bit array
+    :param output_view_type: Output view type index
+    0 = bit, 1=hex, 2=ascii, 3=decimal 4=binary coded decimal (bcd)
+    :param pad_zeros:
+    :param lsb: Least Significant Bit   -> Reverse bits first
+    :param lsd: Least Significant Digit -> Reverse result at end
+    :return:
+    """
     bits_str = "".join(["1" if b else "0" for b in bits])
 
-    if output_view_type == 0:
-        return bits_str
+    if output_view_type == 4:
+        # For BCD we need to enforce padding
+        pad_zeros = True
 
-    elif output_view_type == 1:
-        if pad_zeros:
-            bits_str += "0" * ((4 - (len(bits_str) % 4)) % 4)
+    if pad_zeros and output_view_type in (1, 2, 4):
+        n = 4 if output_view_type in (1, 4) else 8 if output_view_type == 2 else 1
+        bits_str += "0" * ((n - (len(bits_str) % n)) % n)
 
-        return "".join(["{0:x}".format(int(bits_str[i:i + 4], 2)) for i in range(0, len(bits_str), 4)])
+    if lsb:
+        # Reverse bit string
+        bits_str = bits_str[::-1]
 
-    elif output_view_type == 2:
-        if pad_zeros:
-            bits_str += "0" * ((8 - (len(bits_str) % 8)) % 8)
+    if output_view_type == 0:  # bt
+        result = bits_str
 
-        return "".join(map(chr,
-                           [int("".join(bits_str[i:i + 8]), 2) for i in range(0, len(bits_str), 8)]))
+    elif output_view_type == 1:  # hex
+        result = "".join(["{0:x}".format(int(bits_str[i:i + 4], 2)) for i in range(0, len(bits_str), 4)])
 
-    elif output_view_type == 3:
-        return int(bits_str, 2)
+    elif output_view_type == 2:  # ascii
+        result = "".join(map(chr,
+                             [int("".join(bits_str[i:i + 8]), 2) for i in range(0, len(bits_str), 8)]))
+
+    elif output_view_type == 3:  # decimal
+        try:
+            result = str(int(bits_str, 2))
+        except ValueError:
+            return None
+    elif output_view_type == 4:  # bcd
+        error_symbol = "?"
+        lut = {"{0:04b}".format(i): str(i) if i < 10 else error_symbol for i in range(16)}
+        result = "".join([lut[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4)])
+    else:
+        raise ValueError("Unknown view type")
+
+    if lsd:
+        # reverse result
+        return result[::-1]
+    else:
+        return result
 
 
 def hex2bit(hex_str: str) -> array.array:

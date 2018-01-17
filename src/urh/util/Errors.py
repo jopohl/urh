@@ -66,6 +66,15 @@ class Errors:
                                   "feature."))
 
     @staticmethod
+    def rtlsdr_sdr_driver():
+        if sys.platform == "win32":
+            w = QWidget()
+            QMessageBox.critical(w, w.tr("Could not access RTL-SDR device"),
+                                 w.tr("You may need to reinstall the driver with Zadig for 'Composite' device.<br>"
+                                      "See <a href='https://github.com/jopohl/urh/issues/389'>here</a> "
+                                      "for more information."))
+
+    @staticmethod
     def empty_group():
         w = QWidget()
         QMessageBox.critical(w, w.tr("Empty group"),

@@ -414,6 +414,7 @@ class CompareFrameController(QWidget):
         pa.message_types = []
         pa.name = "Loaded Protocol"
         pa.filename = filename
+
         pa.from_xml_file(filename=filename, read_bits=True)
         for messsage_type in pa.message_types:
             if messsage_type not in self.proto_analyzer.message_types:

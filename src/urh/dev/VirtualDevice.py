@@ -599,7 +599,12 @@ class VirtualDevice(QObject):
     def emit_index_changed(self, old, new):
         self.index_changed.emit(old, new)
 
-    def read_messages(self):
+    def read_messages(self) -> str:
+        """
+        returns a string of new device messages separated by newlines
+
+        :return:
+        """
         if self.backend == Backends.grc:
             return self.__dev.read_errors()
         elif self.backend == Backends.native:

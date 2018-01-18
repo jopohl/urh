@@ -497,7 +497,7 @@ class Message(object):
     def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
         assert "bits" in tag.attrib
         result = cls.from_plain_bits_str(bits=tag.get("bits"))
-        result.from_xml(tag, participants, decoders=None, message_types=None)
+        result.from_xml(tag, participants, decoders=decoders, message_types=message_types)
         return result
 
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):

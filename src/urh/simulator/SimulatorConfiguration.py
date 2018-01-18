@@ -250,8 +250,7 @@ class SimulatorConfiguration(QObject):
 
     def __save_item_to_xml(self, tag: ET.Element, item):
         if isinstance(item, SimulatorMessage):
-            # todo: are these arguments correct?
-            child_tag = item.to_xml(decoders=None, include_message_type=False, write_bits=True)
+            child_tag = item.to_xml(decoders=self.project_manager.decodings, include_message_type=True, write_bits=True)
         elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorProgramAction, SimulatorGotoAction,
                                                SimulatorRule, SimulatorRuleCondition)):
             child_tag = item.to_xml()

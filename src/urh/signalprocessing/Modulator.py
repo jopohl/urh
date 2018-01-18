@@ -270,6 +270,22 @@ class Modulator(object):
         return modulators_tag
 
     @staticmethod
+    def modulators_from_xml_tag(xml_tag: ET.Element) -> list:
+        if xml_tag is None:
+            return []
+
+        if xml_tag.tag != "modulators":
+            xml_tag = xml_tag.find("modulators")
+
+        if xml_tag is None:
+            return []
+
+        result = []
+        for mod_tag in xml_tag.iter("modulator"):
+            result.append(Modulator.from_xml(mod_tag))
+        return result
+
+    @staticmethod
     def get_value_with_suffix(value, unit=""):
         decimal_point = locale.localeconv()["decimal_point"]
 

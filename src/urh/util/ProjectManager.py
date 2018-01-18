@@ -12,6 +12,7 @@ from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator
 
@@ -178,10 +179,10 @@ class ProjectManager(QObject):
             self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
-            self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
+            self.participants = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
             self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
-            decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
+            decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
             if decodings:
                 # Set values of decodings only so decodings are updated in generator when loading a project
                 cfc.decodings[:] = decodings
@@ -193,7 +194,9 @@ class ProjectManager(QObject):
                                             decodings=cfc.decodings)
 
             cfc.updateUI()
-            self.modulators[:] = self.read_modulators_from_project_file()
+            modulators = self.read_modulators_from_project_file()
+            if modulators:
+                self.modulators[:] = modulators
             self.main_controller.generator_tab_controller.refresh_modulators()
             self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 
@@ -274,12 +277,7 @@ class ProjectManager(QObject):
             tree = ET.parse(self.project_file)
 
         root = tree.getroot()
-        # Clear Modulations
-        for mod_tag in root.findall("modulator"):
-            root.remove(mod_tag)
-
-        for i, mod in enumerate(self.modulators):
-            root.append(mod.to_xml(i))
+        root.append(Modulator.modulators_to_xml_tag(self.modulators))
 
         tree.write(self.project_file)
 
@@ -296,11 +294,7 @@ class ProjectManager(QObject):
         tree = ET.parse(filename)
         root = tree.getroot()
 
-        result = []
-        for mod_tag in root.iter("modulator"):
-            result.append(Modulator.from_xml(mod_tag))
-
-        return result
+        return Modulator.modulators_from_xml_tag(root)
 
     def save_project(self, simulator_config=None):
         if self.project_file is None or not os.path.isfile(self.project_file):

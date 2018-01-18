@@ -75,3 +75,18 @@ class Participant(object):
             participants_tag.append(participant.to_xml())
         return participants_tag
 
+    @staticmethod
+    def read_participants_from_xml_tag(xml_tag: ET.Element):
+        if xml_tag is None:
+            return []
+
+        if xml_tag.tag != "participants":
+            xml_tag = xml_tag.find("participants")
+
+        if xml_tag is None:
+            return []
+
+        participants = []
+        for parti_tag in xml_tag.findall("participant"):
+            participants.append(Participant.from_xml(parti_tag))
+        return participants

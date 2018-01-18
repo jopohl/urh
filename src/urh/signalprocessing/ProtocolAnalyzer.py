@@ -620,10 +620,10 @@ class ProtocolAnalyzer(object):
         if not root:
             return None
 
-        decoders = self.read_decoders_from_xml_tag(root) if decodings is None else decodings
+        decoders = Encoding.read_decoders_from_xml_tag(root) if decodings is None else decodings
 
         if participants is None:
-            participants = self.read_participants_from_xml_tag(root)
+            participants = Participant.read_participants_from_xml_tag(root)
 
         if read_bits:
             self.messages[:] = []
@@ -656,29 +656,6 @@ class ProtocolAnalyzer(object):
 
         except AttributeError:
             pass
-
-    @staticmethod
-    def read_participants_from_xml_tag(root: ET.Element):
-        try:
-            participants = []
-            for parti_tag in root.find("participants").findall("participant"):
-                participants.append(Participant.from_xml(parti_tag))
-            return participants
-        except AttributeError:
-            logger.warning("no participants found in xml")
-            return []
-
-    @staticmethod
-    def read_decoders_from_xml_tag(root: ET.Element):
-        try:
-            decoders = []
-            for decoding_tag in root.find("decodings").findall("decoding"):
-                conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-                decoders.append(Encoding(conf))
-            return decoders
-        except AttributeError:
-            logger.error("no decodings found in xml")
-            return []
 
     def from_xml_file(self, filename: str, read_bits=False):
         try:

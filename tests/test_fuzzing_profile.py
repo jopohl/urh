@@ -3,6 +3,7 @@ import tempfile
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
+from urh.controller.MainController import MainController
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -22,7 +23,9 @@ class TestFuzzingProfile(QtTestCase):
         pac.messages.append(Message([True, False, False, True], 100, decoder=decoders[0], message_type=pac.default_message_type))
         pac.messages.append(Message([False, False, False, False], 200, decoder=decoders[1], message_type=pac.default_message_type))
         pac.create_fuzzing_label(1, 10, 0)
-        pac.to_xml_file(filename)
+        assert isinstance(self.form, MainController)
+        pac.to_xml_file(filename, decoders=decoders,
+                        participants=self.form.project_manager.participants)
 
         self.wait_before_new_file()
         self.form.add_files([os.path.join(tempfile.gettempdir(), "test.fuzz.xml")])

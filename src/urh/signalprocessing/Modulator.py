@@ -263,6 +263,13 @@ class Modulator(object):
         return result
 
     @staticmethod
+    def modulators_to_xml_tag(modulators: list) -> ET.Element:
+        modulators_tag = ET.Element("modulators")
+        for i, modulator in enumerate(modulators):
+            modulators_tag.append(modulator.to_xml(i))
+        return modulators_tag
+
+    @staticmethod
     def get_value_with_suffix(value, unit=""):
         decimal_point = locale.localeconv()["decimal_point"]
 

@@ -5,7 +5,7 @@ import array
 from urh import constants
 from urh.util.GenericCRC import GenericCRC
 from urh.util import util
-
+from xml.etree import ElementTree as ET
 
 class Encoding(object):
     """
@@ -58,6 +58,9 @@ class Encoding(object):
         # Set Chain
         self.chain = []
         self.set_chain(chain)
+
+    def __hash__(self):
+        return hash(tuple(self.get_chain()))
 
     @property
     def symbol_len(self):
@@ -838,3 +841,14 @@ class Encoding(object):
             return False
 
         return self.get_chain() == other.get_chain()
+
+    @staticmethod
+    def decodings_to_xml_tag(decodings: list) -> ET.Element:
+        decodings_tag = ET.Element("decodings")
+        for decoding in decodings:
+            dec_str = ""
+            for chn in decoding.get_chain():
+                dec_str += repr(chn) + ", "
+            dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.text = dec_str
+        return decodings_tag

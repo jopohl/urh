@@ -67,3 +67,11 @@ class Participant(object):
         relative_rssi = int(tag.get("relative_rssi", 0))
         return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index,
                            id=tag.attrib["id"], relative_rssi=relative_rssi)
+
+    @staticmethod
+    def participants_to_xml_tag(participants: list) -> ET.Element:
+        participants_tag = ET.Element("participants")
+        for participant in participants:
+            participants_tag.append(participant.to_xml())
+        return participants_tag
+

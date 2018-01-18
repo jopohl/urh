@@ -615,7 +615,9 @@ class GeneratorTabController(QWidget):
     def on_btn_save_clicked(self):
         filename = FileOperator.get_save_file_name("profile.fuzz.xml", caption="Save fuzz profile")
         if filename:
-            self.table_model.protocol.to_xml_file(filename)
+            self.table_model.protocol.to_xml_file(filename,
+                                                  decoders=self.project_manager.decodings,
+                                                  participants=self.project_manager.participants)
 
     @pyqtSlot()
     def on_btn_open_clicked(self):

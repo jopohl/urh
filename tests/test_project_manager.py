@@ -39,7 +39,7 @@ class TestProjectManager(QtTestCase):
         self.gframe.modulators.append(Modulator("test 2"))
         self.gframe.modulators = self.gframe.modulators[:2]  # Take only the first two
 
-        self.form.project_manager.save_project()
+        self.form.save_project()
 
         loaded_mods = self.form.project_manager.read_modulators_from_project_file()
         self.assertEqual(len(loaded_mods), 2)
@@ -107,7 +107,7 @@ class TestProjectManager(QtTestCase):
 
         self.form.compare_frame_controller.refresh_assigned_participants_ui()
 
-        self.form.project_manager.save_project()
+        self.form.save_project()
         self.form.close_all()
         self.wait_before_new_file()
         self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 0)
@@ -151,7 +151,6 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[1].field_type, sync_field_type)
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
 
-        self.form.project_manager.save_project()
         self.form.close_all()
         self.wait_before_new_file()
         self.assertEqual(len(self.form.compare_frame_controller.active_message_type), 0)

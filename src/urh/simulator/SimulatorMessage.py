@@ -40,7 +40,8 @@ class SimulatorMessage(Message, SimulatorItem):
 
     @property
     def plain_ascii_str(self) -> str:
-        plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array if len(self.send_recv_messages) else self.plain_ascii_array
+        plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array if len(
+            self.send_recv_messages) else self.plain_ascii_array
         return "".join(map(chr, plain_ascii_array))
 
     @property
@@ -104,7 +105,9 @@ class SimulatorMessage(Message, SimulatorItem):
 
     @classmethod
     def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
-        msg = Message.new_from_xml(tag.find("message"), participants=participants, decoders=decoders, message_types=message_types)
-        destination = Participant.find_matching( tag.get("destination_id", ""), participants)
+        msg = Message.new_from_xml(tag.find("message"),
+                                   participants=participants,
+                                   decoders=decoders,
+                                   message_types=message_types)
+        destination = Participant.find_matching(tag.get("destination_id", ""), participants)
         return SimulatorMessage(destination, msg.plain_bits, msg.pause, msg.message_type, msg.decoder, msg.participant)
-

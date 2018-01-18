@@ -7,6 +7,7 @@ from tests.QtTestCase import QtTestCase
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 
 
@@ -16,8 +17,10 @@ class TestSimulatorTabGUI(QtTestCase):
         self.carl = Participant("Carl", "C")
         self.dennis = Participant("Dennis", "D")
         self.participants = [self.carl, self.dennis]
+        self.project_folder = os.path.join(tempfile.gettempdir(), "simulator_project")
 
     def test_save_and_load(self):
+        assert isinstance(self.form, MainController)
         stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         self.__setup_project()
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
@@ -40,17 +43,21 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        xml_tag = stc.simulator_config.save_simulator_config_to_xml()
-        xml_str = minidom.parseString(ET.tostring(xml_tag)).toprettyxml(indent="  ")
+        self.form.close_all()
+        self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
+        stc.simulator_scene.select_all_items()
+        self.assertEqual(stc.simulator_message_field_model.rowCount(), 0)
 
-        print(xml_str)
+        self.form.project_manager.set_project_folder(self.project_folder)
 
-        for child in xml_tag:
-            print(stc.simulator_config.load_simulator_item_from_xml(child, []))
+        self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+        self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
+        stc.simulator_scene.select_all_items()
+        self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
     def __setup_project(self):
         assert isinstance(self.form, MainController)
-        directory = os.path.join(tempfile.gettempdir(), "simulator_project")
+        directory = self.project_folder
         if not os.path.isdir(directory):
             os.mkdir(directory)
 

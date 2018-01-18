@@ -189,6 +189,15 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.resize_columns()
         self.update_ui()
 
+    def load_config_from_xml_tag(self, xml_tag):
+        if xml_tag is None:
+            return
+        self.simulator_config.on_project_updated()
+        self.simulator_config.load_from_xml(xml_tag, self.proto_analyzer.message_types)
+
+    def close_all(self):
+        self.simulator_scene.clear_all()
+
     @pyqtSlot(int, int, int)
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol

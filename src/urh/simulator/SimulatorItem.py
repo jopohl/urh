@@ -34,6 +34,10 @@ class SimulatorItem(object):
         child.set_parent(self)
         self.children.insert(pos, child)
 
+    def add_child(self, child):
+        child.set_parent(self)
+        self.children.append(child)
+
     def delete(self):
         for child in self.children[:]:
             child.set_parent(None)

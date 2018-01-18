@@ -30,7 +30,8 @@ class SimulatorConfiguration(QObject):
         super().__init__()
         self.rootItem = SimulatorItem()
         self.project_manager = project_manager
-        self.broadcast_part = Participant("Broadcast", "Broadcast", self.project_manager.broadcast_address_hex)
+        self.broadcast_part = Participant("Broadcast", "Broadcast",
+                                          self.project_manager.broadcast_address_hex, id="broadcast_participant")
         self.__active_participants = None
 
         self.item_dict = OrderedDict()
@@ -103,9 +104,11 @@ class SimulatorConfiguration(QObject):
 
         return self.__active_participants
 
-    def add_items(self, items, pos: int, parent_item: SimulatorItem):
+    def add_items(self, items, pos: int, parent_item):
         if parent_item is None:
             parent_item = self.rootItem
+
+        assert isinstance(parent_item, SimulatorItem)
 
         for item in items:
             parent_item.insert_child(pos, item)
@@ -202,8 +205,16 @@ class SimulatorConfiguration(QObject):
     def get_all_messages(self):
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
 
-    def load_simulator_item_from_xml(self, xml_tag: ET.Element, message_types) -> (SimulatorItem, bool):
-        finished = False
+    def load_from_xml(self, xml_tag: ET.Element, message_types):
+        assert xml_tag.tag == "simulator_config"
+        items = []
+
+        for child_tag in xml_tag:
+            items.append(self.load_item_from_xml(child_tag, message_types))
+
+        self.add_items(items, pos=0, parent_item=None)
+
+    def load_item_from_xml(self, xml_tag: ET.Element, message_types) -> SimulatorItem:
         if xml_tag.tag == "simulator_message":
             item = SimulatorMessage.new_from_xml(xml_tag, self.participants, self.project_manager.decodings,
                                                  message_types)
@@ -212,16 +223,22 @@ class SimulatorConfiguration(QObject):
         elif xml_tag.tag == "simulator_program_action":
             item = SimulatorProgramAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule":
-            item = SimulatorRule.from_xml(xml_tag)
-            finished = True
+            return  SimulatorRule.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_goto_action":
             item = SimulatorGotoAction.from_xml(xml_tag)
+        elif xml_tag.tag in ("message", "label", "checksum_label"):
+            return None
         else:
-            raise ValueError("Unknown simulator item tag: {}".format(xml_tag.text))
+            raise ValueError("Unknown simulator item tag: {}".format(xml_tag.tag))
 
-        return item, finished
+        for child_tag in xml_tag:
+            child = self.load_item_from_xml(child_tag, message_types)
+            if child is not None:
+                item.add_child(child)
 
-    def save_simulator_config_to_xml(self) -> ET.Element:
+        return item
+
+    def save_to_xml(self) -> ET.Element:
         result = ET.Element("simulator_config")
 
         for item in self.rootItem.children:

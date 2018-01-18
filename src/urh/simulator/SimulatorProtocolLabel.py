@@ -1,3 +1,4 @@
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -122,7 +123,11 @@ class SimulatorProtocolLabel(SimulatorItem):
         :type field_types_by_caption: dict[str, FieldType]
         :return:
         """
-        label = ProtocolLabel.from_xml(tag.find("label"), field_types_by_caption)
+        label_tag = tag.find("label")
+        if label_tag is not None:
+            label = ProtocolLabel.from_xml(label_tag, field_types_by_caption)
+        else:
+            label = ChecksumLabel.from_xml(tag.find("checksum_label"), field_types_by_caption)
         result = SimulatorProtocolLabel(label)
         result.value_type_index = Formatter.str2val(tag.get("value_type_index", "0"), int)
         result.external_program = tag.get("external_program", "")

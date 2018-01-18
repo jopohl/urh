@@ -195,6 +195,7 @@ class ProjectManager(QObject):
             self.main_controller.generator_tab_controller.modulators = modulators if modulators else [
                 Modulator("Modulation")]
             self.main_controller.generator_tab_controller.refresh_modulators()
+            self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 
         if len(self.project_path) > 0 and self.project_file is None:
             self.main_controller.ui.actionConvert_Folder_to_Project.setEnabled(True)
@@ -298,7 +299,7 @@ class ProjectManager(QObject):
 
         return result
 
-    def save_project(self):
+    def save_project(self, simulator_config=None):
         if self.project_file is None or not os.path.isfile(self.project_file):
             return
 
@@ -362,6 +363,9 @@ class ProjectManager(QObject):
         root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
                                                   messages=[msg for proto in cfc.full_protocol_list for msg in
                                                             proto.messages]))
+
+        if simulator_config is not None:
+            root.append(simulator_config.save_to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
         with open(self.project_file, "w") as f:

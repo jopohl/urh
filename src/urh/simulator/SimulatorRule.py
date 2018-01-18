@@ -35,18 +35,11 @@ class SimulatorRule(SimulatorItem):
         return result
 
     def to_xml(self) -> ET.Element:
-        result = ET.Element("simulator_rule")
-        for condition in self.children:
-            assert isinstance(condition, SimulatorRuleCondition)
-            result.append(condition.to_xml())
-        return result
+        return ET.Element("simulator_rule")
 
     @classmethod
     def from_xml(cls, tag: ET.Element):
-        result = SimulatorRule()
-        for i, child in enumerate(tag):
-            result.insert_child(i, SimulatorRuleCondition.from_xml(child))
-        return result
+        return SimulatorRule()
 
 class ConditionType(Enum):
     IF = "IF"
@@ -82,8 +75,8 @@ class SimulatorRuleCondition(SimulatorItem):
         return result
 
     def to_xml(self):
-        return ET.Element("rule_condition", attrib={"type": self.type.value,
-                                                    "condition": self.condition})
+        return ET.Element("simulator_rule_condition", attrib={"type": self.type.value,
+                                                              "condition": self.condition})
 
     @classmethod
     def from_xml(cls, tag: ET.Element):

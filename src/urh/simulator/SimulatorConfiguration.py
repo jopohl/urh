@@ -223,7 +223,9 @@ class SimulatorConfiguration(QObject):
         elif xml_tag.tag == "simulator_program_action":
             item = SimulatorProgramAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule":
-            return  SimulatorRule.from_xml(xml_tag)
+            item = SimulatorRule.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_rule_condition":
+            item = SimulatorRuleCondition.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_goto_action":
             item = SimulatorGotoAction.from_xml(xml_tag)
         elif xml_tag.tag in ("message", "label", "checksum_label"):
@@ -250,11 +252,9 @@ class SimulatorConfiguration(QObject):
         if isinstance(item, SimulatorMessage):
             # todo: are these arguments correct?
             child_tag = item.to_xml(decoders=None, include_message_type=False, write_bits=True)
-        elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorProgramAction, SimulatorGotoAction)):
+        elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorProgramAction, SimulatorGotoAction,
+                                               SimulatorRule, SimulatorRuleCondition)):
             child_tag = item.to_xml()
-        elif isinstance(item, SimulatorRule):
-            tag.append(item.to_xml())
-            return
         else:
             raise ValueError("Unknown simulator item type {}".format(type(item)))
 

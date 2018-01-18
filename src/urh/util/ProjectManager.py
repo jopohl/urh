@@ -14,7 +14,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 
 
 class ProjectManager(QObject):
@@ -39,9 +39,9 @@ class ProjectManager(QObject):
 
         self.__project_file = None
 
-        self.modulators = [Modulator("Modulator")]  # type: list[Modulator]
+        self.__modulators = [Modulator("Modulator")]  # type: list[Modulator]
 
-        self.decodings = []  # type: list[Encoding]
+        self.__decodings = []  # type: list[Encoding]
         self.load_decodings()
 
         self.modulation_was_edited = False
@@ -54,6 +54,28 @@ class ProjectManager(QObject):
         self.field_types = []  # type: list[FieldType]
         self.field_types_by_caption = dict()
         self.reload_field_types()
+
+    @property
+    def modulators(self):
+        return self.__modulators
+
+    @modulators.setter
+    def modulators(self, value):
+        if value:
+            self.__modulators[:] = value
+            if hasattr(self.main_controller, "generator_tab_controller"):
+                self.main_controller.generator_tab_controller.refresh_modulators()
+
+    @property
+    def decodings(self):
+        return self.__decodings
+
+    @decodings.setter
+    def decodings(self, value):
+        if value:
+            self.__decodings[:] = value
+            if hasattr(self.main_controller, "compare_frame_controller"):
+                self.main_controller.compare_frame_controller.fill_decoding_combobox()
 
     @property
     def project_loaded(self) -> bool:
@@ -103,15 +125,14 @@ class ProjectManager(QObject):
         try:
             f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
         except FileNotFoundError:
-            self.decodings[:] = fallback
+            self.decodings = fallback
             return
 
         if not f:
-            self.decodings[:] = fallback
+            self.decodings = fallback
             return
 
-        self.decodings[:] = []  # :type: list[Encoding]
-
+        decodings = []
         for line in f:
             tmp_conf = []
             for j in line.split(","):
@@ -119,11 +140,13 @@ class ProjectManager(QObject):
                 tmp = tmp.replace("'", "")
                 if not "\n" in tmp and tmp != "":
                     tmp_conf.append(tmp)
-            self.decodings.append(Encoding(tmp_conf))
+            decodings.append(Encoding(tmp_conf))
         f.close()
 
-        if len(self.decodings) == 0:
-            self.decodings[:] = fallback
+        if decodings:
+            self.decodings = decodings
+        else:
+            self.decodings = fallback
 
     def read_parameters(self, root):
         device_conf_tag = root.find("device_conf")
@@ -182,11 +205,7 @@ class ProjectManager(QObject):
             self.participants = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
             self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
-            decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
-            if decodings:
-                # Set values of decodings only so decodings are updated in generator when loading a project
-                cfc.decodings[:] = decodings
-            cfc.fill_decoding_combobox()
+            self.decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
 
             cfc.proto_analyzer.message_types = self.read_message_types()
             cfc.fill_message_type_combobox()
@@ -194,10 +213,7 @@ class ProjectManager(QObject):
                                             decodings=cfc.decodings)
 
             cfc.updateUI()
-            modulators = self.read_modulators_from_project_file()
-            if modulators:
-                self.modulators[:] = modulators
-            self.main_controller.generator_tab_controller.refresh_modulators()
+            self.modulators = self.read_modulators_from_project_file()
             self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 
         if len(self.project_path) > 0 and self.project_file is None:
@@ -364,11 +380,7 @@ class ProjectManager(QObject):
         if simulator_config is not None:
             root.append(simulator_config.save_to_xml())
 
-        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        with open(self.project_file, "w") as f:
-            for line in xmlstr.split("\n"):
-                if line.strip():
-                    f.write(line + "\n")
+        util.write_xml_to_file(root, self.project_file)
 
     def read_participants_for_signal(self, signal: Signal, messages):
         if self.project_file is None or len(signal.filename) == 0:

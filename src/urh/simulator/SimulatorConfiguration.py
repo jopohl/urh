@@ -214,12 +214,13 @@ class SimulatorConfiguration(QObject):
         modulators_tag = xml_tag.find("modulators")
         if modulators_tag:
             xml_tag.remove(modulators_tag)
-            self.project_manager.modulators[:] = Modulator.modulators_from_xml_tag(xml_tag)
+            self.project_manager.modulators = Modulator.modulators_from_xml_tag(modulators_tag)
 
         participants_tag = xml_tag.find("participants")
         if participants_tag:
             xml_tag.remove(participants_tag)
             self.project_manager.participants = Participant.read_participants_from_xml_tag(participants_tag)
+            self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")
         if decodings_tag:

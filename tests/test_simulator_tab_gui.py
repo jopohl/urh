@@ -55,6 +55,28 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
+    def test_save_and_load_standalone(self):
+        assert isinstance(self.form, MainController)
+        self.__setup_project()
+        stc = self.form.simulator_tab_controller
+
+        self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
+        self.add_all_signals_to_simulator()
+        self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
+        self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+
+        filename = os.path.join(tempfile.gettempdir(), "test.simulation.xml")
+        if os.path.isfile(filename):
+            os.remove(filename)
+        self.form.simulator_tab_controller.save_simulator_file(filename)
+        self.form.close_all()
+
+        self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
+        self.assertEqual(stc.simulator_message_table_model.rowCount(), 0)
+        self.form.simulator_tab_controller.load_simulator_file(filename)
+        self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
+        self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+
     def __setup_project(self):
         assert isinstance(self.form, MainController)
         directory = self.project_folder

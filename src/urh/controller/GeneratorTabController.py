@@ -106,7 +106,7 @@ class GeneratorTabController(QWidget):
     @modulators.setter
     def modulators(self, value):
         assert type(value) == list
-        self.project_manager.modulators[:] = value
+        self.project_manager.modulators = value
 
     def create_connects(self, compare_frame_controller):
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)

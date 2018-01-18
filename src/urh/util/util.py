@@ -3,21 +3,26 @@ import os
 import sys
 
 import time
+from xml.dom import minidom
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
+from xml.etree import ElementTree as ET
 
 from urh import constants
 from urh.util.Logger import logger
 
 
 def profile(func):
-   def func_wrapper(*args):
-       t = time.perf_counter()
-       result =func(*args)
-       print("{} took {:.2f}ms".format(func, 1000*(time.perf_counter()-t)))
-       return result
-   return func_wrapper
+    def func_wrapper(*args):
+        t = time.perf_counter()
+        result = func(*args)
+        print("{} took {:.2f}ms".format(func, 1000 * (time.perf_counter() - t)))
+        return result
+
+    return func_wrapper
+
 
 def set_icon_theme():
     if sys.platform != "linux" or constants.SETTINGS.value("icon_theme_index", 0, int) == 0:
@@ -176,3 +181,11 @@ def create_table_item(content):
     item = QTableWidgetItem(str(content))
     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
     return item
+
+
+def write_xml_to_file(xml_tag: ET.Element, filename: str):
+    xml_str = minidom.parseString(ET.tostring(xml_tag)).toprettyxml(indent="  ")
+    with open(filename, "w") as f:
+        for line in xml_str.split("\n"):
+            if line.strip():
+                f.write(line + "\n")

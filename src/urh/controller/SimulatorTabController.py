@@ -7,6 +7,7 @@ from PyQt5.QtGui import QRegExpValidator
 
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
+from urh.util import util, FileOperator
 from urh.util.ProjectManager import ProjectManager
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
@@ -28,6 +29,7 @@ from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+import xml.etree.ElementTree as ET
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -118,6 +120,8 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
         self.ui.tblViewMessage.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
+        self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
+        self.ui.btnLoad.clicked.connect(self.on_btn_load_clicked)
 
         self.tree_model.modelReset.connect(self.refresh_tree)
 
@@ -188,11 +192,22 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewMessage.resize_columns()
         self.update_ui()
 
-    def load_config_from_xml_tag(self, xml_tag):
+    def load_config_from_xml_tag(self, xml_tag, update_before=True):
         if xml_tag is None:
             return
-        self.simulator_config.on_project_updated()
+
+        if update_before:
+            self.simulator_config.on_project_updated()
+
         self.simulator_config.load_from_xml(xml_tag, self.proto_analyzer.message_types)
+
+    def load_simulator_file(self, filename: str):
+        tree = ET.parse(filename)
+        self.load_config_from_xml_tag(tree.getroot(), update_before=False)
+
+    def save_simulator_file(self, filename: str):
+        tag = self.simulator_config.save_to_xml(standalone=True)
+        util.write_xml_to_file(tag, filename)
 
     def close_all(self):
         self.simulator_scene.clear_all()
@@ -419,3 +434,15 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def refresh_tree(self):
         self.ui.treeProtocols.expandAll()
+
+    @pyqtSlot()
+    def on_btn_save_clicked(self):
+        filename = FileOperator.get_save_file_name(initial_name="myprofile.sim.xml", caption="Save simulator profile")
+        if filename:
+            self.save_simulator_file(filename)
+
+    @pyqtSlot()
+    def on_btn_load_clicked(self):
+        dialog = FileOperator.get_open_dialog(False, parent=self, name_filter="simulator")
+        if dialog.exec_():
+            self.load_simulator_file(dialog.selectedFiles()[0])

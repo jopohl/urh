@@ -40,6 +40,7 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
                           "Wave (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
                           "Fuzzprofiles (*.fuzz.xml *.fuzz);;" \
+                          "Simulator (*.sim.xml *.sim)" \
                           "Plain bits (*.txt);;" \
                           "Tar Archives (*.tar *.tar.gz *.tar.bz2);;" \
                           "Zip Archives (*.zip)"
@@ -47,6 +48,8 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
             name_filter = "Protocols (*.proto.xml *.proto);;"
         elif name_filter == "fuzz":
             name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz);;"
+        elif name_filter == "simulator":
+            name_filter = "Simulator (*.sim.xml *.sim)"
 
         dialog.setNameFilter(name_filter)
 
@@ -103,6 +106,8 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
         name_filter = "Fuzzfiles (*.fuzz.xml *.fuzz);;All files (*)"
     elif caption == "Save encoding":
         name_filter = ""
+    elif caption == "Save simulator profile":
+        name_filter = "Simulator (*.sim.xml *.sim);;All files (*)"
     else:
         name_filter = "Protocols (*.proto.xml *.proto);;All files (*)"
 

@@ -251,6 +251,10 @@ class MainController(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(2)
         self.generator_tab_controller.load_from_file(filename)
 
+    def add_simulator_profile(self, filename):
+        self.ui.tabWidget.setCurrentIndex(3)
+        self.simulator_tab_controller.load_simulator_file(filename)
+
     def add_signalfile(self, filename: str, group_id=0, enforce_sample_rate=None):
         if not os.path.exists(filename):
             QMessageBox.critical(self, self.tr("File not Found"),
@@ -371,6 +375,8 @@ class MainController(QMainWindow):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
             elif filename.endswith(".fuzz") or filename.endswith(".fuzz.xml"):
                 self.add_fuzz_profile(filename)
+            elif filename.endswith(".sim") or filename.endswith(".sim.xml"):
+                self.add_simulator_profile(filename)
             elif filename.endswith(".txt"):
                 self.add_plain_bits_from_txt(filename)
             elif filename.endswith(".csv"):

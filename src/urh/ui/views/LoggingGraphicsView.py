@@ -1,5 +1,8 @@
-from PyQt5.QtWidgets import QGraphicsView, QMenu, QAction
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QGraphicsView, QMenu, QAction
+
+from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
+
 
 class LoggingGraphicsView(QGraphicsView):
 
@@ -26,7 +29,7 @@ class LoggingGraphicsView(QGraphicsView):
 
     def contextMenuEvent(self, event):
         menu = self.create_context_menu()
-        action = menu.exec_(event.globalPos())
+        menu.exec_(event.globalPos())
 
     def create_context_menu(self):
         menu = QMenu()
@@ -35,25 +38,9 @@ class LoggingGraphicsView(QGraphicsView):
             menu.addAction(self.log_selected_action)
             menu.addAction(self.do_not_log_selected_action)
 
-        if len(self.scene().visible_participants):
-            menu.addSeparator()
-
-            select_from_menu = menu.addMenu("Select all messages from")
-
-            for vp in self.scene().visible_participants:
-                if vp is self.scene().broadcast_part:
-                    continue
-
-                vpa = select_from_menu.addAction(vp.text.toPlainText())
-                vpa.setData(vp)
-                vpa.triggered.connect(self.on_select_from_action_triggered)
-
-            select_to_menu = menu.addMenu("Select all messages to")
-
-            for vp in self.scene().visible_participants:
-                vpa = select_to_menu.addAction(vp.text.toPlainText())
-                vpa.setData(vp)
-                vpa.triggered.connect(self.on_select_to_action_triggered)
+        SimulatorGraphicsView.add_select_actions_to_menu(menu, self.scene(),
+                                                         select_to_trigger=self.on_select_to_action_triggered,
+                                                         select_from_trigger=self.on_select_from_action_triggered)
 
         return menu
 

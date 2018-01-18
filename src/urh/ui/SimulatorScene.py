@@ -251,6 +251,10 @@ class SimulatorScene(QGraphicsScene):
     def visible_participants(self):
         return [part for part in self.participants if part.isVisible()]
 
+    @property
+    def visible_participants_without_broadcast(self):
+        return [part for part in self.participants if part.isVisible() and part is not self.broadcast_part]
+
     def arrange_participants(self):
         messages = self.get_all_messages()
 

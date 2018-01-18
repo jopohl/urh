@@ -8,6 +8,8 @@ from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorRule import ConditionType
 from urh.signalprocessing.MessageType import MessageType
 from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.ui.SimulatorScene import SimulatorScene
+
 
 class SimulatorGraphicsView(QGraphicsView):
     message_updated = pyqtSignal(SimulatorMessage)
@@ -36,20 +38,27 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        num_bits, ok = QInputDialog.getInt(self, self.tr("How many bits shall the new message have?"),
+        num_bits, ok = QInputDialog.getInt(self,
+                                           self.tr("How many bits shall the new message have?"),
                                            self.tr("Number of bits:"), 42, 1)
 
         if ok:
             message_type = MessageType("default") if not self.sender().data() else self.sender().data()
             ref_item = self.context_menu_item
-            position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+            if isinstance(ref_item, RuleConditionItem):
+                position = QAbstractItemView.OnItem
+            else:
+                position = QAbstractItemView.BelowItem
 
-            message = self.scene().add_message(plain_bits=[0]*num_bits, pause=1000000, message_type=message_type,
-                                     ref_item=ref_item, position=position)
+            message = self.scene().add_message(plain_bits=[0] * num_bits,
+                                               pause=1000000,
+                                               message_type=message_type,
+                                               ref_item=ref_item,
+                                               position=position)
             self.jump_to_item(message)
 
     @pyqtSlot()
-    def on_add_rule_action_triggered(self):        
+    def on_add_rule_action_triggered(self):
         rule = self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
         if_cond = rule.children[0]
         self.jump_to_item(if_cond)
@@ -210,33 +219,16 @@ class SimulatorGraphicsView(QGraphicsView):
         if len(self.scene().get_all_messages()) > 1:
             consolidate_messages_action = menu.addAction("Consolidate messages")
             consolidate_messages_action.triggered.connect(self.on_consolidate_messages_action_triggered)
-            
 
         if len([item for item in self.scene().items() if isinstance(item, GraphicsItem)]):
-            #menu.addAction(self.select_all_action)
+            # menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
             clear_all_action.setIcon(QIcon.fromTheme("edit-clear"))
 
-        if len(self.scene().visible_participants):
-            menu.addSeparator()
-
-            select_from_menu = menu.addMenu("Select all messages from")
-
-            for vp in self.scene().visible_participants:
-                if vp is self.scene().broadcast_part:
-                    continue
-
-                vpa = select_from_menu.addAction(vp.text.toPlainText())
-                vpa.setData(vp)
-                vpa.triggered.connect(self.on_select_from_action_triggered)
-
-            select_to_menu = menu.addMenu("Select all messages to")
-
-            for vp in self.scene().visible_participants:
-                vpa = select_to_menu.addAction(vp.text.toPlainText())
-                vpa.setData(vp)
-                vpa.triggered.connect(self.on_select_to_action_triggered)
+        self.add_select_actions_to_menu(menu, self.scene(),
+                                        select_to_trigger=self.on_select_to_action_triggered,
+                                        select_from_trigger=self.on_select_from_action_triggered)
 
         return menu
 
@@ -281,3 +273,24 @@ class SimulatorGraphicsView(QGraphicsView):
             self.navigate_backward()
         elif event.key() == Qt.Key_Down:
             self.navigate_forward()
+
+    @classmethod
+    def add_select_actions_to_menu(cls, menu, scene: SimulatorScene, select_to_trigger, select_from_trigger):
+        if len(scene.visible_participants) == 0:
+            return
+
+        menu.addSeparator()
+
+        select_from_menu = menu.addMenu("Select all messages from")
+
+        for vp in scene.visible_participants_without_broadcast:
+            vpa = select_from_menu.addAction(vp.text.toPlainText())
+            vpa.setData(vp)
+            vpa.triggered.connect(select_from_trigger)
+
+        select_to_menu = menu.addMenu("Select all messages to")
+
+        for vp in scene.visible_participants:
+            vpa = select_to_menu.addAction(vp.text.toPlainText())
+            vpa.setData(vp)
+            vpa.triggered.connect(select_to_trigger)

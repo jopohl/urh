@@ -49,7 +49,7 @@ class SimulatorMessageTableView(TableView):
             encoding_group = QActionGroup(self)
             encoding_menu = menu.addMenu("Enforce encoding")
 
-            for decoding in self.model().compare_frame_controller.decodings:
+            for decoding in self.model().project_manager.decodings:
                 ea = encoding_menu.addAction(decoding.name)
                 ea.setCheckable(True)
                 ea.setActionGroup(encoding_group)
@@ -69,7 +69,7 @@ class SimulatorMessageTableView(TableView):
             modulation_group = QActionGroup(self)
             modulation_menu = menu.addMenu("Modulation")
 
-            for i, modulator in enumerate(self.model().generator_tab_controller.modulators):
+            for i, modulator in enumerate(self.model().project_manager.modulators):
                 ma = modulation_menu.addAction(modulator.name)
                 ma.setCheckable(True)
                 ma.setActionGroup(modulation_group)

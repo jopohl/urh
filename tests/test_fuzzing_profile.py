@@ -19,7 +19,7 @@ class TestFuzzingProfile(QtTestCase):
 
         decoders = [Encoding(["NRZ"]), Encoding(["NRZ-I", constants.DECODING_INVERT])]
 
-        pac = ProtocolAnalyzerContainer([mod1, mod2])
+        pac = ProtocolAnalyzerContainer()
         pac.messages.append(Message([True, False, False, True], 100, decoder=decoders[0], message_type=pac.default_message_type))
         pac.messages.append(Message([False, False, False, False], 200, decoder=decoders[1], message_type=pac.default_message_type))
         pac.create_fuzzing_label(1, 10, 0)
@@ -34,7 +34,6 @@ class TestFuzzingProfile(QtTestCase):
 
         pac = self.form.generator_tab_controller.table_model.protocol
 
-        self.assertEqual(len(pac.modulators), 2)
         self.assertEqual(len(pac.messages), 2)
         self.assertEqual(pac.messages[1][0], False)
         self.assertEqual(len(pac.protocol_labels), 1)

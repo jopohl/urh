@@ -48,7 +48,7 @@ class GeneratorTabController(QWidget):
         self.ui.treeProtocols.setModel(self.tree_model)
 
         self.table_model = GeneratorTableModel(compare_frame_controller.proto_tree_model.rootItem,
-                                               [Modulator("Modulation")], compare_frame_controller.decodings)
+                                               compare_frame_controller.decodings)
         self.table_model.controller = self
         self.ui.tableMessages.setModel(self.table_model)
 
@@ -96,7 +96,7 @@ class GeneratorTabController(QWidget):
 
     @property
     def modulators(self):
-        return self.table_model.protocol.modulators
+        return self.project_manager.modulators
 
     @property
     def total_modulated_samples(self) -> int:
@@ -106,7 +106,7 @@ class GeneratorTabController(QWidget):
     @modulators.setter
     def modulators(self, value):
         assert type(value) == list
-        self.table_model.protocol.modulators = value
+        self.project_manager.modulators[:] = value
 
     def create_connects(self, compare_frame_controller):
         compare_frame_controller.proto_tree_model.modelReset.connect(self.refresh_tree)
@@ -617,7 +617,8 @@ class GeneratorTabController(QWidget):
         if filename:
             self.table_model.protocol.to_xml_file(filename,
                                                   decoders=self.project_manager.decodings,
-                                                  participants=self.project_manager.participants)
+                                                  participants=self.project_manager.participants,
+                                                  modulators=self.modulators)
 
     @pyqtSlot()
     def on_btn_open_clicked(self):
@@ -628,6 +629,7 @@ class GeneratorTabController(QWidget):
 
     def load_from_file(self, filename: str):
         try:
+            self.modulators = self.project_manager.read_modulators_from_file(filename)
             self.table_model.protocol.from_xml_file(filename)
             self.refresh_pause_list()
             self.refresh_estimated_time()

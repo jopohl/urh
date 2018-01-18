@@ -240,7 +240,7 @@ class SimulatorConfiguration(QObject):
 
         return item
 
-    def save_to_xml(self) -> ET.Element:
+    def save_to_xml(self, standalone=False) -> ET.Element:
         result = ET.Element("simulator_config")
 
         for item in self.rootItem.children:

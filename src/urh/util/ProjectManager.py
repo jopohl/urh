@@ -38,6 +38,8 @@ class ProjectManager(QObject):
 
         self.__project_file = None
 
+        self.modulators = [Modulator("Modulator")]  # type: list[Modulator]
+
         self.decodings = []  # type: list[Encoding]
         self.load_decodings()
 
@@ -191,9 +193,7 @@ class ProjectManager(QObject):
                                             decodings=cfc.decodings)
 
             cfc.updateUI()
-            modulators = self.read_modulators_from_project_file()
-            self.main_controller.generator_tab_controller.modulators = modulators if modulators else [
-                Modulator("Modulation")]
+            self.modulators[:] = self.read_modulators_from_project_file()
             self.main_controller.generator_tab_controller.refresh_modulators()
             self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 
@@ -262,12 +262,12 @@ class ProjectManager(QObject):
 
         tree.write(self.project_file)
 
-    def write_modulators_to_project_file(self, modulators, tree=None):
+    def write_modulators_to_project_file(self, tree=None):
         """
         :type modulators: list of Modulator
         :return:
         """
-        if self.project_file is None or not modulators:
+        if self.project_file is None or not self.modulators:
             return
 
         if tree is None:
@@ -278,7 +278,7 @@ class ProjectManager(QObject):
         for mod_tag in root.findall("modulator"):
             root.remove(mod_tag)
 
-        for i, mod in enumerate(modulators):
+        for i, mod in enumerate(self.modulators):
             root.append(mod.to_xml(i))
 
         tree.write(self.project_file)
@@ -287,10 +287,13 @@ class ProjectManager(QObject):
         """
         :rtype: list of Modulator
         """
-        if not self.project_file:
+        return self.read_modulators_from_file(self.project_file)
+
+    def read_modulators_from_file(self, filename: str):
+        if not filename:
             return []
 
-        tree = ET.parse(self.project_file)
+        tree = ET.parse(filename)
         root = tree.getroot()
 
         result = []
@@ -310,7 +313,7 @@ class ProjectManager(QObject):
         tree.write(self.project_file)
 
         # self.write_labels(self.maincontroller.compare_frame_controller.proto_analyzer)
-        self.write_modulators_to_project_file(self.main_controller.generator_tab_controller.modulators, tree=tree)
+        self.write_modulators_to_project_file(tree=tree)
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()

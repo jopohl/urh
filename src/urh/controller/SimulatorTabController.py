@@ -62,8 +62,7 @@ class SimulatorTabController(QWidget):
         self.project_manager.reload_field_types()
         self.update_field_name_column()
 
-        self.simulator_message_table_model = SimulatorMessageTableModel(compare_frame_controller,
-                                                                        generator_tab_controller, self)
+        self.simulator_message_table_model = SimulatorMessageTableModel(self.project_manager, self)
         self.ui.tblViewMessage.setModel(self.simulator_message_table_model)
 
         self.ui.ruleCondLineEdit.setValidator(RuleExpressionValidator(self.sim_expression_parser, is_formula=False))
@@ -215,7 +214,7 @@ class SimulatorTabController(QWidget):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
         preselected_index = selected_message.modulator_index
 
-        modulator_dialog = ModulatorDialog(self.generator_tab_controller.modulators, parent=self)
+        modulator_dialog = ModulatorDialog(self.project_manager.modulators, parent=self)
         modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
         modulator_dialog.ui.treeViewSignals.expandAll()
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
@@ -233,7 +232,7 @@ class SimulatorTabController(QWidget):
         current_index = cBoxModulations.currentIndex()
         cBoxModulations.clear()
 
-        for modulator in self.generator_tab_controller.modulators:
+        for modulator in self.project_manager.modulators:
             cBoxModulations.addItem(modulator.name)
 
         cBoxModulations.setCurrentIndex(current_index)
@@ -371,7 +370,7 @@ class SimulatorTabController(QWidget):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
-        s = SimulatorDialog(self.simulator_config, self.generator_tab_controller.modulators,
+        s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
                             self.sim_expression_parser, self.project_manager, parent=self)
 
         s.exec_()

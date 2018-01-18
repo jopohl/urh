@@ -24,9 +24,9 @@ from urh.util.Logger import logger
 class GeneratorTableModel(TableModel):
     first_protocol_added = pyqtSignal(ProtocolAnalyzer)
 
-    def __init__(self, tree_root_item: ProtocolTreeItem, modulators, decodings, parent = None):
+    def __init__(self, tree_root_item: ProtocolTreeItem, decodings, parent = None):
         super().__init__(participants=[], parent=parent)
-        self.protocol = ProtocolAnalyzerContainer(modulators)
+        self.protocol = ProtocolAnalyzerContainer()
         self.tree_root_item = tree_root_item
         self.dropped_row = -1
 

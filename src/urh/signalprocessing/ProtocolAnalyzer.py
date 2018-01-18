@@ -577,13 +577,13 @@ class ProtocolAnalyzer(object):
                 break
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol",
-                   include_message_type=False, write_bits=False, messages=None) -> ET.Element:
+                   include_message_type=False, write_bits=False, messages=None, modulators=None) -> ET.Element:
         root = ET.Element(tag_name)
         messages = self.messages if messages is None else messages
 
         # Save modulators
-        if hasattr(self, "modulators"):  # For protocol analyzer container
-            root.append(Modulator.modulators_to_xml_tag(self.modulators))
+        if modulators is not None:  # For protocol analyzer container
+            root.append(Modulator.modulators_to_xml_tag(modulators))
 
         root.append(Encoding.decodings_to_xml_tag(decodings))
         root.append(Participant.participants_to_xml_tag(participants))
@@ -605,9 +605,10 @@ class ProtocolAnalyzer(object):
         return root
 
     def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol",
-                    include_message_types=False, write_bits=False):
+                    include_message_types=False, write_bits=False, modulators=None):
         tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name,
-                              include_message_type=include_message_types, write_bits=write_bits)
+                              include_message_type=include_message_types, write_bits=write_bits,
+                              modulators=modulators)
 
         xmlstr = minidom.parseString(ET.tostring(tag)).toprettyxml(indent="   ")
         with open(filename, "w") as f:
@@ -618,11 +619,6 @@ class ProtocolAnalyzer(object):
     def from_xml_tag(self, root: ET.Element, read_bits=False, participants=None, decodings=None):
         if not root:
             return None
-
-        if root.find("modulators") and hasattr(self, "modulators"):
-            self.modulators[:] = []
-            for mod_tag in root.find("modulators").findall("modulator"):
-                self.modulators.append(Modulator.from_xml(mod_tag))
 
         decoders = self.read_decoders_from_xml_tag(root) if decodings is None else decodings
 

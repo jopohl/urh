@@ -517,7 +517,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
               <item row="0" column="16">
                <widget class="QToolButton" name="btnSaveProto">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -527,6 +527,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                   <width>0</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>Save current protocol.</string>
                 </property>
                 <property name="text">
                  <string/>
@@ -777,6 +780,25 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                <widget class="Line" name="line">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="17">
+               <widget class="QToolButton" name="btnLoadProto">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Load a protocol.</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="document-open"/>
                 </property>
                </widget>
               </item>

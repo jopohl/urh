@@ -7,7 +7,7 @@ from zipfile import ZipFile
 import numpy as np
 from PyQt5.QtCore import QDir
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QFileDialog
 
 from tests.QtTestCase import QtTestCase
 from urh.util import FileOperator
@@ -58,3 +58,10 @@ class TestFileOperator(QtTestCase):
 
         zip_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
         self.assertNotEqual(zip_md5, zip_md5_after_save)
+
+    def test_get_open_dialog(self):
+        d1 = FileOperator.get_open_dialog(directory_mode=False)
+        self.assertEqual(d1.fileMode(), QFileDialog.ExistingFiles)
+
+        d2 = FileOperator.get_open_dialog(directory_mode=True)
+        self.assertEqual(d2.fileMode(), QFileDialog.Directory)

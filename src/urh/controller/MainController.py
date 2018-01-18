@@ -188,6 +188,8 @@ class MainController(QMainWindow):
         self.compare_frame_controller.show_config_field_types_triggered.connect(
             self.on_show_field_types_config_action_triggered)
 
+        self.compare_frame_controller.load_protocol_clicked.connect(self.on_compare_frame_controller_load_protocol_clicked)
+
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
@@ -713,25 +715,10 @@ class MainController(QMainWindow):
         self.show_open_dialog(directory=True)
 
     def show_open_dialog(self, directory=False):
-        fip = FileIconProvider()
-        self.dialog = QFileDialog(self)
-        self.dialog.setIconProvider(fip)
-        self.dialog.setDirectory(FileOperator.RECENT_PATH)
-        self.dialog.setWindowTitle("Open Folder")
-        if directory:
-            self.dialog.setFileMode(QFileDialog.Directory)
-        else:
-            self.dialog.setFileMode(QFileDialog.ExistingFiles)
-            self.dialog.setNameFilter(
-                "All files (*);;Complex (*.complex);;Complex16 unsigned (*.complex16u);;Complex16 signed (*.complex16s);;Wave (*.wav);;Protocols (*.proto.xml *.proto);;"
-                "Fuzzprofiles (*.fuzz.xml *.fuzz);;Plain bits (*.txt);;Tar Archives (*.tar *.tar.gz *.tar.bz2);;Zip Archives (*.zip)")
-
-        self.dialog.setOptions(QFileDialog.DontResolveSymlinks)
-        self.dialog.setViewMode(QFileDialog.Detail)
-
-        if self.dialog.exec_():
+        dialog = FileOperator.get_open_dialog(directory_mode=directory, parent=self, name_filter="full")
+        if dialog.exec_():
             try:
-                file_names = self.dialog.selectedFiles()
+                file_names = dialog.selectedFiles()
                 folders = [folder for folder in file_names if os.path.isdir(folder)]
 
                 if len(folders) > 0:
@@ -855,3 +842,10 @@ class MainController(QMainWindow):
         self.ui.actionSave_project.setVisible(project_loaded)
         self.ui.actionConvert_Folder_to_Project.setDisabled(project_loaded)
         self.__set_non_project_warning_visibility()
+
+    @pyqtSlot()
+    def on_compare_frame_controller_load_protocol_clicked(self):
+        dialog = FileOperator.get_open_dialog(directory_mode=False, parent=self, name_filter="proto")
+        if dialog.exec_():
+            for filename in dialog.selectedFiles():
+                self.add_protocol_file(filename)

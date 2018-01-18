@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1081</width>
-    <height>699</height>
+    <width>1287</width>
+    <height>774</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1159</width>
-        <height>686</height>
+        <width>1287</width>
+        <height>774</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -637,12 +637,34 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Save current fuzz profile.</string>
+               </property>
                <property name="text">
                 <string>...</string>
                </property>
                <property name="icon">
                 <iconset theme="document-save">
                  <normaloff>.</normaloff>.</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="btnOpen">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Load a fuzz profile.</string>
+               </property>
+               <property name="text">
+                <string>...</string>
+               </property>
+               <property name="icon">
+                <iconset theme="document-open"/>
                </property>
               </widget>
              </item>

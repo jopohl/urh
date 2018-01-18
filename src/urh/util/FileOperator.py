@@ -9,6 +9,7 @@ import numpy as np
 from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
+from urh.models.FileIconProvider import FileIconProvider
 from urh.util.Errors import Errors
 
 VIEW_TYPES = ["Bits", "Hex", "ASCII"]
@@ -18,6 +19,41 @@ archives = {}
    :param: archives[extracted_filename] = filename"""
 
 RECENT_PATH = QDir.homePath()
+
+
+def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QFileDialog:
+    fip = FileIconProvider()
+    dialog = QFileDialog(parent)
+    dialog.setIconProvider(fip)
+    dialog.setDirectory(RECENT_PATH)
+
+    if directory_mode:
+        dialog.setFileMode(QFileDialog.Directory)
+        dialog.setWindowTitle("Open Folder")
+    else:
+        dialog.setFileMode(QFileDialog.ExistingFiles)
+        dialog.setWindowTitle("Open Files")
+        if name_filter == "full":
+            name_filter = "All files (*);;Complex (*.complex);;" \
+                          "Complex16 unsigned (*.complex16u);;" \
+                          "Complex16 signed (*.complex16s);;" \
+                          "Wave (*.wav);;" \
+                          "Protocols (*.proto.xml *.proto);;" \
+                          "Fuzzprofiles (*.fuzz.xml *.fuzz);;" \
+                          "Plain bits (*.txt);;" \
+                          "Tar Archives (*.tar *.tar.gz *.tar.bz2);;" \
+                          "Zip Archives (*.zip)"
+        elif name_filter == "proto":
+            name_filter = "Protocols (*.proto.xml *.proto);;"
+        elif name_filter == "fuzz":
+            name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz);;"
+
+        dialog.setNameFilter(name_filter)
+
+    dialog.setOptions(QFileDialog.DontResolveSymlinks)
+    dialog.setViewMode(QFileDialog.Detail)
+
+    return dialog
 
 
 def uncompress_archives(file_names, temp_dir):
@@ -59,8 +95,8 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     global RECENT_PATH
     if caption == "Save signal":
         name_filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) " \
-                 "(*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;" \
-                 "Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
+                      "(*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;" \
+                      "Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         if wav_only:
             name_filter = "wav files (*.wav);;all files (*)"
     elif caption == "Save fuzz profile":

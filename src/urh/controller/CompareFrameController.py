@@ -37,6 +37,7 @@ class CompareFrameController(QWidget):
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
     show_config_field_types_triggered = pyqtSignal()
+    load_protocol_clicked = pyqtSignal()
 
     def __init__(self, plugin_manager: PluginManager, project_manager: ProjectManager, parent):
 
@@ -263,6 +264,8 @@ class CompareFrameController(QWidget):
         self.protocol_label_list_model.label_removed.connect(self.on_label_removed)
 
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)
+        self.ui.btnLoadProto.clicked.connect(self.on_btn_load_proto_clicked)
+
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
 
         self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
@@ -1046,6 +1049,10 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_btn_save_protocol_clicked(self):
         self.save_protocol()
+
+    @pyqtSlot()
+    def on_btn_load_proto_clicked(self):
+        self.load_protocol_clicked.emit()
 
     @pyqtSlot()
     def on_btn_next_search_clicked(self):

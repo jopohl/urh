@@ -162,7 +162,7 @@ class ProjectManager(QObject):
             self.decodings = fallback
 
     @staticmethod
-    def __read_device_conf_dict(tag: ET.Element, target_dict):
+    def read_device_conf_dict(tag: ET.Element, target_dict):
         if tag is None:
             return
 
@@ -181,10 +181,16 @@ class ProjectManager(QObject):
             device_val_tag.text = str(device_conf[key])
         return result
 
+    def simulator_rx_conf_to_xml(self) -> ET.Element:
+        return self.__device_conf_dict_to_xml("simulator_rx_conf", self.simulator_rx_conf)
+
+    def simulator_tx_conf_to_xml(self) -> ET.Element:
+        return self.__device_conf_dict_to_xml("simulator_tx_conf", self.simulator_tx_conf)
+
     def read_parameters(self, root):
-        self.__read_device_conf_dict(root.find("device_conf"), target_dict=self.device_conf)
-        self.__read_device_conf_dict(root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf)
-        self.__read_device_conf_dict(root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf)
+        self.read_device_conf_dict(root.find("device_conf"), target_dict=self.device_conf)
+        self.read_device_conf_dict(root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf)
+        self.read_device_conf_dict(root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf)
 
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
@@ -360,8 +366,8 @@ class ProjectManager(QObject):
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         root.append(self.__device_conf_dict_to_xml("device_conf", self.device_conf))
-        root.append(self.__device_conf_dict_to_xml("simulator_rx_conf", self.simulator_rx_conf))
-        root.append(self.__device_conf_dict_to_xml("simulator_tx_conf", self.simulator_tx_conf))
+        root.append(self.simulator_rx_conf_to_xml())
+        root.append(self.simulator_tx_conf_to_xml())
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
         root.set("modulation_was_edited", str(int(self.modulation_was_edited)))

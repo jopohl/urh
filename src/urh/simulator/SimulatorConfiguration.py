@@ -213,21 +213,26 @@ class SimulatorConfiguration(QObject):
 
         modulators_tag = xml_tag.find("modulators")
         if modulators_tag:
-            xml_tag.remove(modulators_tag)
             self.project_manager.modulators = Modulator.modulators_from_xml_tag(modulators_tag)
 
         participants_tag = xml_tag.find("participants")
         if participants_tag:
-            xml_tag.remove(participants_tag)
             self.project_manager.participants = Participant.read_participants_from_xml_tag(participants_tag)
             self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")
         if decodings_tag:
-            xml_tag.remove(decodings_tag)
             self.project_manager.decodings = Encoding.read_decoders_from_xml_tag(decodings_tag)
 
-        for child_tag in xml_tag:
+        rx_config_tag = xml_tag.find("simulator_rx_conf")
+        if rx_config_tag:
+            ProjectManager.read_device_conf_dict(rx_config_tag, self.project_manager.simulator_rx_conf)
+
+        tx_config_tag = xml_tag.find("simulator_tx_conf")
+        if tx_config_tag:
+            ProjectManager.read_device_conf_dict(tx_config_tag, self.project_manager.simulator_tx_conf)
+
+        for child_tag in xml_tag.find("items"):
             items.append(self.load_item_from_xml(child_tag, message_types))
 
         self.add_items(items, pos=0, parent_item=None)
@@ -265,9 +270,12 @@ class SimulatorConfiguration(QObject):
             result.append(Modulator.modulators_to_xml_tag(self.project_manager.modulators))
             result.append(Encoding.decodings_to_xml_tag(self.project_manager.decodings))
             result.append(Participant.participants_to_xml_tag(self.project_manager.participants))
+            result.append(self.project_manager.simulator_rx_conf_to_xml())
+            result.append(self.project_manager.simulator_tx_conf_to_xml())
 
+        items_tag = ET.SubElement(result, "items")
         for item in self.rootItem.children:
-            self.__save_item_to_xml(result, item)
+            self.__save_item_to_xml(items_tag, item)
 
         return result
 

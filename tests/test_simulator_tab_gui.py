@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from PyQt5.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
+from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
@@ -96,11 +97,11 @@ class TestSimulatorTabGUI(QtTestCase):
         model.setData(model.index(0, 2), 2, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "")
         model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), model.ERROR_COLOR)
+        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
         model.setData(model.index(0, 3), "item1.No_name + 42", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), model.ERROR_COLOR)
+        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
         model.setData(model.index(0, 3), "item1.No_name + 42/", role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), model.ERROR_COLOR)
+        self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
 
 
         # external program

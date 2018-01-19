@@ -1,7 +1,9 @@
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtGui import QValidator
 
+from urh import constants
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+
 
 class ExpressionLineEdit(QLineEdit):
     fld_abbrev_chars = ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
@@ -21,7 +23,12 @@ class ExpressionLineEdit(QLineEdit):
         super().setValidator(validator)
 
     def on_validation_status_changed(self, status, message):
-        style_sheet = 'QLineEdit { background-color: rgba(255, 175, 175) }' if status == QValidator.Intermediate else ''
+        if status == QValidator.Intermediate:
+            col = constants.ERROR_BG_COLOR
+            bg_string = "background-color: rgba({}, {}, {}, {})".format(col.red(), col.green(), col.blue(), col.alpha())
+            style_sheet = "QLineEdit {" + bg_string + "}"
+        else:
+            style_sheet = ""
 
         self.setToolTip(message)
         self.setStyleSheet(style_sheet)

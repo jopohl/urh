@@ -9,8 +9,6 @@ from urh.util import util
 
 
 class SimulatorMessageFieldModel(QAbstractTableModel):
-    ERROR_COLOR = QColor.fromRgb(255, 175, 175)
-
     header_labels = ['Name', 'Display format', 'Value type', 'Value']
 
     protocol_label_updated = pyqtSignal(SimulatorProtocolLabel)
@@ -94,7 +92,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 3:
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
-                    return self.ERROR_COLOR
+                    return constants.ERROR_BG_COLOR
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:

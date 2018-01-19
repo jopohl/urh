@@ -92,10 +92,12 @@ class TestSimulatorTabGUI(QtTestCase):
         # get live during simulation
         model.setData(model.index(0, 2), 1, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "-")
+        stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
 
         # formula
         model.setData(model.index(0, 2), 2, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "")
+        stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
         self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
         model.setData(model.index(0, 3), "item1.No_name + 42", role=Qt.EditRole)
@@ -106,10 +108,12 @@ class TestSimulatorTabGUI(QtTestCase):
 
         # external program
         model.setData(model.index(0, 2), 3, role=Qt.EditRole)
+        stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         self.assertEqual(model.data(model.index(0, 3)), "")
 
         # random value
         model.setData(model.index(0, 2), 4, role=Qt.EditRole)
+        stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         self.assertTrue(model.data(model.index(0, 3)).startswith("Range (Decimal):"))
         model.setData(model.index(0, 3), (42, 1337), role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "Range (Decimal): 42 - 1337")

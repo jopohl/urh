@@ -92,7 +92,6 @@ class SimulatorMessageTableView(TableView):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.sender().data()
             updated_messages.append(self.model().protocol.messages[row])
-        print("HALLO")
         SimulatorItem.protocol_manager.items_updated.emit(updated_messages)
 
     @pyqtSlot()

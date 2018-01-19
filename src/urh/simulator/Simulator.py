@@ -286,7 +286,6 @@ class Simulator(QObject):
 
                 if self.measure_started and received_msg.decoded_bits_str == "101010101001110100100000010000000000111001000000000100000000100110000000001000000000010101011011":
                     self.measure_started = False
-                    print("--- " + str(time.perf_counter() - self.time) + " ---")
 
                 start_time = time.perf_counter()
                 check_result = self.check_message(received_msg, new_message)
@@ -375,7 +374,6 @@ class Simulator(QObject):
         curr_repeat = 0
 
         while curr_repeat < repeat:
-            print("[SIMULATOR] Pushing {} samples to ringbuffer".format(len(modulator.modulated_samples)))
             sender.push_data(modulator.modulated_samples)
             curr_repeat += 1
 
@@ -403,8 +401,6 @@ class Simulator(QObject):
 
         # just to be sure ...
         timer.stop()
-
-        print("[SIMULATOR] received message", msg)
 
         return msg
 

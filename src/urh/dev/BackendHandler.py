@@ -247,8 +247,3 @@ class BackendHandler(object):
                     return attempt
 
         return ""
-
-
-if __name__ == "__main__":
-    bh = BackendHandler()
-    print(bh.device_backends)

@@ -7,6 +7,9 @@ from urh.util.GenericCRC import GenericCRC
 from urh.util import util
 from xml.etree import ElementTree as ET
 
+from urh.util.Logger import logger
+
+
 class Encoding(object):
     """
     Full featured encoding/decoding of protocols.
@@ -438,7 +441,7 @@ class Encoding(object):
             out, _ = p.communicate(param.encode())
             return out.decode()
         except:
-            print("Error running", cmd, param)
+            logger.error("Could not run {} {}".format(cmd, param))
             return ""
 
     def code_carrier(self, decoding, inpt):

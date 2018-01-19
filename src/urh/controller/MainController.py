@@ -643,7 +643,7 @@ class MainController(QMainWindow):
             r.close()
             return
 
-        r.recording_parameters.connect(pm.set_recording_parameters)
+        r.device_parameters_changed.connect(pm.set_device_parameters)
         r.files_recorded.connect(self.on_signals_recorded)
         r.show()
 
@@ -660,7 +660,7 @@ class MainController(QMainWindow):
             Errors.no_device()
             psd.close()
         else:
-            psd.recording_parameters.connect(pm.set_recording_parameters)
+            psd.device_parameters_changed.connect(pm.set_device_parameters)
             psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
             psd.show()
 
@@ -673,7 +673,7 @@ class MainController(QMainWindow):
             r.close()
             return
 
-        r.recording_parameters.connect(pm.set_recording_parameters)
+        r.device_parameters_changed.connect(pm.set_device_parameters)
         r.show()
 
     @pyqtSlot(list, float)

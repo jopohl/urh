@@ -17,7 +17,7 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SendRecvDialog(QDialog):
-    recording_parameters = pyqtSignal(str, dict)
+    device_parameters_changed = pyqtSignal(str, dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
         super().__init__(parent)
@@ -105,6 +105,7 @@ class SendRecvDialog(QDialog):
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
 
         self.device_settings_widget.selected_device_changed.connect(self.on_selected_device_changed)
+        self.device_settings_widget.device_parameters_changed.connect(self.device_parameters_changed.emit)
 
     def _create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
@@ -272,14 +273,7 @@ class SendRecvDialog(QDialog):
 
             self.device.cleanup()
             logger.debug("Successfully cleaned up device")
-            self.recording_parameters.emit(str(self.device.name), dict(frequency=self.device.frequency,
-                                                                       sample_rate=self.device.sample_rate,
-                                                                       bandwidth=self.device.bandwidth,
-                                                                       gain=self.device.gain,
-                                                                       if_gain=self.device.if_gain,
-                                                                       baseband_gain=self.device.baseband_gain,
-                                                                       freq_correction=self.device.freq_correction
-                                                                       ))
+            self.device_settings_widget.emit_device_parameters_changed()
 
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 

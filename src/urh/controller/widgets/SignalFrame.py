@@ -752,7 +752,7 @@ class SignalFrame(QFrame):
             dialog.close()
             return
 
-        dialog.recording_parameters.connect(project_manager.set_recording_parameters)
+        dialog.device_parameters_changed.connect(project_manager.set_device_parameters)
         dialog.show()
         dialog.graphics_view.show_full_scene(reinitialize=True)
 

@@ -29,8 +29,7 @@ class ProjectManager(QObject):
         self.main_controller = main_controller
         self.device_conf = dict(frequency=config.DEFAULT_FREQUENCY,
                                 sample_rate=config.DEFAULT_SAMPLE_RATE,
-                                bandwidth=config.DEFAULT_BANDWIDTH,
-                                gain=config.DEFAULT_GAIN)
+                                bandwidth=config.DEFAULT_BANDWIDTH)
 
         self.simulator_num_repeat = 1
         self.simulator_retries = 10
@@ -94,7 +93,7 @@ class ProjectManager(QObject):
         self.field_types = FieldType.load_from_xml()
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
-    def set_recording_parameters(self, device: str, kwargs: dict):
+    def set_device_parameters(self, device: str, kwargs: dict):
         for key, value in kwargs.items():
             self.device_conf[key] = value
         self.device = device

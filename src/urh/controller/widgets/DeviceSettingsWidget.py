@@ -17,8 +17,10 @@ from urh.util.ProjectManager import ProjectManager
 class DeviceSettingsWidget(QWidget):
     selected_device_changed = pyqtSignal()
     gain_edited = pyqtSignal()
+    device_parameters_changed = pyqtSignal(str, dict)
 
-    def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler=None, parent=None):
+    def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler = None,
+                 parent=None):
         super().__init__(parent)
         self.ui = Ui_FormDeviceSettings()
         self.ui.setupUi(self)
@@ -39,25 +41,10 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
         self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
-        self.ui.spinBoxGain.setValue(project_manager.device_conf["gain"])
-        try:
-            if_gain = project_manager.device_conf["if_gain"]
-        except KeyError:
-            if_gain = config.DEFAULT_IF_GAIN
-        self.ui.spinBoxIFGain.setValue(if_gain)
-
-        try:
-            baseband_gain = project_manager.device_conf["baseband_gain"]
-        except KeyError:
-            baseband_gain = config.DEFAULT_BB_GAIN
-        self.ui.spinBoxBasebandGain.setValue(baseband_gain)
-
-        try:
-            freq_correction = project_manager.device_conf["freq_correction"]
-        except KeyError:
-            freq_correction = config.DEFAULT_FREQ_CORRECTION
-        self.ui.spinBoxFreqCorrection.setValue(freq_correction)
-
+        self.ui.spinBoxGain.setValue(project_manager.device_conf.get("gain", config.DEFAULT_GAIN))
+        self.ui.spinBoxIFGain.setValue(project_manager.device_conf.get("if_gain", config.DEFAULT_IF_GAIN))
+        self.ui.spinBoxBasebandGain.setValue(project_manager.device_conf.get("baseband_gain", config.DEFAULT_BB_GAIN))
+        self.ui.spinBoxFreqCorrection.setValue(project_manager.device_conf.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
         device = project_manager.device
 
@@ -82,6 +69,15 @@ class DeviceSettingsWidget(QWidget):
                            + "\\." + ip_range
                            + "\\." + ip_range + "$")
         self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
+
+        if "gain" not in project_manager.device_conf:
+            self.set_default_rf_gain()
+
+        if "if_gain" not in project_manager.device_conf:
+            self.set_default_if_gain()
+
+        if "baseband_gain" not in project_manager.device_conf:
+            self.set_default_bb_gain()
 
         self.create_connects()
         self.sync_gain_sliders()
@@ -136,25 +132,39 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_num_repeats_changed)
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
-    def sync_gain_sliders(self):
+    def set_gain_defaults(self):
+        self.set_default_rf_gain()
+        self.set_default_if_gain()
+        self.set_default_bb_gain()
+
+    def set_default_rf_gain(self):
         conf = self.selected_device_conf
         prefix = self.rx_tx_prefix
-
         if prefix + "rf_gain" in conf:
             key = prefix + "rf_gain"
             gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxGain.setValue(gain)
-            self.ui.spinBoxGain.valueChanged.emit(gain)
+
+    def set_default_if_gain(self):
+        conf = self.selected_device_conf
+        prefix = self.rx_tx_prefix
         if prefix + "if_gain" in conf:
             key = prefix + "if_gain"
             if_gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxIFGain.setValue(if_gain)
-            self.ui.spinBoxIFGain.valueChanged.emit(if_gain)
+
+    def set_default_bb_gain(self):
+        conf = self.selected_device_conf
+        prefix = self.rx_tx_prefix
         if prefix + "baseband_gain" in conf:
             key = prefix + "baseband_gain"
             baseband_gain = conf[key][int(median(range(len(conf[key]))))]
             self.ui.spinBoxBasebandGain.setValue(baseband_gain)
-            self.ui.spinBoxBasebandGain.valueChanged.emit(baseband_gain)
+
+    def sync_gain_sliders(self):
+        self.ui.spinBoxGain.valueChanged.emit(self.ui.spinBoxGain.value())
+        self.ui.spinBoxIFGain.valueChanged.emit(self.ui.spinBoxIFGain.value())
+        self.ui.spinBoxBasebandGain.valueChanged.emit(self.ui.spinBoxBasebandGain.value())
 
     def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
@@ -162,8 +172,8 @@ class DeviceSettingsWidget(QWidget):
         key_ui_dev_param_map = {"center_freq": "Freq", "sample_rate": "SampleRate", "bandwidth": "Bandwidth"}
 
         for key, ui_item in key_ui_dev_param_map.items():
-            spinbox = getattr(self.ui, "spinBox"+ui_item)  # type: QSpinBox
-            label = getattr(self.ui, "label"+ui_item)  # type: QLabel
+            spinbox = getattr(self.ui, "spinBox" + ui_item)  # type: QSpinBox
+            label = getattr(self.ui, "label" + ui_item)  # type: QLabel
             if key in conf:
                 spinbox.setVisible(True)
                 label.setVisible(True)
@@ -240,7 +250,7 @@ class DeviceSettingsWidget(QWidget):
                 combobox.clear()
                 combobox.addItems(conf[conf_key])
                 if conf_key + "_default_index" in conf:
-                    combobox.setCurrentIndex(conf[conf_key+"_default_index"])
+                    combobox.setCurrentIndex(conf[conf_key + "_default_index"])
 
                 combobox.setVisible(True)
             else:
@@ -295,6 +305,16 @@ class DeviceSettingsWidget(QWidget):
         self.ui.lineEditDeviceArgs.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
+
+    def emit_device_parameters_changed(self):
+        self.device_parameters_changed.emit(str(self.device.name), dict(frequency=self.device.frequency,
+                                                                        sample_rate=self.device.sample_rate,
+                                                                        bandwidth=self.device.bandwidth,
+                                                                        gain=self.device.gain,
+                                                                        if_gain=self.device.if_gain,
+                                                                        baseband_gain=self.device.baseband_gain,
+                                                                        freq_correction=self.device.freq_correction
+                                                                        ))
 
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):
@@ -416,6 +436,7 @@ class DeviceSettingsWidget(QWidget):
 
         dev_name = self.ui.cbDevice.currentText()
         self.set_device_ui_items_visibility(dev_name)
+        self.set_gain_defaults()
         self.sync_gain_sliders()
         self.set_bandwidth_status()
 

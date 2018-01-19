@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 
 from urh import constants
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
+from urh.dev import config
 from urh.signalprocessing.Participant import Participant
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_project import Ui_ProjectDialog
@@ -106,7 +107,7 @@ class ProjectDialog(QDialog):
             self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
             self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
             self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
-            self.ui.spinBoxGain.setValue(project_manager.device_conf["gain"])
+            self.ui.spinBoxGain.setValue(project_manager.device_conf.get("gain", config.DEFAULT_GAIN))
             self.ui.txtEdDescription.setPlainText(project_manager.description)
             self.ui.lineEdit_Path.setText(project_manager.project_path)
             self.ui.lineEditBroadcastAddress.setText(project_manager.broadcast_address_hex)
@@ -282,7 +283,7 @@ class ProjectDialog(QDialog):
         self.ui.spinBoxFreq.setValue(args["frequency"])
         self.ui.spinBoxSampleRate.setValue(args["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(args["bandwidth"])
-        self.ui.spinBoxGain.setValue(args["gain"])
+        self.ui.spinBoxGain.setValue(args.get("gain", config.DEFAULT_GAIN))
 
     @pyqtSlot(str)
     def on_spectrum_analyzer_link_activated(self, link: str):
@@ -293,7 +294,7 @@ class ProjectDialog(QDialog):
                 r.close()
                 return
 
-            r.recording_parameters.connect(self.set_recording_params_from_spectrum_analyzer_link)
+            r.device_parameters_changed.connect(self.set_recording_params_from_spectrum_analyzer_link)
             r.show()
 
     @pyqtSlot()

@@ -604,7 +604,7 @@ class GeneratorTabController(QWidget):
                 dialog.close()
                 return
 
-            dialog.recording_parameters.connect(self.project_manager.set_recording_parameters)
+            dialog.device_parameters_changed.connect(self.project_manager.set_device_parameters)
             dialog.show()
             dialog.graphics_view.show_full_scene(reinitialize=True)
         except Exception as e:

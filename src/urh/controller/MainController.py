@@ -432,6 +432,7 @@ class MainController(QMainWindow):
     def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
         self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
+        self.simulator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
         for sig_frame in self.signal_tab_controller.signal_frames:
             sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
 

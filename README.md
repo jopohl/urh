@@ -7,7 +7,7 @@
 
 
 
-The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
+The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
 
 * __hardware interfaces__ for common Software Defined Radios
 * __easy demodulation__ of signals
@@ -17,8 +17,8 @@ The Universal Radio Hacker is a software for investigating unknown wireless prot
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 
-To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf), watch the __demonstration videos__ [on YouTube](https://www.youtube.com/watch?v=kuubkTDAxwA)
-or check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices.
+To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf), watch the [demonstration videos (YouTube)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+or check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices. Scroll down this page to learn how to install URH on your system.
 
 Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
 

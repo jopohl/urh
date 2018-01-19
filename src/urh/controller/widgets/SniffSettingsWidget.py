@@ -11,6 +11,7 @@ from urh.util.ProjectManager import ProjectManager
 class SniffSettingsWidget(QWidget):
     sniff_setting_edited = pyqtSignal()
     sniff_file_edited = pyqtSignal()
+    sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, device_name: str, project_manager: ProjectManager,
                  signal=None, encoding_index=0, backend_handler=None,
@@ -74,6 +75,14 @@ class SniffSettingsWidget(QWidget):
         self.ui.spinbox_sniff_BitLen.editingFinished.emit()
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
         self.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
+
+    def emit_sniff_parameters_changed(self):
+        self.sniff_parameters_changed.emit(dict(bit_len=self.sniffer.signal.bit_len,
+                                                center=self.sniffer.signal.qad_center,
+                                                noise=self.sniffer.signal.noise_threshold,
+                                                tolerance=self.sniffer.signal.tolerance,
+                                                modulation_index=self.sniffer.signal.modulation_type,
+                                                decoding_name=self.sniffer.decoder.name))
 
     @pyqtSlot()
     def on_noise_edited(self):

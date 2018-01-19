@@ -17,7 +17,7 @@ from urh.util.ProjectManager import ProjectManager
 class DeviceSettingsWidget(QWidget):
     selected_device_changed = pyqtSignal()
     gain_edited = pyqtSignal()
-    device_parameters_changed = pyqtSignal(str, dict)
+    device_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler = None,
                  parent=None):
@@ -44,9 +44,10 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxGain.setValue(project_manager.device_conf.get("gain", config.DEFAULT_GAIN))
         self.ui.spinBoxIFGain.setValue(project_manager.device_conf.get("if_gain", config.DEFAULT_IF_GAIN))
         self.ui.spinBoxBasebandGain.setValue(project_manager.device_conf.get("baseband_gain", config.DEFAULT_BB_GAIN))
-        self.ui.spinBoxFreqCorrection.setValue(project_manager.device_conf.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
+        self.ui.spinBoxFreqCorrection.setValue(
+            project_manager.device_conf.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
-        device = project_manager.device
+        device = project_manager.device_conf["name"]
 
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox()
@@ -307,14 +308,16 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
 
     def emit_device_parameters_changed(self):
-        self.device_parameters_changed.emit(str(self.device.name), dict(frequency=self.device.frequency,
-                                                                        sample_rate=self.device.sample_rate,
-                                                                        bandwidth=self.device.bandwidth,
-                                                                        gain=self.device.gain,
-                                                                        if_gain=self.device.if_gain,
-                                                                        baseband_gain=self.device.baseband_gain,
-                                                                        freq_correction=self.device.freq_correction
-                                                                        ))
+        settings = {"name": str(self.device.name)}
+        for attrib in ("frequency", "sample_rate", "bandwidth", "gain", "if_gain", "baseband_gain", "freq_correction"):
+            try:
+                value = getattr(self.device, attrib, None)
+                if value is not None:
+                    settings[attrib] = value
+            except (ValueError, AttributeError):
+                continue
+
+        self.device_parameters_changed.emit(settings)
 
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):

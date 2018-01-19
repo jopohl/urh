@@ -1,5 +1,6 @@
 import time
-from PyQt5.QtCore import QTimer, pyqtSlot
+
+from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
@@ -9,13 +10,17 @@ from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
+from urh.simulator.Simulator import Simulator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
 from urh.util.ProjectManager import ProjectManager
-from urh.simulator.Simulator import Simulator
 
 
 class SimulatorDialog(QDialog):
+    rx_parameters_changed = pyqtSignal(dict)
+    tx_parameters_changed = pyqtSignal(dict)
+    sniff_parameters_changed = pyqtSignal(dict)
+
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, parent=None):
         super().__init__(parent)
@@ -58,8 +63,6 @@ class SimulatorDialog(QDialog):
         self.sniff_settings_widget.ui.label_sniff_viewtype.hide()
         self.sniff_settings_widget.ui.comboBox_sniff_viewtype.hide()
 
-        # TODO: Load Simulator RX settings from project
-
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
 
@@ -81,14 +84,54 @@ class SimulatorDialog(QDialog):
 
         self.device_settings_tx_widget.device = self.simulator.sender.device
 
-        # TODO: Load Simulator TX settings from project
-
         self.update_buttons()
         self.create_connects()
 
+        self.__bootstrap_device_settings(self.device_settings_rx_widget, project_manager.simulator_rx_conf)
+        self.__bootstrap_sniff_settings(self.sniff_settings_widget, project_manager.simulator_rx_conf)
+        self.__bootstrap_device_settings(self.device_settings_tx_widget, project_manager.simulator_tx_conf)
+
+    @staticmethod
+    def __bootstrap_device_settings(device_widget: DeviceSettingsWidget, config: dict):
+        mapping = {"frequency": "spinBoxFreq", "sample_rate": "spinBoxSampleRate", "bandwidth": "spinBoxBandwidth",
+                   "gain": "spinBoxGain", "if_gain": "spinBoxIFGain", "baseband_gain": "spinBoxBasebandGain",
+                   "freq_correction": "spinBoxFreqCorrection"}
+
+        if "name" in config:
+            device_widget.ui.cbDevice.setCurrentText(config["name"])
+
+        for key, value in config.items():
+            widget = mapping.get(key, None)
+            if widget:
+                getattr(device_widget.ui, widget).setValue(value)
+        device_widget.emit_editing_finished_signals()
+
+    @staticmethod
+    def __bootstrap_sniff_settings(sniff_widget: SniffSettingsWidget, config: dict):
+        for key, value in config.items():
+            if key == "bit_len":
+                sniff_widget.ui.spinbox_sniff_BitLen.setValue(value)
+            elif key == "center":
+                sniff_widget.ui.spinbox_sniff_Center.setValue(value)
+            elif key == "noise":
+                sniff_widget.ui.spinbox_sniff_Noise.setValue(value)
+            elif key == "tolerance":
+                sniff_widget.ui.spinbox_sniff_ErrorTolerance.setValue(value)
+            elif key == "modulation_index":
+                sniff_widget.ui.combox_sniff_Modulation.setCurrentIndex(value)
+            elif key == "decoding_name":
+                sniff_widget.ui.comboBox_sniff_encoding.setCurrentText(value)
+
+        sniff_widget.emit_editing_finished_signals()
+
     def create_connects(self):
         self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
+        self.device_settings_rx_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
+
         self.device_settings_tx_widget.selected_device_changed.connect(self.on_selected_tx_device_changed)
+        self.device_settings_tx_widget.device_parameters_changed.connect(self.tx_parameters_changed.emit)
+
+        self.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
 
         self.simulator_scene.selectionChanged.connect(self.update_buttons)
         self.simulator_config.items_updated.connect(self.update_buttons)
@@ -213,7 +256,17 @@ class SimulatorDialog(QDialog):
         self.ui.lblCurrentRepeatValue.setText("-")
         self.ui.lblCurrentItemValue.setText("-")
 
+    def emit_editing_finished_signals(self):
+        self.device_settings_rx_widget.emit_editing_finished_signals()
+        self.device_settings_tx_widget.emit_editing_finished_signals()
+        self.sniff_settings_widget.emit_editing_finished_signals()
+
     def closeEvent(self, event: QCloseEvent):
+        self.emit_editing_finished_signals()
+        self.device_settings_rx_widget.emit_device_parameters_changed()
+        self.device_settings_tx_widget.emit_device_parameters_changed()
+        self.sniff_settings_widget.emit_sniff_parameters_changed()
+
         self.timer.stop()
         self.simulator.stop()
         time.sleep(0.1)

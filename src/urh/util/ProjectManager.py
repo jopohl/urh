@@ -29,7 +29,11 @@ class ProjectManager(QObject):
         self.main_controller = main_controller
         self.device_conf = dict(frequency=config.DEFAULT_FREQUENCY,
                                 sample_rate=config.DEFAULT_SAMPLE_RATE,
-                                bandwidth=config.DEFAULT_BANDWIDTH)
+                                bandwidth=config.DEFAULT_BANDWIDTH,
+                                name="USRP")
+
+        self.simulator_rx_conf = dict()
+        self.simulator_tx_conf = dict()
 
         self.simulator_num_repeat = 1
         self.simulator_retries = 10
@@ -44,7 +48,6 @@ class ProjectManager(QObject):
         self.load_decodings()
 
         self.modulation_was_edited = False
-        self.device = "USRP"
         self.description = ""
         self.project_path = ""
         self.broadcast_address_hex = "ffff"
@@ -93,10 +96,21 @@ class ProjectManager(QObject):
         self.field_types = FieldType.load_from_xml()
         self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
 
-    def set_device_parameters(self, device: str, kwargs: dict):
+    def set_device_parameters(self, kwargs: dict):
         for key, value in kwargs.items():
             self.device_conf[key] = value
-        self.device = device
+
+    def on_simulator_rx_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_rx_conf[key] = value
+
+    def on_simulator_tx_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_tx_conf[key] = value
+
+    def on_simulator_sniff_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_rx_conf[key] = value
 
     def load_decodings(self):
         if self.project_file:
@@ -151,7 +165,10 @@ class ProjectManager(QObject):
         device_conf_tag = root.find("device_conf")
         if device_conf_tag is not None:
             for dev_tag in device_conf_tag:
-                self.device_conf[dev_tag.tag] = float(dev_tag.text)
+                if dev_tag.tag == "name":
+                    self.device_conf["name"] = dev_tag.text
+                else:
+                    self.device_conf[dev_tag.tag] = float(dev_tag.text)
 
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")

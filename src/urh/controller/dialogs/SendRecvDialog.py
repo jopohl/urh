@@ -17,7 +17,7 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SendRecvDialog(QDialog):
-    device_parameters_changed = pyqtSignal(str, dict)
+    device_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, parent=None, testing_mode=False):
         super().__init__(parent)

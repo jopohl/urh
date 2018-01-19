@@ -388,6 +388,10 @@ class SimulatorTabController(QWidget):
         s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
                             self.sim_expression_parser, self.project_manager, parent=self)
 
+        s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
+        s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
+        s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
+
         s.exec_()
 
     @pyqtSlot()

@@ -118,7 +118,7 @@ class SimulatorDialog(QDialog):
             elif key == "tolerance":
                 sniff_widget.ui.spinbox_sniff_ErrorTolerance.setValue(value)
             elif key == "modulation_index":
-                sniff_widget.ui.combox_sniff_Modulation.setCurrentIndex(value)
+                sniff_widget.ui.combox_sniff_Modulation.setCurrentIndex(int(value))
             elif key == "decoding_name":
                 sniff_widget.ui.comboBox_sniff_encoding.setCurrentText(value)
 

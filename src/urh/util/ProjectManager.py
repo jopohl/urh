@@ -161,14 +161,30 @@ class ProjectManager(QObject):
         else:
             self.decodings = fallback
 
+    @staticmethod
+    def __read_device_conf_dict(tag: ET.Element, target_dict):
+        if tag is None:
+            return
+
+        for dev_tag in tag:
+            try:
+                value = float(dev_tag.text)
+            except ValueError:
+                value = dev_tag.text
+            target_dict[dev_tag.tag] = value
+
+    @staticmethod
+    def __device_conf_dict_to_xml(key_name: str, device_conf: dict):
+        result = ET.Element(key_name)
+        for key in sorted(device_conf):
+            device_val_tag = ET.SubElement(result, key)
+            device_val_tag.text = str(device_conf[key])
+        return result
+
     def read_parameters(self, root):
-        device_conf_tag = root.find("device_conf")
-        if device_conf_tag is not None:
-            for dev_tag in device_conf_tag:
-                if dev_tag.tag == "name":
-                    self.device_conf["name"] = dev_tag.text
-                else:
-                    self.device_conf[dev_tag.tag] = float(dev_tag.text)
+        self.__read_device_conf_dict(root.find("device_conf"), target_dict=self.device_conf)
+        self.__read_device_conf_dict(root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf)
+        self.__read_device_conf_dict(root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf)
 
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
@@ -343,10 +359,9 @@ class ProjectManager(QObject):
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
-        device_conf_tag = ET.SubElement(root, "device_conf")
-        for key in sorted(self.device_conf):
-            device_val_tag = ET.SubElement(device_conf_tag, key)
-            device_val_tag.text = str(self.device_conf[key])
+        root.append(self.__device_conf_dict_to_xml("device_conf", self.device_conf))
+        root.append(self.__device_conf_dict_to_xml("simulator_rx_conf", self.simulator_rx_conf))
+        root.append(self.__device_conf_dict_to_xml("simulator_tx_conf", self.simulator_tx_conf))
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
         root.set("modulation_was_edited", str(int(self.modulation_was_edited)))

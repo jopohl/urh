@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QMenu
@@ -143,7 +143,7 @@ class TestSimulatorTabGUI(QtTestCase):
         timer = QTimer()
         timer.setInterval(1)
         timer.setSingleShot(True)
-        timer.timeout.connect(self.__on_context_menu_timer_timeout)
+        timer.timeout.connect(self.__on_context_menu_simulator_graphics_view_timer_timeout)
         timer.start()
 
         stc.ui.gvSimulator.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, pos))
@@ -151,7 +151,31 @@ class TestSimulatorTabGUI(QtTestCase):
         rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
         self.assertEqual(len(rules), 1)
 
-    def __on_context_menu_timer_timeout(self):
+    def test_simulator_message_table_context_menu(self):
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        stc.ui.tabWidget.setCurrentIndex(1)
+
+        stc.simulator_scene.get_all_messages()[0].setSelected(True)
+        self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
+
+        stc.ui.tblViewMessage.selectColumn(2)
+        x, y = stc.ui.tblViewMessage.columnViewportPosition(2), stc.ui.tblViewMessage.rowViewportPosition(0)
+        pos = QPoint(x, y)
+        stc.ui.tblViewMessage.context_menu_pos = pos
+        menu = stc.ui.tblViewMessage.create_context_menu()
+
+        names = [action.text() for action in menu.actions()]
+        self.assertIn("Modulation", names)
+        add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
+        add_label_action.trigger()
+        menu.close()
+        stc.ui.tblViewMessage.selectRow(0)
+
+        self.assertEqual(stc.simulator_message_field_model.rowCount(), 2)
+
+    def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
                     and w.parent() is None and w not in self.menus_to_ignore)
         names = [action.text() for action in menu.actions()]

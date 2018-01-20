@@ -1,17 +1,13 @@
-# Universal Radio Hacker
-[![PyPI version](https://badge.fury.io/py/urh.svg)](https://pypi.python.org/pypi/urh)
-[![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
-[![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
-[![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
+# Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
 
-| Linux  | Windows | OSX |
-| ------------- | ------------- | ------------- |
-|[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) | [![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master) | [![CircleCI](https://circleci.com/gh/jopohl/urh/tree/master.svg?style=svg)](https://circleci.com/gh/jopohl/urh/tree/master) |
+
+| Linux  | Windows | OSX | Test Coverage |
+| ------------- | ------------- | ------------- | -------- | 
+|[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) | [![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master) | [![CircleCI](https://circleci.com/gh/jopohl/urh/tree/master.svg?style=svg)](https://circleci.com/gh/jopohl/urh/tree/master) | [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master) |
 
 
 
-The Universal Radio Hacker is a software for investigating unknown wireless protocols. Features include
+The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
 
 * __hardware interfaces__ for common Software Defined Radios
 * __easy demodulation__ of signals
@@ -21,12 +17,12 @@ The Universal Radio Hacker is a software for investigating unknown wireless prot
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 
-To get started, you can
-* download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf)
-* watch the __demonstration videos__ [on YouTube](https://www.youtube.com/watch?v=kuubkTDAxwA)
-* check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices.
+To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf), watch the [demonstration videos (YouTube)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+or check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices. Scroll down this page to learn how to install URH on your system.
 
-Want to stay in touch? Chat with us on [Slack](https://join.slack.com/t/stralsundsecurity/shared_invite/MjEwOTIxNzMzODc3LTE0OTk3NTM3NzUtNDU0YWJkNGM5Yw)!
+Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
+
+To support the development you can star this repository or buy us a coffee: [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2)
 
 ## Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).

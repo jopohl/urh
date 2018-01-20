@@ -6,6 +6,7 @@ from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.MainController import MainController
 
 
 class TestGenerator(QtTestCase):
@@ -153,6 +154,7 @@ class TestGenerator(QtTestCase):
         self.assertNotEqual(len(self.form.generator_tab_controller.table_model.display_data[2]), 30)
 
     def test_create_fuzzing_list_view_context_menu(self):
+        self.form.generator_tab_controller.ui.tabWidget.setCurrentIndex(2)
         # Context menu should be empty if table is empty
         self.assertEqual(self.form.generator_tab_controller.table_model.rowCount(), 0)
         self.form.generator_tab_controller.ui.tableMessages.context_menu_pos = QPoint(0, 0)
@@ -174,6 +176,17 @@ class TestGenerator(QtTestCase):
         menu = self.form.generator_tab_controller.ui.listViewProtoLabels.create_context_menu()
         n_items = len(menu.actions())
         self.assertGreater(n_items, 0)
+
+    def test_pauses_widget(self):
+        assert isinstance(self.form, MainController)
+        self.form.generator_tab_controller.ui.tabWidget.setCurrentIndex(1)
+
+        menu = self.form.generator_tab_controller.ui.lWPauses.create_context_menu()
+        self.assertEqual(len(menu.actions()), 1)
+
+        self.form.generator_tab_controller.ui.lWPauses.addItem("10")
+        menu = self.form.generator_tab_controller.ui.lWPauses.create_context_menu()
+        self.assertEqual(len(menu.actions()), 2)
 
     def test_add_column(self):
         # Add data to test

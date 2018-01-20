@@ -47,8 +47,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>611</width>
-         <height>1548</height>
+         <width>664</width>
+         <height>1343</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -1272,16 +1272,50 @@ QGroupBox::indicator:checked {
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>groupBoxDeviceSettings</tabstop>
+  <tabstop>cbDevice</tabstop>
+  <tabstop>lineEditDeviceArgs</tabstop>
+  <tabstop>comboBoxChannel</tabstop>
+  <tabstop>comboBoxAntenna</tabstop>
+  <tabstop>lineEditIP</tabstop>
+  <tabstop>spinBoxPort</tabstop>
+  <tabstop>spinBoxFreq</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>btnLockBWSR</tabstop>
+  <tabstop>spinBoxBandwidth</tabstop>
+  <tabstop>sliderGain</tabstop>
+  <tabstop>spinBoxGain</tabstop>
+  <tabstop>sliderIFGain</tabstop>
+  <tabstop>spinBoxIFGain</tabstop>
+  <tabstop>sliderBasebandGain</tabstop>
+  <tabstop>spinBoxBasebandGain</tabstop>
+  <tabstop>spinBoxFreqCorrection</tabstop>
+  <tabstop>comboBoxDirectSampling</tabstop>
+  <tabstop>spinBoxNRepeat</tabstop>
+  <tabstop>groupBoxSniffSettings</tabstop>
+  <tabstop>spinbox_sniff_Noise</tabstop>
+  <tabstop>spinbox_sniff_Center</tabstop>
+  <tabstop>spinbox_sniff_BitLen</tabstop>
+  <tabstop>spinbox_sniff_ErrorTolerance</tabstop>
+  <tabstop>combox_sniff_Modulation</tabstop>
+  <tabstop>comboBox_sniff_viewtype</tabstop>
+  <tabstop>comboBox_sniff_encoding</tabstop>
+  <tabstop>lineEdit_sniff_OutputFile</tabstop>
   <tabstop>btnStart</tabstop>
   <tabstop>btnStop</tabstop>
   <tabstop>btnSave</tabstop>
   <tabstop>btnClear</tabstop>
-  <tabstop>txtEd_sniff_Preview</tabstop>
-  <tabstop>sliderYscale</tabstop>
-  <tabstop>txtEditErrors</tabstop>
-  <tabstop>graphicsViewSend</tabstop>
-  <tabstop>graphicsViewReceive</tabstop>
   <tabstop>btnAccept</tabstop>
+  <tabstop>graphicsViewReceive</tabstop>
+  <tabstop>txtEditErrors</tabstop>
+  <tabstop>txtEd_sniff_Preview</tabstop>
+  <tabstop>graphicsViewSend</tabstop>
+  <tabstop>sliderYscale</tabstop>
+  <tabstop>graphicsViewContinuousSend</tabstop>
+  <tabstop>graphicsViewFFT</tabstop>
+  <tabstop>graphicsViewSpectrogram</tabstop>
+  <tabstop>graphicsView_sniff_Preview</tabstop>
  </tabstops>
  <resources>
   <include location="urh.qrc"/>

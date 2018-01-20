@@ -1,16 +1,18 @@
 import os
 import tempfile
-from xml.dom import minidom
-import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QContextMenuEvent
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
-from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.MessageItem import MessageItem
+from urh.simulator.RuleItem import RuleItem
 from urh.simulator.SimulatorRule import ConditionType
 
 
@@ -21,6 +23,8 @@ class TestSimulatorTabGUI(QtTestCase):
         self.dennis = Participant("Dennis", "D")
         self.participants = [self.carl, self.dennis]
         self.project_folder = os.path.join(tempfile.gettempdir(), "simulator_project")
+
+        self.menus_to_ignore = []
 
     def test_save_and_load(self):
         assert isinstance(self.form, MainController)
@@ -105,7 +109,6 @@ class TestSimulatorTabGUI(QtTestCase):
         model.setData(model.index(0, 3), "item1.No_name + 42/", role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
 
-
         # external program
         model.setData(model.index(0, 2), 3, role=Qt.EditRole)
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
@@ -118,6 +121,44 @@ class TestSimulatorTabGUI(QtTestCase):
         model.setData(model.index(0, 3), (42, 1337), role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "Range (Decimal): 42 - 1337")
 
+    def test_simulator_graphics_view(self):
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
+
+        self.assertEqual(len(stc.simulator_scene.selectedItems()), 0)
+
+        # select first message
+        messages = stc.simulator_scene.get_all_messages()
+        pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
+        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
+
+        self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
+        self.assertIsInstance(stc.simulator_scene.selectedItems()[0], MessageItem)
+
+        rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
+        self.assertEqual(len(rules), 0)
+        self.menus_to_ignore = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
+        timer = QTimer()
+        timer.setInterval(1)
+        timer.setSingleShot(True)
+        timer.timeout.connect(self.__on_context_menu_timer_timeout)
+        timer.start()
+
+        stc.ui.gvSimulator.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, pos))
+
+        rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
+        self.assertEqual(len(rules), 1)
+
+    def __on_context_menu_timer_timeout(self):
+        menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
+                    and w.parent() is None and w not in self.menus_to_ignore)
+        names = [action.text() for action in menu.actions()]
+        self.assertIn("Create new message type based on this message ...", names)
+        add_rule_action = next(action for action in menu.actions() if action.text() == "Add rule")
+        add_rule_action.trigger()
+        menu.close()
 
     def __setup_project(self):
         assert isinstance(self.form, MainController)

@@ -39,6 +39,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.add_rule_condition(rule, ConditionType.ELSE_IF)
 
         stc.simulator_scene.add_goto_action(None, 0)
+        stc.simulator_scene.add_program_action(None, 0)
 
         messages = stc.simulator_config.get_all_messages()
         self.assertEqual(len(messages), 3)

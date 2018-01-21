@@ -54,7 +54,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             msg_str_data = []
             if include_timestamps:
                 msg_date = datetime.fromtimestamp(msg.timestamp)
-                msg_str_data.append(msg_date.strftime("[%Y-%m-%d %H:%M:%S]"))
+                msg_str_data.append(msg_date.strftime("[%Y-%m-%d %H:%M:%S.%f]"))
             msg_str_data.append(msg.view_to_string(view, decoded=True, show_pauses=False))
             result.append(" ".join(msg_str_data))
         return "\n".join(result)

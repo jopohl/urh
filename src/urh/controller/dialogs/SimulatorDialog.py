@@ -61,6 +61,7 @@ class SimulatorDialog(QDialog):
         self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
         self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
         self.sniff_settings_widget.ui.label_sniff_viewtype.hide()
+        self.sniff_settings_widget.ui.checkBox_sniff_Timestamp.hide()
         self.sniff_settings_widget.ui.comboBox_sniff_viewtype.hide()
 
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)

@@ -68,6 +68,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
+        self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
 
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
@@ -109,8 +110,8 @@ class SniffSettingsWidget(QWidget):
         self.sniffer.signal.silent_set_modulation_type(new_index)
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot(int)
-    def on_view_type_changed(self, new_index: int):
+    @pyqtSlot()
+    def on_view_type_changed(self):
         self.sniff_setting_edited.emit()
 
     @pyqtSlot(int)
@@ -129,3 +130,7 @@ class SniffSettingsWidget(QWidget):
 
         self.sniffer.sniff_file = text
         self.sniff_file_edited.emit()
+
+    @pyqtSlot()
+    def on_checkbox_sniff_timestamp_clicked(self):
+        self.sniff_setting_edited.emit()

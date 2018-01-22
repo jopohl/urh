@@ -1,16 +1,15 @@
 import array
 import os
 import sys
-
 import time
 from xml.dom import minidom
+from xml.etree import ElementTree as ET
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QFontDatabase, QFont
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem, QApplication
+from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
-from xml.etree import ElementTree as ET
 
 from urh import constants
 from urh.util.Logger import logger

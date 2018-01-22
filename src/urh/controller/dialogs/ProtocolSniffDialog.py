@@ -6,6 +6,7 @@ from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
+from urh.util import util
 
 
 class ProtocolSniffDialog(SendRecvDialog):
@@ -41,11 +42,17 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.setWindowTitle(self.tr("Sniff Protocol"))
         self.setWindowIcon(QIcon.fromTheme(":/icons/icons/sniffer.svg"))
 
+        self.ui.txtEd_sniff_Preview.setFont(util.get_monospace_font())
+
         self.create_connects()
 
     @property
-    def view_type(self):
+    def view_type(self) -> int:
         return self.sniff_settings_widget.ui.comboBox_sniff_viewtype.currentIndex()
+
+    @property
+    def show_timestamp(self) -> bool:
+        return self.sniff_settings_widget.ui.checkBox_sniff_Timestamp.isChecked()
 
     def create_connects(self):
         super().create_connects()
@@ -85,7 +92,8 @@ class ProtocolSniffDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_sniff_setting_edited(self):
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.show_timestamp))
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -106,7 +114,8 @@ class ProtocolSniffDialog(SendRecvDialog):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index)
+        new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index,
+                                                  include_timestamps=self.show_timestamp)
         if new_data.strip():
             self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
             self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(

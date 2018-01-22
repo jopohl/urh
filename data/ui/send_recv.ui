@@ -47,8 +47,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>664</width>
-         <height>1343</height>
+         <width>624</width>
+         <height>1550</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -84,7 +84,7 @@ QGroupBox::indicator:checked {
 }</string>
           </property>
           <property name="title">
-           <string>Sniff settings</string>
+           <string>Sniff settin&amp;gs</string>
           </property>
           <property name="flat">
            <bool>true</bool>
@@ -107,38 +107,31 @@ QGroupBox::indicator:checked {
              <property name="lineWidth">
               <number>0</number>
              </property>
-             <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0" columnminimumwidth="150,0">
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_sniff_Tolerance">
-                <property name="text">
-                 <string>Error Tolerance:</string>
+             <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0">
+              <item row="2" column="1">
+               <widget class="QSpinBox" name="spinbox_sniff_BitLen">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>999999999</number>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_sniff_Center">
-                <property name="text">
-                 <string>Center:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+              <item row="1" column="1">
+               <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
                 <property name="decimals">
                  <number>4</number>
                 </property>
+                <property name="minimum">
+                 <double>-3.140000000000000</double>
+                </property>
                 <property name="maximum">
-                 <double>1.000000000000000</double>
+                 <double>3.140000000000000</double>
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="label_sniff_viewtype">
                 <property name="text">
                  <string>View:</string>
@@ -164,36 +157,19 @@ QGroupBox::indicator:checked {
                 </item>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
+              <item row="0" column="1">
+               <widget class="QDoubleSpinBox" name="spinbox_sniff_Noise">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="decimals">
                  <number>4</number>
                 </property>
-                <property name="minimum">
-                 <double>-3.140000000000000</double>
-                </property>
                 <property name="maximum">
-                 <double>3.140000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QSpinBox" name="spinbox_sniff_BitLen">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>999999999</number>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QComboBox" name="comboBox_sniff_encoding"/>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_sniff_OutputFile">
-                <property name="text">
-                 <string>Write bitstream to file:</string>
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -202,32 +178,6 @@ QGroupBox::indicator:checked {
                 <property name="text">
                  <string>Modulation:</string>
                 </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_sniff_encoding">
-                <property name="text">
-                 <string>Encoding:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="QComboBox" name="comboBox_sniff_viewtype">
-                <item>
-                 <property name="text">
-                  <string>Bit</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hex</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>ASCII</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item row="3" column="1">
@@ -240,6 +190,20 @@ QGroupBox::indicator:checked {
                 </property>
                </widget>
               </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_sniff_OutputFile">
+                <property name="text">
+                 <string>Write bitstream to file:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_sniff_Center">
+                <property name="text">
+                 <string>Center:</string>
+                </property>
+               </widget>
+              </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_sniff_BitLength">
                 <property name="text">
@@ -247,7 +211,7 @@ QGroupBox::indicator:checked {
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="8" column="1">
                <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -272,6 +236,53 @@ QGroupBox::indicator:checked {
                  <string>Noise:</string>
                 </property>
                </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_sniff_Tolerance">
+                <property name="text">
+                 <string>Error Tolerance:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QComboBox" name="comboBox_sniff_viewtype">
+                  <item>
+                   <property name="text">
+                    <string>Bit</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Hex</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>ASCII</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="checkBox_sniff_Timestamp">
+                  <property name="text">
+                   <string>Show timestamp</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_sniff_encoding">
+                <property name="text">
+                 <string>Encoding:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QComboBox" name="comboBox_sniff_encoding"/>
               </item>
              </layout>
             </widget>
@@ -660,7 +671,7 @@ QGroupBox::indicator:checked {
 }</string>
           </property>
           <property name="title">
-           <string>Device settings</string>
+           <string>De&amp;vice settings</string>
           </property>
           <property name="flat">
            <bool>true</bool>
@@ -1272,8 +1283,8 @@ QGroupBox::indicator:checked {
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>scrollArea</tabstop>
   <tabstop>groupBoxDeviceSettings</tabstop>
+  <tabstop>scrollArea</tabstop>
   <tabstop>cbDevice</tabstop>
   <tabstop>lineEditDeviceArgs</tabstop>
   <tabstop>comboBoxChannel</tabstop>
@@ -1299,23 +1310,24 @@ QGroupBox::indicator:checked {
   <tabstop>spinbox_sniff_BitLen</tabstop>
   <tabstop>spinbox_sniff_ErrorTolerance</tabstop>
   <tabstop>combox_sniff_Modulation</tabstop>
-  <tabstop>comboBox_sniff_viewtype</tabstop>
   <tabstop>comboBox_sniff_encoding</tabstop>
+  <tabstop>comboBox_sniff_viewtype</tabstop>
+  <tabstop>checkBox_sniff_Timestamp</tabstop>
   <tabstop>lineEdit_sniff_OutputFile</tabstop>
   <tabstop>btnStart</tabstop>
   <tabstop>btnStop</tabstop>
   <tabstop>btnSave</tabstop>
   <tabstop>btnClear</tabstop>
-  <tabstop>btnAccept</tabstop>
-  <tabstop>graphicsViewReceive</tabstop>
-  <tabstop>txtEditErrors</tabstop>
+  <tabstop>graphicsView_sniff_Preview</tabstop>
   <tabstop>txtEd_sniff_Preview</tabstop>
-  <tabstop>graphicsViewSend</tabstop>
-  <tabstop>sliderYscale</tabstop>
+  <tabstop>btnAccept</tabstop>
   <tabstop>graphicsViewContinuousSend</tabstop>
   <tabstop>graphicsViewFFT</tabstop>
   <tabstop>graphicsViewSpectrogram</tabstop>
-  <tabstop>graphicsView_sniff_Preview</tabstop>
+  <tabstop>graphicsViewSend</tabstop>
+  <tabstop>txtEditErrors</tabstop>
+  <tabstop>sliderYscale</tabstop>
+  <tabstop>graphicsViewReceive</tabstop>
  </tabstops>
  <resources>
   <include location="urh.qrc"/>

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
@@ -47,8 +48,16 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.__sniff_file = ""
         self.__store_data = True
 
-    def decoded_to_string(self, view: int, start=0):
-        return '\n'.join(msg.view_to_string(view, decoded=True, show_pauses=False) for msg in self.messages[start:])
+    def decoded_to_string(self, view: int, start=0, include_timestamps=True):
+        result = []
+        for msg in self.messages[start:]:
+            msg_str_data = []
+            if include_timestamps:
+                msg_date = datetime.fromtimestamp(msg.timestamp)
+                msg_str_data.append(msg_date.strftime("[%Y-%m-%d %H:%M:%S.%f]"))
+            msg_str_data.append(msg.view_to_string(view, decoded=True, show_pauses=False))
+            result.append(" ".join(msg_str_data))
+        return "\n".join(result)
 
     @property
     def sniff_file(self):

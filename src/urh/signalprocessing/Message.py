@@ -3,6 +3,8 @@ import copy
 import math
 import xml.etree.ElementTree as ET
 
+import time
+
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -16,7 +18,7 @@ class Message(object):
     """
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
-                 "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state",
+                 "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state", "timestamp",
                  "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
@@ -39,6 +41,7 @@ class Message(object):
         self.participant = participant    # type: Participant
         self.message_type = message_type  # type: MessageType
 
+        self.timestamp = time.time()
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 

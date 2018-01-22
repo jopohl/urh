@@ -290,6 +290,7 @@ class TestSendRecvDialog(QtTestCase):
 
         QApplication.instance().processEvents()
         sniff_dialog = self.__get_sniff_dialog()
+        sniff_dialog.ui.checkBox_sniff_Timestamp.setChecked(False)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         sniff_dialog.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
@@ -312,6 +313,11 @@ class TestSendRecvDialog(QtTestCase):
             self.assertEqual(received, orig + "0" * pad)
 
         sniff_dialog.ui.btnStop.click()
+        sniff_dialog.ui.checkBox_sniff_Timestamp.click()
+        self.assertTrue(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
+        sniff_dialog.ui.checkBox_sniff_Timestamp.click()
+        self.assertFalse(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
+
         target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
         self.assertFalse(os.path.isfile(target_file))
 

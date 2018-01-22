@@ -62,3 +62,13 @@ class TestOptionsGUI(QtTestCase):
         self.assertFalse(self.dialog.ui.radioButtonGnuradioDirectory.isChecked())
         self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
         self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
+
+    def test_field_type_tab(self):
+        self.dialog.ui.tabWidget.setCurrentWidget(self.dialog.ui.tabFieldtypes)
+        n_rows = self.dialog.ui.tblLabeltypes.model().rowCount()
+        self.assertGreater(n_rows, 1)
+        self.dialog.ui.btnAddLabelType.click()
+        self.wait_before_new_file()
+        self.assertEqual(n_rows+1, self.dialog.ui.tblLabeltypes.model().rowCount())
+        self.dialog.ui.btnRemoveLabeltype.click()
+        self.assertEqual(n_rows, self.dialog.ui.tblLabeltypes.model().rowCount())

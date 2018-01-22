@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+import copy
 from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
@@ -102,6 +103,14 @@ class ProtocolLabel(object):
     def range_complete_fuzzed(self) -> bool:
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
+
+    def get_copy(self):
+        if self.copied:
+            return self
+        else:
+            result = copy.deepcopy(self)
+            result.copied = True
+            return result
 
     def __lt__(self, other):
         if self.start != other.start:

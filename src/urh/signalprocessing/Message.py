@@ -105,47 +105,46 @@ class Message(object):
     def __add__(self, other):
         return self.__plain_bits + other.__plain_bits
 
+    def _remove_labels_for_range(self, index):
+        if isinstance(index, int):
+            index = slice(index, index + 1, 1)
+
+        assert isinstance(index, slice)
+
+        start = index.start if index.start is not None else 0
+        stop = index.stop
+        step = index.step if index.step is not None else 1
+
+        removed_labels = []
+
+        for lbl in self.message_type:  # type: ProtocolLabel
+            if start <= lbl.start and stop >= lbl.end:
+                self.message_type.remove(lbl)
+
+            elif stop - 1 < lbl.start:
+                number_elements = len(range(start, stop, step))
+                l_cpy = lbl.get_copy()
+                l_cpy.start -= number_elements
+                l_cpy.end -= number_elements
+                self.message_type.remove(lbl)
+                self.message_type.append(l_cpy)
+
+            elif start <= lbl.start <= stop:
+                self.message_type.remove(lbl)
+                removed_labels.append(lbl)
+
+            elif start >= lbl.start and stop <= lbl.end:
+                self.message_type.remove(lbl)
+                removed_labels.append(lbl)
+
+            elif lbl.start <= start < lbl.end:
+                self.message_type.remove(lbl)
+                removed_labels.append(lbl)
+
+        return removed_labels
+
     def __delitem__(self, index):
-        if isinstance(index, slice):
-            step = index.step
-            if step is None:
-                step = 1
-            number_elements = len(range(index.start, index.stop, step))
-
-            for l in self.message_type[:]:
-                if index.start <= l.start and index.stop >= l.end:
-                    self.message_type.remove(l)
-
-                elif index.stop - 1 < l.start:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start -= number_elements
-                    l_cpy.end -= number_elements
-                    self.message_type.remove(l)
-                    self.message_type.append(l_cpy)
-
-                elif index.start <= l.start <= index.stop:
-                    self.message_type.remove(l)
-
-                elif index.start >= l.start and index.stop <= l.end:
-                    self.message_type.remove(l)
-
-                elif l.start <= index.start < l.end:
-                    self.message_type.remove(l)
-        else:
-            for l in self.message_type:
-                if index < l.start:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start -= 1
-                    l_cpy.end -= 1
-                    self.message_type.remove(l)
-                    self.message_type.append(l_cpy)
-                elif l.start < index < l.end:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start = index - 1
-                    self.message_type.remove(l)
-                    if l_cpy.end - l_cpy.start > 0:
-                        self.message_type.append(l_cpy)
-
+        self._remove_labels_for_range(index)
         del self.plain_bits[index]
 
     def __str__(self):

@@ -22,6 +22,10 @@ class SimulatorProtocolLabel(SimulatorItem):
         self.random_min = 0
         self.random_max = self.label.fuzz_maximum - 1
 
+    def get_copy(self):
+        # no copy needed in simulator
+        return self
+
     def set_parent(self, value):
         if value is not None:
             assert isinstance(value, SimulatorMessage)

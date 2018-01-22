@@ -61,11 +61,8 @@ class FuzzingDialog(QDialog):
         if len(self.message.message_type) == 0:
             return None
 
-        cur_label = self.message.message_type[self.current_label_index]
-        if not cur_label.copied:
-            cur_label = copy.deepcopy(cur_label)
-            self.message.message_type[self.current_label_index] = cur_label
-            cur_label.copied = True
+        cur_label = self.message.message_type[self.current_label_index].get_copy()
+        self.message.message_type[self.current_label_index] = cur_label
         cur_label.fuzz_values = [fv for fv in cur_label.fuzz_values if fv]  # Remove empty strings
 
         if len(cur_label.fuzz_values) == 0:

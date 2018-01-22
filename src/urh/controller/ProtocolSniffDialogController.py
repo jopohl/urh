@@ -1,7 +1,7 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QCompleter, QDirModel
+from PyQt5.QtGui import QIcon, QFontDatabase
+from PyQt5.QtWidgets import QCompleter, QDirModel, QApplication
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 
 from urh import constants
@@ -63,6 +63,9 @@ class ProtocolSniffDialogController(SendRecvDialogController):
             self.ui.comboBox_sniff_encoding.setCurrentIndex(encoding_index)
 
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
+        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        fixed_font.setPointSize(QApplication.instance().font().pointSize())
+        self.ui.txtEd_sniff_Preview.setFont(fixed_font)
 
     @property
     def device(self):

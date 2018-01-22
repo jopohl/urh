@@ -22,7 +22,7 @@ from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.painting.LegendScene import LegendScene
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_signal_frame import Ui_SignalFrame
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -60,9 +60,7 @@ class SignalFrameController(QFrame):
         self.__set_spectrogram_adjust_widgets_visibility()
         self.ui.gvSignal.init_undo_stack(self.undo_stack)
 
-        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        fixed_font.setPointSize(QApplication.instance().font().pointSize())
-        self.ui.txtEdProto.setFont(fixed_font)
+        self.ui.txtEdProto.setFont(util.get_monospace_font())
         self.ui.txtEdProto.participants = project_manager.participants
         self.ui.txtEdProto.messages = proto_analyzer.messages
 

@@ -9,6 +9,7 @@ from urh.controller.SendRecvDialogController import SendRecvDialogController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
+from urh.util import util
 
 
 class ProtocolSniffDialogController(SendRecvDialogController):
@@ -63,9 +64,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
             self.ui.comboBox_sniff_encoding.setCurrentIndex(encoding_index)
 
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
-        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        fixed_font.setPointSize(QApplication.instance().font().pointSize())
-        self.ui.txtEd_sniff_Preview.setFont(fixed_font)
+        self.ui.txtEd_sniff_Preview.setFont(util.get_monospace_font())
 
     @property
     def device(self):

@@ -3,8 +3,8 @@ import os
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
+from PyQt5.QtGui import QIcon, QFontDatabase, QFont
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem, QApplication
 
 from urh import constants
 from urh.util.Logger import logger
@@ -167,3 +167,9 @@ def create_table_item(content):
     item = QTableWidgetItem(str(content))
     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
     return item
+
+
+def get_monospace_font() -> QFont:
+    fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+    fixed_font.setPointSize(QApplication.instance().font().pointSize())
+    return fixed_font

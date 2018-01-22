@@ -6,6 +6,7 @@ from PyQt5.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.MainController import MainController
 
 
@@ -209,7 +210,6 @@ class TestGenerator(QtTestCase):
         self.form.generator_tab_controller.generator_undo_stack.redo()
         self.assertEqual(l1 + 1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
 
-
     def test_edit_data(self):
         # load some bits from txt
         filename = os.path.join(tempfile.gettempdir(), "testdata.txt")
@@ -244,6 +244,36 @@ class TestGenerator(QtTestCase):
         self.assertEqual(table_model.protocol.plain_hex_str[0], "aaf")
         self.__set_model_data(table_model, row=0, column=4, value="b")
         self.assertEqual(table_model.protocol.plain_hex_str[0], "aaf0b")
+
+    def test_fuzzing_label_list_view(self):
+        self.add_signal_to_form("ask.complex")
+        gframe = self.form.generator_tab_controller  # type: GeneratorTabController
+        gframe.ui.cbViewType.setCurrentText("Bit")
+
+        self.add_signal_to_generator(0)
+        gframe.ui.tabWidget.setCurrentWidget(gframe.ui.tab_fuzzing)
+
+        gframe.ui.tableMessages.selectRow(0)
+        self.assertEqual(gframe.label_list_model.rowCount(), 0)
+        gframe.create_fuzzing_label(0, 10, 20)
+        self.assertEqual(gframe.label_list_model.rowCount(), 1)
+
+        model = gframe.label_list_model
+        lbl = model.labels[0]
+        self.assertTrue(bool(lbl.fuzz_me))
+        self.assertEqual(len(lbl.fuzz_values), 1)
+
+        self.assertTrue(bool(model.data(model.index(0,0), role=Qt.CheckStateRole)), True)
+        model.setData(model.index(0,0), Qt.Unchecked, role=Qt.CheckStateRole)
+        self.assertFalse(lbl.fuzz_me)
+
+        model.setData(model.index(0,0), "test", role=Qt.EditRole)
+        self.assertEqual("test (empty)", model.data(model.index(0,0), role=Qt.DisplayRole))
+
+        lbl.fuzz_values.append("101010")
+        model.update()
+        self.assertEqual("test (1)", model.data(model.index(0, 0), role=Qt.DisplayRole))
+
 
     def __set_model_data(self, model, row, column, value):
         model.setData(model.createIndex(row, column), value, role=Qt.EditRole)

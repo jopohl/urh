@@ -36,12 +36,16 @@ class TestProtocolLabelDialog(QtTestCase):
         self.assertEqual(label.name, "testname")
         table_model.setData(table_model.index(0, 1), 15)
         self.assertEqual(label.start, 15 - 1)
+        self.dialog.ui.tblViewProtoLabels.openPersistentEditor(table_model.index(0, 1))
         table_model.setData(table_model.index(0, 2), 30)
         self.assertEqual(label.end, 30)
+        self.dialog.ui.tblViewProtoLabels.openPersistentEditor(table_model.index(0, 2))
         table_model.setData(table_model.index(0, 3), 4)
         self.assertEqual(label.color_index, 4)
+        self.dialog.ui.tblViewProtoLabels.openPersistentEditor(table_model.index(0, 3))
         table_model.setData(table_model.index(0, 4), False)
         self.assertEqual(label.apply_decoding, False)
+        self.dialog.ui.tblViewProtoLabels.openPersistentEditor(table_model.index(0, 4))
 
     def test_change_view_type(self):
         table_model = self.dialog.ui.tblViewProtoLabels.model()

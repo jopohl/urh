@@ -84,6 +84,10 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     def view_type(self):
         return self.ui.comboBox_sniff_viewtype.currentIndex()
 
+    @property
+    def include_timestamps(self):
+        return self.ui.checkBox_sniff_Timestamp.isChecked()
+
     def create_connects(self):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
@@ -99,6 +103,7 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
+        self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
 
     def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
         super().set_device_ui_items_visibility(device_name, adjust_gains)
@@ -141,27 +146,32 @@ class ProtocolSniffDialogController(SendRecvDialogController):
     @pyqtSlot()
     def on_noise_edited(self):
         self.sniffer.signal._noise_threshold = self.ui.spinbox_sniff_Noise.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.include_timestamps))
 
     @pyqtSlot()
     def on_center_edited(self):
         self.sniffer.signal.qad_center = self.ui.spinbox_sniff_Center.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.include_timestamps))
 
     @pyqtSlot()
     def on_bit_len_edited(self):
         self.sniffer.signal.bit_len = self.ui.spinbox_sniff_BitLen.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.include_timestamps))
 
     @pyqtSlot()
     def on_tolerance_edited(self):
         self.sniffer.signal.tolerance = self.ui.spinbox_sniff_ErrorTolerance.value()
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.include_timestamps))
 
     @pyqtSlot(int)
     def on_modulation_changed(self, new_index: int):
         self.sniffer.signal.silent_set_modulation_type(new_index)
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
+                                                                                include_timestamps=self.include_timestamps))
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -182,14 +192,14 @@ class ProtocolSniffDialogController(SendRecvDialogController):
 
     @pyqtSlot(int)
     def on_data_sniffed(self, from_index: int):
-        new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index)
+        new_data = self.sniffer.decoded_to_string(self.view_type, start=from_index, include_timestamps=self.include_timestamps)
         if new_data.strip():
             self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
             self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
     @pyqtSlot(int)
     def on_view_type_changed(self, new_index: int):
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(new_index))
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(new_index, include_timestamps=self.include_timestamps))
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):
@@ -215,4 +225,8 @@ class ProtocolSniffDialogController(SendRecvDialogController):
         if self.sniffer.decoder != self.encodings[index]:
             self.sniffer.set_decoder_for_messages(self.encodings[index])
             self.sniffer.decoder = self.encodings[index]
-            self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type))
+            self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type, include_timestamps=self.include_timestamps))
+
+    @pyqtSlot(bool)
+    def on_checkbox_sniff_timestamp_clicked(self, checked: bool):
+        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type, include_timestamps=checked))

@@ -47,8 +47,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>631</width>
-         <height>1490</height>
+         <width>624</width>
+         <height>1550</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -266,7 +266,7 @@ QGroupBox::indicator:checked {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBoxTimestamp">
+                 <widget class="QCheckBox" name="checkBox_sniff_Timestamp">
                   <property name="text">
                    <string>Show timestamp</string>
                   </property>
@@ -1312,7 +1312,7 @@ QGroupBox::indicator:checked {
   <tabstop>combox_sniff_Modulation</tabstop>
   <tabstop>comboBox_sniff_encoding</tabstop>
   <tabstop>comboBox_sniff_viewtype</tabstop>
-  <tabstop>checkBoxTimestamp</tabstop>
+  <tabstop>checkBox_sniff_Timestamp</tabstop>
   <tabstop>lineEdit_sniff_OutputFile</tabstop>
   <tabstop>btnStart</tabstop>
   <tabstop>btnStop</tabstop>

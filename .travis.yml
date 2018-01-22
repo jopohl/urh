@@ -60,4 +60,4 @@ after_failure:
   - cat /tmp/build_log.txt
   - cat /tmp/test_errors.txt
 
-after_success: coveralls
+after_success: coveralls --rcfile=tests/.coveragerc

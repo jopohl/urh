@@ -6,6 +6,8 @@ import time
 from xml.dom import minidom
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QFontDatabase, QFont
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 from xml.etree import ElementTree as ET
@@ -189,3 +191,9 @@ def write_xml_to_file(xml_tag: ET.Element, filename: str):
         for line in xml_str.split("\n"):
             if line.strip():
                 f.write(line + "\n")
+
+
+def get_monospace_font() -> QFont:
+    fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+    fixed_font.setPointSize(QApplication.instance().font().pointSize())
+    return fixed_font

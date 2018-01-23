@@ -3,6 +3,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
+      group: deprecated-2017Q4
       sudo: required
       python: 3.4_with_system_site_packages
       env:
@@ -11,6 +12,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
+      group: deprecated-2017Q4
       sudo: required
       python: 3.5
       env:
@@ -19,6 +21,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
+      group: deprecated-2017Q4
       sudo: required
       python: 3.6
       env:

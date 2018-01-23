@@ -5,11 +5,11 @@ from PyQt5.QtWidgets import QMessageBox, QWidget
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.util.Logger import logger
 
 
 class ProtocolTreeModel(QAbstractItemModel):
     item_dropped = pyqtSignal()
-    labels_on_group_dropped = pyqtSignal(list, int)
     group_deleted = pyqtSignal(int, int)
     proto_to_group_added = pyqtSignal(int)
     group_added = pyqtSignal(QModelIndex)
@@ -192,24 +192,6 @@ class ProtocolTreeModel(QAbstractItemModel):
             return True
 
         data_str = str(mimedata.text())
-        if data_str.startswith("PLabels"):
-            # Labels Dropped
-            data_str = data_str.replace("'", "")
-            label_ids = list(map(int, data_str.replace("PLabels:", "").split("/")))
-            drop_node = self.getItem(parentIndex)
-            if drop_node == self.rootItem:
-                return False
-            elif drop_node.is_group:
-                parent = drop_node
-            else:
-                parent = drop_node.parent()
-
-            dropped_group_id = self.rootItem.index_of(parent)
-
-            self.labels_on_group_dropped.emit(label_ids, dropped_group_id)
-
-            return True
-
         indexes = list(reversed(data_str.split("/")[:-1]))
         drag_nodes = []
 
@@ -224,10 +206,14 @@ class ProtocolTreeModel(QAbstractItemModel):
             else:
                 parent = self.rootItem.child(parent)
             node = parent.child(row)
-            if node.is_group:
-                contains_groups = True
-            else:
-                contains_files = True
+            try:
+                if node.is_group:
+                    contains_groups = True
+                else:
+                    contains_files = True
+            except AttributeError:
+                logger.error("Could not perform drop for index {}".format(index))
+                continue
 
             if contains_files and contains_groups:
                 QMessageBox.information(QWidget(), self.tr("Drag not supported"),

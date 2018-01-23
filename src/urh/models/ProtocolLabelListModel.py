@@ -94,18 +94,5 @@ class ProtocolLabelListModel(QAbstractListModel):
         self.controller.updateUI(resize_table=False)
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | \
-               Qt.ItemIsEditable | Qt.ItemIsDragEnabled
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable
 
-    def supportedDragActions(self):
-        return Qt.MoveAction | Qt.CopyAction
-
-    def mimeTypes(self):
-        return ['text/plain']
-
-    def mimeData(self, indexes):
-        data = "PLabels:"
-        data += "/".join([str(index.row()) for index in indexes])
-        mime_data = QMimeData()
-        mime_data.setText(data)
-        return mime_data

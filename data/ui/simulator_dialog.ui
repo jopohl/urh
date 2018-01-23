@@ -335,82 +335,184 @@
           <attribute name="title">
            <string>Messages</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="1">
-            <widget class="QLabel" name="lblCurrentRepeatValue">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QGroupBox" name="groupBoxSimulationStatus">
+             <property name="styleSheet">
+              <string notr="true">QGroupBox
+{
+border: none;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+}
+QGroupBox::indicator:unchecked {
+ image: url(:/icons/icons/collapse.svg)
+}
+QGroupBox::indicator:checked {
+ image: url(:/icons/icons/uncollapse.svg)
+}</string>
              </property>
-             <property name="text">
-              <string>0</string>
+             <property name="title">
+              <string>Simulation Status</string>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Current iteration:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Current item:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="lblCurrentItemValue">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="4">
-            <widget class="QToolButton" name="btnSaveLog">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset theme="document-save">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="5">
-            <widget class="QTextEdit" name="textEditSimulation">
-             <property name="readOnly">
+             <property name="checkable">
               <bool>true</bool>
              </property>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <property name="topMargin">
+               <number>15</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <widget class="QTextEdit" name="textEditSimulation">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QLabel" name="label">
+                     <property name="text">
+                      <string>Current iteration:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="lblCurrentRepeatValue">
+                     <property name="font">
+                      <font>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>Current item:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="lblCurrentItemValue">
+                     <property name="font">
+                      <font>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="btnSaveLog">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset theme="document-save">
+                       <normaloff>.</normaloff>.</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBoxRXStatus">
+             <property name="styleSheet">
+              <string notr="true">QGroupBox
+{
+border: none;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+}
+QGroupBox::indicator:unchecked {
+ image: url(:/icons/icons/collapse.svg)
+}
+QGroupBox::indicator:checked {
+ image: url(:/icons/icons/uncollapse.svg)
+}</string>
+             </property>
+             <property name="title">
+              <string>RX Status</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_14">
+              <property name="topMargin">
+               <number>15</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_2">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <widget class="LiveGraphicView" name="graphicsViewPreview"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_device">
           <attribute name="title">
-           <string>SDR Logs</string>
+           <string>SDR Status</string>
           </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
             <widget class="QTextEdit" name="textEditDevices">
              <property name="readOnly">
               <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>After starting the simulation you will the log messages of your configured SDRs here.</string>
              </property>
             </widget>
            </item>
@@ -437,11 +539,51 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LiveGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.LiveGraphicView.h</header>
+  </customwidget>
+  <customwidget>
    <class>LoggingGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.LoggingGraphicsView.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="urh.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>groupBoxSimulationStatus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>groupBoxRXStatus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>616</x>
+     <y>478</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>544</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

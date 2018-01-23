@@ -139,48 +139,112 @@ class Ui_DialogSimulator(object):
         self.tabWidget.setObjectName("tabWidget")
         self.tab_simulation = QtWidgets.QWidget()
         self.tab_simulation.setObjectName("tab_simulation")
-        self.gridLayout = QtWidgets.QGridLayout(self.tab_simulation)
-        self.gridLayout.setObjectName("gridLayout")
-        self.lblCurrentRepeatValue = QtWidgets.QLabel(self.tab_simulation)
+        self.verticalLayout_15 = QtWidgets.QVBoxLayout(self.tab_simulation)
+        self.verticalLayout_15.setObjectName("verticalLayout_15")
+        self.groupBoxSimulationStatus = QtWidgets.QGroupBox(self.tab_simulation)
+        self.groupBoxSimulationStatus.setStyleSheet("QGroupBox\n"
+"{\n"
+"border: none;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"QGroupBox::indicator:unchecked {\n"
+" image: url(:/icons/icons/collapse.svg)\n"
+"}\n"
+"QGroupBox::indicator:checked {\n"
+" image: url(:/icons/icons/uncollapse.svg)\n"
+"}")
+        self.groupBoxSimulationStatus.setCheckable(True)
+        self.groupBoxSimulationStatus.setObjectName("groupBoxSimulationStatus")
+        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.groupBoxSimulationStatus)
+        self.verticalLayout_12.setContentsMargins(-1, 15, -1, -1)
+        self.verticalLayout_12.setObjectName("verticalLayout_12")
+        self.frame = QtWidgets.QFrame(self.groupBoxSimulationStatus)
+        self.frame.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.frame.setLineWidth(0)
+        self.frame.setObjectName("frame")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
+        self.textEditSimulation = QtWidgets.QTextEdit(self.frame)
+        self.textEditSimulation.setReadOnly(True)
+        self.textEditSimulation.setObjectName("textEditSimulation")
+        self.verticalLayout_11.addWidget(self.textEditSimulation)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtWidgets.QLabel(self.frame)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.lblCurrentRepeatValue = QtWidgets.QLabel(self.frame)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.lblCurrentRepeatValue.setFont(font)
         self.lblCurrentRepeatValue.setAlignment(QtCore.Qt.AlignCenter)
         self.lblCurrentRepeatValue.setObjectName("lblCurrentRepeatValue")
-        self.gridLayout.addWidget(self.lblCurrentRepeatValue, 1, 1, 1, 1)
-        self.label = QtWidgets.QLabel(self.tab_simulation)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.tab_simulation)
+        self.horizontalLayout_2.addWidget(self.lblCurrentRepeatValue)
+        self.label_2 = QtWidgets.QLabel(self.frame)
         self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 1, 2, 1, 1)
-        self.lblCurrentItemValue = QtWidgets.QLabel(self.tab_simulation)
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.lblCurrentItemValue = QtWidgets.QLabel(self.frame)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.lblCurrentItemValue.setFont(font)
         self.lblCurrentItemValue.setAlignment(QtCore.Qt.AlignCenter)
         self.lblCurrentItemValue.setObjectName("lblCurrentItemValue")
-        self.gridLayout.addWidget(self.lblCurrentItemValue, 1, 3, 1, 1)
-        self.btnSaveLog = QtWidgets.QToolButton(self.tab_simulation)
+        self.horizontalLayout_2.addWidget(self.lblCurrentItemValue)
+        self.btnSaveLog = QtWidgets.QToolButton(self.frame)
         icon = QtGui.QIcon.fromTheme("document-save")
         self.btnSaveLog.setIcon(icon)
         self.btnSaveLog.setObjectName("btnSaveLog")
-        self.gridLayout.addWidget(self.btnSaveLog, 1, 4, 1, 1)
-        self.textEditSimulation = QtWidgets.QTextEdit(self.tab_simulation)
-        self.textEditSimulation.setReadOnly(True)
-        self.textEditSimulation.setObjectName("textEditSimulation")
-        self.gridLayout.addWidget(self.textEditSimulation, 0, 0, 1, 5)
+        self.horizontalLayout_2.addWidget(self.btnSaveLog)
+        self.verticalLayout_11.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_12.addWidget(self.frame)
+        self.verticalLayout_15.addWidget(self.groupBoxSimulationStatus)
+        self.groupBoxRXStatus = QtWidgets.QGroupBox(self.tab_simulation)
+        self.groupBoxRXStatus.setStyleSheet("QGroupBox\n"
+"{\n"
+"border: none;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"QGroupBox::indicator:unchecked {\n"
+" image: url(:/icons/icons/collapse.svg)\n"
+"}\n"
+"QGroupBox::indicator:checked {\n"
+" image: url(:/icons/icons/uncollapse.svg)\n"
+"}")
+        self.groupBoxRXStatus.setCheckable(True)
+        self.groupBoxRXStatus.setObjectName("groupBoxRXStatus")
+        self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.groupBoxRXStatus)
+        self.verticalLayout_14.setContentsMargins(-1, 15, -1, -1)
+        self.verticalLayout_14.setObjectName("verticalLayout_14")
+        self.frame_2 = QtWidgets.QFrame(self.groupBoxRXStatus)
+        self.frame_2.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.frame_2.setLineWidth(0)
+        self.frame_2.setObjectName("frame_2")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.frame_2)
+        self.verticalLayout_13.setObjectName("verticalLayout_13")
+        self.graphicsViewPreview = LiveGraphicView(self.frame_2)
+        self.graphicsViewPreview.setObjectName("graphicsViewPreview")
+        self.verticalLayout_13.addWidget(self.graphicsViewPreview)
+        self.verticalLayout_14.addWidget(self.frame_2)
+        self.verticalLayout_15.addWidget(self.groupBoxRXStatus)
         self.tabWidget.addTab(self.tab_simulation, "")
         self.tab_device = QtWidgets.QWidget()
         self.tab_device.setObjectName("tab_device")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab_device)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.tab_device)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
         self.textEditDevices = QtWidgets.QTextEdit(self.tab_device)
         self.textEditDevices.setReadOnly(True)
         self.textEditDevices.setObjectName("textEditDevices")
-        self.horizontalLayout_2.addWidget(self.textEditDevices)
+        self.verticalLayout_10.addWidget(self.textEditDevices)
         self.tabWidget.addTab(self.tab_device, "")
         self.verticalLayout_9.addWidget(self.tabWidget)
         self.btnStartStop = QtWidgets.QPushButton(self.tabSimulation)
@@ -194,6 +258,8 @@ class Ui_DialogSimulator(object):
         self.retranslateUi(DialogSimulator)
         self.tabWidgetSimulatorSettings.setCurrentIndex(4)
         self.tabWidget.setCurrentIndex(0)
+        self.groupBoxSimulationStatus.toggled['bool'].connect(self.frame.setVisible)
+        self.groupBoxRXStatus.toggled['bool'].connect(self.frame_2.setVisible)
         QtCore.QMetaObject.connectSlotsByName(DialogSimulator)
 
     def retranslateUi(self, DialogSimulator):
@@ -215,14 +281,19 @@ class Ui_DialogSimulator(object):
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabLog), _translate("DialogSimulator", "Log settings"))
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabRX), _translate("DialogSimulator", "RX settings"))
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabTX), _translate("DialogSimulator", "TX settings"))
-        self.lblCurrentRepeatValue.setText(_translate("DialogSimulator", "0"))
+        self.groupBoxSimulationStatus.setTitle(_translate("DialogSimulator", "Simulation Status"))
         self.label.setText(_translate("DialogSimulator", "Current iteration:"))
+        self.lblCurrentRepeatValue.setText(_translate("DialogSimulator", "0"))
         self.label_2.setText(_translate("DialogSimulator", "Current item:"))
         self.lblCurrentItemValue.setText(_translate("DialogSimulator", "0"))
         self.btnSaveLog.setText(_translate("DialogSimulator", "..."))
+        self.groupBoxRXStatus.setTitle(_translate("DialogSimulator", "RX Status"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_simulation), _translate("DialogSimulator", "Messages"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_device), _translate("DialogSimulator", "SDR Logs"))
+        self.textEditDevices.setPlaceholderText(_translate("DialogSimulator", "After starting the simulation you will the log messages of your configured SDRs here."))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_device), _translate("DialogSimulator", "SDR Status"))
         self.btnStartStop.setText(_translate("DialogSimulator", "Start"))
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabSimulation), _translate("DialogSimulator", "Simulation"))
 
+from urh.ui.views.LiveGraphicView import LiveGraphicView
 from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView
+from . import urh_rc

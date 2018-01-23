@@ -1,8 +1,9 @@
 import time
 
+import numpy as np
 from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWidget
@@ -12,6 +13,7 @@ from urh.dev.EndlessSender import EndlessSender
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.simulator.Simulator import Simulator
 from urh.ui.SimulatorScene import SimulatorScene
+from urh.ui.painting.SniffSceneManager import SniffSceneManager
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
 from urh.util.ProjectManager import ProjectManager
 
@@ -85,6 +87,9 @@ class SimulatorDialog(QDialog):
 
         self.device_settings_tx_widget.device = self.simulator.sender.device
 
+        self.scene_manager = SniffSceneManager(np.array([]), parent=self)
+        self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+
         self.update_buttons()
         self.create_connects()
 
@@ -148,7 +153,7 @@ class SimulatorDialog(QDialog):
 
         self.ui.btnStartStop.clicked.connect(self.on_start_stop_clicked)
         self.ui.btnSaveLog.clicked.connect(self.on_save_log_clicked)
-        self.timer.timeout.connect(self.update_view)
+        self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
 
@@ -172,18 +177,6 @@ class SimulatorDialog(QDialog):
 
     def on_btn_toggle_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
-
-    @pyqtSlot()
-    def on_selected_rx_device_changed(self):
-        dev_name = self.device_settings_rx_widget.ui.cbDevice.currentText()
-        self.simulator.sniffer.device_name = dev_name
-        self.device_settings_rx_widget.device = self.simulator.sniffer.rcv_device
-
-    @pyqtSlot()
-    def on_selected_tx_device_changed(self):
-        dev_name = self.device_settings_tx_widget.ui.cbDevice.currentText()
-        self.simulator.sender.device_name = dev_name
-        self.device_settings_tx_widget.device = self.simulator.sender.device
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
@@ -215,6 +208,15 @@ class SimulatorDialog(QDialog):
         current_item = self.simulator.current_item.index() if self.simulator.is_simulating else "-"
         self.ui.lblCurrentItemValue.setText(current_item)
 
+    def update_rx_graphics_view(self):
+        if not self.ui.graphicsViewPreview.isEnabled():
+            return
+
+        self.scene_manager.end = self.simulator.sniffer.rcv_device.current_index
+        self.scene_manager.init_scene()
+        self.scene_manager.show_full_scene()
+        self.ui.graphicsViewPreview.update()
+
     def on_save_log_clicked(self):
         file_path = QFileDialog.getSaveFileName(self, "Save log", "", "Log file (*.log)")
 
@@ -245,6 +247,19 @@ class SimulatorDialog(QDialog):
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-stop"))
         self.ui.btnStartStop.setText("Stop")
 
+        rx_device = self.simulator.sniffer.rcv_device
+        for item in self.scene_manager.scene.items():
+            if isinstance(item, QGraphicsTextItem):
+                self.scene_manager.scene.removeItem(item)
+
+        if hasattr(rx_device.data, "real"):
+            self.ui.graphicsViewPreview.setEnabled(True)
+            self.scene_manager.data_array = rx_device.data.real
+        else:
+            self.ui.graphicsViewPreview.setEnabled(False)
+            self.scene_manager.data_array = np.array([])
+            self.scene_manager.scene.addText("Could not generate RX preview.")
+
     def on_simulation_stopped(self):
         self.timer.stop()
         self.update_view()
@@ -274,3 +289,20 @@ class SimulatorDialog(QDialog):
         self.simulator.cleanup()
 
         super().closeEvent(event)
+
+    @pyqtSlot()
+    def on_timer_timeout(self):
+        self.update_view()
+        self.update_rx_graphics_view()
+
+    @pyqtSlot()
+    def on_selected_rx_device_changed(self):
+        dev_name = self.device_settings_rx_widget.ui.cbDevice.currentText()
+        self.simulator.sniffer.device_name = dev_name
+        self.device_settings_rx_widget.device = self.simulator.sniffer.rcv_device
+
+    @pyqtSlot()
+    def on_selected_tx_device_changed(self):
+        dev_name = self.device_settings_tx_widget.ui.cbDevice.currentText()
+        self.simulator.sender.device_name = dev_name
+        self.device_settings_tx_widget.device = self.simulator.sender.device

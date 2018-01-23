@@ -41,7 +41,7 @@ class SimulatorDialog(QDialog):
         self.ui.spinBoxNRepeat.setValue(self.project_manager.simulator_num_repeat)
         self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout)
         self.ui.spinBoxRetries.setValue(self.project_manager.simulator_retries)
-        self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_retries)
+        self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_error_handling_index)
 
         self.update_interval = 25
 
@@ -166,6 +166,7 @@ class SimulatorDialog(QDialog):
     def on_retries_value_changed(self, value):
         self.project_manager.simulator_retries = value
 
+    @pyqtSlot(int)
     def on_combobox_error_handling_index_changed(self, index: int):
         self.project_manager.simulator_error_handling_index = index
 

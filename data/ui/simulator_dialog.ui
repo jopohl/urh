@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QTabWidget" name="tabWidgetSimulatorSettings">
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane { border: 0; }</string>
+     </property>
      <property name="currentIndex">
       <number>4</number>
      </property>
@@ -49,8 +52,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1062</width>
-            <height>764</height>
+            <width>1066</width>
+            <height>767</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -222,8 +225,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1062</width>
-            <height>764</height>
+            <width>1066</width>
+            <height>767</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -276,8 +279,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1062</width>
-            <height>764</height>
+            <width>1066</width>
+            <height>767</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">

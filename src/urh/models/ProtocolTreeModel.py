@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QMessageBox, QWidget
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.util.Logger import logger
 
 
 class ProtocolTreeModel(QAbstractItemModel):
@@ -205,10 +206,14 @@ class ProtocolTreeModel(QAbstractItemModel):
             else:
                 parent = self.rootItem.child(parent)
             node = parent.child(row)
-            if node.is_group:
-                contains_groups = True
-            else:
-                contains_files = True
+            try:
+                if node.is_group:
+                    contains_groups = True
+                else:
+                    contains_files = True
+            except AttributeError:
+                logger.error("Could not perform drop for index {}".format(index))
+                continue
 
             if contains_files and contains_groups:
                 QMessageBox.information(QWidget(), self.tr("Drag not supported"),

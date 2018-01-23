@@ -4,7 +4,7 @@ import tempfile
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu
+from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -14,6 +14,8 @@ from urh.signalprocessing.Participant import Participant
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.RuleItem import RuleItem
 from urh.simulator.SimulatorRule import ConditionType
+from urh.ui.ExpressionLineEdit import ExpressionLineEdit
+from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 
 
 class TestSimulatorTabGUI(QtTestCase):
@@ -175,6 +177,15 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewMessage.selectRow(0)
 
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 2)
+
+    def test_expression_line_edit(self):
+        e = ExpressionLineEdit()
+        e.setCompleter(QCompleter(self.form.simulator_tab_controller.completer_model, e))
+        e.setValidator(RuleExpressionValidator(self.form.simulator_tab_controller.sim_expression_parser))
+
+        self.assertEqual(e.text(), "")
+        QTest.keyClick(e, Qt.Key_R, Qt.NoModifier)
+        self.assertEqual(e.text(), "r")
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)

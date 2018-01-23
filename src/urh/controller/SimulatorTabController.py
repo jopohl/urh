@@ -1,35 +1,36 @@
-import numpy
 import itertools
+import xml.etree.ElementTree as ET
 
-from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox
+import numpy
 from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, QRegExp
 from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
+    QHBoxLayout
 
-from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
-from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
-from urh.util import util, FileOperator
-from urh.util.ProjectManager import ProjectManager
-from urh.ui.ui_simulator import Ui_SimulatorTab
-from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
-from urh.ui.SimulatorScene import SimulatorScene
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.MessageType import MessageType
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
-from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
-from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
+from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
+from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
+from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
-from urh.ui.RuleExpressionValidator import RuleExpressionValidator
-import xml.etree.ElementTree as ET
+from urh.ui.ui_simulator import Ui_SimulatorTab
+from urh.util import util, FileOperator
+from urh.util.ProjectManager import ProjectManager
+
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
@@ -81,6 +82,15 @@ class SimulatorTabController(QWidget):
         self.ui.navLineEdit.setValidator(QRegExpValidator(QRegExp("^\d+(\.\d+)*$")))
 
         self.__active_item = None
+
+        # place save/load button at corner of tab widget
+        frame = QFrame(parent=self)
+        frame.setLayout(QHBoxLayout())
+        frame.setFrameStyle(frame.NoFrame)
+        frame.layout().addWidget(self.ui.btnSave)
+        frame.layout().addWidget(self.ui.btnLoad)
+        frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.ui.tabWidget.setCornerWidget(frame)
 
         self.create_connects(compare_frame_controller)
 

@@ -7,25 +7,16 @@ matrix:
       dist: trusty
       sudo: required
       python: 3.4_with_system_site_packages
-      env:
-        - DISPLAY=:99.0
-        - LIBOVERLAY_SCROLLBAR=0
     - os: linux
       language: python
       dist: trusty
       sudo: required
       python: 3.5
-      env:
-        - DISPLAY=:99.0
-        - LIBOVERLAY_SCROLLBAR=0
     - os: linux
       language: python
       dist: trusty
       sudo: required
       python: 3.6
-      env:
-        - DISPLAY=:99.0
-        - LIBOVERLAY_SCROLLBAR=0
   allow_failures:
     - python: 3.4_with_system_site_packages
 
@@ -45,8 +36,11 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then pip3 install -r data/requirements.txt; fi   # PyQt5 is only installable via pip for Python >= 3.5
   - pip3 install pytest-cov coveralls
   - sudo apt-get install -qq libegl1-mesa
-  - sh -e /etc/init.d/xvfb start
-  - sleep 3
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 
 before_script:
   - touch tests/show_gui

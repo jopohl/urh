@@ -118,8 +118,12 @@ class Message(object):
         removed_labels = []
 
         for lbl in self.message_type:  # type: ProtocolLabel
-            if start <= lbl.start and stop >= lbl.end:
+            if (start <= lbl.start and stop >= lbl.end) \
+                    or start <= lbl.start <= stop \
+                    or (start >= lbl.start and stop <= lbl.end) \
+                    or lbl.start <= start < lbl.end:
                 self.message_type.remove(lbl)
+                removed_labels.append(lbl)
 
             elif stop - 1 < lbl.start:
                 number_elements = len(range(start, stop, step))
@@ -128,18 +132,6 @@ class Message(object):
                 l_cpy.end -= number_elements
                 self.message_type.remove(lbl)
                 self.message_type.append(l_cpy)
-
-            elif start <= lbl.start <= stop:
-                self.message_type.remove(lbl)
-                removed_labels.append(lbl)
-
-            elif start >= lbl.start and stop <= lbl.end:
-                self.message_type.remove(lbl)
-                removed_labels.append(lbl)
-
-            elif lbl.start <= start < lbl.end:
-                self.message_type.remove(lbl)
-                removed_labels.append(lbl)
 
         return removed_labels
 

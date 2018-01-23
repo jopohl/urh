@@ -1,10 +1,11 @@
 import copy
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QPoint, Qt, QModelIndex
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.CompareFrameController import CompareFrameController
 from urh.signalprocessing.FieldType import FieldType
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 
@@ -13,7 +14,7 @@ class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("two_participants.complex")
-        self.cfc = self.form.compare_frame_controller
+        self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
 
@@ -211,6 +212,37 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.treeViewProtocols.selection_changed.emit()
         QApplication.instance().processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
+
+    def test_tree_view_drop_mime_data(self):
+        # Drop signal to new group
+        self.cfc.proto_tree_model.addGroup("Test group")
+        self.assertEqual(len(self.cfc.groups), 2)
+        self.assertEqual(self.cfc.groups[0].num_protocols, 1)
+        self.assertEqual(self.cfc.groups[1].num_protocols, 0)
+        self.cfc.proto_tree_model.update()
+
+        self.cfc.show()
+        model = self.cfc.proto_tree_model
+
+        group_1_index = model.index(0, 0, QModelIndex())
+        signal_index = model.index(0, 0, group_1_index)
+
+        group_2_index = model.index(1, 0, QModelIndex())
+        self.assertEqual(group_2_index.internalPointer().group.name, "Test group")
+        mimedata = model.mimeData([signal_index])
+        model.dropMimeData(mimedata, Qt.MoveAction, 0, 0, group_2_index)
+        self.assertEqual(self.cfc.groups[0].num_protocols, 0)
+        self.assertEqual(self.cfc.groups[1].num_protocols, 1)
+
+        # Drop group to another position
+        self.assertEqual(self.cfc.groups[0].name, "New Group")
+        self.assertEqual(self.cfc.groups[1].name, "Test group")
+        mimedata = model.mimeData([group_2_index])
+        model.dropMimeData(mimedata, Qt.MoveAction, 0, 0, group_1_index)
+        self.assertEqual(self.cfc.groups[0].name, "Test group")
+        self.assertEqual(self.cfc.groups[0].num_protocols, 1)
+        self.assertEqual(self.cfc.groups[1].name, "New Group")
+        self.assertEqual(self.cfc.groups[1].num_protocols, 0)
 
     def test_label_selection_changed(self):
         self.assertEqual(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)

@@ -49,7 +49,7 @@ class SimulatorMessage(Message, SimulatorItem):
         return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) else str(self)
 
     def __delitem__(self, index):
-        removed_labels = self._remove_labels_for_range(index)
+        removed_labels = self._remove_labels_for_range(index, instant_remove=False)
         self.protocol_manager.delete_items(removed_labels)
         del self.plain_bits[index]
 

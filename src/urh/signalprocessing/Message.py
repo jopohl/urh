@@ -105,7 +105,7 @@ class Message(object):
     def __add__(self, other):
         return self.__plain_bits + other.__plain_bits
 
-    def _remove_labels_for_range(self, index):
+    def _remove_labels_for_range(self, index, instant_remove=True):
         if isinstance(index, int):
             index = slice(index, index + 1, 1)
 
@@ -122,7 +122,8 @@ class Message(object):
                     or start <= lbl.start <= stop \
                     or (start >= lbl.start and stop <= lbl.end) \
                     or lbl.start <= start < lbl.end:
-                self.message_type.remove(lbl)
+                if instant_remove:
+                    self.message_type.remove(lbl)
                 removed_labels.append(lbl)
 
             elif stop - 1 < lbl.start:
@@ -130,8 +131,10 @@ class Message(object):
                 l_cpy = lbl.get_copy()
                 l_cpy.start -= number_elements
                 l_cpy.end -= number_elements
-                self.message_type.remove(lbl)
-                self.message_type.append(l_cpy)
+
+                if instant_remove:
+                    self.message_type.remove(lbl)
+                    self.message_type.append(l_cpy)
 
         return removed_labels
 

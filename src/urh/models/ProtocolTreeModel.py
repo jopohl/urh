@@ -9,7 +9,6 @@ from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 
 class ProtocolTreeModel(QAbstractItemModel):
     item_dropped = pyqtSignal()
-    labels_on_group_dropped = pyqtSignal(list, int)
     group_deleted = pyqtSignal(int, int)
     proto_to_group_added = pyqtSignal(int)
     group_added = pyqtSignal(QModelIndex)
@@ -192,24 +191,6 @@ class ProtocolTreeModel(QAbstractItemModel):
             return True
 
         data_str = str(mimedata.text())
-        if data_str.startswith("PLabels"):
-            # Labels Dropped
-            data_str = data_str.replace("'", "")
-            label_ids = list(map(int, data_str.replace("PLabels:", "").split("/")))
-            drop_node = self.getItem(parentIndex)
-            if drop_node == self.rootItem:
-                return False
-            elif drop_node.is_group:
-                parent = drop_node
-            else:
-                parent = drop_node.parent()
-
-            dropped_group_id = self.rootItem.index_of(parent)
-
-            self.labels_on_group_dropped.emit(label_ids, dropped_group_id)
-
-            return True
-
         indexes = list(reversed(data_str.split("/")[:-1]))
         drag_nodes = []
 

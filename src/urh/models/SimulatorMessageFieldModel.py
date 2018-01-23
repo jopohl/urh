@@ -48,7 +48,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 1:
                 return ProtocolLabel.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                return lbl.VALUE_TYPES[lbl.value_type_index]
+                if lbl.is_checksum_label:
+                    return "Checksum"
+                else:
+                    return lbl.VALUE_TYPES[lbl.value_type_index]
             elif j == 3:
                 if lbl.value_type_index == 0:
                     message = lbl.parent()
@@ -128,7 +131,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         row, col = index.row(), index.column()
         label = self.message_type[row]  # type: SimulatorProtocolLabel
 
-        flags = super().flags(index)
+        if col == 2 and label.is_checksum_label:
+            return Qt.ItemIsSelectable
+
+        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
         if not(col == 3 and label.value_type_index in [0, 1]):
             flags |= Qt.ItemIsEditable

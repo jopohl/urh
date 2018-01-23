@@ -102,6 +102,10 @@ class SimulatorProtocolLabel(SimulatorItem):
     def show(self, value):
         self.label.show = value
 
+    @property
+    def is_checksum_label(self):
+        return isinstance(self.label, ChecksumLabel)
+
     def check(self):
         result = True
 

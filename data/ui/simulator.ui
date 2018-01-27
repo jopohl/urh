@@ -394,6 +394,59 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </item>
                </layout>
               </widget>
+              <widget class="QWidget" name="tabParticipants">
+               <attribute name="title">
+                <string>Participants</string>
+               </attribute>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QTableView" name="tableViewParticipants"/>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_9">
+                  <item>
+                   <widget class="QToolButton" name="btnAddParticipant">
+                    <property name="toolTip">
+                     <string>Add participant</string>
+                    </property>
+                    <property name="text">
+                     <string>Add</string>
+                    </property>
+                    <property name="icon">
+                     <iconset theme="list-add"/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="btnRemoveParticipant">
+                    <property name="toolTip">
+                     <string>Remove participant</string>
+                    </property>
+                    <property name="text">
+                     <string>Remove</string>
+                    </property>
+                    <property name="icon">
+                     <iconset theme="list-remove"/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
             <item>

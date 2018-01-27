@@ -7,10 +7,12 @@ from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout
 
+from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.signalprocessing.MessageType import MessageType
@@ -34,8 +36,8 @@ from urh.util.ProjectManager import ProjectManager
 
 class SimulatorTabController(QWidget):
     def __init__(self, compare_frame_controller: CompareFrameController,
-                       generator_tab_controller: GeneratorTabController,
-                       project_manager: ProjectManager, parent):
+                 generator_tab_controller: GeneratorTabController,
+                 project_manager: ProjectManager, parent):
         super().__init__(parent)
 
         self.project_manager = project_manager
@@ -57,11 +59,21 @@ class SimulatorTabController(QWidget):
         self.tree_model = self.generator_tab_controller.tree_model
         self.ui.treeProtocols.setModel(self.tree_model)
 
+        self.participant_table_model = ParticipantTableModel(project_manager.participants)
+        self.ui.tableViewParticipants.setModel(self.participant_table_model)
+        self.ui.tableViewParticipants.setItemDelegateForColumn(2, ComboBoxDelegate(
+            [""] * len(constants.PARTICIPANT_COLORS),
+            colors=constants.PARTICIPANT_COLORS,
+            parent=self))
+
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self.ui.tblViewFieldValues))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES, parent=self.ui.tblViewFieldValues))
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self, parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS,
+                                                                                parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(2, ComboBoxDelegate(SimulatorProtocolLabel.VALUE_TYPES,
+                                                                                parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(3, ProtocolValueDelegate(controller=self,
+                                                                                     parent=self.ui.tblViewFieldValues))
         self.project_manager.reload_field_types()
         self.update_field_name_column()
 
@@ -92,12 +104,14 @@ class SimulatorTabController(QWidget):
         frame.layout().setContentsMargins(0, 0, 0, 0)
         self.ui.tabWidget.setCornerWidget(frame)
 
-        self.create_connects(compare_frame_controller)
+        self.refresh_participant_table()
+        self.create_connects()
 
     def refresh_field_types_for_labels(self):
         for msg in self.simulator_config.get_all_messages():
             for lbl in (lbl for lbl in msg.message_type if lbl.field_type is not None):
-                msg.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))
+                msg.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption,
+                                                                                                 None))
 
         self.update_field_name_column()
         self.update_ui()
@@ -112,9 +126,11 @@ class SimulatorTabController(QWidget):
 
     def update_field_name_column(self):
         field_types = [ft.caption for ft in self.field_types]
-        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True, return_index=False, parent=self.ui.tblViewFieldValues))
+        self.ui.tblViewFieldValues.setItemDelegateForColumn(0, ComboBoxDelegate(field_types, is_editable=True,
+                                                                                return_index=False,
+                                                                                parent=self.ui.tblViewFieldValues))
 
-    def create_connects(self, compare_frame_controller):
+    def create_connects(self):
         self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
         self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
@@ -133,6 +149,12 @@ class SimulatorTabController(QWidget):
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
         self.ui.btnLoad.clicked.connect(self.on_btn_load_clicked)
 
+        self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
+        self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
+        self.participant_table_model.participants_removed.connect(self.on_participants_removed)
+        self.participant_table_model.participant_added.connect(self.on_participant_added)
+        self.participant_table_model.participant_edited.connect(self.on_participant_edited)
+
         self.tree_model.modelReset.connect(self.refresh_tree)
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
@@ -149,13 +171,15 @@ class SimulatorTabController(QWidget):
         self.simulator_config.participants_changed.connect(self.update_vertical_table_header)
         self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
 
+        self.project_manager.project_updated.connect(self.on_project_updated)
+
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
 
     def add_message_type(self, message: SimulatorMessage):
         names = set(message_type.name for message_type in self.proto_analyzer.message_types)
         name = "Message type #"
-        i = next(i for i in itertools.count(start=1) if name+str(i) not in names)
+        i = next(i for i in itertools.count(start=1) if name + str(i) not in names)
 
         msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"),
                                                  self.tr("Name:"), text=name + str(i))
@@ -180,7 +204,7 @@ class SimulatorTabController(QWidget):
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
-        #self.update_goto_combobox()
+        # self.update_goto_combobox()
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:
@@ -245,7 +269,8 @@ class SimulatorTabController(QWidget):
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
         modulator_dialog.showMaximized()
 
-        self.generator_tab_controller.initialize_modulation_dialog(selected_message.encoded_bits_str[0:10], modulator_dialog)
+        self.generator_tab_controller.initialize_modulation_dialog(selected_message.encoded_bits_str[0:10],
+                                                                   modulator_dialog)
 
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
@@ -321,7 +346,7 @@ class SimulatorTabController(QWidget):
         self.simulator_message_table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.simulator_message_table_model.update()
         self.ui.tblViewMessage.resize_columns()
-        
+
     @pyqtSlot()
     def on_goto_combobox_index_changed(self):
         if not isinstance(self.active_item, SimulatorGotoAction):
@@ -388,7 +413,8 @@ class SimulatorTabController(QWidget):
     def on_show_simulate_dialog_action_triggered(self):
         if not self.simulator_config.protocol_valid():
             QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
-                self.tr("There are some problems with your protocol configuration. Please fix them first."))
+                                 self.tr(
+                                     "There are some problems with your protocol configuration. Please fix them first."))
             return
 
         if not len(self.simulator_config.get_all_messages()):
@@ -460,3 +486,52 @@ class SimulatorTabController(QWidget):
         dialog = FileOperator.get_open_dialog(False, parent=self, name_filter="simulator")
         if dialog.exec_():
             self.load_simulator_file(dialog.selectedFiles()[0])
+
+    @pyqtSlot()
+    def on_btn_remove_participant_clicked(self):
+        self.ui.tableViewParticipants.model().remove_participants(
+            self.ui.tableViewParticipants.selectionModel().selection())
+
+    @pyqtSlot()
+    def on_btn_add_participant_clicked(self):
+        self.ui.tableViewParticipants.model().add_participant()
+
+    def refresh_participant_table(self):
+        n = len(self.participant_table_model.participants)
+        if n == 0:
+            items = []
+        elif n == 1:
+            items = ["0"]
+        else:
+            items = [str(i) for i in range(n)]
+            items[0] += " (low)"
+            items[-1] += " (high)"
+
+        for row in range(n):
+            self.ui.tableViewParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
+
+        self.ui.tableViewParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
+
+        for row in range(n):
+            self.ui.tableViewParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))
+            self.ui.tableViewParticipants.openPersistentEditor(self.participant_table_model.index(row, 3))
+
+    @pyqtSlot()
+    def on_participant_added(self):
+        self.project_manager.project_updated.emit()
+        self.refresh_participant_table()
+
+    @pyqtSlot()
+    def on_participants_removed(self):
+        self.project_manager.project_updated.emit()
+        self.refresh_participant_table()
+
+    @pyqtSlot()
+    def on_participant_edited(self):
+        self.project_manager.project_updated.emit()
+
+    @pyqtSlot()
+    def on_project_updated(self):
+        self.participant_table_model.participants = self.project_manager.participants
+        self.participant_table_model.update()
+        self.refresh_participant_table()

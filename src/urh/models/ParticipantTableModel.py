@@ -1,6 +1,7 @@
 import random
 import string
 
+import itertools
 from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, QModelIndex, Qt, QItemSelection
 
 from urh import constants
@@ -124,6 +125,14 @@ class ParticipantTableModel(QAbstractTableModel):
         for participant in self.participants:
             if participant.relative_rssi > len(self.participants) - 1:
                 participant.relative_rssi -= num_removed
+
+        # fix duplicates
+        n = len(self.participants)
+        for p1, p2 in itertools.combinations(self.participants, 2):
+            if p1.relative_rssi == p2.relative_rssi:
+                p1.relative_rssi = next((i for i in range(n)
+                                         if i not in set(p.relative_rssi for p in self.participants)),
+                                        0)
 
         self.update()
         self.participants_removed.emit()

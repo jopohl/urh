@@ -50,7 +50,6 @@ class ProjectDialog(QDialog):
                                                                              colors=constants.PARTICIPANT_COLORS,
                                                                              parent=self))
 
-        self.__set_relative_rssi_delegate()
         self.ui.lineEditBroadcastAddress.setValidator(QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}")))
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -82,32 +81,12 @@ class ProjectDialog(QDialog):
 
         self.on_line_edit_path_text_edited()
 
-        self.open_editors()
+        self.refresh_participant_table()
 
         try:
             self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
-
-    def __set_relative_rssi_delegate(self):
-        n = len(self.participants)
-        if n == 0:
-            items = []
-        elif n == 1:
-            items = ["0"]
-        else:
-            items = [str(i) for i in range(n)]
-            items[0] += " (low)"
-            items[-1] += " (high)"
-
-        for row in range(len(self.participants)):
-            self.ui.tblParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
-
-        self.ui.tblParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
-
-    def __on_relative_rssi_edited(self):
-        self.__set_relative_rssi_delegate()
-        self.open_editors()
 
     @property
     def participants(self):
@@ -133,9 +112,9 @@ class ProjectDialog(QDialog):
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
 
-        self.participant_table_model.participant_rssi_edited.connect(self.__on_relative_rssi_edited)
         self.participant_table_model.participant_added.connect(self.on_participant_added)
         self.participant_table_model.participants_removed.connect(self.on_participants_removed)
+        self.participant_table_model.participant_edited.connect(self.on_participant_edited)
 
     def set_path(self, path):
         self.path = path
@@ -146,12 +125,19 @@ class ProjectDialog(QDialog):
         self.ui.lblNewPath.setVisible(not os.path.isdir(self.path))
 
     def refresh_participant_table(self):
-        self.__set_relative_rssi_delegate()
-        self.ui.btnRemoveParticipant.setEnabled(len(self.participants) > 1)
-        self.open_editors()
+        n = len(self.participants)
+        items = [str(i) for i in range(n)]
+        if len(items) >= 2:
+            items[0] += " (low)"
+            items[-1] += " (high)"
 
-    def open_editors(self):
-        for row in range(len(self.participants)):
+        for row in range(n):
+            self.ui.tblParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
+
+        self.ui.tblParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
+        self.ui.btnRemoveParticipant.setEnabled(len(self.participants) > 1)
+
+        for row in range(n):
             self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))
             self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 3))
 
@@ -243,4 +229,9 @@ class ProjectDialog(QDialog):
 
     @pyqtSlot()
     def on_participants_removed(self):
+        self.refresh_participant_table()
+
+    @pyqtSlot()
+    def on_participant_edited(self):
+        self.participant_table_model.update()
         self.refresh_participant_table()

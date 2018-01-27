@@ -8,7 +8,6 @@ from urh.signalprocessing.Participant import Participant
 
 
 class ParticipantTableModel(QAbstractTableModel):
-    participant_rssi_edited = pyqtSignal()
     participant_added = pyqtSignal()
     participants_removed = pyqtSignal()
     participant_edited = pyqtSignal()
@@ -69,7 +68,6 @@ class ParticipantTableModel(QAbstractTableModel):
                     other.relative_rssi = participant.relative_rssi
                     break
             participant.relative_rssi = int(value)
-            self.participant_rssi_edited.emit()
         elif j == 4:
             participant.address_hex = value
 

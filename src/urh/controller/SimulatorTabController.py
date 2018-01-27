@@ -498,12 +498,8 @@ class SimulatorTabController(QWidget):
 
     def refresh_participant_table(self):
         n = len(self.participant_table_model.participants)
-        if n == 0:
-            items = []
-        elif n == 1:
-            items = ["0"]
-        else:
-            items = [str(i) for i in range(n)]
+        items = [str(i) for i in range(n)]
+        if len(items) >= 2:
             items[0] += " (low)"
             items[-1] += " (high)"
 
@@ -511,6 +507,7 @@ class SimulatorTabController(QWidget):
             self.ui.tableViewParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
 
         self.ui.tableViewParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
+        self.ui.btnRemoveParticipant.setEnabled(n > 1)
 
         for row in range(n):
             self.ui.tableViewParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))

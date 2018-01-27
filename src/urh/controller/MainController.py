@@ -226,8 +226,7 @@ class MainController(QMainWindow):
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
     def add_plain_bits_from_txt(self, filename: str):
-        protocol = ProtocolAnalyzer(None)
-        protocol.filename = filename
+        protocol = ProtocolAnalyzer(None, filename=filename)
         with open(filename) as f:
             for line in f:
                 protocol.messages.append(Message.from_plain_bits_str(line.strip()))

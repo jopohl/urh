@@ -196,3 +196,10 @@ def get_monospace_font() -> QFont:
     fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     fixed_font.setPointSize(QApplication.instance().font().pointSize())
     return fixed_font
+
+
+def get_name_from_filename(filename: str):
+    if not isinstance(filename, str):
+        return "No Name"
+
+    return os.path.basename(filename).split(".")[0]

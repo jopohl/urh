@@ -17,6 +17,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
+from urh.util import util as urh_util
 from urh.util.Logger import logger
 
 
@@ -41,12 +42,16 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal):
+    def __init__(self, signal: Signal, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
-        self.filename = self.signal.filename if self.signal is not None else ""
+        if filename is None:
+            self.filename = self.signal.filename if self.signal is not None else ""
+        else:
+            assert signal is None
+            self.filename = filename
 
-        self.__name = "Blank"  # Fallback if Signal has no Name
+        self.__name = urh_util.get_name_from_filename(filename)  # Fallback if Signal has no Name
 
         self.show = Qt.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()

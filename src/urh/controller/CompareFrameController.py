@@ -17,7 +17,6 @@ from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Encoding import Encoding
-from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -118,6 +117,7 @@ class CompareFrameController(QWidget):
         self.__set_decoding_error_label(None)
 
         self.__set_default_message_type_ui_status()
+
     # region properties
 
     @property
@@ -417,10 +417,8 @@ class CompareFrameController(QWidget):
 
         :rtype: list of ProtocolAnalyzer
         """
-        pa = ProtocolAnalyzer(signal=None)
+        pa = ProtocolAnalyzer(signal=None, filename=filename)
         pa.message_types = []
-        pa.name = "Loaded Protocol"
-        pa.filename = filename
 
         pa.from_xml_file(filename=filename, read_bits=True)
         for messsage_type in pa.message_types:
@@ -438,6 +436,7 @@ class CompareFrameController(QWidget):
     def add_sniffed_protocol_messages(self, messages: list):
         if len(messages) > 0:
             proto_analyzer = ProtocolAnalyzer(None)
+            proto_analyzer.name = "Sniffed data"
             proto_analyzer.messages = messages
             self.add_protocol(proto_analyzer, group_id=self.proto_tree_model.ngroups - 1)
             self.refresh()

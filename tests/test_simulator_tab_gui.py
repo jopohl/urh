@@ -212,7 +212,7 @@ class TestSimulatorTabGUI(QtTestCase):
             os.remove(os.path.join(directory, "URHProject.xml"))
 
         self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
-        self.form.project_manager.participants = self.participants
+        self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
         self.add_signal_to_form("esaver.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

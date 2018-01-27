@@ -180,6 +180,7 @@ class Ui_SimulatorTab(object):
         self.tabParticipants = QtWidgets.QWidget()
         self.tabParticipants.setObjectName("tabParticipants")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tabParticipants)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.tableViewParticipants = QtWidgets.QTableView(self.tabParticipants)
         self.tableViewParticipants.setObjectName("tableViewParticipants")

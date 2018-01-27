@@ -77,7 +77,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         self.assertEqual(stc.participant_table_model.rowCount(), 2)
 
-        filename = os.path.join(tempfile.gettempdir(), "test.simulation.xml")
+        filename = os.path.join(tempfile.gettempdir(), "test.sim.xml")
         if os.path.isfile(filename):
             os.remove(filename)
         self.form.simulator_tab_controller.save_simulator_file(filename)

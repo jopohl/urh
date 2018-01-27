@@ -182,7 +182,7 @@ class Ui_SimulatorTab(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tabParticipants)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.tableViewParticipants = QtWidgets.QTableView(self.tabParticipants)
+        self.tableViewParticipants = ParticipantTableView(self.tabParticipants)
         self.tableViewParticipants.setObjectName("tableViewParticipants")
         self.horizontalLayout.addWidget(self.tableViewParticipants)
         self.verticalLayout_9 = QtWidgets.QVBoxLayout()
@@ -370,6 +370,7 @@ class Ui_SimulatorTab(object):
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
+from urh.ui.views.ParticipantTableView import ParticipantTableView
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 from urh.ui.views.SimulatorLabelTableView import SimulatorLabelTableView
 from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView

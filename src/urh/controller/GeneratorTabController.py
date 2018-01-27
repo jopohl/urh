@@ -642,7 +642,6 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_project_updated(self):
-        self.table_model.participants = self.project_manager.participants
         self.table_model.refresh_vertical_header()
 
     def set_network_sdr_send_button_visibility(self):

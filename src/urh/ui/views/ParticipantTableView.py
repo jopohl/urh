@@ -1,0 +1,65 @@
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtGui import QKeySequence, QIcon, QContextMenuEvent
+from PyQt5.QtWidgets import QTableView, QAction, QMenu
+
+from urh.models.ParticipantTableModel import ParticipantTableModel
+from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
+
+
+class ParticipantTableView(QTableView):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.remove_action = QAction("Remove selected participants", self)
+        self.remove_action.setShortcut(QKeySequence.Delete)
+        self.remove_action.setIcon(QIcon.fromTheme("list-remove"))
+        self.remove_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.remove_action.triggered.connect(self.on_remove_action_triggered)
+        self.addAction(self.remove_action)
+
+    def model(self) -> ParticipantTableModel:
+        return super().model()
+
+    def setModel(self, model: ParticipantTableModel):
+        if self.model():
+            self.model().updated.disconnect()
+
+        super().setModel(model)
+        self.model().updated.connect(self.refresh_participant_table)
+
+    def create_context_menu(self):
+        menu = QMenu()
+        add_action = menu.addAction(QIcon.fromTheme("list-add"), "Add participant")
+        add_action.triggered.connect(self.on_add_action_triggered)
+
+        if not self.selectionModel().selection().isEmpty():
+            menu.addAction(self.remove_action)
+
+        return menu
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
+
+    def refresh_participant_table(self):
+        n = len(self.model().participants)
+        items = [str(i) for i in range(n)]
+        if len(items) >= 2:
+            items[0] += " (low)"
+            items[-1] += " (high)"
+
+        for row in range(n):
+            self.closePersistentEditor(self.model().index(row, 3))
+
+        self.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
+
+        for row in range(n):
+            self.openPersistentEditor(self.model().index(row, 2))
+            self.openPersistentEditor(self.model().index(row, 3))
+
+    @pyqtSlot()
+    def on_remove_action_triggered(self):
+        self.model().remove_participants(self.selectionModel().selection())
+
+    @pyqtSlot()
+    def on_add_action_triggered(self):
+        self.model().add_participant()

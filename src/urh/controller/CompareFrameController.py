@@ -1151,9 +1151,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_project_updated(self):
-        self.participant_list_model.participants = self.project_manager.participants
         self.participant_list_model.update()
-        self.protocol_model.participants = self.project_manager.participants
         self.protocol_model.refresh_vertical_header()
         self.active_message_type = self.proto_analyzer.default_message_type
 

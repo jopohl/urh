@@ -104,7 +104,6 @@ class SimulatorTabController(QWidget):
         frame.layout().setContentsMargins(0, 0, 0, 0)
         self.ui.tabWidget.setCornerWidget(frame)
 
-        self.refresh_participant_table()
         self.create_connects()
 
     def refresh_field_types_for_labels(self):
@@ -149,11 +148,9 @@ class SimulatorTabController(QWidget):
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
         self.ui.btnLoad.clicked.connect(self.on_btn_load_clicked)
 
-        self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
-        self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
-        self.participant_table_model.participants_removed.connect(self.on_participants_removed)
-        self.participant_table_model.participant_added.connect(self.on_participant_added)
-        self.participant_table_model.participant_edited.connect(self.on_participant_edited)
+        self.ui.btnAddParticipant.clicked.connect(self.ui.tableViewParticipants.on_add_action_triggered)
+        self.ui.btnRemoveParticipant.clicked.connect(self.ui.tableViewParticipants.on_remove_action_triggered)
+        self.participant_table_model.updated.connect(self.on_participant_model_updated)
 
         self.tree_model.modelReset.connect(self.refresh_tree)
 
@@ -168,10 +165,8 @@ class SimulatorTabController(QWidget):
         self.simulator_config.items_updated.connect(self.refresh_message_table)
         self.simulator_config.items_moved.connect(self.refresh_message_table)
         self.simulator_config.items_deleted.connect(self.refresh_message_table)
-        self.simulator_config.participants_changed.connect(self.update_vertical_table_header)
+        self.simulator_config.participants_changed.connect(self.on_participants_changed)
         self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
-
-        self.project_manager.project_updated.connect(self.on_project_updated)
 
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
@@ -465,6 +460,13 @@ class SimulatorTabController(QWidget):
         self.item_updated(self.active_item)
 
     @pyqtSlot()
+    def on_participants_changed(self):
+        self.update_vertical_table_header()
+        self.participant_table_model.updated.disconnect(self.on_participant_model_updated)
+        self.participant_table_model.update()
+        self.participant_table_model.updated.connect(self.on_participant_model_updated)
+
+    @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
         self.active_item.args = self.ui.cmdLineArgsLineEdit.text()
         self.item_updated(self.active_item)
@@ -489,47 +491,6 @@ class SimulatorTabController(QWidget):
             self.load_simulator_file(dialog.selectedFiles()[0])
 
     @pyqtSlot()
-    def on_btn_remove_participant_clicked(self):
-        self.ui.tableViewParticipants.model().remove_participants(
-            self.ui.tableViewParticipants.selectionModel().selection())
-
-    @pyqtSlot()
-    def on_btn_add_participant_clicked(self):
-        self.ui.tableViewParticipants.model().add_participant()
-
-    def refresh_participant_table(self):
-        n = len(self.participant_table_model.participants)
-        items = [str(i) for i in range(n)]
-        if len(items) >= 2:
-            items[0] += " (low)"
-            items[-1] += " (high)"
-
-        for row in range(n):
-            self.ui.tableViewParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
-
-        self.ui.tableViewParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
-        self.ui.btnRemoveParticipant.setEnabled(n > 1)
-
-        for row in range(n):
-            self.ui.tableViewParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))
-            self.ui.tableViewParticipants.openPersistentEditor(self.participant_table_model.index(row, 3))
-
-    @pyqtSlot()
-    def on_participant_added(self):
-        self.project_manager.project_updated.emit()
-        self.refresh_participant_table()
-
-    @pyqtSlot()
-    def on_participants_removed(self):
-        self.project_manager.project_updated.emit()
-        self.refresh_participant_table()
-
-    @pyqtSlot()
-    def on_participant_edited(self):
+    def on_participant_model_updated(self):
         self.project_manager.project_updated.emit()
 
-    @pyqtSlot()
-    def on_project_updated(self):
-        self.participant_table_model.participants = self.project_manager.participants
-        self.participant_table_model.update()
-        self.refresh_participant_table()

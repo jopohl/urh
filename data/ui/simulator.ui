@@ -412,7 +412,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QTableView" name="tableViewParticipants"/>
+                 <widget class="ParticipantTableView" name="tableViewParticipants"/>
                 </item>
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -425,7 +425,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                      <string>Add</string>
                     </property>
                     <property name="icon">
-                     <iconset theme="list-add"/>
+                     <iconset theme="list-add">
+                      <normaloff>.</normaloff>.</iconset>
                     </property>
                    </widget>
                   </item>
@@ -438,7 +439,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                      <string>Remove</string>
                     </property>
                     <property name="icon">
-                     <iconset theme="list-remove"/>
+                     <iconset theme="list-remove">
+                      <normaloff>.</normaloff>.</iconset>
                     </property>
                    </widget>
                   </item>
@@ -749,6 +751,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    <class>SimulatorLabelTableView</class>
    <extends>QTableView</extends>
    <header>urh.ui.views.SimulatorLabelTableView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ParticipantTableView</class>
+   <extends>QTableView</extends>
+   <header>urh.ui.views.ParticipantTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

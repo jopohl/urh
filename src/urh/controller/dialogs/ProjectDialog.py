@@ -59,8 +59,6 @@ class ProjectDialog(QDialog):
         self.description = self.ui.txtEdDescription.toPlainText()
         self.broadcast_address_hex = self.ui.lineEditBroadcastAddress.text()
 
-        self.ui.btnRemoveParticipant.setDisabled(len(self.participants) <= 1)
-
         self.path = self.ui.lineEdit_Path.text()
         self.new_project = new_project
         self.committed = False
@@ -72,7 +70,7 @@ class ProjectDialog(QDialog):
 
         self.create_connects()
         # add two participants
-        if self.participant_table_model.rowCount() == 0:
+        if self.participant_table_model.rowCount() == 0 and new_project:
             self.ui.btnAddParticipant.click()
             self.ui.btnAddParticipant.click()
 
@@ -80,8 +78,6 @@ class ProjectDialog(QDialog):
             self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
 
         self.on_line_edit_path_text_edited()
-
-        self.refresh_participant_table()
 
         try:
             self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
@@ -104,17 +100,13 @@ class ProjectDialog(QDialog):
         self.ui.txtEdDescription.textChanged.connect(self.on_txt_edit_description_text_changed)
         self.ui.lineEditBroadcastAddress.textEdited.connect(self.on_line_edit_broadcast_address_text_edited)
 
-        self.ui.btnAddParticipant.clicked.connect(self.on_btn_add_participant_clicked)
-        self.ui.btnRemoveParticipant.clicked.connect(self.on_btn_remove_participant_clicked)
+        self.ui.btnAddParticipant.clicked.connect(self.ui.tblParticipants.on_add_action_triggered)
+        self.ui.btnRemoveParticipant.clicked.connect(self.ui.tblParticipants.on_remove_action_triggered)
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_line_edit_path_text_edited)
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
-
-        self.participant_table_model.participant_added.connect(self.on_participant_added)
-        self.participant_table_model.participants_removed.connect(self.on_participants_removed)
-        self.participant_table_model.participant_edited.connect(self.on_participant_edited)
 
     def set_path(self, path):
         self.path = path
@@ -123,23 +115,6 @@ class ProjectDialog(QDialog):
         self.ui.lblName.setText(name)
 
         self.ui.lblNewPath.setVisible(not os.path.isdir(self.path))
-
-    def refresh_participant_table(self):
-        n = len(self.participants)
-        items = [str(i) for i in range(n)]
-        if len(items) >= 2:
-            items[0] += " (low)"
-            items[-1] += " (high)"
-
-        for row in range(n):
-            self.ui.tblParticipants.closePersistentEditor(self.participant_table_model.index(row, 3))
-
-        self.ui.tblParticipants.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
-        self.ui.btnRemoveParticipant.setEnabled(len(self.participants) > 1)
-
-        for row in range(n):
-            self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 2))
-            self.ui.tblParticipants.openPersistentEditor(self.participant_table_model.index(row, 3))
 
     def closeEvent(self, event: QCloseEvent):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
@@ -214,24 +189,3 @@ class ProjectDialog(QDialog):
 
             r.device_parameters_changed.connect(self.set_recording_params_from_spectrum_analyzer_link)
             r.show()
-
-    @pyqtSlot()
-    def on_btn_add_participant_clicked(self):
-        self.participant_table_model.add_participant()
-
-    @pyqtSlot()
-    def on_btn_remove_participant_clicked(self):
-        self.participant_table_model.remove_participants(self.ui.tblParticipants.selectionModel().selection())
-
-    @pyqtSlot()
-    def on_participant_added(self):
-        self.refresh_participant_table()
-
-    @pyqtSlot()
-    def on_participants_removed(self):
-        self.refresh_participant_table()
-
-    @pyqtSlot()
-    def on_participant_edited(self):
-        self.participant_table_model.update()
-        self.refresh_participant_table()

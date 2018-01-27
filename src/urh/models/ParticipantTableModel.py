@@ -9,9 +9,7 @@ from urh.signalprocessing.Participant import Participant
 
 
 class ParticipantTableModel(QAbstractTableModel):
-    participant_added = pyqtSignal()
-    participants_removed = pyqtSignal()
-    participant_edited = pyqtSignal()
+    updated = pyqtSignal()
 
     def __init__(self, participants):
         super().__init__()
@@ -21,6 +19,7 @@ class ParticipantTableModel(QAbstractTableModel):
     def update(self):
         self.beginResetModel()
         self.endResetModel()
+        self.updated.emit()
 
     def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.header_labels)
@@ -72,7 +71,7 @@ class ParticipantTableModel(QAbstractTableModel):
         elif j == 4:
             participant.address_hex = value
 
-        self.participant_edited.emit()
+        self.update()
 
         return True
 
@@ -105,20 +104,15 @@ class ParticipantTableModel(QAbstractTableModel):
         participant.relative_rssi = len(self.participants) - 1
 
         self.update()
-        self.participant_added.emit()
 
     def remove_participants(self, selection: QItemSelection):
-        if len(self.participants) <= 1:
+        if len(self.participants) < 1:
             return
 
         if selection.isEmpty():
             start, end = len(self.participants) - 1, len(self.participants) - 1  # delete last element
         else:
             start, end = min([rng.top() for rng in selection]), max([rng.bottom() for rng in selection])
-
-        if end - start >= len(self.participants) - 1:
-            # Ensure one left
-            start += 1
 
         del self.participants[start:end + 1]
         num_removed = (end + 1) - start
@@ -135,4 +129,3 @@ class ParticipantTableModel(QAbstractTableModel):
                                         0)
 
         self.update()
-        self.participants_removed.emit()

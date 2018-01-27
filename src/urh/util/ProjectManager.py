@@ -240,7 +240,7 @@ class ProjectManager(QObject):
             self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
-            self.participants = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
+            self.participants[:] = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
             self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
             self.decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
@@ -526,5 +526,5 @@ class ProjectManager(QObject):
             self.description = dialog.description
             self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(" ", "")
             if dialog.new_project:
-                self.participants = dialog.participants
+                self.participants[:] = dialog.participants
             self.project_updated.emit()

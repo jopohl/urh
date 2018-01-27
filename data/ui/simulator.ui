@@ -203,7 +203,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset theme="document-open"/>
+                     <iconset theme="document-open">
+                      <normaloff>.</normaloff>.</iconset>
                     </property>
                    </widget>
                   </item>
@@ -451,7 +452,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
            <item>
             <widget class="QStackedWidget" name="detail_view_widget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="page_empty"/>
              <widget class="QWidget" name="page_goto_action">
@@ -510,7 +511,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </widget>
                </item>
                <item row="2" column="2">
-                <widget class="QTableView" name="tblViewFieldValues">
+                <widget class="SimulatorLabelTableView" name="tblViewFieldValues">
                  <property name="alternatingRowColors">
                   <bool>true</bool>
                  </property>
@@ -538,6 +539,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </property>
                  <property name="text">
                   <string>Labels:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
                 </widget>
                </item>
@@ -675,6 +679,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    <class>ExpressionLineEdit</class>
    <extends>QLineEdit</extends>
    <header>urh.ui.ExpressionLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SimulatorLabelTableView</class>
+   <extends>QTableView</extends>
+   <header>urh.ui.views.SimulatorLabelTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

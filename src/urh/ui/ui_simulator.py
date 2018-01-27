@@ -236,7 +236,7 @@ class Ui_SimulatorTab(object):
         self.label_10.setSizePolicy(sizePolicy)
         self.label_10.setObjectName("label_10")
         self.gridLayout_6.addWidget(self.label_10, 1, 0, 1, 1)
-        self.tblViewFieldValues = QtWidgets.QTableView(self.page_message)
+        self.tblViewFieldValues = SimulatorLabelTableView(self.page_message)
         self.tblViewFieldValues.setAlternatingRowColors(True)
         self.tblViewFieldValues.setShowGrid(False)
         self.tblViewFieldValues.setObjectName("tblViewFieldValues")
@@ -250,6 +250,7 @@ class Ui_SimulatorTab(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
+        self.label_11.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_11.setObjectName("label_11")
         self.gridLayout_6.addWidget(self.label_11, 2, 0, 1, 1)
         self.spinBoxRepeat = QtWidgets.QSpinBox(self.page_message)
@@ -306,7 +307,7 @@ class Ui_SimulatorTab(object):
 
         self.retranslateUi(SimulatorTab)
         self.tabWidget.setCurrentIndex(0)
-        self.detail_view_widget.setCurrentIndex(0)
+        self.detail_view_widget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(SimulatorTab)
 
     def retranslateUi(self, SimulatorTab):
@@ -341,5 +342,6 @@ class Ui_SimulatorTab(object):
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
+from urh.ui.views.SimulatorLabelTableView import SimulatorLabelTableView
 from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView
 from . import urh_rc

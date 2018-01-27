@@ -140,3 +140,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             flags |= Qt.ItemIsEditable
 
         return flags
+
+    def remove_label_at(self, index: int):
+        try:
+            label = self.message_type[index]
+            self.controller.simulator_config.delete_items([label])
+        except IndexError:
+            pass

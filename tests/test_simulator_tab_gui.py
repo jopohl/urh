@@ -75,17 +75,23 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
 
+        self.assertEqual(stc.participant_table_model.rowCount(), 2)
+
         filename = os.path.join(tempfile.gettempdir(), "test.simulation.xml")
         if os.path.isfile(filename):
             os.remove(filename)
         self.form.simulator_tab_controller.save_simulator_file(filename)
         self.form.close_all()
+        self.form.project_manager.participants.clear()
+        self.form.project_manager.project_updated.emit()
 
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 0)
+        self.assertEqual(stc.participant_table_model.rowCount(), 0)
         self.form.simulator_tab_controller.load_simulator_file(filename)
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
+        self.assertEqual(stc.participant_table_model.rowCount(), 2)
 
     def test_edit_simulator_label_table(self):
         self.__setup_project()

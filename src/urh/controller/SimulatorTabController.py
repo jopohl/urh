@@ -234,6 +234,7 @@ class SimulatorTabController(QWidget):
             self.simulator_config.on_project_updated()
 
         self.simulator_config.load_from_xml(xml_tag, self.proto_analyzer.message_types)
+        self.project_manager.project_updated.emit()
 
     def load_simulator_file(self, filename: str):
         tree = ET.parse(filename)

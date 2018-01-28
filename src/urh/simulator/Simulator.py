@@ -26,7 +26,6 @@ from urh.util.ProjectManager import ProjectManager
 class Simulator(QObject):
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
-    stopping_simulation = pyqtSignal()
 
     def __init__(self, protocol_manager: SimulatorConfiguration, modulators,
                  expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
@@ -90,7 +89,9 @@ class Simulator(QObject):
         self.log_message("Stop simulation ..." + "{}".format(msg))
         self.is_simulating = False
 
-        self.stopping_simulation.emit()
+        if msg == "Finished":
+            # Ensure devices can send their last data before killing them
+            time.sleep(0.5)
 
         # stop devices
         self.sniffer.stop()
@@ -226,9 +227,6 @@ class Simulator(QObject):
 
             if self.do_restart:
                 self.restart()
-
-        # Ensure devices can send their last data before killing them
-        time.sleep(1)
 
         self.stop(msg="Finished")
 

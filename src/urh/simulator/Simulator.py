@@ -87,9 +87,6 @@ class Simulator(QObject):
             self.sender_ready = True
 
     def stop(self, msg=""):
-        if not self.is_simulating:
-            return
-
         self.log_message("Stop simulation ..." + "{}".format(msg))
         self.is_simulating = False
 
@@ -231,7 +228,7 @@ class Simulator(QObject):
                 self.restart()
 
         # Ensure devices can send their last data before killing them
-        time.sleep(0.5)
+        time.sleep(1)
 
         self.stop(msg="Finished")
 

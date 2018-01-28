@@ -100,6 +100,8 @@ class ProjectDialog(QDialog):
 
         self.ui.btnAddParticipant.clicked.connect(self.ui.tblParticipants.on_add_action_triggered)
         self.ui.btnRemoveParticipant.clicked.connect(self.ui.tblParticipants.on_remove_action_triggered)
+        self.ui.btnUp.clicked.connect(self.ui.tblParticipants.on_move_up_action_triggered)
+        self.ui.btnDown.clicked.connect(self.ui.tblParticipants.on_move_down_action_triggered)
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_line_edit_path_text_edited)
         self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)

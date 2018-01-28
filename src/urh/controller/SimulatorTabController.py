@@ -147,6 +147,8 @@ class SimulatorTabController(QWidget):
 
         self.ui.btnAddParticipant.clicked.connect(self.ui.tableViewParticipants.on_add_action_triggered)
         self.ui.btnRemoveParticipant.clicked.connect(self.ui.tableViewParticipants.on_remove_action_triggered)
+        self.ui.btnUp.clicked.connect(self.ui.tableViewParticipants.on_move_up_action_triggered)
+        self.ui.btnDown.clicked.connect(self.ui.tableViewParticipants.on_move_down_action_triggered)
         self.participant_table_model.participant_edited.connect(self.on_participant_edited)
 
         self.tree_model.modelReset.connect(self.refresh_tree)

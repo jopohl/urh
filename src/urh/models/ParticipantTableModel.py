@@ -92,7 +92,7 @@ class ParticipantTableModel(QAbstractTableModel):
         if name is not None:
             return name, name[0]
 
-        name = next(("P"+str(i) for i in itertools.count() if "P"+str(i) not in given_names), None)
+        name = next(("P" + str(i) for i in itertools.count() if "P" + str(i) not in given_names), None)
         if name is not None:
             return name, name[1:]
 
@@ -139,3 +139,35 @@ class ParticipantTableModel(QAbstractTableModel):
 
         self.update()
         self.participant_edited.emit()
+
+    def move_up(self, selection: QItemSelection):
+        if selection.isEmpty() or len(self.participants) < 1:
+            return None, None
+
+        start, end = min([rng.top() for rng in selection]), max([rng.bottom() for rng in selection])
+        if start == 0:
+            return None, None
+
+        for i in range(start, end + 1):
+            self.participants[i], self.participants[i - 1] = self.participants[i - 1], self.participants[i]
+
+        self.update()
+        self.participant_edited.emit()
+
+        return start, end
+
+    def move_down(self, selection: QItemSelection):
+        if selection.isEmpty() or len(self.participants) < 1:
+            return None, None
+
+        start, end = min([rng.top() for rng in selection]), max([rng.bottom() for rng in selection])
+        if end >= len(self.participants) - 1:
+            return None, None
+
+        for i in reversed(range(start, end + 1)):
+            self.participants[i], self.participants[i + 1] = self.participants[i + 1], self.participants[i]
+
+        self.update()
+        self.participant_edited.emit()
+
+        return start, end

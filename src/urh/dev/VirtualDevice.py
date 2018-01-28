@@ -134,6 +134,9 @@ class VirtualDevice(QObject):
                                                    resume_on_full_receive_buffer=resume_on_full_receive_buffer,
                                                    spectrum=self.mode == Mode.spectrum, sending=self.mode == Mode.send)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
+            self.__dev.send_connection_established.connect(self.emit_ready_for_action)
+            self.__dev.receive_server_startet.connect(self.emit_ready_for_action)
+            self.__dev.error_occured.connect(self.emit_fatal_error_occured)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:
             self.__dev = None
@@ -648,3 +651,13 @@ class VirtualDevice(QObject):
             logger.info("Retry with port " + str(self.__dev.gr_port))
         else:
             raise ValueError("Only for GR backend")
+
+    def emit_ready_for_action(self):
+        """
+        Notify observers that device is successfully initialized
+        :return:
+        """
+        self.ready_for_action.emit()
+
+    def emit_fatal_error_occured(self, msg: str):
+        self.fatal_error_occurred.emit(msg)

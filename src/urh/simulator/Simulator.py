@@ -185,8 +185,8 @@ class Simulator(QObject):
 
     def simulate(self):
         self.simulation_started.emit()
-
         self.__wait_for_devices()
+
         if not self.is_simulating:
             # Simulation may have ended due to device errors
             return
@@ -243,19 +243,11 @@ class Simulator(QObject):
             # we have to send a message ...
             sender = self.sender
 
-            start_time = time.perf_counter()
-
             for lbl in new_message.message_type:
                 if lbl.value_type_index == 4:
                     # random value
                     result = numpy.random.randint(lbl.random_min, lbl.random_max + 1)
                     self.set_label_value(new_message, lbl, result)
-
-            # print("Random values: " + str(time.perf_counter() - start_time))
-
-            # calculate checksums ...
-
-            start_time = time.perf_counter()
 
             for lbl in new_message.message_type:
                 if isinstance(lbl.label, ChecksumLabel):
@@ -265,13 +257,7 @@ class Simulator(QObject):
                     new_message.plain_bits[start:end] = checksum + array.array("B", [0] * (
                             (end - start) - len(checksum)))
 
-            #            print("Checksums: " + str(time.perf_counter() - start_time))
-
-            start_time = time.perf_counter()
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
-
-            #         print("Send message: " + str(time.perf_counter() - start_time))
-
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
             msg.send_recv_messages.append(new_message)
@@ -285,9 +271,7 @@ class Simulator(QObject):
             while self.is_simulating \
                     and not self.simulation_is_finished() \
                     and retry < self.project_manager.simulator_retries:
-                start_time = time.perf_counter()
                 received_msg = self.receive_message(sniffer)
-                # print("Receive message: " + str(time.perf_counter() - start_time))
 
                 if not self.is_simulating:
                     return
@@ -318,9 +302,7 @@ class Simulator(QObject):
                 if self.measure_started and received_msg.decoded_bits_str == "101010101001110100100000010000000000111001000000000100000000100110000000001000000000010101011011":
                     self.measure_started = False
 
-                start_time = time.perf_counter()
                 check_result = self.check_message(received_msg, new_message)
-                # print("Check message: " + str(time.perf_counter() - start_time) + " " + str(check_result))
 
                 if check_result:
                     decoded_msg = Message(received_msg.decoded_bits, 0,

@@ -124,6 +124,7 @@ class Device(QObject):
     @classmethod
     def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
+            ctrl_connection.send("failed to start rx mode")
             return False
 
         try:
@@ -163,6 +164,7 @@ class Device(QObject):
     @classmethod
     def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
+            ctrl_connection.send("failed to start tx mode")
             return False
 
         if cls.ASYNCHRONOUS:

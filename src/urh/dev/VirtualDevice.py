@@ -27,6 +27,9 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
+    fatal_error_occurred = pyqtSignal(str)
+    ready_for_action = pyqtSignal()
+
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."
 
@@ -606,11 +609,20 @@ class VirtualDevice(QObject):
         :return:
         """
         if self.backend == Backends.grc:
-            return self.__dev.read_errors()
+            errors = self.__dev.read_errors()
+            if "FATAL: " in errors:
+                self.fatal_error_occurred.emit(errors[errors.index["FATAL: "]])
+
         elif self.backend == Backends.native:
             messages = "\n".join(self.__dev.device_messages)
             if messages and not messages.endswith("\n"):
                 messages += "\n"
+
+            if "successfully started" in messages:
+                self.ready_for_action.emit()
+            elif "failed to start" in messages:
+                self.fatal_error_occurred.emit(messages[messages.index("failed to start"):])
+
             self.__dev.device_messages.clear()
             return messages
         elif self.backend == Backends.network:

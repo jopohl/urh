@@ -4,7 +4,7 @@ import threading
 import time
 
 import numpy
-from PyQt5.QtCore import QEventLoop, QTimer, pyqtSignal, QObject
+from PyQt5.QtCore import QEventLoop, QTimer, pyqtSignal, QObject, pyqtSlot
 
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -44,6 +44,10 @@ class Simulator(QObject):
         self.current_repeat = 0
         self.messages = []
 
+        self.sniffer_ready = False
+        self.sender_ready = False
+        self.fatal_device_error_occurred = False
+
         self.measure_started = False
         self.time = None
 
@@ -54,18 +58,38 @@ class Simulator(QObject):
         self.reset()
 
         # start devices
+        self.sniffer.rcv_device.fatal_error_occurred.connect(self.stop_on_error)
+        self.sniffer.rcv_device.ready_for_action.connect(self.on_sniffer_ready)
+        self.sender.device.fatal_error_occurred.connect(self.stop_on_error)
+        self.sender.device.ready_for_action.connect(self.on_sender_ready)
+
         self.sniffer.sniff()
         self.sender.start()
 
-        time.sleep(2)
-
         self._start_simulation_thread()
 
-    def stop(self):
+    @pyqtSlot(str)
+    def stop_on_error(self, msg: str):
+        self.fatal_device_error_occurred = True
+        self.stop(msg=msg)
+
+    @pyqtSlot()
+    def on_sniffer_ready(self):
+        if not self.sniffer_ready:
+            self.log_message("Sniffer is ready to operate")
+            self.sniffer_ready = True
+
+    @pyqtSlot()
+    def on_sender_ready(self):
+        if not self.sender_ready:
+            self.log_message("Sender is ready to operate")
+            self.sender_ready = True
+
+    def stop(self, msg=""):
         if not self.is_simulating:
             return
 
-        self.log_message("Stop simulation ...")
+        self.log_message("Stop simulation ..." + "{}".format(msg))
         self.is_simulating = False
 
         self.stopping_simulation.emit()
@@ -74,11 +98,16 @@ class Simulator(QObject):
         self.sniffer.stop()
         self.sender.stop()
 
+        self.simulation_stopped.emit()
+
     def restart(self):
         self.reset()
         self.log_message("Restart simulation ...")
 
     def reset(self):
+        self.sniffer_ready = False
+        self.sender_ready = False
+        self.fatal_device_error_occurred = False
         self.sniffer.clear()
 
         self.current_item = self.protocol_manager.rootItem
@@ -102,7 +131,9 @@ class Simulator(QObject):
         messages = ""
 
         for device in self.devices:
-            messages += device.read_messages()
+            new_messages = device.read_messages()
+            if new_messages:
+                messages += new_messages
 
             if messages and not messages.endswith("\n"):
                 messages += "\n"
@@ -143,8 +174,23 @@ class Simulator(QObject):
 
         return self.current_repeat >= self.project_manager.simulator_num_repeat
 
+    def __wait_for_devices(self):
+        for i in range(5):
+            if self.sniffer_ready and self.sender_ready:
+                return True
+            if self.fatal_device_error_occurred:
+                return False
+            self.log_message("Waiting for devices ...")
+            time.sleep(1)
+
     def simulate(self):
         self.simulation_started.emit()
+
+        self.__wait_for_devices()
+        if not self.is_simulating:
+            # Simulation may have ended due to device errors
+            return
+
         self.log_message("Start simulation ...")
 
         while self.is_simulating and not self.simulation_is_finished():
@@ -182,8 +228,7 @@ class Simulator(QObject):
             if self.do_restart:
                 self.restart()
 
-        self.stop()
-        self.simulation_stopped.emit()
+        self.stop(msg="Finished")
 
     def process_message(self):
         assert isinstance(self.current_item, SimulatorMessage)

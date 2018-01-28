@@ -31,6 +31,7 @@ from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.util import util, FileOperator
+from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -416,14 +417,17 @@ class SimulatorTabController(QWidget):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
-        s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
-                            self.sim_expression_parser, self.project_manager, parent=self)
+        try:
+            s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
+                                self.sim_expression_parser, self.project_manager, parent=self)
 
-        s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
-        s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
-        s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
+            s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
+            s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
+            s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
 
-        s.exec_()
+            s.exec_()
+        except Exception as e:
+            Errors.generic_error("An error occurred", str(e))
 
     @pyqtSlot()
     def on_nav_line_edit_return_pressed(self):

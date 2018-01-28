@@ -15,6 +15,7 @@ from urh.simulator.Simulator import Simulator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
+from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -304,6 +305,11 @@ class SimulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_selected_tx_device_changed(self):
-        dev_name = self.device_settings_tx_widget.ui.cbDevice.currentText()
-        self.simulator.sender.device_name = dev_name
-        self.device_settings_tx_widget.device = self.simulator.sender.device
+        old_name = self.simulator.sender.device_name
+        try:
+            dev_name = self.device_settings_tx_widget.ui.cbDevice.currentText()
+            self.simulator.sender.device_name = dev_name
+            self.device_settings_tx_widget.device = self.simulator.sender.device
+        except Exception as e:
+            self.device_settings_tx_widget.ui.cbDevice.setCurrentText(old_name)
+            Errors.generic_error("Error occurred", str(e))

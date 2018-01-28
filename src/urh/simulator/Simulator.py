@@ -181,7 +181,7 @@ class Simulator(QObject):
             if self.fatal_device_error_occurred:
                 return False
             self.log_message("Waiting for devices ...")
-            time.sleep(0.5)
+            time.sleep(1)
 
     def simulate(self):
         self.simulation_started.emit()

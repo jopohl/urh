@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
-        ProjectDialog.resize(774, 734)
+        ProjectDialog.resize(803, 936)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.lNewProject = QtWidgets.QLabel(ProjectDialog)
@@ -163,8 +163,6 @@ class Ui_ProjectDialog(object):
         self.btnCancel.setObjectName("btnCancel")
         self.horizontalLayout.addWidget(self.btnCancel)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 37, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem2)
 
         self.retranslateUi(ProjectDialog)
         self.btnCancel.clicked.connect(ProjectDialog.close)

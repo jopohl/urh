@@ -9,6 +9,9 @@ from urh.signalprocessing.Participant import Participant
 
 
 class ParticipantTableModel(QAbstractTableModel):
+    INITIAL_NAMES = ["Alice", "Bob", "Carl", "Dave", "Eve", "Frank", "Grace", "Heidi", "Judy", "Mallory", "Oscar",
+                     "Peggy", "Sybil", "Trudy", "Victor", "Walter"]
+
     updated = pyqtSignal()
     participant_edited = pyqtSignal()
 
@@ -83,8 +86,19 @@ class ParticipantTableModel(QAbstractTableModel):
 
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
+    def __get_initial_name(self) -> (str, str):
+        given_names = set(p.name for p in self.participants)
+        name = next((name for name in self.INITIAL_NAMES if name not in given_names), None)
+        if name is not None:
+            return name, name[0]
+
+        name = next(("P"+str(i) for i in itertools.count() if "P"+str(i) not in given_names), None)
+        if name is not None:
+            return name, name[1:]
+
+        return "Participant X", "X"
+
     def add_participant(self):
-        used_shortnames = {p.shortname for p in self.participants}
         used_colors = set(p.color_index for p in self.participants)
         avail_colors = set(range(0, len(constants.PARTICIPANT_COLORS))) - used_colors
         if len(avail_colors) > 0:
@@ -92,16 +106,8 @@ class ParticipantTableModel(QAbstractTableModel):
         else:
             color_index = random.choice(range(len(constants.PARTICIPANT_COLORS)))
 
-        num_chars = 0
-        participant = None
-        while participant is None:
-            num_chars += 1
-            for c in string.ascii_uppercase:
-                shortname = num_chars * str(c)
-                if shortname not in used_shortnames:
-                    participant = Participant("Device " + shortname, shortname=shortname, color_index=color_index)
-                    break
-
+        name, shortname = self.__get_initial_name()
+        participant = Participant(name, shortname=shortname, color_index=color_index)
         self.participants.append(participant)
         participant.relative_rssi = len(self.participants) - 1
 

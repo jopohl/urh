@@ -393,6 +393,9 @@ class Simulator(QObject):
             curr_repeat += 1
 
     def receive_message(self, sniffer):
+        if sniffer.messages:
+            return sniffer.messages.pop(0)
+
         spy = QSignalSpy(sniffer.message_sniffed)
         if spy.wait(self.project_manager.simulator_timeout * 1000):
             return sniffer.messages.pop(0)

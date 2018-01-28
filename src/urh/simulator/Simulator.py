@@ -230,6 +230,9 @@ class Simulator(QObject):
             if self.do_restart:
                 self.restart()
 
+        # Ensure devices can send their last data before killing them
+        time.sleep(0.5)
+
         self.stop(msg="Finished")
 
     def process_message(self):
@@ -324,6 +327,7 @@ class Simulator(QObject):
         now = datetime.datetime.now()
         timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(now)
         self.messages.append(timestamp + ": " + message)
+        logger.debug(timestamp + ": " + message)
 
     def check_message(self, received_msg, expected_msg):
         # do we have a crc label?

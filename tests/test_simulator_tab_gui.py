@@ -193,6 +193,41 @@ class TestSimulatorTabGUI(QtTestCase):
         QTest.keyClick(e, Qt.Key_R, Qt.NoModifier)
         self.assertEqual(e.text(), "r")
 
+    def test_participant_table(self):
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
+        stc.ui.tabWidget.setCurrentIndex(2)
+        self.assertEqual(stc.participant_table_model.rowCount(), 0)
+
+        for i in range(3):
+            stc.ui.btnAddParticipant.click()
+
+        QApplication.processEvents()
+        self.assertEqual(stc.participant_table_model.rowCount(), 3)
+
+        participants = stc.project_manager.participants
+        self.assertEqual(participants[0].name, "Alice")
+        self.assertEqual(participants[1].name, "Bob")
+        self.assertEqual(participants[2].name, "Carl")
+
+        stc.ui.tableViewParticipants.selectRow(1)
+        stc.ui.btnUp.click()
+
+        self.assertEqual(participants[0].name, "Bob")
+        self.assertEqual(participants[1].name, "Alice")
+        self.assertEqual(participants[2].name, "Carl")
+
+        stc.ui.btnDown.click()
+
+        self.assertEqual(participants[0].name, "Alice")
+        self.assertEqual(participants[1].name, "Bob")
+        self.assertEqual(participants[2].name, "Carl")
+
+        stc.ui.btnDown.click()
+
+        self.assertEqual(participants[0].name, "Alice")
+        self.assertEqual(participants[1].name, "Carl")
+        self.assertEqual(participants[2].name, "Bob")
+
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
                     and w.parent() is None and w not in self.menus_to_ignore)

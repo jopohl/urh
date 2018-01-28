@@ -68,6 +68,9 @@ class Simulator(QObject):
 
         self._start_simulation_thread()
 
+        # Ensure all ongoing qt signals can be processed
+        time.sleep(0.1)
+
     @pyqtSlot(str)
     def stop_on_error(self, msg: str):
         self.fatal_device_error_occurred = True

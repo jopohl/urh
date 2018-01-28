@@ -20,6 +20,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     """
     started = pyqtSignal()
     stopped = pyqtSignal()
+    message_sniffed = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
                  modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False, real_time=False):
@@ -106,6 +107,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.free_data()  # do not store received bits twice
 
         self.qt_signals.data_sniffed.emit(old_nmsgs)
+        if self.messages:
+            self.message_sniffed.emit()
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
             plain_bits_str = self.plain_bits_str

@@ -4,15 +4,16 @@ import threading
 import time
 
 import numpy
-from PyQt5.QtCore import QEventLoop, QTimer, pyqtSignal, QObject, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
+from PyQt5.QtTest import QSignalSpy
 
-from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
@@ -392,31 +393,12 @@ class Simulator(QObject):
             curr_repeat += 1
 
     def receive_message(self, sniffer):
-        msg = None
-        loop = QEventLoop()
-        sniffer.qt_signals.data_sniffed.connect(loop.quit)
-        self.stopping_simulation.connect(loop.quit)
-
-        timer = QTimer()
-        timer.setSingleShot(True)
-        timer.timeout.connect(loop.quit)
-        timer.start(self.project_manager.simulator_timeout * 1000)
-
-        while self.is_simulating and timer.isActive():
-            if len(sniffer.messages):
-                msg = sniffer.messages[0]
-                sniffer.messages.remove(msg)
-                break
-
-            loop.exec()
-
-        if not timer.isActive():
+        spy = QSignalSpy(sniffer.message_sniffed)
+        if spy.wait(self.project_manager.simulator_timeout * 1000):
+            return sniffer.messages.pop(0)
+        else:
             self.log_message("Receive timeout")
-
-        # just to be sure ...
-        timer.stop()
-
-        return msg
+            return None
 
     def set_label_value(self, message, label, value):
         lbl_len = label.end - label.start

@@ -21,20 +21,6 @@ from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, C
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
-class SimulatorDeviceSettings(object):
-    def __init__(self, is_rx: bool):
-        self.is_rx = is_rx
-        self.bit_length = 100
-        self.center = 0
-        self.noise = 0
-        self.error_tolerance = 5
-        self.modulation_type = 0
-        self.device = ""
-
-        self.center_freq = 433.92e6
-        self.sample_rate = 1e6
-        self.bandwidth = 1e6
-        self.freq_correction = 0
 
 class Simulator(QObject):
     simulation_started = pyqtSignal()
@@ -280,7 +266,7 @@ class Simulator(QObject):
                 received_msg.message_type = new_message.message_type
 
                 if (
-                not self.measure_started) and received_msg.decoded_bits_str == "10101010100111010101000010010000000110001100010011011101011100000000100011111011":
+                        not self.measure_started) and received_msg.decoded_bits_str == "10101010100111010101000010010000000110001100010011011101011100000000100011111011":
                     self.measure_started = True
                     self.time = time.perf_counter()
 

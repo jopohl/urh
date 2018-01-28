@@ -10,6 +10,7 @@ from urh.signalprocessing.Participant import Participant
 
 class ParticipantTableModel(QAbstractTableModel):
     updated = pyqtSignal()
+    participant_edited = pyqtSignal()
 
     def __init__(self, participants):
         super().__init__()
@@ -72,6 +73,7 @@ class ParticipantTableModel(QAbstractTableModel):
             participant.address_hex = value
 
         self.update()
+        self.participant_edited.emit()
 
         return True
 
@@ -104,6 +106,7 @@ class ParticipantTableModel(QAbstractTableModel):
         participant.relative_rssi = len(self.participants) - 1
 
         self.update()
+        self.participant_edited.emit()
 
     def remove_participants(self, selection: QItemSelection):
         if len(self.participants) < 1:
@@ -129,3 +132,4 @@ class ParticipantTableModel(QAbstractTableModel):
                                         0)
 
         self.update()
+        self.participant_edited.emit()

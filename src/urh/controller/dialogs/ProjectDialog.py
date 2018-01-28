@@ -46,9 +46,7 @@ class ProjectDialog(QDialog):
             self.ui.btnOK.setText("Accept")
 
         self.ui.tblParticipants.setModel(self.participant_table_model)
-        self.ui.tblParticipants.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(constants.PARTICIPANT_COLORS),
-                                                                             colors=constants.PARTICIPANT_COLORS,
-                                                                             parent=self))
+        self.participant_table_model.update()
 
         self.ui.lineEditBroadcastAddress.setValidator(QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}")))
 

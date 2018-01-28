@@ -61,10 +61,7 @@ class SimulatorTabController(QWidget):
 
         self.participant_table_model = ParticipantTableModel(project_manager.participants)
         self.ui.tableViewParticipants.setModel(self.participant_table_model)
-        self.ui.tableViewParticipants.setItemDelegateForColumn(2, ComboBoxDelegate(
-            [""] * len(constants.PARTICIPANT_COLORS),
-            colors=constants.PARTICIPANT_COLORS,
-            parent=self))
+        self.participant_table_model.update()
 
         self.simulator_message_field_model = SimulatorMessageFieldModel(self)
         self.ui.tblViewFieldValues.setModel(self.simulator_message_field_model)
@@ -150,7 +147,7 @@ class SimulatorTabController(QWidget):
 
         self.ui.btnAddParticipant.clicked.connect(self.ui.tableViewParticipants.on_add_action_triggered)
         self.ui.btnRemoveParticipant.clicked.connect(self.ui.tableViewParticipants.on_remove_action_triggered)
-        self.participant_table_model.updated.connect(self.on_participant_model_updated)
+        self.participant_table_model.participant_edited.connect(self.on_participant_edited)
 
         self.tree_model.modelReset.connect(self.refresh_tree)
 
@@ -462,9 +459,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_participants_changed(self):
         self.update_vertical_table_header()
-        self.participant_table_model.updated.disconnect(self.on_participant_model_updated)
         self.participant_table_model.update()
-        self.participant_table_model.updated.connect(self.on_participant_model_updated)
 
     @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
@@ -491,6 +486,6 @@ class SimulatorTabController(QWidget):
             self.load_simulator_file(dialog.selectedFiles()[0])
 
     @pyqtSlot()
-    def on_participant_model_updated(self):
+    def on_participant_edited(self):
         self.project_manager.project_updated.emit()
 

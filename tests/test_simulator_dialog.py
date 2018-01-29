@@ -138,20 +138,6 @@ class TestSimulatorDialog(QtTestCase):
         tx_settings_widget.ui.lineEditIP.editingFinished.emit()
         self.assertEqual(simulator.sender.device.ip, "1.2.6.2")
 
-    def test_participants_list(self):
-        self.dialog.ui.tabWidget.setCurrentIndex(0)
-        model = self.dialog.ui.listViewSimulate.model()
-        self.assertEqual(model.rowCount(), 2)
-        self.assertEqual(model.data(model.index(0, 0)), "Alice (A)")
-        self.assertEqual(model.data(model.index(1, 0)), "Bob (B)")
-        self.assertFalse(self.form.project_manager.participants[0].simulate)
-        self.assertEqual(model.data(model.index(0, 0), role=Qt.CheckStateRole), Qt.Unchecked)
-        self.assertFalse(self.form.project_manager.participants[1].simulate)
-        self.assertEqual(model.data(model.index(1, 0), role=Qt.CheckStateRole), Qt.Unchecked)
-
-        model.setData(model.index(0, 0), Qt.Checked, role=Qt.CheckStateRole)
-        self.assertTrue(self.form.project_manager.participants[0].simulate)
-
     def __edit_spinbox_value(self, spinbox, value):
         spinbox.setValue(value)
         spinbox.editingFinished.emit()

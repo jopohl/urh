@@ -1,5 +1,6 @@
 import os
 import tempfile
+from array import array
 
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
@@ -13,6 +14,7 @@ from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.RuleItem import RuleItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -227,6 +229,34 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(participants[0].name, "Alice")
         self.assertEqual(participants[1].name, "Carl")
         self.assertEqual(participants[2].name, "Bob")
+
+    def test_participants_list(self):
+        alice = Participant("Alice", "A")
+        bob = Participant("Bob", "B")
+        self.form.project_manager.participants.append(alice)
+        self.form.project_manager.participants.append(bob)
+        self.form.project_manager.project_updated.emit()
+
+        mt = self.form.compare_frame_controller.proto_analyzer.default_message_type
+        msg1 = SimulatorMessage(destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg2 = SimulatorMessage(destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+
+        simulator_manager = self.form.simulator_tab_controller.simulator_config
+        simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
+        simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
+
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
+        model = stc.ui.listViewSimulate.model()
+        self.assertEqual(model.rowCount(), 2)
+        self.assertEqual(model.data(model.index(0, 0)), "Alice (A)")
+        self.assertEqual(model.data(model.index(1, 0)), "Bob (B)")
+        self.assertFalse(self.form.project_manager.participants[0].simulate)
+        self.assertEqual(model.data(model.index(0, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+        self.assertFalse(self.form.project_manager.participants[1].simulate)
+        self.assertEqual(model.data(model.index(1, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+
+        model.setData(model.index(0, 0), Qt.Checked, role=Qt.CheckStateRole)
+        self.assertTrue(self.form.project_manager.participants[0].simulate)
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)

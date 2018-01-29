@@ -208,18 +208,15 @@ class SimulatorScene(QGraphicsScene):
         self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0 , 0, 0))
 
     def update_participants(self, refresh=True):
-        participants = self.simulator_config.participants
-
-        for key in list(self.participants_dict.keys()):
-            if key is None:
+        for participant in list(self.participants_dict):
+            if participant is None or participant == self.simulator_config.broadcast_part:
                 continue
 
-            if key not in participants:
-                self.removeItem(self.participants_dict[key])
-                self.participant_items.remove(self.participants_dict[key])
-                del self.participants_dict[key]
+            self.removeItem(self.participants_dict[participant])
+            self.participant_items.remove(self.participants_dict[participant])
+            del self.participants_dict[participant]
 
-        for participant in participants:
+        for participant in self.simulator_config.participants:
             if participant in self.participants_dict:
                 self.participants_dict[participant].refresh()
             else:

@@ -14,6 +14,7 @@ from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
+from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
@@ -90,6 +91,12 @@ class SimulatorTabController(QWidget):
 
         self.__active_item = None
 
+        self.ui.listViewSimulate.setModel(SimulatorParticipantListModel(self.simulator_config))
+        self.ui.spinBoxNRepeat.setValue(self.project_manager.simulator_num_repeat)
+        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout)
+        self.ui.spinBoxRetries.setValue(self.project_manager.simulator_retries)
+        self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_error_handling_index)
+
         # place save/load button at corner of tab widget
         frame = QFrame(parent=self)
         frame.setLayout(QHBoxLayout())
@@ -103,6 +110,8 @@ class SimulatorTabController(QWidget):
         frame.layout().addWidget(self.ui.btnLoad)
         frame.layout().setContentsMargins(0, 0, 0, 0)
         self.ui.tabWidget.setCornerWidget(frame)
+
+        self.ui.splitterLeftRight.setSizes([0.2 * self.width(), 0.8 * self.width()])
 
         self.create_connects()
 
@@ -166,6 +175,13 @@ class SimulatorTabController(QWidget):
         self.simulator_config.items_deleted.connect(self.refresh_message_table)
         self.simulator_config.participants_changed.connect(self.on_participants_changed)
         self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
+
+        self.ui.gvSimulator.message_updated.connect(self.on_message_source_or_destination_updated)
+
+        self.ui.spinBoxNRepeat.valueChanged.connect(self.on_spinbox_num_repeat_value_changed)
+        self.ui.spinBoxTimeout.valueChanged.connect(self.on_spinbox_timeout_value_changed)
+        self.ui.comboBoxError.currentIndexChanged.connect(self.on_combobox_error_handling_index_changed)
+        self.ui.spinBoxRetries.valueChanged.connect(self.on_spinbox_retries_value_changed)
 
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
@@ -435,6 +451,7 @@ class SimulatorTabController(QWidget):
     def on_participants_changed(self):
         self.update_vertical_table_header()
         self.participant_table_model.update()
+        self.ui.listViewSimulate.model().update()
 
     @pyqtSlot()
     def on_cmd_line_args_line_edit_text_changed(self):
@@ -463,3 +480,24 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_participant_edited(self):
         self.project_manager.project_updated.emit()
+
+    @pyqtSlot(int)
+    def on_spinbox_num_repeat_value_changed(self, value):
+        self.project_manager.simulator_num_repeat = value
+
+    @pyqtSlot(int)
+    def on_spinbox_timeout_value_changed(self, value):
+        self.project_manager.simulator_timeout = value
+
+    @pyqtSlot(int)
+    def on_spinbox_retries_value_changed(self, value):
+        self.project_manager.simulator_retries = value
+
+    @pyqtSlot(int)
+    def on_combobox_error_handling_index_changed(self, index: int):
+        self.project_manager.simulator_error_handling_index = index
+
+    @pyqtSlot()
+    def on_message_source_or_destination_updated(self):
+        self.simulator_config.update_active_participants()
+        self.ui.listViewSimulate.model().update()

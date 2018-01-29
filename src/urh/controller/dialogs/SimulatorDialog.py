@@ -10,7 +10,6 @@ from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWi
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
-from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.simulator.Simulator import Simulator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
@@ -35,14 +34,7 @@ class SimulatorDialog(QDialog):
         self.simulator_scene = SimulatorScene(mode=1,
                                               simulator_config=self.simulator_config)
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        self.ui.listViewSimulate.setModel(SimulatorParticipantListModel(self.simulator_config))
-
         self.project_manager = project_manager
-
-        self.ui.spinBoxNRepeat.setValue(self.project_manager.simulator_num_repeat)
-        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout)
-        self.ui.spinBoxRetries.setValue(self.project_manager.simulator_retries)
-        self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_error_handling_index)
 
         self.update_interval = 25
 
@@ -147,29 +139,11 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
         self.ui.btnToggleLog.clicked.connect(self.on_btn_toggle_clicked)
 
-        self.ui.spinBoxNRepeat.valueChanged.connect(self.on_spinbox_num_repeat_value_changed)
-        self.ui.spinBoxTimeout.valueChanged.connect(self.on_spinbox_timeout_value_changed)
-        self.ui.comboBoxError.currentIndexChanged.connect(self.on_combobox_error_handling_index_changed)
-        self.ui.spinBoxRetries.valueChanged.connect(self.on_retries_value_changed)
-
         self.ui.btnStartStop.clicked.connect(self.on_start_stop_clicked)
         self.ui.btnSaveLog.clicked.connect(self.on_save_log_clicked)
         self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
-
-    def on_spinbox_num_repeat_value_changed(self, value):
-        self.project_manager.simulator_num_repeat = value
-
-    def on_spinbox_timeout_value_changed(self, value):
-        self.project_manager.simulator_timeout = value
-
-    def on_retries_value_changed(self, value):
-        self.project_manager.simulator_retries = value
-
-    @pyqtSlot(int)
-    def on_combobox_error_handling_index_changed(self, index: int):
-        self.project_manager.simulator_error_handling_index = index
 
     def on_btn_log_all_clicked(self):
         self.simulator_scene.log_all_items(True)

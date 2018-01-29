@@ -7,18 +7,18 @@ class SimulatorParticipantListModel(QAbstractListModel):
 
     def __init__(self, config: SimulatorConfiguration, parent=None):
         super().__init__(parent)
-        self.protocol_manager = config
+        self.simulator_config = config
 
     def update(self):
         self.beginResetModel()
         self.endResetModel()
 
     def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
-        return len(self.protocol_manager.active_participants)
+        return len(self.simulator_config.active_participants)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         i = index.row()
-        participant = self.protocol_manager.active_participants[i]
+        participant = self.simulator_config.active_participants[i]
 
         if not index.isValid():
             return None
@@ -30,7 +30,7 @@ class SimulatorParticipantListModel(QAbstractListModel):
 
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()
-        participants = self.protocol_manager.active_participants
+        participants = self.simulator_config.active_participants
         if role == Qt.CheckStateRole:
             participants[i].simulate = value
             self.update()

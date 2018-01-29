@@ -23,20 +23,8 @@ class Ui_SimulatorTab(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.splitter_2 = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
-        self.splitter_2.setStyleSheet("QSplitter::handle:vertical {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
-"}")
-        self.splitter_2.setOrientation(QtCore.Qt.Vertical)
-        self.splitter_2.setHandleWidth(6)
-        self.splitter_2.setObjectName("splitter_2")
-        self.splitter = QtWidgets.QSplitter(self.splitter_2)
-        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+        self.splitterLeftRight = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
+        self.splitterLeftRight.setStyleSheet("QSplitter::handle:horizontal {\n"
 "margin: 4px 0px;\n"
 "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
 "stop:0 rgba(255, 255, 255, 0), \n"
@@ -44,10 +32,9 @@ class Ui_SimulatorTab(object):
 "stop:1 rgba(255, 255, 255, 0));\n"
 "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
 "}")
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setHandleWidth(6)
-        self.splitter.setObjectName("splitter")
-        self.layoutWidget = QtWidgets.QWidget(self.splitter)
+        self.splitterLeftRight.setOrientation(QtCore.Qt.Horizontal)
+        self.splitterLeftRight.setObjectName("splitterLeftRight")
+        self.layoutWidget = QtWidgets.QWidget(self.splitterLeftRight)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setContentsMargins(11, 11, 11, 11)
@@ -58,9 +45,75 @@ class Ui_SimulatorTab(object):
         self.treeProtocols = GeneratorTreeView(self.layoutWidget)
         self.treeProtocols.setObjectName("treeProtocols")
         self.verticalLayout_3.addWidget(self.treeProtocols)
+        self.label_6 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_6.setObjectName("label_6")
+        self.verticalLayout_3.addWidget(self.label_6)
+        self.listViewSimulate = QtWidgets.QListView(self.layoutWidget)
+        self.listViewSimulate.setAlternatingRowColors(True)
+        self.listViewSimulate.setObjectName("listViewSimulate")
+        self.verticalLayout_3.addWidget(self.listViewSimulate)
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
+        self.label_4 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 0, 0, 1, 1)
+        self.spinBoxNRepeat = QtWidgets.QSpinBox(self.layoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBoxNRepeat.sizePolicy().hasHeightForWidth())
+        self.spinBoxNRepeat.setSizePolicy(sizePolicy)
+        self.spinBoxNRepeat.setObjectName("spinBoxNRepeat")
+        self.gridLayout.addWidget(self.spinBoxNRepeat, 0, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
+        self.spinBoxTimeout = QtWidgets.QSpinBox(self.layoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBoxTimeout.sizePolicy().hasHeightForWidth())
+        self.spinBoxTimeout.setSizePolicy(sizePolicy)
+        self.spinBoxTimeout.setObjectName("spinBoxTimeout")
+        self.gridLayout.addWidget(self.spinBoxTimeout, 1, 1, 1, 1)
+        self.label_7 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout.addWidget(self.label_7, 2, 0, 1, 1)
+        self.comboBoxError = QtWidgets.QComboBox(self.layoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxError.sizePolicy().hasHeightForWidth())
+        self.comboBoxError.setSizePolicy(sizePolicy)
+        self.comboBoxError.setObjectName("comboBoxError")
+        self.comboBoxError.addItem("")
+        self.comboBoxError.addItem("")
+        self.comboBoxError.addItem("")
+        self.gridLayout.addWidget(self.comboBoxError, 2, 1, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_8.setObjectName("label_8")
+        self.gridLayout.addWidget(self.label_8, 3, 0, 1, 1)
+        self.spinBoxRetries = QtWidgets.QSpinBox(self.layoutWidget)
+        self.spinBoxRetries.setMinimum(1)
+        self.spinBoxRetries.setProperty("value", 10)
+        self.spinBoxRetries.setObjectName("spinBoxRetries")
+        self.gridLayout.addWidget(self.spinBoxRetries, 3, 1, 1, 1)
+        self.verticalLayout_3.addLayout(self.gridLayout)
         self.btnStartSim = QtWidgets.QPushButton(self.layoutWidget)
         self.btnStartSim.setObjectName("btnStartSim")
         self.verticalLayout_3.addWidget(self.btnStartSim)
+        self.splitter = QtWidgets.QSplitter(self.splitterLeftRight)
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+"}")
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setObjectName("splitter")
         self.layoutWidget_2 = QtWidgets.QWidget(self.splitter)
         self.layoutWidget_2.setObjectName("layoutWidget_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget_2)
@@ -167,7 +220,7 @@ class Ui_SimulatorTab(object):
         self.horizontalLayout.addLayout(self.verticalLayout_9)
         self.tabWidget.addTab(self.tabParticipants, "")
         self.verticalLayout_2.addWidget(self.tabWidget)
-        self.layoutWidget_3 = QtWidgets.QWidget(self.splitter_2)
+        self.layoutWidget_3 = QtWidgets.QWidget(self.splitter)
         self.layoutWidget_3.setObjectName("layoutWidget_3")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.layoutWidget_3)
         self.verticalLayout_4.setContentsMargins(11, 11, 11, 11)
@@ -282,7 +335,7 @@ class Ui_SimulatorTab(object):
         self.gridLayout_9.addItem(spacerItem5, 4, 0, 1, 5)
         self.detail_view_widget.addWidget(self.page_ext_prog_action)
         self.verticalLayout_4.addWidget(self.detail_view_widget)
-        self.verticalLayout_5.addWidget(self.splitter_2)
+        self.verticalLayout_5.addWidget(self.splitterLeftRight)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_8.addWidget(self.scrollArea)
 
@@ -294,7 +347,16 @@ class Ui_SimulatorTab(object):
     def retranslateUi(self, SimulatorTab):
         _translate = QtCore.QCoreApplication.translate
         SimulatorTab.setWindowTitle(_translate("SimulatorTab", "Form"))
-        self.label.setText(_translate("SimulatorTab", "Protocols:"))
+        self.label.setText(_translate("SimulatorTab", "Protocols (drag&drop to Flow Graph):"))
+        self.label_6.setText(_translate("SimulatorTab", "Simulate these participants:"))
+        self.label_4.setText(_translate("SimulatorTab", "Repeat simulation this often:"))
+        self.spinBoxNRepeat.setSpecialValueText(_translate("SimulatorTab", "Infinite"))
+        self.label_3.setText(_translate("SimulatorTab", "Timeout (in seconds):"))
+        self.label_7.setText(_translate("SimulatorTab", "In case of an overdue response:"))
+        self.comboBoxError.setItemText(0, _translate("SimulatorTab", "Resend last message"))
+        self.comboBoxError.setItemText(1, _translate("SimulatorTab", "Stop simulation"))
+        self.comboBoxError.setItemText(2, _translate("SimulatorTab", "Restart simulation"))
+        self.label_8.setText(_translate("SimulatorTab", "Maximum retries:"))
         self.btnStartSim.setText(_translate("SimulatorTab", "Simulate..."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("SimulatorTab", "Flow Graph"))
         self.lNumSelectedColumns.setText(_translate("SimulatorTab", "0"))

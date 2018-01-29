@@ -171,38 +171,38 @@ class SimulatorGraphicsView(QGraphicsView):
             source_group = QActionGroup(self.scene())
             source_menu = menu.addMenu("Source")
 
-            for particpnt in self.scene().participants:
-                if self.context_menu_item.destination == particpnt:
+            for participant_item in self.scene().participant_items:
+                if self.context_menu_item.destination == participant_item:
                     continue
 
-                if particpnt == self.scene().broadcast_part:
+                if participant_item == self.scene().broadcast_part:
                     continue
 
-                pa = source_menu.addAction(particpnt.text.toPlainText())
+                pa = source_menu.addAction(participant_item.text.toPlainText())
                 pa.setCheckable(True)
                 pa.setActionGroup(source_group)
 
-                if self.context_menu_item.source == particpnt:
+                if self.context_menu_item.source == participant_item:
                     pa.setChecked(True)
 
-                pa.setData(particpnt.model_item)
+                pa.setData(participant_item.model_item)
                 pa.triggered.connect(self.on_source_action_triggered)
 
             destination_group = QActionGroup(self.scene())
             destination_menu = menu.addMenu("Destination")
 
-            for particpnt in self.scene().participants:
-                if self.context_menu_item.source == particpnt:
+            for participant_item in self.scene().participant_items:
+                if self.context_menu_item.source == participant_item:
                     continue
 
-                pa = destination_menu.addAction(particpnt.text.toPlainText())
+                pa = destination_menu.addAction(participant_item.text.toPlainText())
                 pa.setCheckable(True)
                 pa.setActionGroup(destination_group)
 
-                if self.context_menu_item.destination == particpnt:
+                if self.context_menu_item.destination == participant_item:
                     pa.setChecked(True)
 
-                pa.setData(particpnt.model_item)
+                pa.setData(participant_item.model_item)
                 pa.triggered.connect(self.on_destination_action_triggered)
 
             if self.context_menu_item.destination != self.scene().broadcast_part:

@@ -105,13 +105,13 @@ class SimulatorScene(QGraphicsScene):
         return self.items_dict[model_item]
 
     def insert_participant(self, participant: Participant):
-        scene_part = ParticipantItem(participant)
-        scene_part.setVisible(False)
-        self.participant_items.insert(-2, scene_part)
-        self.participants_dict[participant] = scene_part
-        self.addItem(scene_part)
+        participant_item = ParticipantItem(participant)
+        participant_item.setVisible(False)
+        self.participant_items.insert(-2, participant_item)
+        self.participants_dict[participant] = participant_item
+        self.addItem(participant_item)
 
-        return scene_part
+        return participant_item
 
     def insert_item(self, item: GraphicsItem):
         parent_scene_item = self.get_parent_scene_item(item)

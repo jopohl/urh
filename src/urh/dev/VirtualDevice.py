@@ -613,9 +613,11 @@ class VirtualDevice(QObject):
         """
         if self.backend == Backends.grc:
             errors = self.__dev.read_errors()
+
             if "FATAL: " in errors:
                 self.fatal_error_occurred.emit(errors[errors.index["FATAL: "]])
 
+            return errors
         elif self.backend == Backends.native:
             messages = "\n".join(self.__dev.device_messages)
             if messages and not messages.endswith("\n"):
@@ -627,6 +629,7 @@ class VirtualDevice(QObject):
                 self.fatal_error_occurred.emit(messages[messages.index("failed to start"):])
 
             self.__dev.device_messages.clear()
+
             return messages
         elif self.backend == Backends.network:
             return ""

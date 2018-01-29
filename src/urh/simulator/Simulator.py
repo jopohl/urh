@@ -74,7 +74,8 @@ class Simulator(QObject):
     @pyqtSlot(str)
     def stop_on_error(self, msg: str):
         self.fatal_device_error_occurred = True
-        self.stop(msg=msg)
+        if self.is_simulating:
+            self.stop(msg=msg)
 
     @pyqtSlot()
     def on_sniffer_ready(self):
@@ -185,9 +186,11 @@ class Simulator(QObject):
             self.log_message("Waiting for devices ...")
             time.sleep(1)
 
+        return True
+
     def simulate(self):
         self.simulation_started.emit()
-        self.__wait_for_devices()
+        self.is_simulating = self.__wait_for_devices()
 
         if not self.is_simulating:
             # Simulation may have ended due to device errors

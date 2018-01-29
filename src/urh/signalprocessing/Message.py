@@ -446,6 +446,7 @@ class Message(object):
         root.set("message_type_id", self.message_type.id)
         root.set("modulator_index", str(self.modulator_index))
         root.set("pause", str(self.pause))
+        root.set("timestamp", str(self.timestamp))
 
         if write_bits:
             root.set("bits", self.plain_bits_str)
@@ -464,6 +465,10 @@ class Message(object):
         return root
 
     def from_xml(self, tag: ET.Element, participants, decoders=None, message_types=None):
+        timestamp = tag.get("timestamp", None)
+        if timestamp:
+            self.timestamp = float(timestamp)
+
         part_id = tag.get("participant_id", None)
         message_type_id = tag.get("message_type_id", None)
         self.modulator_index = int(tag.get("modulator_index", self.modulator_index))

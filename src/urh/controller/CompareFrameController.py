@@ -509,13 +509,18 @@ class CompareFrameController(QWidget):
                         continue
 
                     message.align_labels = align_labels
-
                     try:
-                        if i > 0:
-                            rel_time = proto.messages[i - 1].get_duration(proto.signal.sample_rate)
-                            abs_time += rel_time
-                    except (IndexError, AttributeError):
-                        pass  # No signal, loaded from protocol file
+                        if hasattr(proto.signal, "sample_rate"):
+                            if i > 0:
+                                rel_time = proto.messages[i - 1].get_duration(proto.signal.sample_rate)
+                                abs_time += rel_time
+                        else:
+                            # No signal, loaded from protocol file
+                            abs_time = datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%d %H:%M:%S.%f")
+                            if i > 0:
+                                rel_time = message.timestamp - proto.messages[i-1].timestamp
+                    except IndexError:
+                        pass
 
                     message.absolute_time = abs_time
                     message.relative_time = rel_time
@@ -1352,7 +1357,12 @@ class CompareFrameController(QWidget):
             self.active_group_ids.sort()
 
         self.ui.lblRSSI.setText(locale.format_string("%.2f", message.rssi))
-        abs_time = Formatter.science_time(message.absolute_time)
+        if isinstance(message.absolute_time, str):
+            # For protocol files the abs time is the timestamp as string
+            abs_time = message.absolute_time
+        else:
+            abs_time = Formatter.science_time(message.absolute_time)
+
         rel_time = Formatter.science_time(message.relative_time)
         self.ui.lTime.setText("{0} (+{1})".format(abs_time, rel_time))
 

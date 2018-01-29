@@ -2,12 +2,11 @@ import itertools
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, QRegExp
-from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
-    QHBoxLayout
+    QHBoxLayout, QToolButton
 
-from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
@@ -24,7 +23,7 @@ from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -89,15 +88,18 @@ class SimulatorTabController(QWidget):
         self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
-        self.ui.navLineEdit.setValidator(QRegExpValidator(QRegExp("^\d+(\.\d+)*$")))
-
         self.__active_item = None
 
         # place save/load button at corner of tab widget
         frame = QFrame(parent=self)
         frame.setLayout(QHBoxLayout())
         frame.setFrameStyle(frame.NoFrame)
+        self.ui.btnSave = QToolButton(self.ui.tab)
+        self.ui.btnSave.setIcon(QIcon.fromTheme("document-save"))
         frame.layout().addWidget(self.ui.btnSave)
+
+        self.ui.btnLoad = QToolButton(self.ui.tab)
+        self.ui.btnLoad.setIcon(QIcon.fromTheme("document-open"))
         frame.layout().addWidget(self.ui.btnLoad)
         frame.layout().setContentsMargins(0, 0, 0, 0)
         self.ui.tabWidget.setCornerWidget(frame)
@@ -133,9 +135,6 @@ class SimulatorTabController(QWidget):
         self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
-        self.ui.btnNextNav.clicked.connect(self.ui.gvSimulator.navigate_forward)
-        self.ui.btnPrevNav.clicked.connect(self.ui.gvSimulator.navigate_backward)
-        self.ui.navLineEdit.returnPressed.connect(self.on_nav_line_edit_return_pressed)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -308,11 +307,6 @@ class SimulatorTabController(QWidget):
 
     def update_ui(self):
         if self.active_item is not None:
-            scene_item = self.simulator_scene.model_to_scene(self.active_item)
-            self.ui.navLineEdit.setText(self.active_item.index())
-            self.ui.btnNextNav.setEnabled(not scene_item.next() is None)
-            self.ui.btnPrevNav.setEnabled(not scene_item.prev() is None)
-
             text = self.tr("Detail view for item #") + self.active_item.index()
 
             if isinstance(self.active_item, SimulatorMessage):
@@ -322,10 +316,6 @@ class SimulatorTabController(QWidget):
 
             self.ui.lblMsgFieldsValues.setText(text)
         else:
-            self.ui.navLineEdit.clear()
-            self.ui.btnNextNav.setEnabled(False)
-            self.ui.btnPrevNav.setEnabled(False)
-
             self.ui.lblMsgFieldsValues.setText(self.tr("Detail view for item"))
 
     def update_vertical_table_header(self):
@@ -430,27 +420,6 @@ class SimulatorTabController(QWidget):
             Errors.generic_error("An error occurred", str(e))
 
     @pyqtSlot()
-    def on_nav_line_edit_return_pressed(self):
-        nav_text = self.ui.navLineEdit.text()
-
-        curr_item = self.simulator_config.rootItem
-
-        index_list = nav_text.split(".")
-        index_list = list(map(int, index_list))
-
-        for index in index_list:
-            if (curr_item is None or index > curr_item.child_count()
-                    or isinstance(curr_item, SimulatorMessage)):
-                break
-
-            curr_item = curr_item.children[index - 1]
-
-            if isinstance(curr_item, SimulatorRule):
-                curr_item = curr_item.children[0]
-
-        self.ui.gvSimulator.jump_to_item(curr_item)
-
-    @pyqtSlot()
     def on_btn_choose_ext_prog_clicked(self):
         file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
 
@@ -494,4 +463,3 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_participant_edited(self):
         self.project_manager.project_updated.emit()
-

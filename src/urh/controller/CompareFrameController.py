@@ -1,6 +1,7 @@
 import locale
 import os
 import time
+from datetime import datetime
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
@@ -436,7 +437,7 @@ class CompareFrameController(QWidget):
     def add_sniffed_protocol_messages(self, messages: list):
         if len(messages) > 0:
             proto_analyzer = ProtocolAnalyzer(None)
-            proto_analyzer.name = "Sniffed data"
+            proto_analyzer.name = datetime.fromtimestamp(messages[0].timestamp).strftime("%Y-%m-%d %H:%M:%S")
             proto_analyzer.messages = messages
             self.add_protocol(proto_analyzer, group_id=self.proto_tree_model.ngroups - 1)
             self.refresh()

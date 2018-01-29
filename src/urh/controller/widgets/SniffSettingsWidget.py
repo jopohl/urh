@@ -1,3 +1,4 @@
+import os
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QCompleter, QDirModel
 
@@ -5,6 +6,7 @@ from urh import constants
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_send_recv_sniff_settings import Ui_SniffSettings
+from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -123,10 +125,18 @@ class SniffSettingsWidget(QWidget):
 
     @pyqtSlot()
     def on_line_edit_output_file_editing_finished(self):
+        self.ui.lineEdit_sniff_OutputFile.setStyleSheet("")
         text = self.ui.lineEdit_sniff_OutputFile.text()
         if text and not text.endswith(".txt"):
             text += ".txt"
             self.ui.lineEdit_sniff_OutputFile.setText(text)
+
+        if not os.path.isfile(text):
+            try:
+                open(text, "w").close()
+            except Exception as e:
+                self.ui.lineEdit_sniff_OutputFile.setStyleSheet("color:red;")
+                return
 
         self.sniffer.sniff_file = text
         self.sniff_file_edited.emit()

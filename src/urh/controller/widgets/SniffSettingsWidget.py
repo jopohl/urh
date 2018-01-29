@@ -131,7 +131,7 @@ class SniffSettingsWidget(QWidget):
             text += ".txt"
             self.ui.lineEdit_sniff_OutputFile.setText(text)
 
-        if not os.path.isfile(text):
+        if text and not os.path.isfile(text):
             try:
                 open(text, "w").close()
             except Exception as e:

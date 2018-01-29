@@ -423,6 +423,20 @@ class SimulatorTabController(QWidget):
             QMessageBox.critical(self, self.tr("No messages found"), self.tr("Please add at least one message."))
             return
 
+        num_simulated = len([p for p in self.project_manager.participants if p.simulate])
+        if num_simulated == 0:
+            if self.ui.listViewSimulate.model().rowCount() == 0:
+                QMessageBox.critical(self, self.tr("No active participants"),
+                                     self.tr("You have no active participants.<br>"
+                                             "Please add a participant in the <i>Participants tab</i> and "
+                                             "assign it to at least one message as <i>source</i> or <i>destination.</i>"))
+                return
+            else:
+                QMessageBox.critical(self, self.tr("No participant for simulation selected"),
+                                     self.tr("Please check at least one participant from the "
+                                             "<i>Simulate these participants</i> list."))
+                return
+
         try:
             s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
                                 self.sim_expression_parser, self.project_manager, parent=self)

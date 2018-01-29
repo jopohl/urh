@@ -38,7 +38,7 @@ class SimulatorScene(QGraphicsScene):
         self.tree_root_item = None
 
         self.participants_dict = {}
-        self.participants = []
+        self.participant_items = []
 
         self.broadcast_part = self.insert_participant(self.simulator_config.broadcast_part)
         self.not_assigned_part = self.insert_participant(None)
@@ -107,7 +107,7 @@ class SimulatorScene(QGraphicsScene):
     def insert_participant(self, participant: Participant):
         scene_part = ParticipantItem(participant)
         scene_part.setVisible(False)
-        self.participants.insert(-2, scene_part)
+        self.participant_items.insert(-2, scene_part)
         self.participants_dict[participant] = scene_part
         self.addItem(scene_part)
 
@@ -216,7 +216,7 @@ class SimulatorScene(QGraphicsScene):
 
             if key not in participants:
                 self.removeItem(self.participants_dict[key])
-                self.participants.remove(self.participants_dict[key])
+                self.participant_items.remove(self.participants_dict[key])
                 del self.participants_dict[key]
 
         for participant in participants:
@@ -249,16 +249,16 @@ class SimulatorScene(QGraphicsScene):
 
     @property
     def visible_participants(self):
-        return [part for part in self.participants if part.isVisible()]
+        return [part for part in self.participant_items if part.isVisible()]
 
     @property
     def visible_participants_without_broadcast(self):
-        return [part for part in self.participants if part.isVisible() and part is not self.broadcast_part]
+        return [part for part in self.participant_items if part.isVisible() and part is not self.broadcast_part]
 
     def arrange_participants(self):
         messages = self.get_all_messages()
 
-        for participant in self.participants:
+        for participant in self.participant_items:
             if any(msg.source == participant or msg.destination == participant for msg in messages):
                 participant.setVisible(True)
             else:
@@ -306,7 +306,7 @@ class SimulatorScene(QGraphicsScene):
             scene_item.update_position(x_pos, y_pos)
             y_pos += round(scene_item.boundingRect().height())
 
-        for participant in self.participants:
+        for participant in self.participant_items:
             participant.update_position(y_pos = max(y_pos, 50))
 
     def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):

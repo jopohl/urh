@@ -1,3 +1,4 @@
+from urh import constants
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.UnlabeledRangeItem import UnlabeledRangeItem
@@ -8,6 +9,7 @@ from PyQt5.QtGui import QPen, QPolygonF
 
 import math
 
+
 class MessageItem(GraphicsItem):
     def __init__(self, model_item: SimulatorMessage, parent=None):
         assert isinstance(model_item, SimulatorMessage)
@@ -15,7 +17,7 @@ class MessageItem(GraphicsItem):
 
         self.setFlag(QGraphicsItem.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
-        
+
         self.repeat_text = QGraphicsTextItem(self)
         self.repeat_text.setFont(self.font)
 
@@ -26,16 +28,16 @@ class MessageItem(GraphicsItem):
     def width(self):
         labels = self.labels()
         width = self.number.boundingRect().width()
-        #width += 5
+        # width += 5
         width += sum([lbl.boundingRect().width() for lbl in labels])
         width += 5 * (len(labels) - 1)
         width += self.repeat_text.boundingRect().width()
-        
+
         return width
 
     def refresh(self):
         self.repeat_text.setPlainText("(" + str(self.model_item.repeat) + "x)" if self.model_item.repeat > 1 else "")
-	
+
     def labels(self):
         self.refresh_unlabeled_range_marker()
         unlabeled_range_items = [uri for uri in self.childItems() if isinstance(uri, UnlabeledRangeItem)]
@@ -101,7 +103,7 @@ class MessageItem(GraphicsItem):
         for label in labels:
             label.setPos(start_x, start_y)
             start_x += label.boundingRect().width() + 5
-            
+
         self.repeat_text.setPos(start_x, start_y)
 
         if labels:
@@ -120,6 +122,7 @@ class MessageItem(GraphicsItem):
     def destination(self):
         return self.scene().participants_dict[self.model_item.destination]
 
+
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -132,27 +135,28 @@ class MessageArrowItem(QGraphicsLineItem):
         if self.line().length() == 0:
             return
 
-        myPen = self.pen()
-        myPen.setColor(Qt.black)
-        arrowSize = 10.0
-        painter.setPen(myPen)
-        painter.setBrush(Qt.black)
+        pen = self.pen()
+        pen.setColor(constants.LINECOLOR)
+        painter.setPen(pen)
+        painter.setBrush(constants.LINECOLOR)
+
+        arrow_size = 10.0
 
         angle = math.acos(self.line().dx() / self.line().length())
 
         if self.line().dy() >= 0:
             angle = (math.pi * 2) - angle
 
-        arrowP1 = self.line().p2() - QPointF(math.sin(angle + math.pi / 2.5) * arrowSize,
-                    math.cos(angle + math.pi / 2.5) * arrowSize)
+        arrow_p1 = self.line().p2() - QPointF(math.sin(angle + math.pi / 2.5) * arrow_size,
+                                              math.cos(angle + math.pi / 2.5) * arrow_size)
 
-        arrowP2 = self.line().p2() - QPointF(math.sin(angle + math.pi - math.pi / 2.5) * arrowSize,
-                    math.cos(angle + math.pi - math.pi / 2.5) * arrowSize)
+        arrow_p2 = self.line().p2() - QPointF(math.sin(angle + math.pi - math.pi / 2.5) * arrow_size,
+                                              math.cos(angle + math.pi - math.pi / 2.5) * arrow_size)
 
-        arrowHead = QPolygonF()
-        arrowHead.append(self.line().p2())
-        arrowHead.append(arrowP1)
-        arrowHead.append(arrowP2)
+        arrow_head = QPolygonF()
+        arrow_head.append(self.line().p2())
+        arrow_head.append(arrow_p1)
+        arrow_head.append(arrow_p2)
 
         painter.drawLine(self.line())
-        painter.drawPolygon(arrowHead)
+        painter.drawPolygon(arrow_head)

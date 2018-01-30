@@ -5,6 +5,8 @@ import os
 import sys
 from enum import Enum
 
+from urh.util.Logger import logger
+
 
 class Backends(Enum):
     none = 0
@@ -173,9 +175,13 @@ class BackendHandler(object):
                 return
         else:
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-                # Use shell=True to prevent console window popping up on windows
-                self.gnuradio_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
-                                               shell=True, stderr=DEVNULL) == 0
+                try:
+                    # Use shell=True to prevent console window popping up on windows
+                    self.gnuradio_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
+                                                   shell=True, stderr=DEVNULL) == 0
+                except OSError as e:
+                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: "+str(e))
+                    self.gnuradio_installed = True
                 constants.SETTINGS.setValue("python2_exe", self.python2_exe)
             else:
                 self.gnuradio_installed = False
@@ -247,8 +253,3 @@ class BackendHandler(object):
                     return attempt
 
         return ""
-
-
-if __name__ == "__main__":
-    bh = BackendHandler()
-    print(bh.device_backends)

@@ -27,6 +27,9 @@ class VirtualDevice(QObject):
     index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
+    fatal_error_occurred = pyqtSignal(str)
+    ready_for_action = pyqtSignal()
+
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."
 
@@ -131,6 +134,9 @@ class VirtualDevice(QObject):
                                                    resume_on_full_receive_buffer=resume_on_full_receive_buffer,
                                                    spectrum=self.mode == Mode.spectrum, sending=self.mode == Mode.send)
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
+            self.__dev.send_connection_established.connect(self.emit_ready_for_action)
+            self.__dev.receive_server_started.connect(self.emit_ready_for_action)
+            self.__dev.error_occurred.connect(self.emit_fatal_error_occured)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:
             self.__dev = None
@@ -206,6 +212,13 @@ class VirtualDevice(QObject):
             self.__dev.sending_is_continuous = value
         else:
             raise ValueError(self.continuous_send_msg)
+
+    @property
+    def is_raw_mode(self) -> bool:
+        if self.backend == Backends.network:
+            return self.__dev.raw_mode
+        else:
+            return True
 
     @property
     def continuous_send_ring_buffer(self):
@@ -599,12 +612,24 @@ class VirtualDevice(QObject):
         :return:
         """
         if self.backend == Backends.grc:
-            return self.__dev.read_errors()
+            errors = self.__dev.read_errors()
+
+            if "FATAL: " in errors:
+                self.fatal_error_occurred.emit(errors[errors.index["FATAL: "]])
+
+            return errors
         elif self.backend == Backends.native:
             messages = "\n".join(self.__dev.device_messages)
             if messages and not messages.endswith("\n"):
                 messages += "\n"
+
+            if "successfully started" in messages:
+                self.ready_for_action.emit()
+            elif "failed to start" in messages:
+                self.fatal_error_occurred.emit(messages[messages.index("failed to start"):])
+
             self.__dev.device_messages.clear()
+
             return messages
         elif self.backend == Backends.network:
             return ""
@@ -629,3 +654,13 @@ class VirtualDevice(QObject):
             logger.info("Retry with port " + str(self.__dev.gr_port))
         else:
             raise ValueError("Only for GR backend")
+
+    def emit_ready_for_action(self):
+        """
+        Notify observers that device is successfully initialized
+        :return:
+        """
+        self.ready_for_action.emit()
+
+    def emit_fatal_error_occured(self, msg: str):
+        self.fatal_error_occurred.emit(msg)

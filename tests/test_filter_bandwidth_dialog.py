@@ -1,12 +1,12 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
+from urh.controller.dialogs.FilterBandwidthDialog import FilterBandwidthDialog
 from urh.signalprocessing.Filter import Filter
 
 
 class TestFilterBandwidthDialog(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.dialog = FilterBandwidthDialogController()
+        self.dialog = FilterBandwidthDialog()
 
     def test_change_custom_bw(self):
         bw = 0.3

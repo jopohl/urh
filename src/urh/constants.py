@@ -37,6 +37,8 @@ BGCOLOR = QColor.fromRgb(55, 53, 53)
 AXISCOLOR = QColor.fromRgb(200, 200, 200, 100)
 ARROWCOLOR = QColor.fromRgb(204, 120, 50)
 
+ERROR_BG_COLOR = QColor.fromRgb(255, 0, 0, 150)
+
 SEND_INDICATOR_COLOR = QColor("darkblue")  # overwritten by system color (bin/urh)
 
 # ROI-SELECTION COLORS

@@ -19,6 +19,8 @@ class Modulator(object):
     """
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
+    MODULATION_TYPES_VERBOSE = ["Amplitude Shift Keying (ASK)", "Frequency Shift Keying (FSK)",
+                                "Phase Shift Keying (PSK)", "Gaussian Frequeny Shift Keying (GFSK)"]
 
     def __init__(self, name: str):
         self.carrier_freq_hz = 40 * 10 ** 3
@@ -94,6 +96,10 @@ class Modulator(object):
         val = val.upper()
         if val in self.MODULATION_TYPES:
             self.modulation_type = self.MODULATION_TYPES.index(val)
+
+    @property
+    def modulation_type_verbose_str(self):
+        return self.MODULATION_TYPES_VERBOSE[self.modulation_type]
 
     @property
     def param_for_zero_str(self):
@@ -254,6 +260,29 @@ class Modulator(object):
                 result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
             else:
                 setattr(result, attrib, Formatter.str2val(value, float, 1))
+        return result
+
+    @staticmethod
+    def modulators_to_xml_tag(modulators: list) -> ET.Element:
+        modulators_tag = ET.Element("modulators")
+        for i, modulator in enumerate(modulators):
+            modulators_tag.append(modulator.to_xml(i))
+        return modulators_tag
+
+    @staticmethod
+    def modulators_from_xml_tag(xml_tag: ET.Element) -> list:
+        if xml_tag is None:
+            return []
+
+        if xml_tag.tag != "modulators":
+            xml_tag = xml_tag.find("modulators")
+
+        if xml_tag is None:
+            return []
+
+        result = []
+        for mod_tag in xml_tag.iter("modulator"):
+            result.append(Modulator.from_xml(mod_tag))
         return result
 
     @staticmethod

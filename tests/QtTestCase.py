@@ -4,7 +4,8 @@ import unittest
 
 import sip
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
@@ -42,17 +43,10 @@ class QtTestCase(unittest.TestCase):
             self.dialog.close()
         if hasattr(self, "form"):
             self.form.close_all()
-            QApplication.instance().processEvents()
-            QTest.qWait(self.CLOSE_TIMEOUT)
-
             self.form.close()
-            QApplication.instance().processEvents()
-            QTest.qWait(self.CLOSE_TIMEOUT)
-
             sip.delete(self.form)
             self.form = None
-
-        QApplication.instance().processEvents()
+        QTest.qSleep(1)
         QTest.qWait(self.CLOSE_TIMEOUT)
 
     def wait_before_new_file(self):
@@ -75,3 +69,14 @@ class QtTestCase(unittest.TestCase):
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+
+    def add_all_signals_to_simulator(self):
+        assert isinstance(self.form, MainController)
+        sim_frame = self.form.simulator_tab_controller
+        sim_frame.ui.treeProtocols.selectAll()
+        self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
+        mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
+        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.CopyAction|Qt.MoveAction,
+                                mimedata, Qt.LeftButton, Qt.NoModifier)
+        drop_event.acceptProposedAction()
+        sim_frame.ui.gvSimulator.dropEvent(drop_event)

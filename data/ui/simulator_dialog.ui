@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogSimulator</class>
+ <widget class="QDialog" name="DialogSimulator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1088</width>
+    <height>823</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Simulation</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QTabWidget" name="tabWidgetSimulatorSettings">
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane { border: 0; }</string>
+     </property>
+     <property name="currentIndex">
+      <number>3</number>
+     </property>
+     <widget class="QWidget" name="tabLog">
+      <attribute name="title">
+       <string>Log settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="LoggingGraphicsView" name="gvSimulator">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="btnLogAll">
+           <property name="text">
+            <string>Log all</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnLogNone">
+           <property name="text">
+            <string>Log none</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnToggleLog">
+           <property name="text">
+            <string>Toggle selected</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabRX">
+      <attribute name="title">
+       <string>RX settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QScrollArea" name="scrollAreaRX">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContentsRX">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1066</width>
+            <height>767</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabTX">
+      <attribute name="title">
+       <string>TX settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QScrollArea" name="scrollAreaTX">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContentsTX">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1066</width>
+            <height>767</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabSimulation">
+      <attribute name="title">
+       <string>Simulation</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="styleSheet">
+          <string notr="true">QTabWidget::pane { border: 0; }</string>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::West</enum>
+         </property>
+         <property name="tabShape">
+          <enum>QTabWidget::Triangular</enum>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_simulation">
+          <attribute name="title">
+           <string>Messages</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QGroupBox" name="groupBoxSimulationStatus">
+             <property name="styleSheet">
+              <string notr="true">QGroupBox
+{
+border: none;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+}
+QGroupBox::indicator:unchecked {
+ image: url(:/icons/icons/collapse.svg)
+}
+QGroupBox::indicator:checked {
+ image: url(:/icons/icons/uncollapse.svg)
+}</string>
+             </property>
+             <property name="title">
+              <string>Simulation Status</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <property name="topMargin">
+               <number>15</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <widget class="QTextEdit" name="textEditSimulation">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QLabel" name="label">
+                     <property name="text">
+                      <string>Current iteration:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="lblCurrentRepeatValue">
+                     <property name="font">
+                      <font>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>Current item:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="lblCurrentItemValue">
+                     <property name="font">
+                      <font>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="btnSaveLog">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset theme="document-save">
+                       <normaloff>.</normaloff>.</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBoxRXStatus">
+             <property name="styleSheet">
+              <string notr="true">QGroupBox
+{
+border: none;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+}
+QGroupBox::indicator:unchecked {
+ image: url(:/icons/icons/collapse.svg)
+}
+QGroupBox::indicator:checked {
+ image: url(:/icons/icons/uncollapse.svg)
+}</string>
+             </property>
+             <property name="title">
+              <string>RX Status</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_14">
+              <property name="topMargin">
+               <number>15</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_2">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <widget class="LiveGraphicView" name="graphicsViewPreview"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_device">
+          <attribute name="title">
+           <string>SDR Status</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item>
+            <widget class="QTextEdit" name="textEditDevices">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>After starting the simulation you will the log messages of your configured SDRs here.</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnStartStop">
+         <property name="text">
+          <string>Start</string>
+         </property>
+         <property name="icon">
+          <iconset theme="media-playback-start">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LiveGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.LiveGraphicView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LoggingGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.LoggingGraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="urh.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>groupBoxSimulationStatus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>groupBoxRXStatus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>616</x>
+     <y>478</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>544</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

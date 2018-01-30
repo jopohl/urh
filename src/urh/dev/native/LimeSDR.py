@@ -83,6 +83,7 @@ class LimeSDR(Device):
         limesdr.setup_stream(cls.RECV_FIFO_SIZE)
         ret = limesdr.start_stream()
         ctrl_connection.send("Initialize stream:{0}".format(ret))
+        return ret
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
@@ -94,6 +95,7 @@ class LimeSDR(Device):
         limesdr.setup_stream(cls.SEND_FIFO_SIZE)
         ret = limesdr.start_stream()
         ctrl_connection.send("Initialize stream:{0}".format(ret))
+        return ret
 
     @classmethod
     def send_sync(cls, data):

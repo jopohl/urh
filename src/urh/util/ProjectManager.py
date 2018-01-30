@@ -8,10 +8,13 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 from urh import constants
 from urh.dev import config
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
+from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 
 
 class ProjectManager(QObject):
@@ -27,15 +30,54 @@ class ProjectManager(QObject):
         self.device_conf = dict(frequency=config.DEFAULT_FREQUENCY,
                                 sample_rate=config.DEFAULT_SAMPLE_RATE,
                                 bandwidth=config.DEFAULT_BANDWIDTH,
-                                gain=config.DEFAULT_GAIN)
+                                name="USRP")
+
+        self.simulator_rx_conf = dict()
+        self.simulator_tx_conf = dict()
+
+        self.simulator_num_repeat = 1
+        self.simulator_retries = 10
+        self.simulator_timeout = 60
+        self.simulator_error_handling_index = 0
+
+        self.__project_file = None
+
+        self.__modulators = [Modulator("Modulator")]  # type: list[Modulator]
+
+        self.__decodings = []  # type: list[Encoding]
+        self.load_decodings()
 
         self.modulation_was_edited = False
-        self.device = "USRP"
         self.description = ""
         self.project_path = ""
         self.broadcast_address_hex = "ffff"
-        self.__project_file = None
         self.participants = []
+
+        self.field_types = []  # type: list[FieldType]
+        self.field_types_by_caption = dict()
+        self.reload_field_types()
+
+    @property
+    def modulators(self):
+        return self.__modulators
+
+    @modulators.setter
+    def modulators(self, value):
+        if value:
+            self.__modulators[:] = value
+            if hasattr(self.main_controller, "generator_tab_controller"):
+                self.main_controller.generator_tab_controller.refresh_modulators()
+
+    @property
+    def decodings(self):
+        return self.__decodings
+
+    @decodings.setter
+    def decodings(self, value):
+        if value:
+            self.__decodings[:] = value
+            if hasattr(self.main_controller, "compare_frame_controller"):
+                self.main_controller.compare_frame_controller.fill_decoding_combobox()
 
     @property
     def project_loaded(self) -> bool:
@@ -50,16 +92,105 @@ class ProjectManager(QObject):
         self.__project_file = value
         self.project_loaded_status_changed.emit(self.project_loaded)
 
-    def set_recording_parameters(self, device: str, kwargs: dict):
+    def reload_field_types(self):
+        self.field_types = FieldType.load_from_xml()
+        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
+
+    def set_device_parameters(self, kwargs: dict):
         for key, value in kwargs.items():
             self.device_conf[key] = value
-        self.device = device
+
+    def on_simulator_rx_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_rx_conf[key] = value
+
+    def on_simulator_tx_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_tx_conf[key] = value
+
+    def on_simulator_sniff_parameters_changed(self, kwargs: dict):
+        for key, value in kwargs.items():
+            self.simulator_rx_conf[key] = value
+
+    def load_decodings(self):
+        if self.project_file:
+            prefix = os.path.realpath(os.path.dirname(self.project_file))
+        else:
+            prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
+
+        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
+
+                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
+                              constants.DECODING_INVERT]),
+
+                    Encoding(["Manchester I",
+                              constants.DECODING_EDGE]),
+
+                    Encoding(["Manchester II",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_INVERT]),
+
+                    Encoding(["Differential Manchester",
+                              constants.DECODING_EDGE,
+                              constants.DECODING_DIFFERENTIAL])
+                    ]
+
+        try:
+            f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
+        except FileNotFoundError:
+            self.decodings = fallback
+            return
+
+        if not f:
+            self.decodings = fallback
+            return
+
+        decodings = []
+        for line in f:
+            tmp_conf = []
+            for j in line.split(","):
+                tmp = j.strip()
+                tmp = tmp.replace("'", "")
+                if not "\n" in tmp and tmp != "":
+                    tmp_conf.append(tmp)
+            decodings.append(Encoding(tmp_conf))
+        f.close()
+
+        if decodings:
+            self.decodings = decodings
+        else:
+            self.decodings = fallback
+
+    @staticmethod
+    def read_device_conf_dict(tag: ET.Element, target_dict):
+        if tag is None:
+            return
+
+        for dev_tag in tag:
+            try:
+                value = float(dev_tag.text)
+            except ValueError:
+                value = dev_tag.text
+            target_dict[dev_tag.tag] = value
+
+    @staticmethod
+    def __device_conf_dict_to_xml(key_name: str, device_conf: dict):
+        result = ET.Element(key_name)
+        for key in sorted(device_conf):
+            device_val_tag = ET.SubElement(result, key)
+            device_val_tag.text = str(device_conf[key])
+        return result
+
+    def simulator_rx_conf_to_xml(self) -> ET.Element:
+        return self.__device_conf_dict_to_xml("simulator_rx_conf", self.simulator_rx_conf)
+
+    def simulator_tx_conf_to_xml(self) -> ET.Element:
+        return self.__device_conf_dict_to_xml("simulator_tx_conf", self.simulator_tx_conf)
 
     def read_parameters(self, root):
-        device_conf_tag = root.find("device_conf")
-        if device_conf_tag is not None:
-            for dev_tag in device_conf_tag:
-                self.device_conf[dev_tag.tag] = float(dev_tag.text)
+        self.read_device_conf_dict(root.find("device_conf"), target_dict=self.device_conf)
+        self.read_device_conf_dict(root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf)
+        self.read_device_conf_dict(root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf)
 
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
@@ -109,14 +240,10 @@ class ProjectManager(QObject):
             self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
-            self.participants = cfc.proto_analyzer.read_participants_from_xml_tag(root=root.find("protocol"))
+            self.participants[:] = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
             self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
-            decodings = cfc.proto_analyzer.read_decoders_from_xml_tag(root.find("protocol"))
-            if decodings:
-                # Set values of decodings only so decodings are updated in generator when loading a project
-                cfc.decodings[:] = decodings
-            cfc.fill_decoding_combobox()
+            self.decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
 
             cfc.proto_analyzer.message_types = self.read_message_types()
             cfc.fill_message_type_combobox()
@@ -124,10 +251,8 @@ class ProjectManager(QObject):
                                             decodings=cfc.decodings)
 
             cfc.updateUI()
-            modulators = self.read_modulators_from_project_file()
-            self.main_controller.generator_tab_controller.modulators = modulators if modulators else [
-                Modulator("Modulation")]
-            self.main_controller.generator_tab_controller.refresh_modulators()
+            self.modulators = self.read_modulators_from_project_file()
+            self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 
         if len(self.project_path) > 0 and self.project_file is None:
             self.main_controller.ui.actionConvert_Folder_to_Project.setEnabled(True)
@@ -194,24 +319,19 @@ class ProjectManager(QObject):
 
         tree.write(self.project_file)
 
-    def write_modulators_to_project_file(self, modulators, tree=None):
+    def write_modulators_to_project_file(self, tree=None):
         """
         :type modulators: list of Modulator
         :return:
         """
-        if self.project_file is None or not modulators:
+        if self.project_file is None or not self.modulators:
             return
 
         if tree is None:
             tree = ET.parse(self.project_file)
 
         root = tree.getroot()
-        # Clear Modulations
-        for mod_tag in root.findall("modulator"):
-            root.remove(mod_tag)
-
-        for i, mod in enumerate(modulators):
-            root.append(mod.to_xml(i))
+        root.append(Modulator.modulators_to_xml_tag(self.modulators))
 
         tree.write(self.project_file)
 
@@ -219,19 +339,18 @@ class ProjectManager(QObject):
         """
         :rtype: list of Modulator
         """
-        if not self.project_file:
+        return self.read_modulators_from_file(self.project_file)
+
+    def read_modulators_from_file(self, filename: str):
+        if not filename:
             return []
 
-        tree = ET.parse(self.project_file)
+        tree = ET.parse(filename)
         root = tree.getroot()
 
-        result = []
-        for mod_tag in root.iter("modulator"):
-            result.append(Modulator.from_xml(mod_tag))
+        return Modulator.modulators_from_xml_tag(root)
 
-        return result
-
-    def save_project(self):
+    def save_project(self, simulator_config=None):
         if self.project_file is None or not os.path.isfile(self.project_file):
             return
 
@@ -242,14 +361,13 @@ class ProjectManager(QObject):
         tree.write(self.project_file)
 
         # self.write_labels(self.maincontroller.compare_frame_controller.proto_analyzer)
-        self.write_modulators_to_project_file(self.main_controller.generator_tab_controller.modulators, tree=tree)
+        self.write_modulators_to_project_file(tree=tree)
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
-        device_conf_tag = ET.SubElement(root, "device_conf")
-        for key in sorted(self.device_conf):
-            device_val_tag = ET.SubElement(device_conf_tag, key)
-            device_val_tag.text = str(self.device_conf[key])
+        root.append(self.__device_conf_dict_to_xml("device_conf", self.device_conf))
+        root.append(self.simulator_rx_conf_to_xml())
+        root.append(self.simulator_tx_conf_to_xml())
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
         root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
         root.set("modulation_was_edited", str(int(self.modulation_was_edited)))
@@ -296,11 +414,10 @@ class ProjectManager(QObject):
                                                   messages=[msg for proto in cfc.full_protocol_list for msg in
                                                             proto.messages]))
 
-        xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        with open(self.project_file, "w") as f:
-            for line in xmlstr.split("\n"):
-                if line.strip():
-                    f.write(line + "\n")
+        if simulator_config is not None:
+            root.append(simulator_config.save_to_xml())
+
+        util.write_xml_to_file(root, self.project_file)
 
     def read_participants_for_signal(self, signal: Signal, messages):
         if self.project_file is None or len(signal.filename) == 0:
@@ -409,5 +526,5 @@ class ProjectManager(QObject):
             self.description = dialog.description
             self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(" ", "")
             if dialog.new_project:
-                self.participants = dialog.participants
+                self.participants[:] = dialog.participants
             self.project_updated.emit()

@@ -3,13 +3,13 @@ import random
 import tempfile
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 
 
 class TestCSVImportDialog(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.dialog = CSVImportDialogController()
+        self.dialog = CSVImportDialog()
 
         if self.SHOW:
             self.dialog.show()

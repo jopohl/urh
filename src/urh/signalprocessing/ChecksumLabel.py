@@ -98,8 +98,8 @@ class ChecksumLabel(ProtocolLabel):
 
         return result
 
-    def to_xml(self, index: int):
-        result = super().to_xml(index)
+    def to_xml(self):
+        result = super().to_xml()
         result.tag = "checksum_label"
         result.attrib.update({"data_ranges": str(self.data_ranges), "category": self.category.name})
         result.append(self.checksum.to_xml())

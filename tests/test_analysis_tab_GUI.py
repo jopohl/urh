@@ -1,11 +1,14 @@
 import copy
 
 from PyQt5.QtCore import QPoint, Qt, QModelIndex
+from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
+from urh.controller.MainController import MainController
 from urh.signalprocessing.FieldType import FieldType
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 
@@ -14,6 +17,7 @@ class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("two_participants.complex")
+        assert isinstance(self.form, MainController)
         self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
@@ -313,3 +317,31 @@ class TestAnalysisTabGUI(QtTestCase):
 
         self.assertIn("display type", model.data(model.index(0, 1), Qt.ToolTipRole))
         self.assertIn("bit order", model.data(model.index(0, 2), Qt.ToolTipRole))
+
+    def test_label_list_view(self):
+        menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
+
+        global context_menu
+        context_menu = None # type: QMenu
+        def on_timeout():
+            global context_menu
+            context_menu = next(w for w in QApplication.topLevelWidgets()
+                        if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
+            context_menu.close()
+
+        self.cfc.add_protocol_label(10, 20, 0, 0, False)
+        self.cfc.add_message_type()
+        self.assertEqual(self.cfc.ui.cbMessagetypes.count(), 2)
+
+        self.cfc.ui.tblViewProtocol.selectRow(0)
+        self.assertEqual(self.cfc.ui.listViewLabelNames.model().rowCount(), 1)
+
+        timer = QTimer()
+        timer.setSingleShot(True)
+        timer.timeout.connect(on_timeout)
+        timer.start(1)
+        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0,0)))
+
+        names = [action.text() for action in context_menu.actions()]
+        self.assertIn("Edit Protocol Label...", names)
+

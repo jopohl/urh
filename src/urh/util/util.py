@@ -1,13 +1,28 @@
 import array
 import os
 import sys
+import time
+from xml.dom import minidom
+from xml.etree import ElementTree as ET
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QFontDatabase, QFont
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem, QApplication
+from PyQt5.QtGui import QFontDatabase, QFont
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 
 from urh import constants
 from urh.util.Logger import logger
+
+
+def profile(func):
+    def func_wrapper(*args):
+        t = time.perf_counter()
+        result = func(*args)
+        print("{} took {:.2f}ms".format(func, 1000 * (time.perf_counter() - t)))
+        return result
+
+    return func_wrapper
 
 
 def set_icon_theme():
@@ -169,7 +184,22 @@ def create_table_item(content):
     return item
 
 
+def write_xml_to_file(xml_tag: ET.Element, filename: str):
+    xml_str = minidom.parseString(ET.tostring(xml_tag)).toprettyxml(indent="  ")
+    with open(filename, "w") as f:
+        for line in xml_str.split("\n"):
+            if line.strip():
+                f.write(line + "\n")
+
+
 def get_monospace_font() -> QFont:
     fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     fixed_font.setPointSize(QApplication.instance().font().pointSize())
     return fixed_font
+
+
+def get_name_from_filename(filename: str):
+    if not isinstance(filename, str):
+        return "No Name"
+
+    return os.path.basename(filename).split(".")[0]

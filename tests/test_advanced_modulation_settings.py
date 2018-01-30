@@ -2,7 +2,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.AdvancedModulationOptionsController import AdvancedModulationOptionsController
+from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
 
 
 class TestAdvancedModulationSettings(QtTestCase):
@@ -35,7 +35,7 @@ class TestAdvancedModulationSettings(QtTestCase):
     def __make_setting(self, signal_frame, pause_threshold=None, message_divisor_length=None):
         def accept_dialog():
             for widget in QApplication.instance().topLevelWidgets():
-                if isinstance(widget, AdvancedModulationOptionsController):
+                if isinstance(widget, AdvancedModulationOptionsDialog):
                     if pause_threshold is not None:
                         widget.ui.spinBoxPauseThreshold.setValue(pause_threshold)
                     if message_divisor_length is not None:

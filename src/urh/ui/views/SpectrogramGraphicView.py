@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QMenu
 
-from urh.controller.FilterBandwidthDialogController import FilterBandwidthDialogController
+from urh.controller.dialogs.FilterBandwidthDialog import FilterBandwidthDialog
 from urh.signalprocessing.Filter import Filter
 from urh.ui.painting.SpectrogramScene import SpectrogramScene
 from urh.ui.painting.SpectrogramSceneManager import SpectrogramSceneManager
@@ -99,5 +99,5 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_configure_filter_bw_triggered(self):
-        dialog = FilterBandwidthDialogController(parent=self)
+        dialog = FilterBandwidthDialog(parent=self)
         dialog.show()

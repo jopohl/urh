@@ -1,14 +1,14 @@
 from PyQt5.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.MessageTypeDialogController import MessageTypeDialogController
+from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.signalprocessing.MessageType import MessageType
 
 
 class TestMessageTypeOptionsGUI(QtTestCase):
     def setUp(self):
         self.message_type = MessageType(name="Test")
-        self.dialog = MessageTypeDialogController(self.message_type)
+        self.dialog = MessageTypeDialog(self.message_type)
 
         if self.SHOW:
             self.dialog.show()

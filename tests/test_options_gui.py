@@ -1,12 +1,12 @@
 from tests.QtTestCase import QtTestCase
-from urh.controller.OptionsController import OptionsController
+from urh.controller.dialogs.OptionsDialog import OptionsDialog
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
 class TestOptionsGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.dialog = OptionsController(self.form.plugin_manager.installed_plugins, parent=self.form)
+        self.dialog = OptionsDialog(self.form.plugin_manager.installed_plugins, parent=self.form)
 
         if self.SHOW:
             self.dialog.show()
@@ -62,3 +62,13 @@ class TestOptionsGUI(QtTestCase):
         self.assertFalse(self.dialog.ui.radioButtonGnuradioDirectory.isChecked())
         self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
         self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
+
+    def test_field_type_tab(self):
+        self.dialog.ui.tabWidget.setCurrentWidget(self.dialog.ui.tabFieldtypes)
+        n_rows = self.dialog.ui.tblLabeltypes.model().rowCount()
+        self.assertGreater(n_rows, 1)
+        self.dialog.ui.btnAddLabelType.click()
+        self.wait_before_new_file()
+        self.assertEqual(n_rows+1, self.dialog.ui.tblLabeltypes.model().rowCount())
+        self.dialog.ui.btnRemoveLabeltype.click()
+        self.assertEqual(n_rows, self.dialog.ui.tblLabeltypes.model().rowCount())

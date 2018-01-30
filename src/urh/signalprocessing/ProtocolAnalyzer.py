@@ -1,22 +1,23 @@
+import array
 import copy
+import sys
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from xml.dom import minidom
 
-import array
 import numpy as np
-import sys
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions, util
+from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
-from urh.signalprocessing.Encoding import Encoding
+from urh.util import util as urh_util
 from urh.util.Logger import logger
 
 
@@ -41,12 +42,16 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal):
+    def __init__(self, signal: Signal, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
-        self.filename = self.signal.filename if self.signal is not None else ""
+        if filename is None:
+            self.filename = self.signal.filename if self.signal is not None else ""
+        else:
+            assert signal is None
+            self.filename = filename
 
-        self.__name = "Blank"  # Fallback if Signal has no Name
+        self.__name = urh_util.get_name_from_filename(filename)  # Fallback if Signal has no Name
 
         self.show = Qt.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()
@@ -576,60 +581,24 @@ class ProtocolAnalyzer(object):
                     MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
 
-    def to_xml_tag(self, decodings, participants, tag_name="protocol", include_message_type=False,
-                   write_bits=False, messages=None) -> ET.Element:
-        """
-
-        :param decodings:
-        :param participants:
-        :param tag_name:
-        :param include_message_type:
-        :param write_bits:
-        :param messages: Give custom list of messages to use instead of self.messages. Used when saving project and
-        some subprotocols are hidden in Compare Frame Controller
-        :return:
-        """
+    def to_xml_tag(self, decodings, participants, tag_name="protocol",
+                   include_message_type=False, write_bits=False, messages=None, modulators=None) -> ET.Element:
         root = ET.Element(tag_name)
         messages = self.messages if messages is None else messages
 
         # Save modulators
-        if hasattr(self, "modulators"):  # For protocol analyzer container
-            modulators_tag = ET.SubElement(root, "modulators")
-            for i, modulator in enumerate(self.modulators):
-                modulators_tag.append(modulator.to_xml(i))
+        if modulators is not None:  # For protocol analyzer container
+            root.append(Modulator.modulators_to_xml_tag(modulators))
 
-        # Save decodings
-        if not decodings:
-            decodings = []
-            for message in messages:
-                if message.decoder not in decodings:
-                    decodings.append(message.decoder)
-
-        decodings_tag = ET.SubElement(root, "decodings")
-        for decoding in decodings:
-            dec_str = ""
-            for chn in decoding.get_chain():
-                dec_str += repr(chn) + ", "
-            dec_tag = ET.SubElement(decodings_tag, "decoding")
-            dec_tag.text = dec_str
-
-        # Save participants
-        if not participants:
-            participants = []
-            for message in messages:
-                if message.participant and message.participant not in participants:
-                    participants.append(message.participant)
-
-        participants_tag = ET.SubElement(root, "participants")
-        for participant in participants:
-            participants_tag.append(participant.to_xml())
+        root.append(Encoding.decodings_to_xml_tag(decodings))
+        root.append(Participant.participants_to_xml_tag(participants))
 
         # Save data
         data_tag = ET.SubElement(root, "messages")
         for i, message in enumerate(messages):
-            message_tag = message.to_xml(decoders=decodings, include_message_type=include_message_type)
-            if write_bits:
-                message_tag.set("bits", message.plain_bits_str)
+            message_tag = message.to_xml(decoders=decodings,
+                                         include_message_type=include_message_type,
+                                         write_bits=write_bits)
             data_tag.append(message_tag)
 
         # Save message types separatively as not saved in messages already
@@ -640,10 +609,11 @@ class ProtocolAnalyzer(object):
 
         return root
 
-    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol", include_message_types=False,
-                    write_bits=False):
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="protocol",
+                    include_message_types=False, write_bits=False, modulators=None):
         tag = self.to_xml_tag(decodings=decoders, participants=participants, tag_name=tag_name,
-                              include_message_type=include_message_types, write_bits=write_bits)
+                              include_message_type=include_message_types, write_bits=write_bits,
+                              modulators=modulators)
 
         xmlstr = minidom.parseString(ET.tostring(tag)).toprettyxml(indent="   ")
         with open(filename, "w") as f:
@@ -655,15 +625,10 @@ class ProtocolAnalyzer(object):
         if not root:
             return None
 
-        if root.find("modulators") and hasattr(self, "modulators"):
-            self.modulators[:] = []
-            for mod_tag in root.find("modulators").findall("modulator"):
-                self.modulators.append(Modulator.from_xml(mod_tag))
-
-        decoders = self.read_decoders_from_xml_tag(root) if decodings is None else decodings
+        decoders = Encoding.read_decoders_from_xml_tag(root) if decodings is None else decodings
 
         if participants is None:
-            participants = self.read_participants_from_xml_tag(root)
+            participants = Participant.read_participants_from_xml_tag(root)
 
         if read_bits:
             self.messages[:] = []
@@ -683,10 +648,10 @@ class ProtocolAnalyzer(object):
             message_tags = root.find("messages").findall("message")
             for i, message_tag in enumerate(message_tags):
                 if read_bits:
-                    message = Message.from_plain_bits_str(bits=message_tag.get("bits"))
-                    message.from_xml(tag=message_tag, participants=participants, decoders=decoders,
-                                     message_types=self.message_types)
-                    self.messages.append(message)
+                    self.messages.append(Message.new_from_xml(tag=message_tag,
+                                                              participants=participants,
+                                                              decoders=decoders,
+                                                              message_types=self.message_types))
                 else:
                     try:
                         self.messages[i].from_xml(tag=message_tag, participants=participants,
@@ -696,29 +661,6 @@ class ProtocolAnalyzer(object):
 
         except AttributeError:
             pass
-
-    @staticmethod
-    def read_participants_from_xml_tag(root: ET.Element):
-        try:
-            participants = []
-            for parti_tag in root.find("participants").findall("participant"):
-                participants.append(Participant.from_xml(parti_tag))
-            return participants
-        except AttributeError:
-            logger.warning("no participants found in xml")
-            return []
-
-    @staticmethod
-    def read_decoders_from_xml_tag(root: ET.Element):
-        try:
-            decoders = []
-            for decoding_tag in root.find("decodings").findall("decoding"):
-                conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
-                decoders.append(Encoding(conf))
-            return decoders
-        except AttributeError:
-            logger.error("no decodings found in xml")
-            return []
 
     def from_xml_file(self, filename: str, read_bits=False):
         try:

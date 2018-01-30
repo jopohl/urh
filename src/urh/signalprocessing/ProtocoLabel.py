@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+import copy
 from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
@@ -20,7 +21,7 @@ class ProtocolLabel(object):
 
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "fuzz_me", "fuzz_values",
+    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "__fuzz_me", "fuzz_values",
                  "fuzz_created", "__field_type", "display_format_index", "display_bit_order_index",
                  "auto_created", "copied")
 
@@ -34,7 +35,7 @@ class ProtocolLabel(object):
         self.color_index = color_index
         self.show = Qt.Checked
 
-        self.fuzz_me = Qt.Checked
+        self.__fuzz_me = Qt.Checked
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
@@ -47,6 +48,16 @@ class ProtocolLabel(object):
         self.auto_created = auto_created
 
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
+
+    @property
+    def fuzz_me(self) -> int:
+        return self.__fuzz_me
+
+    @fuzz_me.setter
+    def fuzz_me(self, value):
+        if isinstance(value, bool):
+            value = Qt.Checked if value else Qt.Unchecked
+        self.__fuzz_me = value
 
     @property
     def is_preamble(self) -> bool:
@@ -93,6 +104,14 @@ class ProtocolLabel(object):
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
 
+    def get_copy(self):
+        if self.copied:
+            return self
+        else:
+            result = copy.deepcopy(self)
+            result.copied = True
+            return result
+
     def __lt__(self, other):
         if self.start != other.start:
             return self.start < other.start
@@ -128,11 +147,10 @@ class ProtocolLabel(object):
         format_string = "{0:0" + str(len(cur_val)) + "b}"
         self.fuzz_values.append(format_string.format(val))
 
-    def to_xml(self, index: int) -> ET.Element:
+    def to_xml(self) -> ET.Element:
         return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end),
                                            "color_index": str(self.color_index),
-                                           "apply_decoding": str(self.apply_decoding), "index": str(index),
-                                           "show": str(self.show),
+                                           "apply_decoding": str(self.apply_decoding), "show": str(self.show),
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),

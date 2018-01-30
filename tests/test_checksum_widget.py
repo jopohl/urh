@@ -1,8 +1,8 @@
 import array
 
 from tests.QtTestCase import QtTestCase
-from urh.controller.ChecksumWidgetController import ChecksumWidgetController
-from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.controller.widgets.ChecksumWidget import ChecksumWidget
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -16,7 +16,7 @@ class TestChecksumWidget(QtTestCase):
     def test_configure_crc_ranges(self):
         checksum_label = ChecksumLabel("checksum_label", 50, 100, 0, FieldType("crc", FieldType.Function.CHECKSUM))
 
-        crc_widget_controller = ChecksumWidgetController(checksum_label, Message([0] * 100, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidget(checksum_label, Message([0] * 100, 0, MessageType("test")), 0)
         model = crc_widget_controller.data_range_table_model
         self.assertEqual(model.data(model.index(0, 0)), 1)
         self.assertEqual(model.data(model.index(0, 1)), 50)
@@ -37,7 +37,7 @@ class TestChecksumWidget(QtTestCase):
     def test_configure_crc_parameters(self):
         crc_label = ChecksumLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CHECKSUM))
 
-        crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidget(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
 
         crc = GenericCRC(polynomial=list(GenericCRC.DEFAULT_POLYNOMIALS.keys())[0])
         self.assertEqual(crc_widget_controller.ui.lineEditCRCPolynomial.text(), crc.polynomial_as_hex_str)
@@ -62,10 +62,10 @@ class TestChecksumWidget(QtTestCase):
 
     def test_default_crcs(self):
         crc_label = ChecksumLabel("crc_label", 25, 120, 0, FieldType("crc", FieldType.Function.CHECKSUM))
-        crc_widget_controller = ChecksumWidgetController(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidget(crc_label, Message([0] * 150, 0, MessageType("test")), 0)
 
         default_crc_polynomials = GenericCRC.DEFAULT_POLYNOMIALS
-        special_crcs = ChecksumWidgetController.SPECIAL_CRCS
+        special_crcs = ChecksumWidget.SPECIAL_CRCS
 
         self.assertEqual(len(default_crc_polynomials) + len(special_crcs),
                          crc_widget_controller.ui.comboBoxCRCFunction.count())
@@ -85,13 +85,13 @@ class TestChecksumWidget(QtTestCase):
         mt = MessageType("test")
         mt.append(ChecksumLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CHECKSUM)))
 
-        self.dialog = ProtocolLabelController(0, Message([0] * 100, 0, mt), 0)
+        self.dialog = ProtocolLabelDialog(0, Message([0] * 100, 0, mt), 0)
         self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.count(), 1)
         self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")
 
     def test_enocean_checksum(self):
         checksum_label = ChecksumLabel("checksum_label", 50, 100, 0, FieldType("crc", FieldType.Function.CHECKSUM))
-        crc_widget_controller = ChecksumWidgetController(checksum_label, Message([0] * 100, 0, MessageType("test")), 0)
+        crc_widget_controller = ChecksumWidget(checksum_label, Message([0] * 100, 0, MessageType("test")), 0)
 
         crc_widget_controller.ui.comboBoxCategory.setCurrentIndex(1)
         self.assertEqual(crc_widget_controller.ui.stackedWidget.currentWidget(), crc_widget_controller.ui.page_wsp)

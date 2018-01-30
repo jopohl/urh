@@ -5,6 +5,9 @@ import array
 from urh import constants
 from urh.util.GenericCRC import GenericCRC
 from urh.util import util
+from xml.etree import ElementTree as ET
+
+from urh.util.Logger import logger
 
 
 class Encoding(object):
@@ -58,6 +61,9 @@ class Encoding(object):
         # Set Chain
         self.chain = []
         self.set_chain(chain)
+
+    def __hash__(self):
+        return hash(tuple(self.get_chain()))
 
     @property
     def symbol_len(self):
@@ -435,7 +441,7 @@ class Encoding(object):
             out, _ = p.communicate(param.encode())
             return out.decode()
         except:
-            print("Error running", cmd, param)
+            logger.error("Could not run {} {}".format(cmd, param))
             return ""
 
     def code_carrier(self, decoding, inpt):
@@ -838,3 +844,33 @@ class Encoding(object):
             return False
 
         return self.get_chain() == other.get_chain()
+
+    @staticmethod
+    def decodings_to_xml_tag(decodings: list) -> ET.Element:
+        decodings_tag = ET.Element("decodings")
+        for decoding in decodings:
+            dec_str = ""
+            for chn in decoding.get_chain():
+                dec_str += repr(chn) + ", "
+            dec_tag = ET.SubElement(decodings_tag, "decoding")
+            dec_tag.text = dec_str
+        return decodings_tag
+
+    @staticmethod
+    def read_decoders_from_xml_tag(xml_tag: ET.Element):
+        if xml_tag is None:
+            return []
+
+        if xml_tag.tag != "decodings":
+            xml_tag = xml_tag.find("decodings")
+
+        if xml_tag is None:
+            return []
+
+        decoders = []
+        for decoding_tag in xml_tag.findall("decoding"):
+            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
+            decoders.append(Encoding(conf))
+        return decoders
+
+

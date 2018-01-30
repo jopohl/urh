@@ -1,11 +1,9 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.controller.ChecksumWidgetController import ChecksumWidgetController
+from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.signalprocessing.Encoding import Encoding
-from urh.util import util
 
 
 class TestCRCGUIIntegration(QtTestCase):
@@ -24,7 +22,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
         proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidgetController
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         self.assertNotIn("WSP", checksum_tab.ui.comboBoxCategory.currentText())
         checksum_tab.ui.radioButtonWSPAuto.click()
 
@@ -37,7 +35,7 @@ class TestCRCGUIIntegration(QtTestCase):
         # Configure WSP and verify its correct
         proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidgetController
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCategory.setCurrentIndex(1)
         self.assertIn("WSP", checksum_tab.ui.comboBoxCategory.currentText())
         checksum_tab.ui.radioButtonWSPAuto.click()
@@ -65,7 +63,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
         proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidgetController
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         self.assertEqual("generic", checksum_tab.ui.comboBoxCategory.currentText())
         self.assertNotEqual("CC1101", checksum_tab.ui.comboBoxCRCFunction.currentText())
 
@@ -80,7 +78,7 @@ class TestCRCGUIIntegration(QtTestCase):
         # Configure CC1101 and verify its correct
         proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidgetController
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCRCFunction.setCurrentText("CC1101")
         self.assertEqual(checksum_tab.ui.lineEditCRCPolynomial.text(), "8005")
         self.assertEqual(checksum_tab.ui.lineEditFinalXOR.text(), "0000")

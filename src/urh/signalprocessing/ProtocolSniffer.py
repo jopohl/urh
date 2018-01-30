@@ -10,6 +10,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+from urh.util.util import profile
 
 
 class ProtocolSniffer(ProtocolAnalyzer, QObject):
@@ -19,9 +20,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     """
     started = pyqtSignal()
     stopped = pyqtSignal()
+    message_sniffed = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler):
+                 modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False, real_time=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -31,14 +33,16 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
+        self.network_raw_mode = network_raw_mode
         self.backend_handler = backend_handler
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
-                                        resume_on_full_receive_buffer=True, raw_mode=False)
+                                        resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
         self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
+        self.real_time = real_time
         self.data_cache = []
         self.conseq_non_data = 0
         self.reading_data = False
@@ -78,7 +82,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if value != self.rcv_device.name:
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
-                                            resume_on_full_receive_buffer=True, raw_mode=False)
+                                            resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
             self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
@@ -89,7 +93,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
         old_nmsgs = len(self.messages)
-        if self.rcv_device.backend in (Backends.native, Backends.grc):
+        if self.rcv_device.is_raw_mode:
             if old_index == new_index:
                 return
             self.__demodulate_data(self.rcv_device.data[old_index:new_index])
@@ -103,6 +107,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.free_data()  # do not store received bits twice
 
         self.qt_signals.data_sniffed.emit(old_nmsgs)
+        if self.messages:
+            self.message_sniffed.emit()
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
             plain_bits_str = self.plain_bits_str
@@ -129,7 +135,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         if self.reading_data:
             self.data_cache.append(data)
-            return
+            if not self.real_time:
+                return
         elif len(self.data_cache) == 0:
             return
 

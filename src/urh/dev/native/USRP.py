@@ -47,8 +47,7 @@ class USRP(Device):
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
-        usrp.start_stream(cls.READ_SAMPLES)
-        ctrl_connection.send("Initialized stream")
+        return usrp.start_stream(cls.READ_SAMPLES)
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
@@ -60,6 +59,7 @@ class USRP(Device):
         usrp.setup_stream()
         ret = usrp.start_stream(0)
         ctrl_connection.send("Initialize stream:{0}".format(ret))
+        return ret
 
     @classmethod
     def send_sync(cls, data):

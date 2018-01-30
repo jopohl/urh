@@ -5,20 +5,21 @@ import traceback
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication, QCheckBox
+    QMessageBox, QApplication
 
 from urh import constants, version
-from urh.controller.CSVImportDialogController import CSVImportDialogController
+from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.DecoderWidgetController import DecoderWidgetController
+from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.controller.GeneratorTabController import GeneratorTabController
-from urh.controller.OptionsController import OptionsController
-from urh.controller.ProjectDialogController import ProjectDialogController
-from urh.controller.ProtocolSniffDialogController import ProtocolSniffDialogController
-from urh.controller.ReceiveDialogController import ReceiveDialogController
-from urh.controller.SignalFrameController import SignalFrameController
+from urh.controller.dialogs.OptionsDialog import OptionsDialog
+from urh.controller.dialogs.ProjectDialog import ProjectDialog
+from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
+from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
+from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.controller.SignalTabController import SignalTabController
-from urh.controller.SpectrumDialogController import SpectrumDialogController
+from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
@@ -40,7 +41,7 @@ class MainController(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        OptionsController.write_default_options()
+        OptionsDialog.write_default_options()
 
         self.project_save_timer = QTimer()
         self.project_manager = ProjectManager(self)
@@ -58,6 +59,13 @@ class MainController(QMainWindow):
         self.generator_tab_controller = GeneratorTabController(self.compare_frame_controller,
                                                                self.project_manager,
                                                                parent=self.ui.tab_generator)
+
+        self.simulator_tab_controller = SimulatorTabController(parent=self.ui.tab_simulator,
+                                                               compare_frame_controller=self.compare_frame_controller,
+                                                               generator_tab_controller=self.generator_tab_controller,
+                                                               project_manager=self.project_manager)
+
+        self.ui.tab_simulator.layout().addWidget(self.simulator_tab_controller)
 
         self.undo_group = QUndoGroup()
         self.undo_group.addStack(self.signal_tab_controller.signal_undo_stack)
@@ -80,7 +88,7 @@ class MainController(QMainWindow):
 
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 
-        self.signal_protocol_dict = {}  # type: dict[SignalFrameController, ProtocolAnalyzer]
+        self.signal_protocol_dict = {}  # type: dict[SignalFrame, ProtocolAnalyzer]
 
         self.ui.lnEdtTreeFilter.setClearButtonEnabled(True)
 
@@ -137,6 +145,8 @@ class MainController(QMainWindow):
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
 
+        self.ui.tabWidget.removeTab(3)
+
     def __set_non_project_warning_visibility(self):
         show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
         self.ui.labelNonProjectMode.setVisible(show)
@@ -151,7 +161,7 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
         self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
-        self.ui.actionSave_project.triggered.connect(self.project_manager.save_project)
+        self.ui.actionSave_project.triggered.connect(self.save_project)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
         self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
@@ -193,7 +203,7 @@ class MainController(QMainWindow):
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
-        self.project_save_timer.timeout.connect(self.project_manager.save_project)
+        self.project_save_timer.timeout.connect(self.save_project)
 
         self.ui.actionConvert_Folder_to_Project.triggered.connect(self.project_manager.convert_folder_to_project)
         self.project_manager.project_loaded_status_changed.connect(self.on_project_loaded_status_changed)
@@ -218,8 +228,7 @@ class MainController(QMainWindow):
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
     def add_plain_bits_from_txt(self, filename: str):
-        protocol = ProtocolAnalyzer(None)
-        protocol.filename = filename
+        protocol = ProtocolAnalyzer(None, filename=filename)
         with open(filename) as f:
             for line in f:
                 protocol.messages.append(Message.from_plain_bits_str(line.strip()))
@@ -242,6 +251,10 @@ class MainController(QMainWindow):
     def add_fuzz_profile(self, filename):
         self.ui.tabWidget.setCurrentIndex(2)
         self.generator_tab_controller.load_from_file(filename)
+
+    def add_simulator_profile(self, filename):
+        self.ui.tabWidget.setCurrentIndex(3)
+        self.simulator_tab_controller.load_simulator_file(filename)
 
     def add_signalfile(self, filename: str, group_id=0, enforce_sample_rate=None):
         if not os.path.exists(filename):
@@ -298,7 +311,7 @@ class MainController(QMainWindow):
         self.generator_tab_controller.tree_model.remove_protocol(protocol)
         protocol.eliminate()
 
-    def close_signal_frame(self, signal_frame: SignalFrameController):
+    def close_signal_frame(self, signal_frame: SignalFrame):
         try:
             self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
             try:
@@ -363,6 +376,8 @@ class MainController(QMainWindow):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
             elif filename.endswith(".fuzz") or filename.endswith(".fuzz.xml"):
                 self.add_fuzz_profile(filename)
+            elif filename.endswith(".sim") or filename.endswith(".sim.xml"):
+                self.add_simulator_profile(filename)
             elif filename.endswith(".txt"):
                 self.add_plain_bits_from_txt(filename)
             elif filename.endswith(".csv"):
@@ -380,14 +395,14 @@ class MainController(QMainWindow):
         self.signal_tab_controller.set_frame_numbers()
 
     def closeEvent(self, event: QCloseEvent):
-        self.project_manager.save_project()
+        self.save_project()
         super().closeEvent(event)
 
     def close_all(self):
 
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.project_manager.save_project()
+        self.save_project()
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
@@ -402,8 +417,10 @@ class MainController(QMainWindow):
         self.compare_frame_controller.protocol_undo_stack.clear()
         self.generator_tab_controller.generator_undo_stack.clear()
 
+        self.simulator_tab_controller.close_all()
+
     def show_options_dialog_specific_tab(self, tab_index: int):
-        op = OptionsController(self.plugin_manager.installed_plugins, parent=self)
+        op = OptionsDialog(self.plugin_manager.installed_plugins, parent=self)
         op.values_changed.connect(self.on_options_changed)
         op.ui.tabWidget.setCurrentIndex(tab_index)
         op.show()
@@ -416,11 +433,12 @@ class MainController(QMainWindow):
     def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
         self.generator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
+        self.simulator_tab_controller.ui.cbViewType.setCurrentIndex(view_index)
         for sig_frame in self.signal_tab_controller.signal_frames:
             sig_frame.ui.cbProtoView.setCurrentIndex(view_index)
 
     def show_project_settings(self):
-        pdc = ProjectDialogController(new_project=False, project_manager=self.project_manager, parent=self)
+        pdc = ProjectDialog(new_project=False, project_manager=self.project_manager, parent=self)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 
@@ -434,6 +452,9 @@ class MainController(QMainWindow):
         self.ui.tabParticipants.show()
         self.ui.tabWidget_Project.setMaximumHeight(9000)
 
+    def save_project(self):
+        self.project_manager.save_project(simulator_config=self.simulator_tab_controller.simulator_config)
+
     @pyqtSlot()
     def on_project_tab_bar_double_clicked(self):
         if self.ui.tabParticipants.isVisible():
@@ -443,7 +464,6 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_project_updated(self):
-        self.participant_legend_model.participants = self.project_manager.participants
         self.participant_legend_model.update()
         self.compare_frame_controller.refresh()
         self.ui.textEditProjectDescription.setText(self.project_manager.description)
@@ -568,7 +588,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_show_decoding_dialog_triggered(self):
         signals = [sf.signal for sf in self.signal_tab_controller.signal_frames]
-        decoding_controller = DecoderWidgetController(
+        decoding_controller = DecoderDialog(
             self.compare_frame_controller.decodings, signals,
             self.project_manager, parent=self)
         decoding_controller.finished.connect(self.update_decodings)
@@ -577,7 +597,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def update_decodings(self):
-        self.compare_frame_controller.load_decodings()
+        self.project_manager.load_decodings()
         self.compare_frame_controller.fill_decoding_combobox()
         self.compare_frame_controller.refresh_existing_encodings()
 
@@ -607,12 +627,14 @@ class MainController(QMainWindow):
             th = self.generator_tab_controller.ui.tabWidget.tabBar().height()
             for i in range(self.generator_tab_controller.ui.tabWidget.count()):
                 self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
+            # Modulators may got changed from Simulator Dialog
+            self.generator_tab_controller.refresh_modulators()
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):
         pm = self.project_manager
         try:
-            r = ReceiveDialogController(pm, parent=self)
+            r = ReceiveDialog(pm, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -622,7 +644,7 @@ class MainController(QMainWindow):
             r.close()
             return
 
-        r.recording_parameters.connect(pm.set_recording_parameters)
+        r.device_parameters_changed.connect(pm.set_device_parameters)
         r.files_recorded.connect(self.on_signals_recorded)
         r.show()
 
@@ -631,22 +653,13 @@ class MainController(QMainWindow):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
 
-        bit_len = signal.bit_len if signal else 100
-        mod_type = signal.modulation_type if signal else 1
-        tolerance = signal.tolerance if signal else 5
-        noise = signal.noise_threshold if signal else 0.001
-        center = signal.qad_center if signal else 0.02
-
-        psd = ProtocolSniffDialogController(pm, noise, center, bit_len, tolerance, mod_type,
-                                            self.compare_frame_controller.decodings,
-                                            encoding_index=self.compare_frame_controller.ui.cbDecoding.currentIndex(),
-                                            parent=self)
+        psd = ProtocolSniffDialog(project_manager=pm, signal=signal, parent=self)
 
         if psd.has_empty_device_list:
             Errors.no_device()
             psd.close()
         else:
-            psd.recording_parameters.connect(pm.set_recording_parameters)
+            psd.device_parameters_changed.connect(pm.set_device_parameters)
             psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
             psd.show()
 
@@ -659,7 +672,7 @@ class MainController(QMainWindow):
             r.close()
             return
 
-        r.recording_parameters.connect(pm.set_recording_parameters)
+        r.device_parameters_changed.connect(pm.set_device_parameters)
         r.show()
 
     @pyqtSlot(list, float)
@@ -675,7 +688,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
-        pdc = ProjectDialogController(parent=self)
+        pdc = ProjectDialog(parent=self)
         try:
             path = os.path.dirname(self.signal_tab_controller.signal_frames[0].signal.filename)
         except (IndexError, AttributeError, TypeError):
@@ -782,11 +795,13 @@ class MainController(QMainWindow):
             for sf in self.signal_tab_controller.signal_frames:
                 sf.refresh_protocol()
 
+        self.project_manager.reload_field_types()
         self.compare_frame_controller.refresh_field_types_for_labels()
         self.compare_frame_controller.set_shown_protocols()
         self.generator_tab_controller.set_network_sdr_send_button_visibility()
         self.generator_tab_controller.init_rfcat_plugin()
         self.generator_tab_controller.set_modulation_profile_status()
+        self.simulator_tab_controller.refresh_field_types_for_labels()
 
         if "default_view" in changed_options:
             self.apply_default_view(int(changed_options["default_view"]))
@@ -824,7 +839,7 @@ class MainController(QMainWindow):
             sample_rate = None if sample_rate == 0 else sample_rate
             self.add_files([complex_file], group_id=group_id, enforce_sample_rate=sample_rate)
 
-        dialog = CSVImportDialogController(file_name, parent=self)
+        dialog = CSVImportDialog(file_name, parent=self)
         dialog.data_imported.connect(on_data_imported)
         dialog.exec_()
 

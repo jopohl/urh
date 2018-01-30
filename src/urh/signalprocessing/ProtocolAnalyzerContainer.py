@@ -26,13 +26,12 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     This class is used by the generator to manage distinct protocols
     """
 
-    def __init__(self, modulators):
+    def __init__(self):
         """
 
         :type modulators: list of Modulator
         """
         super().__init__(None)
-        self.modulators = modulators
 
         self.fuzz_pause = 10000
 
@@ -146,10 +145,10 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
     def set_decoder_for_messages(self, decoder, messages=None):
         raise NotImplementedError("Encoding cant be set in Generator!")
 
-    def to_xml_file(self, filename: str, decoders=None, participants=None, tag_name="fuzz_profile",
-                    include_message_types=True, write_bits=True):
-        super().to_xml_file(filename=filename, decoders=None, participants=participants, tag_name=tag_name,
-                            include_message_types=include_message_types, write_bits=write_bits)
+    def to_xml_file(self, filename: str, decoders, participants, tag_name="fuzz_profile",
+                    include_message_types=True, write_bits=True, modulators=None):
+        super().to_xml_file(filename=filename, decoders=decoders, participants=participants, tag_name=tag_name,
+                            include_message_types=include_message_types, write_bits=write_bits, modulators=modulators)
 
     def from_xml_file(self, filename: str, read_bits=True):
         super().from_xml_file(filename=filename, read_bits=read_bits)

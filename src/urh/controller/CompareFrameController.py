@@ -1,6 +1,7 @@
 import locale
 import os
 import time
+from datetime import datetime
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
@@ -8,8 +9,8 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
 
 from urh import constants
-from urh.controller.MessageTypeDialogController import MessageTypeDialogController
-from urh.controller.ProtocolLabelController import ProtocolLabelController
+from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
@@ -17,7 +18,6 @@ from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Encoding import Encoding
-from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -45,8 +45,6 @@ class CompareFrameController(QWidget):
 
         self.proto_analyzer = ProtocolAnalyzer(None)
         self.project_manager = project_manager
-        self.decodings = []  # type: list[Encoding]
-        self.load_decodings()
 
         self.ui = Ui_TabAnalysis()
         self.ui.setupUi(self)
@@ -121,10 +119,15 @@ class CompareFrameController(QWidget):
 
         self.__set_default_message_type_ui_status()
 
-        self.field_types = FieldType.load_from_xml()
-        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
-
     # region properties
+
+    @property
+    def field_types(self):
+        return self.project_manager.field_types
+
+    @property
+    def field_types_by_caption(self):
+        return self.project_manager.field_types_by_caption
 
     @property
     def active_group_ids(self):
@@ -351,53 +354,9 @@ class CompareFrameController(QWidget):
 
             self.ui.tblViewProtocol.resize_columns()
 
-    def load_decodings(self):
-        if self.project_manager.project_file:
-            prefix = os.path.realpath(os.path.dirname(self.project_manager.project_file))
-        else:
-            prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
-
-        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
-
-                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              constants.DECODING_INVERT]),
-
-                    Encoding(["Manchester I",
-                              constants.DECODING_EDGE]),
-
-                    Encoding(["Manchester II",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_INVERT]),
-
-                    Encoding(["Differential Manchester",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_DIFFERENTIAL])
-                    ]
-
-        try:
-            f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
-        except FileNotFoundError:
-            self.decodings[:] = fallback
-            return
-
-        if not f:
-            self.decodings[:] = fallback
-            return
-
-        self.decodings[:] = []  # :type: list[Encoding]
-
-        for line in f:
-            tmp_conf = []
-            for j in line.split(","):
-                tmp = j.strip()
-                tmp = tmp.replace("'", "")
-                if not "\n" in tmp and tmp != "":
-                    tmp_conf.append(tmp)
-            self.decodings.append(Encoding(tmp_conf))
-        f.close()
-
-        if len(self.decodings) == 0:
-            self.decodings[:] = fallback
+    @property
+    def decodings(self):
+        return self.project_manager.decodings
 
     def refresh_existing_encodings(self):
         """
@@ -459,10 +418,8 @@ class CompareFrameController(QWidget):
 
         :rtype: list of ProtocolAnalyzer
         """
-        pa = ProtocolAnalyzer(signal=None)
+        pa = ProtocolAnalyzer(signal=None, filename=filename)
         pa.message_types = []
-        pa.name = "Loaded Protocol"
-        pa.filename = filename
 
         pa.from_xml_file(filename=filename, read_bits=True)
         for messsage_type in pa.message_types:
@@ -480,6 +437,7 @@ class CompareFrameController(QWidget):
     def add_sniffed_protocol_messages(self, messages: list):
         if len(messages) > 0:
             proto_analyzer = ProtocolAnalyzer(None)
+            proto_analyzer.name = datetime.fromtimestamp(messages[0].timestamp).strftime("%Y-%m-%d %H:%M:%S")
             proto_analyzer.messages = messages
             self.add_protocol(proto_analyzer, group_id=self.proto_tree_model.ngroups - 1)
             self.refresh()
@@ -551,13 +509,18 @@ class CompareFrameController(QWidget):
                         continue
 
                     message.align_labels = align_labels
-
                     try:
-                        if i > 0:
-                            rel_time = proto.messages[i - 1].get_duration(proto.signal.sample_rate)
-                            abs_time += rel_time
-                    except (IndexError, AttributeError):
-                        pass  # No signal, loaded from protocol file
+                        if hasattr(proto.signal, "sample_rate"):
+                            if i > 0:
+                                rel_time = proto.messages[i - 1].get_duration(proto.signal.sample_rate)
+                                abs_time += rel_time
+                        else:
+                            # No signal, loaded from protocol file
+                            abs_time = datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%d %H:%M:%S.%f")
+                            if i > 0:
+                                rel_time = message.timestamp - proto.messages[i-1].timestamp
+                    except IndexError:
+                        pass
 
                     message.absolute_time = abs_time
                     message.relative_time = rel_time
@@ -669,8 +632,8 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        protocol_label_dialog = ProtocolLabelController(preselected_index=preselected_index,
-                                                        message=longest_message, viewtype=view_type, parent=self)
+        protocol_label_dialog = ProtocolLabelDialog(preselected_index=preselected_index,
+                                                    message=longest_message, viewtype=view_type, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
@@ -965,12 +928,7 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.resize_vertical_header()
         self.participant_changed.emit()
 
-    def reload_field_types(self):
-        self.field_types = FieldType.load_from_xml()
-        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
-
     def refresh_field_types_for_labels(self):
-        self.reload_field_types()
         for mt in self.proto_analyzer.message_types:
             for lbl in (lbl for lbl in mt if lbl.field_type is not None):  # type: ProtocolLabel
                 mt.change_field_type_of_label(lbl, self.field_types_by_caption.get(lbl.field_type.caption, None))
@@ -1078,7 +1036,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_btn_message_type_settings_clicked(self):
-        dialog = MessageTypeDialogController(self.active_message_type, parent=self)
+        dialog = MessageTypeDialog(self.active_message_type, parent=self)
         dialog.show()
         dialog.finished.connect(self.on_message_type_dialog_finished)
 
@@ -1198,9 +1156,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_project_updated(self):
-        self.participant_list_model.participants = self.project_manager.participants
         self.participant_list_model.update()
-        self.protocol_model.participants = self.project_manager.participants
         self.protocol_model.refresh_vertical_header()
         self.active_message_type = self.proto_analyzer.default_message_type
 
@@ -1401,7 +1357,12 @@ class CompareFrameController(QWidget):
             self.active_group_ids.sort()
 
         self.ui.lblRSSI.setText(locale.format_string("%.2f", message.rssi))
-        abs_time = Formatter.science_time(message.absolute_time)
+        if isinstance(message.absolute_time, str):
+            # For protocol files the abs time is the timestamp as string
+            abs_time = message.absolute_time
+        else:
+            abs_time = Formatter.science_time(message.absolute_time)
+
         rel_time = Formatter.science_time(message.relative_time)
         self.ui.lTime.setText("{0} (+{1})".format(abs_time, rel_time))
 

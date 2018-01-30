@@ -22,6 +22,10 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     sending_stop_requested = pyqtSignal()
     current_send_message_changed = pyqtSignal(int)
 
+    send_connection_established = pyqtSignal()
+    receive_server_started = pyqtSignal()
+    error_occurred = pyqtSignal(str)
+
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             received = self.request.recv(65536 * 8)
@@ -67,7 +71,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
 
         self.receive_check_timer = QTimer()
-        self.receive_check_timer.setInterval(250)
+        self.receive_check_timer.setInterval(10)
         # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
         self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
 
@@ -174,6 +178,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_thread.daemon = True
         self.server_thread.start()
 
+        self.receive_server_started.emit()
+
     def stop_tcp_server(self):
         self.receive_check_timer.stop()
         if hasattr(self, "server"):
@@ -195,6 +201,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
         sock = self.prepare_send_connection()
+        if sock is None:
+            return
 
         try:
             for _ in rng:
@@ -207,11 +215,18 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.shutdown_socket(sock)
 
     def prepare_send_connection(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.connect((self.client_ip, self.client_port))
-        return sock
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.connect((self.client_ip, self.client_port))
+            self.send_connection_established.emit()
+            return sock
+        except Exception as e:
+            msg = "Could not establish connection " + str(e)
+            self.error_occured.emit(msg)
+            logger.error(msg)
+            return None
 
     def shutdown_socket(self, sock):
         try:
@@ -224,6 +239,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
         samples_per_iteration = 65536 // 2
         sock = self.prepare_send_connection()
+        if sock is None:
+            return
 
         try:
             for _ in rng:
@@ -268,6 +285,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         """
         self.is_sending = True
         sock = self.prepare_send_connection()
+        if sock is None:
+            return
         try:
             for i, msg in enumerate(messages):
                 if self.__sending_interrupt_requested:

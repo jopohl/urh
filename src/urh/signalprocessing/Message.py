@@ -7,6 +7,7 @@ import time
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -104,47 +105,41 @@ class Message(object):
     def __add__(self, other):
         return self.__plain_bits + other.__plain_bits
 
+    def _remove_labels_for_range(self, index, instant_remove=True):
+        if isinstance(index, int):
+            index = slice(index, index + 1, 1)
+
+        assert isinstance(index, slice)
+
+        start = index.start if index.start is not None else 0
+        stop = index.stop
+        step = index.step if index.step is not None else 1
+
+        removed_labels = []
+
+        for lbl in self.message_type:  # type: ProtocolLabel
+            if (start <= lbl.start and stop >= lbl.end) \
+                    or start <= lbl.start <= stop \
+                    or (start >= lbl.start and stop <= lbl.end) \
+                    or lbl.start <= start < lbl.end:
+                if instant_remove:
+                    self.message_type.remove(lbl)
+                removed_labels.append(lbl)
+
+            elif stop - 1 < lbl.start:
+                number_elements = len(range(start, stop, step))
+                l_cpy = lbl.get_copy()
+                l_cpy.start -= number_elements
+                l_cpy.end -= number_elements
+
+                if instant_remove:
+                    self.message_type.remove(lbl)
+                    self.message_type.append(l_cpy)
+
+        return removed_labels
+
     def __delitem__(self, index):
-        if isinstance(index, slice):
-            step = index.step
-            if step is None:
-                step = 1
-            number_elements = len(range(index.start, index.stop, step))
-
-            for l in self.message_type[:]:
-                if index.start <= l.start and index.stop >= l.end:
-                    self.message_type.remove(l)
-
-                elif index.stop - 1 < l.start:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start -= number_elements
-                    l_cpy.end -= number_elements
-                    self.message_type.remove(l)
-                    self.message_type.append(l_cpy)
-
-                elif index.start <= l.start <= index.stop:
-                    self.message_type.remove(l)
-
-                elif index.start >= l.start and index.stop <= l.end:
-                    self.message_type.remove(l)
-
-                elif l.start <= index.start < l.end:
-                    self.message_type.remove(l)
-        else:
-            for l in self.message_type:
-                if index < l.start:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start -= 1
-                    l_cpy.end -= 1
-                    self.message_type.remove(l)
-                    self.message_type.append(l_cpy)
-                elif l.start < index < l.end:
-                    l_cpy = copy.deepcopy(l)
-                    l_cpy.start = index - 1
-                    self.message_type.remove(l)
-                    if l_cpy.end - l_cpy.start > 0:
-                        self.message_type.append(l_cpy)
-
+        self._remove_labels_for_range(index)
         del self.plain_bits[index]
 
     def __str__(self):
@@ -446,11 +441,16 @@ class Message(object):
         plain_bits = list(map(int, bits))
         return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
 
-    def to_xml(self, decoders=None, include_message_type=False) -> ET.Element:
+    def to_xml(self, decoders=None, include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element("message")
         root.set("message_type_id", self.message_type.id)
         root.set("modulator_index", str(self.modulator_index))
         root.set("pause", str(self.pause))
+        root.set("timestamp", str(self.timestamp))
+
+        if write_bits:
+            root.set("bits", self.plain_bits_str)
+
         if decoders:
             try:
                 decoding_index = decoders.index(self.decoder)
@@ -465,22 +465,23 @@ class Message(object):
         return root
 
     def from_xml(self, tag: ET.Element, participants, decoders=None, message_types=None):
+        timestamp = tag.get("timestamp", None)
+        if timestamp:
+            self.timestamp = float(timestamp)
+
         part_id = tag.get("participant_id", None)
         message_type_id = tag.get("message_type_id", None)
         self.modulator_index = int(tag.get("modulator_index", self.modulator_index))
         self.pause = int(tag.get("pause", self.pause))
         decoding_index = tag.get("decoding_index", None)
-        if decoding_index:
+        if decoding_index and decoders is not None:
             try:
                 self.decoder = decoders[int(decoding_index)]
             except IndexError:
                 pass
 
         if part_id:
-            for participant in participants:
-                if participant.id_match(part_id):
-                    self.participant = participant
-                    break
+            self.participant = Participant.find_matching(part_id, participants)
             if self.participant is None:
                 logger.warning("No participant matched the id {0} from xml".format(part_id))
 
@@ -493,6 +494,13 @@ class Message(object):
         message_type_tag = tag.find("message_type")
         if message_type_tag:
             self.message_type = MessageType.from_xml(message_type_tag)
+
+    @classmethod
+    def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
+        assert "bits" in tag.attrib
+        result = cls.from_plain_bits_str(bits=tag.get("bits"))
+        result.from_xml(tag, participants, decoders=decoders, message_types=message_types)
+        return result
 
     def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
         start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormDeviceSettings</class>
+ <widget class="QWidget" name="FormDeviceSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>860</width>
+    <height>668</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBoxDeviceSettings">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox
+{
+border: none;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+}
+QGroupBox::indicator:unchecked {
+ image: url(:/icons/icons/collapse.svg)
+}
+QGroupBox::indicator:checked {
+ image: url(:/icons/icons/uncollapse.svg)
+}</string>
+     </property>
+     <property name="title">
+      <string>Device settings</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <property name="topMargin">
+       <number>15</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QFrame" name="frame_2">
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Device:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="cbDevice">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>USRP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HackRF</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelDeviceArgs">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>-1</number>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Device arguments:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEditDeviceArgs">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelChannel">
+           <property name="text">
+            <string>Channel:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="comboBoxChannel"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelAntenna">
+           <property name="text">
+            <string>Antenna:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="comboBoxAntenna"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelIP">
+           <property name="text">
+            <string>IP address:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="lineEditIP">
+           <property name="text">
+            <string>127.0.0.1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="labelPort">
+           <property name="text">
+            <string>Port number:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="spinBoxPort">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>1234</number>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="labelFreq">
+           <property name="text">
+            <string>Frequency (Hz):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>0.001000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="labelSampleRate">
+           <property name="text">
+            <string>Sample rate (Sps):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>0.001000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2" rowspan="2">
+          <widget class="QToolButton" name="btnLockBWSR">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="urh.qrc">
+             <normaloff>:/icons/icons/lock.svg</normaloff>:/icons/icons/lock.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="labelBandwidth">
+           <property name="text">
+            <string>Bandwidth (Hz):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>0.001000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="labelGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Gain:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <layout class="QGridLayout" name="gridLayout_5">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QSlider" name="sliderGain">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="singleStep">
+              <number>1</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spinBoxGain">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>99</number>
+             </property>
+             <property name="value">
+              <number>40</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="labelIFGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>IF Gain:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="0" column="0">
+            <widget class="QSlider" name="sliderIFGain">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spinBoxIFGain">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="labelBasebandGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Baseband gain:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="0" column="0">
+            <widget class="QSlider" name="sliderBasebandGain">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="sliderPosition">
+              <number>0</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="invertedAppearance">
+              <bool>false</bool>
+             </property>
+             <property name="invertedControls">
+              <bool>false</bool>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+             </property>
+             <property name="tickInterval">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spinBoxBasebandGain">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="labelFreqCorrection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Frequency correction:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QSpinBox" name="spinBoxFreqCorrection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="minimum">
+            <number>-1000</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="labelDirectSampling">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Direct sampling:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QComboBox" name="comboBoxDirectSampling">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="labelNRepeat">
+           <property name="text">
+            <string>Repeat:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QSpinBox" name="spinBoxNRepeat">
+           <property name="specialValueText">
+            <string>Infinite</string>
+           </property>
+           <property name="maximum">
+            <number>999999999</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KillerDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>urh.ui.KillerDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>groupBoxDeviceSettings</tabstop>
+  <tabstop>cbDevice</tabstop>
+  <tabstop>lineEditDeviceArgs</tabstop>
+  <tabstop>comboBoxChannel</tabstop>
+  <tabstop>comboBoxAntenna</tabstop>
+  <tabstop>lineEditIP</tabstop>
+  <tabstop>spinBoxPort</tabstop>
+  <tabstop>spinBoxFreq</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>spinBoxBandwidth</tabstop>
+  <tabstop>btnLockBWSR</tabstop>
+  <tabstop>sliderGain</tabstop>
+  <tabstop>spinBoxGain</tabstop>
+  <tabstop>sliderIFGain</tabstop>
+  <tabstop>spinBoxIFGain</tabstop>
+  <tabstop>sliderBasebandGain</tabstop>
+  <tabstop>spinBoxBasebandGain</tabstop>
+  <tabstop>spinBoxFreqCorrection</tabstop>
+  <tabstop>comboBoxDirectSampling</tabstop>
+  <tabstop>spinBoxNRepeat</tabstop>
+ </tabstops>
+ <resources>
+  <include location="urh.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>groupBoxDeviceSettings</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

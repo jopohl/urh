@@ -5,7 +5,7 @@ from PyQt5.QtCore import QPoint
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
-from urh.controller.DecoderWidgetController import DecoderWidgetController
+from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.signalprocessing.Encoding import Encoding
 
 class TestDecodingGUI(QtTestCase):
@@ -21,9 +21,9 @@ class TestDecodingGUI(QtTestCase):
 
         signal = self.form.signal_tab_controller.signal_frames[0].signal
         empty_signal = self.form.signal_tab_controller.signal_frames[1].signal
-        self.dialog = DecoderWidgetController(decodings=self.form.compare_frame_controller.decodings,
-                                              signals=[signal, empty_signal], parent=self.form,
-                                              project_manager=self.form.project_manager)
+        self.dialog = DecoderDialog(decodings=self.form.compare_frame_controller.decodings,
+                                    signals=[signal, empty_signal], parent=self.form,
+                                    project_manager=self.form.project_manager)
 
         if self.SHOW:
             self.dialog.show()

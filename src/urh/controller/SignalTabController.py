@@ -1,15 +1,15 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtWidgets import QSplitter, QWidget, QVBoxLayout, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
+from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
 
-from urh.controller.SignalFrameController import SignalFrameController
+from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
 
 
 class SignalTabController(QWidget):
-    frame_closed = pyqtSignal(SignalFrameController)
+    frame_closed = pyqtSignal(SignalFrame)
     not_show_again_changed = pyqtSignal()
     signal_created = pyqtSignal(int, Signal)
     files_dropped = pyqtSignal(list)
@@ -23,11 +23,11 @@ class SignalTabController(QWidget):
     def signal_frames(self):
         """
 
-        :rtype: list of SignalFrameController
+        :rtype: list of SignalFrame
         """
         splitter = self.ui.splitter
         return [splitter.widget(i) for i in range(splitter.count())
-                if isinstance(splitter.widget(i), SignalFrameController)]
+                if isinstance(splitter.widget(i), SignalFrame)]
 
     @property
     def signal_undo_stack(self):
@@ -50,12 +50,12 @@ class SignalTabController(QWidget):
     def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
-    def close_frame(self, frame:SignalFrameController):
+    def close_frame(self, frame:SignalFrame):
         self.frame_closed.emit(frame)
 
     def add_signal_frame(self, proto_analyzer, index=-1):
         self.__set_getting_started_status(False)
-        sig_frame = SignalFrameController(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
+        sig_frame = SignalFrame(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
         sframes = self.signal_frames
 
         if len(proto_analyzer.signal.filename) == 0:
@@ -85,9 +85,9 @@ class SignalTabController(QWidget):
 
     def add_empty_frame(self, filename: str, proto):
         self.__set_getting_started_status(False)
-        sig_frame = SignalFrameController(proto_analyzer=proto, undo_stack=self.undo_stack,
-                                          project_manager=self.project_manager, proto_bits=proto.decoded_proto_bits_str,
-                                          parent=self)
+        sig_frame = SignalFrame(proto_analyzer=proto, undo_stack=self.undo_stack,
+                                project_manager=self.project_manager, proto_bits=proto.decoded_proto_bits_str,
+                                parent=self)
 
         sig_frame.ui.lineEditSignalName.setText(filename)
         sig_frame.setMinimumHeight(sig_frame.height())
@@ -110,7 +110,7 @@ class SignalTabController(QWidget):
             w.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             self.ui.splitter.addWidget(w)
 
-    def __create_connects_for_signal_frame(self, signal_frame: SignalFrameController):
+    def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):
         signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
         signal_frame.drag_started.connect(self.frame_dragged)
         signal_frame.frame_dropped.connect(self.frame_dropped)

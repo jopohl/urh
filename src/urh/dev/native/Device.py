@@ -98,7 +98,7 @@ class Device(QObject):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection) -> int:
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -124,6 +124,7 @@ class Device(QObject):
     @classmethod
     def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
+            ctrl_connection.send("failed to start rx mode")
             return False
 
         try:
@@ -134,11 +135,16 @@ class Device(QObject):
             pass
 
         if cls.ASYNCHRONOUS:
-            cls.enter_async_receive_mode(data_connection, ctrl_connection)
+            ret = cls.enter_async_receive_mode(data_connection, ctrl_connection)
         else:
-            cls.prepare_sync_receive(ctrl_connection)
+            ret = cls.prepare_sync_receive(ctrl_connection)
+
+        if ret != 0:
+            ctrl_connection.send("failed to start rx mode")
+            return False
 
         exit_requested = False
+        ctrl_connection.send("successfully started rx mode")
 
         while not exit_requested:
             if cls.ASYNCHRONOUS:
@@ -158,17 +164,24 @@ class Device(QObject):
     @classmethod
     def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
         if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
+            ctrl_connection.send("failed to start tx mode")
             return False
 
         if cls.ASYNCHRONOUS:
-            cls.enter_async_send_mode(send_config.get_data_to_send)
+            ret = cls.enter_async_send_mode(send_config.get_data_to_send)
         else:
-            cls.prepare_sync_send(ctrl_connection)
+            ret = cls.prepare_sync_send(ctrl_connection)
+
+        if ret != 0:
+            ctrl_connection.send("failed to start tx mode")
+            return False
 
         exit_requested = False
         buffer_size = cls.CONTINUOUS_SEND_BUFFER_SIZE if send_config.continuous else cls.SEND_BUFFER_SIZE
         if not cls.ASYNCHRONOUS and buffer_size == 0:
             logger.warning("Send buffer size is zero!")
+
+        ctrl_connection.send("successfully started tx mode")
 
         while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:

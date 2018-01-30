@@ -381,13 +381,6 @@ class SimulatorScene(QGraphicsScene):
         self.add_protocols(ref_item, position, protocols_to_add)
         super().dropEvent(event)
 
-    def mousePressEvent(self, event):
-        if event.button() != Qt.LeftButton:
-            event.accept()
-            return
-
-        super().mousePressEvent(event)
-
     def add_rule(self, ref_item, position):
         rule = SimulatorRule()
         pos, parent = self.insert_at(ref_item, position, True)

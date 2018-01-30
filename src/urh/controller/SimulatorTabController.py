@@ -5,12 +5,13 @@ import numpy
 from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
-    QHBoxLayout, QToolButton
+    QHBoxLayout, QToolButton, QDialog
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
@@ -182,6 +183,8 @@ class SimulatorTabController(QWidget):
         self.ui.spinBoxTimeout.valueChanged.connect(self.on_spinbox_timeout_value_changed)
         self.ui.comboBoxError.currentIndexChanged.connect(self.on_combobox_error_handling_index_changed)
         self.ui.spinBoxRetries.valueChanged.connect(self.on_spinbox_retries_value_changed)
+
+        self.ui.tblViewFieldValues.item_link_clicked.connect(self.on_table_item_link_clicked)
 
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
@@ -515,3 +518,18 @@ class SimulatorTabController(QWidget):
     def on_message_source_or_destination_updated(self):
         self.simulator_config.update_active_participants()
         self.ui.listViewSimulate.model().update()
+
+    @pyqtSlot(int, int)
+    def on_table_item_link_clicked(self, row: int, column: int):
+        try:
+            lbl = self.simulator_message_field_model.message_type[row]  # type: SimulatorProtocolLabel
+            assert lbl.is_checksum_label
+            assert isinstance(self.active_item, SimulatorMessage)
+        except (IndexError, AssertionError):
+            return
+
+        d = QDialog(parent=self)
+        layout = QHBoxLayout()
+        layout.addWidget(ChecksumWidget(lbl.label, self.active_item, self.ui.cbViewType.currentIndex()))
+        d.setLayout(layout)
+        d.show()

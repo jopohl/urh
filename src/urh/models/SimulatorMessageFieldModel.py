@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import qApp
 
 from urh import constants
 from urh.signalprocessing.MessageType import MessageType
@@ -89,6 +90,10 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 font = QFont()
                 font.setItalic(lbl.field_type is None)
                 return font
+            elif j == 2 and self.link_index(index):
+                font = QFont()
+                font.setUnderline(True)
+                return font
         elif role == Qt.BackgroundColorRole:
             if j == 0:
                 return constants.LABEL_COLORS[lbl.color_index]
@@ -96,6 +101,18 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
                     return constants.ERROR_BG_COLOR
+        elif role == Qt.TextColorRole:
+            if self.link_index(index):
+                return qApp.palette().link().color()
+
+    def link_index(self, index: QModelIndex):
+        try:
+            lbl = self.message_type[index.row()]  # type: SimulatorProtocolLabel
+            if index.column() == 2 and lbl.is_checksum_label:
+                return True
+        except:
+            return False
+        return False
 
     def setData(self, index: QModelIndex, value, role=None):
         if role == Qt.EditRole:

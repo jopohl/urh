@@ -1,9 +1,12 @@
+from PyQt5.QtGui import QPainter
+
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
 
 from PyQt5.QtWidgets import QGraphicsTextItem
+
 
 class LabelItem(GraphicsItem):
     font_bold_italic = None
@@ -13,7 +16,7 @@ class LabelItem(GraphicsItem):
         super().__init__(model_item=model_item, parent=parent)
 
         self.name = QGraphicsTextItem(self)
-        self.name.setFont(GraphicsItem.font)
+        self.name.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 1:
@@ -22,7 +25,7 @@ class LabelItem(GraphicsItem):
     def update_numbering(self):
         pass
 
-    def paint(self, painter, option, widget):
+    def paint(self, painter: QPainter, option, widget):
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())
 

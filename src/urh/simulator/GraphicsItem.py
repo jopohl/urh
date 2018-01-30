@@ -7,11 +7,10 @@ from urh import constants
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorRule import SimulatorRule
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.util import util
+
 
 class GraphicsItem(QGraphicsObject):
-    font = None
-    font_bold = None
-
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(parent)
         self.model_item = model_item
@@ -23,14 +22,12 @@ class GraphicsItem(QGraphicsObject):
         self.drop_indicator_position = None
         self.item_under_mouse = None
 
-        GraphicsItem.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        GraphicsItem.font.setPointSize(8)
-
-        GraphicsItem.font_bold = QFont(GraphicsItem.font)
-        GraphicsItem.font_bold.setWeight(QFont.DemiBold)
+        self.font = util.get_monospace_font()
+        self.font_bold = QFont(self.font)
+        self.font_bold.setWeight(QFont.DemiBold)
 
         self.number = QGraphicsTextItem(self)
-        self.number.setFont(GraphicsItem.font_bold)
+        self.number.setFont(self.font_bold)
 
         self.setFlag(QGraphicsItem.ItemIgnoresParentOpacity, True)
 

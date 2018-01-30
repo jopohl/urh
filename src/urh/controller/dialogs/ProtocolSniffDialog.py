@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QCloseEvent
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
@@ -12,7 +12,7 @@ from urh.util import util
 class ProtocolSniffDialog(SendRecvDialog):
     protocol_accepted = pyqtSignal(list)
 
-    def __init__(self, project_manager, signal=None, encoding_index=0, parent=None, testing_mode=False):
+    def __init__(self, project_manager, signal=None, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
@@ -25,7 +25,6 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.sniff_settings_widget = SniffSettingsWidget(project_manager=project_manager,
                                                          device_name=self.selected_device_name,
                                                          signal=signal,
-                                                         encoding_index=encoding_index,
                                                          backend_handler=self.backend_handler)
         self.ui.scrollAreaWidgetContents_2.layout().insertWidget(1, self.sniff_settings_widget)
 
@@ -54,9 +53,14 @@ class ProtocolSniffDialog(SendRecvDialog):
     def show_timestamp(self) -> bool:
         return self.sniff_settings_widget.ui.checkBox_sniff_Timestamp.isChecked()
 
+    def closeEvent(self, event: QCloseEvent):
+        self.sniff_settings_widget.emit_sniff_parameters_changed()
+        super().closeEvent(event)
+
     def create_connects(self):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
+        self.sniff_settings_widget.sniff_parameters_changed.connect(self.device_parameters_changed.emit)
 
         self.sniff_settings_widget.sniff_setting_edited.connect(self.on_sniff_setting_edited)
         self.sniff_settings_widget.sniff_file_edited.connect(self.on_sniff_file_edited)

@@ -15,18 +15,19 @@ class SniffSettingsWidget(QWidget):
     sniff_file_edited = pyqtSignal()
     sniff_parameters_changed = pyqtSignal(dict)
 
-    def __init__(self, device_name: str, project_manager: ProjectManager,
-                 signal=None, encoding_index=0, backend_handler=None,
+    def __init__(self, device_name: str, project_manager: ProjectManager, signal=None, backend_handler=None,
                  network_raw_mode=False, real_time=False, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
 
-        bit_length = signal.bit_len if signal else 100
-        modulation_type_index = signal.modulation_type if signal else 1
-        tolerance = signal.tolerance if signal else 5
-        noise = signal.noise_threshold if signal else 0.001
-        center = signal.qad_center if signal else 0.02
+        conf = project_manager.device_conf
+        bit_length = conf.get("bit_len", signal.bit_len if signal else 100)
+        modulation_type_index = conf.get("modulation_index", signal.modulation_type if signal else 1)
+        tolerance = conf.get("tolerance", signal.tolerance if signal else 5)
+        noise = conf.get("noise", signal.noise_threshold if signal else 0.001)
+        center = conf.get("center", signal.qad_center if signal else 0.02)
+        decoding_name = conf.get("decoding_name", "")
 
         self.sniffer = ProtocolSniffer(bit_len=bit_length,
                                        center=center,
@@ -51,8 +52,8 @@ class SniffSettingsWidget(QWidget):
 
         self.create_connects()
 
-        if encoding_index > -1:
-            self.ui.comboBox_sniff_encoding.setCurrentIndex(encoding_index)
+        if decoding_name:
+            self.ui.comboBox_sniff_encoding.setCurrentText(decoding_name)
 
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 

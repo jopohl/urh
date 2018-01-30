@@ -5,12 +5,14 @@ import shutil
 import xml.etree.ElementTree as ET
 from subprocess import call
 
-
 OXYGEN_PATH = "/usr/share/icons/oxygen/base"
+
 
 def get_python_files():
     python_files = []
-    for path, subdirs, files in os.walk(os.path.join(os.curdir, "..", "..", "src")):
+    code_dir = os.path.join(os.curdir, "..", "src")
+    assert os.path.isdir(code_dir)
+    for path, subdirs, files in os.walk(code_dir):
         for name in files:
             if name.endswith(".py"):
                 python_files.append(os.path.join(path, name))
@@ -30,9 +32,10 @@ def get_used_icon_names():
                     icons.add(icon[start:end])
     return icons
 
+
 def copy_icons(icon_names: set):
     target_dir = "/tmp/oxy"
-    sizes = [s for s in os.listdir(OXYGEN_PATH) if os.path.isdir(os.path.join(OXYGEN_PATH, s))] # 8x8, 22x22 ...
+    sizes = [s for s in os.listdir(OXYGEN_PATH) if os.path.isdir(os.path.join(OXYGEN_PATH, s))]  # 8x8, 22x22 ...
     for size in sizes:
         target_size_dir = os.path.join(target_dir, size)
         os.makedirs(target_size_dir, exist_ok=True)
@@ -45,19 +48,18 @@ def copy_icons(icon_names: set):
                         shutil.copyfile(src, os.path.join(target_size_dir, f))
                         break
 
-
     # Create theme file
     with open(os.path.join(target_dir, "index.theme"), "w") as f:
         f.write("[Icon Theme]\n")
         f.write("Name=oxy\n")
         f.write("Comment=Subset of oxygen icons\n")
         f.write("Inherits=default\n")
-        f.write("Directories="+",".join(sizes)+"\n")
+        f.write("Directories=" + ",".join(sizes) + "\n")
 
         for size in sizes:
             f.write("\n")
-            f.write("["+size+"]\n")
-            f.write("Size="+size[:size.index("x")]+"\n")
+            f.write("[" + size + "]\n")
+            f.write("Size=" + size[:size.index("x")] + "\n")
             f.write("\n")
 
     root = ET.Element("RCC")
@@ -80,7 +82,8 @@ def copy_icons(icon_names: set):
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.copy("/tmp/xtra_icons_rc.py", tar_path)
 
+
 if __name__ == "__main__":
     icons = get_used_icon_names()
-    #print(icons)
+    print(icons)
     copy_icons(icons)

@@ -87,7 +87,12 @@ class SimulatorProtocolLabel(SimulatorItem):
         return self.label.fuzz_maximum
 
     @field_type.setter
-    def field_type(self, val):
+    def field_type(self, val: FieldType):
+        if self.is_checksum_label and val.function != FieldType.Function.CHECKSUM:
+            assert isinstance(self.label, ChecksumLabel)
+            self.label = self.label.to_label(val)
+        elif not self.is_checksum_label and val.function == FieldType.Function.CHECKSUM:
+            self.label = ChecksumLabel.from_label(self.label)
         self.label.field_type = val
 
     @property

@@ -145,8 +145,6 @@ class MainController(QMainWindow):
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
 
-        self.ui.tabWidget.removeTab(3)
-
     def __set_non_project_warning_visibility(self):
         show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
         self.ui.labelNonProjectMode.setVisible(show)

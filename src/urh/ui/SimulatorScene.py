@@ -235,6 +235,9 @@ class SimulatorScene(QGraphicsScene):
     def get_all_messages(self):
         return [item for item in self.items() if isinstance(item, MessageItem)]
 
+    def get_selected_messages(self):
+        return [item for item in self.selectedItems() if isinstance(item, MessageItem)]
+
     def select_messages_with_participant(self, participant: ParticipantItem, from_part=True):
         messages = self.get_all_messages()
         self.clearSelection()

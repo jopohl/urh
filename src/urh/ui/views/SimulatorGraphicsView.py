@@ -103,21 +103,22 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_source_action_triggered(self):
-        self.context_menu_item.model_item.participant = self.sender().data()
-        self.message_updated.emit(self.context_menu_item.model_item)
+        for msg_item in self.scene().get_selected_messages():
+            msg_item.model_item.participant = self.sender().data()
+            self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_destination_action_triggered(self):
-        self.context_menu_item.model_item.destination = self.sender().data()
-        self.message_updated.emit(self.context_menu_item.model_item)
+        for msg_item in self.scene().get_selected_messages():
+            msg_item.model_item.destination = self.sender().data()
+            self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_swap_part_action_triggered(self):
-        model_item = self.context_menu_item.model_item
-        tmp = model_item.participant
-        model_item.participant = model_item.destination
-        model_item.destination = tmp
-        self.message_updated.emit(model_item)
+        for msg_item in self.scene().get_selected_messages():
+            model_item = msg_item.model_item
+            model_item.participant, model_item.destination = model_item.destination, model_item.participant
+            self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_new_message_type_action_triggered(self):
@@ -260,11 +261,6 @@ class SimulatorGraphicsView(QGraphicsView):
     def contextMenuEvent(self, event):
         items = [item for item in self.items(event.pos()) if isinstance(item, GraphicsItem) and item.is_selectable()]
         self.context_menu_item = None if len(items) == 0 else items[0]
-
-        if self.context_menu_item:
-            self.scene().clearSelection()
-            self.context_menu_item.setSelected(True)
-
         menu = self.create_context_menu()
         action = menu.exec_(event.globalPos())
 

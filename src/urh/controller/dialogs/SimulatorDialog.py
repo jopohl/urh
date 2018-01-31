@@ -88,7 +88,6 @@ class SimulatorDialog(QDialog):
         self.create_connects()
 
         self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
-        self.sniff_settings_widget.bootstrap(project_manager.simulator_rx_conf)
         self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
 
     def create_connects(self):
@@ -269,7 +268,7 @@ class SimulatorDialog(QDialog):
     def on_btn_test_sniff_settings_clicked(self):
         def on_dialog_finished():
             self.device_settings_rx_widget.bootstrap(self.project_manager.simulator_rx_conf)
-            self.sniff_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
+            self.sniff_settings_widget.bootstrap(self.project_manager.device_conf)
 
         self.device_settings_rx_widget.emit_device_parameters_changed()
         self.sniff_settings_widget.emit_sniff_parameters_changed()
@@ -277,7 +276,6 @@ class SimulatorDialog(QDialog):
         psd = ProtocolSniffDialog(self.project_manager, parent=self)
         psd.device_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
         psd.device_settings_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
-        psd.sniff_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
         psd.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
         psd.finished.connect(on_dialog_finished)
         psd.ui.btnAccept.hide()

@@ -110,7 +110,8 @@ class ProjectManager(QObject):
 
     def on_simulator_sniff_parameters_changed(self, kwargs: dict):
         for key, value in kwargs.items():
-            self.simulator_rx_conf[key] = value
+            # Save sniff values in common device conf
+            self.device_conf[key] = value
 
     def load_decodings(self):
         if self.project_file:

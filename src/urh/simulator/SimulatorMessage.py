@@ -54,8 +54,9 @@ class SimulatorMessage(Message, SimulatorItem):
         del self.plain_bits[index]
 
     def to_xml(self, decoders=None, include_message_type=False, write_bits=True) -> ET.Element:
-        result = ET.Element("simulator_message", attrib={"destination_id": self.destination.id,
-                                                         "repeat": str(self.repeat)})
+        result = ET.Element("simulator_message",
+                            attrib={"destination_id": self.destination.id if self.destination else "",
+                                    "repeat": str(self.repeat)})
 
         result.append(super().to_xml(decoders, include_message_type, write_bits=write_bits))
 

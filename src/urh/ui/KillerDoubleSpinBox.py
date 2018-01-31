@@ -13,7 +13,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         super().__init__(parent)
 
         self.auto_update_step_size = True
-        self.allowed_values = None  # set a list to restrict allowed values
 
         self.lineEdit().setValidator(None)
 
@@ -22,9 +21,6 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         self.editingFinished.connect(self.adjust_step)
 
     def setValue(self, value: float):
-        if isinstance(self.allowed_values, list) and value not in self.allowed_values:
-            return
-
         super().setValue(value)
         self.adjust_step()
 

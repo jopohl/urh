@@ -67,6 +67,10 @@ class DeviceSettingsWidget(QWidget):
             if value is not None:
                 ui_widget.setValue(value)
 
+        self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
+        dev_name = self.ui.cbDevice.currentText()
+        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
+
         set_val(self.ui.spinBoxFreq, "frequency", config.DEFAULT_FREQUENCY)
         set_val(self.ui.spinBoxSampleRate, "sample_rate", config.DEFAULT_SAMPLE_RATE)
         set_val(self.ui.spinBoxBandwidth, "bandwidth", config.DEFAULT_BANDWIDTH)
@@ -75,10 +79,6 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxBasebandGain, "baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
-        self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
-
-        dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
 
         if "gain" not in conf_dict:
             self.set_default_rf_gain()
@@ -188,7 +188,6 @@ class DeviceSettingsWidget(QWidget):
                 label.setVisible(True)
 
                 if isinstance(conf[key], list):
-                    spinbox.allowed_values = conf[key]
                     spinbox.setMinimum(min(conf[key]))
                     spinbox.setMaximum(max(conf[key]))
                     spinbox.setSingleStep(conf[key][1] - conf[key][0])
@@ -197,7 +196,6 @@ class DeviceSettingsWidget(QWidget):
                     spinbox.setMinimum(conf[key].start)
                     spinbox.setMaximum(conf[key].stop)
                     spinbox.auto_update_step_size = True
-                    spinbox.allowed_values = "all"
                     spinbox.adjust_step()
             else:
                 spinbox.setVisible(False)

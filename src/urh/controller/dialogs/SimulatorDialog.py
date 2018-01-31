@@ -25,7 +25,7 @@ class SimulatorDialog(QDialog):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, simulator_config, modulators,
-                 expression_parser, project_manager: ProjectManager, signals: list,
+                 expression_parser, project_manager: ProjectManager, signals: list=None,
                  parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogSimulator()

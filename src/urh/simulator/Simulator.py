@@ -51,6 +51,8 @@ class Simulator(QObject):
         self.measure_started = False
         self.time = None
 
+        self.verbose = True
+
         self.sniffer = sniffer
         self.sender = sender
 
@@ -300,15 +302,7 @@ class Simulator(QObject):
                 received_msg.decoder = new_message.decoder
                 received_msg.message_type = new_message.message_type
 
-                if (
-                        not self.measure_started) and received_msg.decoded_bits_str == "10101010100111010101000010010000000110001100010011011101011100000000100011111011":
-                    self.measure_started = True
-                    self.time = time.perf_counter()
-
-                if self.measure_started and received_msg.decoded_bits_str == "101010101001110100100000010000000000111001000000000100000000100110000000001000000000010101011011":
-                    self.measure_started = False
-
-                check_result = self.check_message(received_msg, new_message)
+                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry)
 
                 if check_result:
                     decoded_msg = Message(received_msg.decoded_bits, 0,
@@ -317,6 +311,8 @@ class Simulator(QObject):
                     self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
+                elif self.verbose:
+                    self.log_message(error_msg)
 
                 retry += 1
 
@@ -330,7 +326,7 @@ class Simulator(QObject):
         self.messages.append(timestamp + ": " + message)
         logger.debug(timestamp + ": " + message)
 
-    def check_message(self, received_msg, expected_msg):
+    def check_message(self, received_msg, expected_msg, retry: int) -> (bool, str):
         # do we have a crc label?
         crc_label = next((lbl.label for lbl in received_msg.message_type if isinstance(lbl.label, ChecksumLabel)), None)
 
@@ -340,7 +336,7 @@ class Simulator(QObject):
 
         #           if checksum != received_msg.decoded_bits[start:end]:
         # checksum wrong ...
-        #               return False
+        #               return False, "CRC mismatch"
 
         for lbl in received_msg.message_type:
             if isinstance(lbl.label, ChecksumLabel):
@@ -353,10 +349,18 @@ class Simulator(QObject):
             start_recv, end_recv = received_msg.get_label_range(lbl.label, 0, True)
             start_exp, end_exp = expected_msg.get_label_range(lbl.label, 0, False)
 
-            if received_msg.decoded_bits[start_recv:end_recv] != expected_msg[start_exp:end_exp]:
-                return False
+            actual = received_msg.decoded_bits[start_recv:end_recv]
+            expected = expected_msg[start_exp:end_exp]
+            if actual != expected:
+                error_msg = "\n  [Attempt {}/{}] Mismatch for label {}.\n" \
+                            "  Expected:\t{}\n  Got:\t{}".format(retry + 1,
+                                                                 self.project_manager.simulator_retries,
+                                                                 lbl.name,
+                                                                 "".join(map(str, expected)),
+                                                                 "".join(map(str, actual)))
+                return False, error_msg
 
-        return True
+        return True, ""
 
     def log_message_labels(self, message: Message):
         for lbl in message.message_type:

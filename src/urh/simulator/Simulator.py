@@ -19,6 +19,7 @@ from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.util import util
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
@@ -242,20 +243,14 @@ class Simulator(QObject):
         assert isinstance(self.current_item, SimulatorMessage)
         msg = self.current_item
 
-        if msg.participant is None:
+        if msg.source is None:
             return
 
         new_message = self.generate_message_from_template(msg)
 
-        if msg.participant.simulate:
-            # we have to send a message ...
+        if msg.source.simulate:
+            # we have to send a message
             sender = self.sender
-
-            for lbl in new_message.message_type:
-                if lbl.value_type_index == 4:
-                    # random value
-                    result = numpy.random.randint(lbl.random_min, lbl.random_max + 1)
-                    self.set_label_value(new_message, lbl, result)
 
             for lbl in new_message.message_type:
                 if isinstance(lbl.label, ChecksumLabel):
@@ -271,14 +266,13 @@ class Simulator(QObject):
             msg.send_recv_messages.append(new_message)
             self.last_sent_message = msg
         else:
-            # we have to receive a message ...
+            # we have to receive a message
             self.log_message("Waiting for message " + msg.index() + " ...")
             sniffer = self.sniffer
             retry = 0
 
-            while self.is_simulating \
-                    and not self.simulation_is_finished() \
-                    and retry < self.project_manager.simulator_retries:
+            max_retries = self.project_manager.simulator_retries
+            while self.is_simulating and not self.simulation_is_finished() and retry < max_retries:
                 received_msg = self.receive_message(sniffer)
 
                 if not self.is_simulating:
@@ -286,10 +280,7 @@ class Simulator(QObject):
 
                 if received_msg is None:
                     if self.project_manager.simulator_error_handling_index == 0:
-                        # resend last message
                         self.resend_last_message()
-
-                        # and try again ...
                         retry += 1
                         continue
                     elif self.project_manager.simulator_error_handling_index == 1:
@@ -363,23 +354,24 @@ class Simulator(QObject):
         return True, ""
 
     def log_message_labels(self, message: Message):
+        message.split(decode=False)
         for lbl in message.message_type:
-            if lbl.logging_active:
-                start, end = message.get_label_range(lbl, lbl.display_format_index % 3, False)
+            if not lbl.logging_active:
+                continue
 
-                if lbl.display_format_index == 0:
-                    value = message.plain_bits_str[start:end]
-                elif lbl.display_format_index == 1:
-                    value = message.plain_hex_str[start:end]
-                elif lbl.display_format_index == 2:
-                    value = message.plain_ascii_str[start:end]
-                elif lbl.display_format_index == 3:
-                    try:
-                        value = str(int(message.plain_bits_str[start:end], 2))
-                    except ValueError:
-                        value = ""
+            try:
+                data = message.plain_bits[lbl.start:lbl.end]
+            except IndexError:
+                return None
 
-                self.messages.append("\t" + lbl.name + ": " + value)
+            lsb = lbl.display_bit_order_index == 1
+            lsd = lbl.display_bit_order_index == 2
+
+            data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd)
+            if data is None:
+                continue
+
+            self.messages.append("\t" + lbl.name + ": " + data)
 
     def resend_last_message(self):
         self.log_message("Resending last message ...")
@@ -412,17 +404,6 @@ class Simulator(QObject):
             self.log_message("Receive timeout")
             return None
 
-    def set_label_value(self, message, label, value):
-        lbl_len = label.end - label.start
-        f_string = "{0:0" + str(lbl_len) + "b}"
-        bits = f_string.format(value)
-
-        if len(bits) > lbl_len:
-            logger.warning("Value {0} too big for label {1}, bits truncated".format(value, label.name))
-
-        for i in range(lbl_len):
-            message[label.start + i] = bool(int(bits[i]))
-
     def generate_message_from_template(self, template_msg):
         new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,
                               message_type=template_msg.message_type, decoder=template_msg.decoder)
@@ -431,11 +412,26 @@ class Simulator(QObject):
             if lbl.value_type_index == 2:
                 # formula
                 valid, _, node = self.expression_parser.validate_expression(lbl.formula)
-                assert valid == True
+                assert valid
                 result = self.expression_parser.evaluate_node(node)
+            elif lbl.value_type_index == 4:
+                # random value
+                result = numpy.random.randint(lbl.random_min, lbl.random_max + 1)
             else:
                 continue
 
             self.set_label_value(new_message, lbl, result)
 
         return new_message
+
+    @staticmethod
+    def set_label_value(message, label, decimal_value: int):
+        lbl_len = label.end - label.start
+        f_string = "{0:0" + str(lbl_len) + "b}"
+        bits = f_string.format(decimal_value)
+
+        if len(bits) > lbl_len:
+            logger.warning("Value {0} too big for label {1}, bits truncated".format(decimal_value, label.name))
+
+        for i in range(lbl_len):
+            message[label.start + i] = bool(int(bits[i]))

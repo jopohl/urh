@@ -111,6 +111,14 @@ class SimulatorProtocolLabel(SimulatorItem):
     def is_checksum_label(self):
         return isinstance(self.label, ChecksumLabel)
 
+    @property
+    def display_bit_order_index(self):
+        return self.label.display_bit_order_index
+
+    @display_bit_order_index.setter
+    def display_bit_order_index(self, value):
+        self.label.display_bit_order_index = value
+
     def check(self):
         result = True
 

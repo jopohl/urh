@@ -17,6 +17,7 @@ from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
@@ -154,6 +155,8 @@ class SimulatorTabController(QWidget):
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
         self.ui.btnLoad.clicked.connect(self.on_btn_load_clicked)
+
+        self.ui.listViewSimulate.model().participant_simulate_changed.connect(self.on_participant_simulate_changed)
 
         self.ui.btnAddParticipant.clicked.connect(self.ui.tableViewParticipants.on_add_action_triggered)
         self.ui.btnRemoveParticipant.clicked.connect(self.ui.tableViewParticipants.on_remove_action_triggered)
@@ -533,3 +536,7 @@ class SimulatorTabController(QWidget):
         layout.addWidget(ChecksumWidget(lbl.label, self.active_item, self.ui.cbViewType.currentIndex()))
         d.setLayout(layout)
         d.show()
+
+    @pyqtSlot(Participant)
+    def on_participant_simulate_changed(self, participant: Participant):
+        self.simulator_scene.refresh_participant(participant)

@@ -233,6 +233,12 @@ class SimulatorScene(QGraphicsScene):
         if refresh:
             self.update_view()
 
+    def refresh_participant(self, participant: Participant):
+        try:
+            self.participants_dict[participant].refresh()
+        except KeyError:
+            pass
+
     def update_items_dict(self):
         sim_items = self.simulator_config.get_all_items()
 

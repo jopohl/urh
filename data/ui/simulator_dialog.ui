@@ -109,6 +109,17 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
+            <widget class="QPushButton" name="btnTestSniffSettings">
+             <property name="text">
+              <string>Test sniffer settings</string>
+             </property>
+             <property name="icon">
+              <iconset resource="urh.qrc">
+               <normaloff>:/icons/icons/sniffer.svg</normaloff>:/icons/icons/sniffer.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>

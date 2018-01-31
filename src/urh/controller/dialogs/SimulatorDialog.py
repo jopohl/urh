@@ -5,6 +5,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
+from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWidget
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
@@ -86,42 +87,9 @@ class SimulatorDialog(QDialog):
         self.update_buttons()
         self.create_connects()
 
-        self.__bootstrap_device_settings(self.device_settings_rx_widget, project_manager.simulator_rx_conf)
-        self.__bootstrap_sniff_settings(self.sniff_settings_widget, project_manager.simulator_rx_conf)
-        self.__bootstrap_device_settings(self.device_settings_tx_widget, project_manager.simulator_tx_conf)
-
-    @staticmethod
-    def __bootstrap_device_settings(device_widget: DeviceSettingsWidget, config: dict):
-        mapping = {"frequency": "spinBoxFreq", "sample_rate": "spinBoxSampleRate", "bandwidth": "spinBoxBandwidth",
-                   "gain": "spinBoxGain", "if_gain": "spinBoxIFGain", "baseband_gain": "spinBoxBasebandGain",
-                   "freq_correction": "spinBoxFreqCorrection"}
-
-        if "name" in config:
-            device_widget.ui.cbDevice.setCurrentText(config["name"])
-
-        for key, value in config.items():
-            widget = mapping.get(key, None)
-            if widget:
-                getattr(device_widget.ui, widget).setValue(value)
-        device_widget.emit_editing_finished_signals()
-
-    @staticmethod
-    def __bootstrap_sniff_settings(sniff_widget: SniffSettingsWidget, config: dict):
-        for key, value in config.items():
-            if key == "bit_len":
-                sniff_widget.ui.spinbox_sniff_BitLen.setValue(value)
-            elif key == "center":
-                sniff_widget.ui.spinbox_sniff_Center.setValue(value)
-            elif key == "noise":
-                sniff_widget.ui.spinbox_sniff_Noise.setValue(value)
-            elif key == "tolerance":
-                sniff_widget.ui.spinbox_sniff_ErrorTolerance.setValue(value)
-            elif key == "modulation_index":
-                sniff_widget.ui.combox_sniff_Modulation.setCurrentIndex(int(value))
-            elif key == "decoding_name":
-                sniff_widget.ui.comboBox_sniff_encoding.setCurrentText(value)
-
-        sniff_widget.emit_editing_finished_signals()
+        self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
+        self.sniff_settings_widget.bootstrap(project_manager.simulator_rx_conf)
+        self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
 
     def create_connects(self):
         self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
@@ -139,20 +107,13 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogNone.clicked.connect(self.on_btn_log_none_clicked)
         self.ui.btnToggleLog.clicked.connect(self.on_btn_toggle_clicked)
 
-        self.ui.btnStartStop.clicked.connect(self.on_start_stop_clicked)
-        self.ui.btnSaveLog.clicked.connect(self.on_save_log_clicked)
+        self.ui.btnStartStop.clicked.connect(self.on_btn_start_stop_clicked)
+        self.ui.btnSaveLog.clicked.connect(self.on_btn_save_log_clicked)
         self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
 
-    def on_btn_log_all_clicked(self):
-        self.simulator_scene.log_all_items(True)
-
-    def on_btn_log_none_clicked(self):
-        self.simulator_scene.log_all_items(False)
-
-    def on_btn_toggle_clicked(self):
-        self.simulator_scene.log_toggle_selected_items()
+        self.ui.btnTestSniffSettings.clicked.connect(self.on_btn_test_sniff_settings_clicked)
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
@@ -193,55 +154,6 @@ class SimulatorDialog(QDialog):
         self.scene_manager.show_full_scene()
         self.ui.graphicsViewPreview.update()
 
-    def on_save_log_clicked(self):
-        file_path = QFileDialog.getSaveFileName(self, "Save log", "", "Log file (*.log)")
-
-        if file_path[0] == "":
-            return
-
-        log_string = self.ui.textEditSimulation.toPlainText()
-
-        try:
-            with open(str(file_path[0]), "w") as f:
-                f.write(log_string)
-        except Exception as e:
-            QMessageBox.critical(self, "Error saving log", e.args[0])
-
-    def on_start_stop_clicked(self):
-        if self.simulator.is_simulating:
-            self.simulator.stop()
-        else:
-            self.device_settings_rx_widget.emit_editing_finished_signals()
-            self.device_settings_tx_widget.emit_editing_finished_signals()
-            self.sniff_settings_widget.emit_editing_finished_signals()
-
-            self.simulator.start()
-
-    def on_simulation_started(self):
-        self.reset()
-        self.timer.start(self.update_interval)
-        self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-stop"))
-        self.ui.btnStartStop.setText("Stop")
-
-        rx_device = self.simulator.sniffer.rcv_device
-        for item in self.scene_manager.scene.items():
-            if isinstance(item, QGraphicsTextItem):
-                self.scene_manager.scene.removeItem(item)
-
-        if hasattr(rx_device.data, "real"):
-            self.ui.graphicsViewPreview.setEnabled(True)
-            self.scene_manager.data_array = rx_device.data.real
-        else:
-            self.ui.graphicsViewPreview.setEnabled(False)
-            self.scene_manager.data_array = np.array([])
-            self.scene_manager.scene.addText("Could not generate RX preview.")
-
-    def on_simulation_stopped(self):
-        self.timer.stop()
-        self.update_view()
-        self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
-        self.ui.btnStartStop.setText("Start")
-
     def reset(self):
         self.ui.textEditDevices.clear()
         self.ui.textEditSimulation.clear()
@@ -267,6 +179,71 @@ class SimulatorDialog(QDialog):
         super().closeEvent(event)
 
     @pyqtSlot()
+    def on_simulation_started(self):
+        self.reset()
+        self.timer.start(self.update_interval)
+        self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-stop"))
+        self.ui.btnStartStop.setText("Stop")
+
+        rx_device = self.simulator.sniffer.rcv_device
+        for item in self.scene_manager.scene.items():
+            if isinstance(item, QGraphicsTextItem):
+                self.scene_manager.scene.removeItem(item)
+
+        if hasattr(rx_device.data, "real"):
+            self.ui.graphicsViewPreview.setEnabled(True)
+            self.scene_manager.data_array = rx_device.data.real
+        else:
+            self.ui.graphicsViewPreview.setEnabled(False)
+            self.scene_manager.data_array = np.array([])
+            self.scene_manager.scene.addText("Could not generate RX preview.")
+
+    @pyqtSlot()
+    def on_simulation_stopped(self):
+        self.timer.stop()
+        self.update_view()
+        self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
+        self.ui.btnStartStop.setText("Start")
+
+    @pyqtSlot()
+    def on_btn_log_all_clicked(self):
+        self.simulator_scene.log_all_items(True)
+
+    @pyqtSlot()
+    def on_btn_log_none_clicked(self):
+        self.simulator_scene.log_all_items(False)
+
+    @pyqtSlot()
+    def on_btn_toggle_clicked(self):
+        self.simulator_scene.log_toggle_selected_items()
+
+    @pyqtSlot()
+    def on_btn_save_log_clicked(self):
+        file_path = QFileDialog.getSaveFileName(self, "Save log", "", "Log file (*.log)")
+
+        if file_path[0] == "":
+            return
+
+        log_string = self.ui.textEditSimulation.toPlainText()
+
+        try:
+            with open(str(file_path[0]), "w") as f:
+                f.write(log_string)
+        except Exception as e:
+            QMessageBox.critical(self, "Error saving log", e.args[0])
+
+    @pyqtSlot()
+    def on_btn_start_stop_clicked(self):
+        if self.simulator.is_simulating:
+            self.simulator.stop()
+        else:
+            self.device_settings_rx_widget.emit_editing_finished_signals()
+            self.device_settings_tx_widget.emit_editing_finished_signals()
+            self.sniff_settings_widget.emit_editing_finished_signals()
+
+            self.simulator.start()
+
+    @pyqtSlot()
     def on_timer_timeout(self):
         self.update_view()
         self.update_rx_graphics_view()
@@ -287,3 +264,21 @@ class SimulatorDialog(QDialog):
         except Exception as e:
             self.device_settings_tx_widget.ui.cbDevice.setCurrentText(old_name)
             Errors.generic_error("Error occurred", str(e))
+
+    @pyqtSlot()
+    def on_btn_test_sniff_settings_clicked(self):
+        def on_dialog_finished():
+            self.device_settings_rx_widget.bootstrap(self.project_manager.simulator_rx_conf)
+            self.sniff_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
+
+        self.device_settings_rx_widget.emit_device_parameters_changed()
+        self.sniff_settings_widget.emit_sniff_parameters_changed()
+
+        psd = ProtocolSniffDialog(self.project_manager, parent=self)
+        psd.device_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
+        psd.device_settings_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
+        psd.sniff_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
+        psd.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
+        psd.finished.connect(on_dialog_finished)
+        psd.ui.btnAccept.hide()
+        psd.show()

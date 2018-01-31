@@ -21,46 +21,48 @@ class SniffSettingsWidget(QWidget):
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
 
-        conf = project_manager.device_conf
-        bit_length = conf.get("bit_len", signal.bit_len if signal else 100)
-        modulation_type_index = conf.get("modulation_index", signal.modulation_type if signal else 1)
-        tolerance = conf.get("tolerance", signal.tolerance if signal else 5)
-        noise = conf.get("noise", signal.noise_threshold if signal else 0.001)
-        center = conf.get("center", signal.qad_center if signal else 0.02)
-        decoding_name = conf.get("decoding_name", "")
-
-        self.sniffer = ProtocolSniffer(bit_len=bit_length,
-                                       center=center,
-                                       noise=noise,
-                                       tolerance=tolerance,
-                                       modulation_type=modulation_type_index,
-                                       device=device_name,
-                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler,
-                                       network_raw_mode=network_raw_mode,
-                                       real_time=real_time)
-
-        self.ui.spinbox_sniff_Noise.setValue(noise)
-        self.ui.spinbox_sniff_Center.setValue(center)
-        self.ui.spinbox_sniff_BitLen.setValue(bit_length)
-        self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
-        self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
-
         self.project_manager = project_manager
 
         for encoding in self.project_manager.decodings:
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
+        self.bootstrap(project_manager.device_conf, signal)
+
+        self.sniffer = ProtocolSniffer(bit_len=self.ui.spinbox_sniff_BitLen.value(),
+                                       center=self.ui.spinbox_sniff_Center.value(),
+                                       noise=self.ui.spinbox_sniff_Noise.value(),
+                                       tolerance=self.ui.spinbox_sniff_ErrorTolerance.value(),
+                                       modulation_type=self.ui.combox_sniff_Modulation.currentIndex(),
+                                       device=device_name,
+                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler,
+                                       network_raw_mode=network_raw_mode,
+                                       real_time=real_time)
+
         self.create_connects()
-
-        if decoding_name:
-            self.ui.comboBox_sniff_encoding.setCurrentText(decoding_name)
-
+        self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 
         # Auto Complete like a Boss
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
+
+    def bootstrap(self, conf_dict: dict, signal=None):
+        bit_length = conf_dict.get("bit_len", signal.bit_len if signal else 100)
+        modulation_type_index = conf_dict.get("modulation_index", signal.modulation_type if signal else 1)
+        tolerance = conf_dict.get("tolerance", signal.tolerance if signal else 5)
+        noise = conf_dict.get("noise", signal.noise_threshold if signal else 0.001)
+        center = conf_dict.get("center", signal.qad_center if signal else 0.02)
+        decoding_name = conf_dict.get("decoding_name", "")
+
+        self.ui.spinbox_sniff_Noise.setValue(noise)
+        self.ui.spinbox_sniff_Center.setValue(center)
+        self.ui.spinbox_sniff_BitLen.setValue(bit_length)
+        self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
+        self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
+        self.ui.comboBox_sniff_encoding.setCurrentText(decoding_name)
+
+        self.emit_editing_finished_signals()
 
     def create_connects(self):
         self.ui.spinbox_sniff_Noise.editingFinished.connect(self.on_noise_edited)

@@ -37,27 +37,10 @@ class DeviceSettingsWidget(QWidget):
             self.ui.labelNRepeat.hide()
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
-
-        self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
-        self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
-        self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
-        self.ui.spinBoxGain.setValue(project_manager.device_conf.get("gain", config.DEFAULT_GAIN))
-        self.ui.spinBoxIFGain.setValue(project_manager.device_conf.get("if_gain", config.DEFAULT_IF_GAIN))
-        self.ui.spinBoxBasebandGain.setValue(project_manager.device_conf.get("baseband_gain", config.DEFAULT_BB_GAIN))
-        self.ui.spinBoxFreqCorrection.setValue(
-            project_manager.device_conf.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
-        self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
-        device = project_manager.device_conf["name"]
-
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox()
         self.ui.cbDevice.addItems(items)
-
-        if device in items:
-            self.ui.cbDevice.setCurrentIndex(items.index(device))
-
-        dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
+        self.bootstrap(project_manager.device_conf)
 
         self.__device = None  # type: VirtualDevice
 
@@ -71,17 +54,33 @@ class DeviceSettingsWidget(QWidget):
                            + "\\." + ip_range + "$")
         self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
 
-        if "gain" not in project_manager.device_conf:
-            self.set_default_rf_gain()
-
-        if "if_gain" not in project_manager.device_conf:
-            self.set_default_if_gain()
-
-        if "baseband_gain" not in project_manager.device_conf:
-            self.set_default_bb_gain()
-
         self.create_connects()
         self.sync_gain_sliders()
+    
+    def bootstrap(self, conf_dict: dict):
+        self.ui.spinBoxFreq.setValue(conf_dict["frequency"])
+        self.ui.spinBoxSampleRate.setValue(conf_dict["sample_rate"])
+        self.ui.spinBoxBandwidth.setValue(conf_dict["bandwidth"])
+        self.ui.spinBoxGain.setValue(conf_dict.get("gain", config.DEFAULT_GAIN))
+        self.ui.spinBoxIFGain.setValue(conf_dict.get("if_gain", config.DEFAULT_IF_GAIN))
+        self.ui.spinBoxBasebandGain.setValue(conf_dict.get("baseband_gain", config.DEFAULT_BB_GAIN))
+        self.ui.spinBoxFreqCorrection.setValue(conf_dict.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
+        self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+        self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
+
+        dev_name = self.ui.cbDevice.currentText()
+        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
+
+        if "gain" not in conf_dict:
+            self.set_default_rf_gain()
+
+        if "if_gain" not in conf_dict:
+            self.set_default_if_gain()
+
+        if "baseband_gain" not in conf_dict:
+            self.set_default_bb_gain()
+
+        self.emit_editing_finished_signals()
 
     @property
     def device(self) -> VirtualDevice:

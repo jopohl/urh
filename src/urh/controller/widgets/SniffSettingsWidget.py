@@ -26,7 +26,7 @@ class SniffSettingsWidget(QWidget):
         for encoding in self.project_manager.decodings:
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
-        self.bootstrap(project_manager.device_conf, signal)
+        self.bootstrap(project_manager.device_conf, signal, enforce_default=True)
 
         self.sniffer = ProtocolSniffer(bit_len=self.ui.spinbox_sniff_BitLen.value(),
                                        center=self.ui.spinbox_sniff_Center.value(),
@@ -47,20 +47,25 @@ class SniffSettingsWidget(QWidget):
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
 
-    def bootstrap(self, conf_dict: dict, signal=None):
-        bit_length = conf_dict.get("bit_len", signal.bit_len if signal else 100)
-        modulation_type_index = conf_dict.get("modulation_index", signal.modulation_type if signal else 1)
-        tolerance = conf_dict.get("tolerance", signal.tolerance if signal else 5)
-        noise = conf_dict.get("noise", signal.noise_threshold if signal else 0.001)
-        center = conf_dict.get("center", signal.qad_center if signal else 0.02)
-        decoding_name = conf_dict.get("decoding_name", "")
+    def bootstrap(self, conf_dict: dict, signal=None, enforce_default=False):
+        def set_val(widget, key: str, default):
+            try:
+                value = conf_dict[key]
+            except KeyError:
+                value = default if enforce_default else None
 
-        self.ui.spinbox_sniff_Noise.setValue(noise)
-        self.ui.spinbox_sniff_Center.setValue(center)
-        self.ui.spinbox_sniff_BitLen.setValue(bit_length)
-        self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
-        self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
-        self.ui.comboBox_sniff_encoding.setCurrentText(decoding_name)
+            if value is not None:
+                if hasattr(widget, "setValue"):
+                    widget.setValue(value)
+                elif hasattr(widget, "setCurrentIndex"):
+                    widget.setCurrentIndex(value)
+
+        set_val(self.ui.spinbox_sniff_BitLen, "bit_len",  signal.bit_len if signal else 100)
+        set_val(self.ui.spinbox_sniff_Center, "center", signal.qad_center if signal else 0.02)
+        set_val(self.ui.spinbox_sniff_ErrorTolerance, "tolerance", signal.tolerance if signal else 5)
+        set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold if signal else 0.001)
+        set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
+        self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
 
         self.emit_editing_finished_signals()
 

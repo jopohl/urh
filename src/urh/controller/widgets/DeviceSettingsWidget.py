@@ -40,7 +40,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox()
         self.ui.cbDevice.addItems(items)
-        self.bootstrap(project_manager.device_conf)
+        self.bootstrap(project_manager.device_conf, enforce_default=True)
 
         self.__device = None  # type: VirtualDevice
 
@@ -57,14 +57,23 @@ class DeviceSettingsWidget(QWidget):
         self.create_connects()
         self.sync_gain_sliders()
     
-    def bootstrap(self, conf_dict: dict):
-        self.ui.spinBoxFreq.setValue(conf_dict["frequency"])
-        self.ui.spinBoxSampleRate.setValue(conf_dict["sample_rate"])
-        self.ui.spinBoxBandwidth.setValue(conf_dict["bandwidth"])
-        self.ui.spinBoxGain.setValue(conf_dict.get("gain", config.DEFAULT_GAIN))
-        self.ui.spinBoxIFGain.setValue(conf_dict.get("if_gain", config.DEFAULT_IF_GAIN))
-        self.ui.spinBoxBasebandGain.setValue(conf_dict.get("baseband_gain", config.DEFAULT_BB_GAIN))
-        self.ui.spinBoxFreqCorrection.setValue(conf_dict.get("freq_correction", config.DEFAULT_FREQ_CORRECTION))
+    def bootstrap(self, conf_dict: dict, enforce_default=False):
+        def set_val(ui_widget, key: str, default):
+            try:
+                value = conf_dict[key]
+            except KeyError:
+                value = default if enforce_default else None
+
+            if value is not None:
+                ui_widget.setValue(value)
+
+        set_val(self.ui.spinBoxFreq, "frequency", config.DEFAULT_FREQUENCY)
+        set_val(self.ui.spinBoxSampleRate, "sample_rate", config.DEFAULT_SAMPLE_RATE)
+        set_val(self.ui.spinBoxBandwidth, "bandwidth", config.DEFAULT_BANDWIDTH)
+        set_val(self.ui.spinBoxGain, "gain", config.DEFAULT_GAIN)
+        set_val(self.ui.spinBoxIFGain, "if_gain", config.DEFAULT_IF_GAIN)
+        set_val(self.ui.spinBoxBasebandGain, "baseband_gain", config.DEFAULT_BB_GAIN)
+        set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
         self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
 

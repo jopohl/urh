@@ -179,6 +179,7 @@ class SimulatorTabController(QWidget):
         self.simulator_config.items_deleted.connect(self.refresh_message_table)
         self.simulator_config.participants_changed.connect(self.on_participants_changed)
         self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
+        self.simulator_config.active_participants_updated.connect(self.on_active_participants_updated)
 
         self.ui.gvSimulator.message_updated.connect(self.on_message_source_or_destination_updated)
 
@@ -523,7 +524,6 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_message_source_or_destination_updated(self):
         self.simulator_config.update_active_participants()
-        self.ui.listViewSimulate.model().update()
 
     @pyqtSlot(int, int)
     def on_table_item_link_clicked(self, row: int, column: int):
@@ -543,3 +543,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot(Participant)
     def on_participant_simulate_changed(self, participant: Participant):
         self.simulator_scene.refresh_participant(participant)
+
+    @pyqtSlot()
+    def on_active_participants_updated(self):
+        self.ui.listViewSimulate.model().update()

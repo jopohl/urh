@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 class SimulatorConfiguration(QObject):
     participants_changed = pyqtSignal()
     item_dict_updated = pyqtSignal()
+    active_participants_updated = pyqtSignal()
 
     items_deleted = pyqtSignal(list)
     items_updated = pyqtSignal(list)
@@ -48,9 +49,9 @@ class SimulatorConfiguration(QObject):
         self.items_updated.connect(self.update_item_dict)
         self.items_deleted.connect(self.update_item_dict)
 
-        self.items_added.connect(self.reset_active_participants)
-        self.items_updated.connect(self.reset_active_participants)
-        self.items_deleted.connect(self.reset_active_participants)
+        self.items_added.connect(self.update_active_participants)
+        self.items_updated.connect(self.update_active_participants)
+        self.items_deleted.connect(self.update_active_participants)
 
     def update_item_dict(self):
         self.item_dict.clear()
@@ -163,9 +164,6 @@ class SimulatorConfiguration(QObject):
     def n_top_level_items(self):
         return self.rootItem.child_count()
 
-    def reset_active_participants(self):
-        self.__active_participants = None
-
     def update_active_participants(self):
         messages = self.get_all_messages()
         active_participants = []
@@ -175,6 +173,7 @@ class SimulatorConfiguration(QObject):
                 active_participants.append(part)
 
         self.__active_participants = active_participants
+        self.active_participants_updated.emit()
 
     def consolidate_messages(self):
         current_item = self.rootItem

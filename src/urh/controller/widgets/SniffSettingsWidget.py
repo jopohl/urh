@@ -16,11 +16,12 @@ class SniffSettingsWidget(QWidget):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, device_name: str, project_manager: ProjectManager, signal=None, backend_handler=None,
-                 network_raw_mode=False, real_time=False, parent=None):
+                 network_raw_mode=False, real_time=False, signals=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
 
+        signals = signals if signals is not None else []
         self.project_manager = project_manager
 
         for encoding in self.project_manager.decodings:
@@ -46,6 +47,16 @@ class SniffSettingsWidget(QWidget):
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
+
+        self.signals = signals
+
+        if len(signals) == 0:
+            self.ui.label_sniff_Signal.hide()
+            self.ui.btn_sniff_use_signal.hide()
+            self.ui.comboBox_sniff_signal.hide()
+        else:
+            for signal in signals:
+                self.ui.comboBox_sniff_signal.addItem(signal.name)
 
     def bootstrap(self, conf_dict: dict, signal=None, enforce_default=False):
         def set_val(widget, key: str, default):
@@ -79,6 +90,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
         self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
+        self.ui.btn_sniff_use_signal.clicked.connect(self.on_btn_sniff_use_signal_clicked)
 
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
@@ -152,3 +164,18 @@ class SniffSettingsWidget(QWidget):
     @pyqtSlot()
     def on_checkbox_sniff_timestamp_clicked(self):
         self.sniff_setting_edited.emit()
+
+    @pyqtSlot()
+    def on_btn_sniff_use_signal_clicked(self):
+        try:
+            signal = self.signals[self.ui.comboBox_sniff_signal.currentIndex()]
+        except IndexError:
+            return
+
+        self.ui.spinbox_sniff_BitLen.setValue(signal.bit_len)
+        self.ui.spinbox_sniff_Center.setValue(signal.qad_center)
+        self.ui.spinbox_sniff_Noise.setValue(signal.noise_threshold)
+        self.ui.spinbox_sniff_ErrorTolerance.setValue(signal.tolerance)
+        self.ui.combox_sniff_Modulation.setCurrentIndex(signal.modulation_type)
+
+        self.emit_editing_finished_signals()

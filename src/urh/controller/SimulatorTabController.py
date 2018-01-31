@@ -444,8 +444,11 @@ class SimulatorTabController(QWidget):
                 return
 
         try:
+            protos = [p for proto_list in self.tree_model.protocols.values() for p in proto_list]
+            signals = [p.signal for p in protos if p.signal is not None]
+
             s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
-                                self.sim_expression_parser, self.project_manager, parent=self)
+                                self.sim_expression_parser, self.project_manager, signals=signals, parent=self)
 
             s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
             s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)

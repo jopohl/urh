@@ -650,8 +650,9 @@ class MainController(QMainWindow):
     def show_proto_sniff_dialog(self):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
+        signals = [f.signal for f in self.signal_tab_controller.signal_frames if f.signal]
 
-        psd = ProtocolSniffDialog(project_manager=pm, signal=signal, parent=self)
+        psd = ProtocolSniffDialog(project_manager=pm, signal=signal, signals=signals, parent=self)
 
         if psd.has_empty_device_list:
             Errors.no_device()

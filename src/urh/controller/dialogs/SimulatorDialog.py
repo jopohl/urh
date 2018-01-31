@@ -25,7 +25,8 @@ class SimulatorDialog(QDialog):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, simulator_config, modulators,
-                 expression_parser, project_manager: ProjectManager, parent=None):
+                 expression_parser, project_manager: ProjectManager, signals: list,
+                 parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogSimulator()
         self.ui.setupUi(self)
@@ -50,7 +51,7 @@ class SimulatorDialog(QDialog):
                                                          project_manager,
                                                          signal=None,
                                                          backend_handler=self.backend_handler,
-                                                         real_time=True, network_raw_mode=True)
+                                                         real_time=True, network_raw_mode=True, signals=signals)
 
         self.device_settings_rx_widget.device = self.sniff_settings_widget.sniffer.rcv_device
 
@@ -273,7 +274,7 @@ class SimulatorDialog(QDialog):
         self.device_settings_rx_widget.emit_device_parameters_changed()
         self.sniff_settings_widget.emit_sniff_parameters_changed()
 
-        psd = ProtocolSniffDialog(self.project_manager, parent=self)
+        psd = ProtocolSniffDialog(self.project_manager, signals=self.sniff_settings_widget.signals, parent=self)
         psd.device_settings_widget.bootstrap(self.project_manager.simulator_rx_conf)
         psd.device_settings_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
         psd.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)

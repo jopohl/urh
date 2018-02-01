@@ -37,3 +37,9 @@ class LabelItem(GraphicsItem):
 
     def refresh(self):
         self.name.setPlainText(self.model_item.name)
+        if self.model_item.is_checksum_label:
+            value_type = "Checksum"
+        else:
+            value_type = SimulatorProtocolLabel.VALUE_TYPES[self.model_item.value_type_index]
+        tooltip = "Value type:<br><b>{}</b>".format(value_type)
+        self.setToolTip(tooltip)

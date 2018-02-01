@@ -17,6 +17,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 from urh.simulator.Simulator import Simulator
 
@@ -29,7 +30,7 @@ def receive(port, current_index, target_index, elapsed):
     s.listen(1)
 
     conn, addr = s.accept()
-    print('Receiver got connection from address:', addr)
+    logger.debug('Receiver got connection from address:'.format(addr))
 
     start = False
     while True:
@@ -132,7 +133,7 @@ class TestSimulator(QtTestCase):
         QTest.qWait(100)
         receive_process.join(10)
 
-        print("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
+        logger.info("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
 
         self.assertEqual(current_index.value, target_num_samples)
         self.assertLess(elapsed.value, 200)

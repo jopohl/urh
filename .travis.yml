@@ -46,7 +46,7 @@ before_script:
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5"* ]]; then
+  - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then
       pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt;
     else
       pytest tests 2> /tmp/test_errors.txt;
@@ -60,8 +60,8 @@ after_failure:
   - cat /tmp/test_errors.txt
 
 after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.5"* ]]; then
+  - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then
       coveralls --rcfile=tests/.coveragerc;
     else
-      echo "coverage upload only for python 3.5";
+      echo "coverage upload only for python > 3.4";
     fi

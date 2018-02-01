@@ -40,13 +40,16 @@ class SimulatorMessage(Message, SimulatorItem):
 
     @property
     def plain_ascii_str(self) -> str:
-        plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array if len(
-            self.send_recv_messages) else self.plain_ascii_array
+        if len(self.send_recv_messages) > 0:
+            plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array
+        else:
+            plain_ascii_array = self.plain_ascii_array
+
         return "".join(map(chr, plain_ascii_array))
 
     @property
     def plain_bits_str(self) -> str:
-        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) else str(self)
+        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) > 0 else str(self)
 
     def __delitem__(self, index):
         removed_labels = self._remove_labels_for_range(index, instant_remove=False)

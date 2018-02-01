@@ -12,7 +12,7 @@ class SimulatorProtocolLabel(SimulatorItem):
     VALUE_TYPES = ["Constant value", "Get live during simulation", "Formula", "External program", "Random value"]
 
     def __init__(self, label: ProtocolLabel):
-        SimulatorItem.__init__(self)
+        super().__init__()
 
         self.label = label
 
@@ -33,58 +33,26 @@ class SimulatorProtocolLabel(SimulatorItem):
         super().set_parent(value)
 
     def __lt__(self, other):
-        if self.label.start != other.label.start:
-            return self.label.start < other.label.start
-        elif self.label.end != other.label.end:
-            return self.label.end < other.label.end
-        elif self.label.name is not None and other.label.name is not None:
-            return len(self.label.name) < len(other.label.name)
-        else:
-            return False
+        return self.label < other.label
 
-    @property
-    def name(self):
-        return self.label.name
+    def __getattr__(self, name):
+        if name == "label":
+            return self.__getattribute__("label")
 
-    @name.setter
-    def name(self, val):
-        self.label.name = val
+        return self.label.__getattribute__(name)
 
-    @property
-    def color_index(self):
-        return self.label.color_index
-
-    @property
-    def start(self):
-        return self.label.start
-
-    @start.setter
-    def start(self, value):
-        self.label.start = value
-
-    @property
-    def end(self):
-        return self.label.end
-
-    @end.setter
-    def end(self, value):
-        self.label.end = value
-
-    @property
-    def display_format_index(self):
-        return self.label.display_format_index
-
-    @display_format_index.setter
-    def display_format_index(self, val):
-        self.label.display_format_index = val
+    def __setattr__(self, key, value):
+        if key == "field_type":
+            # Use special field type property for changing the label type when changing the field type
+            super().__setattr__(key, value)
+        try:
+            self.label.__setattr__(key, value)
+        except AttributeError:
+            super().__setattr__(key, value)
 
     @property
     def field_type(self) -> FieldType:
         return self.label.field_type
-
-    @property
-    def fuzz_maximum(self):
-        return self.label.fuzz_maximum
 
     @field_type.setter
     def field_type(self, val: FieldType):
@@ -96,28 +64,8 @@ class SimulatorProtocolLabel(SimulatorItem):
         self.label.field_type = val
 
     @property
-    def apply_decoding(self):
-        return self.label.apply_decoding
-
-    @property
-    def show(self):
-        return self.label.show
-
-    @show.setter
-    def show(self, value):
-        self.label.show = value
-
-    @property
     def is_checksum_label(self):
         return isinstance(self.label, ChecksumLabel)
-
-    @property
-    def display_bit_order_index(self):
-        return self.label.display_bit_order_index
-
-    @display_bit_order_index.setter
-    def display_bit_order_index(self, value):
-        self.label.display_bit_order_index = value
 
     def check(self):
         result = True

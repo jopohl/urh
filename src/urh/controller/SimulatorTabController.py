@@ -24,7 +24,7 @@ from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorExternalProgramAction import SimulatorExternalProgramAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -408,7 +408,7 @@ class SimulatorTabController(QWidget):
               self.active_item.type != ConditionType.ELSE):
             self.ui.ruleCondLineEdit.setText(self.active_item.condition)
             self.ui.detail_view_widget.setCurrentIndex(3)
-        elif isinstance(self.active_item, SimulatorProgramAction):
+        elif isinstance(self.active_item, SimulatorExternalProgramAction):
             self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)
             self.ui.cmdLineArgsLineEdit.setText(self.active_item.args)
 

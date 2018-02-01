@@ -16,7 +16,7 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorExternalProgramAction import SimulatorExternalProgramAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
@@ -26,7 +26,7 @@ class SimulatorScene(QGraphicsScene):
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
         SimulatorGotoAction: GotoActionItem,
-        SimulatorProgramAction: ProgramActionItem,
+        SimulatorExternalProgramAction: ProgramActionItem,
         SimulatorMessage: MessageItem,
         SimulatorProtocolLabel: LabelItem
     }
@@ -413,7 +413,7 @@ class SimulatorScene(QGraphicsScene):
         return goto_action
 
     def add_program_action(self, ref_item, position):
-        program_action = SimulatorProgramAction()
+        program_action = SimulatorExternalProgramAction()
         pos, parent = self.insert_at(ref_item, position, False)
         self.simulator_config.add_items([program_action], pos, parent)
         return program_action

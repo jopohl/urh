@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QGraphicsTextItem
 from PyQt5.QtCore import QRectF
 
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorExternalProgramAction import SimulatorExternalProgramAction
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorItem import SimulatorItem
 
@@ -50,6 +50,6 @@ class GotoActionItem(ActionItem):
 
 class ProgramActionItem(ActionItem):
     def __init__(self, model_item: SimulatorItem, parent=None):
-        assert isinstance(model_item, SimulatorProgramAction)
+        assert isinstance(model_item, SimulatorExternalProgramAction)
         super().__init__(model_item=model_item, parent=parent)
         self.text.setPlainText("External program")

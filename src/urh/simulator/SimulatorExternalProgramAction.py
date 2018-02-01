@@ -3,7 +3,7 @@ from urh.simulator.SimulatorRule import SimulatorRuleCondition
 import xml.etree.ElementTree as ET
 
 
-class SimulatorProgramAction(SimulatorItem):
+class SimulatorExternalProgramAction(SimulatorItem):
     def __init__(self):
         super().__init__()
         self.ext_prog = None
@@ -25,7 +25,7 @@ class SimulatorProgramAction(SimulatorItem):
 
     @classmethod
     def from_xml(cls, tag):
-        result = SimulatorProgramAction()
+        result = SimulatorExternalProgramAction()
         result.ext_prog = tag.get("ext_prog", None)
         result.args = tag.get("args", None)
         return result

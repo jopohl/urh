@@ -18,9 +18,9 @@ class SimulatorGotoAction(SimulatorItem):
 
     @property
     def target(self):
-        return self.protocol_manager.item_dict[self.goto_target] if self.check() else None
+        return self.protocol_manager.item_dict[self.goto_target] if self.validate() else None
 
-    def check(self):
+    def validate(self):
         target = self.protocol_manager.item_dict.get(self.goto_target, None)
         return self.is_valid_goto_target(target)
 

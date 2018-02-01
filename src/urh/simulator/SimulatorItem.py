@@ -8,7 +8,7 @@ class SimulatorItem(object):
         self.logging_active = True
         self.is_valid = True
 
-    def check(self):
+    def validate(self):
         return True
 
     def get_pos(self):

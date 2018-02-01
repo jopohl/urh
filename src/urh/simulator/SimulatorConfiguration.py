@@ -79,7 +79,7 @@ class SimulatorConfiguration(QObject):
         for child in node.children:
             SimulatorConfiguration.__update_valid_states(child)
 
-        node.is_valid = node.check()
+        node.is_valid = node.validate()
 
     def protocol_valid(self):
         self.update_valid_states()

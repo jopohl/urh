@@ -400,7 +400,7 @@ class SimulatorScene(QGraphicsScene):
 
         pos = rule.child_count()
 
-        if type is ConditionType.ELSE_IF and rule.has_else_condition():
+        if type is ConditionType.ELSE_IF and rule.has_else_condition:
             pos -= 1
 
         self.simulator_config.add_items([rule_condition], pos, rule)

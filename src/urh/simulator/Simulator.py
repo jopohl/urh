@@ -213,13 +213,16 @@ class Simulator(QObject):
                 next_item = self.current_item.target
                 self.log_message("GOTO item " + next_item.index())
             elif isinstance(self.current_item, SimulatorRule):
-                true_cond = self.current_item.true_condition()
+                condition = self.current_item.get_first_applying_condition()
 
-                if true_cond is not None and true_cond.logging_active and true_cond.type != ConditionType.ELSE:
-                    self.log_message("Rule condition " + true_cond.index() + " (" + true_cond.condition + ") applied")
+                if condition is not None and condition.logging_active and condition.type != ConditionType.ELSE:
+                    self.log_message("Rule condition " + condition.index() + " (" + condition.condition + ") applied")
 
-                next_item = true_cond.children[
-                    0] if true_cond is not None and true_cond.child_count() else self.current_item.next_sibling()
+                if condition is not None and condition.child_count() > 0:
+                    next_item = condition.children[0]
+                else:
+                    next_item = self.current_item.next_sibling()
+
             elif (isinstance(self.current_item, SimulatorRuleCondition) and
                   self.current_item.type != ConditionType.IF):
                 next_item = self.current_item.parent().next_sibling()

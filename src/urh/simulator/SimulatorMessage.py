@@ -35,7 +35,7 @@ class SimulatorMessage(Message, SimulatorItem):
         self.children.append(child)
         child.set_parent(self)
 
-    def check(self):
+    def validate(self):
         return all(child.is_valid for child in self.children)
 
     @property

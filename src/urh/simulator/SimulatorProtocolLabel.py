@@ -68,7 +68,7 @@ class SimulatorProtocolLabel(SimulatorItem):
     def is_checksum_label(self):
         return isinstance(self.label, ChecksumLabel)
 
-    def check(self):
+    def validate(self):
         result = True
 
         if self.value_type_index == 2:

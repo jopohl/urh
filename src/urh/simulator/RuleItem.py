@@ -13,8 +13,9 @@ class RuleItem(GraphicsItem):
         assert isinstance(model_item, SimulatorRule)
         super().__init__(model_item=model_item, parent=parent)
 
-    def has_else_condition(self):
-        return self.model_item.has_else_condition()
+    @property
+    def has_else_condition(self) -> bool:
+        return self.model_item.has_else_condition
 
     def update_numbering(self):
         for child in self.get_scene_children():

@@ -1,5 +1,5 @@
-from enum import Enum
 import xml.etree.ElementTree as ET
+from enum import Enum
 
 from urh.simulator.SimulatorItem import SimulatorItem
 
@@ -14,25 +14,15 @@ class SimulatorRule(SimulatorItem):
 
         super().set_parent(value)
 
-    def has_else_condition(self):
+    @property
+    def has_else_condition(self) -> bool:
         return any(child.type is ConditionType.ELSE for child in self.children)
 
-    def true_condition(self):
-        for child in self.children:
-            if child.applies():
-                return child
-
-        return None
+    def get_first_applying_condition(self):
+        return next((child for child in self.children if child.condition_applies), None)
 
     def next_item(self):
-        result = self.next_sibling()
-
-        for child in self.children:
-            if child.applies() and child.child_count():
-                result = child.children[0]
-                break
-
-        return result
+        return next((c.children[0] for c in self.children if c.condition_applies and c.child_count()), self.next_sibling())
 
     def to_xml(self) -> ET.Element:
         return ET.Element("simulator_rule")
@@ -40,6 +30,7 @@ class SimulatorRule(SimulatorItem):
     @classmethod
     def from_xml(cls, tag: ET.Element):
         return SimulatorRule()
+
 
 class ConditionType(Enum):
     IF = "IF"
@@ -53,13 +44,8 @@ class SimulatorRuleCondition(SimulatorItem):
         self.type = type
         self.condition = ""
 
-    def set_parent(self, value):
-        if value is not None:
-            assert isinstance(value, SimulatorRule)
-
-        super().set_parent(value)
-
-    def applies(self):
+    @property
+    def condition_applies(self) -> bool:
         if self.type is ConditionType.ELSE:
             return True
 
@@ -67,7 +53,13 @@ class SimulatorRuleCondition(SimulatorItem):
         assert valid == True and node is not None
         return self.expression_parser.evaluate_node(node)
 
-    def check(self):
+    def set_parent(self, value):
+        if value is not None:
+            assert isinstance(value, SimulatorRule)
+
+        super().set_parent(value)
+
+    def validate(self):
         if self.type is ConditionType.ELSE:
             return True
 

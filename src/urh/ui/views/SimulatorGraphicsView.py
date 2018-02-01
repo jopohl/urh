@@ -162,7 +162,7 @@ class SimulatorGraphicsView(QGraphicsView):
             add_else_if_cond_action = menu.addAction("Add else if block")
             add_else_if_cond_action.triggered.connect(self.on_add_else_if_cond_action_triggered)
 
-            if not self.context_menu_item.parentItem().has_else_condition():
+            if not self.context_menu_item.parentItem().has_else_condition:
                 add_else_cond_action = menu.addAction("Add else block")
                 add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
 

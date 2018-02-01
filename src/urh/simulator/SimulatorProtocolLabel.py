@@ -61,6 +61,7 @@ class SimulatorProtocolLabel(SimulatorItem):
             self.label = self.label.to_label(val)
         elif not self.is_checksum_label and val.function == FieldType.Function.CHECKSUM:
             self.label = ChecksumLabel.from_label(self.label)
+            self.value_type_index = 0
         self.label.field_type = val
 
     @property

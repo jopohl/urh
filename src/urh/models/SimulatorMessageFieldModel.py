@@ -121,11 +121,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
             if j == 0:
                 label.name = value
-
-                if value in self.controller.field_types_by_caption:
-                    label.field_type = self.controller.field_types_by_caption[value]
-                else:
-                    label.field_type = None
+                label.field_type = self.controller.field_types_by_caption.get(value, None)
             elif j == 1:
                 label.display_format_index = value
             elif j == 2:

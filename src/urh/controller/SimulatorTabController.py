@@ -317,7 +317,7 @@ class SimulatorTabController(QWidget):
         goto_combobox.blockSignals(True)
         goto_combobox.clear()
         goto_combobox.addItem("Select item ...")
-        goto_combobox.addItems(SimulatorGotoAction.goto_identifier())
+        goto_combobox.addItems(SimulatorGotoAction.get_valid_goto_targets())
         goto_combobox.setCurrentIndex(-1)
         goto_combobox.blockSignals(False)
 

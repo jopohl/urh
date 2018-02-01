@@ -1,7 +1,8 @@
-from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 import xml.etree.ElementTree as ET
+
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
 
 class SimulatorGotoAction(SimulatorItem):
@@ -15,39 +16,44 @@ class SimulatorGotoAction(SimulatorItem):
 
         super().set_parent(value)
 
-    @staticmethod
-    def is_valid_goto_target(item: SimulatorItem):
-        return not (item is None or isinstance(item, SimulatorProtocolLabel) or
-            isinstance(item, SimulatorRule) or
-            (isinstance(item, SimulatorRuleCondition) and item.type != ConditionType.IF))
-
-    @staticmethod
-    def goto_identifier():
-        identifier = []
-
-        for key, value in SimulatorItem.protocol_manager.item_dict.items():
-            if SimulatorGotoAction.is_valid_goto_target(value):
-                identifier.append(key)
-
-        return identifier
-
-    def check(self):
-        return (self.goto_target in self.protocol_manager.item_dict and
-                    self.is_valid_goto_target(self.protocol_manager.item_dict[self.goto_target]))
-
     @property
     def target(self):
         return self.protocol_manager.item_dict[self.goto_target] if self.check() else None
 
-    def to_xml(self) -> ET.Element:
-        attribs = dict()
-        if self.goto_target is not None:
-            attribs["goto_target"] = self.goto_target
+    def check(self):
+        target = self.protocol_manager.item_dict.get(self.goto_target, None)
+        return self.is_valid_goto_target(target)
 
-        return ET.Element("simulator_goto_action", attrib=attribs)
+    def to_xml(self) -> ET.Element:
+        attributes = dict()
+        if self.goto_target is not None:
+            attributes["goto_target"] = self.goto_target
+
+        return ET.Element("simulator_goto_action", attrib=attributes)
 
     @classmethod
     def from_xml(cls, tag: ET.Element):
         result = SimulatorGotoAction()
         result.goto_target = tag.get("goto_target", None)
         return result
+
+    @staticmethod
+    def is_valid_goto_target(item: SimulatorItem):
+        if item is None:
+            return False
+        if isinstance(item, SimulatorProtocolLabel) or isinstance(item, SimulatorRule):
+            return False
+        if isinstance(item, SimulatorRuleCondition) and item.type != ConditionType.IF:
+            return False
+
+        return True
+
+    @classmethod
+    def get_valid_goto_targets(cls):
+        valid_targets = []
+
+        for key, value in cls.protocol_manager.item_dict.items():
+            if SimulatorGotoAction.is_valid_goto_target(value):
+                valid_targets.append(key)
+
+        return valid_targets

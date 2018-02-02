@@ -127,28 +127,33 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         is_above_noise = np.mean(data.real ** 2 + data.imag ** 2) > self.signal.noise_threshold ** 2
         if is_above_noise:
             self.data_cache.append(data)
+            self.pause_length = 0
             return
         else:
             self.pause_length += len(data)
+            if self.pause_length < 10 * self.signal.bit_len:
+                self.data_cache.append(data)
+                return
 
-        if self.pause_length > 10 * self.signal.bit_len and len(self.data_cache) > 0:
-            # clear cache and start a new message
-            self.signal._fulldata = np.concatenate(self.data_cache)
-            self.data_cache.clear()
-            self.pause_length = 0
-            self.signal._qad = None
+        if len(self.data_cache) == 0:
+            return
 
-            bit_len = self.signal.bit_len
-            ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                    self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
+        # clear cache and start a new message
+        self.signal._fulldata = np.concatenate(self.data_cache)
+        self.data_cache.clear()
+        self.signal._qad = None
 
-            bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
+        bit_len = self.signal.bit_len
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
 
-            for bits, pause in zip(bit_data, pauses):
-                message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
-                                  decoder=self.decoder)
-                self.messages.append(message)
-                self.message_sniffed.emit()
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
+
+        for bits, pause in zip(bit_data, pauses):
+            message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
+                              decoder=self.decoder)
+            self.messages.append(message)
+            self.message_sniffed.emit()
 
     def stop(self):
         self.rcv_device.stop("Stopping receiving due to user interaction")

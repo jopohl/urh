@@ -24,7 +24,6 @@ from urh.util.Logger import logger
 class ProtocolAnalyzerSignals(QObject):
     protocol_updated = pyqtSignal()
     show_state_changed = pyqtSignal()
-    data_sniffed = pyqtSignal(int)
     sniff_device_errors_changed = pyqtSignal(str)
     line_duplicated = pyqtSignal()
     fuzzing_started = pyqtSignal(int)

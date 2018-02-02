@@ -317,7 +317,8 @@ class TestSendRecvDialog(QtTestCase):
         self.assertFalse(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
 
         target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
-        self.assertFalse(os.path.isfile(target_file))
+        if os.path.isfile(target_file):
+            os.remove(target_file)
 
         sniff_dialog.ui.btnClear.click()
         QApplication.instance().processEvents()
@@ -335,8 +336,6 @@ class TestSendRecvDialog(QtTestCase):
             for i, line in enumerate(f):
                 pad = 0 if len(orig_msgs[i]) % 8 == 0 else 8 - len(orig_msgs[i]) % 8
                 self.assertEqual(line.strip(), orig_msgs[i] + "0" * pad)
-
-        os.remove(target_file)
 
         sniff_dialog.ui.btnStop.click()
         self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())

@@ -16,7 +16,7 @@ class SniffSettingsWidget(QWidget):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, device_name: str, project_manager: ProjectManager, signal=None, backend_handler=None,
-                 network_raw_mode=False, real_time=False, signals=None, parent=None):
+                 network_raw_mode=False, signals=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
@@ -36,8 +36,7 @@ class SniffSettingsWidget(QWidget):
                                        modulation_type=self.ui.combox_sniff_Modulation.currentIndex(),
                                        device=device_name,
                                        backend_handler=BackendHandler() if backend_handler is None else backend_handler,
-                                       network_raw_mode=network_raw_mode,
-                                       real_time=real_time)
+                                       network_raw_mode=network_raw_mode)
 
         self.create_connects()
         self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())

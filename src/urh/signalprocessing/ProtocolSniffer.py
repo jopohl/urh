@@ -23,7 +23,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     message_sniffed = pyqtSignal()
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False, real_time=False):
+                 modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -42,10 +42,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
-        self.real_time = real_time
         self.data_cache = []
-        self.conseq_non_data = 0
         self.reading_data = False
+
+        self.pause_length = 0
 
         self.store_messages = True
 
@@ -55,13 +55,16 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def decoded_to_string(self, view: int, start=0, include_timestamps=True):
         result = []
         for msg in self.messages[start:]:
-            msg_str_data = []
-            if include_timestamps:
-                msg_date = datetime.fromtimestamp(msg.timestamp)
-                msg_str_data.append(msg_date.strftime("[%Y-%m-%d %H:%M:%S.%f]"))
-            msg_str_data.append(msg.view_to_string(view, decoded=True, show_pauses=False))
-            result.append(" ".join(msg_str_data))
+            result.append(self.message_to_string(msg, view, include_timestamps))
         return "\n".join(result)
+
+    def message_to_string(self, message: Message, view: int, include_timestamps=True):
+        msg_str_data = []
+        if include_timestamps:
+            msg_date = datetime.fromtimestamp(message.timestamp)
+            msg_str_data.append(msg_date.strftime("[%Y-%m-%d %H:%M:%S.%f]"))
+        msg_str_data.append(message.view_to_string(view, decoded=True, show_pauses=False))
+        return " ".join(msg_str_data)
 
     @property
     def sniff_file(self):
@@ -92,7 +95,6 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     @pyqtSlot(int, int)
     def on_rcv_thread_index_changed(self, old_index, new_index):
-        old_nmsgs = len(self.messages)
         if self.rcv_device.is_raw_mode:
             if old_index == new_index:
                 return
@@ -103,12 +105,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 msg = Message.from_plain_bits_str(bit_str)
                 msg.decoder = self.decoder
                 self.messages.append(msg)
+                self.message_sniffed.emit()
 
             self.rcv_device.free_data()  # do not store received bits twice
-
-        self.qt_signals.data_sniffed.emit(old_nmsgs)
-        if self.messages:
-            self.message_sniffed.emit()
 
         if self.sniff_file and not os.path.isdir(self.sniff_file):
             plain_bits_str = self.plain_bits_str
@@ -125,60 +124,31 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         :param data:
         :return:
         """
-        if self.__are_bits_in_data(data):
-            self.reading_data = True
-        elif self.conseq_non_data == 5:
-            self.reading_data = False
-            self.conseq_non_data = 0
-        else:
-            self.conseq_non_data += 1
-
-        if self.reading_data:
+        is_above_noise = np.mean(data.real ** 2 + data.imag ** 2) > self.signal.noise_threshold ** 2
+        if is_above_noise:
             self.data_cache.append(data)
-            if not self.real_time:
-                return
-        elif len(self.data_cache) == 0:
             return
+        else:
+            self.pause_length += len(data)
 
-        self.signal._fulldata = np.concatenate(self.data_cache)
-        self.data_cache.clear()
-        self.signal._qad = None
+        if self.pause_length > 10 * self.signal.bit_len and len(self.data_cache) > 0:
+            # clear cache and start a new message
+            self.signal._fulldata = np.concatenate(self.data_cache)
+            self.data_cache.clear()
+            self.pause_length = 0
+            self.signal._qad = None
 
-        bit_len = self.signal.bit_len
-        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
+            bit_len = self.signal.bit_len
+            ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+                                    self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
+            bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
 
-        i = 0
-        first_msg = True
-
-        for bits, pause in zip(bit_data, pauses):
-            if first_msg or self.messages[-1].pause > 8 * bit_len:
+            for bits, pause in zip(bit_data, pauses):
                 message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
                                   decoder=self.decoder)
                 self.messages.append(message)
-                first_msg = False
-            else:
-                # Append to last message
-                message = self.messages[-1]
-                nzeros = int(np.round(message.pause / bit_len))
-                message.plain_bits.extend([False] * nzeros)
-                message.plain_bits.extend(bits)
-                message.pause = pause
-            i += 1
-
-    def __are_bits_in_data(self, data):
-        self.signal._fulldata = data
-        self.signal._qad = None
-
-        bit_len = self.signal.bit_len
-        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
-
-        bit_data, pauses, _ = self._ppseq_to_bits(ppseq, bit_len)
-
-        return bool(bit_data)
+                self.message_sniffed.emit()
 
     def stop(self):
         self.rcv_device.stop("Stopping receiving due to user interaction")

@@ -51,7 +51,7 @@ class SimulatorDialog(QDialog):
                                                          project_manager,
                                                          signal=None,
                                                          backend_handler=self.backend_handler,
-                                                         real_time=True, network_raw_mode=True, signals=signals)
+                                                         network_raw_mode=True, signals=signals)
 
         self.device_settings_rx_widget.device = self.sniff_settings_widget.sniffer.rcv_device
 

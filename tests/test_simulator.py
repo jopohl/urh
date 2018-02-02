@@ -80,8 +80,8 @@ class TestSimulator(QtTestCase):
         self.form.project_manager.participants.append(part_b)
         self.form.project_manager.project_updated.emit()
 
-        sniffer = ProtocolSniffer(100, 0.01, 0.001, 5, 1, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
-                                  network_raw_mode=True, real_time=True)
+        sniffer = ProtocolSniffer(100, 0.01, 0.1, 5, 1, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
+                                  network_raw_mode=True)
         sender = EndlessSender(BackendHandler(), NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
@@ -89,11 +89,11 @@ class TestSimulator(QtTestCase):
 
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 100000, MessageType("empty_message_type"), source=part_a)
+                                 pause=100000, message_type=MessageType("empty_message_type"), source=part_a)
 
         msg_b = SimulatorMessage(part_a,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1, 1, 0, 0] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 100000, MessageType("empty_message_type"), source=part_b)
+                                 pause=100000, message_type=MessageType("empty_message_type"), source=part_b)
 
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
@@ -126,10 +126,12 @@ class TestSimulator(QtTestCase):
         modulator.samples_per_bit = 100
         modulator.carrier_freq_hz = 55e3
         modulator.modulate(msg_a.encoded_bits)
-
         # yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
+        QTest.qWait(10)
+        # send some zeros to simulate the end of a message
+        self.network_sdr_plugin_sender.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
         receive_process.join(10)
 

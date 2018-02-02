@@ -80,3 +80,11 @@ class QtTestCase(unittest.TestCase):
                                 mimedata, Qt.LeftButton, Qt.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)
+
+    def get_free_port(self):
+        import socket
+        s = socket.socket()
+        s.bind(("", 0))
+        port = s.getsockname()[1]
+        s.close()
+        return port

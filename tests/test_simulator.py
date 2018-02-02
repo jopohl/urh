@@ -98,14 +98,14 @@ class TestSimulator(QtTestCase):
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
 
-        port = self.__get_free_port()
+        port = self.get_free_port()
         sniffer = simulator.sniffer
         sniffer.rcv_device.set_server_port(port)
 
         self.network_sdr_plugin_sender.client_port = port
 
         sender = simulator.sender
-        port = self.__get_free_port()
+        port = self.get_free_port()
         sender.device.set_client_port(port)
         sender.device._VirtualDevice__dev.name = "simulator_sender"
 
@@ -143,11 +143,3 @@ class TestSimulator(QtTestCase):
         # timeout = spy.wait(2000)
         # yappi.get_func_stats().print_all()
         # yappi.get_thread_stats().print_all()
-
-    def __get_free_port(self):
-        import socket
-        s = socket.socket()
-        s.bind(("", 0))
-        port = s.getsockname()[1]
-        s.close()
-        return port

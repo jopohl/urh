@@ -56,6 +56,9 @@ class SimulatorProtocolLabel(SimulatorItem):
 
     @field_type.setter
     def field_type(self, val: FieldType):
+        if val is None:
+            return
+
         if self.is_checksum_label and val.function != FieldType.Function.CHECKSUM:
             assert isinstance(self.label, ChecksumLabel)
             self.label = self.label.to_label(val)

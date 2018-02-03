@@ -221,7 +221,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             return sock
         except Exception as e:
             msg = "Could not establish connection " + str(e)
-            self.error_occured.emit(msg)
+            self.error_occurred.emit(msg)
             logger.error(msg)
             return None
 

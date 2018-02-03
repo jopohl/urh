@@ -136,7 +136,7 @@ class VirtualDevice(QObject):
             self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             self.__dev.send_connection_established.connect(self.emit_ready_for_action)
             self.__dev.receive_server_started.connect(self.emit_ready_for_action)
-            self.__dev.error_occurred.connect(self.emit_fatal_error_occured)
+            self.__dev.error_occurred.connect(self.emit_fatal_error_occurred)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:
             self.__dev = None
@@ -662,5 +662,5 @@ class VirtualDevice(QObject):
         """
         self.ready_for_action.emit()
 
-    def emit_fatal_error_occured(self, msg: str):
+    def emit_fatal_error_occurred(self, msg: str):
         self.fatal_error_occurred.emit(msg)
